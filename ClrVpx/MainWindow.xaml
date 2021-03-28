@@ -3,10 +3,69 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ClrVpx"
+        xmlns:clrVpx="clr-namespace:ClrVpx"
         mc:Ignorable="d"
-        Title="ClrVpx" Height="450" Width="800">
-    <Grid>
+        Title="ClrVpx" Height="450" Width="800" d:DataContext="{d:DesignData }">
 
-    </Grid>
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="About/About.xaml" />
+        <ResourceDictionary Source="Scanner/Scanner.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type clrVpx:ScannerModel}">
+        <DataGrid Name="ScannerResults" ItemsSource="{Binding Results}"></DataGrid>
+
+        <!--<Grid Background="#FFE5E5E5">-->
+        <!--<TreeView>
+            <TreeViewItem>
+              sdaf
+            </TreeViewItem>
+            <TreeViewItem IsExpanded="True">
+              sdaf
+            </TreeViewItem>
+          </TreeView>-->
+
+        <!--<ListView>
+            <ListViewItem>1</ListViewItem>
+            <ListViewItem>2</ListViewItem>
+          </ListView>-->
+      </DataTemplate>
+
+      <DataTemplate x:Key="TabItemHeaderTemplate">
+        <TextBlock Text="{Binding}" FontSize="20" Margin="5,0" />
+      </DataTemplate>
+
+      <Style TargetType="TabItem">
+        <Setter Property="HeaderTemplate" Value="{StaticResource TabItemHeaderTemplate}" />
+      </Style>
+    </ResourceDictionary>
+  </Window.Resources>
+
+
+  <DockPanel>
+    <TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpx" VerticalAlignment="Center" FontSize="32" />
+    <TabControl>
+      <TabItem Header="Scanner">
+        <ContentPresenter Content="{Binding Scanner}"  ContentTemplate="{StaticResource ScannerTemplate}" />
+      </TabItem>
+      <TabItem Header="About">
+        <ContentPresenter Name="About" Content="{Binding}" ContentTemplate="{StaticResource AboutTemplate}" />
+      </TabItem>
+      <TabItem Header="Play">
+        <Grid>
+          <!--<DataGrid AutoGenerateColumns="False">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="First Name" />
+              <DataGridTextColumn Header="Second Name" Binding="{Binding Table}" />
+            </DataGrid.Columns>
+          </DataGrid>-->
+        </Grid>
+
+      </TabItem>
+    </TabControl>
+
+
+  </DockPanel>
 </Window>

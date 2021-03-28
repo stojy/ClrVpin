@@ -1,2 +1,4 @@
 *.user
 /.vs/*
+/ClrVpx/bin/*
+/ClrVpx/obj/*
