@@ -2,3 +2,5 @@
 /.vs/*
 /ClrVpx/bin/*
 /ClrVpx/obj/*
+*/obj/*
+*/bin/*

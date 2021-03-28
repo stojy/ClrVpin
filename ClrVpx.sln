@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClrVpx", "ClrVpx\ClrVpx.csproj", "{56EC67D6-67D2-4EC8-849E-1657295F9FEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClrVpx", "ClrVpx\ClrVpx.csproj", "{56EC67D6-67D2-4EC8-849E-1657295F9FEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{0F9461D6-B18B-4898-BE0B-C4AC853684C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{56EC67D6-67D2-4EC8-849E-1657295F9FEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56EC67D6-67D2-4EC8-849E-1657295F9FEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56EC67D6-67D2-4EC8-849E-1657295F9FEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F9461D6-B18B-4898-BE0B-C4AC853684C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F9461D6-B18B-4898-BE0B-C4AC853684C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F9461D6-B18B-4898-BE0B-C4AC853684C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F9461D6-B18B-4898-BE0B-C4AC853684C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
