@@ -1,5 +1,24 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:scanner="clr-namespace:ClrVpx.Scanner">
 
+  <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:ScannerModel}">
+    <DataGrid Name="ScannerResults" ItemsSource="{Binding Results}"></DataGrid>
+
+    <!--<Grid Background="#FFE5E5E5">-->
+    <!--<TreeView>
+            <TreeViewItem>
+              sdaf
+            </TreeViewItem>
+            <TreeViewItem IsExpanded="True">
+              sdaf
+            </TreeViewItem>
+          </TreeView>-->
+
+    <!--<ListView>
+            <ListViewItem>1</ListViewItem>
+            <ListViewItem>2</ListViewItem>
+          </ListView>-->
+  </DataTemplate>
 
 </ResourceDictionary>

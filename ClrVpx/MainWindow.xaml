@@ -14,25 +14,6 @@
         <ResourceDictionary Source="Scanner/Scanner.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
-      <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type clrVpx:ScannerModel}">
-        <DataGrid Name="ScannerResults" ItemsSource="{Binding Results}"></DataGrid>
-
-        <!--<Grid Background="#FFE5E5E5">-->
-        <!--<TreeView>
-            <TreeViewItem>
-              sdaf
-            </TreeViewItem>
-            <TreeViewItem IsExpanded="True">
-              sdaf
-            </TreeViewItem>
-          </TreeView>-->
-
-        <!--<ListView>
-            <ListViewItem>1</ListViewItem>
-            <ListViewItem>2</ListViewItem>
-          </ListView>-->
-      </DataTemplate>
-
       <DataTemplate x:Key="TabItemHeaderTemplate">
         <TextBlock Text="{Binding}" FontSize="20" Margin="5,0" />
       </DataTemplate>
@@ -42,7 +23,6 @@
       </Style>
     </ResourceDictionary>
   </Window.Resources>
-
 
   <DockPanel>
     <TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpx" VerticalAlignment="Center" FontSize="32" />
