@@ -32,9 +32,57 @@ namespace ClrVpx.Scanner
         {
             var games = GetDatabase();
 
+            // todo; check PBX media folder and new folder(a)
             var tableAudio = GetMedia("Table Audio", new [] { "*.mp3", "*.wav" });
 
+            var orphanedFiles = Merge(games, tableAudio);
+
             Results = new ObservableCollection<Game>(games);
+        }
+
+        private IEnumerable<string> Merge(List<Game> games, IEnumerable<string> mediaFiles)
+        {
+            var orphanedFiles = new List<string>();
+
+            mediaFiles.ForEach(mediaFile =>
+            {
+                // fuzzy match media to the table
+                // todo; lexical word, etc
+                Game matchedGame;
+                
+
+                if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
+                {
+                    // a previous lesser match was found
+                    if (matchedGame.TableAudioMatchScore > 0)
+                        orphanedFiles.Add(matchedGame.TableAudio);
+
+                    // exact match
+                    // todo; turn this into a class?  including simple file name without path stuff
+                    matchedGame.TableAudio = mediaFile;
+                    matchedGame.TableAudioMatchScore = 100;
+                }
+                else if ((matchedGame = games.FirstOrDefault(game => game.Name == Path.GetFileNameWithoutExtension(mediaFile))) != null)
+                {
+                    // a previous better match was found
+                    if (matchedGame.TableAudioMatchScore > 99)
+                    {
+                        orphanedFiles.Add(mediaFile);
+                    }
+                    else
+                    {
+                        // an incorrect match against table name
+                        matchedGame.TableAudio = mediaFile;
+                        matchedGame.TableAudioMatchScore = 99;
+                    }
+                }
+                else
+                {
+                    orphanedFiles.Add(mediaFile);
+                }
+            });
+
+            return orphanedFiles;
         }
 
         private static List<Game> GetDatabase()

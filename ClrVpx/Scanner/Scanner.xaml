@@ -16,6 +16,8 @@
           <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" />
           <DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />
           <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" />
+          <DataGridTextColumn Header="Table Audio" Binding="{Binding TableAudio}" />
+          <DataGridTextColumn Header="Table Audio Match Score" Binding="{Binding TableAudioMatchScore}" />
 
           <!--<DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" />
           --><!--The Email property contains a URI.  For example "mailto:lucy0@adventure-works.com"--><!--

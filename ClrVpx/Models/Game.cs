@@ -6,10 +6,10 @@ namespace ClrVpx.Models
     public class Game
     {
         [XmlAttribute("name")]
-        public string Name { get; set; }
+        public string Name { get; set; }    // table name - typically matches description, but not always
 
         [XmlElement("description", IsNullable = true)]
-        public string Description { get; set; }
+        public string Description { get; set; } // from IPDB - media files must match
         
         [XmlElement("rom", IsNullable = true)]
         public string Rom { get; set; }
@@ -66,8 +66,10 @@ namespace ClrVpx.Models
         public string DateModified { get; set; }
 
 
-        // dynamic properties
+        // calculated properties
         public int Number { get; set; }
         public string Ipdb { get; set; }
+        public string TableAudio { get; set; }
+        public int TableAudioMatchScore { get; set; }
     }
 }
