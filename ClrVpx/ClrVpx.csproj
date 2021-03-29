@@ -18,4 +18,11 @@
     <ProjectReference Include="..\Utils\Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Settings\Settings.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

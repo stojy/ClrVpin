@@ -27,8 +27,15 @@ namespace ClrVpx.Scanner
 
         private void StartScan()
         {
-            var fileName = @"C:\vp\apps\PinballX\Databases\Visual Pinball\Visual Pinball.xml";
-            var doc = XDocument.Load(fileName);
+            var menu = GetDatabase();
+
+            Results = new ObservableCollection<Game>(menu.Games);
+        }
+
+        private static Menu GetDatabase()
+        {
+            var databaseFile = $@"{Settings.Settings.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
+            var doc = XDocument.Load(databaseFile);
             if (doc.Root == null)
                 throw new Exception("Failed to load database");
 
@@ -39,8 +46,7 @@ namespace ClrVpx.Scanner
                 g.Number = number++;
                 g.Ipdb = g.IpdbId ?? g.IpdbNr;
             });
-            
-            Results = new ObservableCollection<Game>(menu.Games);
+            return menu;
         }
     }
 }

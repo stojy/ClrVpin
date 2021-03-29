@@ -11,6 +11,7 @@
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="About/About.xaml" />
         <ResourceDictionary Source="Scanner/Scanner.xaml" />
+        <ResourceDictionary Source="Settings/Settings.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
       <DataTemplate x:Key="TabItemHeaderTemplate">
@@ -29,13 +30,11 @@
       <TabItem Header="Scanner">
         <ContentPresenter Content="{Binding Scanner}"  ContentTemplate="{StaticResource ScannerTemplate}" />
       </TabItem>
+      <TabItem Header="Settings">
+        <ContentPresenter Content="{Binding Settings}"  ContentTemplate="{StaticResource SettingsTemplate}" />
+      </TabItem>
       <TabItem Header="About">
         <ContentPresenter Name="About" Content="{Binding}" ContentTemplate="{StaticResource AboutTemplate}" />
-      </TabItem>
-      <TabItem Header="Play">
-        <Grid>
-        </Grid>
-
       </TabItem>
     </TabControl>
 
