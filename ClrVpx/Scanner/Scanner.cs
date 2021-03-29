@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using System.Xml.Linq;
@@ -27,15 +30,17 @@ namespace ClrVpx.Scanner
 
         private void StartScan()
         {
-            var menu = GetDatabase();
+            var games = GetDatabase();
 
-            Results = new ObservableCollection<Game>(menu.Games);
+            var tableAudio = GetMedia("Table Audio", new [] { "*.mp3", "*.wav" });
+
+            Results = new ObservableCollection<Game>(games);
         }
 
-        private static Menu GetDatabase()
+        private static List<Game> GetDatabase()
         {
-            var databaseFile = $@"{Settings.Settings.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
-            var doc = XDocument.Load(databaseFile);
+            var file = $@"{Settings.Settings.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
+            var doc = XDocument.Load(file);
             if (doc.Root == null)
                 throw new Exception("Failed to load database");
 
@@ -46,7 +51,18 @@ namespace ClrVpx.Scanner
                 g.Number = number++;
                 g.Ipdb = g.IpdbId ?? g.IpdbNr;
             });
-            return menu;
+
+            return menu.Games;
+        }
+
+        
+        private IEnumerable<string> GetMedia(string folder, string[] extensions)
+        {
+            var path = $@"{Settings.Settings.VpxFrontendFolder}\Media\Visual Pinball\{folder}";
+
+            var files = extensions.Select(ext => Directory.GetFiles(path, ext));
+
+            return files.SelectMany(x => x);
         }
     }
 }
