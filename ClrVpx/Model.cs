@@ -6,9 +6,9 @@ namespace ClrVpx
     {
         public Model()
         {
-            Scanner = new ScannerModel();
+            Scanner = new Scanner.Scanner();
         }
 
-        public ScannerModel Scanner { get; set; }
+        public Scanner.Scanner Scanner { get; set; }
     }
 }

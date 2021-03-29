@@ -2,28 +2,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:scanner="clr-namespace:ClrVpx.Scanner">
 
-  <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:ScannerModel}">
+  <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
       <Button DockPanel.Dock="Top" Width="120px" Command="{Binding Scan}">Scan</Button>
-
-      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Results}"></DataGrid>
-
+      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Results}" />
     </DockPanel>
 
-    <!--<Grid Background="#FFE5E5E5">-->
-    <!--<TreeView>
-            <TreeViewItem>
-              sdaf
-            </TreeViewItem>
-            <TreeViewItem IsExpanded="True">
-              sdaf
-            </TreeViewItem>
-          </TreeView>-->
-
-    <!--<ListView>
-            <ListViewItem>1</ListViewItem>
-            <ListViewItem>2</ListViewItem>
-          </ListView>-->
   </DataTemplate>
 
 </ResourceDictionary>
