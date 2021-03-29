@@ -4,8 +4,26 @@
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
-      <Button DockPanel.Dock="Top" Width="120px" Command="{Binding Scan}">Scan</Button>
-      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Results}" />
+      <Button DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="5" Width="120px" Command="{Binding Scan}">Scan</Button>
+      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Results}"
+                AlternatingRowBackground="LightBlue" AlternationCount="2" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="#" Binding="{Binding Number}" />
+          <DataGridTextColumn Header="IPDB" Binding="{Binding Ipdb}" />
+          <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+          <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" />
+          <DataGridTextColumn Header="Year" Binding="{Binding Year}" />
+          <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" />
+          <DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />
+          <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" />
+
+          <!--<DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" />
+          --><!--The Email property contains a URI.  For example "mailto:lucy0@adventure-works.com"--><!--
+          <DataGridHyperlinkColumn Header="Email" Binding="{Binding Email}"  ContentBinding="{Binding Email, Converter={StaticResource EmailConverter}}" />
+          <DataGridCheckBoxColumn Header="Member?" Binding="{Binding IsMember}" />
+          <DataGridComboBoxColumn Header="Order Status"  SelectedItemBinding="{Binding Status}" ItemsSource="{Binding Source={StaticResource myEnum}}" />-->
+        </DataGrid.Columns>
+      </DataGrid>
     </DockPanel>
 
   </DataTemplate>

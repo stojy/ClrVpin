@@ -33,6 +33,13 @@ namespace ClrVpx.Scanner
                 throw new Exception("Failed to load database");
 
             var menu = doc.Root.Deserialize<Menu>();
+            var number = 1;
+            menu.Games.ForEach(g =>
+            {
+                g.Number = number++;
+                g.Ipdb = g.IpdbId ?? g.IpdbNr;
+            });
+            
             Results = new ObservableCollection<Game>(menu.Games);
         }
     }

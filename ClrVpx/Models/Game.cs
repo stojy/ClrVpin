@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 
 namespace ClrVpx.Models
 {
@@ -7,58 +8,66 @@ namespace ClrVpx.Models
         [XmlAttribute("name")]
         public string Name { get; set; }
 
-        [XmlElement("description")]
+        [XmlElement("description", IsNullable = true)]
         public string Description { get; set; }
         
-        [XmlElement("rom")]
+        [XmlElement("rom", IsNullable = true)]
         public string Rom { get; set; }
 
-        [XmlElement("year")]
+        [XmlElement("manufacturer", IsNullable = true)]
+        public string Manufacturer { get; set; }
+
+        [XmlElement("year", IsNullable = true)]
         public string Year { get; set; }
 
-        [XmlElement("type")]
+        [XmlElement("type", IsNullable = true)]
         public string Type { get; set; }
 
-        [XmlElement("hidedmd")]
+        [XmlElement("hidedmd", IsNullable = true)]
         public string HideDmd { get; set; }
 
-        [XmlElement("hidetopper")]
+        [XmlElement("hidetopper", IsNullable = true)]
         public string HideTopper { get; set; }
 
-        [XmlElement("hidebackglass")]
+        [XmlElement("hidebackglass", IsNullable = true)]
         public string HideBackglass { get; set; }
 
-        [XmlElement("enabled")]
+        [XmlElement("enabled", IsNullable = true)]
         public string Enabled { get; set; }
 
-        [XmlElement("rating")]
+        [XmlElement("rating", IsNullable = true)]
         public string Rating { get; set; }
 
-        [XmlElement("players")]
+        [XmlElement("players", IsNullable = true)]
         public string Players { get; set; }
 
-        [XmlElement("comment")]
+        [XmlElement("comment", IsNullable = true)]
         public string Comment { get; set; }
 
-        [XmlElement("theme")]
+        [XmlElement("theme", IsNullable = true)]
         public string Theme { get; set; }
 
-        [XmlElement("author")]
+        [XmlElement("author", IsNullable = true)]
         public string Author { get; set; }
 
-        [XmlElement("version")]
+        [XmlElement("version", IsNullable = true)]
         public string Version { get; set; }
 
-        [XmlElement("ipdbid")]
+        [XmlElement("ipdbid", IsNullable = true)]
         public string IpdbId { get; set; }
  
-        [XmlElement("ipdbNr")]
+        [XmlElement("ipdbNr", IsNullable = true)]
         public string IpdbNr { get; set; }
 
-        [XmlElement("dateadded")]
+        [XmlElement("dateadded", IsNullable = true)]
         public string DateAdded { get; set; }
 
-        [XmlElement("datemodified")]
+        [XmlElement("datemodified", IsNullable = true)]
         public string DateModified { get; set; }
+
+
+        // dynamic properties
+        public int Number { get; set; }
+        public string Ipdb { get; set; }
     }
 }

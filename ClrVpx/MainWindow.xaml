@@ -34,12 +34,6 @@
       </TabItem>
       <TabItem Header="Play">
         <Grid>
-          <!--<DataGrid AutoGenerateColumns="False">
-            <DataGrid.Columns>
-              <DataGridTextColumn Header="First Name" />
-              <DataGridTextColumn Header="Second Name" Binding="{Binding Table}" />
-            </DataGrid.Columns>
-          </DataGrid>-->
         </Grid>
 
       </TabItem>
