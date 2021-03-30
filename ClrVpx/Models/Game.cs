@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
 namespace ClrVpx.Models
@@ -6,10 +8,10 @@ namespace ClrVpx.Models
     public class Game
     {
         [XmlAttribute("name")]
-        public string Name { get; set; }    // table name - typically matches description, but not always
+        public string Name { get; set; }    // table file name - typically matches description, but not always
 
         [XmlElement("description", IsNullable = true)]
-        public string Description { get; set; } // from IPDB - media files must match
+        public string Description { get; set; } // from IPDB - PBY/PBX media files must match description (not the table file name)
         
         [XmlElement("rom", IsNullable = true)]
         public string Rom { get; set; }
@@ -69,7 +71,14 @@ namespace ClrVpx.Models
         // calculated properties
         public int Number { get; set; }
         public string Ipdb { get; set; }
-        public string TableAudio { get; set; }
-        public int TableAudioMatchScore { get; set; }
+
+        public ObservableCollection<Hit> TableAudios { get; } = new ObservableCollection<Hit>();
+    }
+
+    public class Hit
+    {
+        public string File { get; set; }
+        public int SizeBytes { get; set; } // todo;
+        public int Score { get; set; }
     }
 }

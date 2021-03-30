@@ -34,55 +34,55 @@ namespace ClrVpx.Scanner
 
             // todo; check PBX media folder and new folder(a)
             var tableAudio = GetMedia("Table Audio", new [] { "*.mp3", "*.wav" });
-
-            var orphanedFiles = Merge(games, tableAudio);
+            var orphanedTableAudio = Merge(games, tableAudio, g => g.TableAudios);
 
             Results = new ObservableCollection<Game>(games);
         }
 
-        private IEnumerable<string> Merge(List<Game> games, IEnumerable<string> mediaFiles)
+        private IEnumerable<string> Merge(List<Game> games, IEnumerable<string> mediaFiles, Func<Game, ObservableCollection<Hit>> getHits)
         {
             var orphanedFiles = new List<string>();
 
             mediaFiles.ForEach(mediaFile =>
             {
+                Game matchedGame;
+                Hit hit = null;
+
+                // check for hit
+                // todo; rebuilder; score result for existing vs new files
                 // fuzzy match media to the table
                 // todo; lexical word, etc
-                Game matchedGame;
-                
-
                 if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                {
-                    // a previous lesser match was found
-                    if (matchedGame.TableAudioMatchScore > 0)
-                        orphanedFiles.Add(matchedGame.TableAudio);
-
-                    // exact match
-                    // todo; turn this into a class?  including simple file name without path stuff
-                    matchedGame.TableAudio = mediaFile;
-                    matchedGame.TableAudioMatchScore = 100;
-                }
+                    hit = CreateHit(mediaFile, 100);
                 else if ((matchedGame = games.FirstOrDefault(game => game.Name == Path.GetFileNameWithoutExtension(mediaFile))) != null)
+                    hit = CreateHit(mediaFile, 99);
+                
+                // add hit
+                if (hit != null)
                 {
-                    // a previous better match was found
-                    if (matchedGame.TableAudioMatchScore > 99)
-                    {
-                        orphanedFiles.Add(mediaFile);
-                    }
-                    else
-                    {
-                        // an incorrect match against table name
-                        matchedGame.TableAudio = mediaFile;
-                        matchedGame.TableAudioMatchScore = 99;
-                    }
+                    // add
+                    var hits = getHits(matchedGame);
+                    hits.Add(hit);
+
+                    // sort
+                    var orderedHits = hits.OrderByDescending(h => h.Score).ToList();
+                    hits.Clear();
+                    orderedHits.ForEach(o => hits.Add(o));
                 }
                 else
-                {
                     orphanedFiles.Add(mediaFile);
-                }
             });
 
             return orphanedFiles;
+        }
+
+        private static Hit CreateHit(string mediaFile, int score)
+        {
+            return new Hit
+            {
+                File = mediaFile,
+                Score = score
+            };
         }
 
         private static List<Game> GetDatabase()
