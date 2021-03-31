@@ -5,14 +5,26 @@
 
   <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
     <WrapPanel>
-      <RadioButton/> <!--todo-->
+      <RadioButton /> <!--todo-->
       <TextBlock Margin="2,0" Width="20" Text="{Binding Score}" />
       <TextBlock Margin="2,0" Text="{Binding File}" />
     </WrapPanel>
   </DataTemplate>
-  
-  <DataTemplate x:Key="HitsTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding TableAudios}" ItemTemplate="{StaticResource HitTemplate}" />
+
+  <DataTemplate x:Key="WheelImageTemplate" DataType="models:Game">
+    <ListBox ItemsSource="{Binding WheelImageHits}" ItemTemplate="{StaticResource HitTemplate}" />
+  </DataTemplate>
+  <DataTemplate x:Key="TableAudioTemplate" DataType="models:Game">
+    <ListBox ItemsSource="{Binding TableAudioHits}" ItemTemplate="{StaticResource HitTemplate}" />
+  </DataTemplate>
+  <DataTemplate x:Key="LaunchAudioTemplate" DataType="models:Game">
+    <ListBox ItemsSource="{Binding LaunchAudioHits}" ItemTemplate="{StaticResource HitTemplate}" />
+  </DataTemplate>
+  <DataTemplate x:Key="TableVideoTemplate" DataType="models:Game">
+    <ListBox ItemsSource="{Binding TableVideoHits}" ItemTemplate="{StaticResource HitTemplate}" />
+  </DataTemplate>
+  <DataTemplate x:Key="BackglassVideoTemplate" DataType="models:Game">
+    <ListBox ItemsSource="{Binding BackglassVideoHits}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
@@ -23,16 +35,20 @@
         <DataGrid.Columns>
           <DataGridTextColumn Header="#" Binding="{Binding Number}" />
           <DataGridTextColumn Header="IPDB" Binding="{Binding Ipdb}" />
-          <DataGridTextColumn Header="File Name" Binding="{Binding Name}" Width="300"/>
-          <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="300"/>
-          <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="200"/>
+          <DataGridTextColumn Header="File Name" Binding="{Binding Name}" Width="300" />
+          <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="300" />
+          <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="200" />
           <DataGridTextColumn Header="Year" Binding="{Binding Year}" />
           <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" />
-          <DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />
+          <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
           <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" Width="100" />
 
-          <DataGridTemplateColumn Header="Table Audio" CellTemplate="{StaticResource HitsTemplate}" />
-          
+          <DataGridTemplateColumn Header="Wheel Images" CellTemplate="{StaticResource WheelImageTemplate}" />
+          <DataGridTemplateColumn Header="Table Audio" CellTemplate="{StaticResource TableAudioTemplate}" />
+          <DataGridTemplateColumn Header="Launch Audio" CellTemplate="{StaticResource LaunchAudioTemplate}" />
+          <DataGridTemplateColumn Header="Table Video" CellTemplate="{StaticResource TableVideoTemplate}" />
+          <DataGridTemplateColumn Header="Backglass Video" CellTemplate="{StaticResource BackglassVideoTemplate}" />
+
           <!--<DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" />
           --><!--The Email property contains a URI.  For example "mailto:lucy0@adventure-works.com"--><!--
           <DataGridHyperlinkColumn Header="Email" Binding="{Binding Email}"  ContentBinding="{Binding Email, Converter={StaticResource EmailConverter}}" />

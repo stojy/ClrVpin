@@ -72,7 +72,11 @@ namespace ClrVpx.Models
         public int Number { get; set; }
         public string Ipdb { get; set; }
 
-        public ObservableCollection<Hit> TableAudios { get; } = new ObservableCollection<Hit>();
+        public ObservableCollection<Hit> TableAudioHits { get; } = new ObservableCollection<Hit>();
+        public ObservableCollection<Hit> LaunchAudioHits { get; } = new ObservableCollection<Hit>();
+        public ObservableCollection<Hit> TableVideoHits { get; } = new ObservableCollection<Hit>();
+        public ObservableCollection<Hit> BackglassVideoHits { get; } = new ObservableCollection<Hit>();
+        public ObservableCollection<Hit> WheelImageHits { get; } = new ObservableCollection<Hit>();
     }
 
     public class Hit

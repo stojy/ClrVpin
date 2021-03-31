@@ -28,13 +28,35 @@ namespace ClrVpx.Scanner
 
         public ICommand Scan { get; set; }
 
+        class MediaSetup
+        {
+            public string Title { get; init; }
+            public string[] Extensions { get; init; }
+            public Func<Game, ObservableCollection<Hit>> GetHits { get; init; }
+        }
+
+        private readonly List<MediaSetup> _mediaSetups = new List<MediaSetup>
+        {
+            new MediaSetup {Title = "Table Audio", Extensions = new[] {"*.mp3", "*.wav"}, GetHits = g => g.TableAudioHits},
+            new MediaSetup {Title = "Launch Audio", Extensions = new[] {"*.mp3", "*.wav"}, GetHits = g => g.LaunchAudioHits},
+            new MediaSetup {Title = "Table Videos", Extensions = new[] {"*.mp4", "*.f4v"}, GetHits = g => g.TableVideoHits},
+            new MediaSetup {Title = "Backglass Videos", Extensions = new[] {"*.mp4", "*.f4v"}, GetHits = g => g.BackglassVideoHits},
+            new MediaSetup {Title = "Wheel Images", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits}
+        };
+
         private void StartScan()
         {
             var games = GetDatabase();
 
-            // todo; check PBX media folder and new folder(a)
-            var tableAudio = GetMedia("Table Audio", new [] { "*.mp3", "*.wav" });
-            var orphanedTableAudio = Merge(games, tableAudio, g => g.TableAudios);
+            // todo; check PBX media folder and new folder(s)
+
+            _mediaSetups.ForEach(m =>
+            {
+                var media = GetMedia(m.Title, m.Extensions);
+                var orphans = Merge(games, media, m.GetHits);
+                
+                Console.WriteLine(orphans);
+            });
 
             Results = new ObservableCollection<Game>(games);
         }
@@ -102,7 +124,6 @@ namespace ClrVpx.Scanner
 
             return menu.Games;
         }
-
         
         private IEnumerable<string> GetMedia(string folder, string[] extensions)
         {
