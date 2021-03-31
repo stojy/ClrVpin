@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using System.Xml.Linq;
+using ByteSizeLib;
 using ClrVpx.Models;
 using PropertyChanged;
 using Utils;
@@ -98,6 +99,7 @@ namespace ClrVpx.Scanner
             {
                 Path = path,
                 File = Path.GetFileName(path),
+                Size = ByteSize.FromBytes(new FileInfo(path).Length).ToString("#"),
                 Score = score
             };
         }

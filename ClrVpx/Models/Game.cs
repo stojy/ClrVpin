@@ -77,12 +77,4 @@ namespace ClrVpx.Models
         public ObservableCollection<Hit> BackglassVideoHits { get; } = new ObservableCollection<Hit>();
         public ObservableCollection<Hit> WheelImageHits { get; } = new ObservableCollection<Hit>();
     }
-
-    public class Hit
-    {
-        public string Path { get; set; }
-        public string File { get; set; }
-        public string Size { get; set; }
-        public int Score { get; set; }
-    }
 }
