@@ -7,6 +7,7 @@
     <WrapPanel>
       <RadioButton /> <!--todo-->
       <TextBlock Margin="2,0" Width="20" Text="{Binding Score}" />
+      <TextBlock Margin="2,0" Text="{Binding Size}" />
       <TextBlock Margin="2,0" Text="{Binding File}" />
     </WrapPanel>
   </DataTemplate>
@@ -29,13 +30,13 @@
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
-      <Button DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="5" Width="120px" Command="{Binding Scan}">Scan</Button>
+      <Button DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="5" Width="120px" Command="{Binding StartCommand}">StartCommand</Button>
       <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Results}"
                 AlternatingRowBackground="LightBlue" AlternationCount="2" AutoGenerateColumns="False">
         <DataGrid.Columns>
           <DataGridTextColumn Header="#" Binding="{Binding Number}" />
           <DataGridTextColumn Header="IPDB" Binding="{Binding Ipdb}" />
-          <DataGridTextColumn Header="File Name" Binding="{Binding Name}" Width="300" />
+          <DataGridTextColumn Header="Table" Binding="{Binding TableFileWithExtension}" Width="300" />
           <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="300" />
           <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="200" />
           <DataGridTextColumn Header="Year" Binding="{Binding Year}" />

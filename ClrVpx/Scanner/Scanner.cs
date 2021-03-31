@@ -20,31 +20,23 @@ namespace ClrVpx.Scanner
             // initialise encoding to workaround the error "Windows -1252 is not supported encoding name"
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            Scan = new ActionCommand(StartScan);
-            StartScan();
+            StartCommand = new ActionCommand(Start);
+            Start();
         }
 
         public ObservableCollection<Game> Results { get; set; }
-
-        public ICommand Scan { get; set; }
-
-        class MediaSetup
-        {
-            public string Title { get; init; }
-            public string[] Extensions { get; init; }
-            public Func<Game, ObservableCollection<Hit>> GetHits { get; init; }
-        }
+        public ICommand StartCommand { get; set; }
 
         private readonly List<MediaSetup> _mediaSetups = new List<MediaSetup>
         {
-            new MediaSetup {Title = "Table Audio", Extensions = new[] {"*.mp3", "*.wav"}, GetHits = g => g.TableAudioHits},
-            new MediaSetup {Title = "Launch Audio", Extensions = new[] {"*.mp3", "*.wav"}, GetHits = g => g.LaunchAudioHits},
-            new MediaSetup {Title = "Table Videos", Extensions = new[] {"*.mp4", "*.f4v"}, GetHits = g => g.TableVideoHits},
-            new MediaSetup {Title = "Backglass Videos", Extensions = new[] {"*.mp4", "*.f4v"}, GetHits = g => g.BackglassVideoHits},
-            new MediaSetup {Title = "Wheel Images", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits}
+            new MediaSetup {MediaFolder = "Table Audio", Extensions = new[] {"*.mp3", "*.wav"}, GetHits = g => g.TableAudioHits},
+            new MediaSetup {MediaFolder = "Launch Audio", Extensions = new[] {"*.mp3", "*.wav"}, GetHits = g => g.LaunchAudioHits},
+            new MediaSetup {MediaFolder = "Table Videos", Extensions = new[] {"*.mp4", "*.f4v"}, GetHits = g => g.TableVideoHits},
+            new MediaSetup {MediaFolder = "Backglass Videos", Extensions = new[] {"*.mp4", "*.f4v"}, GetHits = g => g.BackglassVideoHits},
+            new MediaSetup {MediaFolder = "Wheel Images", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits}
         };
 
-        private void StartScan()
+        private void Start()
         {
             var games = GetDatabase();
 
@@ -52,9 +44,9 @@ namespace ClrVpx.Scanner
 
             _mediaSetups.ForEach(m =>
             {
-                var media = GetMedia(m.Title, m.Extensions);
+                var media = GetMedia(m);
                 var orphans = Merge(games, media, m.GetHits);
-                
+
                 Console.WriteLine(orphans);
             });
 
@@ -76,9 +68,9 @@ namespace ClrVpx.Scanner
                 // todo; lexical word, etc
                 if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                     hit = CreateHit(mediaFile, 100);
-                else if ((matchedGame = games.FirstOrDefault(game => game.Name == Path.GetFileNameWithoutExtension(mediaFile))) != null)
+                else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                     hit = CreateHit(mediaFile, 99);
-                
+
                 // add hit
                 if (hit != null)
                 {
@@ -92,17 +84,20 @@ namespace ClrVpx.Scanner
                     orderedHits.ForEach(o => hits.Add(o));
                 }
                 else
+                {
                     orphanedFiles.Add(mediaFile);
+                }
             });
 
             return orphanedFiles;
         }
 
-        private static Hit CreateHit(string mediaFile, int score)
+        private static Hit CreateHit(string path, int score)
         {
             return new Hit
             {
-                File = mediaFile,
+                Path = path,
+                File = Path.GetFileName(path),
                 Score = score
             };
         }
@@ -124,12 +119,11 @@ namespace ClrVpx.Scanner
 
             return menu.Games;
         }
-        
-        private IEnumerable<string> GetMedia(string folder, string[] extensions)
-        {
-            var path = $@"{Settings.Settings.VpxFrontendFolder}\Media\Visual Pinball\{folder}";
 
-            var files = extensions.Select(ext => Directory.GetFiles(path, ext));
+        private IEnumerable<string> GetMedia(MediaSetup mediaSetup)
+        {
+            // todo; store file details, e.g. sixe
+            var files = mediaSetup.Extensions.Select(ext => Directory.GetFiles(mediaSetup.Path, ext));
 
             return files.SelectMany(x => x);
         }

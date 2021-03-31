@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
 namespace ClrVpx.Models
@@ -8,7 +6,7 @@ namespace ClrVpx.Models
     public class Game
     {
         [XmlAttribute("name")]
-        public string Name { get; set; }    // table file name - typically matches description, but not always
+        public string TableFile { get; set; }    // table file name - excludes suffix and typically matches description, but not always
 
         [XmlElement("description", IsNullable = true)]
         public string Description { get; set; } // from IPDB - PBY/PBX media files must match description (not the table file name)
@@ -69,6 +67,7 @@ namespace ClrVpx.Models
 
 
         // calculated properties
+        public string TableFileWithExtension => TableFile + ".pbx";
         public int Number { get; set; }
         public string Ipdb { get; set; }
 
@@ -81,8 +80,9 @@ namespace ClrVpx.Models
 
     public class Hit
     {
+        public string Path { get; set; }
         public string File { get; set; }
-        public int SizeBytes { get; set; } // todo;
+        public string Size { get; set; }
         public int Score { get; set; }
     }
 }
