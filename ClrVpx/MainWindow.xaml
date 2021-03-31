@@ -30,6 +30,12 @@
       <TabItem Header="Scanner">
         <ContentPresenter Content="{Binding Scanner}"  ContentTemplate="{StaticResource ScannerTemplate}" />
       </TabItem>
+      <TabItem Header="Rebuilder">
+        <!--<ContentPresenter Content="{Binding Scanner}"  ContentTemplate="{StaticResource ScannerTemplate}" />-->
+      </TabItem>
+      <TabItem Header="Explorer">
+        <ContentPresenter Content="{Binding Scanner}"  ContentTemplate="{StaticResource ScannerTemplate}" />
+      </TabItem>
       <TabItem Header="Settings">
         <ContentPresenter Content="{Binding Settings}"  ContentTemplate="{StaticResource SettingsTemplate}" />
       </TabItem>
