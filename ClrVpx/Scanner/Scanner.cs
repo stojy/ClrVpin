@@ -49,7 +49,7 @@ namespace ClrVpx.Scanner
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
 
-        public ObservableCollection<Game> FlaggedGames { get; set; }
+        public ObservableCollection<Game> DirtyGames { get; set; }
 
         public void Show()
         {
@@ -75,7 +75,10 @@ namespace ClrVpx.Scanner
             });
 
             Games = new ObservableCollection<Game>(games);
-            FlaggedGames = new ObservableCollection<Game>(games.Where(g => g.Dirty));
+
+            Games.ForEach(game => game.Dirty = game.Media.Any(media => media.Value.Count != 1 || media.Value.Any(m => m.Score != 100)));
+
+            DirtyGames = new ObservableCollection<Game>(games.Where(g => g.Dirty));
         }
 
         private IEnumerable<string> UpdateGames(List<Game> games, IEnumerable<string> mediaFiles, Func<Game, ObservableCollection<Hit>> getHits)
@@ -107,10 +110,6 @@ namespace ClrVpx.Scanner
                     var orderedHits = hits.OrderByDescending(h => h.Score).ToList();
                     hits.Clear();
                     orderedHits.ForEach(o => hits.Add(o));
-
-                    // mark as flagged if only a perfect hit is received
-                    if (!hits.All(hit => hit.Score == 100))
-                        matchedGame.Dirty = true;
                 }
                 else
                 {

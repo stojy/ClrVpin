@@ -43,6 +43,8 @@
           <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
           <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" Width="100" />
+          
+          <DataGridCheckBoxColumn Header="Dirty" Binding="{Binding Dirty}" Width="100" />
 
           <DataGridTemplateColumn Header="Wheel Images" CellTemplate="{StaticResource WheelImageTemplate}" />
           <DataGridTemplateColumn Header="Table Audio" CellTemplate="{StaticResource TableAudioTemplate}" />
