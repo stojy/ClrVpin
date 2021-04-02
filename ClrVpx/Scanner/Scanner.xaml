@@ -13,25 +13,25 @@
   </DataTemplate>
 
   <DataTemplate x:Key="WheelImageTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding WheelImageHits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media[Launch Audio]}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
   <DataTemplate x:Key="TableAudioTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding TableAudioHits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media[Table Audio]}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
   <DataTemplate x:Key="LaunchAudioTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding LaunchAudioHits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media[Table Videos]}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
   <DataTemplate x:Key="TableVideoTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding TableVideoHits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media[Backglass Videos]}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
   <DataTemplate x:Key="BackglassVideoTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding BackglassVideoHits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media[Wheel Images]}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
 
   <DataTemplate x:Key="ScannerExplorerTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
       <Button DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="5" Width="120px" Command="{Binding StartCommand}">Start</Button>
-      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Results}"
+      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Games}"
                 AlternatingRowBackground="LightBlue" AlternationCount="2" AutoGenerateColumns="False">
         <DataGrid.Columns>
           <DataGridTextColumn Header="#" Binding="{Binding Number}" />

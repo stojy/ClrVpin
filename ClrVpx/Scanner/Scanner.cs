@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using ByteSizeLib;
 using ClrVpx.Models;
+using ClrVpx.Settings;
 using PropertyChanged;
 using Utils;
 
@@ -16,6 +17,26 @@ namespace ClrVpx.Scanner
     [AddINotifyPropertyChangedInterface]
     public class Scanner
     {
+        public const string MediaLaunchAudio = "Launch Audio";
+        public const string MediaTableAudio = "Table Audio";
+        public const string MediaTableVideos = "Table Videos";
+        public const string MediaBackglassVideos = "Backglass Videos";
+        public const string MediaWheelImages = "Wheel Images";
+
+        private readonly MainWindow _mainWindow;
+
+        private readonly List<MediaSetup> _supportedMedia = new List<MediaSetup>
+        {
+            new MediaSetup {Folder = MediaTableAudio, Extensions = new[] {"*.mp3", "*.wav"}},
+            new MediaSetup {Folder = MediaLaunchAudio, Extensions = new[] {"*.mp3", "*.wav"}},
+            new MediaSetup {Folder = MediaTableVideos, Extensions = new[] {"*.mp4", "*.f4v"}},
+            new MediaSetup {Folder = MediaBackglassVideos, Extensions = new[] {"*.mp4", "*.f4v"}},
+            new MediaSetup {Folder = MediaWheelImages, Extensions = new[] {"*.png"}}
+            //new MediaSetup {Folder = "Tables", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits},
+            //new MediaSetup {Folder = "Backglass", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits},
+            //new MediaSetup {Folder = "Point of View", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits},
+        };
+
         public Scanner(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
@@ -23,6 +44,12 @@ namespace ClrVpx.Scanner
             StartCommand = new ActionCommand(Start);
             Start();
         }
+
+
+        public ObservableCollection<Game> Games { get; set; }
+        public ICommand StartCommand { get; set; }
+
+        public ObservableCollection<Game> FlaggedGames { get; set; }
 
         public void Show()
         {
@@ -34,39 +61,24 @@ namespace ClrVpx.Scanner
             window.ShowDialog();
         }
 
-
-        public ObservableCollection<Game> Results { get; set; }
-        public ICommand StartCommand { get; set; }
-
-        private readonly List<MediaSetup> _mediaSetups = new List<MediaSetup>
-        {
-            new MediaSetup {MediaFolder = "Table Audio", Extensions = new[] {"*.mp3", "*.wav"}, GetHits = g => g.TableAudioHits},
-            new MediaSetup {MediaFolder = "Launch Audio", Extensions = new[] {"*.mp3", "*.wav"}, GetHits = g => g.LaunchAudioHits},
-            new MediaSetup {MediaFolder = "Table Videos", Extensions = new[] {"*.mp4", "*.f4v"}, GetHits = g => g.TableVideoHits},
-            new MediaSetup {MediaFolder = "Backglass Videos", Extensions = new[] {"*.mp4", "*.f4v"}, GetHits = g => g.BackglassVideoHits},
-            new MediaSetup {MediaFolder = "Wheel Images", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits}
-        };
-
-        private readonly MainWindow _mainWindow;
-
         private void Start()
         {
             var games = GetDatabase();
 
-            // todo; check PBX media folder and new folder(s)
-
-            _mediaSetups.ForEach(m =>
+            // check the installed media files against those that are registered in the database
+            // todo; check against spreadsheet for 'missing games'
+            var orphans = new List<string>();
+            _supportedMedia.ForEach(fileSetup =>
             {
-                var media = GetMedia(m);
-                var orphans = Merge(games, media, m.GetHits);
-
-                Console.WriteLine(orphans);
+                var media = GetMedia(fileSetup);
+                orphans.AddRange(UpdateGames(games, media, fileSetup.GetHits));
             });
 
-            Results = new ObservableCollection<Game>(games);
+            Games = new ObservableCollection<Game>(games);
+            FlaggedGames = new ObservableCollection<Game>(games.Where(g => g.Dirty));
         }
 
-        private IEnumerable<string> Merge(List<Game> games, IEnumerable<string> mediaFiles, Func<Game, ObservableCollection<Hit>> getHits)
+        private IEnumerable<string> UpdateGames(List<Game> games, IEnumerable<string> mediaFiles, Func<Game, ObservableCollection<Hit>> getHits)
         {
             var orphanedFiles = new List<string>();
 
@@ -95,6 +107,10 @@ namespace ClrVpx.Scanner
                     var orderedHits = hits.OrderByDescending(h => h.Score).ToList();
                     hits.Clear();
                     orderedHits.ForEach(o => hits.Add(o));
+
+                    // mark as flagged if only a perfect hit is received
+                    if (!hits.All(hit => hit.Score == 100))
+                        matchedGame.Dirty = true;
                 }
                 else
                 {
@@ -118,7 +134,7 @@ namespace ClrVpx.Scanner
 
         private static List<Game> GetDatabase()
         {
-            var file = $@"{Settings.SettingsModel.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
+            var file = $@"{SettingsModel.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
             var doc = XDocument.Load(file);
             if (doc.Root == null)
                 throw new Exception("Failed to load database");

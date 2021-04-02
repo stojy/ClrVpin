@@ -1,18 +1,17 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
 namespace ClrVpx.Models
 {
     public class Game
     {
-        [XmlAttribute("name")]
-        public string TableFile { get; set; }    // table file name - excludes suffix and typically matches description, but not always
+        [XmlAttribute("name")] public string TableFile { get; set; } // table file name - excludes suffix and typically matches description, but not always
 
         [XmlElement("description", IsNullable = true)]
         public string Description { get; set; } // from IPDB - PBY/PBX media files must match description (not the table file name)
-        
-        [XmlElement("rom", IsNullable = true)]
-        public string Rom { get; set; }
+
+        [XmlElement("rom", IsNullable = true)] public string Rom { get; set; }
 
         [XmlElement("manufacturer", IsNullable = true)]
         public string Manufacturer { get; set; }
@@ -55,7 +54,7 @@ namespace ClrVpx.Models
 
         [XmlElement("ipdbid", IsNullable = true)]
         public string IpdbId { get; set; }
- 
+
         [XmlElement("ipdbNr", IsNullable = true)]
         public string IpdbNr { get; set; }
 
@@ -65,16 +64,20 @@ namespace ClrVpx.Models
         [XmlElement("datemodified", IsNullable = true)]
         public string DateModified { get; set; }
 
-
         // calculated properties
+        [XmlIgnore]
+        public Dictionary<string, ObservableCollection<Hit>> Media { get; set; } = new Dictionary<string, ObservableCollection<Hit>>
+        {
+            {Scanner.Scanner.MediaLaunchAudio, new ObservableCollection<Hit>()},
+            {Scanner.Scanner.MediaTableAudio, new ObservableCollection<Hit>()},
+            {Scanner.Scanner.MediaTableVideos, new ObservableCollection<Hit>()},
+            {Scanner.Scanner.MediaBackglassVideos, new ObservableCollection<Hit>()},
+            {Scanner.Scanner.MediaWheelImages, new ObservableCollection<Hit>()}
+        };
+
         public string TableFileWithExtension => TableFile + ".pbx";
         public int Number { get; set; }
         public string Ipdb { get; set; }
-
-        public ObservableCollection<Hit> TableAudioHits { get; } = new ObservableCollection<Hit>();
-        public ObservableCollection<Hit> LaunchAudioHits { get; } = new ObservableCollection<Hit>();
-        public ObservableCollection<Hit> TableVideoHits { get; } = new ObservableCollection<Hit>();
-        public ObservableCollection<Hit> BackglassVideoHits { get; } = new ObservableCollection<Hit>();
-        public ObservableCollection<Hit> WheelImageHits { get; } = new ObservableCollection<Hit>();
+        public bool Dirty { get; set; } = true;
     }
 }
