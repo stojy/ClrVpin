@@ -13,7 +13,7 @@
     <Setter Property="FontSize" Value="14" />
   </Style>
 
-  <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:Settings}">
+  <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:SettingsModel}">
     <StackPanel Margin="5">
       <WrapPanel Orientation="Horizontal" Margin="5">
         <TextBlock Style="{StaticResource TextBlockStyle}">VPX Frontend Folder:</TextBlock>

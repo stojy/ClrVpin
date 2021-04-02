@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using ByteSizeLib;
@@ -16,14 +16,24 @@ namespace ClrVpx.Scanner
     [AddINotifyPropertyChangedInterface]
     public class Scanner
     {
-        public Scanner()
+        public Scanner(MainWindow mainWindow)
         {
-            // initialise encoding to workaround the error "Windows -1252 is not supported encoding name"
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            _mainWindow = mainWindow;
 
             StartCommand = new ActionCommand(Start);
             Start();
         }
+
+        public void Show()
+        {
+            var window = new Window
+            {
+                Content = this,
+                ContentTemplate = _mainWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
+            };
+            window.ShowDialog();
+        }
+
 
         public ObservableCollection<Game> Results { get; set; }
         public ICommand StartCommand { get; set; }
@@ -36,6 +46,8 @@ namespace ClrVpx.Scanner
             new MediaSetup {MediaFolder = "Backglass Videos", Extensions = new[] {"*.mp4", "*.f4v"}, GetHits = g => g.BackglassVideoHits},
             new MediaSetup {MediaFolder = "Wheel Images", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits}
         };
+
+        private readonly MainWindow _mainWindow;
 
         private void Start()
         {
@@ -106,7 +118,7 @@ namespace ClrVpx.Scanner
 
         private static List<Game> GetDatabase()
         {
-            var file = $@"{Settings.Settings.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
+            var file = $@"{Settings.SettingsModel.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
             var doc = XDocument.Load(file);
             if (doc.Root == null)
                 throw new Exception("Failed to load database");

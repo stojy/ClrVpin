@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace ClrVpx.Scanner
+namespace Utils
 {
     public class ActionCommand : ICommand
     {
@@ -14,16 +14,18 @@ namespace ClrVpx.Scanner
             _canExecute = canExecute ?? (() => true);
         }
 
-        public bool CanExecute(object? parameter)
+        public bool CanExecute(object parameter)
         {
             return _canExecute();
         }
 
-        public void Execute(object? parameter)
+        public void Execute(object parameter)
         {
             _execute();
         }
 
+#pragma warning disable 67
         public event EventHandler CanExecuteChanged;
+#pragma warning restore 67
     }
 }

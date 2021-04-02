@@ -1,16 +1,19 @@
-﻿using PropertyChanged;
+﻿using System.Text;
+using PropertyChanged;
 
 namespace ClrVpx
 {
     [AddINotifyPropertyChangedInterface]
-    // ReSharper disable once UnusedMember.Global
     public partial class MainWindow
     {
         public MainWindow()
         {
-            Model = new Model();
+            // initialise encoding to workaround the error "Windows -1252 is not supported encoding name"
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            Model = new Model(this);
             DataContext = Model;
-            
+
             InitializeComponent();
         }
 

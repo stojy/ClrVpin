@@ -1,14 +1,14 @@
 ﻿using System.Windows;
 using PropertyChanged;
 
-namespace ClrVpx.Settings
+namespace ClrVpx.About
 {
     [AddINotifyPropertyChangedInterface]
-    public class Settings
+    public class About
     {
-        private readonly Window _mainWindow;
+        private readonly MainWindow _mainWindow;
 
-        public Settings(Window mainWindow)
+        public About(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
         }
@@ -17,8 +17,8 @@ namespace ClrVpx.Settings
         {
             var window = new Window
             {
-                Content = Model.Settings,
-                ContentTemplate = _mainWindow.FindResource("SettingsTemplate") as DataTemplate,
+                Content = this,
+                ContentTemplate = _mainWindow.FindResource("AboutTemplate") as DataTemplate
             };
             window.ShowDialog();
         }

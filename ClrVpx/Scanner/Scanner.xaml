@@ -28,9 +28,9 @@
     <ListBox ItemsSource="{Binding BackglassVideoHits}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
 
-  <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
+  <DataTemplate x:Key="ScannerExplorerTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
-      <Button DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="5" Width="120px" Command="{Binding StartCommand}">StartCommand</Button>
+      <Button DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="5" Width="120px" Command="{Binding StartCommand}">Start</Button>
       <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Results}"
                 AlternatingRowBackground="LightBlue" AlternationCount="2" AutoGenerateColumns="False">
         <DataGrid.Columns>
