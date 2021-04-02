@@ -90,14 +90,12 @@ namespace ClrVpx.Scanner
                 Game matchedGame;
                 Hit hit = null;
 
-                // check for hit
-                // todo; rebuilder; score result for existing vs new files
-                // fuzzy match media to the table
-                // todo; lexical word, etc
+                // check for hit.. only 1 hit per file, so order is important!
+                // todo; fuzzy match.. e.g. partial matches, etc.
                 if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                    hit = CreateHit(mediaFile, 100);
+                    hit = CreateHit(mediaFile, HitType.Valid);
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                    hit = CreateHit(mediaFile, 99);
+                    hit = CreateHit(mediaFile, HitType.TableName);
 
                 // add hit
                 if (hit != null)
@@ -105,11 +103,6 @@ namespace ClrVpx.Scanner
                     // add
                     var hits = getHits(matchedGame);
                     hits.Add(hit);
-
-                    // sort
-                    var orderedHits = hits.OrderByDescending(h => h.Score).ToList();
-                    hits.Clear();
-                    orderedHits.ForEach(o => hits.Add(o));
                 }
                 else
                 {
@@ -120,14 +113,14 @@ namespace ClrVpx.Scanner
             return orphanedFiles;
         }
 
-        private static Hit CreateHit(string path, int score)
+        private static Hit CreateHit(string path, HitType type)
         {
             return new Hit
             {
                 Path = path,
                 File = Path.GetFileName(path),
                 Size = ByteSize.FromBytes(new FileInfo(path).Length).ToString("#"),
-                Score = score
+                Type = type
             };
         }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 using ClrVpx.Scanner;
 
