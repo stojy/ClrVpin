@@ -76,9 +76,9 @@ namespace ClrVpx.Scanner
 
             Games = new ObservableCollection<Game>(games);
 
-            Games.ForEach(game => game.Dirty = game.Media.Any(media => media.Value.Count != 1 || media.Value.Any(m => m.Score != 100)));
+            Games.ForEach(game => game.IsDirty = game.Media.Any(media => media.Value.IsDirty));
 
-            DirtyGames = new ObservableCollection<Game>(games.Where(g => g.Dirty));
+            DirtyGames = new ObservableCollection<Game>(games.Where(g => g.IsDirty));
         }
 
         private IEnumerable<string> UpdateGames(List<Game> games, IEnumerable<string> mediaFiles, Func<Game, ObservableCollection<Hit>> getHits)
