@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Xml.Serialization;
-using ClrVpx.Scanner;
+﻿using System.Xml.Serialization;
 
 namespace ClrVpx.Models
 {
@@ -66,18 +64,15 @@ namespace ClrVpx.Models
 
         // calculated properties
         [XmlIgnore]
-        public Dictionary<string, GameMedia> Media { get; set; } = new Dictionary<string, GameMedia>
-        {
-            {Scanner.Scanner.MediaLaunchAudio, new GameMedia()},
-            {Scanner.Scanner.MediaTableAudio, new GameMedia()},
-            {Scanner.Scanner.MediaTableVideos, new GameMedia()},
-            {Scanner.Scanner.MediaBackglassVideos, new GameMedia()},
-            {Scanner.Scanner.MediaWheelImages, new GameMedia()}
-        };
-
+        public GameMedia Media { get; set; } = new GameMedia();
+        
+        [XmlIgnore]
         public string TableFileWithExtension => TableFile + ".pbx";
+        
+        [XmlIgnore]
         public int Number { get; set; }
+        
+        [XmlIgnore]
         public string Ipdb { get; set; }
-        public bool IsDirty { get; set; } = true;
     }
 }

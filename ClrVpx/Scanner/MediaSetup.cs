@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using ClrVpx.Models;
+﻿using ClrVpx.Models;
 
 namespace ClrVpx.Scanner
 {
@@ -7,7 +6,7 @@ namespace ClrVpx.Scanner
     {
         public string Folder { get; init; }
         public string[] Extensions { get; init; }
-        public ObservableCollection<Hit> GetHits(Game game) => game.Media[Folder].Hits;
+        public MediaHits GetHits(Game game) => game.Media.MediaHits[Folder];
 
         public string Path => $@"{Settings.SettingsModel.VpxFrontendFolder}\Media\Visual Pinball\{Folder}";
     }

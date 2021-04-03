@@ -15,6 +15,8 @@ namespace ClrVpx
             DataContext = Model;
 
             InitializeComponent();
+
+            Model.ScannerCommand.Execute(null);
         }
 
         public Model Model { get; set; }

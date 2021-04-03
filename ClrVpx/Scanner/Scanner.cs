@@ -25,7 +25,7 @@ namespace ClrVpx.Scanner
 
         private readonly MainWindow _mainWindow;
 
-        private readonly List<MediaSetup> _supportedMedia = new List<MediaSetup>
+        private readonly List<MediaSetup> _mediaSetups = new List<MediaSetup>
         {
             new MediaSetup {Folder = MediaTableAudio, Extensions = new[] {"*.mp3", "*.wav"}},
             new MediaSetup {Folder = MediaLaunchAudio, Extensions = new[] {"*.mp3", "*.wav"}},
@@ -65,25 +65,26 @@ namespace ClrVpx.Scanner
         {
             var games = GetDatabase();
 
+            // todo; retrieve 'missing games' from spreadsheet
+
+            // add media file info
+            games.ForEach(game => game.Media.Init(game));
+
             // check the installed media files against those that are registered in the database
-            // todo; check against spreadsheet for 'missing games'
-            var orphans = new List<string>();
-            _supportedMedia.ForEach(fileSetup =>
+            var unknownMediaFiles = new List<string>();
+            _mediaSetups.ForEach(mediaSetup =>
             {
-                var media = GetMedia(fileSetup);
-                orphans.AddRange(UpdateGames(games, media, fileSetup.GetHits));
+                var mediaFiles = GetMedia(mediaSetup);
+                var unknownMedia = AddMedia(games, mediaFiles, mediaSetup.GetHits);
+                unknownMediaFiles.AddRange(unknownMedia);
             });
 
             Games = new ObservableCollection<Game>(games);
-
-            Games.ForEach(game => game.IsDirty = game.Media.Any(media => media.Value.IsDirty));
-
-            DirtyGames = new ObservableCollection<Game>(games.Where(g => g.IsDirty));
         }
 
-        private IEnumerable<string> UpdateGames(List<Game> games, IEnumerable<string> mediaFiles, Func<Game, ObservableCollection<Hit>> getHits)
+        private IEnumerable<string> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, MediaHits> getHits)
         {
-            var orphanedFiles = new List<string>();
+            var unknownMediaFiles = new List<string>();
 
             mediaFiles.ForEach(mediaFile =>
             {
@@ -93,36 +94,16 @@ namespace ClrVpx.Scanner
                 // check for hit.. only 1 hit per file, so order is important!
                 // todo; fuzzy match.. e.g. partial matches, etc.
                 if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                    hit = CreateHit(mediaFile, HitType.Valid);
+                    getHits(matchedGame).Add(HitType.Valid, mediaFile);
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                    hit = CreateHit(mediaFile, HitType.TableName);
-
-                // add hit
-                if (hit != null)
-                {
-                    // add
-                    var hits = getHits(matchedGame);
-                    hits.Add(hit);
-                }
+                    getHits(matchedGame).Add(HitType.TableName, mediaFile);
                 else
-                {
-                    orphanedFiles.Add(mediaFile);
-                }
+                    unknownMediaFiles.Add(mediaFile);
             });
 
-            return orphanedFiles;
+            return unknownMediaFiles;
         }
 
-        private static Hit CreateHit(string path, HitType type)
-        {
-            return new Hit
-            {
-                Path = path,
-                File = Path.GetFileName(path),
-                Size = ByteSize.FromBytes(new FileInfo(path).Length).ToString("#"),
-                Type = type
-            };
-        }
 
         private static List<Game> GetDatabase()
         {
