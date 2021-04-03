@@ -28,7 +28,7 @@ namespace ClrVpx.Scanner
         {
             new MediaSetup {Folder = MediaTableAudio, Extensions = new[] {"*.mp3", "*.wav"}},
             new MediaSetup {Folder = MediaLaunchAudio, Extensions = new[] {"*.mp3", "*.wav"}},
-            new MediaSetup {Folder = MediaTableVideos, Extensions = new[] {"*.mp4", "*.f4v"}},
+            new MediaSetup {Folder = MediaTableVideos, Extensions = new[] { "*.f4v", "*.mp4" }},
             new MediaSetup {Folder = MediaBackglassVideos, Extensions = new[] {"*.mp4", "*.f4v"}},
             new MediaSetup {Folder = MediaWheelImages, Extensions = new[] {"*.png"}}
             //new MediaSetup {Folder = "Tables", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits},
@@ -50,21 +50,32 @@ namespace ClrVpx.Scanner
 
         public void Show()
         {
+            var resultsWindow = new Window
+            {
+                Owner = _mainWindow,
+                Left = _mainWindow.Left,
+                Top = _mainWindow.Top + _mainWindow.Height + 10,
+                SizeToContent = SizeToContent.Width,
+                MinWidth = 400,
+                Height = 500,
+                Content = this,
+                ContentTemplate = _mainWindow.FindResource("ScannerResultsTemplate") as DataTemplate
+            };
+            resultsWindow.Show();
+
             var explorerWindow = new Window
             {
                 Owner = _mainWindow,
+                Left = resultsWindow.Left + resultsWindow.Width + 10,
+                Top = _mainWindow.Top,
+                SizeToContent = SizeToContent.Height,
+                MinHeight = 499,
+                MaxHeight = 1000,
+                MinWidth = 400,
                 Content = this,
                 ContentTemplate = _mainWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
             };
             explorerWindow.Show();
-
-            var resultsWindow = new Window
-            {
-                Owner = _mainWindow,
-                Content = this, 
-                ContentTemplate = _mainWindow.FindResource("ScannerResultsTemplate") as DataTemplate
-            };
-            resultsWindow.Show();
         }
 
         private void Start()
@@ -86,7 +97,10 @@ namespace ClrVpx.Scanner
             });
 
             Games = new ObservableCollection<Game>(games);
+            SmellyGames = new ObservableCollection<Game>(games.Where(game => game.Media.IsSmelly));
         }
+
+        public ObservableCollection<Game> SmellyGames { get; set; }
 
         private IEnumerable<string> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, MediaHits> getHits)
         {
@@ -99,7 +113,11 @@ namespace ClrVpx.Scanner
                 // check for hit.. only 1 hit per file, so order is important!
                 // todo; fuzzy match.. e.g. partial matches, etc.
                 if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                    getHits(matchedGame).Add(HitType.Valid, mediaFile);
+                {
+                    // if a match already exists, then assume this match is a duplicate name with wrong extension
+                    var mediaHits = getHits(matchedGame);
+                    mediaHits.Add(mediaHits.Hits.Any(hit => hit.Type == HitType.Valid) ? HitType.DuplicateExtension : HitType.Valid, mediaFile);
+                }
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                     getHits(matchedGame).Add(HitType.TableName, mediaFile);
                 else

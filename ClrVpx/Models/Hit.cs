@@ -1,4 +1,6 @@
-﻿namespace ClrVpx.Models
+﻿using System.ComponentModel;
+
+namespace ClrVpx.Models
 {
     public class Hit
     {
@@ -11,10 +13,19 @@
 
     public enum HitType
     {
+        [Description("Perfect match!!")]    // not displayed
         Valid,
+        
+        [Description("Table name matched")]
         TableName,
+        
+        [Description("Fuzzy name matched")]
         Fuzzy,
+        
+        [Description("Wrong case matched")]
         WrongCase,
-        Duplicate, // extension
+        
+        [Description("Duplicate file extension found")]
+        DuplicateExtension
     }
 }

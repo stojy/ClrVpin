@@ -7,6 +7,12 @@ namespace ClrVpx.Models
     {
         private Game _game;
 
+        public Dictionary<string, MediaHits> MediaHits { get; set; } = new Dictionary<string, MediaHits>();
+
+        public bool IsSmelly => MediaHits.Any(media => media.Value.IsSmelly);
+
+        public IEnumerable<string> SmellyResults => MediaHits.SelectMany(media => media.Value.GetSmellyResults(media.Key));
+
         public void Init(Game game)
         {
             _game = game;
@@ -17,10 +23,5 @@ namespace ClrVpx.Models
             MediaHits.Add(Scanner.Scanner.MediaBackglassVideos, new MediaHits(_game.Description));
             MediaHits.Add(Scanner.Scanner.MediaWheelImages, new MediaHits(_game.Description));
         }
-
-        public Dictionary<string, MediaHits> MediaHits { get; set; } = new Dictionary<string, MediaHits>();
-
-        public bool IsSmelly => MediaHits.Any(media => media.Value.SmellyResults.Any());
-        public IEnumerable<string> SmellyResults => MediaHits.SelectMany(media => media.Value.SmellyResults);
     }
 }

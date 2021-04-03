@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:clrVpx="clr-namespace:ClrVpx"
         mc:Ignorable="d"
-        Title="ClrVpx" WindowState="Normal" Height="200" Width="300" d:DataContext="{d:DesignData }">
+        Left="20" Top="20"
+        SizeToContent="WidthAndHeight"
+        Title="ClrVpx" WindowState="Normal"
+        d:DataContext="{d:DesignData }">
 
   <Window.Resources>
     <ResourceDictionary>
@@ -16,16 +19,16 @@
         <ResourceDictionary Source="Settings/Settings.xaml" />
         <ResourceDictionary Source="About/About.xaml" />
       </ResourceDictionary.MergedDictionaries>
-      
+
       <DataTemplate x:Key="MainWindowTemplate" DataType="clrVpx:Model">
         <StackPanel>
           <TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpx" VerticalAlignment="Center" FontSize="32" />
 
-          <WrapPanel>
-            <Button Command="{Binding ScannerCommand}">Scanner</Button>
-            <Button Command="{Binding RebuilderCommand}">Rebuilder</Button>
-            <Button Command="{Binding SettingsCommand}">Settings</Button>
-            <Button Command="{Binding AboutCommand}">About</Button>
+          <WrapPanel Margin="5">
+            <Button Margin="5,0" Command="{Binding ScannerCommand}">Scanner</Button>
+            <Button Margin="5,0" Command="{Binding RebuilderCommand}">Rebuilder</Button>
+            <Button Margin="5,0" Command="{Binding SettingsCommand}">Settings</Button>
+            <Button Margin="5,0" Command="{Binding AboutCommand}">About</Button>
           </WrapPanel>
 
         </StackPanel>
@@ -34,6 +37,6 @@
     </ResourceDictionary>
   </Window.Resources>
 
-  <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource MainWindowTemplate}"></ContentPresenter>
+  <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource MainWindowTemplate}" />
 
 </Window>

@@ -3,27 +3,29 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using ByteSizeLib;
-using PropertyChanged;
+using Utils;
 
 namespace ClrVpx.Models
 {
     public class MediaHits
     {
-        // perfect match
-//        public Hit Valid;
+        private readonly string _expectedName;
 
         public MediaHits(string expectedName)
         {
-            ExpectedName = expectedName;
+            _expectedName = expectedName;
         }
-
-        public string ExpectedName { get; init; }
 
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
-        public IEnumerable<string> SmellyResults => IsMissing
-            ? new[] {$"Missing: {ExpectedName}"}
-            : Hits.Where(hit => hit.Type != HitType.Valid).Select(hit => $"{hit.Type} : {hit.File}");
+        public bool IsMissing => !Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase);
+
+        public IEnumerable<string> GetSmellyResults(string mediaType)
+        {
+            return IsMissing
+                ? new[] {$"Missing file: {_expectedName}"}
+                : Hits.Where(hit => hit.Type != HitType.Valid).Select(hit => $"{mediaType} - {hit.Type.GetDescription()} : {hit.File}");
+        }
 
         public void Add(HitType type, string path)
         {
@@ -37,18 +39,6 @@ namespace ClrVpx.Models
             Hits.Add(hit);
         }
 
-
-        //// use if 'better file', e.g. larger size, more recent, etc.
-        //public List<Hit> TableNameHits { get; set; } = new List<Hit>();
-        //public List<Hit> FuzzyHits { get; set; } = new List<Hit>();
-
-        //// always use
-        //public List<Hit> WrongCaseHits { get; set; } = new List<Hit>();
-
-        //// always remove - based on file extension priority order
-        //public List<Hit> DuplicateHits { get; set; } = new List<Hit>();
-
-        public bool IsMissing => Hits.Any(hit => !(hit.Type == HitType.Valid || hit.Type == HitType.WrongCase));
-        //public bool IsSmelly => Hits.Count != 1 || Hits.Any(hit => hit.Type != HitType.Valid);
+        public bool IsSmelly => Hits.Count != 1 || Hits.Any(hit => hit.Type != HitType.Valid);
     }
 }
