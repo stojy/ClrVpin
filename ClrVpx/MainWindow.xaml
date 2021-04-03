@@ -10,7 +10,8 @@
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Scanner/Scanner.xaml" />
+        <ResourceDictionary Source="Scanner/ScannerExplorer.xaml" />
+        <ResourceDictionary Source="Scanner/ScannerResults.xaml" />
         <ResourceDictionary Source="Rebuilder/Rebuilder.xaml" />
         <ResourceDictionary Source="Settings/Settings.xaml" />
         <ResourceDictionary Source="About/About.xaml" />

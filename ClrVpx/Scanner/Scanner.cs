@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
-using ByteSizeLib;
 using ClrVpx.Models;
 using ClrVpx.Settings;
 using PropertyChanged;
@@ -49,16 +48,23 @@ namespace ClrVpx.Scanner
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
 
-        public ObservableCollection<Game> DirtyGames { get; set; }
-
         public void Show()
         {
-            var window = new Window
+            var explorerWindow = new Window
             {
+                Owner = _mainWindow,
                 Content = this,
                 ContentTemplate = _mainWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
             };
-            window.ShowDialog();
+            explorerWindow.Show();
+
+            var resultsWindow = new Window
+            {
+                Owner = _mainWindow,
+                Content = this, 
+                ContentTemplate = _mainWindow.FindResource("ScannerResultsTemplate") as DataTemplate
+            };
+            resultsWindow.Show();
         }
 
         private void Start()
@@ -89,7 +95,6 @@ namespace ClrVpx.Scanner
             mediaFiles.ForEach(mediaFile =>
             {
                 Game matchedGame;
-                Hit hit = null;
 
                 // check for hit.. only 1 hit per file, so order is important!
                 // todo; fuzzy match.. e.g. partial matches, etc.
@@ -125,7 +130,6 @@ namespace ClrVpx.Scanner
 
         private IEnumerable<string> GetMedia(MediaSetup mediaSetup)
         {
-            // todo; store file details, e.g. sixe
             var files = mediaSetup.Extensions.Select(ext => Directory.GetFiles(mediaSetup.Path, ext));
 
             return files.SelectMany(x => x);
