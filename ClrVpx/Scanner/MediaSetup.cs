@@ -6,7 +6,7 @@ namespace ClrVpx.Scanner
     {
         public string Folder { get; init; }
         public string[] Extensions { get; init; }
-        public MediaHits GetHits(Game game) => game.Media.MediaHits[Folder];
+        public MediaHits GetMediaHits(Game game) => game.Media.MediaHitsCollection[Folder];
 
         public string Path => $@"{Settings.SettingsModel.VpxFrontendFolder}\Media\Visual Pinball\{Folder}";
     }

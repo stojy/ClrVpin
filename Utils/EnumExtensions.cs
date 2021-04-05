@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace Utils
 {
@@ -12,8 +13,7 @@ namespace Utils
             
             if (name != null)
             {
-                var field = type.GetField(name);
-                if (field != null)
+                if (type.GetField(name) is MemberInfo field)
                 {
                     if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
                         return attr.Description;

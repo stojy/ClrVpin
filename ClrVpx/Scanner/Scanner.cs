@@ -16,6 +16,14 @@ namespace ClrVpx.Scanner
     [AddINotifyPropertyChangedInterface]
     public class Scanner
     {
+        public Scanner(MainWindow mainWindow)
+        {
+            _mainWindow = mainWindow;
+
+            StartCommand = new ActionCommand(Start);
+            Start();
+        }
+
         public const string MediaLaunchAudio = "Launch Audio";
         public const string MediaTableAudio = "Table Audio";
         public const string MediaTableVideos = "Table Videos";
@@ -28,25 +36,19 @@ namespace ClrVpx.Scanner
         {
             new MediaSetup {Folder = MediaTableAudio, Extensions = new[] {"*.mp3", "*.wav"}},
             new MediaSetup {Folder = MediaLaunchAudio, Extensions = new[] {"*.mp3", "*.wav"}},
-            new MediaSetup {Folder = MediaTableVideos, Extensions = new[] { "*.f4v", "*.mp4" }},
+            new MediaSetup {Folder = MediaTableVideos, Extensions = new[] {"*.f4v", "*.mp4"}},
             new MediaSetup {Folder = MediaBackglassVideos, Extensions = new[] {"*.mp4", "*.f4v"}},
             new MediaSetup {Folder = MediaWheelImages, Extensions = new[] {"*.png"}}
-            //new MediaSetup {Folder = "Tables", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits},
-            //new MediaSetup {Folder = "Backglass", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits},
-            //new MediaSetup {Folder = "Point of View", Extensions = new[] {"*.png"}, GetHits = g => g.WheelImageHits},
+            //new MediaSetup {Folder = "Tables", Extensions = new[] {"*.png"}, GetMediaHits = g => g.WheelImageHits},
+            //new MediaSetup {Folder = "Backglass", Extensions = new[] {"*.png"}, GetMediaHits = g => g.WheelImageHits},
+            //new MediaSetup {Folder = "Point of View", Extensions = new[] {"*.png"}, GetMediaHits = g => g.WheelImageHits},
         };
-
-        public Scanner(MainWindow mainWindow)
-        {
-            _mainWindow = mainWindow;
-
-            StartCommand = new ActionCommand(Start);
-            Start();
-        }
 
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
+
+        public ObservableCollection<Game> SmellyGames { get; set; }
 
         public void Show()
         {
@@ -84,25 +86,33 @@ namespace ClrVpx.Scanner
 
             // todo; retrieve 'missing games' from spreadsheet
 
-            // add media file info
-            games.ForEach(game => game.Media.Init(game));
-
             // check the installed media files against those that are registered in the database
             var unknownMediaFiles = new List<string>();
             _mediaSetups.ForEach(mediaSetup =>
             {
                 var mediaFiles = GetMedia(mediaSetup);
-                var unknownMedia = AddMedia(games, mediaFiles, mediaSetup.GetHits);
+                var unknownMedia = AddMedia(games, mediaFiles, mediaSetup.GetMediaHits);
                 unknownMediaFiles.AddRange(unknownMedia);
             });
 
+            AddMissingMedia(games);
             Games = new ObservableCollection<Game>(games);
             SmellyGames = new ObservableCollection<Game>(games.Where(game => game.Media.IsSmelly));
         }
 
-        public ObservableCollection<Game> SmellyGames { get; set; }
+        private static void AddMissingMedia(List<Game> games)
+        {
+            games.ForEach(game =>
+            {
+                game.Media.MediaHitsCollection.ForEach(mediaHitCollection =>
+                {
+                    if (!mediaHitCollection.Value.Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase))
+                        mediaHitCollection.Value.Add(HitType.Missing, "asdf");
+                });
+            });
+        }
 
-        private IEnumerable<string> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, MediaHits> getHits)
+        private IEnumerable<string> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, MediaHits> getMediaHits)
         {
             var unknownMediaFiles = new List<string>();
 
@@ -115,13 +125,17 @@ namespace ClrVpx.Scanner
                 if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
-                    var mediaHits = getHits(matchedGame);
+                    var mediaHits = getMediaHits(matchedGame);
                     mediaHits.Add(mediaHits.Hits.Any(hit => hit.Type == HitType.Valid) ? HitType.DuplicateExtension : HitType.Valid, mediaFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                    getHits(matchedGame).Add(HitType.TableName, mediaFile);
+                {
+                    getMediaHits(matchedGame).Add(HitType.TableName, mediaFile);
+                }
                 else
+                {
                     unknownMediaFiles.Add(mediaFile);
+                }
             });
 
             return unknownMediaFiles;

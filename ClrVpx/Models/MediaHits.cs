@@ -1,44 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using ByteSizeLib;
-using Utils;
 
 namespace ClrVpx.Models
 {
     public class MediaHits
     {
-        private readonly string _expectedName;
+        public MediaHits(string mediaType) => _mediaType = mediaType;
 
-        public MediaHits(string expectedName)
-        {
-            _expectedName = expectedName;
-        }
-
+        private readonly string _mediaType;
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
-        public bool IsMissing => !Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase);
-
-        public IEnumerable<string> GetSmellyResults(string mediaType)
-        {
-            return IsMissing
-                ? new[] {$"Missing file: {_expectedName}"}
-                : Hits.Where(hit => hit.Type != HitType.Valid).Select(hit => $"{mediaType} - {hit.Type.GetDescription()} : {hit.File}");
-        }
+        public bool IsMissing => Hits.Any(hit => hit.Type == HitType.Missing);
+        public bool IsSmelly => SmellyHits.Any();
+        public IEnumerable<Hit> SmellyHits => Hits.Where(hit => hit.Type != HitType.Valid);
 
         public void Add(HitType type, string path)
         {
-            var hit = new Hit
-            {
-                Path = path,
-                File = Path.GetFileName(path),
-                Size = ByteSize.FromBytes(new FileInfo(path).Length).ToString("#"),
-                Type = type
-            };
-            Hits.Add(hit);
+            Hits.Add(new Hit(_mediaType, path, type));
         }
-
-        public bool IsSmelly => Hits.Count != 1 || Hits.Any(hit => hit.Type != HitType.Valid);
     }
 }
