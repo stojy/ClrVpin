@@ -25,7 +25,25 @@
 
   <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
-      <TextBox DockPanel.Dock="Top">SmellyHits</TextBox>
+      <WrapPanel DockPanel.Dock="Top" Margin="10">
+        <TextBlock>Search:</TextBlock>
+        <TextBox Width="150" Height="20" VerticalAlignment="Top" Margin="5,0"></TextBox>
+        <StackPanel Margin="5,0">
+          <CheckBox Margin="5,0">TableAudio</CheckBox>
+          <CheckBox Margin="5,0">TableAudio</CheckBox>
+          <CheckBox Margin="5,0">TableAudio</CheckBox>
+          <CheckBox Margin="5,0">TableAudio</CheckBox>
+          <CheckBox Margin="5,0">TableAudio</CheckBox>
+        </StackPanel>
+        <StackPanel Margin="5,0">
+          <CheckBox Margin="5,0">Missing</CheckBox>
+          <CheckBox Margin="5,0">Table Name</CheckBox>
+          <CheckBox Margin="5,0">Case</CheckBox>
+          <CheckBox Margin="5,0">Fuzzy</CheckBox>
+          <CheckBox Margin="5,0">Duplicate Extension</CheckBox>
+        </StackPanel>
+
+      </WrapPanel>
       <TreeView ItemsSource="{Binding SmellyGames}" ItemContainerStyle="{StaticResource SmellyGamesStyle}"
                 ItemTemplate="{StaticResource SmellyGamesTemplate}">
       </TreeView>
