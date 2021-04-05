@@ -1,11 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 using Utils;
 
 namespace ClrVpx.Models
 {
     public class Media
     {
+        public const string TableAudio = "Table Audio";
+        public const string LaunchAudio = "Launch Audio";
+        public const string TableVideos = "Table Videos";
+        public const string BackglassVideos = "Backglass Videos";
+        public const string WheelImages = "Wheel Images";
+
+        public static string[] Types = {TableAudio, LaunchAudio, TableVideos, BackglassVideos, WheelImages};
         public Media()
         {
             SupportedTypes.ForEach(mediaType => MediaHitsCollection.Add(new MediaHits(mediaType)));
@@ -13,11 +23,11 @@ namespace ClrVpx.Models
 
         public static MediaType[] SupportedTypes =
         {
-            new MediaType("Table Audio", new[] {"*.mp3", "*.wav"}),
-            new MediaType("Launch Audio", new[] {"*.mp3", "*.wav"}),
-            new MediaType("Table Videos", new[] {"*.f4v", "*.mp4"}),
-            new MediaType("Backglass Videos", new[] {"*.mp4", "*.f4v"}),
-            new MediaType("Wheel Images", new[] {"*.png", "*.jpg"})
+            new MediaType(TableAudio, new[] {"*.mp3", "*.wav"}),
+            new MediaType(LaunchAudio, new[] {"*.mp3", "*.wav"}),
+            new MediaType(TableVideos, new[] {"*.f4v", "*.mp4"}),
+            new MediaType(BackglassVideos, new[] {"*.mp4", "*.f4v"}),
+            new MediaType(WheelImages, new[] {"*.png", "*.jpg"})
             //new MediaType {Folder = "Tables", Extensions = new[] {"*.png"}, GetMediaHits = g => g.WheelImageHits},
             //new MediaType {Folder = "Backglass", Extensions = new[] {"*.png"}, GetMediaHits = g => g.WheelImageHits},
             //new MediaType {Folder = "Point of View", Extensions = new[] {"*.png"}, GetMediaHits = g => g.WheelImageHits},
@@ -25,8 +35,19 @@ namespace ClrVpx.Models
 
         public List<MediaHits> MediaHitsCollection { get; set; } = new List<MediaHits>();
 
-        public bool IsSmelly => MediaHitsCollection.Any(media => media.IsSmelly);
+        public void Update(Func<IEnumerable<string>> getFilteredMedia)
+        {
+            // standard properties to avoid cost of recalculating getters during every request (e.g. wpf bindings)
+            IsSmelly = MediaHitsCollection.Any(media => media.IsSmelly);
+            SmellyHits = new ObservableCollection<Hit>(MediaHitsCollection.SelectMany(media => media.SmellyHits).ToList());
+            SmellyHitsView = new ListCollectionView(SmellyHits);
+            
+            SmellyHitsView.Filter = hitObject => getFilteredMedia().Contains(((Hit) hitObject).MediaType);
 
-        public IEnumerable<Hit> SmellyHits => MediaHitsCollection.SelectMany(media => media.SmellyHits);
+        }
+    
+        public bool IsSmelly { get; set; }
+        public ObservableCollection<Hit> SmellyHits { get; set; }
+        public ListCollectionView SmellyHitsView { get; set; }
     }
 }

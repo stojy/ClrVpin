@@ -8,7 +8,8 @@
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
-  <HierarchicalDataTemplate x:Key="SmellyGamesTemplate" DataType="models:Game" ItemsSource="{Binding Media.SmellyHits}"
+  <HierarchicalDataTemplate x:Key="SmellyGamesTemplate" DataType="models:Game"
+                            ItemsSource="{Binding Media.SmellyHitsView}"
                             ItemTemplate="{StaticResource SmellyResultTemplate}">
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
@@ -41,14 +42,20 @@
           Expand All
         </CheckBox>
 
-        <!-- media type and hit type filtering - requires ListCollectionView & ObservableCollection at each level.. and corresponding filter and refresh :( -->
-        <!--<StackPanel Margin="5,0">
-          <CheckBox Margin="5,0" Command="{Binding FilterTableAudioCommand}" IsChecked="{Binding FilterTableAudio}">TableAudio</CheckBox>
-          <CheckBox Margin="5,0">TableAudio</CheckBox>
-          <CheckBox Margin="5,0">TableAudio</CheckBox>
-          <CheckBox Margin="5,0">TableAudio</CheckBox>
-          <CheckBox Margin="5,0">TableAudio</CheckBox>
+        <StackPanel Margin="5,0">
+          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableAudio}"
+                    Content="{x:Static models:Media.TableAudio}" IsChecked="true"/>
+          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableVideos}"
+                    Content="{x:Static models:Media.TableVideos}" IsChecked="true"/>
+          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.BackglassVideos}"
+                    Content="{x:Static models:Media.BackglassVideos}" IsChecked="true"/>
+          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.LaunchAudio}"
+                    Content="{x:Static models:Media.LaunchAudio}" IsChecked="true"/>
+          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.WheelImages}"
+                    Content="{x:Static models:Media.WheelImages}" IsChecked="true"/>
         </StackPanel>
+
+        <!-- todo; filter on hit type.. similar convoluted solution to media type filtering required with another LCV and refreshing
         <StackPanel Margin="5,0">
           <CheckBox Margin="5,0">Missing</CheckBox>
           <CheckBox Margin="5,0">Table Name</CheckBox>
@@ -59,7 +66,7 @@
       </WrapPanel>
 
       <TreeView ItemsSource="{Binding SmellyGamesView}" ItemContainerStyle="{StaticResource SmellyGamesStyle}"
-                ItemTemplate="{StaticResource SmellyGamesTemplate}"  />
+                ItemTemplate="{StaticResource SmellyGamesTemplate}" />
     </DockPanel>
   </DataTemplate>
 

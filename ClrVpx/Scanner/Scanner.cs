@@ -26,13 +26,27 @@ namespace ClrVpx.Scanner
             ExpandGamesCommand = new ActionCommandParam<bool>(ExpandItems);
             SearchTextCommand = new ActionCommand(SearchTextChanged);
 
+            FilterMediaTypeCommand = new ActionCommandParam<string>(FilterMediaType);
             Start();
+        }
+
+        private void FilterMediaType(string mediaType)
+        {
+            if (_filteredMediaTypes.Contains(mediaType))
+                _filteredMediaTypes.Remove(mediaType);
+            else
+                _filteredMediaTypes.Add(mediaType);
+
+            Games.ForEach(game => game.Media.SmellyHitsView.Refresh());
+            InitSmellyGamesView();
         }
 
         private readonly MainWindow _mainWindow;
         private DispatcherTimer _searchTextChangedDelayTimer;
+        private readonly List<string> _filteredMediaTypes = new List<string>(Media.Types);
 
         public ActionCommandParam<bool> ExpandGamesCommand { get; set; }
+        public ActionCommandParam<string> FilterMediaTypeCommand { get; set; }
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
@@ -111,11 +125,11 @@ namespace ClrVpx.Scanner
                 unknownMediaFiles.AddRange(unknownMedia);
             });
 
-            AddMissingMedia(games);
+            Update(games);
+
             Games = new ObservableCollection<Game>(games);
 
-            SmellyGames = new ObservableCollection<Game>(games.Where(game => game.Media.IsSmelly));
-            SmellyGamesView = new ListCollectionView(SmellyGames);
+            InitSmellyGamesView();
 
             // filter at games level.. NOT filter at media type or game hit type
             SmellyGamesView.Filter += gameObject =>
@@ -126,15 +140,24 @@ namespace ClrVpx.Scanner
             };
         }
 
-        private static void AddMissingMedia(List<Game> games)
+        private void InitSmellyGamesView()
+        {
+            SmellyGames = new ObservableCollection<Game>(Games.Where(game => game.Media.SmellyHitsView.Count > 0));
+            SmellyGamesView = new ListCollectionView(SmellyGames);
+        }
+
+        private void Update(List<Game> games)
         {
             games.ForEach(game =>
             {
+                // add missing media
                 game.Media.MediaHitsCollection.ForEach(mediaHitCollection =>
                 {
                     if (!mediaHitCollection.Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase))
                         mediaHitCollection.Add(HitType.Missing, game.Description);
                 });
+
+                game.Media.Update(() => _filteredMediaTypes);
             });
         }
 
