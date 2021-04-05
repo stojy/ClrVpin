@@ -1,18 +1,20 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:scanner="clr-namespace:ClrVpx.Scanner"
-                    xmlns:models="clr-namespace:ClrVpx.Models">
+                    xmlns:models="clr-namespace:ClrVpx.Models"
+                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
 
   <HierarchicalDataTemplate x:Key="SmellyResultTemplate" DataType="models:Hit">
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
-  <HierarchicalDataTemplate x:Key="SmellyGamesTemplate" DataType="models:Game" ItemsSource="{Binding Media.SmellyHits}" ItemTemplate="{StaticResource SmellyResultTemplate}">
+  <HierarchicalDataTemplate x:Key="SmellyGamesTemplate" DataType="models:Game" ItemsSource="{Binding Media.SmellyHits}"
+                            ItemTemplate="{StaticResource SmellyResultTemplate}">
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
   <Style x:Key="SmellyGamesStyle" TargetType="TreeViewItem">
-    <Setter Property="IsExpanded" Value="True" />
+    <!--<Setter Property="IsExpanded" Value="True" />-->
     <!--<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />-->
     <Setter Property="FontWeight" Value="Normal" />
@@ -26,8 +28,16 @@
   <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top" Margin="10">
-        <TextBlock>Search:</TextBlock>
-        <TextBox Width="150" Height="20" VerticalAlignment="Top" Margin="5,0"></TextBox>
+        <TextBlock>SearchText:</TextBlock>
+        <TextBox Width="150" Height="20" VerticalAlignment="Top" Margin="5,0"
+                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+          <i:Interaction.Triggers>
+            <i:EventTrigger EventName="TextChanged">
+              <i:InvokeCommandAction Command="{Binding SearchTextCommand}" />
+            </i:EventTrigger>
+          </i:Interaction.Triggers>
+
+        </TextBox>
         <StackPanel Margin="5,0">
           <CheckBox Margin="5,0">TableAudio</CheckBox>
           <CheckBox Margin="5,0">TableAudio</CheckBox>
@@ -44,9 +54,8 @@
         </StackPanel>
 
       </WrapPanel>
-      <TreeView ItemsSource="{Binding SmellyGames}" ItemContainerStyle="{StaticResource SmellyGamesStyle}"
-                ItemTemplate="{StaticResource SmellyGamesTemplate}">
-      </TreeView>
+      <TreeView ItemsSource="{Binding SmellyGamesView}" ItemContainerStyle="{StaticResource SmellyGamesStyle}"
+                ItemTemplate="{StaticResource SmellyGamesTemplate}" />
     </DockPanel>
   </DataTemplate>
 
