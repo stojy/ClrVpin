@@ -6,9 +6,9 @@ namespace ClrVpx.Models
 {
     public class MediaHits
     {
-        public MediaHits(string mediaType) => _mediaType = mediaType;
+        public MediaHits(string mediaType) => Type = mediaType;
 
-        private readonly string _mediaType;
+        public string Type { get; }
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
         public bool IsMissing => Hits.Any(hit => hit.Type == HitType.Missing);
@@ -17,7 +17,7 @@ namespace ClrVpx.Models
 
         public void Add(HitType type, string path)
         {
-            Hits.Add(new Hit(_mediaType, path, type));
+            Hits.Add(new Hit(Type, path, type));
         }
     }
 }

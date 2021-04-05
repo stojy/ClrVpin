@@ -13,19 +13,19 @@
   </DataTemplate>
 
   <DataTemplate x:Key="WheelImageTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[Launch Audio].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[0].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
   <DataTemplate x:Key="TableAudioTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[Table Audio].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[1].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
   <DataTemplate x:Key="LaunchAudioTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[Table Videos].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[2].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
   <DataTemplate x:Key="TableVideoTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[Backglass Videos].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[3].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
   <DataTemplate x:Key="BackglassVideoTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[Wheel Images].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
+    <ListBox ItemsSource="{Binding Media.MediaHitsCollection[4].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
   </DataTemplate>
 
   <DataTemplate x:Key="ScannerExplorerTemplate" DataType="{x:Type scanner:Scanner}">

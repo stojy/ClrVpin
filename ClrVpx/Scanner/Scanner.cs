@@ -106,8 +106,8 @@ namespace ClrVpx.Scanner
             {
                 game.Media.MediaHitsCollection.ForEach(mediaHitCollection =>
                 {
-                    if (!mediaHitCollection.Value.Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase))
-                        mediaHitCollection.Value.Add(HitType.Missing, "asdf");
+                    if (!mediaHitCollection.Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase))
+                        mediaHitCollection.Add(HitType.Missing, game.Description);
                 });
             });
         }

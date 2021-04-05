@@ -30,7 +30,6 @@
                 ItemTemplate="{StaticResource SmellyGamesTemplate}">
       </TreeView>
     </DockPanel>
-
   </DataTemplate>
 
 </ResourceDictionary>
