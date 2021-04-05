@@ -24,8 +24,8 @@ namespace ClrVpx.Scanner
 
             StartCommand = new ActionCommand(Start);
             ExpandGamesCommand = new ActionCommandParam<bool>(ExpandItems);
-
             SearchTextCommand = new ActionCommand(SearchTextChanged);
+
             Start();
         }
 
@@ -55,7 +55,11 @@ namespace ClrVpx.Scanner
             if (_searchTextChangedDelayTimer == null)
             {
                 _searchTextChangedDelayTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(300)};
-                _searchTextChangedDelayTimer.Tick += (_, _) => SmellyGamesView.Refresh();
+                _searchTextChangedDelayTimer.Tick += (_, _) =>
+                {
+                    SmellyGamesView.Refresh();
+                    _searchTextChangedDelayTimer.Stop();
+                };
             }
 
             _searchTextChangedDelayTimer.Stop(); // Resets the timer
@@ -113,11 +117,12 @@ namespace ClrVpx.Scanner
             SmellyGames = new ObservableCollection<Game>(games.Where(game => game.Media.IsSmelly));
             SmellyGamesView = new ListCollectionView(SmellyGames);
 
+            // filter at games level.. NOT filter at media type or game hit type
             SmellyGamesView.Filter += gameObject =>
             {
-                var game = (Game) gameObject;
-
-                return game.Description.ToLower().Contains(SearchText.ToLower());
+                if (SearchText.Length == 0)
+                    return true;
+                return ((Game) gameObject).Description.ToLower().Contains(SearchText.ToLower());
             };
         }
 
