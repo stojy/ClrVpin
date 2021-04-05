@@ -6,7 +6,10 @@ namespace ClrVpx.Models
 {
     public class MediaHits
     {
-        public MediaHits(string mediaType) => Type = mediaType;
+        public MediaHits(string mediaType)
+        {
+            Type = mediaType;
+        }
 
         public string Type { get; }
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();

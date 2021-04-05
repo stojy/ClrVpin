@@ -24,26 +24,7 @@ namespace ClrVpx.Scanner
             Start();
         }
 
-        public const string MediaLaunchAudio = "Launch Audio";
-        public const string MediaTableAudio = "Table Audio";
-        public const string MediaTableVideos = "Table Videos";
-        public const string MediaBackglassVideos = "Backglass Videos";
-        public const string MediaWheelImages = "Wheel Images";
-
         private readonly MainWindow _mainWindow;
-
-        private readonly List<MediaSetup> _mediaSetups = new List<MediaSetup>
-        {
-            new MediaSetup {Folder = MediaTableAudio, Extensions = new[] {"*.mp3", "*.wav"}},
-            new MediaSetup {Folder = MediaLaunchAudio, Extensions = new[] {"*.mp3", "*.wav"}},
-            new MediaSetup {Folder = MediaTableVideos, Extensions = new[] {"*.f4v", "*.mp4"}},
-            new MediaSetup {Folder = MediaBackglassVideos, Extensions = new[] {"*.mp4", "*.f4v"}},
-            new MediaSetup {Folder = MediaWheelImages, Extensions = new[] {"*.png"}}
-            //new MediaSetup {Folder = "Tables", Extensions = new[] {"*.png"}, GetMediaHits = g => g.WheelImageHits},
-            //new MediaSetup {Folder = "Backglass", Extensions = new[] {"*.png"}, GetMediaHits = g => g.WheelImageHits},
-            //new MediaSetup {Folder = "Point of View", Extensions = new[] {"*.png"}, GetMediaHits = g => g.WheelImageHits},
-        };
-
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
@@ -88,7 +69,7 @@ namespace ClrVpx.Scanner
 
             // check the installed media files against those that are registered in the database
             var unknownMediaFiles = new List<string>();
-            _mediaSetups.ForEach(mediaSetup =>
+            Media.SupportedTypes.ForEach(mediaSetup =>
             {
                 var mediaFiles = GetMedia(mediaSetup);
                 var unknownMedia = AddMedia(games, mediaFiles, mediaSetup.GetMediaHits);
@@ -160,9 +141,9 @@ namespace ClrVpx.Scanner
             return menu.Games;
         }
 
-        private IEnumerable<string> GetMedia(MediaSetup mediaSetup)
+        private IEnumerable<string> GetMedia(MediaType mediaType)
         {
-            var files = mediaSetup.Extensions.Select(ext => Directory.GetFiles(mediaSetup.Path, ext));
+            var files = mediaType.Extensions.Select(ext => Directory.GetFiles(mediaType.Path, ext));
 
             return files.SelectMany(x => x);
         }

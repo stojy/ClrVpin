@@ -64,7 +64,7 @@ namespace ClrVpx.Models
 
         // calculated properties
         [XmlIgnore]
-        public GameMedia Media { get; set; } = new GameMedia();
+        public Media Media { get; set; } = new Media();
         
         [XmlIgnore]
         public string TableFileWithExtension => TableFile + ".pbx";
