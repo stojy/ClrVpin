@@ -6,12 +6,14 @@ namespace ClrVpx.Models
 {
     public class MediaHits
     {
-        public MediaHits(string mediaType)
+        public MediaHits(MediaType mediaType)
         {
-            Type = mediaType;
+            _mediaType = mediaType;
         }
 
-        public string Type { get; }
+        private readonly MediaType _mediaType;
+
+        public string Type => _mediaType.Folder;
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
         public bool IsMissing => Hits.Any(hit => hit.Type == HitType.Missing);
@@ -20,6 +22,9 @@ namespace ClrVpx.Models
 
         public void Add(HitType type, string path)
         {
+            // for missing media.. the path is the description, i.e. desirable file name without an extension
+            if (type == HitType.Missing)
+                path = @$"{_mediaType.QualifiedFolder}\{path}.{_mediaType.ExtensionDetails}";
             Hits.Add(new Hit(Type, path, type));
         }
     }

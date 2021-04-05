@@ -143,7 +143,7 @@ namespace ClrVpx.Scanner
 
         private IEnumerable<string> GetMedia(MediaType mediaType)
         {
-            var files = mediaType.Extensions.Select(ext => Directory.GetFiles(mediaType.Path, ext));
+            var files = mediaType.Extensions.Select(ext => Directory.GetFiles(mediaType.QualifiedFolder, ext));
 
             return files.SelectMany(x => x);
         }

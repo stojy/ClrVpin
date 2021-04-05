@@ -28,7 +28,7 @@ namespace ClrVpx.Models
         public string MediaType { get; }
         public string Description { get; }
 
-        public sealed override string ToString() => $"{MediaType} - {Type.GetDescription()} : {File}";
+        public sealed override string ToString() => $"{MediaType} - {Type.GetDescription()}: {Path}";
     }
 
     public enum HitType

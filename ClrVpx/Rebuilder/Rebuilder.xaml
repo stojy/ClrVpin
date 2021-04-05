@@ -6,9 +6,9 @@
   <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
     <WrapPanel>
       <RadioButton /> <!--todo-->
-      <TextBlock Margin="2,0" Width="20" Text="{Binding Score}" />
+      <TextBlock Margin="2,0" Width="20" Text="{Binding}" />
       <TextBlock Margin="2,0" Text="{Binding Size}" />
-      <TextBlock Margin="2,0" Text="{Binding File}" />
+      <TextBlock Margin="2,0" Text="{Binding Path}" />
     </WrapPanel>
   </DataTemplate>
 
