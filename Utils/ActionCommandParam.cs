@@ -3,12 +3,12 @@ using System.Windows.Input;
 
 namespace Utils
 {
-    public class ActionCommand : ICommand
+    public class ActionCommandParam<T> : ICommand
     {
-        private readonly Action _execute;
+        private readonly Action<T> _execute;
         private readonly Func<bool> _canExecute;
 
-        public ActionCommand(Action execute, Func<bool> canExecute = null)
+        public ActionCommandParam(Action<T> execute, Func<bool> canExecute = null)
         {
             _execute = execute;
             _canExecute = canExecute ?? (() => true);
@@ -21,7 +21,7 @@ namespace Utils
 
         public void Execute(object parameter)
         {
-            _execute?.Invoke();
+            _execute?.Invoke((T)parameter);
         }
 
 #pragma warning disable 67

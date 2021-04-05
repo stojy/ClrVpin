@@ -74,5 +74,8 @@ namespace ClrVpx.Models
         
         [XmlIgnore]
         public string Ipdb { get; set; }
+
+        [XmlIgnore]
+        public bool IsExpanded { get; set; }
     }
 }

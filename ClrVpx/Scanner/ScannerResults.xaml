@@ -14,7 +14,7 @@
   </HierarchicalDataTemplate>
 
   <Style x:Key="SmellyGamesStyle" TargetType="TreeViewItem">
-    <!--<Setter Property="IsExpanded" Value="True" />-->
+    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
     <!--<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />-->
     <Setter Property="FontWeight" Value="Normal" />
@@ -54,6 +54,11 @@
         </StackPanel>
 
       </WrapPanel>
+      <CheckBox Margin="5,0" DockPanel.Dock="Top" Command="{Binding ExpandGamesCommand}"
+                CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
+        Expand All
+      </CheckBox>
+
       <TreeView ItemsSource="{Binding SmellyGamesView}" ItemContainerStyle="{StaticResource SmellyGamesStyle}"
                 ItemTemplate="{StaticResource SmellyGamesTemplate}" />
     </DockPanel>

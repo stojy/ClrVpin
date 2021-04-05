@@ -12,7 +12,6 @@ using ClrVpx.Models;
 using ClrVpx.Settings;
 using PropertyChanged;
 using Utils;
-using Menu = ClrVpx.Models.Menu;
 
 namespace ClrVpx.Scanner
 {
@@ -24,8 +23,30 @@ namespace ClrVpx.Scanner
             _mainWindow = mainWindow;
 
             StartCommand = new ActionCommand(Start);
+            ExpandGamesCommand = new ActionCommandParam<bool>(ExpandItems);
+
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             Start();
+        }
+
+        private readonly MainWindow _mainWindow;
+        private DispatcherTimer _searchTextChangedDelayTimer;
+
+        public ActionCommandParam<bool> ExpandGamesCommand { get; set; }
+
+        public ObservableCollection<Game> Games { get; set; }
+        public ICommand StartCommand { get; set; }
+        public ListCollectionView SmellyGamesView { get; set; }
+        public ObservableCollection<Game> SmellyGames { get; set; }
+
+        public string SearchText { get; set; } = "";
+
+        public ICommand SearchTextCommand { get; set; }
+
+        private void ExpandItems(bool expand)
+        {
+            SmellyGames.ForEach(game => game.IsExpanded = expand);
+            SmellyGamesView.Refresh();
         }
 
         private void SearchTextChanged()
@@ -36,21 +57,10 @@ namespace ClrVpx.Scanner
                 _searchTextChangedDelayTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(300)};
                 _searchTextChangedDelayTimer.Tick += (_, _) => SmellyGamesView.Refresh();
             }
+
             _searchTextChangedDelayTimer.Stop(); // Resets the timer
             _searchTextChangedDelayTimer.Start();
         }
-
-        private readonly MainWindow _mainWindow;
-        private DispatcherTimer _searchTextChangedDelayTimer;
-
-        public ObservableCollection<Game> Games { get; set; }
-        public ICommand StartCommand { get; set; }
-        public ListCollectionView SmellyGamesView { get; set; }
-        public ObservableCollection<Game> SmellyGames { get; set; }
-
-        public string SearchText { get; set; } = "";
-
-        public ICommand SearchTextCommand { get; set; }
 
         public void Show()
         {
@@ -99,12 +109,13 @@ namespace ClrVpx.Scanner
 
             AddMissingMedia(games);
             Games = new ObservableCollection<Game>(games);
+
             SmellyGames = new ObservableCollection<Game>(games.Where(game => game.Media.IsSmelly));
             SmellyGamesView = new ListCollectionView(SmellyGames);
 
             SmellyGamesView.Filter += gameObject =>
             {
-                var game = (Game)gameObject;
+                var game = (Game) gameObject;
 
                 return game.Description.ToLower().Contains(SearchText.ToLower());
             };
