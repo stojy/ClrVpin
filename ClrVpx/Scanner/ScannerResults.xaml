@@ -2,8 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:scanner="clr-namespace:ClrVpx.Scanner"
                     xmlns:models="clr-namespace:ClrVpx.Models"
-                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                    xmlns:clrVpx="clr-namespace:ClrVpx">
+                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
 
   <HierarchicalDataTemplate x:Key="SmellyResultTemplate" DataType="models:Hit">
     <TextBlock Text="{Binding Description}" />
@@ -30,7 +29,7 @@
   <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top" Margin="10">
-        <TextBlock>SearchText:</TextBlock>
+        <TextBlock>Search:</TextBlock>
         <TextBox Width="150" Height="20" VerticalAlignment="Top" Margin="5,0"
                  Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
           <i:Interaction.Triggers>
@@ -40,46 +39,42 @@
           </i:Interaction.Triggers>
         </TextBox>
 
-        <CheckBox Margin="5,0" DockPanel.Dock="Top" Command="{Binding ExpandGamesCommand}"
-                  CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
-          Expand All
-        </CheckBox>
+        <GroupBox Margin="5,-10" Padding="5" Header="Media Type">
+          <StackPanel Margin="5,0">
+            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableAudio}"
+                      Content="{x:Static models:Media.TableAudio}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableVideos}"
+                      Content="{x:Static models:Media.TableVideos}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.BackglassVideos}"
+                      Content="{x:Static models:Media.BackglassVideos}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.LaunchAudio}"
+                      Content="{x:Static models:Media.LaunchAudio}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.WheelImages}"
+                      Content="{x:Static models:Media.WheelImages}" IsChecked="true" />
+          </StackPanel>
+        </GroupBox>
 
-        <StackPanel Margin="5,0">
-          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableAudio}"
-                    Content="{x:Static models:Media.TableAudio}" IsChecked="true"/>
-          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableVideos}"
-                    Content="{x:Static models:Media.TableVideos}" IsChecked="true"/>
-          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.BackglassVideos}"
-                    Content="{x:Static models:Media.BackglassVideos}" IsChecked="true"/>
-          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.LaunchAudio}"
-                    Content="{x:Static models:Media.LaunchAudio}" IsChecked="true"/>
-          <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.WheelImages}"
-                    Content="{x:Static models:Media.WheelImages}" IsChecked="true"/>
-        </StackPanel>
+        <GroupBox Margin="5,-10" Padding="0,5" Header="Hit Type">
+          <StackPanel>
+            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.Missing}"
+                      Content="{Binding Source={x:Static models:HitType.Missing}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.TableName}"
+                      Content="{Binding Source={x:Static models:HitType.TableName}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.DuplicateExtension}"
+                      Content="{Binding Source={x:Static models:HitType.DuplicateExtension}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.WrongCase}"
+                      Content="{Binding Source={x:Static models:HitType.WrongCase}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.Fuzzy}"
+                      Content="{Binding Source={x:Static models:HitType.Fuzzy}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
+          </StackPanel>
+        </GroupBox>
 
-        <StackPanel Margin="5,0">
-          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.Missing}"
-                    Content="{Binding Source={x:Static models:HitType.Missing}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
-          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.TableName}"
-                    Content="{Binding Source={x:Static models:HitType.TableName}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
-          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.DuplicateExtension}"
-                    Content="{Binding Source={x:Static models:HitType.DuplicateExtension}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
-          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.WrongCase}"
-                    Content="{Binding Source={x:Static models:HitType.WrongCase}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
-          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.Fuzzy}"
-                    Content="{Binding Source={x:Static models:HitType.Fuzzy}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
-        </StackPanel>
-
-        <!-- todo; filter on hit type.. similar convoluted solution to media type filtering required with another LCV and refreshing
-        <StackPanel Margin="5,0">
-          <CheckBox Margin="5,0">Missing</CheckBox>
-          <CheckBox Margin="5,0">Table Name</CheckBox>
-          <CheckBox Margin="5,0">Case</CheckBox>
-          <CheckBox Margin="5,0">Fuzzy</CheckBox>
-          <CheckBox Margin="5,0">Duplicate Extension</CheckBox>
-        </StackPanel>-->
       </WrapPanel>
+
+      <CheckBox Margin="5,5" DockPanel.Dock="Top" Command="{Binding ExpandGamesCommand}"
+                CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
+        Expand All
+      </CheckBox>
 
       <TreeView ItemsSource="{Binding SmellyGamesView}" ItemContainerStyle="{StaticResource SmellyGamesStyle}"
                 ItemTemplate="{StaticResource SmellyGamesTemplate}" />
