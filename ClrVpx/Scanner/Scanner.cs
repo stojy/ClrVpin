@@ -100,8 +100,9 @@ namespace ClrVpx.Scanner
             var resultsWindow = new Window
             {
                 Owner = _mainWindow,
+                Title = "Scanner Results",
                 Left = _mainWindow.Left,
-                Top = _mainWindow.Top + _mainWindow.Height + 10,
+                Top = _mainWindow.Top + _mainWindow.Height + 5,
                 SizeToContent = SizeToContent.Width,
                 MinWidth = 400,
                 Height = 500,
@@ -110,10 +111,25 @@ namespace ClrVpx.Scanner
             };
             resultsWindow.Show();
 
+            var statisticsWindow = new Window
+            {
+                Owner = _mainWindow,
+                Title = "Scanner Statistics",
+                Left = _mainWindow.Left,
+                Top = _mainWindow.Top + _mainWindow.Height + resultsWindow.Height + 10,
+                SizeToContent = SizeToContent.Width,
+                MinWidth = 400,
+                Height = 500,
+                Content = this,
+                ContentTemplate = _mainWindow.FindResource("ScannerResultsTemplate") as DataTemplate
+            };
+            statisticsWindow.Show();
+
             var explorerWindow = new Window
             {
                 Owner = _mainWindow,
-                Left = resultsWindow.Left + resultsWindow.Width + 10,
+                Title = "Scanner Explorer",
+                Left = resultsWindow.Left + resultsWindow.Width + 5,
                 Top = _mainWindow.Top,
                 SizeToContent = SizeToContent.Height,
                 MinHeight = 499,
