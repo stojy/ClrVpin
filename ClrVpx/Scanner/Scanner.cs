@@ -26,6 +26,7 @@ namespace ClrVpx.Scanner
             ExpandGamesCommand = new ActionCommandParam<bool>(ExpandItems);
             SearchTextCommand = new ActionCommand(SearchTextChanged);
 
+            FilterHitTypeCommand = new ActionCommandParam<HitType>(FilterHitType);
             FilterMediaTypeCommand = new ActionCommandParam<string>(FilterMediaType);
             Start();
         }
@@ -41,12 +42,25 @@ namespace ClrVpx.Scanner
             InitSmellyGamesView();
         }
 
+        private void FilterHitType(HitType hitType)
+        {
+            if (_filteredHitTypes.Contains(hitType))
+                _filteredHitTypes.Remove(hitType);
+            else
+                _filteredHitTypes.Add(hitType);
+
+            Games.ForEach(game => game.Media.SmellyHitsView.Refresh());
+            InitSmellyGamesView();
+        }
+
         private readonly MainWindow _mainWindow;
         private DispatcherTimer _searchTextChangedDelayTimer;
         private readonly List<string> _filteredMediaTypes = new List<string>(Media.Types);
+        private readonly List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
 
         public ActionCommandParam<bool> ExpandGamesCommand { get; set; }
         public ActionCommandParam<string> FilterMediaTypeCommand { get; set; }
+        public ActionCommandParam<HitType> FilterHitTypeCommand { get; set; }
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
@@ -57,6 +71,7 @@ namespace ClrVpx.Scanner
 
         public ICommand SearchTextCommand { get; set; }
 
+        
         private void ExpandItems(bool expand)
         {
             SmellyGames.ForEach(game => game.IsExpanded = expand);
@@ -130,20 +145,20 @@ namespace ClrVpx.Scanner
             Games = new ObservableCollection<Game>(games);
 
             InitSmellyGamesView();
-
-            // filter at games level.. NOT filter at media type or game hit type
-            SmellyGamesView.Filter += gameObject =>
-            {
-                if (SearchText.Length == 0)
-                    return true;
-                return ((Game) gameObject).Description.ToLower().Contains(SearchText.ToLower());
-            };
         }
 
         private void InitSmellyGamesView()
         {
             SmellyGames = new ObservableCollection<Game>(Games.Where(game => game.Media.SmellyHitsView.Count > 0));
             SmellyGamesView = new ListCollectionView(SmellyGames);
+
+            // filter at games level.. NOT filter at media type or game hit type
+            SmellyGamesView.Filter += gameObject =>
+            {
+                if (SearchText.Length == 0)
+                    return true;
+                return ((Game)gameObject).Description.ToLower().Contains(SearchText.ToLower());
+            };
         }
 
         private void Update(List<Game> games)
@@ -157,7 +172,7 @@ namespace ClrVpx.Scanner
                         mediaHitCollection.Add(HitType.Missing, game.Description);
                 });
 
-                game.Media.Update(() => _filteredMediaTypes);
+                game.Media.Update(() => _filteredMediaTypes, () => _filteredHitTypes);
             });
         }
 

@@ -9,6 +9,11 @@ namespace ClrVpx.Models
 {
     public class Media
     {
+        public Media()
+        {
+            SupportedTypes.ForEach(mediaType => MediaHitsCollection.Add(new MediaHits(mediaType)));
+        }
+
         public const string TableAudio = "Table Audio";
         public const string LaunchAudio = "Launch Audio";
         public const string TableVideos = "Table Videos";
@@ -16,10 +21,6 @@ namespace ClrVpx.Models
         public const string WheelImages = "Wheel Images";
 
         public static string[] Types = {TableAudio, LaunchAudio, TableVideos, BackglassVideos, WheelImages};
-        public Media()
-        {
-            SupportedTypes.ForEach(mediaType => MediaHitsCollection.Add(new MediaHits(mediaType)));
-        }
 
         public static MediaType[] SupportedTypes =
         {
@@ -35,19 +36,19 @@ namespace ClrVpx.Models
 
         public List<MediaHits> MediaHitsCollection { get; set; } = new List<MediaHits>();
 
-        public void Update(Func<IEnumerable<string>> getFilteredMedia)
+        public bool IsSmelly { get; set; }
+        public ObservableCollection<Hit> SmellyHits { get; set; }
+        public ListCollectionView SmellyHitsView { get; set; }
+
+        public void Update(Func<IEnumerable<string>> getFilteredMedia, Func<IEnumerable<HitType>> getFilteredHitTypes)
         {
             // standard properties to avoid cost of recalculating getters during every request (e.g. wpf bindings)
             IsSmelly = MediaHitsCollection.Any(media => media.IsSmelly);
             SmellyHits = new ObservableCollection<Hit>(MediaHitsCollection.SelectMany(media => media.SmellyHits).ToList());
-            SmellyHitsView = new ListCollectionView(SmellyHits);
-            
-            SmellyHitsView.Filter = hitObject => getFilteredMedia().Contains(((Hit) hitObject).MediaType);
-
+            SmellyHitsView = new ListCollectionView(SmellyHits)
+            {
+                Filter = hitObject => getFilteredMedia().Contains(((Hit) hitObject).MediaType) && getFilteredHitTypes().Contains(((Hit) hitObject).Type)
+            };
         }
-    
-        public bool IsSmelly { get; set; }
-        public ObservableCollection<Hit> SmellyHits { get; set; }
-        public ListCollectionView SmellyHitsView { get; set; }
     }
 }

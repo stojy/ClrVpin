@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:scanner="clr-namespace:ClrVpx.Scanner"
                     xmlns:models="clr-namespace:ClrVpx.Models"
-                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
+                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                    xmlns:clrVpx="clr-namespace:ClrVpx">
 
   <HierarchicalDataTemplate x:Key="SmellyResultTemplate" DataType="models:Hit">
     <TextBlock Text="{Binding Description}" />
@@ -23,6 +24,8 @@
       </Trigger>
     </Style.Triggers>
   </Style>
+
+  <models:HitTypeDescriptionConverter x:Key="HitTypeDescriptionConverter" />
 
   <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
@@ -53,6 +56,19 @@
                     Content="{x:Static models:Media.LaunchAudio}" IsChecked="true"/>
           <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.WheelImages}"
                     Content="{x:Static models:Media.WheelImages}" IsChecked="true"/>
+        </StackPanel>
+
+        <StackPanel Margin="5,0">
+          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.Missing}"
+                    Content="{Binding Source={x:Static models:HitType.Missing}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
+          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.TableName}"
+                    Content="{Binding Source={x:Static models:HitType.TableName}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
+          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.DuplicateExtension}"
+                    Content="{Binding Source={x:Static models:HitType.DuplicateExtension}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
+          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.WrongCase}"
+                    Content="{Binding Source={x:Static models:HitType.WrongCase}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
+          <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.Fuzzy}"
+                    Content="{Binding Source={x:Static models:HitType.Fuzzy}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true"/>
         </StackPanel>
 
         <!-- todo; filter on hit type.. similar convoluted solution to media type filtering required with another LCV and refreshing

@@ -29,26 +29,28 @@ namespace ClrVpx.Models
         public string Description { get; }
 
         public sealed override string ToString() => $"{MediaType} - {Type.GetDescription()}: {Path}";
+
+        public static HitType[] Types = { HitType.TableName, HitType.Fuzzy, HitType.WrongCase, HitType.DuplicateExtension, HitType.Missing };
     }
 
     public enum HitType
     {
-        [Description("Perfect match!!")]    // not displayed
+        [Description("Perfect Match!!")]    // not displayed
         Valid,
         
-        [Description("Table name matched")]
+        [Description("Table Name")]
         TableName,
         
-        [Description("Fuzzy name matched")]
+        [Description("Fuzzy Name")]
         Fuzzy,
         
-        [Description("Wrong case matched")]
+        [Description("Wrong Case")]
         WrongCase,
         
-        [Description("Duplicate file extension found")]
+        [Description("Duplicate File Extension")]
         DuplicateExtension,
 
-        [Description("Missing file")]
+        [Description("Missing File")]
         Missing
     }
 }
