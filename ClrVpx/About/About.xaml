@@ -15,12 +15,12 @@
 
       <WrapPanel Margin="5">
         <TextBlock Style="{StaticResource TextBlockStyle}">Git:</TextBlock>
-        <TextBlock Style="{StaticResource TextBlockStyle}">https://github.com/stojy/ClrVpx</TextBlock>
+        <TextBlock Style="{StaticResource TextBlockStyle}">https://github.com/stojy/ClrPin</TextBlock>
       </WrapPanel>
 
       <WrapPanel Margin="5">
         <TextBlock Style="{StaticResource TextBlockStyle}">Contact:</TextBlock>
-        <TextBlock Style="{StaticResource TextBlockStyle}">vpx@stoj.net</TextBlock>
+        <TextBlock Style="{StaticResource TextBlockStyle}">clrpin@stoj.net</TextBlock>
       </WrapPanel>
 
     </StackPanel>
