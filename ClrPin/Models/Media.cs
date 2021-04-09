@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Data;
 using Utils;
 
-namespace ClrVpx.Models
+namespace ClrPin.Models
 {
     public class Media
     {

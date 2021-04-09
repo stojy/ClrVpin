@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace ClrVpx.Models
+namespace ClrPin.Models
 {
     public class MediaHits
     {

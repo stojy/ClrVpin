@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace ClrVpx
+namespace ClrPin
 {
     public partial class App : Application
     {

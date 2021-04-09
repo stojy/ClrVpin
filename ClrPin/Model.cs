@@ -1,6 +1,6 @@
 ﻿using Utils;
 
-namespace ClrVpx
+namespace ClrPin
 {
     public class Model
     {

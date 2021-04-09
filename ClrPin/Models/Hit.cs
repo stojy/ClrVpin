@@ -3,7 +3,7 @@ using System.IO;
 using ByteSizeLib;
 using Utils;
 
-namespace ClrVpx.Models
+namespace ClrPin.Models
 {
     public class Hit
     {

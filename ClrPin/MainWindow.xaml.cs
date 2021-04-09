@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using PropertyChanged;
 
-namespace ClrVpx
+namespace ClrPin
 {
     [AddINotifyPropertyChangedInterface]
     public partial class MainWindow

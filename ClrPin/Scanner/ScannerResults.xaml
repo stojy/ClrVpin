@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:scanner="clr-namespace:ClrVpx.Scanner"
-                    xmlns:models="clr-namespace:ClrVpx.Models"
-                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
+                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                    xmlns:models="clr-namespace:ClrPin.Models"
+                    xmlns:scanner="clr-namespace:ClrPin.Scanner">
 
   <HierarchicalDataTemplate x:Key="SmellyResultTemplate" DataType="models:Hit">
     <TextBlock Text="{Binding Description}" />

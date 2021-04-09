@@ -11,12 +11,12 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using ByteSizeLib;
-using ClrVpx.Models;
-using ClrVpx.Settings;
+using ClrPin.Models;
+using ClrPin.Settings;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpx.Scanner
+namespace ClrPin.Scanner
 {
     [AddINotifyPropertyChangedInterface]
     public class Scanner

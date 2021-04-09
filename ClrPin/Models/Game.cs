@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace ClrVpx.Models
+namespace ClrPin.Models
 {
     public class Game
     {

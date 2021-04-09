@@ -3,7 +3,7 @@ using System.Windows.Input;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpx.Rebuilder
+namespace ClrPin.Rebuilder
 {
     [AddINotifyPropertyChangedInterface]
     public class Rebuilder

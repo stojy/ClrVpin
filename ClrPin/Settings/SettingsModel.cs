@@ -1,4 +1,4 @@
-﻿namespace ClrVpx.Settings
+﻿namespace ClrPin.Settings
 {
     public class SettingsModel
     {
