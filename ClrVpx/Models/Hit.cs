@@ -13,7 +13,8 @@ namespace ClrVpx.Models
                 MediaType = mediaType;
                 Path = path;
                 File = System.IO.Path.GetFileName(path);
-                Size = type == HitType.Missing ? null : ByteSize.FromBytes(new FileInfo(path).Length).ToString("#");
+                Size = type == HitType.Missing ? 0 : new FileInfo(path).Length;
+                SizeString = type == HitType.Missing ? null : ByteSize.FromBytes(new FileInfo(path).Length).ToString("#");
                 Type = type;
 
                 // performance tweak - explicitly assign a property instead of relying on ToString during subsequent binding
@@ -21,9 +22,11 @@ namespace ClrVpx.Models
             }
         }
 
+
         public string Path { get; }
         public string File { get; }
-        public string Size { get; }
+        public string SizeString { get; }
+        public long Size { get; set; }
         public HitType Type { get;  }
         public string MediaType { get; }
         public string Description { get; }

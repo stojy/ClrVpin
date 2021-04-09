@@ -7,7 +7,7 @@
     <WrapPanel>
       <RadioButton /> <!--todo-->
       <TextBlock Margin="2,0" Width="60" Text="{Binding Type}" />
-      <TextBlock Margin="2,0" Text="{Binding Size}" />
+      <TextBlock Margin="2,0" Text="{Binding SizeString}" />
       <TextBlock Margin="2,0" Text="{Binding Path}" />
     </WrapPanel>
   </DataTemplate>
