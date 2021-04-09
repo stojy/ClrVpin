@@ -5,7 +5,7 @@
 
   <DataTemplate x:Key="ScannerStatisticsTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
-      <TextBox>TODO</TextBox>
+      <TextBox Text="{Binding Statistics}" FontFamily="Courier New"></TextBox>
 
     </DockPanel>
   </DataTemplate>

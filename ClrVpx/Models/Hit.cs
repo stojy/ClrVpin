@@ -47,10 +47,10 @@ namespace ClrVpx.Models
         [Description("Wrong Case")]
         WrongCase,
         
-        [Description("Duplicate File Extension")]
+        [Description("Duplicate")]
         DuplicateExtension,
 
-        [Description("Missing File")]
+        [Description("Missing")]
         Missing
     }
 }

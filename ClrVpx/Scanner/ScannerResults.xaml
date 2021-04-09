@@ -39,7 +39,7 @@
           </i:Interaction.Triggers>
         </TextBox>
 
-        <GroupBox Margin="5,-10" Padding="5" Header="Media Type">
+        <GroupBox Margin="5,-10" Padding="5" Header="Media">
           <StackPanel Margin="5,0">
             <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableAudio}"
                       Content="{x:Static models:Media.TableAudio}" IsChecked="true" />
@@ -54,7 +54,7 @@
           </StackPanel>
         </GroupBox>
 
-        <GroupBox Margin="5,-10" Padding="0,5" Header="Hit Type">
+        <GroupBox Margin="5,-10" Padding="0,5" Header="Criteria">
           <StackPanel>
             <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.Missing}"
                       Content="{Binding Source={x:Static models:HitType.Missing}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />

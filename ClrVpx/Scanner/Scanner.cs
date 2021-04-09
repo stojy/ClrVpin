@@ -119,9 +119,9 @@ namespace ClrVpx.Scanner
                 Top = _mainWindow.Top + _mainWindow.Height + resultsWindow.Height + 10,
                 SizeToContent = SizeToContent.Width,
                 MinWidth = 400,
-                Height = 500,
+                Height = 600,
                 Content = this,
-                ContentTemplate = _mainWindow.FindResource("ScannerResultsTemplate") as DataTemplate
+                ContentTemplate = _mainWindow.FindResource("ScannerStatisticsTemplate") as DataTemplate
             };
             statisticsWindow.Show();
 
@@ -161,7 +161,36 @@ namespace ClrVpx.Scanner
             Games = new ObservableCollection<Game>(games);
 
             InitSmellyGamesView();
+
+            CreateStatistics();
         }
+
+        private void CreateStatistics()
+        {
+            Statistics = 
+                $"{CreateHitTypeStatistics()}" +
+                $"\n\nUnneeded" +
+                $"\n\n------------------------" +
+                $"\n\n Active..";
+        }
+
+        private string CreateHitTypeStatistics()
+        {
+            // for every hit type, create stats against every media type
+            var hitStatistics = Hit.Types.Select(hitType =>
+                {
+                    var title = $"{hitType.GetDescription()}";
+                    
+                    var contents = string.Join("\n",
+                        Media.Types.Select(type =>
+                            $"- {type,-30}{SmellyGames.Count(g => g.Media.MediaHitsCollection.First(x => x.Type == type).Hits.Any(hit => hit.Type == hitType))}/{Games.Count}"));
+                    return $"{title}\n{contents}";
+                });
+
+            return string.Join("\n\n", hitStatistics);
+        }
+
+        public string Statistics { get; set; }
 
         private void InitSmellyGamesView()
         {
