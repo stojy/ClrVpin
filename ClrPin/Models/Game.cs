@@ -77,5 +77,8 @@ namespace ClrPin.Models
 
         [XmlIgnore]
         public bool IsExpanded { get; set; }
+
+        [XmlIgnore]
+        public bool IsSelected { get; set; }
     }
 }

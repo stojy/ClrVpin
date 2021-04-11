@@ -2,20 +2,37 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     xmlns:models="clr-namespace:ClrPin.Models"
-                    xmlns:scanner="clr-namespace:ClrPin.Scanner">
+                    xmlns:scanner="clr-namespace:ClrPin.Scanner"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" >
 
-  <HierarchicalDataTemplate x:Key="SmellyResultTemplate" DataType="models:Hit">
-    <TextBlock Text="{Binding Description}" />
-  </HierarchicalDataTemplate>
 
-  <HierarchicalDataTemplate x:Key="SmellyGamesTemplate" DataType="models:Game"
-                            ItemsSource="{Binding Media.SmellyHitsView}"
-                            ItemTemplate="{StaticResource SmellyResultTemplate}">
-    <TextBlock Text="{Binding Description}" />
-  </HierarchicalDataTemplate>
+  <ContextMenu x:Key="SmellyGameMediaContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
+    <MenuItem Header="Open File" Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsPresent}" />
+    <MenuItem Header="Show in Explorer" Command="{Binding ExplorerCommand}" IsEnabled="{Binding IsPresent}" />
+    <MenuItem Header="Copy Path" Command="{Binding CopyPathCommand}" />
+  </ContextMenu>
 
-  <Style x:Key="SmellyGamesStyle" TargetType="TreeViewItem">
+  <!--<ContextMenu x:Key="SmellyGameContextMenu">
+    <MenuItem Header="Child - Play Table Audio" Command="{Binding PlayCommand}" />
+  </ContextMenu>-->
+
+  <Style x:Key="SmellyGameMediaStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}">
     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="ContextMenu" Value="{StaticResource SmellyGameMediaContextMenu}"/>
+    <Style.Triggers>
+      <Trigger Property="IsSelected" Value="True">
+        <Setter Property="FontWeight" Value="Bold" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style x:Key="SmellyGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}">
+    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+    <!--<Setter Property="ContextMenu" Value="{StaticResource SmellyGameContextMenu}"/>-->
     <Setter Property="FontWeight" Value="Normal" />
     <Style.Triggers>
       <Trigger Property="IsSelected" Value="True">
@@ -23,6 +40,17 @@
       </Trigger>
     </Style.Triggers>
   </Style>
+
+  <HierarchicalDataTemplate x:Key="SmellyResultTemplate" DataType="models:Hit">
+    <TextBlock Text="{Binding Description}" />
+  </HierarchicalDataTemplate>
+
+  <HierarchicalDataTemplate x:Key="SmellyGamesItemTemplate" DataType="models:Game"
+                            ItemsSource="{Binding Media.SmellyHitsView}"
+                            ItemTemplate="{StaticResource SmellyResultTemplate}"
+                            ItemContainerStyle="{StaticResource SmellyGameMediaStyle}">
+    <TextBlock Text="{Binding Description}" />
+  </HierarchicalDataTemplate>
 
   <models:HitTypeDescriptionConverter x:Key="HitTypeDescriptionConverter" />
 
@@ -72,21 +100,30 @@
       </WrapPanel>
 
       <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,5,0">
-        <CheckBox DockPanel.Dock="Left" Margin="5,5"  Command="{Binding ExpandGamesCommand}"
+        <CheckBox DockPanel.Dock="Left" Margin="5,5" Command="{Binding ExpandGamesCommand}"
                   CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
           Expand All
         </CheckBox>
 
-        <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right" >
-          <TextBlock Text="Total: "/>
-          <TextBlock Text="{Binding SmellyGames.Count}"/>
-          <TextBlock Text=" / "/>
-          <TextBlock Text="{Binding Games.Count}"/>
+        <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right">
+          <TextBlock Text="Total: " />
+          <TextBlock Text="{Binding SmellyGames.Count}" />
+          <TextBlock Text=" / " />
+          <TextBlock Text="{Binding Games.Count}" />
         </WrapPanel>
       </DockPanel>
 
-      <TreeView ItemsSource="{Binding SmellyGamesView}" ItemContainerStyle="{StaticResource SmellyGamesStyle}"
-                ItemTemplate="{StaticResource SmellyGamesTemplate}" />
+      <TreeView ItemsSource="{Binding SmellyGamesView}"
+                ItemTemplate="{StaticResource SmellyGamesItemTemplate}" 
+                ItemContainerStyle="{StaticResource SmellyGameStyle}">
+
+        <!--<i:Interaction.Triggers>
+          <i:EventTrigger EventName="MouseDoubleClick">
+            <i:InvokeCommandAction Command="{Binding DoubleClickSmellyMediaCommand}" CommandParameter="{Binding SmellyGamesView.CurrentItem}" />
+          </i:EventTrigger>
+        </i:Interaction.Triggers>-->
+
+      </TreeView>
     </DockPanel>
   </DataTemplate>
 
