@@ -26,11 +26,11 @@ namespace ClrPin.Scanner
             _mainWindow = mainWindow;
 
             StartCommand = new ActionCommand(Start);
-            ExpandGamesCommand = new ActionCommandParam<bool>(ExpandItems);
+            ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
             SearchTextCommand = new ActionCommand(SearchTextChanged);
 
-            FilterHitTypeCommand = new ActionCommandParam<HitType>(FilterHitType);
-            FilterMediaTypeCommand = new ActionCommandParam<string>(FilterMediaType);
+            FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
+            FilterMediaTypeCommand = new ActionCommand<string>(FilterMediaType);
             Start();
         }
 
@@ -42,9 +42,9 @@ namespace ClrPin.Scanner
         private DispatcherTimer _searchTextChangedDelayTimer;
         private Stopwatch _scanStopWatch;
 
-        public ActionCommandParam<bool> ExpandGamesCommand { get; set; }
-        public ActionCommandParam<string> FilterMediaTypeCommand { get; set; }
-        public ActionCommandParam<HitType> FilterHitTypeCommand { get; set; }
+        public ActionCommand<bool> ExpandGamesCommand { get; set; }
+        public ActionCommand<string> FilterMediaTypeCommand { get; set; }
+        public ActionCommand<HitType> FilterHitTypeCommand { get; set; }
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
@@ -78,7 +78,6 @@ namespace ClrPin.Scanner
             Games.ForEach(game => game.Media.SmellyHitsView.Refresh());
             InitSmellyGamesView();
         }
-
 
         private void ExpandItems(bool expand)
         {

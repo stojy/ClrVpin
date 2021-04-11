@@ -4,7 +4,8 @@
                     xmlns:models="clr-namespace:ClrPin.Models"
                     xmlns:scanner="clr-namespace:ClrPin.Scanner"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
-                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" >
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:controls="clr-namespace:ClrPin.Controls">
 
 
   <ContextMenu x:Key="SmellyGameMediaContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
@@ -17,11 +18,11 @@
     <MenuItem Header="Child - Play Table Audio" Command="{Binding PlayCommand}" />
   </ContextMenu>-->
 
-  <Style x:Key="SmellyGameMediaStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}">
-    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+  <Style x:Key="SmellyGameMediaStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}">
     <Setter Property="FontWeight" Value="Normal" />
-    <Setter Property="ContextMenu" Value="{StaticResource SmellyGameMediaContextMenu}"/>
+    <Setter Property="ContextMenu" Value="{StaticResource SmellyGameMediaContextMenu}" />
+    <Setter Property="controls:MouseDoubleClick.Command" Value="{Binding OpenFileCommand}"/>
+
     <Style.Triggers>
       <Trigger Property="IsSelected" Value="True">
         <Setter Property="FontWeight" Value="Bold" />
@@ -114,16 +115,8 @@
       </DockPanel>
 
       <TreeView ItemsSource="{Binding SmellyGamesView}"
-                ItemTemplate="{StaticResource SmellyGamesItemTemplate}" 
-                ItemContainerStyle="{StaticResource SmellyGameStyle}">
-
-        <!--<i:Interaction.Triggers>
-          <i:EventTrigger EventName="MouseDoubleClick">
-            <i:InvokeCommandAction Command="{Binding DoubleClickSmellyMediaCommand}" CommandParameter="{Binding SmellyGamesView.CurrentItem}" />
-          </i:EventTrigger>
-        </i:Interaction.Triggers>-->
-
-      </TreeView>
+                ItemTemplate="{StaticResource SmellyGamesItemTemplate}"
+                ItemContainerStyle="{StaticResource SmellyGameStyle}"/>
     </DockPanel>
   </DataTemplate>
 

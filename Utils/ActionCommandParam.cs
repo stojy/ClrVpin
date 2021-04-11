@@ -3,20 +3,20 @@ using System.Windows.Input;
 
 namespace Utils
 {
-    public class ActionCommandParam<T> : ICommand
+    public class ActionCommand<T> : ICommand
     {
         private readonly Action<T> _execute;
-        private readonly Func<bool> _canExecute;
+        private readonly Func<object, bool> _canExecute;
 
-        public ActionCommandParam(Action<T> execute, Func<bool> canExecute = null)
+        public ActionCommand(Action<T> execute, Func<object, bool> canExecute = null)
         {
             _execute = execute;
-            _canExecute = canExecute ?? (() => true);
+            _canExecute = canExecute ?? (_ => true);
         }
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute();
+            return _canExecute(parameter);
         }
 
         public void Execute(object parameter)

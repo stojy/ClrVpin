@@ -24,7 +24,7 @@ namespace ClrPin.Models
 
             // viewmodel
             IsPresent = Type != HitType.Missing;
-            OpenFileCommand = new ActionCommand(OpenFile);
+            OpenFileCommand = new ActionCommand(OpenFile, _ => IsPresent);
             ExplorerCommand = new ActionCommand(ShowInExplorer);
             CopyPathCommand = new ActionCommand(CopyPath);
         }

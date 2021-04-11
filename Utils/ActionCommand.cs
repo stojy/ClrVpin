@@ -6,17 +6,17 @@ namespace Utils
     public class ActionCommand : ICommand
     {
         private readonly Action _execute;
-        private readonly Func<bool> _canExecute;
+        private readonly Func<object, bool> _canExecute;
 
-        public ActionCommand(Action execute, Func<bool> canExecute = null)
+        public ActionCommand(Action execute, Func<object, bool> canExecute = null)
         {
             _execute = execute;
-            _canExecute = canExecute ?? (() => true);
+            _canExecute = canExecute ?? (_ => true);
         }
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute();
+            return _canExecute(parameter);
         }
 
         public void Execute(object parameter)
