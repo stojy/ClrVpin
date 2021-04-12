@@ -31,7 +31,6 @@ namespace ClrVpin.Scanner
 
             FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
             FilterMediaTypeCommand = new ActionCommand<string>(FilterMediaType);
-            Start();
         }
 
         private const int StatisticsKeyWidth = -30;
@@ -41,6 +40,7 @@ namespace ClrVpin.Scanner
         private readonly MainWindow _mainWindow;
         private DispatcherTimer _searchTextChangedDelayTimer;
         private Stopwatch _scanStopWatch;
+        private Window _scannerWindow;
 
         public ActionCommand<bool> ExpandGamesCommand { get; set; }
         public ActionCommand<string> FilterMediaTypeCommand { get; set; }
@@ -104,12 +104,31 @@ namespace ClrVpin.Scanner
 
         public void Show()
         {
-            var resultsWindow = new Window
+            _scannerWindow = new Window
             {
                 Owner = _mainWindow,
+                Title = "Scanner",
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                SizeToContent = SizeToContent.Width,
+                MinWidth = 400,
+                Height = 500,
+                Content = this,
+                ContentTemplate = _mainWindow.FindResource("ScannerTemplate") as DataTemplate
+            };
+            _scannerWindow.Show();
+
+            _mainWindow.Hide();
+            _scannerWindow.Closed += (_, _) => _mainWindow.Show();
+        }
+
+        public void ShowResults()
+        {
+            var resultsWindow = new Window
+            {
+                Owner = _scannerWindow,
                 Title = "Scanner Results",
-                Left = _mainWindow.Left,
-                Top = _mainWindow.Top + _mainWindow.Height + 5,
+                Left = 10,
+                Top = 10,
                 SizeToContent = SizeToContent.Width,
                 MinWidth = 400,
                 Height = 500,
@@ -120,10 +139,10 @@ namespace ClrVpin.Scanner
 
             var statisticsWindow = new Window
             {
-                Owner = _mainWindow,
+                Owner = _scannerWindow,
                 Title = "Scanner Statistics",
-                Left = _mainWindow.Left,
-                Top = _mainWindow.Top + _mainWindow.Height + resultsWindow.Height + 10,
+                Left = resultsWindow.Left,
+                Top = resultsWindow.Top + resultsWindow.Height + 10,
                 SizeToContent = SizeToContent.Width,
                 MinWidth = 400,
                 Height = 650,
@@ -134,22 +153,32 @@ namespace ClrVpin.Scanner
 
             var explorerWindow = new Window
             {
-                Owner = _mainWindow,
+                Owner = _scannerWindow,
                 Title = "Scanner Explorer",
                 Left = resultsWindow.Left + resultsWindow.Width + 5,
-                Top = _mainWindow.Top,
+                Top = resultsWindow.Top,
                 SizeToContent = SizeToContent.Height,
                 MinHeight = 500,
-                MaxHeight = 1000,
+                MaxHeight = 1200,
                 MinWidth = 400,
                 Content = this,
                 ContentTemplate = _mainWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
             };
             explorerWindow.Show();
+
+            _scannerWindow.Hide();
+            resultsWindow.Closed += (_, _) =>
+            {
+                statisticsWindow.Close();
+                explorerWindow.Close();
+                _scannerWindow.Show();
+            };
         }
 
         private void Start()
         {
+            ShowResults();
+
             _scanStopWatch = Stopwatch.StartNew();
 
             var games = GetDatabase();

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:clrVpin="clr-namespace:ClrVpin"
         mc:Ignorable="d"
-        Left="20" Top="20"
+        WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
         Title="ClrVpin" WindowState="Normal"
         d:DataContext="{d:DesignData }">
@@ -13,6 +13,7 @@
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Scanner/Scanner.xaml" />
         <ResourceDictionary Source="Scanner/ScannerExplorer.xaml" />
         <ResourceDictionary Source="Scanner/ScannerResults.xaml" />
         <ResourceDictionary Source="Scanner/ScannerStatistics.xaml" />
