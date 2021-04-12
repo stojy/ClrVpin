@@ -1,11 +1,10 @@
-# ClrVpx
-WIP
+# ClrVpin
+Virtual Pinball Content Management.
 
-Visual Pinball X content management..
 - Tables
 - Backglasses
 - Video
 - Audio
 - Wheels
 
-
+WIP
