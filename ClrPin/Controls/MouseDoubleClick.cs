@@ -19,11 +19,13 @@ namespace ClrPin.Controls
             target.SetValue(CommandProperty, value);
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static void SetCommandParameter(DependencyObject target, object value)
         {
             target.SetValue(CommandParameterProperty, value);
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static object GetCommandParameter(DependencyObject target) => target.GetValue(CommandParameterProperty);
 
         private static void CommandChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
