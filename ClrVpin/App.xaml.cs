@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using NLog;
 
 namespace ClrVpin
 {
-    public partial class App : Application
+    public partial class App
     {
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            _logger.Info("App.xaml starting..");
 
             SetupExceptionHandling();
         }
@@ -16,42 +21,42 @@ namespace ClrVpin
         private void SetupExceptionHandling()
         {
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-                HandleError((Exception)e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
+                HandleError(s, (Exception)e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
 
             DispatcherUnhandledException += (s, e) =>
             {
-                HandleError(e.Exception, "Application.Current.DispatcherUnhandledException");
+                HandleError(s, e.Exception, "Application.Current.DispatcherUnhandledException");
                 e.Handled = false;
             };
 
             TaskScheduler.UnobservedTaskException += (s, e) =>
             {
-                HandleError(e.Exception, "TaskScheduler.UnobservedTaskException");
+                HandleError(s, e.Exception, "TaskScheduler.UnobservedTaskException");
                 e.SetObserved();
             };
         }
 
-        private void HandleError(Exception exception, string source)
+        private void HandleError(object sender, Exception exception, string source)
         {
-            var message = $"Unhandled exception ({source})";
             try
             {
-                var assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName();
-                message = $"Unhandled exception in {assemblyName}\n\n{exception.Message}\n\n{exception}";
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly().GetName();
+                var message = "Unhandled exception detected\n\n"+
+                              $"Message: {exception.Message}\n" +
+                              $"Assembly: {assembly}\n" +
+                              $"Sender: {sender}\n" + 
+                              $"Source: {source}";
 
-                MessageBox.Show(MainWindow!, message, "An Error Has Occurred", MessageBoxButton.OK, MessageBoxImage.Error);
-                
-                //LogicalTreeHelper()
-
+                _logger.Error(exception, message);
+                MessageBox.Show(MainWindow!, $"{message}\n\n{exception}", "An Error Has Occurred", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                //_logger.Error(ex, "Exception in HandleError");
+                _logger.Error(ex, "Exception in HandleError");
             }
             finally
             {
                 Shutdown();
-                //_logger.Error(exception, message);
             }
         }
     }
