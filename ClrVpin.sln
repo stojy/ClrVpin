@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31112.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{0F9461D6-B18B-4898-BE0B-C4AC853684C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilsTests", "UtilsTests\UtilsTests.csproj", "{8D3770A5-B378-4131-A18B-A65DF639A509}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClrVpin", "ClrVpin\ClrVpin.csproj", "{AC3D1EA8-78DC-4B8C-B6F3-2ADE521A978D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0F9461D6-B18B-4898-BE0B-C4AC853684C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F9461D6-B18B-4898-BE0B-C4AC853684C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F9461D6-B18B-4898-BE0B-C4AC853684C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F9461D6-B18B-4898-BE0B-C4AC853684C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D3770A5-B378-4131-A18B-A65DF639A509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D3770A5-B378-4131-A18B-A65DF639A509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D3770A5-B378-4131-A18B-A65DF639A509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D3770A5-B378-4131-A18B-A65DF639A509}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC3D1EA8-78DC-4B8C-B6F3-2ADE521A978D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC3D1EA8-78DC-4B8C-B6F3-2ADE521A978D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC3D1EA8-78DC-4B8C-B6F3-2ADE521A978D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC3D1EA8-78DC-4B8C-B6F3-2ADE521A978D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EEFDE1FF-91E7-4C51-8546-5721BAE8910A}
+	EndGlobalSection
+EndGlobal

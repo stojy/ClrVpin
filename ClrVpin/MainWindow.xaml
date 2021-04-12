@@ -1,0 +1,43 @@
+﻿<Window x:Class="ClrVpin.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:clrVpin="clr-namespace:ClrVpin"
+        mc:Ignorable="d"
+        Left="20" Top="20"
+        SizeToContent="WidthAndHeight"
+        Title="ClrVpin" WindowState="Normal"
+        d:DataContext="{d:DesignData }">
+
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Scanner/ScannerExplorer.xaml" />
+        <ResourceDictionary Source="Scanner/ScannerResults.xaml" />
+        <ResourceDictionary Source="Scanner/ScannerStatistics.xaml" />
+        <ResourceDictionary Source="Rebuilder/Rebuilder.xaml" />
+        <ResourceDictionary Source="Settings/Settings.xaml" />
+        <ResourceDictionary Source="About/About.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <DataTemplate x:Key="MainWindowTemplate" DataType="clrVpin:Model">
+        <StackPanel>
+          <TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />
+
+          <WrapPanel Margin="5">
+            <Button Margin="5,0" Command="{Binding ScannerCommand}">Scanner</Button>
+            <Button Margin="5,0" Command="{Binding RebuilderCommand}">Rebuilder</Button>
+            <Button Margin="5,0" Command="{Binding SettingsCommand}">Settings</Button>
+            <Button Margin="5,0" Command="{Binding AboutCommand}">About</Button>
+          </WrapPanel>
+
+        </StackPanel>
+
+      </DataTemplate>
+    </ResourceDictionary>
+  </Window.Resources>
+
+  <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource MainWindowTemplate}" />
+
+</Window>

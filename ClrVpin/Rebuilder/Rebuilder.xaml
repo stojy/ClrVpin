@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:models="clr-namespace:ClrVpin.Models"
+                    xmlns:rebuilder="clr-namespace:ClrVpin.Rebuilder">
+
+  <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
+    <WrapPanel>
+      <RadioButton /> <!--todo-->
+      <TextBlock Margin="2,0" Width="20" Text="{Binding}" />
+      <TextBlock Margin="2,0" Text="{Binding SizeString}" />
+      <TextBlock Margin="2,0" Text="{Binding Path}" />
+    </WrapPanel>
+  </DataTemplate>
+
+  <DataTemplate x:Key="RebuilderTemplate" DataType="{x:Type rebuilder:Rebuilder}">
+    <DockPanel>
+      <Button DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="5" Width="120px" Command="{Binding StartCommand}">Start</Button>
+    </DockPanel>
+
+  </DataTemplate>
+
+</ResourceDictionary>
