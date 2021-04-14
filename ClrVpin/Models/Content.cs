@@ -29,9 +29,9 @@ namespace ClrVpin.Models
             new ContentType(TableVideos, new[] {"*.f4v", "*.mp4"}),
             new ContentType(BackglassVideos, new[] {"*.mp4", "*.f4v"}),
             new ContentType(WheelImages, new[] {"*.png", "*.jpg"})
-            //new ContentType {Folder = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            //new ContentType {Folder = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            //new ContentType {Folder = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+            //new ContentType {Type = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+            //new ContentType {Type = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+            //new ContentType {Type = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
         };
 
         public List<ContentHits> ContentHitsCollection { get; set; } = new List<ContentHits>();

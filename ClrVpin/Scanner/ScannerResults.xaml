@@ -5,7 +5,8 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:scanner="clr-namespace:ClrVpin.Scanner">
+                    xmlns:scanner="clr-namespace:ClrVpin.Scanner"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
 
   <ContextMenu x:Key="SmellyGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
@@ -33,7 +34,6 @@
   <Style x:Key="SmellyGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}">
     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-    <!--<Setter Property="ContextMenu" Value="{StaticResource SmellyGameContextMenu}"/>-->
     <Setter Property="FontWeight" Value="Normal" />
     <Style.Triggers>
       <Trigger Property="IsSelected" Value="True">
@@ -70,6 +70,15 @@
 
         <GroupBox Margin="5,-10" Padding="5" Header="Content">
           <StackPanel Margin="5,0">
+            <ItemsControl ItemsSource="{Binding FilteredContentTypes}" BorderThickness="5">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="system:String">
+                  <!--<TextBlock Text="{Binding}"/>-->
+                  <CheckBox Margin="5,0" Content="{Binding}" IsChecked="true" IsEnabled="true" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
             <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.TableAudio}"
                       Content="{x:Static models:Content.TableAudio}" IsChecked="true" />
             <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.TableVideos}"

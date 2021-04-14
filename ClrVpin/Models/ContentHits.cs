@@ -13,7 +13,7 @@ namespace ClrVpin.Models
 
         private readonly ContentType _contentType;
 
-        public string Type => _contentType.Folder;
+        public string Type => _contentType.Type;
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
         public bool IsMissing => Hits.Any(hit => hit.Type == HitType.Missing);

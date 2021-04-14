@@ -32,14 +32,19 @@ namespace ClrVpin.Scanner
             ConfigureCheckHitTypesCommand = new ActionCommand<HitType>(ConfigureCheckHitTypes);
             ConfigureFixHitTypesCommand = new ActionCommand<HitType>(ConfigureFixHitTypes);
 
-            FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
             FilterContentTypeCommand = new ActionCommand<string>(FilterContentType);
+            FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
+
+            // todo; build list based on config with bindings
+            FilteredContentTypes = new List<string>(Content.Types);
         }
 
         private const int StatisticsKeyWidth = -30;
 
-        private readonly List<string> _filteredContentTypes = new List<string>(Content.Types);
-        private readonly List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
+        public List<string> FilteredContentTypes { get; }
+        private List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
+
+        public List<string> FilteredContentTypesView { get; set; }
 
         private readonly MainWindow _mainWindow;
         private DispatcherTimer _searchTextChangedDelayTimer;
@@ -72,7 +77,7 @@ namespace ClrVpin.Scanner
 
         private void FilterContentType(string contentType)
         {
-            _filteredContentTypes.Toggle(contentType);
+           // _filteredContentTypes.Toggle(contentType);
             Games.ForEach(game => game.Content.SmellyHitsView.Refresh());
             InitSmellyGamesView();
         }
@@ -190,7 +195,8 @@ namespace ClrVpin.Scanner
 
             // check the installed content files against those that are registered in the database
             var unknownFiles = new List<string>();
-            Content.SupportedTypes.ForEach(contentSetup =>
+            var checkContentTypes = Content.SupportedTypes.Where(type => Config.CheckContentTypes.Contains(type.Type));
+            checkContentTypes.ForEach(contentSetup =>
             {
                 var mediaFiles = GetMedia(contentSetup);
                 var unknownMedia = AddMedia(games, mediaFiles, contentSetup.GetContentHits);
@@ -271,7 +277,7 @@ namespace ClrVpin.Scanner
                         contentHitCollection.Add(HitType.Missing, game.Description);
                 });
 
-                game.Content.Update(() => _filteredContentTypes, () => _filteredHitTypes);
+                game.Content.Update(() => FilteredContentTypes, () => _filteredHitTypes);
             });
         }
 
