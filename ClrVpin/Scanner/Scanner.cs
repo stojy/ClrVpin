@@ -29,13 +29,22 @@ namespace ClrVpin.Scanner
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
             SearchTextCommand = new ActionCommand(SearchTextChanged);
 
+            ConfigureMediaTypeCommand = new ActionCommand<string>(ConfigureMediaType);
+            ConfigureHitTypeCheckCommand = new ActionCommand<HitType>(ConfigureHitTypeCheck);
+            ConfigureHitTypeFixCommand = new ActionCommand<HitType>(ConfigureHitTypeFix);
+
             FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
             FilterMediaTypeCommand = new ActionCommand<string>(FilterMediaType);
         }
 
         private const int StatisticsKeyWidth = -30;
-        private readonly List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
+
+        private readonly List<string> _configMediaTypes = new List<string>(Media.Types);
+        private readonly List<HitType> _configHitTypesCheck = new List<HitType>(Hit.Types);
+        private readonly List<HitType> _configHitTypesFix = new List<HitType>(Hit.Types);
+
         private readonly List<string> _filteredMediaTypes = new List<string>(Media.Types);
+        private readonly List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
 
         private readonly MainWindow _mainWindow;
         private DispatcherTimer _searchTextChangedDelayTimer;
@@ -43,6 +52,11 @@ namespace ClrVpin.Scanner
         private Window _scannerWindow;
 
         public ActionCommand<bool> ExpandGamesCommand { get; set; }
+        
+        public ActionCommand<string> ConfigureMediaTypeCommand { get; set; }
+        public ActionCommand<HitType> ConfigureHitTypeCheckCommand { get; set; }
+        public ActionCommand<HitType> ConfigureHitTypeFixCommand { get; set; }
+        
         public ActionCommand<string> FilterMediaTypeCommand { get; set; }
         public ActionCommand<HitType> FilterHitTypeCommand { get; set; }
 
@@ -57,24 +71,20 @@ namespace ClrVpin.Scanner
 
         public string Statistics { get; set; }
 
+        private void ConfigureMediaType(string mediaType) => _configMediaTypes.Toggle(mediaType);
+        private void ConfigureHitTypeCheck(HitType hitType) => _configHitTypesCheck.Toggle(hitType);
+        private void ConfigureHitTypeFix(HitType hitType) => _configHitTypesFix.Toggle(hitType);
+
         private void FilterMediaType(string mediaType)
         {
-            if (_filteredMediaTypes.Contains(mediaType))
-                _filteredMediaTypes.Remove(mediaType);
-            else
-                _filteredMediaTypes.Add(mediaType);
-
+            _filteredMediaTypes.Toggle(mediaType);
             Games.ForEach(game => game.Media.SmellyHitsView.Refresh());
             InitSmellyGamesView();
         }
 
         private void FilterHitType(HitType hitType)
         {
-            if (_filteredHitTypes.Contains(hitType))
-                _filteredHitTypes.Remove(hitType);
-            else
-                _filteredHitTypes.Add(hitType);
-
+            _filteredHitTypes.Toggle(hitType);
             Games.ForEach(game => game.Media.SmellyHitsView.Refresh());
             InitSmellyGamesView();
         }
@@ -109,9 +119,7 @@ namespace ClrVpin.Scanner
                 Owner = _mainWindow,
                 Title = "Scanner",
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                SizeToContent = SizeToContent.Width,
-                MinWidth = 400,
-                Height = 500,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 ContentTemplate = _mainWindow.FindResource("ScannerTemplate") as DataTemplate
             };

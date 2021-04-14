@@ -23,5 +23,13 @@ namespace Utils
             foreach (var item in source)
                 action(item, i++);
         }
+
+        public static void Toggle<T>(this List<T> source, T item)
+        {
+            if (source.Contains(item))
+                source.Remove(item);
+            else
+                source.Add(item);
+        }
     }
 }

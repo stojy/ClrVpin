@@ -7,6 +7,7 @@ using Utils;
 
 namespace ClrVpin.Models
 {
+    // todo; perhaps rename to content?  e.g. as not to exclude b2s and vpx
     public class Media
     {
         public Media()

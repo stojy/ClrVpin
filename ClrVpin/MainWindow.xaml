@@ -22,15 +22,19 @@
         <ResourceDictionary Source="About/About.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
+      <Style TargetType="Button">
+        <Setter Property="Margin" Value="5,0"/>
+        <Setter Property="Padding" Value="5"/>
+      </Style>
       <DataTemplate x:Key="MainWindowTemplate" DataType="clrVpin:Model">
         <StackPanel>
           <TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />
 
           <WrapPanel Margin="5">
-            <Button Margin="5,0" Command="{Binding ScannerCommand}">Scanner</Button>
-            <Button Margin="5,0" Command="{Binding RebuilderCommand}">Rebuilder</Button>
-            <Button Margin="5,0" Command="{Binding SettingsCommand}">Settings</Button>
-            <Button Margin="5,0" Command="{Binding AboutCommand}">About</Button>
+            <Button Command="{Binding ScannerCommand}">Scanner</Button>
+            <Button Command="{Binding RebuilderCommand}">Rebuilder</Button>
+            <Button Command="{Binding SettingsCommand}">Settings</Button>
+            <Button Command="{Binding AboutCommand}">About</Button>
           </WrapPanel>
 
         </StackPanel>
