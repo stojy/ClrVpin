@@ -33,7 +33,7 @@
           <WrapPanel Margin="5">
             <Button Command="{Binding ScannerCommand}">Scanner</Button>
             <Button Command="{Binding RebuilderCommand}">Rebuilder</Button>
-            <Button Command="{Binding SettingsCommand}">Settings</Button>
+            <Button Command="{Binding SettingsCommand}">Config</Button>
             <Button Command="{Binding AboutCommand}">About</Button>
           </WrapPanel>
 

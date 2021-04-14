@@ -17,7 +17,7 @@ namespace ClrVpin.Settings
         {
             var window = new Window
             {
-                Content = Model.Settings,
+                Content = Model.Config,
                 ContentTemplate = _mainWindow.FindResource("SettingsTemplate") as DataTemplate,
             };
             window.ShowDialog();

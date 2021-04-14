@@ -13,17 +13,17 @@
         <GroupBox Margin="5,5" Padding="0, 5" Header="Media to Scan" DockPanel.Dock="Top">
           <WrapPanel Margin="5,0">
             <StackPanel>
-              <CheckBox Margin="5,0" Command="{Binding ConfigureMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableAudio}"
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.TableAudio}"
                         Content="{x:Static models:Media.TableAudio}" IsChecked="true" />
-              <CheckBox Margin="5,0" Command="{Binding ConfigureMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableVideos}"
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.TableVideos}"
                         Content="{x:Static models:Media.TableVideos}" IsChecked="true" />
-              <CheckBox Margin="5,0" Command="{Binding ConfigureMediaTypeCommand}" CommandParameter="{x:Static models:Media.LaunchAudio}"
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.LaunchAudio}"
                         Content="{x:Static models:Media.LaunchAudio}" IsChecked="true" />
             </StackPanel>
             <StackPanel>
-              <CheckBox Margin="5,0" Command="{Binding ConfigureMediaTypeCommand}" CommandParameter="{x:Static models:Media.BackglassVideos}"
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.BackglassVideos}"
                         Content="{x:Static models:Media.BackglassVideos}" IsChecked="true" />
-              <CheckBox Margin="5,0" Command="{Binding ConfigureMediaTypeCommand}" CommandParameter="{x:Static models:Media.WheelImages}"
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.WheelImages}"
                         Content="{x:Static models:Media.WheelImages}" IsChecked="true" />
             </StackPanel>
           </WrapPanel>
@@ -33,30 +33,30 @@
       <WrapPanel>
         <GroupBox Margin="5, 5" Padding="0,5" Header="Check">
           <StackPanel>
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeCheckCommand}" CommandParameter="{x:Static models:HitType.Missing}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureCheckHitTypesCommand}" CommandParameter="{x:Static models:HitType.Missing}"
                       Content="{Binding Source={x:Static models:HitType.Missing}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeCheckCommand}" CommandParameter="{x:Static models:HitType.TableName}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureCheckHitTypesCommand}" CommandParameter="{x:Static models:HitType.TableName}"
                       Content="{Binding Source={x:Static models:HitType.TableName}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeCheckCommand}" CommandParameter="{x:Static models:HitType.DuplicateExtension}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureCheckHitTypesCommand}" CommandParameter="{x:Static models:HitType.DuplicateExtension}"
                       Content="{Binding Source={x:Static models:HitType.DuplicateExtension}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeCheckCommand}" CommandParameter="{x:Static models:HitType.WrongCase}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureCheckHitTypesCommand}" CommandParameter="{x:Static models:HitType.WrongCase}"
                       Content="{Binding Source={x:Static models:HitType.WrongCase}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeCheckCommand}" CommandParameter="{x:Static models:HitType.Fuzzy}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureCheckHitTypesCommand}" CommandParameter="{x:Static models:HitType.Fuzzy}"
                       Content="{Binding Source={x:Static models:HitType.Fuzzy}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
           </StackPanel>
         </GroupBox>
 
         <GroupBox Margin="5,5" Padding="0,5" Header="Fix">
           <StackPanel>
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeFixCommand}" CommandParameter="{x:Static models:HitType.Missing}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureFixHitTypesCommand}" CommandParameter="{x:Static models:HitType.Missing}"
                       Content="{Binding Source={x:Static models:HitType.Missing}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeFixCommand}" CommandParameter="{x:Static models:HitType.TableName}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureFixHitTypesCommand}" CommandParameter="{x:Static models:HitType.TableName}"
                       Content="{Binding Source={x:Static models:HitType.TableName}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeFixCommand}" CommandParameter="{x:Static models:HitType.DuplicateExtension}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureFixHitTypesCommand}" CommandParameter="{x:Static models:HitType.DuplicateExtension}"
                       Content="{Binding Source={x:Static models:HitType.DuplicateExtension}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeFixCommand}" CommandParameter="{x:Static models:HitType.WrongCase}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureFixHitTypesCommand}" CommandParameter="{x:Static models:HitType.WrongCase}"
                       Content="{Binding Source={x:Static models:HitType.WrongCase}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding ConfigureHitTypeFixCommand}" CommandParameter="{x:Static models:HitType.Fuzzy}"
+            <CheckBox Margin="5,0" Command="{Binding ConfigureFixHitTypesCommand}" CommandParameter="{x:Static models:HitType.Fuzzy}"
                       Content="{Binding Source={x:Static models:HitType.Fuzzy}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
           </StackPanel>
         </GroupBox>

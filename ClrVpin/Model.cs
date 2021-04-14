@@ -1,4 +1,5 @@
-﻿using Utils;
+﻿using ClrVpin.Models;
+using Utils;
 
 namespace ClrVpin
 {
@@ -6,7 +7,7 @@ namespace ClrVpin
     {
         public Model(MainWindow mainWindow)
         {
-            Settings = new Settings.SettingsModel();
+            Config = new Config();
 
             ScannerCommand = new ActionCommand(() => new Scanner.Scanner(mainWindow).Show());
             RebuilderCommand = new ActionCommand(() => new Rebuilder.Rebuilder(mainWindow).Show());
@@ -19,6 +20,6 @@ namespace ClrVpin
         public ActionCommand SettingsCommand { get; set; }
         public ActionCommand AboutCommand { get; set; }
 
-        public static Settings.SettingsModel Settings { get; set; }
+        public static Config Config { get; set; }
     }
 }

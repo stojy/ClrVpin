@@ -12,7 +12,6 @@ using System.Windows.Threading;
 using System.Xml.Linq;
 using ByteSizeLib;
 using ClrVpin.Models;
-using ClrVpin.Settings;
 using PropertyChanged;
 using Utils;
 
@@ -29,19 +28,15 @@ namespace ClrVpin.Scanner
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
             SearchTextCommand = new ActionCommand(SearchTextChanged);
 
-            ConfigureMediaTypeCommand = new ActionCommand<string>(ConfigureMediaType);
-            ConfigureHitTypeCheckCommand = new ActionCommand<HitType>(ConfigureHitTypeCheck);
-            ConfigureHitTypeFixCommand = new ActionCommand<HitType>(ConfigureHitTypeFix);
+            ConfigureCheckMediaTypesCommand = new ActionCommand<string>(ConfigureCheckMediaTypes);
+            ConfigureCheckHitTypesCommand = new ActionCommand<HitType>(ConfigureCheckHitTypes);
+            ConfigureFixHitTypesCommand = new ActionCommand<HitType>(ConfigureFixHitTypes);
 
             FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
             FilterMediaTypeCommand = new ActionCommand<string>(FilterMediaType);
         }
 
         private const int StatisticsKeyWidth = -30;
-
-        private readonly List<string> _configMediaTypes = new List<string>(Media.Types);
-        private readonly List<HitType> _configHitTypesCheck = new List<HitType>(Hit.Types);
-        private readonly List<HitType> _configHitTypesFix = new List<HitType>(Hit.Types);
 
         private readonly List<string> _filteredMediaTypes = new List<string>(Media.Types);
         private readonly List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
@@ -53,9 +48,9 @@ namespace ClrVpin.Scanner
 
         public ActionCommand<bool> ExpandGamesCommand { get; set; }
         
-        public ActionCommand<string> ConfigureMediaTypeCommand { get; set; }
-        public ActionCommand<HitType> ConfigureHitTypeCheckCommand { get; set; }
-        public ActionCommand<HitType> ConfigureHitTypeFixCommand { get; set; }
+        public ActionCommand<string> ConfigureCheckMediaTypesCommand { get; set; }
+        public ActionCommand<HitType> ConfigureCheckHitTypesCommand { get; set; }
+        public ActionCommand<HitType> ConfigureFixHitTypesCommand { get; set; }
         
         public ActionCommand<string> FilterMediaTypeCommand { get; set; }
         public ActionCommand<HitType> FilterHitTypeCommand { get; set; }
@@ -71,9 +66,9 @@ namespace ClrVpin.Scanner
 
         public string Statistics { get; set; }
 
-        private void ConfigureMediaType(string mediaType) => _configMediaTypes.Toggle(mediaType);
-        private void ConfigureHitTypeCheck(HitType hitType) => _configHitTypesCheck.Toggle(hitType);
-        private void ConfigureHitTypeFix(HitType hitType) => _configHitTypesFix.Toggle(hitType);
+        private static void ConfigureCheckMediaTypes(string mediaType) => Config.CheckMediaTypes.Toggle(mediaType);
+        private static void ConfigureCheckHitTypes(HitType hitType) => Config.CheckHitTypes.Toggle(hitType);
+        private static void ConfigureFixHitTypes(HitType hitType) => Config.FixHitTypes.Toggle(hitType);
 
         private void FilterMediaType(string mediaType)
         {
@@ -310,7 +305,7 @@ namespace ClrVpin.Scanner
 
         private static List<Game> GetDatabase()
         {
-            var file = $@"{SettingsModel.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
+            var file = $@"{Config.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
             var doc = XDocument.Load(file);
             if (doc.Root == null)
                 throw new Exception("Failed to load database");
