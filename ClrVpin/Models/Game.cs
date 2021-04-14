@@ -4,10 +4,10 @@ namespace ClrVpin.Models
 {
     public class Game
     {
-        [XmlAttribute("name")] public string TableFile { get; set; } // table file name - excludes suffix and typically matches description, but not always
+        [XmlAttribute("name")] public string TableFile { get; set; } // VPX table, b2s, and pov must match name
 
         [XmlElement("description", IsNullable = true)]
-        public string Description { get; set; } // from IPDB - PBY/PBX media files must match description (not the table file name)
+        public string Description { get; set; } // from IPDB - PBY/PBX media files must match description
 
         [XmlElement("rom", IsNullable = true)] public string Rom { get; set; }
 
@@ -64,7 +64,7 @@ namespace ClrVpin.Models
 
         // calculated properties
         [XmlIgnore]
-        public Media Media { get; set; } = new Media();
+        public Content Content { get; set; } = new Content();
         
         [XmlIgnore]
         public string TableFileWithExtension => TableFile + ".pbx";

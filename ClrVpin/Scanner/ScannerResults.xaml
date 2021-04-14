@@ -8,7 +8,7 @@
                     xmlns:scanner="clr-namespace:ClrVpin.Scanner">
 
 
-  <ContextMenu x:Key="SmellyGameMediaContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
+  <ContextMenu x:Key="SmellyGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
     <MenuItem Header="Open File" Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsPresent}" />
     <MenuItem Header="Show in Explorer" Command="{Binding ExplorerCommand}" IsEnabled="{Binding IsPresent}" />
     <MenuItem Header="Copy Path" Command="{Binding CopyPathCommand}" />
@@ -18,9 +18,9 @@
     <MenuItem Header="Child - Play Table Audio" Command="{Binding PlayCommand}" />
   </ContextMenu>-->
 
-  <Style x:Key="SmellyGameMediaStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}">
+  <Style x:Key="SmellyGameContentStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}">
     <Setter Property="FontWeight" Value="Normal" />
-    <Setter Property="ContextMenu" Value="{StaticResource SmellyGameMediaContextMenu}" />
+    <Setter Property="ContextMenu" Value="{StaticResource SmellyGameContentContextMenu}" />
     <Setter Property="controls:MouseDoubleClick.Command" Value="{Binding OpenFileCommand}"/>
 
     <Style.Triggers>
@@ -47,9 +47,9 @@
   </HierarchicalDataTemplate>
 
   <HierarchicalDataTemplate x:Key="SmellyGamesItemTemplate" DataType="models:Game"
-                            ItemsSource="{Binding Media.SmellyHitsView}"
+                            ItemsSource="{Binding Content.SmellyHitsView}"
                             ItemTemplate="{StaticResource SmellyResultTemplate}"
-                            ItemContainerStyle="{StaticResource SmellyGameMediaStyle}">
+                            ItemContainerStyle="{StaticResource SmellyGameContentStyle}">
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
@@ -68,18 +68,18 @@
           </b:Interaction.Triggers>
         </TextBox>
 
-        <GroupBox Margin="5,-10" Padding="5" Header="Media">
+        <GroupBox Margin="5,-10" Padding="5" Header="Content">
           <StackPanel Margin="5,0">
-            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableAudio}"
-                      Content="{x:Static models:Media.TableAudio}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.TableVideos}"
-                      Content="{x:Static models:Media.TableVideos}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.BackglassVideos}"
-                      Content="{x:Static models:Media.BackglassVideos}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.LaunchAudio}"
-                      Content="{x:Static models:Media.LaunchAudio}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterMediaTypeCommand}" CommandParameter="{x:Static models:Media.WheelImages}"
-                      Content="{x:Static models:Media.WheelImages}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.TableAudio}"
+                      Content="{x:Static models:Content.TableAudio}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.TableVideos}"
+                      Content="{x:Static models:Content.TableVideos}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.BackglassVideos}"
+                      Content="{x:Static models:Content.BackglassVideos}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.LaunchAudio}"
+                      Content="{x:Static models:Content.LaunchAudio}" IsChecked="true" />
+            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.WheelImages}"
+                      Content="{x:Static models:Content.WheelImages}" IsChecked="true" />
           </StackPanel>
         </GroupBox>
 

@@ -10,9 +10,9 @@ namespace ClrVpin.Models
 {
     public class Hit
     {
-        public Hit(string mediaType, string path, HitType type)
+        public Hit(string contentType, string path, HitType type)
         {
-            MediaType = mediaType;
+            ContentType = contentType;
             Path = path;
             File = System.IO.Path.GetFileName(path);
             Size = type == HitType.Missing ? 0 : new FileInfo(path).Length;
@@ -36,7 +36,7 @@ namespace ClrVpin.Models
         public string SizeString { get; }
         public long Size { get; set; }
         public HitType Type { get; }
-        public string MediaType { get; }
+        public string ContentType { get; }
         public string Description { get; }
         public bool IsPresent { get; set; }
 
@@ -61,7 +61,7 @@ namespace ClrVpin.Models
 
         private void CopyPath() => Clipboard.SetText(Path);
 
-        public sealed override string ToString() => $"{MediaType} - {Type.GetDescription()}: {Path}";
+        public sealed override string ToString() => $"{ContentType} - {Type.GetDescription()}: {Path}";
     }
 
     public enum HitType

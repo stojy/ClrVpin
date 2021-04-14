@@ -28,17 +28,17 @@ namespace ClrVpin.Scanner
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
             SearchTextCommand = new ActionCommand(SearchTextChanged);
 
-            ConfigureCheckMediaTypesCommand = new ActionCommand<string>(ConfigureCheckMediaTypes);
+            ConfigureCheckContentTypesCommand = new ActionCommand<string>(ConfigureCheckContentTypes);
             ConfigureCheckHitTypesCommand = new ActionCommand<HitType>(ConfigureCheckHitTypes);
             ConfigureFixHitTypesCommand = new ActionCommand<HitType>(ConfigureFixHitTypes);
 
             FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
-            FilterMediaTypeCommand = new ActionCommand<string>(FilterMediaType);
+            FilterContentTypeCommand = new ActionCommand<string>(FilterContentType);
         }
 
         private const int StatisticsKeyWidth = -30;
 
-        private readonly List<string> _filteredMediaTypes = new List<string>(Media.Types);
+        private readonly List<string> _filteredContentTypes = new List<string>(Content.Types);
         private readonly List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
 
         private readonly MainWindow _mainWindow;
@@ -48,11 +48,11 @@ namespace ClrVpin.Scanner
 
         public ActionCommand<bool> ExpandGamesCommand { get; set; }
         
-        public ActionCommand<string> ConfigureCheckMediaTypesCommand { get; set; }
+        public ActionCommand<string> ConfigureCheckContentTypesCommand { get; set; }
         public ActionCommand<HitType> ConfigureCheckHitTypesCommand { get; set; }
         public ActionCommand<HitType> ConfigureFixHitTypesCommand { get; set; }
         
-        public ActionCommand<string> FilterMediaTypeCommand { get; set; }
+        public ActionCommand<string> FilterContentTypeCommand { get; set; }
         public ActionCommand<HitType> FilterHitTypeCommand { get; set; }
 
         public ObservableCollection<Game> Games { get; set; }
@@ -66,21 +66,21 @@ namespace ClrVpin.Scanner
 
         public string Statistics { get; set; }
 
-        private static void ConfigureCheckMediaTypes(string mediaType) => Config.CheckMediaTypes.Toggle(mediaType);
+        private static void ConfigureCheckContentTypes(string contentType) => Config.CheckContentTypes.Toggle(contentType);
         private static void ConfigureCheckHitTypes(HitType hitType) => Config.CheckHitTypes.Toggle(hitType);
         private static void ConfigureFixHitTypes(HitType hitType) => Config.FixHitTypes.Toggle(hitType);
 
-        private void FilterMediaType(string mediaType)
+        private void FilterContentType(string contentType)
         {
-            _filteredMediaTypes.Toggle(mediaType);
-            Games.ForEach(game => game.Media.SmellyHitsView.Refresh());
+            _filteredContentTypes.Toggle(contentType);
+            Games.ForEach(game => game.Content.SmellyHitsView.Refresh());
             InitSmellyGamesView();
         }
 
         private void FilterHitType(HitType hitType)
         {
             _filteredHitTypes.Toggle(hitType);
-            Games.ForEach(game => game.Media.SmellyHitsView.Refresh());
+            Games.ForEach(game => game.Content.SmellyHitsView.Refresh());
             InitSmellyGamesView();
         }
 
@@ -188,12 +188,14 @@ namespace ClrVpin.Scanner
 
             // todo; retrieve 'missing games' from spreadsheet
 
-            // check the installed media files against those that are registered in the database
+            // check the installed content files against those that are registered in the database
             var unknownFiles = new List<string>();
-            Media.SupportedTypes.ForEach(mediaSetup =>
+            Content.SupportedTypes.ForEach(contentSetup =>
             {
-                var mediaFiles = GetMedia(mediaSetup);
-                var unknownMedia = AddMedia(games, mediaFiles, mediaSetup.GetMediaHits);
+                var mediaFiles = GetMedia(contentSetup);
+                var unknownMedia = AddMedia(games, mediaFiles, contentSetup.GetContentHits);
+
+                // todo; add non-media content, e.g. tables and b2s
 
                 unknownFiles.AddRange(unknownMedia);
             });
@@ -218,14 +220,14 @@ namespace ClrVpin.Scanner
 
         private string CreateHitTypeStatistics()
         {
-            // for every hit type, create stats against every media type
+            // for every hit type, create stats against every content type
             var hitStatistics = Hit.Types.Select(hitType =>
             {
                 var title = $"{hitType.GetDescription()}";
 
                 var contents = string.Join("\n",
-                    Media.Types.Select(type =>
-                        $"- {type,StatisticsKeyWidth + 2}{SmellyGames.Count(g => g.Media.MediaHitsCollection.First(x => x.Type == type).Hits.Any(hit => hit.Type == hitType))}/{Games.Count}"));
+                    Content.Types.Select(type =>
+                        $"- {type,StatisticsKeyWidth + 2}{SmellyGames.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == type).Hits.Any(hit => hit.Type == hitType))}/{Games.Count}"));
                 return $"{title}\n{contents}";
             });
 
@@ -234,22 +236,22 @@ namespace ClrVpin.Scanner
 
         private string CreateTotalStatistics(ICollection unknownFiles)
         {
-            var validHits = Games.SelectMany(x => x.Media.MediaHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitType.Valid).ToList();
+            var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitType.Valid).ToList();
 
             return "\n-----------------------------------------------\n" +
                    $"\n{"Total Games",StatisticsKeyWidth}{Games.Count}" +
                    $"\n{"Unneeded Files",StatisticsKeyWidth}{unknownFiles.Count}" +
-                   $"\n{"Valid Files",StatisticsKeyWidth}{validHits.Count}/{Games.Count * Media.Types.Length} ({(decimal) validHits.Count / (Games.Count * Media.Types.Length):P2})" +
+                   $"\n{"Valid Files",StatisticsKeyWidth}{validHits.Count}/{Games.Count * Content.Types.Length} ({(decimal) validHits.Count / (Games.Count * Content.Types.Length):P2})" +
                    $"\n{"Valid Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(validHits.Sum(x => x.Size)).ToString("#")}" + 
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.Elapsed.TotalSeconds:f2}s";
         }
 
         private void InitSmellyGamesView()
         {
-            SmellyGames = new ObservableCollection<Game>(Games.Where(game => game.Media.SmellyHitsView.Count > 0));
+            SmellyGames = new ObservableCollection<Game>(Games.Where(game => game.Content.SmellyHitsView.Count > 0));
             SmellyGamesView = new ListCollectionView(SmellyGames);
 
-            // filter at games level.. NOT filter at media type or game hit type
+            // filter at games level.. NOT filter at content type or game hit type
             SmellyGamesView.Filter += gameObject =>
             {
                 if (SearchText.Length == 0)
@@ -262,18 +264,18 @@ namespace ClrVpin.Scanner
         {
             games.ForEach(game =>
             {
-                // add missing media
-                game.Media.MediaHitsCollection.ForEach(mediaHitCollection =>
+                // add missing content
+                game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
                 {
-                    if (!mediaHitCollection.Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase))
-                        mediaHitCollection.Add(HitType.Missing, game.Description);
+                    if (!contentHitCollection.Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase))
+                        contentHitCollection.Add(HitType.Missing, game.Description);
                 });
 
-                game.Media.Update(() => _filteredMediaTypes, () => _filteredHitTypes);
+                game.Content.Update(() => _filteredContentTypes, () => _filteredHitTypes);
             });
         }
 
-        private IEnumerable<string> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, MediaHits> getMediaHits)
+        private static IEnumerable<string> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
         {
             var unknownMediaFiles = new List<string>();
 
@@ -286,12 +288,12 @@ namespace ClrVpin.Scanner
                 if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
-                    var mediaHits = getMediaHits(matchedGame);
-                    mediaHits.Add(mediaHits.Hits.Any(hit => hit.Type == HitType.Valid) ? HitType.DuplicateExtension : HitType.Valid, mediaFile);
+                    var contentHits = getContentHits(matchedGame);
+                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitType.Valid) ? HitType.DuplicateExtension : HitType.Valid, mediaFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                 {
-                    getMediaHits(matchedGame).Add(HitType.TableName, mediaFile);
+                    getContentHits(matchedGame).Add(HitType.TableName, mediaFile);
                 }
                 else
                 {
@@ -321,9 +323,9 @@ namespace ClrVpin.Scanner
             return menu.Games;
         }
 
-        private static List<string> GetMedia(MediaType mediaType)
+        private static IEnumerable<string> GetMedia(ContentType contentType)
         {
-            var files = mediaType.Extensions.Select(ext => Directory.GetFiles(mediaType.QualifiedFolder, ext));
+            var files = contentType.Extensions.Select(ext => Directory.GetFiles(contentType.QualifiedFolder, ext));
 
             return files.SelectMany(x => x).ToList();
         }

@@ -10,21 +10,21 @@
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top">
-        <GroupBox Margin="5,5" Padding="0, 5" Header="Media to Scan" DockPanel.Dock="Top">
+        <GroupBox Margin="5,5" Padding="0, 5" Header="Content to Scan" DockPanel.Dock="Top">
           <WrapPanel Margin="5,0">
             <StackPanel>
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.TableAudio}"
-                        Content="{x:Static models:Media.TableAudio}" IsChecked="true" />
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.TableVideos}"
-                        Content="{x:Static models:Media.TableVideos}" IsChecked="true" />
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.LaunchAudio}"
-                        Content="{x:Static models:Media.LaunchAudio}" IsChecked="true" />
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.TableAudio}"
+                        Content="{x:Static models:Content.TableAudio}" IsChecked="true" />
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.TableVideos}"
+                        Content="{x:Static models:Content.TableVideos}" IsChecked="true" />
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.LaunchAudio}"
+                        Content="{x:Static models:Content.LaunchAudio}" IsChecked="true" />
             </StackPanel>
             <StackPanel>
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.BackglassVideos}"
-                        Content="{x:Static models:Media.BackglassVideos}" IsChecked="true" />
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckMediaTypesCommand}" CommandParameter="{x:Static models:Media.WheelImages}"
-                        Content="{x:Static models:Media.WheelImages}" IsChecked="true" />
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.BackglassVideos}"
+                        Content="{x:Static models:Content.BackglassVideos}" IsChecked="true" />
+              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.WheelImages}"
+                        Content="{x:Static models:Content.WheelImages}" IsChecked="true" />
             </StackPanel>
           </WrapPanel>
         </GroupBox>

@@ -2,9 +2,9 @@
 
 namespace ClrVpin.Models
 {
-    public class MediaType
+    public class ContentType
     {
-        public MediaType(string folder, string[] extensions)
+        public ContentType(string folder, string[] extensions)
         {
             (Folder, Extensions) = (folder, extensions);
             var extensionsOnly = extensions.Select(ext => ext.Substring(2)).ToList();
@@ -16,7 +16,7 @@ namespace ClrVpin.Models
 
         public string Folder { get; init; }
         public string[] Extensions { get; init; }
-        public MediaHits GetMediaHits(Game game) => game.Media.MediaHitsCollection.First(mediaHits => mediaHits.Type == Folder);
+        public ContentHits GetContentHits(Game game) => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == Folder);
 
         // todo; support table/b2s path
         public string QualifiedFolder => $@"{Config.VpxFrontendFolder}\Media\Visual Pinball\{Folder}";

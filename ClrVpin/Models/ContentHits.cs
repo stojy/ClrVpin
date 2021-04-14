@@ -4,16 +4,16 @@ using System.Linq;
 
 namespace ClrVpin.Models
 {
-    public class MediaHits
+    public class ContentHits
     {
-        public MediaHits(MediaType mediaType)
+        public ContentHits(ContentType contentType)
         {
-            _mediaType = mediaType;
+            _contentType = contentType;
         }
 
-        private readonly MediaType _mediaType;
+        private readonly ContentType _contentType;
 
-        public string Type => _mediaType.Folder;
+        public string Type => _contentType.Folder;
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
         public bool IsMissing => Hits.Any(hit => hit.Type == HitType.Missing);
@@ -22,9 +22,9 @@ namespace ClrVpin.Models
 
         public void Add(HitType type, string path)
         {
-            // for missing media.. the path is the description, i.e. desirable file name without an extension
+            // for missing content.. the path is the description, i.e. desirable file name without an extension
             if (type == HitType.Missing)
-                path = @$"{_mediaType.QualifiedFolder}\{path}.{_mediaType.ExtensionDetails}";
+                path = @$"{_contentType.QualifiedFolder}\{path}.{_contentType.ExtensionDetails}";
             Hits.Add(new Hit(Type, path, type));
         }
     }
