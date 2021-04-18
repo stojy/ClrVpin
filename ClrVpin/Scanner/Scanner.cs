@@ -15,11 +15,6 @@ using Utils;
 
 namespace ClrVpin.Scanner
 {
-    public class FilteredContentType
-    {
-        public string Description { get; set; }
-    }
-
     [AddINotifyPropertyChangedInterface]
     public class Scanner
     {

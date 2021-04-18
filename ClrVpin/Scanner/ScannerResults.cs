@@ -17,38 +17,37 @@ namespace ClrVpin.Scanner
     {
         public ScannerResults(Window parentWindow, ObservableCollection<Game> games)
         {
-            Games = games;
             _parentWindow = parentWindow;
+
+            Games = games;
 
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
 
-            FilterContentTypeCommand = new ActionCommand<string>(FilterContentType);
+            //FilterContentTypeCommand = new ActionCommand(FilterContentType);
             FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
+
+            _filteredContentTypes = CreateFilteredContentTypes();
+            FilteredContentTypesView = new ListCollectionView(_filteredContentTypes);
+
+            UpdateSmellyStatus(Games);
+            InitSmellyGamesView();
         }
+
+        public ListCollectionView FilteredContentTypesView { get; set; }
 
         public ObservableCollection<Game> Games { get; set; }
         public ListCollectionView SmellyGamesView { get; set; }
         public ObservableCollection<Game> SmellyGames { get; set; }
-        public List<string> FilteredContentTypesView { get; set; }
         public ActionCommand<bool> ExpandGamesCommand { get; set; }
-        public ActionCommand<string> FilterContentTypeCommand { get; set; }
         public ActionCommand<HitType> FilterHitTypeCommand { get; set; }
         public string SearchText { get; set; } = "";
         public ICommand SearchTextCommand { get; set; }
 
         public Window Window { get; set; }
 
-        public List<FilteredContentType> FilteredContentTypes { get; set; }
-
         public void Show()
         {
-            FilteredContentTypes = CreateFilteredContentTypes();
-
-            Update(Games);
-
-            InitSmellyGamesView();
-
             Window = new Window
             {
                 Owner = _parentWindow,
@@ -66,12 +65,15 @@ namespace ClrVpin.Scanner
             Window.Show();
         }
 
-        private static List<FilteredContentType> CreateFilteredContentTypes()
+        private List<FeatureType> CreateFilteredContentTypes()
         {
-            // filtered results content types based on the scanner configuration
-            var filteredContentTypes = Config.CheckContentTypes.Select(x => new FilteredContentType
+            // show all content types, but enabled and active based on the scanner configuration
+            var filteredContentTypes = Content.Types.Select(contentType => new FeatureType
             {
-                Description = x
+                Description = contentType,
+                IsSupported = Config.CheckContentTypes.Contains(contentType),
+                IsActive = Config.CheckContentTypes.Contains(contentType),
+                SelectedCommand = new ActionCommand(() => FilterContentType())
             });
 
             return filteredContentTypes.ToList();
@@ -94,22 +96,19 @@ namespace ClrVpin.Scanner
             _searchTextChangedDelayTimer.Start();
         }
 
-        private void Update(IEnumerable<Game> games)
+        private void UpdateSmellyStatus(IEnumerable<Game> games)
         {
             games.ForEach(game =>
             {
                 // update smelly status
-                game.Content.Update(() => Config.CheckContentTypes, () => _filteredHitTypes);
+                game.Content.Update(() => _filteredContentTypes.Where(x => x.IsActive).Select(x => x.Description), () => _filteredHitTypes);
             });
         }
 
-        private void FilterContentType(string contentType)
+        private void FilterContentType()
         {
-            // _filteredContentTypes.Toggle(contentType);
             Games.ForEach(game => game.Content.SmellyHitsView.Refresh());
-            
-            // todo; don't re-init the entire list!  use similar to search logic
-            InitSmellyGamesView();
+            SmellyGamesView.Refresh();
         }
 
         private void FilterHitType(HitType hitType)
@@ -130,14 +129,19 @@ namespace ClrVpin.Scanner
             SmellyGames = new ObservableCollection<Game>(Games.Where(game => game.Content.SmellyHitsView.Count > 0));
             SmellyGamesView = new ListCollectionView(SmellyGames);
 
-            // filter at games level.. NOT filter at content type or game hit type
+            // text filter
             SmellyGamesView.Filter += gameObject =>
             {
                 if (SearchText.Length == 0)
                     return true;
                 return ((Game) gameObject).Description.ToLower().Contains(SearchText.ToLower());
             };
+
+            // don't display any games that don't have smelly hits - e.g. game smelly hits view filtered out by content and/or hit type
+            SmellyGamesView.Filter += gameObject => ((Game) gameObject).Content.SmellyHitsView.Count > 0;
         }
+
+        private readonly List<FeatureType> _filteredContentTypes;
 
         private readonly List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
 

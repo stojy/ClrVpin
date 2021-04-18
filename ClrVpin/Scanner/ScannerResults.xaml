@@ -14,14 +14,10 @@
     <MenuItem Header="Copy Path" Command="{Binding CopyPathCommand}" />
   </ContextMenu>
 
-  <!--<ContextMenu x:Key="SmellyGameContextMenu">
-    <MenuItem Header="Child - Play Table Audio" Command="{Binding PlayCommand}" />
-  </ContextMenu>-->
-
   <Style x:Key="SmellyGameContentStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}">
     <Setter Property="FontWeight" Value="Normal" />
     <Setter Property="ContextMenu" Value="{StaticResource SmellyGameContentContextMenu}" />
-    <Setter Property="controls:MouseDoubleClick.Command" Value="{Binding OpenFileCommand}"/>
+    <Setter Property="controls:MouseDoubleClick.Command" Value="{Binding OpenFileCommand}" />
 
     <Style.Triggers>
       <Trigger Property="IsSelected" Value="True">
@@ -69,26 +65,13 @@
 
         <GroupBox Margin="5,-10" Padding="5" Header="Content">
           <StackPanel Margin="5,0">
-            <!--todo; use view-->
-            <ItemsControl ItemsSource="{Binding FilteredContentTypes}" BorderThickness="5">
+            <ItemsControl ItemsSource="{Binding FilteredContentTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <!--<TextBlock Text="{Binding}"/>-->
-                  <CheckBox Margin="5,0" Content="{Binding Description}" IsChecked="true" IsEnabled="true" />
+                <DataTemplate DataType="scanner:FeatureType">
+                  <CheckBox Margin="0" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
-
-            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.TableAudio}"
-                      Content="{x:Static models:Content.TableAudio}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.TableVideos}"
-                      Content="{x:Static models:Content.TableVideos}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.BackglassVideos}"
-                      Content="{x:Static models:Content.BackglassVideos}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.LaunchAudio}"
-                      Content="{x:Static models:Content.LaunchAudio}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterContentTypeCommand}" CommandParameter="{x:Static models:Content.WheelImages}"
-                      Content="{x:Static models:Content.WheelImages}" IsChecked="true" />
           </StackPanel>
         </GroupBox>
 
@@ -117,7 +100,7 @@
 
         <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right">
           <TextBlock Text="Total: " />
-          <TextBlock Text="{Binding SmellyGames.Count}" />
+          <TextBlock Text="{Binding SmellyGamesView.Count}" />
           <TextBlock Text=" / " />
           <TextBlock Text="{Binding Games.Count}" />
         </WrapPanel>
@@ -125,7 +108,7 @@
 
       <TreeView ItemsSource="{Binding SmellyGamesView}"
                 ItemTemplate="{StaticResource SmellyGamesItemTemplate}"
-                ItemContainerStyle="{StaticResource SmellyGameStyle}"/>
+                ItemContainerStyle="{StaticResource SmellyGameStyle}" />
     </DockPanel>
   </DataTemplate>
 

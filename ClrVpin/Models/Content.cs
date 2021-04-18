@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
+using ClrVpin.Scanner;
 using Utils;
 
 namespace ClrVpin.Models
@@ -40,14 +41,15 @@ namespace ClrVpin.Models
         public ObservableCollection<Hit> SmellyHits { get; set; }
         public ListCollectionView SmellyHitsView { get; set; }
 
-        public void Update(Func<IEnumerable<string>> getFilteredContent, Func<IEnumerable<HitType>> getFilteredHitTypes)
+        public void Update(Func<IEnumerable<string>> getFilteredContentTypes, Func<IEnumerable<HitType>> getFilteredHitTypes)
         {
             // standard properties to avoid cost of recalculating getters during every request (e.g. wpf bindings)
             IsSmelly = ContentHitsCollection.Any(contentHits => contentHits.IsSmelly);
             SmellyHits = new ObservableCollection<Hit>(ContentHitsCollection.SelectMany(contentHits => contentHits.SmellyHits).ToList());
             SmellyHitsView = new ListCollectionView(SmellyHits)
             {
-                Filter = hitObject => getFilteredContent().Contains(((Hit) hitObject).ContentType) && getFilteredHitTypes().Contains(((Hit) hitObject).Type)
+                Filter = hitObject => getFilteredContentTypes().Contains(((Hit) hitObject).ContentType) &&
+                                      getFilteredHitTypes().Contains(((Hit) hitObject).Type)
             };
         }
     }
