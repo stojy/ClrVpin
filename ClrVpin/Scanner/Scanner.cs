@@ -240,7 +240,6 @@ namespace ClrVpin.Scanner
             return files.SelectMany(x => x).ToList();
         }
 
-
         private readonly MainWindow _parentWindow;
         private Window _scannerWindow;
         private Stopwatch _scanStopWatch;

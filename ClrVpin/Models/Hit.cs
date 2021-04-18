@@ -29,7 +29,7 @@ namespace ClrVpin.Models
             CopyPathCommand = new ActionCommand(CopyPath);
         }
 
-        public static HitType[] Types = {HitType.TableName, HitType.Fuzzy, HitType.WrongCase, HitType.DuplicateExtension, HitType.Missing};
+        public static HitType[] Types = {HitType.Missing, HitType.TableName, HitType.DuplicateExtension, HitType.WrongCase, HitType.Fuzzy};
 
         public string Path { get; }
         public string File { get; }

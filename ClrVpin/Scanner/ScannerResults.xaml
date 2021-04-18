@@ -75,18 +75,15 @@
           </StackPanel>
         </GroupBox>
 
-        <GroupBox Margin="5,-10" Padding="0,5" Header="Criteria">
-          <StackPanel>
-            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.Missing}"
-                      Content="{Binding Source={x:Static models:HitType.Missing}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.TableName}"
-                      Content="{Binding Source={x:Static models:HitType.TableName}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.DuplicateExtension}"
-                      Content="{Binding Source={x:Static models:HitType.DuplicateExtension}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.WrongCase}"
-                      Content="{Binding Source={x:Static models:HitType.WrongCase}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
-            <CheckBox Margin="5,0" Command="{Binding FilterHitTypeCommand}" CommandParameter="{x:Static models:HitType.Fuzzy}"
-                      Content="{Binding Source={x:Static models:HitType.Fuzzy}, Converter={StaticResource HitTypeDescriptionConverter}}" IsChecked="true" />
+        <GroupBox Margin="5,-10" Padding="0,5" Header="Check Criteria">
+          <StackPanel Margin="5,0">
+            <ItemsControl ItemsSource="{Binding FilteredHitTypesView}" BorderThickness="5">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="scanner:FeatureType">
+                  <CheckBox Margin="0" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
           </StackPanel>
         </GroupBox>
 

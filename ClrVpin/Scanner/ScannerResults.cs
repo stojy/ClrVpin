@@ -24,23 +24,24 @@ namespace ClrVpin.Scanner
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
 
-            //FilterContentTypeCommand = new ActionCommand(FilterContentType);
-            FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
-
             _filteredContentTypes = CreateFilteredContentTypes();
-            FilteredContentTypesView = new ListCollectionView(_filteredContentTypes);
+            FilteredContentTypesView = new ListCollectionView(_filteredContentTypes.ToList());
+
+            _filteredHitTypes = CreateFilteredHitTypes();
+            FilteredHitTypesView = new ListCollectionView(_filteredHitTypes.ToList());
 
             UpdateSmellyStatus(Games);
             InitSmellyGamesView();
         }
 
-        public ListCollectionView FilteredContentTypesView { get; set; }
-
         public ObservableCollection<Game> Games { get; set; }
+
+        public ListCollectionView FilteredContentTypesView { get; set; }
+        public ListCollectionView FilteredHitTypesView { get; set; }
         public ListCollectionView SmellyGamesView { get; set; }
         public ObservableCollection<Game> SmellyGames { get; set; }
+
         public ActionCommand<bool> ExpandGamesCommand { get; set; }
-        public ActionCommand<HitType> FilterHitTypeCommand { get; set; }
         public string SearchText { get; set; } = "";
         public ICommand SearchTextCommand { get; set; }
 
@@ -65,18 +66,32 @@ namespace ClrVpin.Scanner
             Window.Show();
         }
 
-        private List<FeatureType> CreateFilteredContentTypes()
+        private IEnumerable<FeatureType> CreateFilteredHitTypes()
         {
-            // show all content types, but enabled and active based on the scanner configuration
+            // show all hit types, but assign enabled and active based on the scanner configuration
+            var filteredContentTypes = Hit.Types.Select(hitType => new FeatureType
+            {
+                Description = hitType.GetDescription(),
+                IsSupported = Config.CheckHitTypes.Contains(hitType),
+                IsActive = Config.CheckHitTypes.Contains(hitType),
+                SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
+            });
+
+            return filteredContentTypes.ToList();
+        }
+
+        private IEnumerable<FeatureType> CreateFilteredContentTypes()
+        {
+            // show all content types, but assign enabled and active based on the scanner configuration
             var filteredContentTypes = Content.Types.Select(contentType => new FeatureType
             {
                 Description = contentType,
                 IsSupported = Config.CheckContentTypes.Contains(contentType),
                 IsActive = Config.CheckContentTypes.Contains(contentType),
-                SelectedCommand = new ActionCommand(() => FilterContentType())
+                SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
             });
 
-            return filteredContentTypes.ToList();
+            return filteredContentTypes;
         }
 
         private void SearchTextChanged()
@@ -100,22 +115,17 @@ namespace ClrVpin.Scanner
         {
             games.ForEach(game =>
             {
-                // update smelly status
-                game.Content.Update(() => _filteredContentTypes.Where(x => x.IsActive).Select(x => x.Description), () => _filteredHitTypes);
+                // update smelly status of each game based AND filter the view based on the selected content and/or hit criteria
+                game.Content.Update(
+                    () => _filteredContentTypes.Where(x => x.IsActive).Select(x => x.Description),
+                    () => _filteredHitTypes.Where(x => x.IsActive).Select(x => x.Description));
             });
         }
 
-        private void FilterContentType()
+        private void UpdateSmellyHitsView()
         {
             Games.ForEach(game => game.Content.SmellyHitsView.Refresh());
             SmellyGamesView.Refresh();
-        }
-
-        private void FilterHitType(HitType hitType)
-        {
-            _filteredHitTypes.Toggle(hitType);
-            Games.ForEach(game => game.Content.SmellyHitsView.Refresh());
-            InitSmellyGamesView();
         }
 
         private void ExpandItems(bool expand)
@@ -141,9 +151,8 @@ namespace ClrVpin.Scanner
             SmellyGamesView.Filter += gameObject => ((Game) gameObject).Content.SmellyHitsView.Count > 0;
         }
 
-        private readonly List<FeatureType> _filteredContentTypes;
-
-        private readonly List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
+        private readonly IEnumerable<FeatureType> _filteredContentTypes;
+        private readonly IEnumerable<FeatureType> _filteredHitTypes;
 
         private readonly Window _parentWindow;
         private DispatcherTimer _searchTextChangedDelayTimer;
