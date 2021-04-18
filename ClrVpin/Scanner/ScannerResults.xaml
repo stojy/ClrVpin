@@ -5,8 +5,7 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:scanner="clr-namespace:ClrVpin.Scanner"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:scanner="clr-namespace:ClrVpin.Scanner">
 
 
   <ContextMenu x:Key="SmellyGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
@@ -55,7 +54,7 @@
 
   <models:HitTypeDescriptionConverter x:Key="HitTypeDescriptionConverter" />
 
-  <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:Scanner}">
+  <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:ScannerResults}">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top" Margin="10">
         <TextBlock>Search:</TextBlock>
@@ -70,11 +69,12 @@
 
         <GroupBox Margin="5,-10" Padding="5" Header="Content">
           <StackPanel Margin="5,0">
+            <!--todo; use view-->
             <ItemsControl ItemsSource="{Binding FilteredContentTypes}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="system:String">
+                <DataTemplate>
                   <!--<TextBlock Text="{Binding}"/>-->
-                  <CheckBox Margin="5,0" Content="{Binding}" IsChecked="true" IsEnabled="true" />
+                  <CheckBox Margin="5,0" Content="{Binding Description}" IsChecked="true" IsEnabled="true" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -6,9 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Threading;
 using System.Xml.Linq;
 using ByteSizeLib;
 using ClrVpin.Models;
@@ -17,145 +15,65 @@ using Utils;
 
 namespace ClrVpin.Scanner
 {
+    public class FilteredContentType
+    {
+        public string Description { get; set; }
+    }
+
     [AddINotifyPropertyChangedInterface]
     public class Scanner
     {
-        public Scanner(MainWindow mainWindow)
+        public Scanner(MainWindow parentWindow)
         {
-            _mainWindow = mainWindow;
+            _parentWindow = parentWindow;
 
             StartCommand = new ActionCommand(Start);
-            ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
-            SearchTextCommand = new ActionCommand(SearchTextChanged);
 
             ConfigureCheckContentTypesCommand = new ActionCommand<string>(ConfigureCheckContentTypes);
             ConfigureCheckHitTypesCommand = new ActionCommand<HitType>(ConfigureCheckHitTypes);
             ConfigureFixHitTypesCommand = new ActionCommand<HitType>(ConfigureFixHitTypes);
-
-            FilterContentTypeCommand = new ActionCommand<string>(FilterContentType);
-            FilterHitTypeCommand = new ActionCommand<HitType>(FilterHitType);
-
-            // todo; build list based on config with bindings
-            FilteredContentTypes = new List<string>(Content.Types);
         }
 
-        private const int StatisticsKeyWidth = -30;
-
-        public List<string> FilteredContentTypes { get; }
-        private List<HitType> _filteredHitTypes = new List<HitType>(Hit.Types);
-
-        public List<string> FilteredContentTypesView { get; set; }
-
-        private readonly MainWindow _mainWindow;
-        private DispatcherTimer _searchTextChangedDelayTimer;
-        private Stopwatch _scanStopWatch;
-        private Window _scannerWindow;
-
-        public ActionCommand<bool> ExpandGamesCommand { get; set; }
-        
         public ActionCommand<string> ConfigureCheckContentTypesCommand { get; set; }
         public ActionCommand<HitType> ConfigureCheckHitTypesCommand { get; set; }
         public ActionCommand<HitType> ConfigureFixHitTypesCommand { get; set; }
-        
-        public ActionCommand<string> FilterContentTypeCommand { get; set; }
-        public ActionCommand<HitType> FilterHitTypeCommand { get; set; }
-
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
-        public ListCollectionView SmellyGamesView { get; set; }
-        public ObservableCollection<Game> SmellyGames { get; set; }
-
-        public string SearchText { get; set; } = "";
-
-        public ICommand SearchTextCommand { get; set; }
-
         public string Statistics { get; set; }
-
-        private static void ConfigureCheckContentTypes(string contentType) => Config.CheckContentTypes.Toggle(contentType);
-        private static void ConfigureCheckHitTypes(HitType hitType) => Config.CheckHitTypes.Toggle(hitType);
-        private static void ConfigureFixHitTypes(HitType hitType) => Config.FixHitTypes.Toggle(hitType);
-
-        private void FilterContentType(string contentType)
-        {
-           // _filteredContentTypes.Toggle(contentType);
-            Games.ForEach(game => game.Content.SmellyHitsView.Refresh());
-            InitSmellyGamesView();
-        }
-
-        private void FilterHitType(HitType hitType)
-        {
-            _filteredHitTypes.Toggle(hitType);
-            Games.ForEach(game => game.Content.SmellyHitsView.Refresh());
-            InitSmellyGamesView();
-        }
-
-        private void ExpandItems(bool expand)
-        {
-            SmellyGames.ForEach(game => game.IsExpanded = expand);
-            SmellyGamesView.Refresh();
-        }
-
-        private void SearchTextChanged()
-        {
-            // delay processing text changed
-            if (_searchTextChangedDelayTimer == null)
-            {
-                _searchTextChangedDelayTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(300)};
-                _searchTextChangedDelayTimer.Tick += (_, _) =>
-                {
-                    SmellyGamesView.Refresh();
-                    _searchTextChangedDelayTimer.Stop();
-                };
-            }
-
-            _searchTextChangedDelayTimer.Stop(); // Resets the timer
-            _searchTextChangedDelayTimer.Start();
-        }
 
         public void Show()
         {
             _scannerWindow = new Window
             {
-                Owner = _mainWindow,
+                Owner = _parentWindow,
                 Title = "Scanner",
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
-                ContentTemplate = _mainWindow.FindResource("ScannerTemplate") as DataTemplate
+                ContentTemplate = _parentWindow.FindResource("ScannerTemplate") as DataTemplate
             };
             _scannerWindow.Show();
 
-            _mainWindow.Hide();
-            _scannerWindow.Closed += (_, _) => _mainWindow.Show();
+            _parentWindow.Hide();
+            _scannerWindow.Closed += (_, _) => _parentWindow.Show();
         }
 
         public void ShowResults()
         {
-            var resultsWindow = new Window
-            {
-                Owner = _scannerWindow,
-                Title = "Scanner Results",
-                Left = 10,
-                Top = 10,
-                SizeToContent = SizeToContent.Width,
-                MinWidth = 400,
-                Height = 500,
-                Content = this,
-                ContentTemplate = _mainWindow.FindResource("ScannerResultsTemplate") as DataTemplate
-            };
-            resultsWindow.Show();
+            var scannerResults = new ScannerResults(_scannerWindow, Games);
+            scannerResults.Show();
 
             var statisticsWindow = new Window
             {
                 Owner = _scannerWindow,
                 Title = "Scanner Statistics",
-                Left = resultsWindow.Left,
-                Top = resultsWindow.Top + resultsWindow.Height + 10,
+                Left = scannerResults.Window.Left,
+                Top = scannerResults.Window.Top + scannerResults.Window.Height + 10,
                 SizeToContent = SizeToContent.Width,
                 MinWidth = 400,
                 Height = 650,
                 Content = this,
-                ContentTemplate = _mainWindow.FindResource("ScannerStatisticsTemplate") as DataTemplate
+                ContentTemplate = _parentWindow.FindResource("ScannerStatisticsTemplate") as DataTemplate
             };
             statisticsWindow.Show();
 
@@ -163,19 +81,19 @@ namespace ClrVpin.Scanner
             {
                 Owner = _scannerWindow,
                 Title = "Scanner Explorer",
-                Left = resultsWindow.Left + resultsWindow.Width + 5,
-                Top = resultsWindow.Top,
+                Left = scannerResults.Window.Left + scannerResults.Window.Width + 5,
+                Top = scannerResults.Window.Top,
                 SizeToContent = SizeToContent.Height,
                 MinHeight = 500,
                 MaxHeight = 1200,
                 MinWidth = 400,
                 Content = this,
-                ContentTemplate = _mainWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
+                ContentTemplate = _parentWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
             };
             explorerWindow.Show();
 
             _scannerWindow.Hide();
-            resultsWindow.Closed += (_, _) =>
+            scannerResults.Window.Closed += (_, _) =>
             {
                 statisticsWindow.Close();
                 explorerWindow.Close();
@@ -183,9 +101,13 @@ namespace ClrVpin.Scanner
             };
         }
 
+        private static void ConfigureCheckContentTypes(string contentType) => Config.CheckContentTypes.Toggle(contentType);
+        private static void ConfigureCheckHitTypes(HitType hitType) => Config.CheckHitTypes.Toggle(hitType);
+        private static void ConfigureFixHitTypes(HitType hitType) => Config.FixHitTypes.Toggle(hitType);
+
         private void Start()
         {
-            ShowResults();
+            // todo; show progress bar
 
             _scanStopWatch = Stopwatch.StartNew();
 
@@ -210,10 +132,10 @@ namespace ClrVpin.Scanner
 
             Games = new ObservableCollection<Game>(games);
 
-            InitSmellyGamesView();
 
             _scanStopWatch.Stop();
-            
+
+            ShowResults();
             CreateStatistics(unknownFiles);
         }
 
@@ -231,9 +153,12 @@ namespace ClrVpin.Scanner
             {
                 var title = $"{hitType.GetDescription()}";
 
+                //var contents = string.Join("\n",
+                //    Content.Types.Select(type =>
+                //        $"- {type,StatisticsKeyWidth + 2}{SmellyGames.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == type).Hits.Any(hit => hit.Type == hitType))}/{Games.Count}"));
                 var contents = string.Join("\n",
                     Content.Types.Select(type =>
-                        $"- {type,StatisticsKeyWidth + 2}{SmellyGames.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == type).Hits.Any(hit => hit.Type == hitType))}/{Games.Count}"));
+                        $"- {type,StatisticsKeyWidth + 2}{Games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == type).Hits.Any(hit => hit.Type == hitType))}/{Games.Count}"));
                 return $"{title}\n{contents}";
             });
 
@@ -248,22 +173,8 @@ namespace ClrVpin.Scanner
                    $"\n{"Total Games",StatisticsKeyWidth}{Games.Count}" +
                    $"\n{"Unneeded Files",StatisticsKeyWidth}{unknownFiles.Count}" +
                    $"\n{"Valid Files",StatisticsKeyWidth}{validHits.Count}/{Games.Count * Content.Types.Length} ({(decimal) validHits.Count / (Games.Count * Content.Types.Length):P2})" +
-                   $"\n{"Valid Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(validHits.Sum(x => x.Size)).ToString("#")}" + 
+                   $"\n{"Valid Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(validHits.Sum(x => x.Size)).ToString("#")}" +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.Elapsed.TotalSeconds:f2}s";
-        }
-
-        private void InitSmellyGamesView()
-        {
-            SmellyGames = new ObservableCollection<Game>(Games.Where(game => game.Content.SmellyHitsView.Count > 0));
-            SmellyGamesView = new ListCollectionView(SmellyGames);
-
-            // filter at games level.. NOT filter at content type or game hit type
-            SmellyGamesView.Filter += gameObject =>
-            {
-                if (SearchText.Length == 0)
-                    return true;
-                return ((Game) gameObject).Description.ToLower().Contains(SearchText.ToLower());
-            };
         }
 
         private void Update(List<Game> games)
@@ -276,8 +187,6 @@ namespace ClrVpin.Scanner
                     if (!contentHitCollection.Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase))
                         contentHitCollection.Add(HitType.Missing, game.Description);
                 });
-
-                game.Content.Update(() => FilteredContentTypes, () => _filteredHitTypes);
             });
         }
 
@@ -335,5 +244,11 @@ namespace ClrVpin.Scanner
 
             return files.SelectMany(x => x).ToList();
         }
+
+
+        private readonly MainWindow _parentWindow;
+        private Window _scannerWindow;
+        private Stopwatch _scanStopWatch;
+        private const int StatisticsKeyWidth = -30;
     }
 }
