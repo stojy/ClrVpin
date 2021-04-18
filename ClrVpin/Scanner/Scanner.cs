@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
-using ByteSizeLib;
 using ClrVpin.Models;
 using PropertyChanged;
 using Utils;
@@ -34,7 +32,6 @@ namespace ClrVpin.Scanner
         public ActionCommand<HitType> ConfigureFixHitTypesCommand { get; set; }
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
-        public string Statistics { get; set; }
 
         public void Show()
         {
@@ -58,19 +55,9 @@ namespace ClrVpin.Scanner
             var scannerResults = new ScannerResults(_scannerWindow, Games);
             scannerResults.Show();
 
-            var statisticsWindow = new Window
-            {
-                Owner = _scannerWindow,
-                Title = "Scanner Statistics",
-                Left = scannerResults.Window.Left,
-                Top = scannerResults.Window.Top + scannerResults.Window.Height + 10,
-                SizeToContent = SizeToContent.Width,
-                MinWidth = 400,
-                Height = 650,
-                Content = this,
-                ContentTemplate = _parentWindow.FindResource("ScannerStatisticsTemplate") as DataTemplate
-            };
-            statisticsWindow.Show();
+
+            var scannerStatistics = new ScannerStatistics(Games, _scanStopWatch, _unknownFiles);
+            scannerStatistics.Show(_scannerWindow, scannerResults.Window);
 
             var explorerWindow = new Window
             {
@@ -90,7 +77,7 @@ namespace ClrVpin.Scanner
             _scannerWindow.Hide();
             scannerResults.Window.Closed += (_, _) =>
             {
-                statisticsWindow.Close();
+                scannerStatistics.Close();
                 explorerWindow.Close();
                 _scannerWindow.Show();
             };
@@ -111,7 +98,7 @@ namespace ClrVpin.Scanner
             // todo; retrieve 'missing games' from spreadsheet
 
             // check the installed content files against those that are registered in the database
-            var unknownFiles = new List<string>();
+            _unknownFiles = new List<string>();
             var checkContentTypes = Content.SupportedTypes.Where(type => Config.CheckContentTypes.Contains(type.Type));
             checkContentTypes.ForEach(contentSetup =>
             {
@@ -119,57 +106,17 @@ namespace ClrVpin.Scanner
                 var unknownMedia = AddMedia(games, mediaFiles, contentSetup.GetContentHits);
 
                 // todo; add non-media content, e.g. tables and b2s
-
-                unknownFiles.AddRange(unknownMedia);
+                
+                _unknownFiles.AddRange(unknownMedia);
             });
 
             Update(games);
 
             Games = new ObservableCollection<Game>(games);
 
-
             _scanStopWatch.Stop();
 
             ShowResults();
-            CreateStatistics(unknownFiles);
-        }
-
-        private void CreateStatistics(ICollection unknownFiles)
-        {
-            Statistics =
-                $"{CreateHitTypeStatistics()}\n" +
-                $"{CreateTotalStatistics(unknownFiles)}";
-        }
-
-        private string CreateHitTypeStatistics()
-        {
-            // for every hit type, create stats against every content type
-            var hitStatistics = Hit.Types.Select(hitType =>
-            {
-                var title = $"{hitType.GetDescription()}";
-
-                //var contents = string.Join("\n",
-                //    Content.Types.Select(type =>
-                //        $"- {type,StatisticsKeyWidth + 2}{SmellyGames.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == type).Hits.Any(hit => hit.Type == hitType))}/{Games.Count}"));
-                var contents = string.Join("\n",
-                    Content.Types.Select(type =>
-                        $"- {type,StatisticsKeyWidth + 2}{Games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == type).Hits.Any(hit => hit.Type == hitType))}/{Games.Count}"));
-                return $"{title}\n{contents}";
-            });
-
-            return $"{string.Join("\n\n", hitStatistics)}";
-        }
-
-        private string CreateTotalStatistics(ICollection unknownFiles)
-        {
-            var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitType.Valid).ToList();
-
-            return "\n-----------------------------------------------\n" +
-                   $"\n{"Total Games",StatisticsKeyWidth}{Games.Count}" +
-                   $"\n{"Unneeded Files",StatisticsKeyWidth}{unknownFiles.Count}" +
-                   $"\n{"Valid Files",StatisticsKeyWidth}{validHits.Count}/{Games.Count * Content.Types.Length} ({(decimal) validHits.Count / (Games.Count * Content.Types.Length):P2})" +
-                   $"\n{"Valid Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(validHits.Sum(x => x.Size)).ToString("#")}" +
-                   $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.Elapsed.TotalSeconds:f2}s";
         }
 
         private void Update(List<Game> games)
@@ -243,6 +190,6 @@ namespace ClrVpin.Scanner
         private readonly MainWindow _parentWindow;
         private Window _scannerWindow;
         private Stopwatch _scanStopWatch;
-        private const int StatisticsKeyWidth = -30;
+        private List<string> _unknownFiles;
     }
 }
