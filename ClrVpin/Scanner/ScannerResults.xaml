@@ -75,7 +75,7 @@
           </StackPanel>
         </GroupBox>
 
-        <GroupBox Margin="5,-10" Padding="0,5" Header="Check Criteria">
+        <GroupBox Margin="5,-10" Padding="0,5" Header="Criteria">
           <StackPanel Margin="5,0">
             <ItemsControl ItemsSource="{Binding FilteredHitTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>

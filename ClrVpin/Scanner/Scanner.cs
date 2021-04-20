@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
 using ClrVpin.Models;
+using NLog;
 using PropertyChanged;
 using Utils;
 
@@ -53,7 +54,7 @@ namespace ClrVpin.Scanner
             _scannerWindow.Closed += (_, _) => _parentWindow.Show();
         }
 
-        public void ShowResults()
+        private void ShowResults()
         {
             var scannerResults = new ScannerResults(_scannerWindow, Games);
             scannerResults.Show();
@@ -127,9 +128,20 @@ namespace ClrVpin.Scanner
             var games = GetDatabase();
 
             // todo; retrieve 'missing games' from spreadsheet
+            
+            Check(games);
+            
+            Fix(games);
 
-            _unknownFiles = new List<Tuple<string, long>>();
+            Games = new ObservableCollection<Game>(games);
 
+            _scanStopWatch.Stop();
+
+            ShowResults();
+        }
+
+        private void Check(List<Game> games)
+        {
             // for the configured content types only.. check the installed content files against those specified in the database
             var checkContentTypes = Content.SupportedTypes.Where(type => Config.CheckContentTypes.Contains(type.Type));
             checkContentTypes.ForEach(contentSetup =>
@@ -142,16 +154,42 @@ namespace ClrVpin.Scanner
                 _unknownFiles.AddRange(unknownMedia);
             });
 
-            Update(games);
-
-            Games = new ObservableCollection<Game>(games);
-
-            _scanStopWatch.Stop();
-
-            ShowResults();
+            CheckMissing(games);
         }
 
-        private static void Update(List<Game> games)
+        private static void Fix(List<Game> games)
+        {
+            games.ForEach(game =>
+            {
+                game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
+                {
+                    if (contentHitCollection.Hits.Any(hit => hit.Type == HitType.Valid))
+                    {
+                        // all hit files can be deleted :)
+                        contentHitCollection.Hits.Where(hit => hit.Type != HitType.Valid).ForEach(hit =>
+                        {
+                            switch (hit.Type)
+                            {
+                                case HitType.DuplicateExtension:
+                                case HitType.Fuzzy:
+                                case HitType.TableName:
+                                case HitType.WrongCase:
+                                    Delete(hit);
+                                    break;
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        private static void Delete(Hit hit)
+        {
+            if (Config.FixHitTypes.Contains(hit.Type))
+                Logger.Info($"deleting: type={hit.Type}, content={hit.ContentType}, path={hit.Path}");
+        }
+
+        private static void CheckMissing(List<Game> games)
         {
             games.ForEach(game =>
             {
@@ -225,6 +263,8 @@ namespace ClrVpin.Scanner
         private readonly MainWindow _parentWindow;
         private Window _scannerWindow;
         private Stopwatch _scanStopWatch;
-        private List<Tuple<string, long>> _unknownFiles;
+        private readonly List<Tuple<string, long>> _unknownFiles = new List<Tuple<string, long>>();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
     }
 }
