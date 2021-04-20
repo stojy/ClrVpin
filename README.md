@@ -1,10 +1,10 @@
 # ClrVpin
-Virtual Pinball Content Management.
+WIP
 
+Virtual Pinball content management.
 - Tables
 - Backglasses
 - Video
 - Audio
 - Wheels
-
-WIP
+- etc
