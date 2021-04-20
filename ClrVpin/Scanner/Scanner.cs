@@ -59,20 +59,8 @@ namespace ClrVpin.Scanner
             var scannerStatistics = new ScannerStatistics(Games, _scanStopWatch, _unknownFiles);
             scannerStatistics.Show(_scannerWindow, scannerResults.Window);
 
-            var explorerWindow = new Window
-            {
-                Owner = _scannerWindow,
-                Title = "Scanner Explorer",
-                Left = scannerResults.Window.Left + scannerResults.Window.Width + 5,
-                Top = scannerResults.Window.Top,
-                SizeToContent = SizeToContent.Height,
-                MinHeight = 500,
-                MaxHeight = 1200,
-                MinWidth = 400,
-                Content = this,
-                ContentTemplate = _parentWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
-            };
-            explorerWindow.Show();
+            var explorerWindow = new ScannerExplorer(Games);
+            explorerWindow.Show(_scannerWindow, scannerResults.Window);
 
             _scannerWindow.Hide();
             scannerResults.Window.Closed += (_, _) =>
