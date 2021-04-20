@@ -1,7 +1,9 @@
 ﻿using System.Windows.Input;
+using PropertyChanged;
 
 namespace ClrVpin.Scanner
 {
+    [AddINotifyPropertyChangedInterface]
     public class FeatureType
     {
         public string Description { get; set; }

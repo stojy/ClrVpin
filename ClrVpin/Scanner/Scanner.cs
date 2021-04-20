@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
 using ClrVpin.Models;
@@ -21,15 +22,17 @@ namespace ClrVpin.Scanner
             _parentWindow = parentWindow;
 
             StartCommand = new ActionCommand(Start);
-
             ConfigureCheckContentTypesCommand = new ActionCommand<string>(ConfigureCheckContentTypes);
-            ConfigureCheckHitTypesCommand = new ActionCommand<HitType>(ConfigureCheckHitTypes);
-            ConfigureFixHitTypesCommand = new ActionCommand<HitType>(ConfigureFixHitTypes);
+
+            CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
+            _fixHitTypes = CreateFixHitTypes();
+            FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
         }
 
+        public ListCollectionView CheckHitTypesView { get; set; }
+        public ListCollectionView FixHitTypesView { get; set; }
+
         public ActionCommand<string> ConfigureCheckContentTypesCommand { get; set; }
-        public ActionCommand<HitType> ConfigureCheckHitTypesCommand { get; set; }
-        public ActionCommand<HitType> ConfigureFixHitTypesCommand { get; set; }
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
 
@@ -44,8 +47,8 @@ namespace ClrVpin.Scanner
                 Content = this,
                 ContentTemplate = _parentWindow.FindResource("ScannerTemplate") as DataTemplate
             };
-            _scannerWindow.Show();
 
+            _scannerWindow.Show();
             _parentWindow.Hide();
             _scannerWindow.Closed += (_, _) => _parentWindow.Show();
         }
@@ -54,7 +57,6 @@ namespace ClrVpin.Scanner
         {
             var scannerResults = new ScannerResults(_scannerWindow, Games);
             scannerResults.Show();
-
 
             var scannerStatistics = new ScannerStatistics(Games, _scanStopWatch, _unknownFiles);
             scannerStatistics.Show(_scannerWindow, scannerResults.Window);
@@ -71,9 +73,50 @@ namespace ClrVpin.Scanner
             };
         }
 
+        private IEnumerable<FeatureType> CreateCheckHitTypes()
+        {
+            // show all hit types
+            var contentTypes = Hit.Types.Select(hitType =>
+            {
+                var featureType = new FeatureType
+                {
+                    Description = hitType.GetDescription(),
+                    IsSupported = true,
+                    IsActive = true
+                };
+
+                featureType.SelectedCommand = new ActionCommand(() =>
+                {
+                    Config.CheckHitTypes.Toggle(hitType);
+
+                    // toggle the fix hit type checked & enabled
+                    var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
+                    fixHitType.IsSupported = featureType.IsActive;
+                    if (!featureType.IsActive)
+                        fixHitType.IsActive = false;
+                });
+
+                return featureType;
+            });
+
+            return contentTypes.ToList();
+        }
+
+        private static IEnumerable<FeatureType> CreateFixHitTypes()
+        {
+            // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
+            var contentTypes = Hit.Types.Select(hitType => new FeatureType
+            {
+                Description = hitType.GetDescription(),
+                IsSupported = true,
+                IsActive = true,
+                SelectedCommand = new ActionCommand(() => Config.FixHitTypes.Toggle(hitType))
+            });
+
+            return contentTypes.ToList();
+        }
+
         private static void ConfigureCheckContentTypes(string contentType) => Config.CheckContentTypes.Toggle(contentType);
-        private static void ConfigureCheckHitTypes(HitType hitType) => Config.CheckHitTypes.Toggle(hitType);
-        private static void ConfigureFixHitTypes(HitType hitType) => Config.FixHitTypes.Toggle(hitType);
 
         private void Start()
         {
@@ -86,7 +129,7 @@ namespace ClrVpin.Scanner
             // todo; retrieve 'missing games' from spreadsheet
 
             _unknownFiles = new List<Tuple<string, long>>();
-            
+
             // for the configured content types only.. check the installed content files against those specified in the database
             var checkContentTypes = Content.SupportedTypes.Where(type => Config.CheckContentTypes.Contains(type.Type));
             checkContentTypes.ForEach(contentSetup =>
@@ -95,7 +138,7 @@ namespace ClrVpin.Scanner
                 var unknownMedia = AddMedia(games, mediaFiles, contentSetup.GetContentHits);
 
                 // todo; add non-media content, e.g. tables and b2s
-                
+
                 _unknownFiles.AddRange(unknownMedia);
             });
 
@@ -108,7 +151,7 @@ namespace ClrVpin.Scanner
             ShowResults();
         }
 
-        private void Update(List<Game> games)
+        private static void Update(List<Game> games)
         {
             games.ForEach(game =>
             {
@@ -140,18 +183,14 @@ namespace ClrVpin.Scanner
                     var contentHits = getContentHits(matchedGame);
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitType.Valid) ? HitType.DuplicateExtension : HitType.Valid, mediaFile);
                 }
-                if ((matchedGame = games.FirstOrDefault(game => string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
-                {
+
+                if ((matchedGame = games.FirstOrDefault(game =>
+                    string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                     getContentHits(matchedGame).Add(HitType.WrongCase, mediaFile);
-                }
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                {
                     getContentHits(matchedGame).Add(HitType.TableName, mediaFile);
-                }
                 else
-                {
                     unknownMediaFiles.Add(new Tuple<string, long>(mediaFile, new FileInfo(mediaFile).Length));
-                }
             });
 
             return unknownMediaFiles;
@@ -182,6 +221,7 @@ namespace ClrVpin.Scanner
             return files.SelectMany(x => x).ToList();
         }
 
+        private readonly IEnumerable<FeatureType> _fixHitTypes;
         private readonly MainWindow _parentWindow;
         private Window _scannerWindow;
         private Stopwatch _scanStopWatch;
