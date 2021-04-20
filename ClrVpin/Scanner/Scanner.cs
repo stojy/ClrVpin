@@ -97,8 +97,9 @@ namespace ClrVpin.Scanner
 
             // todo; retrieve 'missing games' from spreadsheet
 
-            // check the installed content files against those that are registered in the database
-            _unknownFiles = new List<string>();
+            _unknownFiles = new List<Tuple<string, long>>();
+            
+            // for the configured content types only.. check the installed content files against those specified in the database
             var checkContentTypes = Content.SupportedTypes.Where(type => Config.CheckContentTypes.Contains(type.Type));
             checkContentTypes.ForEach(contentSetup =>
             {
@@ -132,21 +133,28 @@ namespace ClrVpin.Scanner
             });
         }
 
-        private static IEnumerable<string> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
+        private static IEnumerable<Tuple<string, long>> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
         {
-            var unknownMediaFiles = new List<string>();
+            var unknownMediaFiles = new List<Tuple<string, long>>();
 
             mediaFiles.ForEach(mediaFile =>
             {
                 Game matchedGame;
 
-                // check for hit.. only 1 hit per file, so order is important!
-                // todo; fuzzy match.. e.g. partial matches, etc.
+                // check for hit..
+                // - skip hit types that aren't configured
+                // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
+                // - todo; fuzzy match.. e.g. partial matches, etc.
                 if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
+                    // - file extension order is important as it determines the priority of the preferred extension
                     var contentHits = getContentHits(matchedGame);
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitType.Valid) ? HitType.DuplicateExtension : HitType.Valid, mediaFile);
+                }
+                if ((matchedGame = games.FirstOrDefault(game => string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                {
+                    getContentHits(matchedGame).Add(HitType.WrongCase, mediaFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                 {
@@ -154,13 +162,12 @@ namespace ClrVpin.Scanner
                 }
                 else
                 {
-                    unknownMediaFiles.Add(mediaFile);
+                    unknownMediaFiles.Add(new Tuple<string, long>(mediaFile, new FileInfo(mediaFile).Length));
                 }
             });
 
             return unknownMediaFiles;
         }
-
 
         private static List<Game> GetDatabase()
         {
@@ -190,6 +197,6 @@ namespace ClrVpin.Scanner
         private readonly MainWindow _parentWindow;
         private Window _scannerWindow;
         private Stopwatch _scanStopWatch;
-        private List<string> _unknownFiles;
+        private List<Tuple<string, long>> _unknownFiles;
     }
 }

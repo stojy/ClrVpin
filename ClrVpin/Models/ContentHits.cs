@@ -20,12 +20,15 @@ namespace ClrVpin.Models
         public bool IsSmelly => SmellyHits.Any();
         public IEnumerable<Hit> SmellyHits => Hits.Where(hit => hit.Type != HitType.Valid);
 
-        public void Add(HitType type, string path)
+        public void Add(HitType hitType, string path)
         {
             // for missing content.. the path is the description, i.e. desirable file name without an extension
-            if (type == HitType.Missing)
+            if (hitType == HitType.Missing)
                 path = @$"{_contentType.QualifiedFolder}\{path}.{_contentType.ExtensionDetails}";
-            Hits.Add(new Hit(Type, path, type));
+
+            // only add hit type for valid hits OR if it has been configured to be checked
+            if (hitType == HitType.Valid || Config.CheckHitTypes.Contains(hitType))
+                Hits.Add(new Hit(Type, path, hitType));
         }
     }
 }
