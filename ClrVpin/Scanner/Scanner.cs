@@ -50,12 +50,12 @@ namespace ClrVpin.Scanner
             _scannerWindow.Closed += (_, _) => _parentWindow.Show();
         }
 
-        private void ShowResults(ICollection<FileDetail> unknownFiles, ICollection<FileDetail> deletedFiles)
+        private void ShowResults(ICollection<FileDetail> unknownFiles, ICollection<FixFileDetail> fixFiles)
         {
             var scannerResults = new ScannerResults(_scannerWindow, Games);
             scannerResults.Show();
 
-            var scannerStatistics = new ScannerStatistics(Games, _scanStopWatch, unknownFiles, deletedFiles);
+            var scannerStatistics = new ScannerStatistics(Games, _scanStopWatch, unknownFiles, fixFiles);
             scannerStatistics.Show(_scannerWindow, scannerResults.Window);
 
             var explorerWindow = new ScannerExplorer(Games);
@@ -127,13 +127,13 @@ namespace ClrVpin.Scanner
 
             var unknownFiles = ScannerUtils.Check(games);
 
-            var deletedFiles = ScannerUtils.Fix(games);
+            var fixFiles = ScannerUtils.Fix(games);
 
             Games = new ObservableCollection<Game>(games);
 
             _scanStopWatch.Stop();
 
-            ShowResults(unknownFiles, deletedFiles);
+            ShowResults(unknownFiles, fixFiles);
         }
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;

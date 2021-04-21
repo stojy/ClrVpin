@@ -50,9 +50,9 @@ namespace ClrVpin.Scanner
             return menu.Games;
         }
 
-        public static List<FileDetail> Fix(List<Game> games)
+        public static List<FixFileDetail> Fix(List<Game> games)
         {
-            var deletedHits = new List<FileDetail>();
+            var deletedHits = new List<FixFileDetail>();
 
             games.ForEach(game =>
             {
@@ -111,14 +111,19 @@ namespace ClrVpin.Scanner
                     var contentHits = getContentHits(matchedGame);
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitType.Valid) ? HitType.DuplicateExtension : HitType.Valid, mediaFile);
                 }
-
-                if ((matchedGame = games.FirstOrDefault(game =>
+                else if ((matchedGame = games.FirstOrDefault(game =>
                     string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                {
                     getContentHits(matchedGame).Add(HitType.WrongCase, mediaFile);
+                }
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
+                {
                     getContentHits(matchedGame).Add(HitType.TableName, mediaFile);
+                }
                 else
+                {
                     unknownMediaFiles.Add(new FileDetail(mediaFile, new FileInfo(mediaFile).Length));
+                }
             });
 
             return unknownMediaFiles;
@@ -131,12 +136,16 @@ namespace ClrVpin.Scanner
             return files.SelectMany(x => x).ToList();
         }
 
-        private static FileDetail Delete(Hit hit)
+        private static FixFileDetail Delete(Hit hit)
         {
+            var deleted = false;
             if (Config.FixHitTypes.Contains(hit.Type))
+            {
+                deleted = true;
                 Logger.Info($"deleting: type={hit.Type}, content={hit.ContentType}, path={hit.Path}");
+            }
 
-            return new FileDetail(hit.Path, hit.Size);
+            return new FixFileDetail(deleted, hit.Path, hit.Size);
         }
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();

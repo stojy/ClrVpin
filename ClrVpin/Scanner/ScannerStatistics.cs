@@ -13,13 +13,12 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerStatistics
     {
-        public ScannerStatistics(ObservableCollection<Game> games, Stopwatch scanStopWatch, ICollection<FileDetail> unknownFiles, ICollection<FileDetail> deletedFiles)
+        public ScannerStatistics(ObservableCollection<Game> games, Stopwatch scanStopWatch, ICollection<FileDetail> unknownFiles, ICollection<FixFileDetail> fixFiles)
         {
             _scanStopWatch = scanStopWatch;
             _games = games;
-            _smellyGames = new List<Game>(games.Where(game => game.Content.SmellyHitsView.Count > 0));
 
-            CreateStatistics(unknownFiles, deletedFiles);
+            CreateStatistics(unknownFiles, fixFiles);
         }
 
         public string Statistics { get; set; }
@@ -34,7 +33,7 @@ namespace ClrVpin.Scanner
                 Top = resultsWindow.Top + resultsWindow.Height + 10,
                 SizeToContent = SizeToContent.Width,
                 MinWidth = 400,
-                Height = 750,
+                Height = 800,
                 Content = this,
                 ContentTemplate = parentWindow.Owner.FindResource("ScannerStatisticsTemplate") as DataTemplate
             };
@@ -46,11 +45,11 @@ namespace ClrVpin.Scanner
             _window.Close();
         }
 
-        private void CreateStatistics(ICollection<FileDetail> unknownFiles, ICollection<FileDetail> deletedFiles)
+        private void CreateStatistics(ICollection<FileDetail> unknownFiles, ICollection<FixFileDetail> fixFiles)
         {
             Statistics =
                 $"{CreateHitTypeStatistics()}\n" +
-                $"{CreateTotalStatistics(unknownFiles, deletedFiles)}";
+                $"{CreateTotalStatistics(unknownFiles, fixFiles)}";
         }
 
         private string CreateHitTypeStatistics()
@@ -77,30 +76,34 @@ namespace ClrVpin.Scanner
             return _games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType)) + "/" + _games.Count;
         }
 
-        private string CreateTotalStatistics(ICollection<FileDetail> unknownFiles, ICollection<FileDetail> deletedFiles)
+        private string CreateTotalStatistics(ICollection<FileDetail> unknownFiles, ICollection<FixFileDetail> fixFiles)
         {
             var validHits = _games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitType.Valid).ToList();
 
             // todo; filter hit type
             var eligibleHits = _games.Count * Config.CheckContentTypes.Count;
 
+            var fixFilesIgnored = fixFiles.Where(x => !x.Deleted).ToList();
+            var fixFilesIgnoredSize = fixFilesIgnored.Sum(x => x.Size);
+            var fixFilesDeleted = fixFiles.Where(x => x.Deleted).ToList();
+            var fixFilesDeletedSize = fixFilesDeleted.Sum(x => x.Size);
+
             return "\n-----------------------------------------------\n" +
                    $"\n{"Total Games",StatisticsKeyWidth}{_games.Count}" +
                    $"\n{"Total Content",StatisticsKeyWidth}{_games.Count * Content.Types.Length}" +
                    $"\n{"Total Scanned Content",StatisticsKeyWidth}{eligibleHits}" +
-                   $"\n\n{"Valid Files",StatisticsKeyWidth}{validHits.Count}" +
-                   $"\n{"Valid Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(validHits.Sum(x => x.Size)).ToString("#")}" +
+                   $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size))}" +
                    $"\n{"Valid Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
-                   $"\n\n{"Unneeded Files",StatisticsKeyWidth}{unknownFiles.Count}" +
-                   $"\n{"Unneeded Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(unknownFiles.Sum(x => x.Size)).ToString("#")}" +
-                   $"\n\n{"Deleted Files",StatisticsKeyWidth}{deletedFiles.Count}" +
-                   $"\n{"Deleted Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(deletedFiles.Sum(x => x.Size)).ToString("#")}" +
+                   $"\n\n{"Unknown Files",StatisticsKeyWidth}{CreateFileStatistic(unknownFiles.Count, unknownFiles.Sum(x => x.Size))}" +
+                   $"\n{"Ignored Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
+                   $"\n{"Deleted Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeleted.Count, fixFilesDeletedSize)}" +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.Elapsed.TotalSeconds:f2}s";
         }
 
+        private string CreateFileStatistic(long count, long size) => $"{count} ({(size == 0 ? "0 B" : ByteSize.FromBytes(size).ToString("0.#"))})";
+
         private readonly ObservableCollection<Game> _games;
         private readonly Stopwatch _scanStopWatch;
-        private List<Game> _smellyGames;
         private Window _window;
 
         private const int StatisticsKeyWidth = -30;
