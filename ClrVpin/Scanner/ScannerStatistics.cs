@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -14,13 +13,13 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerStatistics
     {
-        public ScannerStatistics(ObservableCollection<Game> games, Stopwatch scanStopWatch, ICollection<Tuple<string, long>> unknownFiles)
+        public ScannerStatistics(ObservableCollection<Game> games, Stopwatch scanStopWatch, ICollection<FileDetail> unknownFiles, ICollection<FileDetail> deletedFiles)
         {
             _scanStopWatch = scanStopWatch;
             _games = games;
             _smellyGames = new List<Game>(games.Where(game => game.Content.SmellyHitsView.Count > 0));
 
-            CreateStatistics(unknownFiles);
+            CreateStatistics(unknownFiles, deletedFiles);
         }
 
         public string Statistics { get; set; }
@@ -47,11 +46,11 @@ namespace ClrVpin.Scanner
             _window.Close();
         }
 
-        private void CreateStatistics(ICollection<Tuple<string, long>> unknownFiles)
+        private void CreateStatistics(ICollection<FileDetail> unknownFiles, ICollection<FileDetail> deletedFiles)
         {
             Statistics =
                 $"{CreateHitTypeStatistics()}\n" +
-                $"{CreateTotalStatistics(unknownFiles)}";
+                $"{CreateTotalStatistics(unknownFiles, deletedFiles)}";
         }
 
         private string CreateHitTypeStatistics()
@@ -78,7 +77,7 @@ namespace ClrVpin.Scanner
             return _games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType)) + "/" + _games.Count;
         }
 
-        private string CreateTotalStatistics(ICollection<Tuple<string, long>> unknownFiles)
+        private string CreateTotalStatistics(ICollection<FileDetail> unknownFiles, ICollection<FileDetail> deletedFiles)
         {
             var validHits = _games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitType.Valid).ToList();
 
@@ -93,7 +92,9 @@ namespace ClrVpin.Scanner
                    $"\n{"Valid Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(validHits.Sum(x => x.Size)).ToString("#")}" +
                    $"\n{"Valid Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
                    $"\n\n{"Unneeded Files",StatisticsKeyWidth}{unknownFiles.Count}" +
-                   $"\n{"Unneeded Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(unknownFiles.Sum(x => x.Item2)).ToString("#")}" +
+                   $"\n{"Unneeded Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(unknownFiles.Sum(x => x.Size)).ToString("#")}" +
+                   $"\n\n{"Deleted Files",StatisticsKeyWidth}{deletedFiles.Count}" +
+                   $"\n{"Deleted Files Size",StatisticsKeyWidth}{ByteSize.FromBytes(deletedFiles.Sum(x => x.Size)).ToString("#")}" +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.Elapsed.TotalSeconds:f2}s";
         }
 

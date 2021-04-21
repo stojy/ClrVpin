@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -51,12 +50,12 @@ namespace ClrVpin.Scanner
             _scannerWindow.Closed += (_, _) => _parentWindow.Show();
         }
 
-        private void ShowResults(List<Tuple<string, long>> unknownFiles)
+        private void ShowResults(ICollection<FileDetail> unknownFiles, ICollection<FileDetail> deletedFiles)
         {
             var scannerResults = new ScannerResults(_scannerWindow, Games);
             scannerResults.Show();
 
-            var scannerStatistics = new ScannerStatistics(Games, _scanStopWatch, unknownFiles);
+            var scannerStatistics = new ScannerStatistics(Games, _scanStopWatch, unknownFiles, deletedFiles);
             scannerStatistics.Show(_scannerWindow, scannerResults.Window);
 
             var explorerWindow = new ScannerExplorer(Games);
@@ -128,13 +127,13 @@ namespace ClrVpin.Scanner
 
             var unknownFiles = ScannerUtils.Check(games);
 
-            ScannerUtils.Fix(games);
+            var deletedFiles = ScannerUtils.Fix(games);
 
             Games = new ObservableCollection<Game>(games);
 
             _scanStopWatch.Stop();
 
-            ShowResults(unknownFiles);
+            ShowResults(unknownFiles, deletedFiles);
         }
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;

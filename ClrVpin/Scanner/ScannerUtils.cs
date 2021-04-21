@@ -11,9 +11,9 @@ namespace ClrVpin.Scanner
 {
     public static class ScannerUtils
     {
-        public static List<Tuple<string, long>> Check(List<Game> games)
+        public static List<FileDetail> Check(List<Game> games)
         {
-            var unknownFiles = new List<Tuple<string, long>>();
+            var unknownFiles = new List<FileDetail>();
 
             // for the configured content types only.. check the installed content files against those specified in the database
             var checkContentTypes = Content.SupportedTypes.Where(type => Config.CheckContentTypes.Contains(type.Type));
@@ -50,8 +50,10 @@ namespace ClrVpin.Scanner
             return menu.Games;
         }
 
-        public static void Fix(List<Game> games)
+        public static List<FileDetail> Fix(List<Game> games)
         {
+            var deletedHits = new List<FileDetail>();
+
             games.ForEach(game =>
             {
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
@@ -66,12 +68,14 @@ namespace ClrVpin.Scanner
                                 case HitType.Fuzzy:
                                 case HitType.TableName:
                                 case HitType.WrongCase:
-                                    Delete(hit);
+                                    deletedHits.Add(Delete(hit));
                                     break;
                             }
                         });
                 });
             });
+
+            return deletedHits;
         }
 
 
@@ -88,9 +92,9 @@ namespace ClrVpin.Scanner
             });
         }
 
-        private static IEnumerable<Tuple<string, long>> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
+        private static IEnumerable<FileDetail> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
         {
-            var unknownMediaFiles = new List<Tuple<string, long>>();
+            var unknownMediaFiles = new List<FileDetail>();
 
             mediaFiles.ForEach(mediaFile =>
             {
@@ -114,7 +118,7 @@ namespace ClrVpin.Scanner
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                     getContentHits(matchedGame).Add(HitType.TableName, mediaFile);
                 else
-                    unknownMediaFiles.Add(new Tuple<string, long>(mediaFile, new FileInfo(mediaFile).Length));
+                    unknownMediaFiles.Add(new FileDetail(mediaFile, new FileInfo(mediaFile).Length));
             });
 
             return unknownMediaFiles;
@@ -127,10 +131,12 @@ namespace ClrVpin.Scanner
             return files.SelectMany(x => x).ToList();
         }
 
-        private static void Delete(Hit hit)
+        private static FileDetail Delete(Hit hit)
         {
             if (Config.FixHitTypes.Contains(hit.Type))
                 Logger.Info($"deleting: type={hit.Type}, content={hit.ContentType}, path={hit.Path}");
+
+            return new FileDetail(hit.Path, hit.Size);
         }
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
