@@ -29,7 +29,7 @@ namespace ClrVpin.Models
             CopyPathCommand = new ActionCommand(CopyPath);
         }
 
-        public static HitType[] Types = {HitType.Missing, HitType.TableName, HitType.DuplicateExtension, HitType.WrongCase, HitType.Fuzzy};
+        public static HitType[] Types = {HitType.Missing, HitType.TableName, HitType.DuplicateExtension, HitType.WrongCase, HitType.Fuzzy, HitType.Unknown};
 
         public string Path { get; }
         public string File { get; }
@@ -77,6 +77,8 @@ namespace ClrVpin.Models
 
         [Description("Duplicate")] DuplicateExtension,
 
-        [Description("Missing")] Missing
+        [Description("Missing")] Missing,
+        
+        [Description("Unknown")] Unknown    // unknown files do not relate to any specific game
     }
 }

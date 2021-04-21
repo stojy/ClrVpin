@@ -11,9 +11,9 @@ namespace ClrVpin.Scanner
 {
     public static class ScannerUtils
     {
-        public static List<FileDetail> Check(List<Game> games)
+        public static List<FixFileDetail> Check(List<Game> games)
         {
-            var unknownFiles = new List<FileDetail>();
+            var unknownFiles = new List<FixFileDetail>();
 
             // for the configured content types only.. check the installed content files against those specified in the database
             var checkContentTypes = Content.SupportedTypes.Where(type => Config.CheckContentTypes.Contains(type.Type));
@@ -92,9 +92,9 @@ namespace ClrVpin.Scanner
             });
         }
 
-        private static IEnumerable<FileDetail> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
+        private static IEnumerable<FixFileDetail> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
         {
-            var unknownMediaFiles = new List<FileDetail>();
+            var unknownMediaFiles = new List<FixFileDetail>();
 
             mediaFiles.ForEach(mediaFile =>
             {
@@ -122,7 +122,7 @@ namespace ClrVpin.Scanner
                 }
                 else
                 {
-                    unknownMediaFiles.Add(new FileDetail(mediaFile, new FileInfo(mediaFile).Length));
+                    unknownMediaFiles.Add(new FixFileDetail(HitType.Unknown, false, mediaFile, new FileInfo(mediaFile).Length));
                 }
             });
 
@@ -145,7 +145,7 @@ namespace ClrVpin.Scanner
                 Logger.Info($"deleting: type={hit.Type}, content={hit.ContentType}, path={hit.Path}");
             }
 
-            return new FixFileDetail(deleted, hit.Path, hit.Size);
+            return new FixFileDetail(hit.Type, deleted, hit.Path, hit.Size);
         }
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
