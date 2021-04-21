@@ -95,9 +95,10 @@ namespace ClrVpin.Scanner
             var unknownFilesDeletedSize = unknownFilesDeleted.Sum(x => x.Size);
 
             return "\n-----------------------------------------------\n" +
-                   $"\n{"Total Games",StatisticsKeyWidth}{_games.Count}" +
-                   $"\n{"Total Content",StatisticsKeyWidth}{_games.Count * Content.Types.Length}" +
-                   $"\n{"Total Checked Content",StatisticsKeyWidth}{eligibleHits}" +
+                   "\nTotals" +
+                   $"\n{"- Available Games",StatisticsKeyWidth}{_games.Count}" +
+                   $"\n{"- Possible Content",StatisticsKeyWidth}{_games.Count * Content.Types.Length}" +
+                   $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size))}" +
                    $"\n{"- Valid Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
                    $"\n\n{"Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(fixFiles.Count, fixFiles.Sum(x => x.Size))}" +
