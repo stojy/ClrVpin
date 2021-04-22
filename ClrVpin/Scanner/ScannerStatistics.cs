@@ -33,7 +33,7 @@ namespace ClrVpin.Scanner
                 Top = resultsWindow.Top + resultsWindow.Height + 10,
                 SizeToContent = SizeToContent.Width,
                 MinWidth = 400,
-                Height = 850,
+                Height = 900,
                 Content = this,
                 ContentTemplate = parentWindow.Owner.FindResource("ScannerStatisticsTemplate") as DataTemplate
             };
@@ -86,6 +86,8 @@ namespace ClrVpin.Scanner
             var fixFilesIgnoredSize = fixFilesIgnored.Sum(x => x.Size);
             var fixFilesDeleted = fixFiles.Where(x => x.Deleted).ToList();
             var fixFilesDeletedSize = fixFilesDeleted.Sum(x => x.Size);
+            var fixFilesRenamed = fixFiles.Where(x => x.Renamed).ToList();
+            var fixFilesRenamedSize = fixFilesRenamed.Sum(x => x.Size);
             
             // identify unknown fix files for separate statistics
             var unknownFiles = fixFiles.Where(x => x.HitType == HitType.Unknown).ToList();
@@ -102,10 +104,11 @@ namespace ClrVpin.Scanner
                    $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size))}" +
                    $"\n{"- Valid Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
                    $"\n\n{"Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(fixFiles.Count, fixFiles.Sum(x => x.Size))}" +
-                   $"\n{"- Ignored Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
-                   $"\n{"  (Unknown Files)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesIgnored.Count, unknownFilesIgnoredSize)}" +
+                   $"\n{"- Renamed Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +
                    $"\n{"- Deleted Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeleted.Count, fixFilesDeletedSize)}" +
                    $"\n{"  (Unknown Files)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesDeleted.Count, unknownFilesDeletedSize)}" +
+                   $"\n{"- Ignored Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
+                   $"\n{"  (Unknown Files)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesIgnored.Count, unknownFilesIgnoredSize)}" +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.Elapsed.TotalSeconds:f2}s";
         }
 

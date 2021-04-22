@@ -24,6 +24,11 @@ namespace Utils
                 action(item, i++);
         }
 
+        public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item)
+        {
+            return System.Linq.Enumerable.Except(source, new List<T> {item});
+        }
+
         public static void Toggle<T>(this List<T> source, T item)
         {
             if (source.Contains(item))

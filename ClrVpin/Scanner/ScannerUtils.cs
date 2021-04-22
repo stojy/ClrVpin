@@ -52,30 +52,80 @@ namespace ClrVpin.Scanner
 
         public static List<FixFileDetail> Fix(List<Game> games)
         {
-            var deletedHits = new List<FixFileDetail>();
+            var fixedFileDetails = new List<FixFileDetail>();
 
             games.ForEach(game =>
             {
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
                 {
-                    if (contentHitCollection.Hits.Any(hit => hit.Type == HitType.Valid))
-                        // all hit files can be deleted :)
-                        contentHitCollection.Hits.Where(hit => hit.Type != HitType.Valid).ForEach(hit =>
-                        {
-                            switch (hit.Type)
-                            {
-                                case HitType.DuplicateExtension:
-                                case HitType.Fuzzy:
-                                case HitType.TableName:
-                                case HitType.WrongCase:
-                                    deletedHits.Add(Delete(hit));
-                                    break;
-                            }
-                        });
+                    if (TryGet(contentHitCollection.Hits, out var hit, HitType.Valid))
+                    {
+                        // valid hit exists.. so delete everything else
+                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
+                    }
+                    else if (TryGet(contentHitCollection.Hits, out hit, HitType.WrongCase, HitType.TableName, HitType.Fuzzy))
+                    {
+                        // for all 3 hit types.. rename file and delete other entries
+                        fixedFileDetails.Add(Rename(hit, game));
+                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
+                    }
+
+                    // other hit types are n/a
+                    // - duplicate extension - already taken care as a valid hit will exist
+                    // - unknown - not associated with a game.. handled elsewhere
+                    // - missing - can't be fixed.. requires file to be downloaded
                 });
             });
 
-            return deletedHits;
+            // todo; delete unknown files
+
+            return fixedFileDetails;
+        }
+
+        private static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitType[] hitTypes)
+        {
+            // return the first entry found
+            hit = hits.FirstOrDefault(h => hitTypes.Contains(h.Type));
+            return hit != null;
+        }
+
+        private static List<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit)
+        {
+            var deleted = new List<FixFileDetail>();
+
+            hits.Except(hit).ForEach(h => deleted.Add(Delete(h)));
+
+            return deleted;
+        }
+
+        private static FixFileDetail Delete(Hit hit)
+        {
+            var deleted = false;
+
+            // only delete file if..
+            // - not a valid hit
+            // - file exists
+            // - configured to do so
+            if (hit.Size > 0 && Config.FixHitTypes.Contains(hit.Type))
+            {
+                deleted = true;
+                Logger.Info($"deleting: type={hit.Type}, content={hit.ContentType}, path={hit.Path}");
+            }
+
+            return new FixFileDetail(hit.Type, deleted, false, hit.Path, hit.Size);
+        }
+
+        private static FixFileDetail Rename(Hit hit, Game game)
+        {
+            var renamed = false;
+
+            if (Config.FixHitTypes.Contains(hit.Type))
+            {
+                renamed = true;
+                Logger.Info($"renaming: type={hit.Type}, content={hit.ContentType}, from={hit.Path}, to={game.Description}");
+            }
+            
+            return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size);
         }
 
 
@@ -122,7 +172,7 @@ namespace ClrVpin.Scanner
                 }
                 else
                 {
-                    unknownMediaFiles.Add(new FixFileDetail(HitType.Unknown, false, mediaFile, new FileInfo(mediaFile).Length));
+                    unknownMediaFiles.Add(new FixFileDetail(HitType.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
                 }
             });
 
@@ -136,17 +186,6 @@ namespace ClrVpin.Scanner
             return files.SelectMany(x => x).ToList();
         }
 
-        private static FixFileDetail Delete(Hit hit)
-        {
-            var deleted = false;
-            if (Config.FixHitTypes.Contains(hit.Type))
-            {
-                deleted = true;
-                Logger.Info($"deleting: type={hit.Type}, content={hit.ContentType}, path={hit.Path}");
-            }
-
-            return new FixFileDetail(hit.Type, deleted, hit.Path, hit.Size);
-        }
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     }
