@@ -88,7 +88,7 @@ namespace ClrVpin.Scanner
 
                     // toggle the fix hit type checked & enabled
                     var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
-                    fixHitType.IsSupported = featureType.IsActive;
+                    fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
                     if (!featureType.IsActive)
                         fixHitType.IsActive = false;
                 });
@@ -105,8 +105,9 @@ namespace ClrVpin.Scanner
             var contentTypes = Hit.Types.Select(hitType => new FeatureType
             {
                 Description = hitType.GetDescription(),
-                IsSupported = true,
-                IsActive = true,
+                IsSupported = hitType != HitType.Missing,
+                IsNeverSupported = hitType == HitType.Missing,
+                IsActive = hitType != HitType.Missing,
                 SelectedCommand = new ActionCommand(() => Config.FixHitTypes.Toggle(hitType))
             });
 
@@ -127,7 +128,7 @@ namespace ClrVpin.Scanner
 
             var unknownFiles = ScannerUtils.Check(games);
 
-            var fixFiles = ScannerUtils.Fix(games);
+            var fixFiles = ScannerUtils.Fix(games, unknownFiles);
 
             Games = new ObservableCollection<Game>(games);
 

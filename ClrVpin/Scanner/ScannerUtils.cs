@@ -50,10 +50,11 @@ namespace ClrVpin.Scanner
             return menu.Games;
         }
 
-        public static List<FixFileDetail> Fix(List<Game> games)
+        public static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> unknownFileDetails)
         {
             var fixedFileDetails = new List<FixFileDetail>();
 
+            // fix files associated with games
             games.ForEach(game =>
             {
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
@@ -77,7 +78,12 @@ namespace ClrVpin.Scanner
                 });
             });
 
-            // todo; delete unknown files
+            // delete files NOT associated with games, i.e. unknown files
+            unknownFileDetails.ForEach(x =>
+            {
+                x.Deleted = true;
+                Delete(x.Path, x.HitType, null);
+            });
 
             return fixedFileDetails;
         }
@@ -89,11 +95,12 @@ namespace ClrVpin.Scanner
             return hit != null;
         }
 
-        private static List<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit)
+        private static IEnumerable<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit)
         {
             var deleted = new List<FixFileDetail>();
 
-            hits.Except(hit).ForEach(h => deleted.Add(Delete(h)));
+            // delete all 'real' files except the specified hit
+            hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h)));
 
             return deleted;
         }
@@ -102,17 +109,19 @@ namespace ClrVpin.Scanner
         {
             var deleted = false;
 
-            // only delete file if..
-            // - not a valid hit
-            // - file exists
-            // - configured to do so
-            if (hit.Size > 0 && Config.FixHitTypes.Contains(hit.Type))
+            // only delete file if configured to do so
+            if (Config.FixHitTypes.Contains(hit.Type))
             {
                 deleted = true;
-                Logger.Info($"deleting: type={hit.Type}, content={hit.ContentType}, path={hit.Path}");
+                Delete(hit.Path, hit.Type, hit.ContentType);
             }
 
-            return new FixFileDetail(hit.Type, deleted, false, hit.Path, hit.Size);
+            return new FixFileDetail(hit.Type, deleted, false, hit.Path, hit.Size ?? 0);
+        }
+
+        private static void Delete(string file, HitType hitType, string contentType)
+        {
+            Logger.Info($"deleting: type={hitType}, content={contentType ?? "n/a"}, file={file}");
         }
 
         private static FixFileDetail Rename(Hit hit, Game game)
@@ -124,10 +133,9 @@ namespace ClrVpin.Scanner
                 renamed = true;
                 Logger.Info($"renaming: type={hit.Type}, content={hit.ContentType}, from={hit.Path}, to={game.Description}");
             }
-            
-            return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size);
-        }
 
+            return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
+        }
 
         private static void CheckMissing(List<Game> games)
         {

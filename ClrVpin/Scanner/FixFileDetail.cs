@@ -12,7 +12,8 @@ namespace ClrVpin.Scanner
         }
 
         public HitType HitType { get; }
-        public bool Deleted { get; }
+        public bool Deleted { get; set; }
         public bool Renamed { get; }
+        public bool Ignored => !Deleted && !Renamed;
     }
 }

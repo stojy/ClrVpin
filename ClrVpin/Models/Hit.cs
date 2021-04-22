@@ -15,7 +15,7 @@ namespace ClrVpin.Models
             ContentType = contentType;
             Path = path;
             File = System.IO.Path.GetFileName(path);
-            Size = type == HitType.Missing ? 0 : new FileInfo(path).Length;
+            Size = type == HitType.Missing ? null : new FileInfo(path).Length;
             SizeString = type == HitType.Missing ? null : ByteSize.FromBytes(new FileInfo(path).Length).ToString("#");
             Type = type;
 
@@ -34,7 +34,7 @@ namespace ClrVpin.Models
         public string Path { get; }
         public string File { get; }
         public string SizeString { get; }
-        public long Size { get; set; }
+        public long? Size { get; set; }
         public HitType Type { get; }
         public string ContentType { get; }
         public string Description { get; }

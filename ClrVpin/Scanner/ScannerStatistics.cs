@@ -82,7 +82,7 @@ namespace ClrVpin.Scanner
 
             var eligibleHits = _games.Count * Config.CheckContentTypes.Count;
 
-            var fixFilesIgnored = fixFiles.Where(x => !x.Deleted).ToList();
+            var fixFilesIgnored = fixFiles.Where(x => x.Ignored).ToList();
             var fixFilesIgnoredSize = fixFilesIgnored.Sum(x => x.Size);
             var fixFilesDeleted = fixFiles.Where(x => x.Deleted).ToList();
             var fixFilesDeletedSize = fixFilesDeleted.Sum(x => x.Size);
@@ -91,7 +91,7 @@ namespace ClrVpin.Scanner
             
             // identify unknown fix files for separate statistics
             var unknownFiles = fixFiles.Where(x => x.HitType == HitType.Unknown).ToList();
-            var unknownFilesIgnored = unknownFiles.Where(x => !x.Deleted).ToList();
+            var unknownFilesIgnored = unknownFiles.Where(x => x.Ignored && !x.Renamed).ToList();
             var unknownFilesIgnoredSize = unknownFilesIgnored.Sum(x => x.Size);
             var unknownFilesDeleted = unknownFiles.Where(x => x.Deleted).ToList();
             var unknownFilesDeletedSize = unknownFilesDeleted.Sum(x => x.Size);
@@ -101,7 +101,7 @@ namespace ClrVpin.Scanner
                    $"\n{"- Available Games",StatisticsKeyWidth}{_games.Count}" +
                    $"\n{"- Possible Content",StatisticsKeyWidth}{_games.Count * Content.Types.Length}" +
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
-                   $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size))}" +
+                   $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
                    $"\n{"- Valid Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
                    $"\n\n{"Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(fixFiles.Count, fixFiles.Sum(x => x.Size))}" +
                    $"\n{"- Renamed Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +
@@ -118,6 +118,6 @@ namespace ClrVpin.Scanner
         private readonly Stopwatch _scanStopWatch;
         private Window _window;
 
-        private const int StatisticsKeyWidth = -30;
+        private const int StatisticsKeyWidth = -25;
     }
 }
