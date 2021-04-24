@@ -2,8 +2,8 @@
 WIP
 
 Virtual Pinball content management.
-- Playable content: tables & backglasses
-- Front end content: videos, audio, wheels, etc
+- Content: Tables, Backglasses, POV, etc.
+- Frontend Media: Videos, Audio, Wheels, etc
 
 ![image](https://user-images.githubusercontent.com/11408611/115951592-12e72800-a514-11eb-8bdd-0b5c55b12478.png)
 
