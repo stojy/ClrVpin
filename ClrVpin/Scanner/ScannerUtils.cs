@@ -120,7 +120,7 @@ namespace ClrVpin.Scanner
 
         private static void Delete(string file, HitType hitType, string contentType)
         {
-            Logging.Logger.Info($"deleting: type={hitType}, content={contentType ?? "n/a"}, file={file}");
+            Logging.Logger.Warn($"Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
         }
 
         private static FixFileDetail Rename(Hit hit, Game game)
@@ -130,7 +130,7 @@ namespace ClrVpin.Scanner
             if (Config.FixHitTypes.Contains(hit.Type))
             {
                 renamed = true;
-                Logging.Logger.Info($"renaming: type={hit.Type}, content={hit.ContentType}, from={hit.Path}, to={game.Description}");
+                Logging.Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {game.Description}");
             }
 
             return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size ?? 0);

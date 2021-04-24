@@ -4,15 +4,17 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:logging="clr-namespace:ClrVpin.Logging">
 
+  <logging:LogLevelConverter x:Key="LogLevelConverter" />
+
   <DataTemplate x:Key="LoggingTemplate" DataType="{x:Type logging:Logging}">
     <DockPanel>
-      <ItemsControl ItemsSource="{Binding LogsView}" BorderThickness="5">
+      <ListView ItemsSource="{Binding LogsView}" BorderThickness="5">
         <ItemsControl.ItemTemplate>
           <DataTemplate DataType="logging:Log">
-            <TextBlock Margin="0" Text="{Binding Message}" />
+            <TextBlock Margin="0" Text="{Binding Message}" Foreground="{Binding Level, Converter={StaticResource LogLevelConverter}}" />
           </DataTemplate>
         </ItemsControl.ItemTemplate>
-      </ItemsControl>
+      </ListView>
     </DockPanel>
   </DataTemplate>
 
