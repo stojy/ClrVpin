@@ -15,10 +15,11 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerResults
     {
-        public ScannerResults(Window parentWindow, ObservableCollection<Game> games)
-        {
-            _parentWindow = parentWindow;
+        public const int Width = 530;
+        public const int Height = 500;
 
+        public ScannerResults(ObservableCollection<Game> games)
+        {
             Games = games;
 
             SearchTextCommand = new ActionCommand(SearchTextChanged);
@@ -47,21 +48,20 @@ namespace ClrVpin.Scanner
 
         public Window Window { get; set; }
 
-        public void Show()
+        public void Show(Window parentWindow, int left, int top)
         {
             Window = new Window
             {
-                Owner = _parentWindow,
+                Owner = parentWindow,
                 Title = "Scanner Results",
-                Left = 10,
-                Top = 10,
-                SizeToContent = SizeToContent.Width,
-                MinWidth = 500,
-                Height = 500,
+                Left = left,
+                Top = top,
+                Width = Width,
+                Height = Height,
                 Content = this,
 
                 // todo; load resources in a centralised location
-                ContentTemplate = _parentWindow.Owner.FindResource("ScannerResultsTemplate") as DataTemplate
+                ContentTemplate = parentWindow.Owner.FindResource("ScannerResultsTemplate") as DataTemplate
             };
             Window.Show();
         }
@@ -154,7 +154,6 @@ namespace ClrVpin.Scanner
         private readonly IEnumerable<FeatureType> _filteredContentTypes;
         private readonly IEnumerable<FeatureType> _filteredHitTypes;
 
-        private readonly Window _parentWindow;
         private DispatcherTimer _searchTextChangedDelayTimer;
     }
 }

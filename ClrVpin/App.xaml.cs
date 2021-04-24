@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using NLog;
@@ -7,13 +8,11 @@ namespace ClrVpin
 {
     public partial class App
     {
-        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            _logger.Info("App.xaml starting..");
+            Logging.Logger.Info("Starting ClrVPin..");
 
             SetupExceptionHandling();
         }
@@ -21,7 +20,7 @@ namespace ClrVpin
         private void SetupExceptionHandling()
         {
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-                HandleError(s, (Exception)e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
+                HandleError(s, (Exception) e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
 
             DispatcherUnhandledException += (s, e) =>
             {
@@ -40,19 +39,19 @@ namespace ClrVpin
         {
             try
             {
-                var assembly = System.Reflection.Assembly.GetExecutingAssembly().GetName();
-                var message = "Unhandled exception detected\n\n"+
+                var assembly = Assembly.GetExecutingAssembly().GetName();
+                var message = "Unhandled exception detected\n\n" +
                               $"Message: {exception.Message}\n" +
                               $"Assembly: {assembly}\n" +
-                              $"Sender: {sender}\n" + 
+                              $"Sender: {sender}\n" +
                               $"Source: {source}";
 
-                _logger.Error(exception, message);
+                Logging.Logger.Error(exception, message);
                 MessageBox.Show(MainWindow!, $"{message}\n\n{exception}", "An Error Has Occurred", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Exception in HandleError");
+                Logging.Logger.Error(ex, "Exception in HandleError");
             }
             finally
             {

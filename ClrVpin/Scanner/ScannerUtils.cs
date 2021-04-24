@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using ClrVpin.Models;
-using NLog;
 using Utils;
 
 namespace ClrVpin.Scanner
@@ -121,7 +120,7 @@ namespace ClrVpin.Scanner
 
         private static void Delete(string file, HitType hitType, string contentType)
         {
-            Logger.Info($"deleting: type={hitType}, content={contentType ?? "n/a"}, file={file}");
+            Logging.Logger.Info($"deleting: type={hitType}, content={contentType ?? "n/a"}, file={file}");
         }
 
         private static FixFileDetail Rename(Hit hit, Game game)
@@ -131,7 +130,7 @@ namespace ClrVpin.Scanner
             if (Config.FixHitTypes.Contains(hit.Type))
             {
                 renamed = true;
-                Logger.Info($"renaming: type={hit.Type}, content={hit.ContentType}, from={hit.Path}, to={game.Description}");
+                Logging.Logger.Info($"renaming: type={hit.Type}, content={hit.ContentType}, from={hit.Path}, to={game.Description}");
             }
 
             return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
@@ -193,8 +192,5 @@ namespace ClrVpin.Scanner
 
             return files.SelectMany(x => x).ToList();
         }
-
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     }
 }

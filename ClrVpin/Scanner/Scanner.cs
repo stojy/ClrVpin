@@ -47,25 +47,50 @@ namespace ClrVpin.Scanner
 
             _scannerWindow.Show();
             _parentWindow.Hide();
+
             _scannerWindow.Closed += (_, _) => _parentWindow.Show();
+        }
+
+        private void Start()
+        {
+            // todo; show progress bar
+            _loggingWindow = new Logging.Logging();
+            _loggingWindow.Show(_scannerWindow, ScannerResults.Width, 5, ScannerResults.Height);
+
+            _scanStopWatch = Stopwatch.StartNew();
+
+            var games = ScannerUtils.GetDatabase();
+
+            // todo; retrieve 'missing games' from spreadsheet
+
+            var unknownFiles = ScannerUtils.Check(games);
+
+            var fixFiles = ScannerUtils.Fix(games, unknownFiles);
+
+            Games = new ObservableCollection<Game>(games);
+
+            _scanStopWatch.Stop();
+
+            ShowResults(fixFiles.Concat(unknownFiles).ToList());
         }
 
         private void ShowResults(ICollection<FixFileDetail> fixFiles)
         {
-            var scannerResults = new ScannerResults(_scannerWindow, Games);
-            scannerResults.Show();
+            var scannerResults = new ScannerResults(Games);
+            scannerResults.Show(_scannerWindow, 5, 5);
 
             var scannerStatistics = new ScannerStatistics(Games, _scanStopWatch, fixFiles);
-            scannerStatistics.Show(_scannerWindow, scannerResults.Window);
+            scannerStatistics.Show(_scannerWindow, 5, scannerResults.Window.Height + 5);
 
             var explorerWindow = new ScannerExplorer(Games);
-            explorerWindow.Show(_scannerWindow, scannerResults.Window);
+            explorerWindow.Show(_scannerWindow, scannerStatistics.Window.Width, scannerResults.Window.Height + 5, scannerStatistics.Window.Height);
 
             _scannerWindow.Hide();
             scannerResults.Window.Closed += (_, _) =>
             {
                 scannerStatistics.Close();
                 explorerWindow.Close();
+                _loggingWindow.Close();
                 _scannerWindow.Show();
             };
         }
@@ -116,30 +141,10 @@ namespace ClrVpin.Scanner
 
         private static void ConfigureCheckContentTypes(string contentType) => Config.CheckContentTypes.Toggle(contentType);
 
-        private void Start()
-        {
-            // todo; show progress bar
-
-            _scanStopWatch = Stopwatch.StartNew();
-
-            var games = ScannerUtils.GetDatabase();
-
-            // todo; retrieve 'missing games' from spreadsheet
-
-            var unknownFiles = ScannerUtils.Check(games);
-
-            var fixFiles = ScannerUtils.Fix(games, unknownFiles);
-
-            Games = new ObservableCollection<Game>(games);
-
-            _scanStopWatch.Stop();
-
-            ShowResults(fixFiles.Concat(unknownFiles).ToList());
-        }
-
         private readonly IEnumerable<FeatureType> _fixHitTypes;
         private readonly MainWindow _parentWindow;
         private Window _scannerWindow;
         private Stopwatch _scanStopWatch;
+        private Logging.Logging _loggingWindow;
     }
 }

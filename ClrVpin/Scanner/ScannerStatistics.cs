@@ -23,26 +23,25 @@ namespace ClrVpin.Scanner
 
         public string Statistics { get; set; }
 
-        public void Show(Window parentWindow, Window resultsWindow)
+        public void Show(Window parentWindow, double left, double top)
         {
-            _window = new Window
+            Window = new Window
             {
                 Owner = parentWindow,
                 Title = "Scanner Statistics",
-                Left = resultsWindow.Left,
-                Top = resultsWindow.Top + resultsWindow.Height + 10,
-                SizeToContent = SizeToContent.Width,
-                MinWidth = 400,
+                Left = left,
+                Top = top,
+                Width = 400,
                 Height = 900,
                 Content = this,
                 ContentTemplate = parentWindow.Owner.FindResource("ScannerStatisticsTemplate") as DataTemplate
             };
-            _window.Show();
+            Window.Show();
         }
 
         public void Close()
         {
-            _window.Close();
+            Window.Close();
         }
 
         private void CreateStatistics(ICollection<FixFileDetail> fixFiles)
@@ -116,7 +115,7 @@ namespace ClrVpin.Scanner
 
         private readonly ObservableCollection<Game> _games;
         private readonly Stopwatch _scanStopWatch;
-        private Window _window;
+        public Window Window { get; private set; }
 
         private const int StatisticsKeyWidth = -25;
     }

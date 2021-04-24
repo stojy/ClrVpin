@@ -1,5 +1,4 @@
 ﻿using System.Windows.Input;
-using ClrVpin.Models;
 using PropertyChanged;
 
 namespace ClrVpin.Scanner
