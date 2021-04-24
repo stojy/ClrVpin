@@ -19,6 +19,6 @@ namespace ClrVpin.Models
         public ContentHits GetContentHits(Game game) => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == Type);
 
         // todo; support table/b2s path
-        public string QualifiedFolder => $@"{Config.VpxFrontendFolder}\Media\Visual Pinball\{Type}";
+        public string QualifiedFolder => $@"{Config.FrontendFolder}\Media\Visual Pinball\{Type}";
     }
 }

@@ -33,7 +33,7 @@ namespace ClrVpin.Scanner
 
         public static List<Game> GetDatabase()
         {
-            var file = $@"{Config.VpxFrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
+            var file = $@"{Config.FrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
             var doc = XDocument.Load(file);
             if (doc.Root == null)
                 throw new Exception("Failed to load database");

@@ -6,21 +6,23 @@ namespace ClrVpin.Settings
     [AddINotifyPropertyChangedInterface]
     public class Settings
     {
-        private readonly Window _mainWindow;
-
-        public Settings(Window mainWindow)
-        {
-            _mainWindow = mainWindow;
-        }
-
-        public void Show()
+        public void Show(Window parent)
         {
             var window = new Window
             {
+                Owner = parent,
                 Content = Model.Config,
-                ContentTemplate = _mainWindow.FindResource("SettingsTemplate") as DataTemplate,
+                SizeToContent = SizeToContent.WidthAndHeight,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                ContentTemplate = parent.FindResource("SettingsTemplate") as DataTemplate
             };
-            window.ShowDialog();
+            window.Show();
+            parent.Hide();
+            window.Closed += (_, _) =>
+            {
+                Properties.Settings.Default.Save();
+                parent.Show();
+            };
         }
     }
 }

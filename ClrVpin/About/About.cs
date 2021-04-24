@@ -1,24 +1,11 @@
 ﻿using System.Windows;
-using System.Windows.Input;
 using PropertyChanged;
-using Utils;
 
-namespace ClrVpin.Rebuilder
+namespace ClrVpin.About
 {
     [AddINotifyPropertyChangedInterface]
-    public class Rebuilder
+    public class About
     {
-        public Rebuilder()
-        {
-            StartCommand = new ActionCommand(Start);
-        }
-
-        private void Start()
-        {
-        }
-
-        public ICommand StartCommand { get; set; }
-
         public void Show(Window parent)
         {
             var window = new Window
@@ -27,7 +14,7 @@ namespace ClrVpin.Rebuilder
                 Content = this,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate
+                ContentTemplate = parent.FindResource("AboutTemplate") as DataTemplate
             };
 
             window.Show();

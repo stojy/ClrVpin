@@ -14,10 +14,8 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class Scanner
     {
-        public Scanner(MainWindow parentWindow)
+        public Scanner()
         {
-            _parentWindow = parentWindow;
-
             StartCommand = new ActionCommand(Start);
             ConfigureCheckContentTypesCommand = new ActionCommand<string>(ConfigureCheckContentTypes);
 
@@ -33,22 +31,22 @@ namespace ClrVpin.Scanner
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
 
-        public void Show()
+        public void Show(Window parent)
         {
             _scannerWindow = new Window
             {
-                Owner = _parentWindow,
+                Owner = parent,
                 Title = "Scanner",
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
-                ContentTemplate = _parentWindow.FindResource("ScannerTemplate") as DataTemplate
+                ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate
             };
 
             _scannerWindow.Show();
-            _parentWindow.Hide();
+            parent.Hide();
 
-            _scannerWindow.Closed += (_, _) => _parentWindow.Show();
+            _scannerWindow.Closed += (_, _) => parent.Show();
         }
 
         private void Start()
@@ -142,7 +140,6 @@ namespace ClrVpin.Scanner
         private static void ConfigureCheckContentTypes(string contentType) => Config.CheckContentTypes.Toggle(contentType);
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;
-        private readonly MainWindow _parentWindow;
         private Window _scannerWindow;
         private Stopwatch _scanStopWatch;
         private Logging.Logging _loggingWindow;

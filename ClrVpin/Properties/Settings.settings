@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClrVpin.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Test" Type="System.String" Scope="User">
+      <Value Profile="(Default)">hello</Value>
+    </Setting>
+    <Setting Name="FrontendFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\vp\apps\PinballX</Value>
+    </Setting>
+    <Setting Name="TableFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\vp\tables\vpx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

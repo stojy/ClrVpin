@@ -1,18 +1,19 @@
-﻿using ClrVpin.Models;
+﻿using System.Windows;
+using ClrVpin.Models;
 using Utils;
 
 namespace ClrVpin
 {
     public class Model
     {
-        public Model(MainWindow mainWindow)
+        public Model(Window mainWindow)
         {
             Config = new Config();
 
-            ScannerCommand = new ActionCommand(() => new Scanner.Scanner(mainWindow).Show());
-            RebuilderCommand = new ActionCommand(() => new Rebuilder.Rebuilder(mainWindow).Show());
-            SettingsCommand = new ActionCommand(() => new Settings.Settings(mainWindow).Show());
-            AboutCommand = new ActionCommand(() => new About.About(mainWindow).Show());
+            ScannerCommand = new ActionCommand(() => new Scanner.Scanner().Show(mainWindow));
+            RebuilderCommand = new ActionCommand(() => new Rebuilder.Rebuilder().Show(mainWindow));
+            SettingsCommand = new ActionCommand(() => new Settings.Settings().Show(mainWindow));
+            AboutCommand = new ActionCommand(() => new About.About().Show(mainWindow));
         }
 
         public ActionCommand ScannerCommand { get; set; }
