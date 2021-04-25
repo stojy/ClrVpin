@@ -12,7 +12,16 @@
       <WrapPanel DockPanel.Dock="Top">
         <GroupBox Margin="5,5" Padding="0, 5" Header="Content to Scan" DockPanel.Dock="Top">
           <WrapPanel Margin="5,0">
-            <StackPanel>
+            <ItemsControl ItemsSource="{Binding CheckContentTypesView}" BorderThickness="5">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="scanner:FeatureType">
+                  <CheckBox Margin="0" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+
+            <!--<StackPanel>
               <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.TableAudio}"
                         Content="{x:Static models:Content.TableAudio}" IsChecked="true" />
               <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.TableVideos}"
@@ -25,7 +34,7 @@
                         Content="{x:Static models:Content.BackglassVideos}" IsChecked="true" />
               <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.WheelImages}"
                         Content="{x:Static models:Content.WheelImages}" IsChecked="true" />
-            </StackPanel>
+            </StackPanel>-->
           </WrapPanel>
         </GroupBox>
       </WrapPanel>

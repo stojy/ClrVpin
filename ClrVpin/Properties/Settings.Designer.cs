@@ -58,5 +58,36 @@ namespace ClrVpin.Properties {
                 this["TableFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>Table Audio</string>
+  <string>Launch Audio</string>
+  <string>Table Videos</string>
+  <string>Backglass Videos</string>
+  <string>Wheel Images</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection CheckContentTypes {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["CheckContentTypes"]));
+            }
+            set {
+                this["CheckContentTypes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CheckHitTypes {
+            get {
+                return ((string)(this["CheckHitTypes"]));
+            }
+            set {
+                this["CheckHitTypes"] = value;
+            }
+        }
     }
 }

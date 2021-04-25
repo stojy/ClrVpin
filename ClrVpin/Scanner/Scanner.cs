@@ -17,17 +17,19 @@ namespace ClrVpin.Scanner
         public Scanner()
         {
             StartCommand = new ActionCommand(Start);
-            ConfigureCheckContentTypesCommand = new ActionCommand<string>(ConfigureCheckContentTypes);
+            //ConfigureCheckContentTypesCommand = new ActionCommand<string>(ConfigureCheckContentTypes);
+            CheckContentTypesView = new ListCollectionView(CreateContentTypes().ToList());
 
             CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
+
             _fixHitTypes = CreateFixHitTypes();
             FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
         }
 
+        public ListCollectionView CheckContentTypesView { get; set; }
         public ListCollectionView CheckHitTypesView { get; set; }
         public ListCollectionView FixHitTypesView { get; set; }
 
-        public ActionCommand<string> ConfigureCheckContentTypesCommand { get; set; }
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
 
@@ -46,7 +48,78 @@ namespace ClrVpin.Scanner
             _scannerWindow.Show();
             parent.Hide();
 
-            _scannerWindow.Closed += (_, _) => parent.Show();
+            _scannerWindow.Closed += (_, _) =>
+            {
+                Properties.Settings.Default.Save();
+                parent.Show();
+            };
+        }
+
+        private static IEnumerable<FeatureType> CreateContentTypes()
+        {
+            // show all hit types
+            var featureTypes = Content.Types.Select(contentType =>
+            {
+                var featureType = new FeatureType
+                {
+                    Description = contentType,
+                    IsSupported = true,
+                    IsActive = Config.CheckContentTypes.Contains(contentType)
+                };
+
+                featureType.SelectedCommand = new ActionCommand(() =>
+                {
+                    Config.CheckContentTypes.Toggle(contentType);
+                });
+
+                return featureType;
+            });
+
+            return featureTypes.ToList();
+        }
+
+        private IEnumerable<FeatureType> CreateCheckHitTypes()
+        {
+            // show all hit types
+            var featureTypes = Hit.Types.Select(hitType =>
+            {
+                var featureType = new FeatureType
+                {
+                    Description = hitType.GetDescription(),
+                    IsSupported = true,
+                    IsActive = Config.CheckHitTypes.Contains(hitType)
+                };
+
+                featureType.SelectedCommand = new ActionCommand(() =>
+                {
+                    Config.CheckHitTypes.Toggle(hitType);
+
+                    // toggle the fix hit type checked & enabled
+                    var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
+                    fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
+                    if (!featureType.IsActive)
+                        fixHitType.IsActive = false;
+                });
+
+                return featureType;
+            });
+
+            return featureTypes.ToList();
+        }
+
+        private static IEnumerable<FeatureType> CreateFixHitTypes()
+        {
+            // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
+            var contentTypes = Hit.Types.Select(hitType => new FeatureType
+            {
+                Description = hitType.GetDescription(),
+                IsSupported = hitType != HitType.Missing,
+                IsNeverSupported = hitType == HitType.Missing,
+                IsActive = hitType != HitType.Missing,
+                SelectedCommand = new ActionCommand(() => Config.FixHitTypes.Toggle(hitType))
+            });
+
+            return contentTypes.ToList();
         }
 
         private void Start()
@@ -93,49 +166,6 @@ namespace ClrVpin.Scanner
             };
         }
 
-        private IEnumerable<FeatureType> CreateCheckHitTypes()
-        {
-            // show all hit types
-            var contentTypes = Hit.Types.Select(hitType =>
-            {
-                var featureType = new FeatureType
-                {
-                    Description = hitType.GetDescription(),
-                    IsSupported = true,
-                    IsActive = true
-                };
-
-                featureType.SelectedCommand = new ActionCommand(() =>
-                {
-                    Config.CheckHitTypes.Toggle(hitType);
-
-                    // toggle the fix hit type checked & enabled
-                    var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
-                    fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
-                    if (!featureType.IsActive)
-                        fixHitType.IsActive = false;
-                });
-
-                return featureType;
-            });
-
-            return contentTypes.ToList();
-        }
-
-        private static IEnumerable<FeatureType> CreateFixHitTypes()
-        {
-            // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
-            var contentTypes = Hit.Types.Select(hitType => new FeatureType
-            {
-                Description = hitType.GetDescription(),
-                IsSupported = hitType != HitType.Missing,
-                IsNeverSupported = hitType == HitType.Missing,
-                IsActive = hitType != HitType.Missing,
-                SelectedCommand = new ActionCommand(() => Config.FixHitTypes.Toggle(hitType))
-            });
-
-            return contentTypes.ToList();
-        }
 
         private static void ConfigureCheckContentTypes(string contentType) => Config.CheckContentTypes.Toggle(contentType);
 

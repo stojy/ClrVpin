@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Utils;
 
 namespace ClrVpin.Models
 {
@@ -16,7 +20,13 @@ namespace ClrVpin.Models
         //     e.g. Text="{Binding Source={x:Static p:Settings.Default}, Path=FrontendFolder}"
         //   - vs a simple regular data binding
         //     e.g. Text="{Binding FrontendFolder}"
-        
+
+        static Config()
+        {
+            CheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.CheckContentTypes).Observable;
+            CheckHitTypes = new ObservableCollectionJson<HitType>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value).Observable;
+        }
+
         public static string FrontendFolder
         {
             get => Properties.Settings.Default.FrontendFolder;
@@ -29,8 +39,9 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.TableFolder = value;
         }
 
-        public static readonly List<string> CheckContentTypes = new List<string>(Content.Types);
-        public static readonly List<HitType> CheckHitTypes = new List<HitType>(Hit.Types);
+        public static ObservableCollection<string> CheckContentTypes;
+
+        public static readonly ObservableCollection<HitType> CheckHitTypes;
         public static readonly List<HitType> FixHitTypes = new List<HitType>(Hit.Types);
     }
 }

@@ -18,6 +18,7 @@ namespace ClrVpin.Settings
             };
             window.Show();
             parent.Hide();
+
             window.Closed += (_, _) =>
             {
                 Properties.Settings.Default.Save();
