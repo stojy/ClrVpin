@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Utils;
 
@@ -23,6 +22,7 @@ namespace ClrVpin.Models
         {
             CheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.CheckContentTypes).Observable;
             CheckHitTypes = new ObservableCollectionJson<HitType>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value).Observable;
+            FixHitTypes = new ObservableCollectionJson<HitType>(Properties.Settings.Default.FixHitTypes, value => Properties.Settings.Default.FixHitTypes = value).Observable;
         }
 
         public static string FrontendFolder
@@ -37,9 +37,8 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.TableFolder = value;
         }
 
-        public static ObservableCollection<string> CheckContentTypes;
-
+        public static readonly ObservableCollection<string> CheckContentTypes;
         public static readonly ObservableCollection<HitType> CheckHitTypes;
-        public static readonly List<HitType> FixHitTypes = new List<HitType>(Hit.Types);
+        public static readonly ObservableCollection<HitType> FixHitTypes;
     }
 }

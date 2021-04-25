@@ -64,13 +64,10 @@ namespace ClrVpin.Scanner
                 {
                     Description = contentType,
                     IsSupported = true,
-                    IsActive = Config.CheckContentTypes.Contains(contentType)
+                    IsActive = Config.CheckContentTypes.Contains(contentType),
+                    SelectedCommand = new ActionCommand(() => Config.CheckContentTypes.Toggle(contentType))
                 };
 
-                featureType.SelectedCommand = new ActionCommand(() =>
-                {
-                    Config.CheckContentTypes.Toggle(contentType);
-                });
 
                 return featureType;
             });
@@ -99,6 +96,7 @@ namespace ClrVpin.Scanner
                     fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
                     if (!featureType.IsActive)
                         fixHitType.IsActive = false;
+                    Config.FixHitTypes.Toggle(hitType);
                 });
 
                 return featureType;
@@ -113,9 +111,9 @@ namespace ClrVpin.Scanner
             var contentTypes = Hit.Types.Select(hitType => new FeatureType
             {
                 Description = hitType.GetDescription(),
-                IsSupported = hitType != HitType.Missing,
                 IsNeverSupported = hitType == HitType.Missing,
-                IsActive = hitType != HitType.Missing,
+                IsSupported = Config.CheckHitTypes.Contains(hitType) && hitType != HitType.Missing,
+                IsActive = Config.FixHitTypes.Contains(hitType) && hitType != HitType.Missing,
                 SelectedCommand = new ActionCommand(() => Config.FixHitTypes.Toggle(hitType))
             });
 

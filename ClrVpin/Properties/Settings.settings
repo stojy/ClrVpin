@@ -22,6 +22,9 @@
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="CheckHitTypes" Type="System.String" Scope="User">
+      <Value Profile="(Default)">[4,2,5,1,3,6]</Value>
+    </Setting>
+    <Setting Name="FixHitTypes" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

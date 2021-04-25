@@ -80,13 +80,25 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("[4,2,5,1,3,6]")]
         public string CheckHitTypes {
             get {
                 return ((string)(this["CheckHitTypes"]));
             }
             set {
                 this["CheckHitTypes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FixHitTypes {
+            get {
+                return ((string)(this["FixHitTypes"]));
+            }
+            set {
+                this["FixHitTypes"] = value;
             }
         }
     }
