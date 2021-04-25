@@ -9,35 +9,21 @@
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>
-      <WrapPanel DockPanel.Dock="Top">
-        <GroupBox Margin="5,5" Padding="0, 5" Header="Content to Scan" DockPanel.Dock="Top">
-          <WrapPanel Margin="5,0">
-            <ItemsControl ItemsSource="{Binding CheckContentTypesView}" BorderThickness="5">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="scanner:FeatureType">
-                  <CheckBox Margin="0" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-
-            <!--<StackPanel>
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.TableAudio}"
-                        Content="{x:Static models:Content.TableAudio}" IsChecked="true" />
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.TableVideos}"
-                        Content="{x:Static models:Content.TableVideos}" IsChecked="true" />
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.LaunchAudio}"
-                        Content="{x:Static models:Content.LaunchAudio}" IsChecked="true" />
-            </StackPanel>
-            <StackPanel>
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.BackglassVideos}"
-                        Content="{x:Static models:Content.BackglassVideos}" IsChecked="true" />
-              <CheckBox Margin="5,0" Command="{Binding ConfigureCheckContentTypesCommand}" CommandParameter="{x:Static models:Content.WheelImages}"
-                        Content="{x:Static models:Content.WheelImages}" IsChecked="true" />
-            </StackPanel>-->
-          </WrapPanel>
-        </GroupBox>
-      </WrapPanel>
+      <GroupBox Margin="5,5" Padding="0, 5" Header="Content to Scan" DockPanel.Dock="Top">
+        <ItemsControl ItemsSource="{Binding CheckContentTypesView}" BorderThickness="5">
+          <!--specify items panel with height constrained WrapPanel to achieve multiple columns-->
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel Orientation="Vertical" Height="50" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="scanner:FeatureType">
+              <CheckBox Width="120" Margin="0" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </GroupBox>
 
       <WrapPanel>
         <GroupBox Margin="5, 5" Padding="0,5" Header="Check">
@@ -64,9 +50,7 @@
           </StackPanel>
         </GroupBox>
 
-        <WrapPanel VerticalAlignment="Bottom">
-          <Button Margin="5" Padding="5" Width="50" Command="{Binding StartCommand}">Start</Button>
-        </WrapPanel>
+        <Button Margin="5" Padding="5" Width="50" Command="{Binding StartCommand}" VerticalAlignment="Bottom">Start</Button>
       </WrapPanel>
     </DockPanel>
   </DataTemplate>
