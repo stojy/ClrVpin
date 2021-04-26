@@ -8,25 +8,48 @@
   </Style>
 
   <Style x:Key="TextBoxStyle" TargetType="TextBox">
-    <Setter Property="Width" Value="300" />
+    <Setter Property="Width" Value="500" />
     <Setter Property="IsReadOnly" Value="false" />
     <Setter Property="FontSize" Value="14" />
     <Setter Property="Margin" Value="0,0,5,0" />
   </Style>
 
+  <settings:ListToStringConverter x:Key="ListToStringConverter"/>
+  
+
   <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:Settings}">
     <StackPanel Margin="5">
       <WrapPanel Orientation="Horizontal" Margin="5">
-        <TextBlock Style="{StaticResource TextBlockStyle}">VPX Frontend:</TextBlock>
+        <TextBlock Style="{StaticResource TextBlockStyle}">Frontend:</TextBlock>
         <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.FrontendFolder}" />
         <Button Command="{Binding FrontendFolderCommand}">Select</Button>
       </WrapPanel>
- 
+
+      <!-- front end folders - handled generically to make it a little simpler ot manage -->
+      <GroupBox Margin="5, 5" Padding="0,5" Header="Frontend Folders">
+        <StackPanel>
+          <Button Width="90" HorizontalAlignment="Left" Command="{Binding AutoAssignFoldersCommand}">Auto Assign</Button>
+          <ItemsControl ItemsSource="{Binding FrontendFolders}" BorderThickness="5">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="settings:FolderDetail">
+                <WrapPanel Orientation="Horizontal" Margin="5">
+                  <TextBlock Style="{StaticResource TextBlockStyle}" Text="{Binding Description}" />
+                  <TextBox Margin="-15,0,0,0" Style="{StaticResource TextBoxStyle}" Text="{Binding Folder}" />
+                  <Button Margin="5,0,0,0" Command="{Binding SelectCommand}">Select</Button>
+                  <TextBox Margin="5,0,0,0" Width="80" Style="{StaticResource TextBoxStyle}" Text="{Binding Extensions}" />
+                </WrapPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </GroupBox>
+
       <StackPanel Orientation="Horizontal" Margin="5">
-        <TextBlock Style="{StaticResource TextBlockStyle}">VPX Tables:</TextBlock>
+        <TextBlock Style="{StaticResource TextBlockStyle}">Tables:</TextBlock>
         <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.TableFolder}" />
         <Button Command="{Binding TablesFolderCommand}">Select</Button>
       </StackPanel>
+
     </StackPanel>
 
   </DataTemplate>

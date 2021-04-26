@@ -101,5 +101,77 @@ namespace ClrVpin.Properties {
                 this["FixHitTypes"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FrontendDatabaseFolder {
+            get {
+                return ((string)(this["FrontendDatabaseFolder"]));
+            }
+            set {
+                this["FrontendDatabaseFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FrontendTableAudioFolder {
+            get {
+                return ((string)(this["FrontendTableAudioFolder"]));
+            }
+            set {
+                this["FrontendTableAudioFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FrontendLaunchAudioFolder {
+            get {
+                return ((string)(this["FrontendLaunchAudioFolder"]));
+            }
+            set {
+                this["FrontendLaunchAudioFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FrontendTableVideosFolder {
+            get {
+                return ((string)(this["FrontendTableVideosFolder"]));
+            }
+            set {
+                this["FrontendTableVideosFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FrontendBackglassVideosFolder {
+            get {
+                return ((string)(this["FrontendBackglassVideosFolder"]));
+            }
+            set {
+                this["FrontendBackglassVideosFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FrontendWheelImagesFolder {
+            get {
+                return ((string)(this["FrontendWheelImagesFolder"]));
+            }
+            set {
+                this["FrontendWheelImagesFolder"] = value;
+            }
+        }
     }
 }
