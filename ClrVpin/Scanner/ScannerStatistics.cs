@@ -69,7 +69,7 @@ namespace ClrVpin.Scanner
 
         private string GetSmellyStatistics(string contentType, HitType hitType)
         {
-            if (!Config.CheckContentTypes.Contains(contentType) || !Config.CheckHitTypes.Contains(hitType))
+            if (!Model.Config.CheckContentTypes.Contains(contentType) || !Model.Config.CheckHitTypes.Contains(hitType))
                 return "skipped";
 
             return _games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType)) + "/" + _games.Count;
@@ -79,7 +79,7 @@ namespace ClrVpin.Scanner
         {
             var validHits = _games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitType.Valid).ToList();
 
-            var eligibleHits = _games.Count * Config.CheckContentTypes.Count;
+            var eligibleHits = _games.Count * Model.Config.CheckContentTypes.Count;
 
             var fixFilesIgnored = fixFiles.Where(x => x.Ignored).ToList();
             var fixFilesIgnoredSize = fixFilesIgnored.Sum(x => x.Size);

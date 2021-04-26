@@ -64,8 +64,8 @@ namespace ClrVpin.Scanner
                 {
                     Description = contentType,
                     IsSupported = true,
-                    IsActive = Config.CheckContentTypes.Contains(contentType),
-                    SelectedCommand = new ActionCommand(() => Config.CheckContentTypes.Toggle(contentType))
+                    IsActive = Model.Config.CheckContentTypes.Contains(contentType),
+                    SelectedCommand = new ActionCommand(() => Model.Config.CheckContentTypes.Toggle(contentType))
                 };
 
 
@@ -84,19 +84,19 @@ namespace ClrVpin.Scanner
                 {
                     Description = hitType.GetDescription(),
                     IsSupported = true,
-                    IsActive = Config.CheckHitTypes.Contains(hitType)
+                    IsActive = Model.Config.CheckHitTypes.Contains(hitType)
                 };
 
                 featureType.SelectedCommand = new ActionCommand(() =>
                 {
-                    Config.CheckHitTypes.Toggle(hitType);
+                    Model.Config.CheckHitTypes.Toggle(hitType);
 
                     // toggle the fix hit type checked & enabled
                     var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
                     fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
                     if (!featureType.IsActive)
                         fixHitType.IsActive = false;
-                    Config.FixHitTypes.Toggle(hitType);
+                    Model.Config.FixHitTypes.Toggle(hitType);
                 });
 
                 return featureType;
@@ -112,9 +112,9 @@ namespace ClrVpin.Scanner
             {
                 Description = hitType.GetDescription(),
                 IsNeverSupported = hitType == HitType.Missing,
-                IsSupported = Config.CheckHitTypes.Contains(hitType) && hitType != HitType.Missing,
-                IsActive = Config.FixHitTypes.Contains(hitType) && hitType != HitType.Missing,
-                SelectedCommand = new ActionCommand(() => Config.FixHitTypes.Toggle(hitType))
+                IsSupported = Model.Config.CheckHitTypes.Contains(hitType) && hitType != HitType.Missing,
+                IsActive = Model.Config.FixHitTypes.Contains(hitType) && hitType != HitType.Missing,
+                SelectedCommand = new ActionCommand(() => Model.Config.FixHitTypes.Toggle(hitType))
             });
 
             return contentTypes.ToList();
@@ -163,9 +163,6 @@ namespace ClrVpin.Scanner
                 _scannerWindow.Show();
             };
         }
-
-
-        private static void ConfigureCheckContentTypes(string contentType) => Config.CheckContentTypes.Toggle(contentType);
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;
         private Window _scannerWindow;

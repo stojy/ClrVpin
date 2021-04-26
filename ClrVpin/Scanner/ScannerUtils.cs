@@ -15,7 +15,7 @@ namespace ClrVpin.Scanner
             var unknownFiles = new List<FixFileDetail>();
 
             // for the configured content types only.. check the installed content files against those specified in the database
-            var checkContentTypes = Content.SupportedTypes.Where(type => Config.CheckContentTypes.Contains(type.Type));
+            var checkContentTypes = Content.SupportedTypes.Where(type => Model.Config.CheckContentTypes.Contains(type.Type));
             checkContentTypes.ForEach(contentSetup =>
             {
                 var mediaFiles = GetMedia(contentSetup);
@@ -33,7 +33,7 @@ namespace ClrVpin.Scanner
 
         public static List<Game> GetDatabase()
         {
-            var file = $@"{Config.FrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
+            var file = $@"{Model.Config.FrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
             var doc = XDocument.Load(file);
             if (doc.Root == null)
                 throw new Exception("Failed to load database");
@@ -109,7 +109,7 @@ namespace ClrVpin.Scanner
             var deleted = false;
 
             // only delete file if configured to do so
-            if (Config.FixHitTypes.Contains(hit.Type))
+            if (Model.Config.FixHitTypes.Contains(hit.Type))
             {
                 deleted = true;
                 Delete(hit.Path, hit.Type, hit.ContentType);
@@ -127,7 +127,7 @@ namespace ClrVpin.Scanner
         {
             var renamed = false;
 
-            if (Config.FixHitTypes.Contains(hit.Type))
+            if (Model.Config.FixHitTypes.Contains(hit.Type))
             {
                 renamed = true;
                 Logging.Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {game.Description}");

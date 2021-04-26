@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using PropertyChanged;
 using Utils;
 
 namespace ClrVpin.Models
 {
-    [Serializable]
-    public class Config
+    [AddINotifyPropertyChangedInterface]
+    public class Config //: INotifyPropertyChanged
     {
         // abstract the underlying settings designer class because..
         // - users are agnostic to the underlying Properties.Settings.Default get/set implementation
@@ -18,27 +18,37 @@ namespace ClrVpin.Models
         //   - vs a simple regular data binding
         //     e.g. Text="{Binding FrontendFolder}"
 
-        static Config()
+        public Config()
         {
             CheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.CheckContentTypes).Observable;
             CheckHitTypes = new ObservableCollectionJson<HitType>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value).Observable;
             FixHitTypes = new ObservableCollectionJson<HitType>(Properties.Settings.Default.FixHitTypes, value => Properties.Settings.Default.FixHitTypes = value).Observable;
         }
 
-        public static string FrontendFolder
+        public string FrontendFolder
         {
             get => Properties.Settings.Default.FrontendFolder;
             set => Properties.Settings.Default.FrontendFolder = value;
         }
 
-        public static string TableFolder
+        public string TableFolder
         {
             get => Properties.Settings.Default.TableFolder;
-            set => Properties.Settings.Default.TableFolder = value;
+            set
+            {
+                Properties.Settings.Default.TableFolder = value;
+                //OnPropertyChanged(nameof(Properties.Settings.Default.TableFolder));
+            }
         }
 
-        public static readonly ObservableCollection<string> CheckContentTypes;
-        public static readonly ObservableCollection<HitType> CheckHitTypes;
-        public static readonly ObservableCollection<HitType> FixHitTypes;
+        public readonly ObservableCollection<string> CheckContentTypes;
+        public readonly ObservableCollection<HitType> CheckHitTypes;
+        public readonly ObservableCollection<HitType> FixHitTypes;
+        //public event PropertyChangedEventHandler? PropertyChanged;
+
+        //protected static void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //}
     }
 }

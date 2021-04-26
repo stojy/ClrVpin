@@ -72,8 +72,8 @@ namespace ClrVpin.Scanner
             var filteredContentTypes = Hit.Types.Select(hitType => new FeatureType
             {
                 Description = hitType.GetDescription(),
-                IsSupported = Config.CheckHitTypes.Contains(hitType),
-                IsActive = Config.CheckHitTypes.Contains(hitType),
+                IsSupported = Model.Config.CheckHitTypes.Contains(hitType),
+                IsActive = Model.Config.CheckHitTypes.Contains(hitType),
                 SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
             });
 
@@ -86,8 +86,8 @@ namespace ClrVpin.Scanner
             var filteredContentTypes = Content.Types.Select(contentType => new FeatureType
             {
                 Description = contentType,
-                IsSupported = Config.CheckContentTypes.Contains(contentType),
-                IsActive = Config.CheckContentTypes.Contains(contentType),
+                IsSupported = Model.Config.CheckContentTypes.Contains(contentType),
+                IsActive = Model.Config.CheckContentTypes.Contains(contentType),
                 SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
             });
 

@@ -27,7 +27,7 @@ namespace ClrVpin.Models
                 path = @$"{_contentType.QualifiedFolder}\{path}.{_contentType.ExtensionDetails}";
 
             // only add hit type for valid hits OR if it has been configured to be checked
-            if (hitType == HitType.Valid || Config.CheckHitTypes.Contains(hitType))
+            if (hitType == HitType.Valid || Model.Config.CheckHitTypes.Contains(hitType))
                 Hits.Add(new Hit(Type, path, hitType));
         }
     }
