@@ -46,12 +46,18 @@
                     <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Folder, UpdateSourceTrigger=PropertyChanged}">
                       <b:Interaction.Triggers>
                         <b:EventTrigger EventName="TextChanged">
-                          <b:InvokeCommandAction Command="{Binding FolderChangedCommand}" />
+                          <b:InvokeCommandAction Command="{Binding ChangedCommand}" />
                         </b:EventTrigger>
                       </b:Interaction.Triggers>
                     </TextBox>
                     <Button Command="{Binding FolderExplorerCommand}">Select</Button>
-                    <TextBox Margin="5,0,0,0" Width="90" Style="{StaticResource TextBoxStyle}" Text="{Binding Extensions}" />
+                    <TextBox Margin="5,0,0,0" Width="90" Style="{StaticResource TextBoxStyle}" Text="{Binding Extensions, UpdateSourceTrigger=PropertyChanged}">
+                      <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="TextChanged">
+                          <b:InvokeCommandAction Command="{Binding ChangedCommand}" />
+                        </b:EventTrigger>
+                      </b:Interaction.Triggers>
+                    </TextBox>
                   </WrapPanel>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>

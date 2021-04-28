@@ -14,7 +14,7 @@ namespace ClrVpin.Settings
             Description = folderDetail.Description;
             Extensions = string.Join(", ", folderDetail.Extensions);
 
-            FolderChangedCommand = new ActionCommand(updateFolderDetail);
+            ChangedCommand = new ActionCommand(updateFolderDetail);
             
             FolderExplorerCommand = new ActionCommand(() => FolderUtil.Get(Description, Folder, folder =>
             {
@@ -24,6 +24,6 @@ namespace ClrVpin.Settings
         }
 
         public ActionCommand FolderExplorerCommand { get; set; }
-        public ActionCommand FolderChangedCommand { get; set; }
+        public ActionCommand ChangedCommand { get; set; }
     }
 }
