@@ -13,6 +13,7 @@ namespace ClrVpin.Settings
             Folder = folderDetail.Folder;
             Description = folderDetail.Description;
             Extensions = string.Join(", ", folderDetail.Extensions);
+            Exclude = folderDetail.Exclude;
 
             ChangedCommand = new ActionCommand(updateFolderDetail);
             
