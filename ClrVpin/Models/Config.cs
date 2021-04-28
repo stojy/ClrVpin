@@ -1,10 +1,19 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text.Json;
 using PropertyChanged;
 using Utils;
 
 namespace ClrVpin.Models
 {
+    [AddINotifyPropertyChangedInterface]
+    public class FolderDetail
+    {
+        public string Description { get; set; }
+        public string Folder { get; set; }
+        public string Extensions { get; set; }
+    }
+
     [AddINotifyPropertyChangedInterface]
     public class Config
     {
@@ -24,6 +33,26 @@ namespace ClrVpin.Models
             CheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.CheckContentTypes).Observable;
             CheckHitTypes = new ObservableCollectionJson<HitType>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value).Observable;
             FixHitTypes = new ObservableCollectionJson<HitType>(Properties.Settings.Default.FixHitTypes, value => Properties.Settings.Default.FixHitTypes = value).Observable;
+
+            // assign some default frontend folders if there are none
+            if (string.IsNullOrEmpty(FrontendFoldersJson))
+            {
+                var defaultFrontendFolders = new List<FolderDetail>
+                {
+                    new FolderDetail {Description = TableAudio, Extensions = "*.mp3, *.wav"},
+                    new FolderDetail {Description = LaunchAudio, Extensions = "*.mp3, *.wav"},
+                    new FolderDetail {Description = TableVideos, Extensions = "*.f4v, *.mp4"},
+                    new FolderDetail {Description = BackglassVideos, Extensions = "*.f4v, *.mp4"},
+                    new FolderDetail {Description = WheelImages, Extensions = "*.png, *.jpg"}
+                };
+                FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
+            }
+        }
+
+        private string FrontendFoldersJson
+        {
+            get => Properties.Settings.Default.FrontendFoldersJson;
+            set => Properties.Settings.Default.FrontendFoldersJson = value;
         }
 
         public string FrontendFolder
@@ -38,45 +67,23 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.FrontendDatabaseFolder = value;
         }
 
-        public string FrontendTableAudioFolder
-        {
-            get => Properties.Settings.Default.FrontendTableAudioFolder;
-            set => Properties.Settings.Default.FrontendTableAudioFolder = value;
-        }
-
-        public string FrontendLaunchAudioFolder
-        {
-            get => Properties.Settings.Default.FrontendLaunchAudioFolder;
-            set => Properties.Settings.Default.FrontendLaunchAudioFolder = value;
-        }
-
-        public string FrontendTableVideosFolder
-        {
-            get => Properties.Settings.Default.FrontendTableVideosFolder;
-            set => Properties.Settings.Default.FrontendTableVideosFolder = value;
-        }
-
-        public string FrontendBackglassVideosFolder
-        {
-            get => Properties.Settings.Default.FrontendBackglassVideosFolder;
-            set => Properties.Settings.Default.FrontendBackglassVideosFolder = value;
-        }
-
-        public string FrontendWheelImagesFolder
-        {
-            get => Properties.Settings.Default.FrontendWheelImagesFolder;
-            set => Properties.Settings.Default.FrontendWheelImagesFolder = value;
-        }
-
         public string TableFolder
         {
             get => Properties.Settings.Default.TableFolder;
             set => Properties.Settings.Default.TableFolder = value;
         }
 
+        public List<FolderDetail> GetFrontendFolders() => JsonSerializer.Deserialize<List<FolderDetail>>(FrontendFoldersJson);
+        public void SetFrontendFolders(IEnumerable<FolderDetail> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
+
         public readonly ObservableCollection<string> CheckContentTypes;
         public readonly ObservableCollection<HitType> CheckHitTypes;
         public readonly ObservableCollection<HitType> FixHitTypes;
 
+        public const string TableAudio = "Table Audio";
+        public const string LaunchAudio = "Launch Audio";
+        public const string TableVideos = "Table Videos";
+        public const string BackglassVideos = "Backglass Videos";
+        public const string WheelImages = "Wheel Images";
     }
 }

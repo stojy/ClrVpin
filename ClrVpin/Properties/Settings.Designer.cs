@@ -117,60 +117,12 @@ namespace ClrVpin.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FrontendTableAudioFolder {
+        public string FrontendFoldersJson {
             get {
-                return ((string)(this["FrontendTableAudioFolder"]));
+                return ((string)(this["FrontendFoldersJson"]));
             }
             set {
-                this["FrontendTableAudioFolder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FrontendLaunchAudioFolder {
-            get {
-                return ((string)(this["FrontendLaunchAudioFolder"]));
-            }
-            set {
-                this["FrontendLaunchAudioFolder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FrontendTableVideosFolder {
-            get {
-                return ((string)(this["FrontendTableVideosFolder"]));
-            }
-            set {
-                this["FrontendTableVideosFolder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FrontendBackglassVideosFolder {
-            get {
-                return ((string)(this["FrontendBackglassVideosFolder"]));
-            }
-            set {
-                this["FrontendBackglassVideosFolder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FrontendWheelImagesFolder {
-            get {
-                return ((string)(this["FrontendWheelImagesFolder"]));
-            }
-            set {
-                this["FrontendWheelImagesFolder"] = value;
+                this["FrontendFoldersJson"] = value;
             }
         }
     }

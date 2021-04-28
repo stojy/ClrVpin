@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Models;
 using Microsoft.Xaml.Behaviors.Core;
@@ -16,19 +18,13 @@ namespace ClrVpin.Settings
 
             TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder));
 
-            FrontendFolders = new[]
-            {
-                // todo; store folder extensions -- stored as comma delimited.. config to present as list?  use json thingy
-                new FolderDetail(TableAudio, Config.FrontendTableAudioFolder, folder => Config.FrontendTableAudioFolder = folder, "*.mp3, *.wav"),
-                new FolderDetail(LaunchAudio, Config.FrontendLaunchAudioFolder, folder => Config.FrontendLaunchAudioFolder = folder, "*.mp3, *.wav"),
-                new FolderDetail(TableVideos, Config.FrontendTableVideosFolder, folder => Config.FrontendTableVideosFolder = folder, "*.f4v, *.mp4"),
-                new FolderDetail(BackglassVideos, Config.FrontendBackglassVideosFolder, folder => Config.FrontendBackglassVideosFolder = folder, "*.f4v, *.mp4"),
-                new FolderDetail(WheelImages, Config.FrontendWheelImagesFolder, folder => Config.FrontendWheelImagesFolder = folder, "*.png, *.jpg")
+            var configFrontendFolders = Config.GetFrontendFolders();
+            FrontendFolders = configFrontendFolders!.Select(folder => new FolderDetailModel(folder, () => Config.SetFrontendFolders(FrontendFolders))).ToList();
 
-                //new ContentType {Type = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-                //new ContentType {Type = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-                //new ContentType {Type = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            };
+            // todo; table folders
+            //new ContentType {Type = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+            //new ContentType {Type = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+            //new ContentType {Type = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
         }
 
         public ICommand TablesFolderCommand { get; }
@@ -37,7 +33,7 @@ namespace ClrVpin.Settings
 
         public Config Config { get; } = Model.Config;
 
-        public FolderDetail[] FrontendFolders { get; init; }
+        public List<FolderDetailModel> FrontendFolders { get; init; }
 
         public void Show(Window parent)
         {
@@ -62,11 +58,5 @@ namespace ClrVpin.Settings
         private void AutoAssignFolders()
         {
         }
-
-        public const string TableAudio = "Table Audio";
-        public const string LaunchAudio = "Launch Audio";
-        public const string TableVideos = "Table Videos";
-        public const string BackglassVideos = "Backglass Videos";
-        public const string WheelImages = "Wheel Images";
     }
 }

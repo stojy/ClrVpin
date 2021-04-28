@@ -40,6 +40,7 @@ namespace ClrVpin.Models
 
         public static string[] Types = {TableAudio, LaunchAudio, TableVideos, BackglassVideos, WheelImages};
 
+        // todo; use Config class
         public static ContentType[] SupportedTypes = 
         {
             new ContentType(TableAudio, new[] {"*.mp3", "*.wav"}),

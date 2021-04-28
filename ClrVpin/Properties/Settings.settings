@@ -30,19 +30,7 @@
     <Setting Name="FrontendDatabaseFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="FrontendTableAudioFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="FrontendLaunchAudioFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="FrontendTableVideosFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="FrontendBackglassVideosFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="FrontendWheelImagesFolder" Type="System.String" Scope="User">
+    <Setting Name="FrontendFoldersJson" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
