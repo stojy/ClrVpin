@@ -7,27 +7,21 @@ namespace ClrVpin.Settings
     [AddINotifyPropertyChangedInterface]
     public class FolderDetail
     {
-        private readonly Func<string> _getFolder;
-        private readonly Action<string> _setFolder;
-
-        public string Folder
-        {
-            get => _getFolder();
-            set => _setFolder(value);
-        }
+        public string Folder { get; set; }
 
         public string Extensions { get; set; }
         public string Description { get; }
-        public ActionCommand SelectCommand { get; set; }
+        public ActionCommand FolderExplorerCommand { get; set; }
+        public ActionCommand FolderChangedCommand { get; set; }
 
-        public FolderDetail(string description, Func<string> getFolder, Action<string> setFolder, string extensions)
+        public FolderDetail(string description, string folder, Action<string> setFolder, string extensions)
         {
-            _setFolder = setFolder;
-            _getFolder = getFolder;
-
+            Folder = folder;
             Description = description;
             Extensions = string.Join(", ", extensions);
-            SelectCommand = new ActionCommand(() => FolderUtil.Get(description, Folder, folder => Folder = folder));
+            
+            FolderChangedCommand = new ActionCommand(() => setFolder(Folder));
+            FolderExplorerCommand = new ActionCommand(() => FolderUtil.Get(description, Folder, setFolder));
         }
     }
 }

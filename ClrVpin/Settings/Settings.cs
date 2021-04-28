@@ -19,11 +19,11 @@ namespace ClrVpin.Settings
             FrontendFolders = new[]
             {
                 // todo; store folder extensions -- stored as comma delimited.. config to present as list?  use json thingy
-                new FolderDetail(TableAudio, () => Config.FrontendTableAudioFolder, folder => Config.FrontendTableAudioFolder = folder, "*.mp3, *.wav"),
-                new FolderDetail(LaunchAudio, () => Config.FrontendLaunchAudioFolder, folder => Config.FrontendLaunchAudioFolder = folder, "*.mp3, *.wav"),
-                new FolderDetail(TableVideos, () => Config.FrontendTableVideosFolder, folder => Config.FrontendTableVideosFolder = folder, "*.f4v, *.mp4"),
-                new FolderDetail(BackglassVideos, () => Config.FrontendBackglassVideosFolder, folder => Config.FrontendBackglassVideosFolder = folder, "*.f4v, *.mp4"),
-                new FolderDetail(WheelImages, () => Config.FrontendWheelImagesFolder, folder => Config.FrontendWheelImagesFolder = folder, "*.png, *.jpg")
+                new FolderDetail(TableAudio, Config.FrontendTableAudioFolder, folder => Config.FrontendTableAudioFolder = folder, "*.mp3, *.wav"),
+                new FolderDetail(LaunchAudio, Config.FrontendLaunchAudioFolder, folder => Config.FrontendLaunchAudioFolder = folder, "*.mp3, *.wav"),
+                new FolderDetail(TableVideos, Config.FrontendTableVideosFolder, folder => Config.FrontendTableVideosFolder = folder, "*.f4v, *.mp4"),
+                new FolderDetail(BackglassVideos, Config.FrontendBackglassVideosFolder, folder => Config.FrontendBackglassVideosFolder = folder, "*.f4v, *.mp4"),
+                new FolderDetail(WheelImages, Config.FrontendWheelImagesFolder, folder => Config.FrontendWheelImagesFolder = folder, "*.png, *.jpg")
 
                 //new ContentType {Type = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
                 //new ContentType {Type = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},

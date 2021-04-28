@@ -40,7 +40,7 @@ namespace ClrVpin.Models
 
         public static string[] Types = {TableAudio, LaunchAudio, TableVideos, BackglassVideos, WheelImages};
 
-        public static ContentType[] SupportedTypes =
+        public static ContentType[] SupportedTypes = 
         {
             new ContentType(TableAudio, new[] {"*.mp3", "*.wav"}),
             new ContentType(LaunchAudio, new[] {"*.mp3", "*.wav"}),
