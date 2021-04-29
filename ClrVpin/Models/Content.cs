@@ -11,7 +11,9 @@ namespace ClrVpin.Models
     {
         public Content()
         {
-            SupportedTypes = Model.Config.GetFrontendFolders().Select(folderDetail => new ContentType(folderDetail.Description, folderDetail.Extensions.Split(",").ToArray()));
+            SupportedTypes = Model.Config.GetFrontendFolders()
+                .Where(x => !x.IsDatabase)
+                .Select(folderDetail => new ContentType(folderDetail.Description, folderDetail.Folder, folderDetail.Extensions.Split(",").ToArray()));
 
             SupportedTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
@@ -34,6 +36,7 @@ namespace ClrVpin.Models
             };
         }
 
+        // todo; remove these descriptions and use Config.GetFrontendFolders only
         public const string TableAudio = "Table Audio";
         public const string LaunchAudio = "Launch Audio";
         public const string TableVideos = "Table Videos";

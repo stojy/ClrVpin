@@ -128,7 +128,7 @@ namespace ClrVpin.Scanner
 
             _scanStopWatch = Stopwatch.StartNew();
 
-            var games = ScannerUtils.GetDatabase();
+            var games = ScannerUtils.GetDatabases();
 
             // todo; retrieve 'missing games' from spreadsheet
 

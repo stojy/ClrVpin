@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using ClrVpin.Logging;
 using ClrVpin.Models;
 using Utils;
 
@@ -16,7 +17,7 @@ namespace ClrVpin.Scanner
 
             // for the configured content types only.. check the installed content files against those specified in the database
             var checkContentTypes = Content.SupportedTypes.Where(type => Model.Config.CheckContentTypes.Contains(type.Type));
-            
+
             checkContentTypes.ForEach(contentSetup =>
             {
                 var mediaFiles = GetMedia(contentSetup);
@@ -32,22 +33,33 @@ namespace ClrVpin.Scanner
             return unknownFiles;
         }
 
-        public static List<Game> GetDatabase()
+        public static List<Game> GetDatabases()
         {
-            var file = $@"{Model.Config.FrontendFolder}\Databases\Visual Pinball\Visual Pinball.xml";
-            var doc = XDocument.Load(file);
-            if (doc.Root == null)
-                throw new Exception("Failed to load database");
+            var databaseDetail = Model.Config.GetFrontendFolders().First(x => x.IsDatabase);
 
-            var menu = doc.Root.Deserialize<Menu>();
-            var number = 1;
-            menu.Games.ForEach(g =>
+            // scan through all the databases in the folder
+            var files = Directory.GetFiles(databaseDetail.Folder, databaseDetail.Extensions);
+
+            var games = new List<Game>();
+
+            files.ForEach(file =>
             {
-                g.Number = number++;
-                g.Ipdb = g.IpdbId ?? g.IpdbNr;
-            });
+                var doc = XDocument.Load(file);
+                if (doc.Root == null)
+                    throw new Exception("Failed to load database");
 
-            return menu.Games;
+                var menu = doc.Root.Deserialize<Menu>();
+                var number = 1;
+                menu.Games.ForEach(g =>
+                {
+                    g.Number = number++;
+                    g.Ipdb = g.IpdbId ?? g.IpdbNr;
+                });
+
+                games.AddRange(menu.Games);
+            });
+            
+            return games;
         }
 
         public static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> unknownFileDetails)
@@ -121,7 +133,7 @@ namespace ClrVpin.Scanner
 
         private static void Delete(string file, HitType hitType, string contentType)
         {
-            Logging.Logger.Warn($"Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
+            Logger.Warn($"Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
         }
 
         private static FixFileDetail Rename(Hit hit, Game game)
@@ -131,7 +143,7 @@ namespace ClrVpin.Scanner
             if (Model.Config.FixHitTypes.Contains(hit.Type))
             {
                 renamed = true;
-                Logging.Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {game.Description}");
+                Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {game.Description}");
             }
 
             return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size ?? 0);

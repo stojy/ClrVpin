@@ -10,9 +10,9 @@ namespace ClrVpin.Models
     public class FolderDetail
     {
         public string Description { get; set; }
-        public string Folder { get; set; }
+        public string Folder { get; set; }   
         public string Extensions { get; set; }
-        public bool Exclude { get; set; }
+        public bool IsDatabase { get; set; }
     }
 
     [AddINotifyPropertyChangedInterface]
@@ -21,11 +21,11 @@ namespace ClrVpin.Models
         // abstract the underlying settings designer class because..
         // - users are agnostic to the underlying Properties.Settings.Default get/set implementation
         // - simpler xaml binding to avoid need for either..
-        //   - StaticResource reference; prone to errors if Default isn't referenced in Path (i.e. else new class used)
+        //   - StaticResource reference; prone to errors if Default isn't referenced in Folder (i.e. else new class used)
         //     e.g. <properties:Settings x:Key="Settings"/>
-        //          Text="{Binding Source={StaticResource Settings}, Path=Default.FrontendFolder}"
+        //          Text="{Binding Source={StaticResource Settings}, Folder=Default.FrontendFolder}"
         //   - Static reference; too long
-        //     e.g. Text="{Binding Source={x:Static p:Settings.Default}, Path=FrontendFolder}"
+        //     e.g. Text="{Binding Source={x:Static p:Settings.Default}, Folder=FrontendFolder}"
         //   - vs a simple regular data binding
         //     e.g. Text="{Binding FrontendFolder}"
 
@@ -44,7 +44,7 @@ namespace ClrVpin.Models
         {
             var defaultFrontendFolders = new List<FolderDetail>
             {
-                new FolderDetail {Description = Database, Extensions = "*.xml", Exclude = true},
+                new FolderDetail {Description = Database, Extensions = "*.xml", IsDatabase = true},
                 new FolderDetail {Description = TableAudio, Extensions = "*.mp3, *.wav"},
                 new FolderDetail {Description = LaunchAudio, Extensions = "*.mp3, *.wav"},
                 new FolderDetail {Description = TableVideos, Extensions = "*.f4v, *.mp4"},

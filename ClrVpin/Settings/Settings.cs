@@ -3,8 +3,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Models;
-using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
+using Utils;
+using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
 
 namespace ClrVpin.Settings
 {
@@ -57,6 +58,11 @@ namespace ClrVpin.Settings
 
         private void AutoAssignFolders()
         {
+            // automatically assign folders based on the frontend root folder
+            FrontendFolders.Where(x => !x.IsDatabase).ForEach(x => x.Folder = $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.Description}");
+            FrontendFolders.First(x => x.IsDatabase).Folder = $@"{Config.FrontendFolder}\Databases\Visual Pinball";
+
+            Config.SetFrontendFolders(FrontendFolders);
         }
     }
 }
