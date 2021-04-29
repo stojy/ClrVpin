@@ -97,8 +97,11 @@ namespace ClrVpin.Scanner
             // delete files NOT associated with games, i.e. unknown files
             unknownFileDetails.ForEach(x =>
             {
-                x.Deleted = true;
-                Delete(x.Path, x.HitType, null);
+                if (Model.Config.FixHitTypes.Contains(HitType.Unknown))
+                {
+                    x.Deleted = true;
+                    Delete(x.Path, x.HitType, null);
+                }
             });
 
             return fixedFileDetails;
@@ -145,7 +148,7 @@ namespace ClrVpin.Scanner
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
-            File.Copy(file, destFileName, true);
+            File.Move(file, destFileName, true);
         }
 
         private static FixFileDetail Rename(Hit hit, Game game)
@@ -155,7 +158,14 @@ namespace ClrVpin.Scanner
             if (Model.Config.FixHitTypes.Contains(hit.Type))
             {
                 renamed = true;
-                Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {game.Description}");
+
+                var extension = Path.GetExtension(hit.Path);
+                var path = Path.GetDirectoryName(hit.Path);
+                var newFile = Path.Combine(path!, $"{game.Description}{extension}");
+
+                Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}");
+
+                File.Move(hit.Path!, newFile, true);
             }
 
             return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
@@ -219,6 +229,5 @@ namespace ClrVpin.Scanner
         }
 
         private static string _activeBackupFolder;
-        private static string _baseFolder;
     }
 }
