@@ -11,6 +11,8 @@ namespace ClrVpin.Models
     {
         public Content()
         {
+            SupportedTypes = Model.Config.GetFrontendFolders().Select(folderDetail => new ContentType(folderDetail.Description, folderDetail.Extensions.Split(",").ToArray()));
+
             SupportedTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
 
@@ -40,17 +42,7 @@ namespace ClrVpin.Models
 
         public static string[] Types = {TableAudio, LaunchAudio, TableVideos, BackglassVideos, WheelImages};
 
-        // todo; use Config class
-        public static ContentType[] SupportedTypes = 
-        {
-            new ContentType(TableAudio, new[] {"*.mp3", "*.wav"}),
-            new ContentType(LaunchAudio, new[] {"*.mp3", "*.wav"}),
-            new ContentType(TableVideos, new[] {"*.f4v", "*.mp4"}),
-            new ContentType(BackglassVideos, new[] {"*.mp4", "*.f4v"}),
-            new ContentType(WheelImages, new[] {"*.png", "*.jpg"})
-            //new ContentType {Type = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            //new ContentType {Type = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            //new ContentType {Type = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-        };
+        // todo; remove this class and use Config.GetFrontendFolders only
+        public static IEnumerable<ContentType> SupportedTypes { get; set; }
     }
 }

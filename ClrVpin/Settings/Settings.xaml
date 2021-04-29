@@ -19,8 +19,8 @@
 
   <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:Settings}">
     <StackPanel Margin="5">
-      <GroupBox Margin="5, 5"  Header="Virtual Pinball">
-        <WrapPanel>
+      <GroupBox Margin="5, 5" Padding="0,5" Header="Virtual Pinball">
+        <WrapPanel Margin="5">
           <TextBlock Style="{StaticResource TextBlockStyle}">Tables:</TextBlock>
           <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.TableFolder}" />
           <Button Command="{Binding TablesFolderCommand}">Select</Button>
@@ -29,7 +29,7 @@
 
       <GroupBox Margin="5, 5" Padding="0,5" Header="Frontend">
         <StackPanel Margin="5">
-          <WrapPanel Orientation="Horizontal" Margin="5">
+          <WrapPanel Margin="5">
             <TextBlock Style="{StaticResource TextBlockStyle}">Installation</TextBlock>
             <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.FrontendFolder}" />
             <Button Command="{Binding FrontendFolderCommand}">Select</Button>
@@ -41,7 +41,7 @@
             <ItemsControl ItemsSource="{Binding FrontendFolders}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="settings:FolderDetailModel">
-                  <WrapPanel Orientation="Horizontal">
+                  <WrapPanel Margin="0,0,0,5">
                     <TextBlock Style="{StaticResource TextBlockStyle}" Text="{Binding Description}" />
                     <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Folder, UpdateSourceTrigger=PropertyChanged}">
                       <b:Interaction.Triggers>
