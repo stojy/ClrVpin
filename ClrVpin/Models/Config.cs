@@ -7,15 +7,6 @@ using Utils;
 namespace ClrVpin.Models
 {
     [AddINotifyPropertyChangedInterface]
-    public class FolderDetail
-    {
-        public string Description { get; set; }
-        public string Folder { get; set; }   
-        public string Extensions { get; set; }
-        public bool IsDatabase { get; set; }
-    }
-
-    [AddINotifyPropertyChangedInterface]
     public class Config
     {
         // abstract the underlying settings designer class because..
@@ -42,14 +33,14 @@ namespace ClrVpin.Models
 
         private void Default()
         {
-            var defaultFrontendFolders = new List<FolderDetail>
+            var defaultFrontendFolders = new List<ContentType>
             {
-                new FolderDetail {Description = Database, Extensions = "*.xml", IsDatabase = true},
-                new FolderDetail {Description = TableAudio, Extensions = "*.mp3, *.wav"},
-                new FolderDetail {Description = LaunchAudio, Extensions = "*.mp3, *.wav"},
-                new FolderDetail {Description = TableVideos, Extensions = "*.f4v, *.mp4"},
-                new FolderDetail {Description = BackglassVideos, Extensions = "*.f4v, *.mp4"},
-                new FolderDetail {Description = WheelImages, Extensions = "*.png, *.jpg"}
+                new ContentType {Type = Database, Extensions = "*.xml", IsDatabase = true},
+                new ContentType {Type = TableAudio, Extensions = "*.mp3, *.wav"},
+                new ContentType {Type = LaunchAudio, Extensions = "*.mp3, *.wav"},
+                new ContentType {Type = TableVideos, Extensions = "*.f4v, *.mp4"},
+                new ContentType {Type = BackglassVideos, Extensions = "*.f4v, *.mp4"},
+                new ContentType {Type = WheelImages, Extensions = "*.png, *.jpg"}
             };
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
         }
@@ -78,8 +69,8 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.TableFolder = value;
         }
 
-        public List<FolderDetail> GetFrontendFolders() => JsonSerializer.Deserialize<List<FolderDetail>>(FrontendFoldersJson);
-        public void SetFrontendFolders(IEnumerable<FolderDetail> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
+        public List<ContentType> GetFrontendFolders() => JsonSerializer.Deserialize<List<ContentType>>(FrontendFoldersJson);
+        public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
 
         public readonly ObservableCollection<string> CheckContentTypes;
         public readonly ObservableCollection<HitType> CheckHitTypes;

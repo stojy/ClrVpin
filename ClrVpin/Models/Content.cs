@@ -11,9 +11,7 @@ namespace ClrVpin.Models
     {
         public Content()
         {
-            SupportedTypes = Model.Config.GetFrontendFolders()
-                .Where(x => !x.IsDatabase)
-                .Select(folderDetail => new ContentType(folderDetail.Description, folderDetail.Folder, folderDetail.Extensions.Split(",").ToArray()));
+            SupportedTypes = Model.Config.GetFrontendFolders().Where(x => !x.IsDatabase);
 
             SupportedTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }

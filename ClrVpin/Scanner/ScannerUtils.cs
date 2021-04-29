@@ -201,7 +201,7 @@ namespace ClrVpin.Scanner
 
         private static IEnumerable<string> GetMedia(ContentType contentType)
         {
-            var files = contentType.Extensions.Select(ext => Directory.GetFiles(contentType.QualifiedFolder, ext));
+            var files = contentType.ExtensionsList.Select(ext => Directory.GetFiles(contentType.Folder, ext));
 
             return files.SelectMany(x => x).ToList();
         }

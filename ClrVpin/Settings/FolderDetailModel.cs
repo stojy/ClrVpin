@@ -6,18 +6,18 @@ using PropertyChanged;
 namespace ClrVpin.Settings
 {
     [AddINotifyPropertyChangedInterface]
-    public class FolderDetailModel : FolderDetail
+    public class ContentTypeModel : ContentType
     {
-        public FolderDetailModel(FolderDetail folderDetail, Action updateFolderDetail)
+        public ContentTypeModel(ContentType contentType, Action updateFolderDetail)
         {
-            Folder = folderDetail.Folder;
-            Description = folderDetail.Description;
-            Extensions = string.Join(", ", folderDetail.Extensions);
-            IsDatabase = folderDetail.Description == Config.Database;
+            Folder = contentType.Folder;
+            Type = contentType.Type;
+            Extensions = string.Join(", ", contentType.Extensions);
+            IsDatabase = contentType.Type == Config.Database;
 
             ChangedCommand = new ActionCommand(updateFolderDetail);
             
-            FolderExplorerCommand = new ActionCommand(() => FolderUtil.Get(Description, Folder, folder =>
+            FolderExplorerCommand = new ActionCommand(() => FolderUtil.Get(Type, Folder, folder =>
             {
                 Folder = folder;
                 updateFolderDetail();

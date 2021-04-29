@@ -36,7 +36,7 @@
           <DataGridTextColumn Header="#" Binding="{Binding Number}" />
           <DataGridTextColumn Header="IPDB" Binding="{Binding Ipdb}" />
           <DataGridTextColumn Header="Table" Binding="{Binding TableFileWithExtension}" Width="300" />
-          <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="300" />
+          <DataGridTextColumn Header="Type" Binding="{Binding Description}" Width="300" />
           <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="200" />
           <DataGridTextColumn Header="Year" Binding="{Binding Year}" />
           <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" />

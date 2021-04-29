@@ -20,12 +20,12 @@ namespace ClrVpin.Settings
             TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder));
 
             var configFrontendFolders = Config.GetFrontendFolders();
-            FrontendFolders = configFrontendFolders!.Select(folder => new FolderDetailModel(folder, () => Config.SetFrontendFolders(FrontendFolders))).ToList();
+            FrontendFolders = configFrontendFolders!.Select(folder => new ContentTypeModel(folder, () => Config.SetFrontendFolders(FrontendFolders))).ToList();
 
             // todo; table folders
-            //new ContentType {Type = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            //new ContentType {Type = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            //new ContentType {Type = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+            //new ContentType_Obsolete {Type = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+            //new ContentType_Obsolete {Type = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+            //new ContentType_Obsolete {Type = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
         }
 
         public ICommand TablesFolderCommand { get; }
@@ -34,7 +34,7 @@ namespace ClrVpin.Settings
 
         public Config Config { get; } = Model.Config;
 
-        public List<FolderDetailModel> FrontendFolders { get; init; }
+        public List<ContentTypeModel> FrontendFolders { get; init; }
 
         public void Show(Window parent)
         {
@@ -59,7 +59,7 @@ namespace ClrVpin.Settings
         private void AutoAssignFolders()
         {
             // automatically assign folders based on the frontend root folder
-            FrontendFolders.Where(x => !x.IsDatabase).ForEach(x => x.Folder = $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.Description}");
+            FrontendFolders.Where(x => !x.IsDatabase).ForEach(x => x.Folder = $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.Type}");
             FrontendFolders.First(x => x.IsDatabase).Folder = $@"{Config.FrontendFolder}\Databases\Visual Pinball";
 
             Config.SetFrontendFolders(FrontendFolders);
