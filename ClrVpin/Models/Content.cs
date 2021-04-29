@@ -11,9 +11,9 @@ namespace ClrVpin.Models
     {
         public Content()
         {
-            SupportedTypes = Model.Config.GetFrontendFolders().Where(x => !x.IsDatabase).ToList();
-
-            SupportedTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
+            // create content hits collection.. 1 entry for every content type
+            var contentTypes = Model.Config.GetFrontendFolders().Where(x => !x.IsDatabase).ToList();
+            contentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
 
         public List<ContentHits> ContentHitsCollection { get; set; } = new List<ContentHits>();
@@ -33,7 +33,5 @@ namespace ClrVpin.Models
                                       getFilteredHitTypes().Contains(((Hit) hitObject).Type.GetDescription())
             };
         }
-
-        public static IEnumerable<ContentType> SupportedTypes { get; set; }
     }
 }

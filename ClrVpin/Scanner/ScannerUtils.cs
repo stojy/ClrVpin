@@ -16,7 +16,9 @@ namespace ClrVpin.Scanner
             var unknownFiles = new List<FixFileDetail>();
 
             // for the configured content types only.. check the installed content files against those specified in the database
-            var checkContentTypes = Content.SupportedTypes.Where(type => Model.Config.CheckContentTypes.Contains(type.Type));
+            var checkContentTypes = Model.Config.GetFrontendFolders()
+                .Where(x => !x.IsDatabase)
+                .Where(type => Model.Config.CheckContentTypes.Contains(type.Type));
 
             checkContentTypes.ForEach(contentType =>
             {
