@@ -27,10 +27,10 @@
     <Setting Name="FixHitTypes" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="FrontendDatabaseFolder" Type="System.String" Scope="User">
+    <Setting Name="FrontendFoldersJson" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="FrontendFoldersJson" Type="System.String" Scope="User">
+    <Setting Name="BackupFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

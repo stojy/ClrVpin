@@ -19,6 +19,8 @@ namespace ClrVpin.Settings
 
             TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder));
 
+            BackupFolderCommand = new ActionCommand(() => FolderUtil.Get("Backup Root", Config.BackupFolder, folder => Config.BackupFolder = folder));
+
             var configFrontendFolders = Config.GetFrontendFolders();
             FrontendFolders = configFrontendFolders!.Select(folder => new ContentTypeModel(folder, () => Config.SetFrontendFolders(FrontendFolders))).ToList();
 
@@ -30,6 +32,7 @@ namespace ClrVpin.Settings
 
         public ICommand TablesFolderCommand { get; }
         public ICommand FrontendFolderCommand { get; }
+        public ICommand BackupFolderCommand { get; }
         public ICommand AutoAssignFoldersCommand { get; }
 
         public Config Config { get; } = Model.Config;

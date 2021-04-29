@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text.Json;
 using PropertyChanged;
 using Utils;
@@ -43,6 +44,8 @@ namespace ClrVpin.Models
                 new ContentType {Type = WheelImages, Extensions = "*.png, *.jpg"}
             };
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
+
+            BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");
         }
 
         private string FrontendFoldersJson
@@ -57,10 +60,10 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.FrontendFolder = value;
         }
 
-        public string FrontendDatabaseFolder
+        public string BackupFolder
         {
-            get => Properties.Settings.Default.FrontendDatabaseFolder;
-            set => Properties.Settings.Default.FrontendDatabaseFolder = value;
+            get => Properties.Settings.Default.BackupFolder;
+            set => Properties.Settings.Default.BackupFolder = value;
         }
 
         public string TableFolder

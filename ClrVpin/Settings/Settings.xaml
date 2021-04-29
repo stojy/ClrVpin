@@ -65,6 +65,15 @@
           </StackPanel>
         </StackPanel>
       </GroupBox>
+
+      <GroupBox Margin="5, 5" Padding="0,5" Header="General">
+        <WrapPanel Margin="5">
+          <TextBlock Style="{StaticResource TextBlockStyle}">Backup:</TextBlock>
+          <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.BackupFolder}" />
+          <Button Command="{Binding BackupFolderCommand}">Select</Button>
+        </WrapPanel>
+      </GroupBox>
+
     </StackPanel>
 
   </DataTemplate>
