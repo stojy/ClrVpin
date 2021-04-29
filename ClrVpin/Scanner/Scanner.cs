@@ -58,7 +58,7 @@ namespace ClrVpin.Scanner
         private static IEnumerable<FeatureType> CreateContentTypes()
         {
             // show all hit types
-            var featureTypes = Content.Types.Select(contentType =>
+            var featureTypes = Config.ContentTypes.Select(contentType =>
             {
                 var featureType = new FeatureType
                 {

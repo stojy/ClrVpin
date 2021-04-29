@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using PropertyChanged;
 using Utils;
@@ -30,6 +31,8 @@ namespace ClrVpin.Models
             // assign some default frontend folders if there are none
             if (string.IsNullOrEmpty(FrontendFoldersJson))
                 Default();
+
+            ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).Select(x => x.Type).ToArray();
         }
 
         private void Default()
@@ -47,6 +50,8 @@ namespace ClrVpin.Models
 
             BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");
         }
+
+        public static string[] ContentTypes { get; set; }
 
         private string FrontendFoldersJson
         {

@@ -83,7 +83,7 @@ namespace ClrVpin.Scanner
         private IEnumerable<FeatureType> CreateFilteredContentTypes()
         {
             // show all content types, but assign enabled and active based on the scanner configuration
-            var filteredContentTypes = Content.Types.Select(contentType => new FeatureType
+            var filteredContentTypes = Config.ContentTypes.Select(contentType => new FeatureType
             {
                 Description = contentType,
                 IsSupported = Model.Config.CheckContentTypes.Contains(contentType),

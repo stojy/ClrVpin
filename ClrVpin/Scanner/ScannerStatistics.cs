@@ -59,7 +59,7 @@ namespace ClrVpin.Scanner
                 var title = $"{hitType.GetDescription()}";
 
                 var contents = string.Join("\n",
-                    Content.Types.Select(type =>
+                    Config.ContentTypes.Select(type =>
                         $"- {type,StatisticsKeyWidth + 2}{GetSmellyStatistics(type, hitType)}"));
                 return $"{title}\n{contents}";
             });
@@ -98,7 +98,7 @@ namespace ClrVpin.Scanner
             return "\n-----------------------------------------------\n" +
                    "\nTotals" +
                    $"\n{"- Available Games",StatisticsKeyWidth}{_games.Count}" +
-                   $"\n{"- Possible Content",StatisticsKeyWidth}{_games.Count * Content.Types.Length}" +
+                   $"\n{"- Possible Content",StatisticsKeyWidth}{_games.Count * Config.ContentTypes.Length}" +
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
                    $"\n{"- Valid Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +

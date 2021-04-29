@@ -11,7 +11,7 @@ namespace ClrVpin.Models
     {
         public Content()
         {
-            SupportedTypes = Model.Config.GetFrontendFolders().Where(x => !x.IsDatabase);
+            SupportedTypes = Model.Config.GetFrontendFolders().Where(x => !x.IsDatabase).ToList();
 
             SupportedTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
@@ -34,16 +34,6 @@ namespace ClrVpin.Models
             };
         }
 
-        // todo; remove these descriptions and use Config.GetFrontendFolders only
-        public const string TableAudio = "Table Audio";
-        public const string LaunchAudio = "Launch Audio";
-        public const string TableVideos = "Table Videos";
-        public const string BackglassVideos = "Backglass Videos";
-        public const string WheelImages = "Wheel Images";
-
-        public static string[] Types = {TableAudio, LaunchAudio, TableVideos, BackglassVideos, WheelImages};
-
-        // todo; remove this class and use Config.GetFrontendFolders only
         public static IEnumerable<ContentType> SupportedTypes { get; set; }
     }
 }
