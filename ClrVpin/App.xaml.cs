@@ -2,7 +2,6 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
-using NLog;
 
 namespace ClrVpin
 {
