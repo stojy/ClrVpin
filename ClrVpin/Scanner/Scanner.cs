@@ -134,7 +134,7 @@ namespace ClrVpin.Scanner
 
             var unknownFiles = ScannerUtils.Check(games);
 
-            var fixFiles = ScannerUtils.Fix(games, unknownFiles);
+            var fixFiles = ScannerUtils.Fix(games, unknownFiles, Model.Config.BackupFolder);
 
             Games = new ObservableCollection<Game>(games);
 

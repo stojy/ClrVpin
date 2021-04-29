@@ -60,12 +60,14 @@ namespace ClrVpin.Scanner
 
                 games.AddRange(menu.Games);
             });
-            
+
             return games;
         }
 
-        public static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> unknownFileDetails)
+        public static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> unknownFileDetails, string backupFolder)
         {
+            _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_hh-mm-ss}";
+            
             var fixedFileDetails = new List<FixFileDetail>();
 
             // fix files associated with games
@@ -136,6 +138,14 @@ namespace ClrVpin.Scanner
         private static void Delete(string file, HitType hitType, string contentType)
         {
             Logger.Warn($"Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
+
+            var baseFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
+            var folder = Path.Combine(_activeBackupFolder, baseFolder);
+            var destFileName = Path.Combine(folder, Path.GetFileName(file));
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+            File.Copy(file, destFileName, true);
         }
 
         private static FixFileDetail Rename(Hit hit, Game game)
@@ -207,5 +217,8 @@ namespace ClrVpin.Scanner
 
             return files.SelectMany(x => x).ToList();
         }
+
+        private static string _activeBackupFolder;
+        private static string _baseFolder;
     }
 }
