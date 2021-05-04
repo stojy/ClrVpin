@@ -63,7 +63,7 @@ namespace ClrVpin.Settings
         {
             // automatically assign folders based on the frontend root folder
             FrontendFolders.Where(x => !x.IsDatabase).ForEach(x => x.Folder = $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.Type}");
-            FrontendFolders.First(x => x.IsDatabase).Folder = $@"{Config.FrontendFolder}\Databases\Visual Pinball";
+            FrontendFolders.First(x => x.IsDatabase).Folder = $@"{Config.FrontendFolder}\Media\Databases\Visual Pinball";
 
             Config.SetFrontendFolders(FrontendFolders);
         }

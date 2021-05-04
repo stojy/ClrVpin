@@ -140,15 +140,11 @@ namespace ClrVpin.Scanner
 
         private static void Delete(string file, HitType hitType, string contentType)
         {
-            Logger.Warn($"Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
+            var backupFileName = CreateBackupFileName(file);
 
-            var baseFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
-            var folder = Path.Combine(_activeBackupFolder, baseFolder);
-            var destFileName = Path.Combine(folder, Path.GetFileName(file));
+            Logger.Warn($"Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}, backup: {backupFileName}");
 
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-            File.Move(file, destFileName, true);
+            File.Move(file, backupFileName, true);
         }
 
         private static FixFileDetail Rename(Hit hit, Game game)
@@ -163,12 +159,24 @@ namespace ClrVpin.Scanner
                 var path = Path.GetDirectoryName(hit.Path);
                 var newFile = Path.Combine(path!, $"{game.Description}{extension}");
 
-                Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}");
+                var backupFileName = CreateBackupFileName(hit.Path);
+                Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}, backup: {backupFileName}");
 
+                File.Copy(hit.Path!, newFile, true);
                 File.Move(hit.Path!, newFile, true);
             }
 
             return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
+        }
+
+        private static string CreateBackupFileName(string file)
+        {
+            var baseFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
+            var folder = Path.Combine(_activeBackupFolder, baseFolder);
+            var destFileName = Path.Combine(folder, Path.GetFileName(file));
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+            return destFileName;
         }
 
         private static void CheckMissing(List<Game> games)
