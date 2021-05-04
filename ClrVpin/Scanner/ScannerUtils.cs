@@ -162,7 +162,7 @@ namespace ClrVpin.Scanner
                 var backupFileName = CreateBackupFileName(hit.Path);
                 Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}, backup: {backupFileName}");
 
-                File.Copy(hit.Path!, newFile, true);
+                File.Copy(hit.Path!, backupFileName, true);
                 File.Move(hit.Path!, newFile, true);
             }
 
