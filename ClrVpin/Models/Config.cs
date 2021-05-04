@@ -51,7 +51,12 @@ namespace ClrVpin.Models
             BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");
         }
 
+        // all possible content types (except database) - to be used elsewhere to create check collections
         public static ContentType[] ContentTypes { get; set; }
+
+        // todo; change from enum to class and include tool tip
+        // all possible hit types - to be used elsewhere to create check and fix collections
+        public static HitTypeEnum[] HitTypes = { HitTypeEnum.Missing, HitTypeEnum.TableName, HitTypeEnum.DuplicateExtension, HitTypeEnum.WrongCase, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown };
 
         private string FrontendFoldersJson
         {

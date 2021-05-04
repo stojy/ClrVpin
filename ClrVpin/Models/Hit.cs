@@ -28,8 +28,6 @@ namespace ClrVpin.Models
             CopyPathCommand = new ActionCommand(CopyPath);
         }
 
-        public static HitTypeEnum[] Types = {HitTypeEnum.Missing, HitTypeEnum.TableName, HitTypeEnum.DuplicateExtension, HitTypeEnum.WrongCase, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown};
-
         public string Path { get; }
         public string File { get; }
         public string SizeString { get; }

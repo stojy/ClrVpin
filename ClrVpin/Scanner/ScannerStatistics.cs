@@ -54,7 +54,7 @@ namespace ClrVpin.Scanner
         private string CreateHitTypeStatistics()
         {
             // for every hit type, create stats against every content type
-            var hitStatistics = Hit.Types.Select(hitType =>
+            var hitStatistics = Config.HitTypes.Select(hitType =>
             {
                 var title = $"{hitType.GetDescription()}";
 

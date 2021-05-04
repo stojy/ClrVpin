@@ -69,7 +69,7 @@ namespace ClrVpin.Scanner
         private IEnumerable<FeatureType> CreateFilteredHitTypes()
         {
             // show all hit types, but assign enabled and active based on the scanner configuration
-            var filteredContentTypes = Hit.Types.Select(hitType => new FeatureType
+            var filteredContentTypes = Config.HitTypes.Select(hitType => new FeatureType
             {
                 Description = hitType.GetDescription(),
                 IsSupported = Model.Config.CheckHitTypes.Contains(hitType),
