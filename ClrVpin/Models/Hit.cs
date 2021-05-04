@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -10,32 +9,32 @@ namespace ClrVpin.Models
 {
     public class Hit
     {
-        public Hit(string contentType, string path, HitType type)
+        public Hit(string contentType, string path, HitTypeEnum type)
         {
             ContentType = contentType;
             Path = path;
             File = System.IO.Path.GetFileName(path);
-            Size = type == HitType.Missing ? null : new FileInfo(path).Length;
-            SizeString = type == HitType.Missing ? null : ByteSize.FromBytes(new FileInfo(path).Length).ToString("#");
+            Size = type == HitTypeEnum.Missing ? null : new FileInfo(path).Length;
+            SizeString = type == HitTypeEnum.Missing ? null : ByteSize.FromBytes(new FileInfo(path).Length).ToString("#");
             Type = type;
 
             // performance tweak - explicitly assign a property instead of relying on ToString during subsequent binding
             Description = ToString();
 
             // viewmodel
-            IsPresent = Type != HitType.Missing;
+            IsPresent = Type != HitTypeEnum.Missing;
             OpenFileCommand = new ActionCommand(OpenFile, _ => IsPresent);
             ExplorerCommand = new ActionCommand(ShowInExplorer);
             CopyPathCommand = new ActionCommand(CopyPath);
         }
 
-        public static HitType[] Types = {HitType.Missing, HitType.TableName, HitType.DuplicateExtension, HitType.WrongCase, HitType.Fuzzy, HitType.Unknown};
+        public static HitTypeEnum[] Types = {HitTypeEnum.Missing, HitTypeEnum.TableName, HitTypeEnum.DuplicateExtension, HitTypeEnum.WrongCase, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown};
 
         public string Path { get; }
         public string File { get; }
         public string SizeString { get; }
         public long? Size { get; set; }
-        public HitType Type { get; }
+        public HitTypeEnum Type { get; }
         public string ContentType { get; }
         public string Description { get; }
         public bool IsPresent { get; set; }
@@ -62,23 +61,5 @@ namespace ClrVpin.Models
         private void CopyPath() => Clipboard.SetText(Path);
 
         public sealed override string ToString() => $"{ContentType} - {Type.GetDescription()}: {Path}";
-    }
-
-    public enum HitType
-    {
-        // not displayed
-        [Description("Perfect Match!!")] Valid,
-
-        [Description("Table Name")] TableName,
-
-        [Description("Fuzzy Name")] Fuzzy,
-
-        [Description("Wrong Case")] WrongCase,
-
-        [Description("Duplicate")] DuplicateExtension,
-
-        [Description("Missing")] Missing,
-        
-        [Description("Unknown")] Unknown    // unknown files do not relate to any specific game
     }
 }

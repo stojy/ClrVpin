@@ -75,12 +75,12 @@ namespace ClrVpin.Scanner
             {
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
                 {
-                    if (TryGet(contentHitCollection.Hits, out var hit, HitType.Valid))
+                    if (TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
                     {
                         // valid hit exists.. so delete everything else
                         fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
                     }
-                    else if (TryGet(contentHitCollection.Hits, out hit, HitType.WrongCase, HitType.TableName, HitType.Fuzzy))
+                    else if (TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
                     {
                         // for all 3 hit types.. rename file and delete other entries
                         fixedFileDetails.Add(Rename(hit, game));
@@ -97,7 +97,7 @@ namespace ClrVpin.Scanner
             // delete files NOT associated with games, i.e. unknown files
             unknownFileDetails.ForEach(x =>
             {
-                if (Model.Config.FixHitTypes.Contains(HitType.Unknown))
+                if (Model.Config.FixHitTypes.Contains(HitTypeEnum.Unknown))
                 {
                     x.Deleted = true;
                     Delete(x.Path, x.HitType, null);
@@ -107,7 +107,7 @@ namespace ClrVpin.Scanner
             return fixedFileDetails;
         }
 
-        private static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitType[] hitTypes)
+        private static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
         {
             // return the first entry found
             hit = hits.FirstOrDefault(h => hitTypes.Contains(h.Type));
@@ -138,7 +138,7 @@ namespace ClrVpin.Scanner
             return new FixFileDetail(hit.Type, deleted, false, hit.Path, hit.Size ?? 0);
         }
 
-        private static void Delete(string file, HitType hitType, string contentType)
+        private static void Delete(string file, HitTypeEnum hitType, string contentType)
         {
             var backupFileName = CreateBackupFileName(file);
 
@@ -186,8 +186,8 @@ namespace ClrVpin.Scanner
                 // add missing content
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
                 {
-                    if (!contentHitCollection.Hits.Any(hit => hit.Type == HitType.Valid || hit.Type == HitType.WrongCase))
-                        contentHitCollection.Add(HitType.Missing, game.Description);
+                    if (!contentHitCollection.Hits.Any(hit => hit.Type == HitTypeEnum.Valid || hit.Type == HitTypeEnum.WrongCase))
+                        contentHitCollection.Add(HitTypeEnum.Missing, game.Description);
                 });
             });
         }
@@ -209,20 +209,20 @@ namespace ClrVpin.Scanner
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
                     var contentHits = getContentHits(matchedGame);
-                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitType.Valid) ? HitType.DuplicateExtension : HitType.Valid, mediaFile);
+                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.Valid) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.Valid, mediaFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
                     string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitType.WrongCase, mediaFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, mediaFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitType.TableName, mediaFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, mediaFile);
                 }
                 else
                 {
-                    unknownMediaFiles.Add(new FixFileDetail(HitType.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
+                    unknownMediaFiles.Add(new FixFileDetail(HitTypeEnum.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
                 }
             });
 

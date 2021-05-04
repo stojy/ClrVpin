@@ -25,8 +25,8 @@ namespace ClrVpin.Models
         public Config()
         {
             CheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.CheckContentTypes).Observable;
-            CheckHitTypes = new ObservableCollectionJson<HitType>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value).Observable;
-            FixHitTypes = new ObservableCollectionJson<HitType>(Properties.Settings.Default.FixHitTypes, value => Properties.Settings.Default.FixHitTypes = value).Observable;
+            CheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value).Observable;
+            FixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.FixHitTypes, value => Properties.Settings.Default.FixHitTypes = value).Observable;
 
             // assign some default frontend folders if there are none
             if (string.IsNullOrEmpty(FrontendFoldersJson))
@@ -81,8 +81,8 @@ namespace ClrVpin.Models
         public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
 
         public readonly ObservableCollection<string> CheckContentTypes;
-        public readonly ObservableCollection<HitType> CheckHitTypes;
-        public readonly ObservableCollection<HitType> FixHitTypes;
+        public readonly ObservableCollection<HitTypeEnum> CheckHitTypes;
+        public readonly ObservableCollection<HitTypeEnum> FixHitTypes;
 
         public const string Database = "Database";
         public const string TableAudio = "Table Audio";

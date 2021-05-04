@@ -10,7 +10,7 @@ namespace ClrVpin.Models
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is HitType hitType ? hitType.GetDescription() : DependencyProperty.UnsetValue;
+            return value is HitTypeEnum hitType ? hitType.GetDescription() : DependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

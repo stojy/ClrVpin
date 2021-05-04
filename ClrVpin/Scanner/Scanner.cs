@@ -111,9 +111,9 @@ namespace ClrVpin.Scanner
             var contentTypes = Hit.Types.Select(hitType => new FeatureType
             {
                 Description = hitType.GetDescription(),
-                IsNeverSupported = hitType == HitType.Missing,
-                IsSupported = Model.Config.CheckHitTypes.Contains(hitType) && hitType != HitType.Missing,
-                IsActive = Model.Config.FixHitTypes.Contains(hitType) && hitType != HitType.Missing,
+                IsNeverSupported = hitType == HitTypeEnum.Missing,
+                IsSupported = Model.Config.CheckHitTypes.Contains(hitType) && hitType != HitTypeEnum.Missing,
+                IsActive = Model.Config.FixHitTypes.Contains(hitType) && hitType != HitTypeEnum.Missing,
                 SelectedCommand = new ActionCommand(() => Model.Config.FixHitTypes.Toggle(hitType))
             });
 

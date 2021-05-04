@@ -4,14 +4,14 @@ namespace ClrVpin.Scanner
 {
     public class FixFileDetail : FileDetail
     {
-        public FixFileDetail(HitType hitType, bool deleted, bool renamed, string path, long size) : base(path, size)
+        public FixFileDetail(HitTypeEnum hitType, bool deleted, bool renamed, string path, long size) : base(path, size)
         {
             HitType = hitType;
             Deleted = deleted;
             Renamed = renamed;
         }
 
-        public HitType HitType { get; }
+        public HitTypeEnum HitType { get; }
         public bool Deleted { get; set; }
         public bool Renamed { get; }
         public bool Ignored => !Deleted && !Renamed;

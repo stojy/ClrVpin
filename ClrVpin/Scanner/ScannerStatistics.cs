@@ -67,7 +67,7 @@ namespace ClrVpin.Scanner
             return $"{string.Join("\n\n", hitStatistics)}";
         }
 
-        private string GetSmellyStatistics(string contentType, HitType hitType)
+        private string GetSmellyStatistics(string contentType, HitTypeEnum hitType)
         {
             if (!Model.Config.CheckContentTypes.Contains(contentType) || !Model.Config.CheckHitTypes.Contains(hitType))
                 return "skipped";
@@ -77,7 +77,7 @@ namespace ClrVpin.Scanner
 
         private string CreateTotalStatistics(ICollection<FixFileDetail> fixFiles)
         {
-            var validHits = _games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitType.Valid).ToList();
+            var validHits = _games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.Valid).ToList();
 
             var eligibleHits = _games.Count * Model.Config.CheckContentTypes.Count;
 
@@ -89,7 +89,7 @@ namespace ClrVpin.Scanner
             var fixFilesRenamedSize = fixFilesRenamed.Sum(x => x.Size);
             
             // identify unknown fix files for separate statistics
-            var unknownFiles = fixFiles.Where(x => x.HitType == HitType.Unknown).ToList();
+            var unknownFiles = fixFiles.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
             var unknownFilesIgnored = unknownFiles.Where(x => x.Ignored && !x.Renamed).ToList();
             var unknownFilesIgnoredSize = unknownFilesIgnored.Sum(x => x.Size);
             var unknownFilesDeleted = unknownFiles.Where(x => x.Deleted).ToList();
