@@ -62,12 +62,12 @@ namespace ClrVpin.Scanner
             {
                 var featureType = new FeatureType
                 {
-                    Description = contentType,
+                    Description = contentType.Type,
+                    Tip = contentType.Tip,
                     IsSupported = true,
-                    IsActive = Model.Config.CheckContentTypes.Contains(contentType),
-                    SelectedCommand = new ActionCommand(() => Model.Config.CheckContentTypes.Toggle(contentType))
+                    IsActive = Model.Config.CheckContentTypes.Contains(contentType.Type),
+                    SelectedCommand = new ActionCommand(() => Model.Config.CheckContentTypes.Toggle(contentType.Type))
                 };
-
 
                 return featureType;
             });

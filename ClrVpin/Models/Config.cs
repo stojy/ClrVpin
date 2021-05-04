@@ -32,26 +32,26 @@ namespace ClrVpin.Models
             if (string.IsNullOrEmpty(FrontendFoldersJson))
                 Default();
 
-            ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).Select(x => x.Type).ToArray();
+            ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).ToArray();
         }
 
         private void Default()
         {
             var defaultFrontendFolders = new List<ContentType>
             {
-                new ContentType {Type = Database, Extensions = "*.xml", IsDatabase = true},
-                new ContentType {Type = TableAudio, Extensions = "*.mp3, *.wav"},
-                new ContentType {Type = LaunchAudio, Extensions = "*.mp3, *.wav"},
-                new ContentType {Type = TableVideos, Extensions = "*.f4v, *.mp4"},
-                new ContentType {Type = BackglassVideos, Extensions = "*.f4v, *.mp4"},
-                new ContentType {Type = WheelImages, Extensions = "*.png, *.jpg"}
+                new ContentType {Type = Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
+                new ContentType {Type = TableAudio, Tip="Audio used when displaying a table", Extensions = "*.mp3, *.wav"},
+                new ContentType {Type = LaunchAudio, Tip="Audio used when launching a table", Extensions = "*.mp3, *.wav"},
+                new ContentType {Type = TableVideos, Tip="Video used when displaying a table", Extensions = "*.f4v, *.mp4"},
+                new ContentType {Type = BackglassVideos, Tip="Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4"},
+                new ContentType {Type = WheelImages, Tip="Image used when displaying a table", Extensions = "*.png, *.jpg"}
             };
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
 
             BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");
         }
 
-        public static string[] ContentTypes { get; set; }
+        public static ContentType[] ContentTypes { get; set; }
 
         private string FrontendFoldersJson
         {
