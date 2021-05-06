@@ -18,12 +18,12 @@ namespace ClrVpin.Scanner
             // for the configured content types only.. check the installed content files against those specified in the database
             var checkContentTypes = Model.Config.GetFrontendFolders()
                 .Where(x => !x.IsDatabase)
-                .Where(type => Model.Config.CheckContentTypes.Contains(type.Type));
+                .Where(type => Model.Config.CheckContentTypes.Contains(type.Description));
 
             checkContentTypes.ForEach(contentType =>
             {
                 var mediaFiles = GetMedia(contentType);
-                var unknownMedia = AddMedia(games, mediaFiles, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Type));
+                var unknownMedia = AddMedia(games, mediaFiles, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Description));
 
                 // todo; add non-media content, e.g. tables and b2s
 

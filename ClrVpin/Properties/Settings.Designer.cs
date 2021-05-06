@@ -125,5 +125,17 @@ namespace ClrVpin.Properties {
                 this["BackupFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int SettingsVersion {
+            get {
+                return ((int)(this["SettingsVersion"]));
+            }
+            set {
+                this["SettingsVersion"] = value;
+            }
+        }
     }
 }

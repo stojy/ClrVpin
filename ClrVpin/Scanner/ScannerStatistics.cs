@@ -59,7 +59,7 @@ namespace ClrVpin.Scanner
 
                 var contents = string.Join("\n",
                     Config.ContentTypes.Select(contentType =>
-                        $"- {contentType.Type,StatisticsKeyWidth + 2}{GetSmellyStatistics(contentType.Type, hitType.Type)}"));
+                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetSmellyStatistics(contentType.Description, hitType.Enum)}"));
                 return $"{title}\n{contents}";
             });
 

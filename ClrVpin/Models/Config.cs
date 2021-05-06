@@ -25,48 +25,20 @@ namespace ClrVpin.Models
         public Config()
         {
             CheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.CheckContentTypes).Observable;
-            CheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value).Observable;
+            CheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value)
+                .Observable;
             FixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.FixHitTypes, value => Properties.Settings.Default.FixHitTypes = value).Observable;
 
-            // assign some default frontend folders if there are none
-            if (string.IsNullOrEmpty(FrontendFoldersJson))
+            // reset the settings if the user's stored settings version differs to the default version
+            if (Properties.Settings.Default.SettingsVersion != Properties.Settings.Default.GetDefault<int>(nameof(Properties.Settings.Default.SettingsVersion)))
                 Default();
 
             ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).ToArray();
-        }
-
-        private void Default()
-        {
-            var defaultFrontendFolders = new List<ContentType>
-            {
-                // todo; rename Type to Description
-                new ContentType {Type = "Database", Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
-                new ContentType {Type = "Table Audio", Tip="Audio used when displaying a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Type = "Launch Audio", Tip="Audio used when launching a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Type = "Table Videos", Tip="Video used when displaying a table", Extensions = "*.f4v, *.mp4"},
-                new ContentType {Type = "Backglass Videos", Tip="Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4"},
-                new ContentType {Type = "Wheel Images", Tip="Image used when displaying a table", Extensions = "*.png, *.jpg"}
-            };
-            FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
-
-            BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");
+            HitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
         // all possible content types (except database) - to be used elsewhere to create check collections
         public static ContentType[] ContentTypes { get; set; }
-
-        // todo; change from enum to class and include tool tip
-        // all possible hit types - to be used elsewhere to create check and fix collections
-        public static HitType[] HitTypes =
-        {
-            // todo; rename Type to Enum
-            new HitType { Type = HitTypeEnum.Missing, Description = HitTypeEnum.Missing.GetDescription(), Tip = "Files that should exist because the table exists in the database"},
-            new HitType { Type = HitTypeEnum.TableName, Description = HitTypeEnum.TableName.GetDescription(), Tip = "Files that are incorrectly named matching the table (e.g. .vpx file) instead of the description (as required by frontends)"},
-            new HitType { Type = HitTypeEnum.DuplicateExtension, Description = HitTypeEnum.DuplicateExtension.GetDescription(), Tip = "Files that are duplicated because they have multiple supported extensions (e.g. mp3 and wav)"},
-            new HitType { Type = HitTypeEnum.WrongCase, Description = HitTypeEnum.WrongCase.GetDescription(), Tip = "Files that are correctly named, but have the wrong case"},
-            new HitType { Type = HitTypeEnum.Fuzzy, Description = HitTypeEnum.Fuzzy.GetDescription(), Tip = "Files that match based on various algorithms"},
-            new HitType { Type = HitTypeEnum.Unknown, Description = HitTypeEnum.Unknown.GetDescription(), Tip = "Files that are not required because they do not match any database entries"}
-        };
 
         private string FrontendFoldersJson
         {
@@ -95,8 +67,41 @@ namespace ClrVpin.Models
         public List<ContentType> GetFrontendFolders() => JsonSerializer.Deserialize<List<ContentType>>(FrontendFoldersJson);
         public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
 
+        private void Default()
+        {
+            var defaultFrontendFolders = new List<ContentType>
+            {
+                new ContentType {Description = "Database", Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
+                new ContentType {Description = "Table Audio", Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav"},
+                new ContentType {Description = "Launch Audio", Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav"},
+                new ContentType {Description = "Table Videos", Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4"},
+                new ContentType {Description = "Backglass Videos", Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4"},
+                new ContentType {Description = "Wheel Images", Tip = "Image used when displaying a table", Extensions = "*.png, *.jpg"}
+
+                // todo; table folders
+                //new ContentType_Obsolete {Enum = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+                //new ContentType_Obsolete {Enum = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+                //new ContentType_Obsolete {Enum = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+            };
+            FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
+
+            BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");
+        }
+
         public readonly ObservableCollection<string> CheckContentTypes;
         public readonly ObservableCollection<HitTypeEnum> CheckHitTypes;
         public readonly ObservableCollection<HitTypeEnum> FixHitTypes;
+
+        // todo; change from enum to class and include tool tip
+        // all possible hit types - to be used elsewhere to create check and fix collections
+        public static HitType[] HitTypes =
+        {
+            new HitType {Enum = HitTypeEnum.Missing, Tip = "Files that should exist because the table exists in the database"},
+            new HitType {Enum = HitTypeEnum.TableName, Tip = "Files that are incorrectly named matching the table (e.g. .vpx file) instead of the description (as required by frontends)"},
+            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Files that are duplicated because they have multiple supported extensions (e.g. mp3 and wav)"},
+            new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Files that are correctly named, but have the wrong case"},
+            new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "Files that match based on various algorithms"},
+            new HitType {Enum = HitTypeEnum.Unknown, Tip = "Files that are not required because they do not match any database entries"}
+        };
     }
 }

@@ -62,11 +62,11 @@ namespace ClrVpin.Scanner
             {
                 var featureType = new FeatureType
                 {
-                    Description = contentType.Type,
+                    Description = contentType.Description,
                     Tip = contentType.Tip,
                     IsSupported = true,
-                    IsActive = Model.Config.CheckContentTypes.Contains(contentType.Type),
-                    SelectedCommand = new ActionCommand(() => Model.Config.CheckContentTypes.Toggle(contentType.Type))
+                    IsActive = Model.Config.CheckContentTypes.Contains(contentType.Description),
+                    SelectedCommand = new ActionCommand(() => Model.Config.CheckContentTypes.Toggle(contentType.Description))
                 };
 
                 return featureType;
@@ -84,19 +84,19 @@ namespace ClrVpin.Scanner
                 {
                     Description = hitType.Description,
                     IsSupported = true,
-                    IsActive = Model.Config.CheckHitTypes.Contains(hitType.Type)
+                    IsActive = Model.Config.CheckHitTypes.Contains(hitType.Enum)
                 };
 
                 featureType.SelectedCommand = new ActionCommand(() =>
                 {
-                    Model.Config.CheckHitTypes.Toggle(hitType.Type);
+                    Model.Config.CheckHitTypes.Toggle(hitType.Enum);
 
                     // toggle the fix hit type checked & enabled
                     var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
                     fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
                     if (!featureType.IsActive)
                         fixHitType.IsActive = false;
-                    Model.Config.FixHitTypes.Toggle(hitType.Type);
+                    Model.Config.FixHitTypes.Toggle(hitType.Enum);
                 });
 
                 return featureType;
@@ -111,10 +111,10 @@ namespace ClrVpin.Scanner
             var contentTypes = Config.HitTypes.Select(hitType => new FeatureType
             {
                 Description = hitType.Description,
-                IsNeverSupported = hitType.Type == HitTypeEnum.Missing,
-                IsSupported = Model.Config.CheckHitTypes.Contains(hitType.Type) && hitType.Type != HitTypeEnum.Missing,
-                IsActive = Model.Config.FixHitTypes.Contains(hitType.Type) && hitType.Type != HitTypeEnum.Missing,
-                SelectedCommand = new ActionCommand(() => Model.Config.FixHitTypes.Toggle(hitType.Type))
+                IsNeverSupported = hitType.Enum == HitTypeEnum.Missing,
+                IsSupported = Model.Config.CheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
+                IsActive = Model.Config.FixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
+                SelectedCommand = new ActionCommand(() => Model.Config.FixHitTypes.Toggle(hitType.Enum))
             });
 
             return contentTypes.ToList();

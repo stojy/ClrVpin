@@ -11,7 +11,7 @@ namespace ClrVpin.Models
             _contentType = contentType;
         }
 
-        public string Type => _contentType.Type;
+        public string Type => _contentType.Description;
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
         public bool IsMissing => Hits.Any(hit => hit.Type == HitTypeEnum.Missing);

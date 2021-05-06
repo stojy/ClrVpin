@@ -11,13 +11,13 @@ namespace ClrVpin.Settings
         public ContentTypeModel(ContentType contentType, Action updateFolderDetail)
         {
             Folder = contentType.Folder;
-            Type = contentType.Type;
+            Description = contentType.Description;
             Extensions = string.Join(", ", contentType.Extensions);
-            IsDatabase = contentType.Type == "Database";
+            IsDatabase = contentType.Description == "Database";
 
             ChangedCommand = new ActionCommand(updateFolderDetail);
             
-            FolderExplorerCommand = new ActionCommand(() => FolderUtil.Get(Type, Folder, folder =>
+            FolderExplorerCommand = new ActionCommand(() => FolderUtil.Get(Description, Folder, folder =>
             {
                 Folder = folder;
                 updateFolderDetail();

@@ -23,11 +23,6 @@ namespace ClrVpin.Settings
 
             var configFrontendFolders = Config.GetFrontendFolders();
             FrontendFolders = configFrontendFolders!.Select(folder => new ContentTypeModel(folder, () => Config.SetFrontendFolders(FrontendFolders))).ToList();
-
-            // todo; table folders
-            //new ContentType_Obsolete {Type = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            //new ContentType_Obsolete {Type = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            //new ContentType_Obsolete {Type = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
         }
 
         public ICommand TablesFolderCommand { get; }
@@ -62,7 +57,7 @@ namespace ClrVpin.Settings
         private void AutoAssignFolders()
         {
             // automatically assign folders based on the frontend root folder
-            FrontendFolders.Where(x => !x.IsDatabase).ForEach(x => x.Folder = $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.Type}");
+            FrontendFolders.Where(x => !x.IsDatabase).ForEach(x => x.Folder = $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.Description}");
             FrontendFolders.First(x => x.IsDatabase).Folder = $@"{Config.FrontendFolder}\Media\Databases\Visual Pinball";
 
             Config.SetFrontendFolders(FrontendFolders);
