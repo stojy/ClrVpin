@@ -6,7 +6,7 @@ using Utils;
 
 namespace ClrVpin.Models
 {
-    public class HitTypeDescriptionConverter : IValueConverter
+    public class HitTypeEnumDescriptionConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

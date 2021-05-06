@@ -39,12 +39,13 @@ namespace ClrVpin.Models
         {
             var defaultFrontendFolders = new List<ContentType>
             {
-                new ContentType {Type = Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
-                new ContentType {Type = TableAudio, Tip="Audio used when displaying a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Type = LaunchAudio, Tip="Audio used when launching a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Type = TableVideos, Tip="Video used when displaying a table", Extensions = "*.f4v, *.mp4"},
-                new ContentType {Type = BackglassVideos, Tip="Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4"},
-                new ContentType {Type = WheelImages, Tip="Image used when displaying a table", Extensions = "*.png, *.jpg"}
+                // todo; rename Type to Description
+                new ContentType {Type = "Database", Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
+                new ContentType {Type = "Table Audio", Tip="Audio used when displaying a table", Extensions = "*.mp3, *.wav"},
+                new ContentType {Type = "Launch Audio", Tip="Audio used when launching a table", Extensions = "*.mp3, *.wav"},
+                new ContentType {Type = "Table Videos", Tip="Video used when displaying a table", Extensions = "*.f4v, *.mp4"},
+                new ContentType {Type = "Backglass Videos", Tip="Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4"},
+                new ContentType {Type = "Wheel Images", Tip="Image used when displaying a table", Extensions = "*.png, *.jpg"}
             };
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
 
@@ -56,7 +57,16 @@ namespace ClrVpin.Models
 
         // todo; change from enum to class and include tool tip
         // all possible hit types - to be used elsewhere to create check and fix collections
-        public static HitTypeEnum[] HitTypes = { HitTypeEnum.Missing, HitTypeEnum.TableName, HitTypeEnum.DuplicateExtension, HitTypeEnum.WrongCase, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown };
+        public static HitType[] HitTypes =
+        {
+            // todo; rename Type to Enum
+            new HitType { Type = HitTypeEnum.Missing, Description = HitTypeEnum.Missing.GetDescription(), Tip = "Files that should exist because the table exists in the database"},
+            new HitType { Type = HitTypeEnum.TableName, Description = HitTypeEnum.TableName.GetDescription(), Tip = "Files that are incorrectly named matching the table (e.g. .vpx file) instead of the description (as required by frontends)"},
+            new HitType { Type = HitTypeEnum.DuplicateExtension, Description = HitTypeEnum.DuplicateExtension.GetDescription(), Tip = "Files that are duplicated because they have multiple supported extensions (e.g. mp3 and wav)"},
+            new HitType { Type = HitTypeEnum.WrongCase, Description = HitTypeEnum.WrongCase.GetDescription(), Tip = "Files that are correctly named, but have the wrong case"},
+            new HitType { Type = HitTypeEnum.Fuzzy, Description = HitTypeEnum.Fuzzy.GetDescription(), Tip = "Files that match based on various algorithms"},
+            new HitType { Type = HitTypeEnum.Unknown, Description = HitTypeEnum.Unknown.GetDescription(), Tip = "Files that are not required because they do not match any database entries"}
+        };
 
         private string FrontendFoldersJson
         {
@@ -88,12 +98,5 @@ namespace ClrVpin.Models
         public readonly ObservableCollection<string> CheckContentTypes;
         public readonly ObservableCollection<HitTypeEnum> CheckHitTypes;
         public readonly ObservableCollection<HitTypeEnum> FixHitTypes;
-
-        public const string Database = "Database";
-        public const string TableAudio = "Table Audio";
-        public const string LaunchAudio = "Launch Audio";
-        public const string TableVideos = "Table Videos";
-        public const string BackglassVideos = "Backglass Videos";
-        public const string WheelImages = "Wheel Images";
     }
 }

@@ -71,9 +71,9 @@ namespace ClrVpin.Scanner
             // show all hit types, but assign enabled and active based on the scanner configuration
             var filteredContentTypes = Config.HitTypes.Select(hitType => new FeatureType
             {
-                Description = hitType.GetDescription(),
-                IsSupported = Model.Config.CheckHitTypes.Contains(hitType),
-                IsActive = Model.Config.CheckHitTypes.Contains(hitType),
+                Description = hitType.Description,
+                IsSupported = Model.Config.CheckHitTypes.Contains(hitType.Type),
+                IsActive = Model.Config.CheckHitTypes.Contains(hitType.Type),
                 SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
             });
 

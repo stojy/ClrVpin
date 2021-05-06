@@ -6,7 +6,6 @@ using System.Windows;
 using ByteSizeLib;
 using ClrVpin.Models;
 using PropertyChanged;
-using Utils;
 
 namespace ClrVpin.Scanner
 {
@@ -56,11 +55,11 @@ namespace ClrVpin.Scanner
             // for every hit type, create stats against every content type
             var hitStatistics = Config.HitTypes.Select(hitType =>
             {
-                var title = $"{hitType.GetDescription()}";
+                var title = $"{hitType.Description}";
 
                 var contents = string.Join("\n",
                     Config.ContentTypes.Select(contentType =>
-                        $"- {contentType.Type,StatisticsKeyWidth + 2}{GetSmellyStatistics(contentType.Type, hitType)}"));
+                        $"- {contentType.Type,StatisticsKeyWidth + 2}{GetSmellyStatistics(contentType.Type, hitType.Type)}"));
                 return $"{title}\n{contents}";
             });
 

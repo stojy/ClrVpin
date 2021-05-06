@@ -5,7 +5,7 @@
                     xmlns:scanner="clr-namespace:ClrVpin.Scanner"
                     xmlns:models="clr-namespace:ClrVpin.Models">
 
-  <models:HitTypeDescriptionConverter x:Key="HitTypeDescriptionConverter" />
+  <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
     <DockPanel>

@@ -82,21 +82,21 @@ namespace ClrVpin.Scanner
             {
                 var featureType = new FeatureType
                 {
-                    Description = hitType.GetDescription(),
+                    Description = hitType.Description,
                     IsSupported = true,
-                    IsActive = Model.Config.CheckHitTypes.Contains(hitType)
+                    IsActive = Model.Config.CheckHitTypes.Contains(hitType.Type)
                 };
 
                 featureType.SelectedCommand = new ActionCommand(() =>
                 {
-                    Model.Config.CheckHitTypes.Toggle(hitType);
+                    Model.Config.CheckHitTypes.Toggle(hitType.Type);
 
                     // toggle the fix hit type checked & enabled
                     var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
                     fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
                     if (!featureType.IsActive)
                         fixHitType.IsActive = false;
-                    Model.Config.FixHitTypes.Toggle(hitType);
+                    Model.Config.FixHitTypes.Toggle(hitType.Type);
                 });
 
                 return featureType;
@@ -110,11 +110,11 @@ namespace ClrVpin.Scanner
             // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
             var contentTypes = Config.HitTypes.Select(hitType => new FeatureType
             {
-                Description = hitType.GetDescription(),
-                IsNeverSupported = hitType == HitTypeEnum.Missing,
-                IsSupported = Model.Config.CheckHitTypes.Contains(hitType) && hitType != HitTypeEnum.Missing,
-                IsActive = Model.Config.FixHitTypes.Contains(hitType) && hitType != HitTypeEnum.Missing,
-                SelectedCommand = new ActionCommand(() => Model.Config.FixHitTypes.Toggle(hitType))
+                Description = hitType.Description,
+                IsNeverSupported = hitType.Type == HitTypeEnum.Missing,
+                IsSupported = Model.Config.CheckHitTypes.Contains(hitType.Type) && hitType.Type != HitTypeEnum.Missing,
+                IsActive = Model.Config.FixHitTypes.Contains(hitType.Type) && hitType.Type != HitTypeEnum.Missing,
+                SelectedCommand = new ActionCommand(() => Model.Config.FixHitTypes.Toggle(hitType.Type))
             });
 
             return contentTypes.ToList();

@@ -48,7 +48,7 @@
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
-  <models:HitTypeDescriptionConverter x:Key="HitTypeDescriptionConverter" />
+  <models:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />
 
   <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:ScannerResults}">
     <DockPanel>

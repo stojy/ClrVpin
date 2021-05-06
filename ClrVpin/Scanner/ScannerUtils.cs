@@ -66,7 +66,7 @@ namespace ClrVpin.Scanner
 
         public static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> unknownFileDetails, string backupFolder)
         {
-            _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_hh-mm-ss}";
+            _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
             
             var fixedFileDetails = new List<FixFileDetail>();
 

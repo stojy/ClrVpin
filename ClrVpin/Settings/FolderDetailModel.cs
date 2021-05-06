@@ -13,7 +13,7 @@ namespace ClrVpin.Settings
             Folder = contentType.Folder;
             Type = contentType.Type;
             Extensions = string.Join(", ", contentType.Extensions);
-            IsDatabase = contentType.Type == Config.Database;
+            IsDatabase = contentType.Type == "Database";
 
             ChangedCommand = new ActionCommand(updateFolderDetail);
             
