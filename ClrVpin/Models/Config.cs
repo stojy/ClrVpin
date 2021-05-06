@@ -96,12 +96,12 @@ namespace ClrVpin.Models
         // all possible hit types - to be used elsewhere to create check and fix collections
         public static HitType[] HitTypes =
         {
-            new HitType {Enum = HitTypeEnum.Missing, Tip = "Files that should exist because the table exists in the database"},
-            new HitType {Enum = HitTypeEnum.TableName, Tip = "Files that are incorrectly named matching the table (e.g. .vpx file) instead of the description (as required by frontends)"},
-            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Files that are duplicated because they have multiple supported extensions (e.g. mp3 and wav)"},
-            new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Files that are correctly named, but have the wrong case"},
-            new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "Files that match based on various algorithms"},
-            new HitType {Enum = HitTypeEnum.Unknown, Tip = "Files that are not required because they do not match any database entries"}
+            new HitType {Enum = HitTypeEnum.Missing, Tip = "Files that should match but are missing"},
+            new HitType {Enum = HitTypeEnum.TableName, Tip = "Files matches against table instead of the description"},
+            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Files matches with multiple extensions (e.g. mp3 and wav)"},
+            new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Files matches that have the wrong case"},
+            new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "Files matches based on some 'fuzzy logic'"},
+            new HitType {Enum = HitTypeEnum.Unknown, Tip = "Unknown files that don't match anything"}
         };
     }
 }

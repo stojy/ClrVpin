@@ -83,6 +83,7 @@ namespace ClrVpin.Scanner
                 var featureType = new FeatureType
                 {
                     Description = hitType.Description,
+                    Tip = hitType.Tip,
                     IsSupported = true,
                     IsActive = Model.Config.CheckHitTypes.Contains(hitType.Enum)
                 };
@@ -111,6 +112,7 @@ namespace ClrVpin.Scanner
             var contentTypes = Config.HitTypes.Select(hitType => new FeatureType
             {
                 Description = hitType.Description,
+                Tip = hitType.Tip,
                 IsNeverSupported = hitType.Enum == HitTypeEnum.Missing,
                 IsSupported = Model.Config.CheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
                 IsActive = Model.Config.FixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
