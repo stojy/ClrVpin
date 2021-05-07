@@ -32,8 +32,8 @@
           <TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />
 
           <WrapPanel Margin="5">
-            <Button Command="{Binding ScannerCommand}">Scanner</Button>
-            <Button Command="{Binding RebuilderCommand}">Rebuilder</Button>
+            <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding Config.IsValid}">Scanner</Button>
+            <Button Command="{Binding RebuilderCommand}" IsEnabled="false">Rebuilder</Button>
             <Button Command="{Binding SettingsCommand}">Settings</Button>
             <Button Command="{Binding AboutCommand}">About</Button>
           </WrapPanel>

@@ -35,10 +35,18 @@ namespace ClrVpin.Models
 
             ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).ToArray();
             HitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
+
+            UpdateIsValid();
         }
 
         // all possible content types (except database) - to be used elsewhere to create check collections
         public static ContentType[] ContentTypes { get; set; }
+
+        public string TableFolder
+        {
+            get => Properties.Settings.Default.TableFolder;
+            set => Properties.Settings.Default.TableFolder = value;
+        }
 
         private string FrontendFoldersJson
         {
@@ -58,13 +66,8 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.BackupFolder = value;
         }
 
-        public string TableFolder
-        {
-            get => Properties.Settings.Default.TableFolder;
-            set => Properties.Settings.Default.TableFolder = value;
-        }
-
         public bool IsReviewRequired { get; private set; }
+        public bool IsValid { get; private set; } 
 
         public List<ContentType> GetFrontendFolders() => JsonSerializer.Deserialize<List<ContentType>>(FrontendFoldersJson);
         public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
@@ -73,6 +76,20 @@ namespace ClrVpin.Models
         {
             Properties.Settings.Default.Save();
             IsReviewRequired = false;
+            UpdateIsValid();
+        }
+
+        private void UpdateIsValid()
+        {
+            var paths = new List<string>
+            {
+                TableFolder,
+                FrontendFolder,
+                BackupFolder
+            };
+            paths.AddRange(GetFrontendFolders().Select(x => x.Folder));
+
+            IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
         }
 
         private void Reset()
