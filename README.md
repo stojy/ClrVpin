@@ -5,14 +5,16 @@ Virtual Pinball content management.
 - Content: Tables, Backglasses, POV, etc.
 - Frontend Media: Videos, Audio, Wheels, etc
 
-![image](https://user-images.githubusercontent.com/11408611/115951592-12e72800-a514-11eb-8bdd-0b5c55b12478.png)
+![image](https://user-images.githubusercontent.com/11408611/117463590-6c267100-af82-11eb-8978-a2f8d35417c3.png)
 
-![image](https://user-images.githubusercontent.com/11408611/115951596-1b3f6300-a514-11eb-9303-f1862ebed795.png)
+![image](https://user-images.githubusercontent.com/11408611/117463571-66c92680-af82-11eb-87a1-7ce93baa39c5.png)
 
-![image](https://user-images.githubusercontent.com/11408611/115951609-2d210600-a514-11eb-835b-56eb7e923b5e.png)
+![image](https://user-images.githubusercontent.com/11408611/117464092-e9ea7c80-af82-11eb-9725-42d18990e70b.png)
 
-![image](https://user-images.githubusercontent.com/11408611/115951622-3dd17c00-a514-11eb-8924-55e13c6ae680.png)
+![image](https://user-images.githubusercontent.com/11408611/117464165-f969c580-af82-11eb-8f61-c0e394137f12.png)
 
-![image](https://user-images.githubusercontent.com/11408611/115951626-43c75d00-a514-11eb-8682-f2a1c4e4c078.png)
+![image](https://user-images.githubusercontent.com/11408611/117463987-cde6db00-af82-11eb-816f-f487db07bb1d.png)
 
-![image](https://user-images.githubusercontent.com/11408611/115951628-47f37a80-a514-11eb-9977-97944ade5ff4.png)
+![image](https://user-images.githubusercontent.com/11408611/117464005-d3442580-af82-11eb-8c97-35dc7db67004.png)
+
+![image](https://user-images.githubusercontent.com/11408611/117463760-97a95b80-af82-11eb-80e6-9adcbe0fef35.png)
