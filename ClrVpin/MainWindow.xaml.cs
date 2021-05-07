@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Windows;
 using PropertyChanged;
 
 namespace ClrVpin
@@ -15,6 +16,15 @@ namespace ClrVpin
             DataContext = Model;
 
             InitializeComponent();
+
+            Activated += (_, _) =>
+            {
+                if (Model.Config.IsReviewRequired)
+                {
+                    MessageBox.Show(this, "Please check the updated settings", "Settings have been updated", MessageBoxButton.OK, MessageBoxImage.Information);
+                    new Settings.Settings().Show(this);
+                }
+            };
         }
 
         public Model Model { get; set; }

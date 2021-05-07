@@ -49,7 +49,7 @@ namespace ClrVpin.Settings
 
             window.Closed += (_, _) =>
             {
-                Properties.Settings.Default.Save();
+                Model.Config.Save();
                 parent.Show();
             };
         }

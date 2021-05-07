@@ -80,7 +80,7 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("[4,2,5,1,3,6]")]
+        [global::System.Configuration.DefaultSettingValueAttribute("[1,2,3,4,5,6]")]
         public string CheckHitTypes {
             get {
                 return ((string)(this["CheckHitTypes"]));
@@ -128,13 +128,25 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public int SettingsVersion {
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        public int RequiredVersion {
             get {
-                return ((int)(this["SettingsVersion"]));
+                return ((int)(this["RequiredVersion"]));
             }
             set {
-                this["SettingsVersion"] = value;
+                this["RequiredVersion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int ActualVersion {
+            get {
+                return ((int)(this["ActualVersion"]));
+            }
+            set {
+                this["ActualVersion"] = value;
             }
         }
     }

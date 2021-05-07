@@ -30,8 +30,8 @@ namespace ClrVpin.Models
             FixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.FixHitTypes, value => Properties.Settings.Default.FixHitTypes = value).Observable;
 
             // reset the settings if the user's stored settings version differs to the default version
-            if (Properties.Settings.Default.SettingsVersion != Properties.Settings.Default.GetDefault<int>(nameof(Properties.Settings.Default.SettingsVersion)))
-                Default();
+            if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
+                Reset();
 
             ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).ToArray();
             HitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -64,10 +64,18 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.TableFolder = value;
         }
 
+        public bool IsReviewRequired { get; private set; }
+
         public List<ContentType> GetFrontendFolders() => JsonSerializer.Deserialize<List<ContentType>>(FrontendFoldersJson);
         public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
 
-        private void Default()
+        public void Save()
+        {
+            Properties.Settings.Default.Save();
+            IsReviewRequired = false;
+        }
+
+        private void Reset()
         {
             var defaultFrontendFolders = new List<ContentType>
             {
@@ -86,11 +94,18 @@ namespace ClrVpin.Models
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
 
             BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");
+
+            // update actual version to indicate the config is now compatible and doesn't need to be reset again
+            Properties.Settings.Default.ActualVersion = Properties.Settings.Default.RequiredVersion;
+
+            Save();
+
+            IsReviewRequired = true;
         }
 
-        public readonly ObservableCollection<string> CheckContentTypes;
-        public readonly ObservableCollection<HitTypeEnum> CheckHitTypes;
-        public readonly ObservableCollection<HitTypeEnum> FixHitTypes;
+        public ObservableCollection<string> CheckContentTypes;
+        public ObservableCollection<HitTypeEnum> CheckHitTypes;
+        public ObservableCollection<HitTypeEnum> FixHitTypes;
 
         // todo; change from enum to class and include tool tip
         // all possible hit types - to be used elsewhere to create check and fix collections
