@@ -6,6 +6,7 @@
     <UseWPF>true</UseWPF>
     <Authors>Stojy</Authors>
     <Company>Stoj</Company>
+    <ApplicationIcon>ClrVpin.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

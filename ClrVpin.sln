@@ -9,6 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilsTests", "UtilsTests\Ut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClrVpin", "ClrVpin\ClrVpin.csproj", "{AC3D1EA8-78DC-4B8C-B6F3-2ADE521A978D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{34B6F8B8-7694-4097-811B-C7B944177E1C}"
+	ProjectSection(SolutionItems) = preProject
+		docs\ClrVpin.xcf = docs\ClrVpin.xcf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
