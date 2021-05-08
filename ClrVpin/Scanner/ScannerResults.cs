@@ -102,8 +102,8 @@ namespace ClrVpin.Scanner
                 _searchTextChangedDelayTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(300)};
                 _searchTextChangedDelayTimer.Tick += (_, _) =>
                 {
-                    SmellyGamesView.Refresh();
                     _searchTextChangedDelayTimer.Stop();
+                    SmellyGamesView.Refresh();
                 };
             }
 
@@ -142,13 +142,14 @@ namespace ClrVpin.Scanner
             // text filter
             SmellyGamesView.Filter += gameObject =>
             {
-                if (SearchText.Length == 0)
-                    return true;
-                return ((Game) gameObject).Description.ToLower().Contains(SearchText.ToLower());
-            };
+                // only display games that have smelly hits AND those smelly hits haven't already been filtered out (e.g. filtered on content or hit type)
+                if (((Game) gameObject).Content.SmellyHitsView.Count == 0)
+                    return false;
 
-            // don't display any games that don't have smelly hits - e.g. game smelly hits view filtered out by content and/or hit type
-            SmellyGamesView.Filter += gameObject => ((Game) gameObject).Content.SmellyHitsView.Count > 0;
+                // return hits based on description match against the search text
+                return SearchText.Length == 0 || ((Game) gameObject).Description.ToLower().Contains(SearchText.ToLower());
+
+            };
         }
 
         private readonly IEnumerable<FeatureType> _filteredContentTypes;

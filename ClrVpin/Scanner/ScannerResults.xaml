@@ -5,8 +5,13 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:scanner="clr-namespace:ClrVpin.Scanner">
+                    xmlns:scanner="clr-namespace:ClrVpin.Scanner"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <ResourceDictionary Source="..\Styles.xaml" />
+  </ResourceDictionary.MergedDictionaries>
 
   <ContextMenu x:Key="SmellyGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
     <MenuItem Header="Open File" Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsPresent}" />
@@ -14,27 +19,15 @@
     <MenuItem Header="Copy Path" Command="{Binding CopyPathCommand}" />
   </ContextMenu>
 
-  <Style x:Key="SmellyGameContentStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}">
+  <Style x:Key="SmellyGameContentStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
     <Setter Property="FontWeight" Value="Normal" />
     <Setter Property="ContextMenu" Value="{StaticResource SmellyGameContentContextMenu}" />
     <Setter Property="controls:MouseDoubleClick.Command" Value="{Binding OpenFileCommand}" />
-
-    <Style.Triggers>
-      <Trigger Property="IsSelected" Value="True">
-        <Setter Property="FontWeight" Value="Bold" />
-      </Trigger>
-    </Style.Triggers>
   </Style>
 
-  <Style x:Key="SmellyGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}">
+  <Style x:Key="SmellyGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-    <Setter Property="FontWeight" Value="Normal" />
-    <Style.Triggers>
-      <Trigger Property="IsSelected" Value="True">
-        <Setter Property="FontWeight" Value="Bold" />
-      </Trigger>
-    </Style.Triggers>
   </Style>
 
   <HierarchicalDataTemplate x:Key="SmellyResultTemplate" DataType="models:Hit">
@@ -51,20 +44,23 @@
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />
 
   <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:ScannerResults}">
-    <DockPanel>
-      <WrapPanel DockPanel.Dock="Top" Margin="10">
-        <TextBlock>Search:</TextBlock>
-        <TextBox Width="150" Height="20" VerticalAlignment="Top" Margin="5,0"
-                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-          <b:Interaction.Triggers>
-            <b:EventTrigger EventName="TextChanged">
-              <b:InvokeCommandAction Command="{Binding SearchTextCommand}" />
-            </b:EventTrigger>
-          </b:Interaction.Triggers>
-        </TextBox>
+    <!--dockpanel to provide a scrollbar for the treeview-->
+    <DockPanel Margin="5">
+      <StackPanel DockPanel.Dock="Top">
+        <TextBlock Style="{StaticResource Title}">Filter Options</TextBlock>
+        <WrapPanel Margin="5,0,0,0">
+          <TextBox Width="150" VerticalAlignment="Center"
+                   materialDesign:HintAssist.Hint="e.g. magic"
+                   materialDesign:HintAssist.HelperText="Search game description"
+                   Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <b:Interaction.Triggers>
+              <b:EventTrigger EventName="TextChanged">
+                <b:InvokeCommandAction Command="{Binding SearchTextCommand}" />
+              </b:EventTrigger>
+            </b:Interaction.Triggers>
+          </TextBox>
 
-        <GroupBox Margin="5,-10" Padding="5" Header="Content">
-          <StackPanel Margin="5,0">
+          <GroupBox Margin="5" Padding="2" Header="Content">
             <ItemsControl ItemsSource="{Binding FilteredContentTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="scanner:FeatureType">
@@ -72,11 +68,9 @@
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
-          </StackPanel>
-        </GroupBox>
+          </GroupBox>
 
-        <GroupBox Margin="5,-10" Padding="0,5" Header="Criteria">
-          <StackPanel Margin="5,0">
+          <GroupBox Margin="5" Padding="2" Header="Criteria">
             <ItemsControl ItemsSource="{Binding FilteredHitTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="scanner:FeatureType">
@@ -84,29 +78,30 @@
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
-          </StackPanel>
-        </GroupBox>
-
-      </WrapPanel>
-
-      <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,5,0">
-        <CheckBox DockPanel.Dock="Left" Margin="5,5" Command="{Binding ExpandGamesCommand}"
-                  CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
-          Expand All
-        </CheckBox>
-
-        <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right">
-          <TextBlock Text="Total: " />
-          <TextBlock Text="{Binding SmellyGamesView.Count}" />
-          <TextBlock Text=" / " />
-          <TextBlock Text="{Binding Games.Count}" />
+          </GroupBox>
         </WrapPanel>
-      </DockPanel>
 
-      <TreeView ItemsSource="{Binding SmellyGamesView}"
-                ItemTemplate="{StaticResource SmellyGamesItemTemplate}"
+        <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,5,0">
+          <CheckBox DockPanel.Dock="Left" Margin="5,5" Command="{Binding ExpandGamesCommand}"
+                    CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
+            Expand All
+          </CheckBox>
+
+          <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right">
+            <TextBlock Text="Total: " />
+            <TextBlock Text="{Binding SmellyGamesView.Count}" />
+            <TextBlock Text=" / " />
+            <TextBlock Text="{Binding Games.Count}" />
+          </WrapPanel>
+        </DockPanel>
+      </StackPanel>
+
+      <TreeView DockPanel.Dock="Bottom" ItemsSource="{Binding SmellyGamesView}"
+                ItemTemplate="{StaticResource SmellyGamesItemTemplate}" 
                 ItemContainerStyle="{StaticResource SmellyGameStyle}" />
+      <!--ItemContainerStyle="{StaticResource SmellyGameStyle}"-->
     </DockPanel>
+
   </DataTemplate>
 
 </ResourceDictionary>

@@ -6,13 +6,15 @@
                     xmlns:models="clr-namespace:ClrVpin.Models">
 
   <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="..\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
+
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
     <StackPanel Margin="5">
-      <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}">Content to Scan</TextBlock>
+      <TextBlock Style="{StaticResource Title}">Content to Scan</TextBlock>
       <ItemsControl ItemsSource="{Binding CheckContentTypesView}" BorderThickness="5" HorizontalAlignment="Left">
         <ItemsControl.ItemTemplate>
           <DataTemplate DataType="scanner:FeatureType">
@@ -22,7 +24,7 @@
         </ItemsControl.ItemTemplate>
       </ItemsControl>
 
-      <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,20,0,0">Criteria to Review</TextBlock>
+      <TextBlock Style="{StaticResource Title}">Criteria to Review</TextBlock>
       <WrapPanel>
         <GroupBox Margin="5" Padding="2" Header="Check">
           <StackPanel>
