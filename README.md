@@ -11,7 +11,8 @@ Virtual Pinball content management.
 
 ![image](https://user-images.githubusercontent.com/11408611/117463571-66c92680-af82-11eb-87a1-7ce93baa39c5.png)
 
-![image](https://user-images.githubusercontent.com/11408611/117464092-e9ea7c80-af82-11eb-9725-42d18990e70b.png)
+![image](https://user-images.githubusercontent.com/11408611/117541185-40b88a80-b045-11eb-9aba-770b825d8bd8.png)
+
 
 ![image](https://user-images.githubusercontent.com/11408611/117464165-f969c580-af82-11eb-8f61-c0e394137f12.png)
 
