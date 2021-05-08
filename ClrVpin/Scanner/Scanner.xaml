@@ -11,26 +11,20 @@
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
-    <DockPanel>
-      <GroupBox Margin="5,5" Padding="0, 5" Header="Content to Scan" DockPanel.Dock="Top">
-        <ItemsControl ItemsSource="{Binding CheckContentTypesView}" BorderThickness="5">
-          <!--specify items panel with height constrained WrapPanel to achieve multiple columns-->
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel Orientation="Vertical" Height="50" />
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-          <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="scanner:FeatureType">
-              <CheckBox Width="120" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                        Command="{Binding SelectedCommand}" />
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </GroupBox>
+    <StackPanel Margin="5">
+      <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}">Content to Scan</TextBlock>
+      <ItemsControl ItemsSource="{Binding CheckContentTypesView}" BorderThickness="5" HorizontalAlignment="Left">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="scanner:FeatureType">
+            <CheckBox Width="150" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                      Command="{Binding SelectedCommand}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
 
+      <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,20,0,0">Criteria to Review</TextBlock>
       <WrapPanel>
-        <GroupBox Margin="5, 5" Padding="0,5" Header="Check">
+        <GroupBox Margin="5" Padding="2" Header="Check">
           <StackPanel>
             <ItemsControl ItemsSource="{Binding CheckHitTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
@@ -43,7 +37,7 @@
           </StackPanel>
         </GroupBox>
 
-        <GroupBox Margin="5,5" Padding="0,5" Header="Fix">
+        <GroupBox Margin="5" Padding="2" Header="Fix">
           <StackPanel>
             <ItemsControl ItemsSource="{Binding FixHitTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
@@ -55,10 +49,10 @@
             </ItemsControl>
           </StackPanel>
         </GroupBox>
-
-        <Button Margin="5" Width="50" Command="{Binding StartCommand}" VerticalAlignment="Bottom" Style="{StaticResource AlternateButton}">Start</Button>
       </WrapPanel>
-    </DockPanel>
+      
+      <Button Margin="5" Width="50" Command="{Binding StartCommand}" Style="{StaticResource AlternateButton}">Start</Button>
+    </StackPanel>
   </DataTemplate>
 
 </ResourceDictionary>

@@ -8,13 +8,12 @@
   </ResourceDictionary.MergedDictionaries>
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml crates MainWindow.xaml -->
-  <!-- refer https://intellitect.com/getting-started-material-design-in-xaml/-->
   <Style x:Key="MaterialWindow" TargetType="Window">
     <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
     <Setter Property="TextElement.Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+    <Setter Property="FontFamily" Value="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"/>
     <Setter Property="TextElement.FontWeight" Value="Medium" />
     <Setter Property="TextElement.FontSize" Value="14" />
-    <Setter Property="FontFamily" Value="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"/>
   </Style>
 
   <!--un-keyed style required by windows created in code, e.g. XxxWindow.Show()-->

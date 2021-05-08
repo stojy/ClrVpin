@@ -26,10 +26,11 @@
         <ResourceDictionary Source="About/About.xaml" />
         <ResourceDictionary Source="Logging/Logging.xaml" />
       </ResourceDictionary.MergedDictionaries>
-      
+
       <DataTemplate x:Key="MainWindowTemplate" DataType="clrVpin:Model">
         <StackPanel>
-          <TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />
+          <!--<TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />-->
+          <Image Source="/Resources/ClrVpin.png" Height="150" Margin="10" />
 
           <WrapPanel Margin="5">
             <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding Config.IsValid}">Scanner</Button>
