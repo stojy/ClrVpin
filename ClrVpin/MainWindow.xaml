@@ -8,11 +8,15 @@
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
         Title="ClrVpin" WindowState="Normal"
-        d:DataContext="{d:DesignData }">
+        d:DataContext="{d:DesignData }"
+        Style="{DynamicResource MaterialWindow}">
 
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+
+        <ResourceDictionary Source="Styles.xaml" />
         <ResourceDictionary Source="Scanner/Scanner.xaml" />
         <ResourceDictionary Source="Scanner/ScannerExplorer.xaml" />
         <ResourceDictionary Source="Scanner/ScannerResults.xaml" />
@@ -22,11 +26,7 @@
         <ResourceDictionary Source="About/About.xaml" />
         <ResourceDictionary Source="Logging/Logging.xaml" />
       </ResourceDictionary.MergedDictionaries>
-
-      <Style TargetType="Button">
-        <Setter Property="Margin" Value="5,0"/>
-        <Setter Property="Padding" Value="5"/>
-      </Style>
+      
       <DataTemplate x:Key="MainWindowTemplate" DataType="clrVpin:Model">
         <StackPanel>
           <TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />

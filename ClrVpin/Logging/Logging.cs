@@ -22,9 +22,10 @@ namespace ClrVpin.Logging
                 Height = height,
                 Width = 1200,
                 Content = this,
-                ContentTemplate = parentWindow.Owner.FindResource("LoggingTemplate") as DataTemplate,
                 Left = left,
-                Top = top
+                Top = top,
+                Resources = parentWindow.Resources,
+                ContentTemplate = parentWindow.FindResource("LoggingTemplate") as DataTemplate
             };
             _window.Show();
         }

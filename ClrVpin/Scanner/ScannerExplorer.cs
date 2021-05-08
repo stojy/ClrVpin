@@ -25,7 +25,8 @@ namespace ClrVpin.Scanner
                 Height = height,
                 MinWidth = 400,
                 Content = this,
-                ContentTemplate = parentWindow.Owner.FindResource("ScannerExplorerTemplate") as DataTemplate
+                Resources = parentWindow.Resources,
+                ContentTemplate = parentWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
             };
             _window.Show();
         }

@@ -19,20 +19,21 @@ namespace ClrVpin.Rebuilder
 
         public ICommand StartCommand { get; set; }
 
-        public void Show(Window parent)
+        public void Show(Window parentWindow)
         {
             var window = new Window
             {
-                Owner = parent,
+                Owner = parentWindow,
                 Content = this,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate
+                Resources = parentWindow.Resources,
+                ContentTemplate = parentWindow.FindResource("RebuilderTemplate") as DataTemplate
             };
 
             window.Show();
-            parent.Hide();
-            window.Closed += (_, _) => parent.Show();
+            parentWindow.Hide();
+            window.Closed += (_, _) => parentWindow.Show();
         }
     }
 }

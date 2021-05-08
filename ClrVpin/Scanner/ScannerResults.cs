@@ -59,9 +59,8 @@ namespace ClrVpin.Scanner
                 Width = Width,
                 Height = Height,
                 Content = this,
-
-                // todo; load resources in a centralised location
-                ContentTemplate = parentWindow.Owner.FindResource("ScannerResultsTemplate") as DataTemplate
+                Resources = parentWindow.Resources,
+                ContentTemplate = parentWindow.FindResource("ScannerResultsTemplate") as DataTemplate
             };
             Window.Show();
         }

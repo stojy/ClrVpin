@@ -6,20 +6,21 @@ namespace ClrVpin.About
     [AddINotifyPropertyChangedInterface]
     public class About
     {
-        public void Show(Window parent)
+        public void Show(Window parentWindow)
         {
             var window = new Window
             {
-                Owner = parent,
+                Owner = parentWindow,
                 Content = this,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                ContentTemplate = parent.FindResource("AboutTemplate") as DataTemplate
+                Resources = parentWindow.Resources,
+                ContentTemplate = parentWindow.FindResource("AboutTemplate") as DataTemplate
             };
 
             window.Show();
-            parent.Hide();
-            window.Closed += (_, _) => parent.Show();
+            parentWindow.Hide();
+            window.Closed += (_, _) => parentWindow.Show();
         }
     }
 }

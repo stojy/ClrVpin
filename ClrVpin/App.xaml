@@ -2,4 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
+  
+  <Application.Resources>
+    <!-- windows created in code (but not xaml??) inherit this resource dictionary - i.e. they are not required to import Styles.xaml --><!--
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>-->
+  </Application.Resources>
 </Application>

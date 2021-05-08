@@ -33,25 +33,26 @@ namespace ClrVpin.Scanner
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
 
-        public void Show(Window parent)
+        public void Show(Window parentWindow)
         {
             _scannerWindow = new Window
             {
-                Owner = parent,
+                Owner = parentWindow,
                 Title = "Scanner",
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
-                ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate
+                Resources = parentWindow.Resources,
+                ContentTemplate = parentWindow.FindResource("ScannerTemplate") as DataTemplate
             };
 
             _scannerWindow.Show();
-            parent.Hide();
+            parentWindow.Hide();
 
             _scannerWindow.Closed += (_, _) =>
             {
                 Model.Config.Save();
-                parent.Show();
+                parentWindow.Show();
             };
         }
 

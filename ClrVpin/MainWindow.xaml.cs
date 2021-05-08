@@ -5,6 +5,7 @@ using PropertyChanged;
 namespace ClrVpin
 {
     [AddINotifyPropertyChangedInterface]
+    // ReSharper disable once UnusedMember.Global
     public partial class MainWindow
     {
         public MainWindow()
