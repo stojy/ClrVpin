@@ -44,7 +44,7 @@
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />
 
   <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:ScannerResults}">
-    <!--dockpanel to provide a scrollbar for the treeview-->
+    <!--dock panel to provide a scrollbar for the treeview-->
     <DockPanel Margin="5">
       <StackPanel DockPanel.Dock="Top">
         <TextBlock Style="{StaticResource Title}">Filter Options</TextBlock>

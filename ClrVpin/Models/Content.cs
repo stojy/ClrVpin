@@ -21,6 +21,7 @@ namespace ClrVpin.Models
         public bool IsSmelly { get; set; }
         public ObservableCollection<Hit> SmellyHits { get; set; }
         public ListCollectionView SmellyHitsView { get; set; }
+        public ObservableCollection<Hit> Hits { get; set; }
 
         public void Update(Func<IEnumerable<string>> getFilteredContentTypes, Func<IEnumerable<string>> getFilteredHitTypes)
         {
@@ -32,6 +33,8 @@ namespace ClrVpin.Models
                 Filter = hitObject => getFilteredContentTypes().Contains(((Hit) hitObject).ContentType) &&
                                       getFilteredHitTypes().Contains(((Hit) hitObject).Type.GetDescription())
             };
+
+            Hits = new ObservableCollection<Hit>(ContentHitsCollection.SelectMany(contentHits => contentHits.Hits.ToList()));
         }
     }
 }

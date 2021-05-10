@@ -5,15 +5,15 @@ namespace ClrVpin.Models
     public enum HitTypeEnum
     {
         // not displayed
-        [Description("Perfect Match!!")] Valid,
+        [Description("Valid")] Valid,
 
-        [Description("Table Name")] TableName,
+        [Description("Table Name Match")] TableName,
 
-        [Description("Fuzzy Name")] Fuzzy,
+        [Description("Fuzzy Name Match")] Fuzzy,
 
         [Description("Wrong Case")] WrongCase,
 
-        [Description("Duplicate")] DuplicateExtension,
+        [Description("Duplicate Extension")] DuplicateExtension,
 
         [Description("Missing")] Missing,
         

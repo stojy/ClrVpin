@@ -18,7 +18,7 @@ namespace ClrVpin.Logging
             {
                 Level.Warn => Colors.DarkSalmon,
                 Level.Error => Colors.IndianRed,
-                _ => Colors.Black
+                _ => Colors.White
             };
 
             return new SolidColorBrush(color);

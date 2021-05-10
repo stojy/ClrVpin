@@ -1,61 +1,53 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:models="clr-namespace:ClrVpin.Models"
-                    xmlns:scanner="clr-namespace:ClrVpin.Scanner">
+                    xmlns:scanner="clr-namespace:ClrVpin.Scanner"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+  </ResourceDictionary.MergedDictionaries>
 
   <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
-    <WrapPanel>
-      <RadioButton /> <!--todo-->
-      <TextBlock Margin="2,0" Width="60" Text="{Binding Type}" />
-      <TextBlock Margin="2,0" Text="{Binding SizeString}" />
-      <TextBlock Margin="2,0" Text="{Binding Path}" />
-    </WrapPanel>
+    <Grid ToolTip="{Binding Description}" >
+      <Button Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsPresent}">
+        <Image Source="/Resources/ClrVpin.png" Height="50" Margin="10,0"/>
+      </Button>
+    </Grid>
   </DataTemplate>
 
-  <DataTemplate x:Key="TableAudioTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Content.ContentHitsCollection[0].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
+  <DataTemplate x:Key="ContentTemplate" DataType="models:Game">
+    <ItemsControl ItemsSource="{Binding Content.Hits}" ItemTemplate="{StaticResource HitTemplate}">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Vertical" MaxHeight="50"/>
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+    </ItemsControl>
   </DataTemplate>
-  <DataTemplate x:Key="LaunchAudioTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Content.ContentHitsCollection[1].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
-  </DataTemplate>
-  <DataTemplate x:Key="TableVideoTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Content.ContentHitsCollection[2].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
-  </DataTemplate>
-  <DataTemplate x:Key="BackglassVideoTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Content.ContentHitsCollection[3].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
-  </DataTemplate>
-  <DataTemplate x:Key="WheelImageTemplate" DataType="models:Game">
-    <ListBox ItemsSource="{Binding Content.ContentHitsCollection[4].Hits}" ItemTemplate="{StaticResource HitTemplate}" />
-  </DataTemplate>
+
+  <Style x:Key="TextCellStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignDataGridTextColumnStyle}">
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
 
   <DataTemplate x:Key="ScannerExplorerTemplate" DataType="{x:Type scanner:ScannerExplorer}">
     <DockPanel>
-      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Games}"
-                AlternatingRowBackground="LightBlue" AlternationCount="2" AutoGenerateColumns="False">
+      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding Games}" AutoGenerateColumns="False"
+                materialDesign:DataGridAssist.CellPadding="15 5 5 8"
+                materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8">
         <DataGrid.Columns>
-          <DataGridTextColumn Header="#" Binding="{Binding Number}" />
-          <DataGridTextColumn Header="IPDB" Binding="{Binding Ipdb}" />
-          <DataGridTextColumn Header="Table" Binding="{Binding TableFileWithExtension}" Width="300" />
-          <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="300" />
-          <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="200" />
-          <DataGridTextColumn Header="Year" Binding="{Binding Year}" />
-          <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" />
+          <DataGridTextColumn Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn Header="IPDB" Binding="{Binding Ipdb}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn Header="Year" Binding="{Binding Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
-          <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" Width="100" />
-          
-          <DataGridCheckBoxColumn Header="Smelly" Binding="{Binding Content.IsSmelly, Mode=OneWay}" Width="50" />
+          <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridCheckBoxColumn Header="Smelly" Binding="{Binding Content.IsSmelly, Mode=OneWay}" />
 
-          <DataGridTemplateColumn Header="Wheel Images" CellTemplate="{StaticResource WheelImageTemplate}" />
-          <DataGridTemplateColumn Header="Table Audio" CellTemplate="{StaticResource TableAudioTemplate}" />
-          <DataGridTemplateColumn Header="Launch Audio" CellTemplate="{StaticResource LaunchAudioTemplate}" />
-          <DataGridTemplateColumn Header="Table Video" CellTemplate="{StaticResource TableVideoTemplate}" />
-          <DataGridTemplateColumn Header="Backglass Video" CellTemplate="{StaticResource BackglassVideoTemplate}" />
-
-          <!--<DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" />
-          --><!--The Email property contains a URI.  For example "mailto:lucy0@adventure-works.com"--><!--
-          <DataGridHyperlinkColumn Header="Email" Binding="{Binding Email}"  ContentBinding="{Binding Email, Converter={StaticResource EmailConverter}}" />
-          <DataGridCheckBoxColumn Header="Member?" Binding="{Binding IsMember}" />
-          <DataGridComboBoxColumn Header="Order Status"  SelectedItemBinding="{Binding Status}" ItemsSource="{Binding Source={StaticResource myEnum}}" />-->
+          <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />
         </DataGrid.Columns>
       </DataGrid>
     </DockPanel>
