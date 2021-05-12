@@ -9,9 +9,10 @@ namespace ClrVpin.Models
 {
     public class Hit
     {
-        public Hit(string contentType, string path, HitTypeEnum type)
+        public Hit(ContentTypeEnum contentTypeEnum, string path, HitTypeEnum type)
         {
-            ContentType = contentType;
+            ContentTypeEnum = contentTypeEnum;
+            ContentType = contentTypeEnum.GetDescription();
             Path = path;
             File = System.IO.Path.GetFileName(path);
             Size = type == HitTypeEnum.Missing ? null : new FileInfo(path).Length;
@@ -33,9 +34,10 @@ namespace ClrVpin.Models
         public string SizeString { get; }
         public long? Size { get; set; }
         public HitTypeEnum Type { get; }
-        public string ContentType { get; }
         public string Description { get; }
         public bool IsPresent { get; set; }
+        public string ContentType { get; }
+        public ContentTypeEnum ContentTypeEnum { get; set; }
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand ExplorerCommand { get; set; }

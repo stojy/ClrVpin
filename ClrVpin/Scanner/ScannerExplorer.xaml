@@ -2,28 +2,44 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:scanner="clr-namespace:ClrVpin.Scanner"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
+  <scanner:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />
+
   <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
-    <Grid ToolTip="{Binding Description}" >
-      <Button Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsPresent}">
-        <Image Source="/Resources/ClrVpin.png" Height="50" Margin="10,0"/>
-      </Button>
-    </Grid>
+    <materialDesign:PackIcon Kind="{Binding ContentTypeEnum, Converter={StaticResource ContentTypeToIconConverter}}"
+                             Height="45" Width="45" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center">
+      <b:Interaction.Triggers>
+        <b:EventTrigger EventName="MouseUp">
+          <b:InvokeCommandAction Command="{Binding OpenFileCommand}" />
+        </b:EventTrigger>
+      </b:Interaction.Triggers>
+    </materialDesign:PackIcon>
   </DataTemplate>
 
   <DataTemplate x:Key="ContentTemplate" DataType="models:Game">
-    <ItemsControl ItemsSource="{Binding Content.Hits}" ItemTemplate="{StaticResource HitTemplate}">
-      <ItemsControl.ItemsPanel>
+    <ListBox ItemsSource="{Binding Content.Hits}" ItemTemplate="{StaticResource HitTemplate}">
+      <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
-          <WrapPanel Orientation="Vertical" MaxHeight="50"/>
+          <WrapPanel Orientation="Vertical" MaxHeight="45" />
         </ItemsPanelTemplate>
-      </ItemsControl.ItemsPanel>
-    </ItemsControl>
+      </ListBox.ItemsPanel>
+
+      <ListBox.ItemContainerStyle>
+        <Style TargetType="ListBoxItem">
+          <!-- assign smaller padding to maximize the content size (template bound to material's Ripple) -->
+          <Setter Property="Padding" Value="2" />
+          <Setter Property="IsEnabled" Value="{Binding IsPresent}" />
+          <!-- add tooltip to list box item instead of within pack icon so that it's not restricted to the mouse over the actual icon image -->
+          <Setter Property="ToolTip" Value="{Binding Description}" />
+        </Style>
+      </ListBox.ItemContainerStyle>
+    </ListBox>
   </DataTemplate>
 
   <Style x:Key="TextCellStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignDataGridTextColumnStyle}">

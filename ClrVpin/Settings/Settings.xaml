@@ -42,8 +42,8 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="settings:ContentTypeModel">
                   <WrapPanel Margin="0,0,0,5">
-                    <TextBlock Style="{StaticResource TextBlockStyle}" Text="{Binding Description}" />
-                    <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Folder, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBlock Style="{StaticResource TextBlockStyle}" Text="{Binding ContentType.Description}" />
+                    <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding ContentType.Folder, UpdateSourceTrigger=PropertyChanged}">
                       <b:Interaction.Triggers>
                         <b:EventTrigger EventName="TextChanged">
                           <b:InvokeCommandAction Command="{Binding ChangedCommand}" />

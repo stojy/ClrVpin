@@ -7,6 +7,7 @@ namespace ClrVpin.Models
     [AddINotifyPropertyChangedInterface]
     public class ContentType
     {
+        public ContentTypeEnum Enum { get; set; }
         public string Description { get; set; }
         public string Folder { get; set; }   
         public string Extensions { get; set; }

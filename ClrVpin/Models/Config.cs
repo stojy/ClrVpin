@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -96,18 +97,20 @@ namespace ClrVpin.Models
         {
             var defaultFrontendFolders = new List<ContentType>
             {
-                new ContentType {Description = "Database", Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
-                new ContentType {Description = "Table Audio", Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Description = "Launch Audio", Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Description = "Table Videos", Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4"},
-                new ContentType {Description = "Backglass Videos", Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4"},
-                new ContentType {Description = "Wheel Images", Tip = "Image used when displaying a table", Extensions = "*.png, *.jpg"}
+                new ContentType {Enum = ContentTypeEnum.Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
+                new ContentType {Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav"},
+                new ContentType {Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav"},
+                new ContentType {Enum = ContentTypeEnum.TableVideos, Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4"},
+                new ContentType {Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4"},
+                new ContentType {Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.jpg"}
 
                 // todo; table folders
                 //new ContentType_Obsolete {Enum = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
                 //new ContentType_Obsolete {Enum = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
                 //new ContentType_Obsolete {Enum = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
             };
+            defaultFrontendFolders.ForEach(x => x.Description = x.Enum.GetDescription());
+
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
 
             BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");

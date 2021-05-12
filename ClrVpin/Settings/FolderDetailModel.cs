@@ -6,24 +6,25 @@ using PropertyChanged;
 namespace ClrVpin.Settings
 {
     [AddINotifyPropertyChangedInterface]
-    public class ContentTypeModel : ContentType
+    public class ContentTypeModel
     {
         public ContentTypeModel(ContentType contentType, Action updateFolderDetail)
         {
-            Folder = contentType.Folder;
-            Description = contentType.Description;
+            ContentType = contentType;
+
             Extensions = string.Join(", ", contentType.Extensions);
-            IsDatabase = contentType.Description == "Database";
 
             ChangedCommand = new ActionCommand(updateFolderDetail);
             
-            FolderExplorerCommand = new ActionCommand(() => FolderUtil.Get(Description, Folder, folder =>
+            FolderExplorerCommand = new ActionCommand(() => FolderUtil.Get(ContentType.Description, ContentType.Folder, folder =>
             {
-                Folder = folder;
+                ContentType.Folder = folder;
                 updateFolderDetail();
             }));
         }
 
+        public ContentType ContentType { get; set; }
+        public string Extensions { get; set; }
         public ActionCommand FolderExplorerCommand { get; set; }
         public ActionCommand ChangedCommand { get; set; }
     }
