@@ -12,14 +12,15 @@
   <scanner:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />
 
   <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
-    <materialDesign:PackIcon Kind="{Binding ContentTypeEnum, Converter={StaticResource ContentTypeToIconConverter}}"
-                             Height="45" Width="45" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center">
+    <Grid>
+      <materialDesign:PackIcon Kind="{Binding ContentTypeEnum, Converter={StaticResource ContentTypeToIconConverter}}"
+                               Height="45" Width="45" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" />
       <b:Interaction.Triggers>
         <b:EventTrigger EventName="MouseUp">
           <b:InvokeCommandAction Command="{Binding OpenFileCommand}" />
         </b:EventTrigger>
       </b:Interaction.Triggers>
-    </materialDesign:PackIcon>
+    </Grid>
   </DataTemplate>
 
   <DataTemplate x:Key="ContentTemplate" DataType="models:Game">
@@ -35,6 +36,7 @@
           <!-- assign smaller padding to maximize the content size (template bound to material's Ripple) -->
           <Setter Property="Padding" Value="2" />
           <Setter Property="IsEnabled" Value="{Binding IsPresent}" />
+
           <!-- add tooltip to list box item instead of within pack icon so that it's not restricted to the mouse over the actual icon image -->
           <Setter Property="ToolTip" Value="{Binding Description}" />
         </Style>
@@ -65,6 +67,16 @@
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />
         </DataGrid.Columns>
+
+        <DataGrid.RowStyle>
+          <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding Content.IsSmelly}" Value="True">
+                <Setter Property="Background" Value="#989898" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </DataGrid.RowStyle>
       </DataGrid>
     </DockPanel>
 
