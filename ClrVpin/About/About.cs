@@ -1,11 +1,23 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
+using System.Windows.Input;
 using PropertyChanged;
+using Utils;
 
 namespace ClrVpin.About
 {
     [AddINotifyPropertyChangedInterface]
     public class About
     {
+        public About()
+        {
+            NavigateToGitHubCommand = new ActionCommand(NavigateToGitHub);
+        }
+
+        public string GitHubUrl { get; set; } = @"https://github.com/stojy/ClrVpin";
+
+        public ICommand NavigateToGitHubCommand { get; set; }
+
         public void Show(Window parentWindow)
         {
             var window = new Window
@@ -21,6 +33,11 @@ namespace ClrVpin.About
             window.Show();
             parentWindow.Hide();
             window.Closed += (_, _) => parentWindow.Show();
+        }
+
+        private void NavigateToGitHub()
+        {
+            Process.Start(new ProcessStartInfo(GitHubUrl) {UseShellExecute = true});
         }
     }
 }

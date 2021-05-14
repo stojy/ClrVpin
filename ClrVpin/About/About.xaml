@@ -1,28 +1,37 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:about="clr-namespace:ClrVpin.About">
 
-  <Style x:Key="TextBlockStyle" TargetType="TextBlock">
-    <Setter Property="Width" Value="150" />
-    <Setter Property="FontSize" Value="14" />
-  </Style>
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="..\Styles.xaml" />
+  </ResourceDictionary.MergedDictionaries>
 
-  <DataTemplate x:Key="AboutTemplate">
+  <DataTemplate x:Key="AboutTemplate" DataType="{x:Type about:About}">
+    <DataTemplate.Resources>
+      <Style TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+      </Style>
+    </DataTemplate.Resources>
+
     <StackPanel Margin="5">
-      <WrapPanel Margin="5">
-        <TextBlock Style="{StaticResource TextBlockStyle}">Author:</TextBlock>
-        <TextBlock Style="{StaticResource TextBlockStyle}">Stoj</TextBlock>
+      <TextBlock Style="{StaticResource MaterialDesignHeadline1TextBlock}" HorizontalAlignment="Center">ClrVpin</TextBlock>
+      <Image Source="/Resources/ClrVpin.png" Height="250" Margin="10" />
+
+      <TextBlock Margin="5,10">A handy tool to manage your Visual Pinball content: front end media and VPX tables/backglasses.</TextBlock>
+ 
+      <WrapPanel Margin="5,10">
+        <TextBlock >If you've got any questions, please reach out via the github repository: </TextBlock>
+        <TextBlock Margin="10,0,0,0">
+          <Hyperlink NavigateUri="{Binding GitHubUrl}" Command="{Binding NavigateToGitHubCommand}">
+            <TextBlock Text="{Binding GitHubUrl}" FontSize="18"/>
+          </Hyperlink>
+        </TextBlock>
       </WrapPanel>
 
-      <WrapPanel Margin="5">
-        <TextBlock Style="{StaticResource TextBlockStyle}">Git:</TextBlock>
-        <TextBlock Style="{StaticResource TextBlockStyle}">https://github.com/stojy/ClrVpin</TextBlock>
+      <WrapPanel Margin="5,10">
+        <TextBlock >Author:</TextBlock>
+        <TextBlock Margin="10,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontSize="18">Stoj</TextBlock>
       </WrapPanel>
-
-      <WrapPanel Margin="5">
-        <TextBlock Style="{StaticResource TextBlockStyle}">Contact:</TextBlock>
-        <TextBlock Style="{StaticResource TextBlockStyle}">clrvpin@stoj.net</TextBlock>
-      </WrapPanel>
-
     </StackPanel>
   </DataTemplate>
 
