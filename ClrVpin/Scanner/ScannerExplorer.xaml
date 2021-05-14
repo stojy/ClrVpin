@@ -3,18 +3,20 @@
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:scanner="clr-namespace:ClrVpin.Scanner"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:converters="clr-namespace:ClrVpin.Converters">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <scanner:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />
+  <converters:BoolToStringConverter x:Key="SmellyToIconConverter" True="Exclamation" False="Check" />
 
   <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
     <Grid Background="Transparent">
       <materialDesign:PackIcon Kind="{Binding ContentTypeEnum, Converter={StaticResource ContentTypeToIconConverter}}"
-                               Height="45" Width="45" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                               Height="45" Width="45" VerticalAlignment="Center" HorizontalAlignment="Center" />
       <b:Interaction.Triggers>
         <b:EventTrigger EventName="MouseUp">
           <b:InvokeCommandAction Command="{Binding OpenFileCommand}" />
@@ -44,6 +46,25 @@
     </ListBox>
   </DataTemplate>
 
+  <DataTemplate x:Key="SmellyTemplate" DataType="models:Game">
+    <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Content.IsSmelly, Converter={StaticResource SmellyToIconConverter}}"
+                             Height="25" Width="25" VerticalAlignment="Center" HorizontalAlignment="Center">
+      <!-- just for giggles.. setting foreground by a style trigger instead of a converter.. it's rather large!-->
+      <materialDesign:PackIcon.Style>
+        <Style TargetType="materialDesign:PackIcon">
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding Content.IsSmelly}" Value="True">
+              <Setter Property="Foreground" Value="Coral" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Content.IsSmelly}" Value="False">
+              <Setter Property="Foreground" Value="{DynamicResource SecondaryHueDarkBrush}" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </materialDesign:PackIcon.Style>
+    </materialDesign:PackIcon>
+  </DataTemplate>
+
   <Style x:Key="TextCellStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignDataGridTextColumnStyle}">
     <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
@@ -63,7 +84,7 @@
           <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
           <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridCheckBoxColumn Header="Smelly" Binding="{Binding Content.IsSmelly, Mode=OneWay}" />
+          <DataGridTemplateColumn Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" />
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />
         </DataGrid.Columns>
@@ -72,7 +93,7 @@
           <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
             <Style.Triggers>
               <DataTrigger Binding="{Binding Content.IsSmelly}" Value="True">
-                <Setter Property="Background" Value="#989898" />
+                <Setter Property="Background" Value="#FF222222" />
               </DataTrigger>
             </Style.Triggers>
           </Style>
