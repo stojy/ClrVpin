@@ -12,7 +12,7 @@
   <scanner:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />
 
   <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
-    <Grid>
+    <Grid Background="Transparent">
       <materialDesign:PackIcon Kind="{Binding ContentTypeEnum, Converter={StaticResource ContentTypeToIconConverter}}"
                                Height="45" Width="45" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" />
       <b:Interaction.Triggers>
