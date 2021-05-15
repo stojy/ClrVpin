@@ -43,7 +43,8 @@ namespace ClrVpin.Scanner
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("ScannerTemplate") as DataTemplate
+                ContentTemplate = parentWindow.FindResource("ScannerTemplate") as DataTemplate,
+                ResizeMode = ResizeMode.NoResize
             };
 
             _scannerWindow.Show();

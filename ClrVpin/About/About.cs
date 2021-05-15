@@ -27,7 +27,8 @@ namespace ClrVpin.About
                 SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("AboutTemplate") as DataTemplate
+                ContentTemplate = parentWindow.FindResource("AboutTemplate") as DataTemplate,
+                ResizeMode = ResizeMode.NoResize
             };
 
             window.Show();

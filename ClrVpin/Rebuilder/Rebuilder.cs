@@ -28,7 +28,8 @@ namespace ClrVpin.Rebuilder
                 SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("RebuilderTemplate") as DataTemplate
+                ContentTemplate = parentWindow.FindResource("RebuilderTemplate") as DataTemplate,
+                ResizeMode = ResizeMode.NoResize
             };
 
             window.Show();

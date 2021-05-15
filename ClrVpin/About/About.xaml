@@ -17,11 +17,11 @@
       <TextBlock Style="{StaticResource MaterialDesignHeadline1TextBlock}" HorizontalAlignment="Center">ClrVpin</TextBlock>
       <Image Source="/Resources/ClrVpin.png" Height="250" Margin="10" />
 
-      <TextBlock Margin="5,10,0,0" FontSize="18">A handy tool to manage your Visual Pinball content:</TextBlock>
+      <TextBlock Margin="5,10,0,0" FontSize="18">A handy tool for managing your Visual Pinball content files..</TextBlock>
       <TextBlock Margin="5,0,0,0" FontSize="18">• Front end media (launch video, table video, wheels, etc)</TextBlock>
       <TextBlock Margin="5,0,0,0" FontSize="18">• VPX tables and backglasses</TextBlock>
 
-      <TextBlock Margin="5,20,0,0">If you've got any questions, please reach out via github: </TextBlock>
+      <TextBlock Margin="5,20,0,0">If you've got any questions, please reach out via github..</TextBlock>
       <TextBlock Margin="5,0,0,0">
         <Hyperlink NavigateUri="{Binding GitHubUrl}" Command="{Binding NavigateToGitHubCommand}">
           <TextBlock Text="{Binding GitHubUrl}" FontSize="18" />
