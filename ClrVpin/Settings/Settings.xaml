@@ -2,7 +2,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:settings="clr-namespace:ClrVpin.Settings"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:converters="clr-namespace:ClrVpin.Converters">
+                    xmlns:converters="clr-namespace:ClrVpin.Converters"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <ResourceDictionary Source="../Styles.xaml" />
+  </ResourceDictionary.MergedDictionaries>
 
   <Style x:Key="TextBlockStyle" TargetType="TextBlock">
     <Setter Property="Width" Value="150" />
@@ -10,12 +16,13 @@
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
-  <Style x:Key="TextBoxStyle" TargetType="TextBox">
+  <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
     <Setter Property="Width" Value="500" />
-    <Setter Property="IsReadOnly" Value="false" />
-    <Setter Property="FontSize" Value="14" />
-    <Setter Property="Margin" Value="0,0,0,0" />
-    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <!--<Setter Property="Height" Value="50" />-->
+    <!--<Setter Property="IsReadOnly" Value="false" />
+    <Setter Property="FontSize" Value="14" />-->
+    <!--<Setter Property="Margin" Value="0" />-->
+    <!--<Setter Property="VerticalContentAlignment" Value="Center" />-->
   </Style>
 
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
@@ -23,18 +30,43 @@
   <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:Settings}">
     <StackPanel Margin="5">
       <GroupBox Margin="5, 5" Padding="5,2" Header="Virtual Pinball">
-        <WrapPanel Margin="5">
+        <WrapPanel Margin="5" Height="50">
           <TextBlock Style="{StaticResource TextBlockStyle}">Tables:</TextBlock>
-          <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.TableFolder}" />
+          <!--<TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.TableFolder}" />-->
+          <TextBox Style="{StaticResource TextBoxStyle}"
+                   materialDesign:HintAssist.Hint="Folder"
+                   materialDesign:HintAssist.HelperText="Helper text longer than error">
+            <TextBox.Text>
+              <Binding Path="Config.TableFolder" UpdateSourceTrigger="PropertyChanged">
+                <!--<Binding.ValidationRules>
+                  <domain:NotEmptyValidationRule
+                    ValidatesOnTargetUpdated="True" xmlns:domain="clr-namespace:MaterialDesignDemo.Domain" />
+                </Binding.ValidationRules>-->
+              </Binding>
+            </TextBox.Text>
+          </TextBox>
           <Button Command="{Binding TablesFolderCommand}">Select</Button>
         </WrapPanel>
       </GroupBox>
 
       <GroupBox Margin="5, 5" Padding="5,2" Header="Frontend">
         <StackPanel Margin="5">
-          <WrapPanel Margin="5">
+          <WrapPanel Margin="5" Height="50">
             <TextBlock Style="{StaticResource TextBlockStyle}">Installation</TextBlock>
-            <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.FrontendFolder}" />
+            <!--<TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.FrontendFolder}" />-->
+            <TextBox Style="{StaticResource TextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Folder"
+                     materialDesign:HintAssist.HelperText="Helper text longer than error">
+              <TextBox.Text>
+                <Binding Path="Config.FrontendFolder" UpdateSourceTrigger="PropertyChanged">
+                  <!--<Binding.ValidationRules>
+                  <domain:NotEmptyValidationRule
+                    ValidatesOnTargetUpdated="True" xmlns:domain="clr-namespace:MaterialDesignDemo.Domain" />
+                </Binding.ValidationRules>-->
+                </Binding>
+              </TextBox.Text>
+            </TextBox>
+
             <Button Command="{Binding FrontendFolderCommand}">Select</Button>
           </WrapPanel>
 
@@ -44,15 +76,28 @@
             <ItemsControl ItemsSource="{Binding FrontendFolders}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="settings:ContentTypeModel">
-                  <WrapPanel Margin="0,0,0,5">
+                  <WrapPanel Margin="0,0,0,5" Height="50">
                     <TextBlock Style="{StaticResource TextBlockStyle}" Text="{Binding ContentType.Description}" />
-                    <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding ContentType.Folder, UpdateSourceTrigger=PropertyChanged}">
+                    <!--<TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding ContentType.Folder, UpdateSourceTrigger=PropertyChanged}">-->
+                    <TextBox Style="{StaticResource TextBoxStyle}"
+                             materialDesign:HintAssist.Hint="Folder"
+                             materialDesign:HintAssist.HelperText="Helper text longer than error">
+                      <TextBox.Text>
+                        <Binding Path="ContentType.Folder" UpdateSourceTrigger="PropertyChanged">
+                          <!--<Binding.ValidationRules>
+                  <domain:NotEmptyValidationRule
+                    ValidatesOnTargetUpdated="True" xmlns:domain="clr-namespace:MaterialDesignDemo.Domain" />
+                </Binding.ValidationRules>-->
+                        </Binding>
+                      </TextBox.Text>
                       <b:Interaction.Triggers>
                         <b:EventTrigger EventName="TextChanged">
                           <b:InvokeCommandAction Command="{Binding ChangedCommand}" />
                         </b:EventTrigger>
                       </b:Interaction.Triggers>
                     </TextBox>
+
+
                     <Button Command="{Binding FolderExplorerCommand}">Select</Button>
                     <TextBox Margin="5,0,0,0" Width="90" Style="{StaticResource TextBoxStyle}" Text="{Binding Extensions, UpdateSourceTrigger=PropertyChanged}">
                       <b:Interaction.Triggers>
@@ -70,9 +115,21 @@
       </GroupBox>
 
       <GroupBox Margin="5, 5" Padding="5,2" Header="General">
-        <WrapPanel Margin="5">
+        <WrapPanel Margin="5" Height="50">
           <TextBlock Style="{StaticResource TextBlockStyle}">Backup:</TextBlock>
-          <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.BackupFolder}" />
+          <!--<TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.BackupFolder}" />-->
+          <TextBox Style="{StaticResource TextBoxStyle}"
+                   materialDesign:HintAssist.Hint="Folder"
+                   materialDesign:HintAssist.HelperText="Helper text longer than error">
+            <TextBox.Text>
+              <Binding Path="Config.BackupFolder" UpdateSourceTrigger="PropertyChanged">
+                <!--<Binding.ValidationRules>
+                  <domain:NotEmptyValidationRule
+                    ValidatesOnTargetUpdated="True" xmlns:domain="clr-namespace:MaterialDesignDemo.Domain" />
+                </Binding.ValidationRules>-->
+              </Binding>
+            </TextBox.Text>
+          </TextBox>
           <Button Command="{Binding BackupFolderCommand}">Select</Button>
         </WrapPanel>
       </GroupBox>

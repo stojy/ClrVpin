@@ -19,11 +19,14 @@
   <!--un-keyed style required by windows created in code, e.g. XxxWindow.Show()-->
   <Style TargetType="Window" BasedOn="{StaticResource MaterialWindow}" />
 
-  <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
+  <Style x:Key="RaisedDarkButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
     <Setter Property="Margin" Value="5,0" />
     <Setter Property="Padding" Value="5" />
+    <Setter Property="Height" Value="Auto" />
     <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4" />
   </Style>
+
+  <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButton}" />
 
   <Style x:Key="AlternateButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
     <Setter Property="Margin" Value="5,0" />
