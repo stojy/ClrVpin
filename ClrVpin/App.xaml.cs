@@ -16,12 +16,12 @@ namespace ClrVpin
             SetupExceptionHandling();
         }
 
-        private void SetupExceptionHandling()
+        public static void SetupExceptionHandling()
         {
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
                 HandleError(s, (Exception) e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
 
-            DispatcherUnhandledException += (s, e) =>
+            Current.DispatcherUnhandledException += (s, e) =>
             {
                 HandleError(s, e.Exception, "Application.Current.DispatcherUnhandledException");
                 e.Handled = false;
@@ -34,7 +34,7 @@ namespace ClrVpin
             };
         }
 
-        private void HandleError(object sender, Exception exception, string source)
+        private static void HandleError(object sender, Exception exception, string source)
         {
             try
             {
@@ -46,7 +46,15 @@ namespace ClrVpin
                               $"Source: {source}";
 
                 Logging.Logger.Error(exception, message);
-                MessageBox.Show(MainWindow!, $"{message}\n\n{exception}", "An Error Has Occurred", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                MessageBox.Show(Current.MainWindow!, $"{message}\n\n{exception}", "An Error Has Occurred.  ClrVpin will be shutdown.", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                // can't use the fancy material-ui dialog because it requires a visual tree with a DialogHost available
+                //DialogHost.Show(new Message
+                //{
+                //    Title = "An error has occurred. Shutting down..",
+                //    Detail = message
+                //}).ContinueWith(_ => Environment.Exit(-1));
             }
             catch (Exception ex)
             {
@@ -54,7 +62,7 @@ namespace ClrVpin
             }
             finally
             {
-                Shutdown();
+                Environment.Exit(-1);
             }
         }
     }
