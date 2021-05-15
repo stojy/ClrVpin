@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:clrVpin="clr-namespace:ClrVpin"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:converters="clr-namespace:ClrVpin.Converters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
@@ -27,20 +29,37 @@
         <ResourceDictionary Source="Logging/Logging.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
+      <converters:ReverseBoolConverter x:Key="ReverseBoolConverter" />
+
       <DataTemplate x:Key="MainWindowTemplate" DataType="clrVpin:Model">
-        <StackPanel>
-          <!--<TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />-->
-          <Image Source="/Resources/ClrVpin.png" Height="150" Margin="10" />
+        <!-- alert for a config change required - basically the convoluted(?) material-ui equivalent of a MessageBox -->
+        <materialDesign:DialogHost CloseOnClickAway="True" VerticalAlignment="Center" DialogMargin="0" 
+                                   IsOpen="{Binding Config.IsReviewRequired, Mode=OneWay, Converter={StaticResource ReverseBoolConverter}}" 
+                                   DialogClosing="DialogHost_OnDialogClosing">
+          <materialDesign:DialogHost.DialogContent>
+            <StackPanel Margin="10">
+              <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="Your settings have been updated!" />
+              <TextBlock Margin="0,20,0,0" Text="Please check they are still correct." />
 
-          <WrapPanel Margin="5">
-            <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding Config.IsValid}">Scanner</Button>
-            <Button Command="{Binding RebuilderCommand}" IsEnabled="false">Rebuilder</Button>
-            <Button Command="{Binding SettingsCommand}">Settings</Button>
-            <Button Command="{Binding AboutCommand}">About</Button>
-          </WrapPanel>
+              <Button Margin="0,20,0,0" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" HorizontalAlignment="Center" Content="Show me the way"
+                      Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"/>
+            </StackPanel>
 
-        </StackPanel>
+          </materialDesign:DialogHost.DialogContent>
 
+          <StackPanel>
+            <!--<TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />-->
+            <Image Source="/Resources/ClrVpin.png" Height="150" Margin="10" />
+
+            <WrapPanel Margin="5">
+              <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding Config.IsValid}">Scanner</Button>
+              <Button Command="{Binding RebuilderCommand}" IsEnabled="false">Rebuilder</Button>
+              <Button Command="{Binding SettingsCommand}">Settings</Button>
+              <Button Command="{Binding AboutCommand}">About</Button>
+            </WrapPanel>
+          </StackPanel>
+
+        </materialDesign:DialogHost>
       </DataTemplate>
     </ResourceDictionary>
   </Window.Resources>
