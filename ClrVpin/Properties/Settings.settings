@@ -34,7 +34,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="RequiredVersion" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">20</Value>
+      <Value Profile="(Default)">22</Value>
     </Setting>
     <Setting Name="ActualVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>

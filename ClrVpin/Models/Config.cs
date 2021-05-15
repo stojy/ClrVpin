@@ -67,7 +67,7 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.BackupFolder = value;
         }
 
-        public bool IsReviewRequired { get; private set; }
+        public bool WasReset { get; private set; }
         public bool IsValid { get; private set; } 
 
         public List<ContentType> GetFrontendFolders() => JsonSerializer.Deserialize<List<ContentType>>(FrontendFoldersJson);
@@ -76,7 +76,7 @@ namespace ClrVpin.Models
         public void Save()
         {
             Properties.Settings.Default.Save();
-            IsReviewRequired = false;
+            WasReset = false;
             UpdateIsValid();
         }
 
@@ -120,7 +120,7 @@ namespace ClrVpin.Models
 
             Save();
 
-            IsReviewRequired = true;
+            WasReset = true;
         }
 
         public ObservableCollection<string> CheckContentTypes;

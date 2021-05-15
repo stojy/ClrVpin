@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:clrVpin="clr-namespace:ClrVpin"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:converters="clr-namespace:ClrVpin.Converters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
@@ -29,23 +28,18 @@
         <ResourceDictionary Source="Logging/Logging.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
-      <converters:ReverseBoolConverter x:Key="ReverseBoolConverter" />
-
       <DataTemplate x:Key="MainWindowTemplate" DataType="clrVpin:Model">
-        <!-- alert for a config change required - basically the convoluted(?) material-ui equivalent of a MessageBox -->
-        <materialDesign:DialogHost CloseOnClickAway="True" VerticalAlignment="Center" DialogMargin="0" 
-                                   IsOpen="{Binding Config.IsReviewRequired, Mode=OneWay, Converter={StaticResource ReverseBoolConverter}}" 
-                                   DialogClosing="DialogHost_OnDialogClosing">
-          <materialDesign:DialogHost.DialogContent>
-            <StackPanel Margin="10">
-              <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="Your settings have been updated!" />
-              <TextBlock Margin="0,20,0,0" Text="Please check they are still correct." />
-
-              <Button Margin="0,20,0,0" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" HorizontalAlignment="Center" Content="Show me the way"
-                      Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"/>
-            </StackPanel>
-
-          </materialDesign:DialogHost.DialogContent>
+        <materialDesign:DialogHost Identifier="MainDialog" CloseOnClickAway="True" VerticalAlignment="Center" DialogMargin="0">
+          <materialDesign:DialogHost.DialogContentTemplate>
+            <DataTemplate DataType="clrVpin:Message">
+              <StackPanel Margin="10">
+                <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" />
+                <TextBlock Margin="0,20,0,0" Text="{Binding Detail}" />
+                <Button Margin="0,20,0,0" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" HorizontalAlignment="Center" Content="Show me the way"
+                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+              </StackPanel>
+            </DataTemplate>
+          </materialDesign:DialogHost.DialogContentTemplate>
 
           <StackPanel>
             <!--<TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />-->

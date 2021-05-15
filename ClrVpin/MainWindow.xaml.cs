@@ -1,6 +1,4 @@
 ﻿using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 
@@ -22,21 +20,17 @@ namespace ClrVpin
 
             Activated += (_, _) =>
             {
-                if (!Model.Config.IsReviewRequired)
+                if (Model.Config.WasReset)
                 {
-                    //Dispatcher.Invoke(() => DialogHost.Show("Hello"));
-                    //DialogHost.Show(this).Wait();
-                    //MessageBox.Show(this, "Please check the updated settings", "Settings have been updated", MessageBoxButton.OK, MessageBoxImage.Information);
-                    //new Settings.Settings().Show(this);
+                    DialogHost.Show(new Message
+                    {
+                        Title = "New settings are available",
+                        Detail = "Please review your settings."
+                    }).ContinueWith(_ => Dispatcher.Invoke(() => new Settings.Settings().Show(this)));
                 }
             };
         }
 
         public Model Model { get; set; }
-
-        private void DialogHost_OnDialogClosing(object sender, DialogClosingEventArgs eventargs)
-        {
-            new Settings.Settings().Show(this);
-        }
     }
 }
