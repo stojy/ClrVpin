@@ -49,10 +49,10 @@
       <StackPanel DockPanel.Dock="Top">
         <TextBlock Style="{StaticResource Title}">Filter Options</TextBlock>
         <WrapPanel Margin="5,0,0,0">
-          <TextBox Width="150" VerticalAlignment="Center"
-                   materialDesign:HintAssist.Hint="e.g. magic"
-                   materialDesign:HintAssist.HelperText="Search game description"
-                   Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+          <TextBox Width="150" VerticalAlignment="Center" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic"
+                   Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                   Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                   materialDesign:TextFieldAssist.HasClearButton="True">
             <b:Interaction.Triggers>
               <b:EventTrigger EventName="TextChanged">
                 <b:InvokeCommandAction Command="{Binding SearchTextCommand}" />
