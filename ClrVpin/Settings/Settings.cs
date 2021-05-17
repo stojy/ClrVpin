@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -15,20 +14,22 @@ namespace ClrVpin.Settings
     {
         public Settings()
         {
-            FrontendFolderCommand = new ActionCommand(() => FolderUtil.Get("Frontend Root", Config.FrontendFolder, folder => Config.FrontendFolder = folder));
+            //TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder));
+
+            TableFolderModel = new FolderTypeModel("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder);
+            FrontendFolderModel = new FolderTypeModel("Frontend Root", Config.FrontendFolder, folder => Config.FrontendFolder = folder);
+            BackupFolderModel = new FolderTypeModel("Backup Root", Config.BackupFolder, folder => Config.BackupFolder = folder);
+
             AutoAssignFoldersCommand = new ActionCommand(AutoAssignFolders);
-
-            TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder));
-
-            BackupFolderCommand = new ActionCommand(() => FolderUtil.Get("Backup Root", Config.BackupFolder, folder => Config.BackupFolder = folder));
 
             var configFrontendFolders = Config.GetFrontendFolders();
             FrontendFolders = configFrontendFolders!.Select(folder => new ContentTypeModel(folder, () => Config.SetFrontendFolders(FrontendFolders.Select(x => x.ContentType)))).ToList();
         }
 
-        public ICommand TablesFolderCommand { get; }
-        public ICommand FrontendFolderCommand { get; }
-        public ICommand BackupFolderCommand { get; }
+        public FolderTypeModel TableFolderModel { get; set; }
+        public FolderTypeModel FrontendFolderModel { get; set; }
+        public FolderTypeModel BackupFolderModel { get; set; }
+
         public ICommand AutoAssignFoldersCommand { get; }
 
         public Config Config { get; } = Model.Config;
@@ -60,9 +61,17 @@ namespace ClrVpin.Settings
         private void AutoAssignFolders()
         {
             // automatically assign folders based on the frontend root folder
-            FrontendFolders.Where(x => !x.ContentType.IsDatabase).ForEach(x => x.ContentType.Folder = $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}");
-            FrontendFolders.First(x => x.ContentType.IsDatabase).ContentType.Folder = $@"{Config.FrontendFolder}\Media\Databases\Visual Pinball";
+            FrontendFolders.ForEach(x =>
+            {
+                // for storage
+                x.ContentType.Folder = x.ContentType.IsDatabase
+                    ? $@"{Config.FrontendFolder}\Media\Databases\Visual Pinball"
+                    : $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
 
+                // for display
+                x.Folder = x.ContentType.Folder;
+            });
+            
             Config.SetFrontendFolders(FrontendFolders.Select(x => x.ContentType));
         }
     }

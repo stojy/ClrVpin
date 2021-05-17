@@ -16,75 +16,66 @@
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
-
   <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
-    <Setter Property="Width" Value="500" />
+    <Setter Property="Width" Value="400" />
     <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
   </Style>
 
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
 
+  <!--present folder name with open folder button-->
+  <DataTemplate x:Key="FolderSelection" DataType="settings:FolderTypeDetail">
+    <WrapPanel Margin="5,0,0,5" Height="50">
+      <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}">
+        <TextBox.Text>
+          <Binding Path="Folder" UpdateSourceTrigger="PropertyChanged">
+            <Binding.ValidationRules>
+              <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
+            </Binding.ValidationRules>
+          </Binding>
+        </TextBox.Text>
+        <b:Interaction.Triggers>
+          <b:EventTrigger EventName="TextChanged">
+            <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
+          </b:EventTrigger>
+        </b:Interaction.Triggers>
+      </TextBox>
+
+      <Button Command="{Binding FolderExplorerCommand}" Height="27">Select</Button>
+    </WrapPanel>
+  </DataTemplate>
+
   <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:Settings}">
-    <StackPanel Margin="5">
+    <StackPanel Margin="0">
       <GroupBox Margin="5, 5" Padding="5,2" Header="Virtual Pinball">
-        <WrapPanel Margin="5" Height="50">
-          <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="Table Folder">
-            <TextBox.Text>
-              <Binding Path="Config.TableFolder" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
-                <Binding.ValidationRules>
-                  <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
-                </Binding.ValidationRules>
-              </Binding>
-            </TextBox.Text>
-          </TextBox>
-          <Button Command="{Binding TablesFolderCommand}">Select</Button>
-        </WrapPanel>
+        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding TableFolderModel}" />
       </GroupBox>
 
       <GroupBox Margin="5, 5" Padding="5,2" Header="Frontend">
-        <StackPanel Margin="5">
-          <WrapPanel Margin="5" Height="50">
-            <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="Frontend Folder">
-              <TextBox.Text>
-                <Binding Path="Config.FrontendFolder" UpdateSourceTrigger="PropertyChanged">
-                  <Binding.ValidationRules>
-                    <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
-                  </Binding.ValidationRules>
-                </Binding>
-              </TextBox.Text>
-            </TextBox>
+        <StackPanel>
+          <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding FrontendFolderModel}" />
 
-            <Button Command="{Binding FrontendFolderCommand}">Select</Button>
-          </WrapPanel>
-
-          <!-- front end folders - handled generically to make it a little simpler ot manage -->
+          <!-- front end content folders - handled generically to make it a little simpler ot manage -->
           <StackPanel>
-            <Button Width="90" Margin="0,20,0,0" HorizontalAlignment="Left" Command="{Binding AutoAssignFoldersCommand}">Auto Assign</Button>
-            <ItemsControl ItemsSource="{Binding FrontendFolders}" BorderThickness="5">
+            <Button Width="90" Margin="5,15,0,5" HorizontalAlignment="Left" Command="{Binding AutoAssignFoldersCommand}">Auto Assign</Button>
+
+            <ItemsControl ItemsSource="{Binding FrontendFolders}" BorderThickness="0">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="settings:ContentTypeModel">
-                  <WrapPanel Margin="0,0,0,5" Height="50">
-                    <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding ContentType.Description}">
+                  <WrapPanel Margin="0,0,0,10" Height="50">
+                    <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding}" />
+
+                    <TextBox Margin="5,0,0,0" Width="100" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="File Extension(s)">
                       <TextBox.Text>
-                        <Binding Path="ContentType.Folder" UpdateSourceTrigger="PropertyChanged">
+                        <Binding Path="Extensions" UpdateSourceTrigger="PropertyChanged">
                           <Binding.ValidationRules>
-                            <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
+                            <settings:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
                           </Binding.ValidationRules>
                         </Binding>
                       </TextBox.Text>
                       <b:Interaction.Triggers>
                         <b:EventTrigger EventName="TextChanged">
-                          <b:InvokeCommandAction Command="{Binding ChangedCommand}" />
-                        </b:EventTrigger>
-                      </b:Interaction.Triggers>
-                    </TextBox>
-
-                    <Button Command="{Binding FolderExplorerCommand}">Select</Button>
-
-                    <TextBox Margin="5,0,0,0" Width="90" Style="{StaticResource TextBoxStyle}" Text="{Binding Extensions, UpdateSourceTrigger=PropertyChanged}">
-                      <b:Interaction.Triggers>
-                        <b:EventTrigger EventName="TextChanged">
-                          <b:InvokeCommandAction Command="{Binding ChangedCommand}" />
+                          <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
                         </b:EventTrigger>
                       </b:Interaction.Triggers>
                     </TextBox>
@@ -97,18 +88,7 @@
       </GroupBox>
 
       <GroupBox Margin="5, 5" Padding="5,2" Header="General">
-        <WrapPanel Margin="5" Height="50">
-          <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="Backup Folder">
-            <TextBox.Text>
-              <Binding Path="Config.BackupFolder" UpdateSourceTrigger="PropertyChanged">
-                <Binding.ValidationRules>
-                  <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
-                </Binding.ValidationRules>
-              </Binding>
-            </TextBox.Text>
-          </TextBox>
-          <Button Command="{Binding BackupFolderCommand}">Select</Button>
-        </WrapPanel>
+        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
       </GroupBox>
 
     </StackPanel>
