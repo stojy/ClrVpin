@@ -23,15 +23,17 @@
 
       <TextBlock Margin="5,20,0,0">If you've got any questions, please reach out via github..</TextBlock>
       <TextBlock Margin="5,0,0,0">
-        <Hyperlink NavigateUri="{Binding GitHubUrl}" Command="{Binding NavigateToGitHubCommand}">
-          <TextBlock Text="{Binding GitHubUrl}" FontSize="18" />
+        <Hyperlink NavigateUri="{Binding GitHubRepoUrl}" Command="{Binding NavigateToGitHubRepoCommand}">
+          <TextBlock Text="{Binding GitHubRepoUrl}" FontSize="18" />
         </Hyperlink>
       </TextBlock>
 
-      <WrapPanel Margin="5,10">
-        <TextBlock>Author:</TextBlock>
-        <TextBlock Margin="10,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontSize="18">Stoj</TextBlock>
-      </WrapPanel>
+      <TextBlock Margin="5,20,0,0">Author..</TextBlock>
+      <TextBlock Margin="5,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontSize="18">
+        <Hyperlink NavigateUri="{Binding GitHubAuthorUrl}" Command="{Binding NavigateToGitHubAuthorCommand}">
+          <TextBlock Text="{Binding GitHubAuthorUrl}" FontSize="18" />
+        </Hyperlink>
+      </TextBlock>
     </StackPanel>
   </DataTemplate>
 

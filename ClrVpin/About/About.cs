@@ -11,12 +11,15 @@ namespace ClrVpin.About
     {
         public About()
         {
-            NavigateToGitHubCommand = new ActionCommand(NavigateToGitHub);
+            NavigateToGitHubRepoCommand = new ActionCommand(NavigateToGitHubRepo);
+            NavigateToGitHubAuthorCommand = new ActionCommand(NavigateToGitHubAuthor);
         }
 
-        public string GitHubUrl { get; set; } = @"https://github.com/stojy/ClrVpin";
+        public string GitHubRepoUrl { get; set; } = @"https://github.com/stojy/ClrVpin";
+        public string GitHubAuthorUrl { get; set; } = @"https://github.com/stojy";
 
-        public ICommand NavigateToGitHubCommand { get; set; }
+        public ICommand NavigateToGitHubRepoCommand { get; set; }
+        public ICommand NavigateToGitHubAuthorCommand { get; set; }
 
         public void Show(Window parentWindow)
         {
@@ -36,9 +39,7 @@ namespace ClrVpin.About
             window.Closed += (_, _) => parentWindow.Show();
         }
 
-        private void NavigateToGitHub()
-        {
-            Process.Start(new ProcessStartInfo(GitHubUrl) {UseShellExecute = true});
-        }
+        private void NavigateToGitHubRepo() => Process.Start(new ProcessStartInfo(GitHubRepoUrl) {UseShellExecute = true});
+        private void NavigateToGitHubAuthor() => Process.Start(new ProcessStartInfo(GitHubAuthorUrl) {UseShellExecute = true});
     }
 }
