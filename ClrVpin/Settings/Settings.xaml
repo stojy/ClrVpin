@@ -16,13 +16,10 @@
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
-  <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+
+  <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
     <Setter Property="Width" Value="500" />
-    <!--<Setter Property="Height" Value="50" />-->
-    <!--<Setter Property="IsReadOnly" Value="false" />
-    <Setter Property="FontSize" Value="14" />-->
-    <!--<Setter Property="Margin" Value="0" />-->
-    <!--<Setter Property="VerticalContentAlignment" Value="Center" />-->
+    <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
   </Style>
 
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
@@ -31,17 +28,12 @@
     <StackPanel Margin="5">
       <GroupBox Margin="5, 5" Padding="5,2" Header="Virtual Pinball">
         <WrapPanel Margin="5" Height="50">
-          <TextBlock Style="{StaticResource TextBlockStyle}">Tables:</TextBlock>
-          <!--<TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.TableFolder}" />-->
-          <TextBox Style="{StaticResource TextBoxStyle}"
-                   materialDesign:HintAssist.Hint="Folder"
-                   materialDesign:HintAssist.HelperText="Helper text longer than error">
+          <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="Table Folder">
             <TextBox.Text>
-              <Binding Path="Config.TableFolder" UpdateSourceTrigger="PropertyChanged">
-                <!--<Binding.ValidationRules>
-                  <domain:NotEmptyValidationRule
-                    ValidatesOnTargetUpdated="True" xmlns:domain="clr-namespace:MaterialDesignDemo.Domain" />
-                </Binding.ValidationRules>-->
+              <Binding Path="Config.TableFolder" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                <Binding.ValidationRules>
+                  <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
+                </Binding.ValidationRules>
               </Binding>
             </TextBox.Text>
           </TextBox>
@@ -52,17 +44,12 @@
       <GroupBox Margin="5, 5" Padding="5,2" Header="Frontend">
         <StackPanel Margin="5">
           <WrapPanel Margin="5" Height="50">
-            <TextBlock Style="{StaticResource TextBlockStyle}">Installation</TextBlock>
-            <!--<TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.FrontendFolder}" />-->
-            <TextBox Style="{StaticResource TextBoxStyle}"
-                     materialDesign:HintAssist.Hint="Folder"
-                     materialDesign:HintAssist.HelperText="Helper text longer than error">
+            <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="Frontend Folder">
               <TextBox.Text>
                 <Binding Path="Config.FrontendFolder" UpdateSourceTrigger="PropertyChanged">
-                  <!--<Binding.ValidationRules>
-                  <domain:NotEmptyValidationRule
-                    ValidatesOnTargetUpdated="True" xmlns:domain="clr-namespace:MaterialDesignDemo.Domain" />
-                </Binding.ValidationRules>-->
+                  <Binding.ValidationRules>
+                    <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
+                  </Binding.ValidationRules>
                 </Binding>
               </TextBox.Text>
             </TextBox>
@@ -77,17 +64,12 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="settings:ContentTypeModel">
                   <WrapPanel Margin="0,0,0,5" Height="50">
-                    <TextBlock Style="{StaticResource TextBlockStyle}" Text="{Binding ContentType.Description}" />
-                    <!--<TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding ContentType.Folder, UpdateSourceTrigger=PropertyChanged}">-->
-                    <TextBox Style="{StaticResource TextBoxStyle}"
-                             materialDesign:HintAssist.Hint="Folder"
-                             materialDesign:HintAssist.HelperText="Helper text longer than error">
+                    <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding ContentType.Description}">
                       <TextBox.Text>
                         <Binding Path="ContentType.Folder" UpdateSourceTrigger="PropertyChanged">
-                          <!--<Binding.ValidationRules>
-                  <domain:NotEmptyValidationRule
-                    ValidatesOnTargetUpdated="True" xmlns:domain="clr-namespace:MaterialDesignDemo.Domain" />
-                </Binding.ValidationRules>-->
+                          <Binding.ValidationRules>
+                            <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
+                          </Binding.ValidationRules>
                         </Binding>
                       </TextBox.Text>
                       <b:Interaction.Triggers>
@@ -97,8 +79,8 @@
                       </b:Interaction.Triggers>
                     </TextBox>
 
-
                     <Button Command="{Binding FolderExplorerCommand}">Select</Button>
+
                     <TextBox Margin="5,0,0,0" Width="90" Style="{StaticResource TextBoxStyle}" Text="{Binding Extensions, UpdateSourceTrigger=PropertyChanged}">
                       <b:Interaction.Triggers>
                         <b:EventTrigger EventName="TextChanged">
@@ -116,17 +98,12 @@
 
       <GroupBox Margin="5, 5" Padding="5,2" Header="General">
         <WrapPanel Margin="5" Height="50">
-          <TextBlock Style="{StaticResource TextBlockStyle}">Backup:</TextBlock>
-          <!--<TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Config.BackupFolder}" />-->
-          <TextBox Style="{StaticResource TextBoxStyle}"
-                   materialDesign:HintAssist.Hint="Folder"
-                   materialDesign:HintAssist.HelperText="Helper text longer than error">
+          <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="Backup Folder">
             <TextBox.Text>
               <Binding Path="Config.BackupFolder" UpdateSourceTrigger="PropertyChanged">
-                <!--<Binding.ValidationRules>
-                  <domain:NotEmptyValidationRule
-                    ValidatesOnTargetUpdated="True" xmlns:domain="clr-namespace:MaterialDesignDemo.Domain" />
-                </Binding.ValidationRules>-->
+                <Binding.ValidationRules>
+                  <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
+                </Binding.ValidationRules>
               </Binding>
             </TextBox.Text>
           </TextBox>
