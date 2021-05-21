@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
+using Microsoft.Xaml.Behaviors.Core;
 
 namespace ClrVpin.Logging
 {
@@ -8,9 +11,14 @@ namespace ClrVpin.Logging
         public Logging()
         {
             LogsView = new ListCollectionView(Logger.Logs);
+            File = Logger.File;
+
+            NavigateToFileCommand = new ActionCommand(NavigateToFile);
         }
 
         public ListCollectionView LogsView { get; }
+        public string File { get; }
+        public ICommand NavigateToFileCommand { get; }
 
         public void Show(Window parentWindow, double left, double top, int height)
         {
@@ -32,6 +40,8 @@ namespace ClrVpin.Logging
 
         public void Close() => _window.Close();
 
+        private void NavigateToFile() => Process.Start(new ProcessStartInfo(File) {UseShellExecute = true});
+        
         private Window _window;
     }
 }

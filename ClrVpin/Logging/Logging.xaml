@@ -7,13 +7,27 @@
   <logging:LogLevelConverter x:Key="LogLevelConverter" />
 
   <DataTemplate x:Key="LoggingTemplate" DataType="{x:Type logging:Logging}">
-    <DockPanel>
-      <ListView ItemsSource="{Binding LogsView}" BorderThickness="5">
+    <DockPanel Margin="5">
+      <TextBlock DockPanel.Dock="Top" Margin="0,0,0,10" Foreground="{DynamicResource PrimaryHueDarkBrush}">
+        <Hyperlink NavigateUri="{Binding File}" Command="{Binding NavigateToFileCommand}">
+          <TextBlock Text="{Binding File}" />
+        </Hyperlink>
+      </TextBlock>
+
+      <ListView ItemsSource="{Binding LogsView}">
         <ItemsControl.ItemTemplate>
           <DataTemplate DataType="logging:Log">
-            <TextBlock Margin="0" Text="{Binding Message}" Foreground="{Binding Level, Converter={StaticResource LogLevelConverter}}" />
+            <TextBlock Padding="0" Margin="0" Text="{Binding Message}" Foreground="{Binding Level, Converter={StaticResource LogLevelConverter}}" />
           </DataTemplate>
         </ItemsControl.ItemTemplate>
+
+        <ItemsControl.ItemContainerStyle>
+          <Style TargetType="ListViewItem">
+            <!-- assign smaller padding to maximize the content size (template bound to material's Ripple) -->
+            <Setter Property="Padding" Value="2" />
+          </Style>
+        </ItemsControl.ItemContainerStyle>
+
       </ListView>
     </DockPanel>
   </DataTemplate>
