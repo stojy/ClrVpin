@@ -7,6 +7,7 @@ using Utils;
 
 namespace ClrVpin.Models
 {
+    // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
     public class Content
     {
         public Content()
@@ -16,12 +17,18 @@ namespace ClrVpin.Models
             contentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
 
+        // 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
         public List<ContentHits> ContentHitsCollection { get; set; } = new List<ContentHits>();
 
-        public bool IsSmelly { get; set; }
+        // flattened collection of all smelly media file hits across all content types
         public ObservableCollection<Hit> SmellyHits { get; set; }
         public ListCollectionView SmellyHitsView { get; set; }
+        
+        // flattened collection of all media file hits (including smelly) across all content types (that checking is enabled)
         public ObservableCollection<Hit> Hits { get; set; }
+
+        // true if game contains any smelly hits
+        public bool IsSmelly { get; set; }
 
         public void Update(Func<IEnumerable<string>> getFilteredContentTypes, Func<IEnumerable<string>> getFilteredHitTypes)
         {

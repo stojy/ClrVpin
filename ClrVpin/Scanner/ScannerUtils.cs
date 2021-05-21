@@ -11,30 +11,6 @@ namespace ClrVpin.Scanner
 {
     public static class ScannerUtils
     {
-        public static List<FixFileDetail> Check(List<Game> games)
-        {
-            var unknownFiles = new List<FixFileDetail>();
-
-            // for the configured content types only.. check the installed content files against those specified in the database
-            var checkContentTypes = Model.Config.GetFrontendFolders()
-                .Where(x => !x.IsDatabase)
-                .Where(type => Model.Config.CheckContentTypes.Contains(type.Description));
-
-            checkContentTypes.ForEach(contentType =>
-            {
-                var mediaFiles = GetMedia(contentType);
-                var unknownMedia = AddMedia(games, mediaFiles, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Description));
-
-                // todo; add non-media content, e.g. tables and b2s
-
-                unknownFiles.AddRange(unknownMedia);
-            });
-
-            CheckMissing(games);
-
-            return unknownFiles;
-        }
-
         public static List<Game> GetDatabases()
         {
             var databaseDetail = Model.Config.GetFrontendFolders().First(x => x.IsDatabase);
@@ -64,10 +40,34 @@ namespace ClrVpin.Scanner
             return games;
         }
 
+        public static List<FixFileDetail> Check(List<Game> games)
+        {
+            var unknownFiles = new List<FixFileDetail>();
+
+            // for the configured content types only.. check the installed content files against those specified in the database
+            var checkContentTypes = Model.Config.GetFrontendFolders()
+                .Where(x => !x.IsDatabase)
+                .Where(type => Model.Config.CheckContentTypes.Contains(type.Description));
+
+            checkContentTypes.ForEach(contentType =>
+            {
+                var mediaFiles = GetMedia(contentType);
+                var unknownMedia = AddMediaToGames(games, mediaFiles, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Description));
+
+                // todo; scan non-media content, e.g. tables and b2s
+
+                unknownFiles.AddRange(unknownMedia);
+            });
+
+            CheckMissing(games);
+
+            return unknownFiles;
+        }
+
         public static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> unknownFileDetails, string backupFolder)
         {
             _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
-            
+
             var fixedFileDetails = new List<FixFileDetail>();
 
             // fix files associated with games
@@ -192,10 +192,11 @@ namespace ClrVpin.Scanner
             });
         }
 
-        private static IEnumerable<FixFileDetail> AddMedia(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
+        private static IEnumerable<FixFileDetail> AddMediaToGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
         {
             var unknownMediaFiles = new List<FixFileDetail>();
 
+            // for each file, associate it with a game or if one can't be found, then mark it as unknown
             mediaFiles.ForEach(mediaFile =>
             {
                 Game matchedGame;
@@ -211,14 +212,20 @@ namespace ClrVpin.Scanner
                     var contentHits = getContentHits(matchedGame);
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.Valid) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.Valid, mediaFile);
                 }
-                else if ((matchedGame = games.FirstOrDefault(game =>
-                    string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                else if ((matchedGame =
+                    games.FirstOrDefault(game => string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, mediaFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, mediaFile);
+                }
+                else if ((matchedGame = games.FirstOrDefault(game =>
+                    game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.TableFile))) != null)
+                {
+                    // todo; add more 'fuzzy' checks
+                    getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, mediaFile);
                 }
                 else
                 {
