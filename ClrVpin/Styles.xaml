@@ -38,4 +38,9 @@
     <Setter Property="Margin" Value="0,9,0,4"></Setter>
   </Style>
 
+  <!--with or without this style the appearance doesn't seem to change!-->
+  <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" />
+
+  <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" />
+
 </ResourceDictionary>

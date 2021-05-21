@@ -66,6 +66,12 @@ namespace ClrVpin.Models
             get => Properties.Settings.Default.BackupFolder;
             set => Properties.Settings.Default.BackupFolder = value;
         }
+        
+        public bool TrainerWheels
+        {
+            get => Properties.Settings.Default.TrainerWheels;
+            set => Properties.Settings.Default.TrainerWheels = value;
+        }
 
         public bool WasReset { get; private set; }
         public bool IsValid { get; private set; } 
@@ -114,6 +120,8 @@ namespace ClrVpin.Models
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
 
             BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");
+
+            TrainerWheels = true;
 
             // update actual version to indicate the config is now compatible and doesn't need to be reset again
             Properties.Settings.Default.ActualVersion = Properties.Settings.Default.RequiredVersion;

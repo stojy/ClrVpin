@@ -149,5 +149,17 @@ namespace ClrVpin.Properties {
                 this["ActualVersion"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TrainerWheels {
+            get {
+                return ((bool)(this["TrainerWheels"]));
+            }
+            set {
+                this["TrainerWheels"] = value;
+            }
+        }
     }
 }

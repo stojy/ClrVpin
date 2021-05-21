@@ -88,7 +88,14 @@
       </GroupBox>
 
       <GroupBox Margin="5, 5" Padding="5,2" Header="General">
-        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
+        <StackPanel>
+          <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
+
+          <WrapPanel Margin="5">
+            <ToggleButton ToolTip="When enabled, fixing files is effectively ignored.  No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />
+            <TextBlock Margin="10,0,0,0" Text="Trainer Wheels"/>
+          </WrapPanel>
+        </StackPanel>
       </GroupBox>
 
     </StackPanel>

@@ -142,9 +142,11 @@ namespace ClrVpin.Scanner
         {
             var backupFileName = CreateBackupFileName(file);
 
-            Logger.Warn($"Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}, backup: {backupFileName}");
+            var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
+            Logger.Warn($"{prefix}Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}, backup: {backupFileName}");
 
-            //File.Move(file, backupFileName, true);
+            if (!Model.Config.TrainerWheels)
+                File.Move(file, backupFileName, true);
         }
 
         private static FixFileDetail Rename(Hit hit, Game game)
@@ -160,10 +162,14 @@ namespace ClrVpin.Scanner
                 var newFile = Path.Combine(path!, $"{game.Description}{extension}");
 
                 var backupFileName = CreateBackupFileName(hit.Path);
-                Logger.Info($"Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}, backup: {backupFileName}");
+                var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
+                Logger.Info($"{prefix}Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}, backup: {backupFileName}");
 
-                //File.Copy(hit.Path!, backupFileName, true);
-                //File.Move(hit.Path!, newFile, true);
+                if (!Model.Config.TrainerWheels)
+                {
+                    File.Copy(hit.Path!, backupFileName, true);
+                    File.Move(hit.Path!, newFile, true);
+                }
             }
 
             return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
