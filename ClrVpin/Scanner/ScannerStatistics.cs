@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using ByteSizeLib;
@@ -12,7 +12,7 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerStatistics
     {
-        public ScannerStatistics(ObservableCollection<Game> games, Stopwatch scanStopWatch, ICollection<FixFileDetail> fixFiles)
+        public ScannerStatistics(ObservableCollection<Game> games, TimeSpan scanStopWatch, ICollection<FixFileDetail> fixFiles)
         {
             _scanStopWatch = scanStopWatch;
             _games = games;
@@ -108,13 +108,13 @@ namespace ClrVpin.Scanner
                    $"\n{"  (Unknown Files)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesDeleted.Count, unknownFilesDeletedSize)}" +
                    $"\n{"- Ignored Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
                    $"\n{"  (Unknown Files)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesIgnored.Count, unknownFilesIgnoredSize)}" +
-                   $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.Elapsed.TotalSeconds:f2}s";
+                   $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.TotalSeconds:f2}s";
         }
 
         private static string CreateFileStatistic(long count, long size) => $"{count} ({(size == 0 ? "0 B" : ByteSize.FromBytes(size).ToString("0.#"))})";
 
         private readonly ObservableCollection<Game> _games;
-        private readonly Stopwatch _scanStopWatch;
+        private readonly TimeSpan _scanStopWatch;
         public Window Window { get; private set; }
 
         private const int StatisticsKeyWidth = -25;

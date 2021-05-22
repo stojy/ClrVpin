@@ -1,0 +1,21 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:logging="clr-namespace:ClrVpin.Logging"
+                    xmlns:scanner="clr-namespace:ClrVpin.Scanner">
+
+  <logging:LogLevelConverter x:Key="LogLevelConverter" />
+
+  <DataTemplate x:Key="ProgressTemplate" DataType="{x:Type scanner:Progress}">
+    <StackPanel Margin="10" Width="400" >
+      <ProgressBar Value="{Binding Percentage}"  Height="20" />
+      <DockPanel Margin="0, 10, 0, 0" LastChildFill="True">
+        <TextBlock DockPanel.Dock="Right" Text="{Binding Duration.TotalSeconds, StringFormat={}{0:f0}s}"/>
+        <TextBlock Text="{Binding Status}" />
+      </DockPanel>
+      <Button Command="{Binding CancelCommand}" Width="60" Margin="0,10,0,0" Content="Cancel"/>
+    </StackPanel>
+  </DataTemplate>
+
+</ResourceDictionary>

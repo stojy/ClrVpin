@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Models;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using PropertyChanged;
 using Utils;
 
@@ -124,41 +127,49 @@ namespace ClrVpin.Scanner
             return contentTypes.ToList();
         }
 
-        private void Start()
+        private async void Start()
         {
-            // todo; show progress bar
-            _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_scannerWindow, ScannerResults.Width, 5, ScannerResults.Height);
+            _scannerWindow.Hide();
 
-            _scanStopWatch = Stopwatch.StartNew();
-
-            var games = ScannerUtils.GetDatabases();
-
+            var progress = new Progress();
+            progress.Show(_scannerWindow);
+            
             // todo; retrieve 'missing games' from spreadsheet
 
+            progress.Update("Loading Database", 0);
+            //await Task.Delay(1000);
+            var games = ScannerUtils.GetDatabases();
+            
+            progress.Update("Checking Files", 30);
+            //await Task.Delay(1000);
             var unknownFiles = ScannerUtils.Check(games);
 
+            progress.Update("Fixing Files", 60);
+            //await Task.Delay(1000);
             var fixFiles = ScannerUtils.Fix(games, unknownFiles, Model.Config.BackupFolder);
 
+            progress.Update("Preparing Results", 100);
+            await Task.Delay(1000);
             Games = new ObservableCollection<Game>(games);
-
-            _scanStopWatch.Stop();
-
-            ShowResults(fixFiles.Concat(unknownFiles).ToList());
+            ShowResults(fixFiles.Concat(unknownFiles).ToList(), progress.Duration);
+         
+            progress.Close();
         }
 
-        private void ShowResults(ICollection<FixFileDetail> fixFiles)
+        private void ShowResults(ICollection<FixFileDetail> fixFiles, TimeSpan duration)
         {
             var scannerResults = new ScannerResults(Games);
             scannerResults.Show(_scannerWindow, 5, 5);
 
-            var scannerStatistics = new ScannerStatistics(Games, _scanStopWatch, fixFiles);
+            var scannerStatistics = new ScannerStatistics(Games, duration, fixFiles);
             scannerStatistics.Show(_scannerWindow, 5, scannerResults.Window.Height + 5);
 
             var explorerWindow = new ScannerExplorer(Games);
             explorerWindow.Show(_scannerWindow, scannerStatistics.Window.Width, scannerResults.Window.Height + 5, scannerStatistics.Window.Height);
 
-            _scannerWindow.Hide();
+            _loggingWindow = new Logging.Logging();
+            _loggingWindow.Show(_scannerWindow, ScannerResults.Width, 5, ScannerResults.Height);
+
             scannerResults.Window.Closed += (_, _) =>
             {
                 scannerStatistics.Close();
@@ -170,7 +181,6 @@ namespace ClrVpin.Scanner
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;
         private Window _scannerWindow;
-        private Stopwatch _scanStopWatch;
         private Logging.Logging _loggingWindow;
     }
 }
