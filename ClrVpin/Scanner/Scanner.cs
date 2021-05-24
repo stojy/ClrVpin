@@ -43,7 +43,7 @@ namespace ClrVpin.Scanner
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 370,
-                Height = 430,
+                Height = 420,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate,
