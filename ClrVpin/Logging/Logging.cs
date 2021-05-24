@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using MaterialDesignExtensions.Controls;
 using Microsoft.Xaml.Behaviors.Core;
 
 namespace ClrVpin.Logging
@@ -22,13 +23,13 @@ namespace ClrVpin.Logging
 
         public void Show(Window parentWindow, double left, double top, int height)
         {
-            _window = new Window
+            _window = new MaterialWindow
             {
                 Owner = parentWindow,
                 Title = "Logs",
                 WindowStartupLocation = WindowStartupLocation.Manual,
                 Height = height,
-                Width = 1200,
+                Width = 1790,
                 Content = this,
                 Left = left,
                 Top = top,

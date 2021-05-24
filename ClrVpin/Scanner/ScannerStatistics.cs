@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using ByteSizeLib;
 using ClrVpin.Models;
+using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 
 namespace ClrVpin.Scanner
@@ -24,7 +25,7 @@ namespace ClrVpin.Scanner
 
         public void Show(Window parentWindow, double left, double top)
         {
-            Window = new Window
+            Window = new MaterialWindow
             {
                 Owner = parentWindow,
                 Title = "Scanner Statistics",

@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ClrVpin.Models;
+using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
 
@@ -50,7 +51,7 @@ namespace ClrVpin.Scanner
 
         public void Show(Window parentWindow, int left, int top)
         {
-            Window = new Window
+            Window = new MaterialWindow
             {
                 Owner = parentWindow,
                 Title = "Scanner Results",

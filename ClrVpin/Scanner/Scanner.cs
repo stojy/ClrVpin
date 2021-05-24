@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Models;
-using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
 
@@ -36,27 +35,29 @@ namespace ClrVpin.Scanner
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
 
-        public void Show(Window parentWindow)
+        public void Show(Window parent)
         {
-            _scannerWindow = new Window
+            _scannerWindow = new MaterialWindow
             {
-                Owner = parentWindow,
-                Title = "Scanner",
+                Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                SizeToContent = SizeToContent.WidthAndHeight,
+                //SizeToContent = SizeToContent.WidthAndHeight,
+                Width = 370,
+                Height = 430,
                 Content = this,
-                Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("ScannerTemplate") as DataTemplate,
-                ResizeMode = ResizeMode.NoResize
+                Resources = parent.Resources,
+                ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate,
+                ResizeMode = ResizeMode.NoResize,
+                Title = "Scanner"
             };
 
             _scannerWindow.Show();
-            parentWindow.Hide();
+            parent.Hide();
 
             _scannerWindow.Closed += (_, _) =>
             {
                 Model.Config.Save();
-                parentWindow.Show();
+                parent.Show();
             };
         }
 
@@ -162,18 +163,18 @@ namespace ClrVpin.Scanner
             scannerResults.Show(_scannerWindow, 5, 5);
 
             var scannerStatistics = new ScannerStatistics(Games, duration, fixFiles);
-            scannerStatistics.Show(_scannerWindow, 5, scannerResults.Window.Height + 5);
+            scannerStatistics.Show(_scannerWindow, 5, scannerResults.Window.Height + WindowMargin);
 
-            var explorerWindow = new ScannerExplorer(Games);
-            explorerWindow.Show(_scannerWindow, scannerStatistics.Window.Width, scannerResults.Window.Height + 5, scannerStatistics.Window.Height);
+            var scannerExplorer = new ScannerExplorer(Games);
+            scannerExplorer.Show(_scannerWindow, scannerStatistics.Window.Width + WindowMargin, scannerResults.Window.Height + WindowMargin, scannerStatistics.Window.Height);
 
             _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_scannerWindow, ScannerResults.Width, 5, ScannerResults.Height);
+            _loggingWindow.Show(_scannerWindow, ScannerResults.Width + +WindowMargin, 5, ScannerResults.Height);
 
             scannerResults.Window.Closed += (_, _) =>
             {
                 scannerStatistics.Close();
-                explorerWindow.Close();
+                scannerExplorer.Close();
                 _loggingWindow.Close();
                 _scannerWindow.Show();
             };
@@ -182,5 +183,6 @@ namespace ClrVpin.Scanner
         private readonly IEnumerable<FeatureType> _fixHitTypes;
         private Window _scannerWindow;
         private Logging.Logging _loggingWindow;
+        private const int WindowMargin = 12;
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Models;
+using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
 
@@ -37,15 +38,18 @@ namespace ClrVpin.Settings
 
         public void Show(Window parent)
         {
-            var window = new Window
+            var window = new MaterialWindow
             {
                 Owner = parent,
                 Content = this,
-                SizeToContent = SizeToContent.WidthAndHeight,
+                //SizeToContent = SizeToContent.WidthAndHeight,
+                Height = 760,
+                Width = 610,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("SettingsTemplate") as DataTemplate,
-                ResizeMode = ResizeMode.NoResize
+                ResizeMode = ResizeMode.NoResize,
+                Title = "Settings"
             };
             window.Show();
             parent.Hide();

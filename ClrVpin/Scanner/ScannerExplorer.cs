@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using ClrVpin.Models;
+using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 
 namespace ClrVpin.Scanner
@@ -15,7 +16,7 @@ namespace ClrVpin.Scanner
 
         public void Show(Window parentWindow, double left, double top, double height)
         {
-            _window = new Window
+            _window = new MaterialWindow
             {
                 Owner = parentWindow,
                 Title = "Scanner Explorer",
