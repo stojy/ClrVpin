@@ -1,23 +1,25 @@
 # ClrVpin
 ![ClrVpin - 1280x640](https://user-images.githubusercontent.com/11408611/117466530-654d2d80-af85-11eb-8493-c49034aa9315.png)
 
-**WIP**
 
-Virtual Pinball content management.
-- Content: Tables, Backglasses, POV, etc.
+## Virtual Pinball content management.
 - Frontend Media: Videos, Audio, Wheels, etc
+- Content: Tables, Backglasses, POV, etc.
 
-![image](https://user-images.githubusercontent.com/11408611/117463590-6c267100-af82-11eb-8978-a2f8d35417c3.png)
+## Roadmap
+- Content support (tables and backglass)
+- Rebuilder (import files from other locations)
+- Check for missing games (via internet)
+- Improve fuzzy matching (percentage match, alterative algorithms, etc)
+- Associate IPDB (via internet?)
 
-![image](https://user-images.githubusercontent.com/11408611/117463571-66c92680-af82-11eb-87a1-7ce93baa39c5.png)
+## Screenshots
 
-![image](https://user-images.githubusercontent.com/11408611/117541185-40b88a80-b045-11eb-9aba-770b825d8bd8.png)
-
-
-![image](https://user-images.githubusercontent.com/11408611/117464165-f969c580-af82-11eb-8f61-c0e394137f12.png)
-
-![image](https://user-images.githubusercontent.com/11408611/117463987-cde6db00-af82-11eb-816f-f487db07bb1d.png)
-
-![image](https://user-images.githubusercontent.com/11408611/117464005-d3442580-af82-11eb-8c97-35dc7db67004.png)
-
-![image](https://user-images.githubusercontent.com/11408611/117463760-97a95b80-af82-11eb-80e6-9adcbe0fef35.png)
+![image](https://user-images.githubusercontent.com/11408611/119373295-d5c8ae00-bcea-11eb-9d1b-7cc5c0be357e.png)
+![image](https://user-images.githubusercontent.com/11408611/119373480-09a3d380-bceb-11eb-8002-7b3645c98ee2.png)
+![image](https://user-images.githubusercontent.com/11408611/119373518-145e6880-bceb-11eb-9783-3b74e66750ea.png)
+![image](https://user-images.githubusercontent.com/11408611/119373549-1d4f3a00-bceb-11eb-8bb0-bb5565ad4fa7.png)
+![image](https://user-images.githubusercontent.com/11408611/119373859-7ae38680-bceb-11eb-99b2-5159892a31f5.png)
+![image](https://user-images.githubusercontent.com/11408611/119373593-28a26580-bceb-11eb-8201-05991f273e49.png)
+![image](https://user-images.githubusercontent.com/11408611/119373686-440d7080-bceb-11eb-87c2-dec4b00fda5a.png)
+![image](https://user-images.githubusercontent.com/11408611/119373718-4bcd1500-bceb-11eb-90ee-873ee44056b8.png)
