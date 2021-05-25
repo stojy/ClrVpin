@@ -14,7 +14,10 @@
     </DataTemplate.Resources>
 
     <StackPanel Margin="5">
-      <TextBlock Style="{StaticResource MaterialDesignHeadline1TextBlock}" HorizontalAlignment="Center">ClrVpin</TextBlock>
+      <WrapPanel>
+        <TextBlock Style="{StaticResource MaterialDesignHeadline1TextBlock}" HorizontalAlignment="Center">ClrVpin</TextBlock>
+        <TextBlock VerticalAlignment="Bottom" Margin="10,0,0,20" Text="{Binding AssemblyVersion}"/>
+      </WrapPanel>
       <Image Source="/Resources/ClrVpin.png" Height="250" Margin="10" />
 
       <TextBlock Margin="5,10,0,0" FontSize="18">A handy tool for managing your Visual Pinball content files..</TextBlock>

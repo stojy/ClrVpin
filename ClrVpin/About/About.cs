@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using MaterialDesignExtensions.Controls;
@@ -14,10 +15,14 @@ namespace ClrVpin.About
         {
             NavigateToGitHubRepoCommand = new ActionCommand(NavigateToGitHubRepo);
             NavigateToGitHubAuthorCommand = new ActionCommand(NavigateToGitHubAuthor);
+
+            var version = Assembly.GetEntryAssembly()?.GetName().Version!;
+            AssemblyVersion = $"v{version?.Major}.{version?.Minor}.{version?.Build}";
         }
 
         public string GitHubRepoUrl { get; set; } = @"https://github.com/stojy/ClrVpin";
         public string GitHubAuthorUrl { get; set; } = @"https://github.com/stojy";
+        public string AssemblyVersion { get; set; }
 
         public ICommand NavigateToGitHubRepoCommand { get; set; }
         public ICommand NavigateToGitHubAuthorCommand { get; set; }
