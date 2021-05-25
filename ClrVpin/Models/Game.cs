@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Windows.Input;
+using System.Xml.Serialization;
 
 namespace ClrVpin.Models
 {
@@ -73,14 +74,20 @@ namespace ClrVpin.Models
         
         [XmlIgnore]
         public int Number { get; set; }
-        
+
         [XmlIgnore]
         public string Ipdb { get; set; }
+
+        [XmlIgnore]
+        public string IpdbUrl { get; set; }
 
         [XmlIgnore]
         public bool IsExpanded { get; set; }
 
         [XmlIgnore]
         public bool IsSelected { get; set; }
+
+        [XmlIgnore]
+        public ICommand NavigateToIpdbCommand { get; set; }
     }
 }

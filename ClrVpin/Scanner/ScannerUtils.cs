@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models;
+using Microsoft.Xaml.Behaviors.Core;
 using Utils;
 
 namespace ClrVpin.Scanner
@@ -32,6 +34,8 @@ namespace ClrVpin.Scanner
                 {
                     g.Number = number++;
                     g.Ipdb = g.IpdbId ?? g.IpdbNr;
+                    g.IpdbUrl = string.IsNullOrEmpty(g.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={g.Ipdb}";
+                    g.NavigateToIpdbCommand = new Utils.ActionCommand(() => NavigateToIpdb(g.IpdbUrl));
                 });
 
                 games.AddRange(menu.Games);
@@ -39,6 +43,8 @@ namespace ClrVpin.Scanner
 
             return games;
         }
+
+        private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
 
         public static List<FixFileDetail> Check(List<Game> games)
         {

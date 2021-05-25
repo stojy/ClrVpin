@@ -65,6 +65,15 @@
     </materialDesign:PackIcon>
   </DataTemplate>
 
+  <DataTemplate x:Key="IpdbTemplate" DataType="models:Game">
+    <TextBlock>
+      <Hyperlink NavigateUri="{Binding IpdbUrl}" Command="{Binding NavigateToIpdbCommand}">
+        <TextBlock Text="{Binding Ipdb}" />
+      </Hyperlink>
+    </TextBlock>
+
+  </DataTemplate>
+
   <Style x:Key="TextCellStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignDataGridTextColumnStyle}">
     <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
@@ -76,7 +85,7 @@
                 materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8">
         <DataGrid.Columns>
           <DataGridTextColumn Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn Header="IPDB" Binding="{Binding Ipdb}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTemplateColumn Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
           <DataGridTextColumn Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
@@ -84,9 +93,9 @@
           <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
           <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTemplateColumn Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True"/>
+          <DataGridTemplateColumn Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True" />
 
-          <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}"  />
+          <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />
         </DataGrid.Columns>
 
         <DataGrid.RowStyle>
