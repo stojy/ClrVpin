@@ -20,7 +20,6 @@
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="heat.wxs" />
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
