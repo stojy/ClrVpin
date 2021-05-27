@@ -1,0 +1,2 @@
+﻿rem borrowed from here.. https://stackoverflow.com/questions/55002574/wix-installer-with-many-subfolders-and-files
+"C:\Program Files (x86)\WiX Toolset v3.11\bin\heat" dir ..\ClrVpin\bin\Debug\net5.0-windows -ag -dr INSTALLDIR -srd -sfrag -suid -cg ProductComponents -out ProductComponents.wxs
