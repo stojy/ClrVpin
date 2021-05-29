@@ -2,20 +2,24 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*" Name="ClrVpin" Language="1033" Version="0.1.0.0" Manufacturer="Stoj" UpgradeCode="65e602aa-6d03-452a-b074-fbdc774e7f9a">
+    <!-- 64bit.. https://stackoverflow.com/questions/4304253/how-do-i-get-wix-to-generate-a-64-bit-msi 
+                 https://sorceryforce.net/en/tips/wix64bit -->
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate />
 
-    <Feature Id="ProductFeature" Title="ClrVpin Setup" Level="1">
+    <!-- create these components -->
+    <Feature Id="ProductFeature1" Title="ClrVpin Setup" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
-      <ComponentRef Id="Folders" />
+      <ComponentRef Id="FolderComponent" />
     </Feature>
   </Product>
 
   <Fragment>
+    <!-- special folder details.. https://docs.microsoft.com/en-au/windows/win32/msi/property-reference?redirectedfrom=MSDN#system_folder_properties-->
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
+      <Directory Id="ProgramFiles64Folder">
         <Directory Id="InstallFolder" Name="ClrVpin">
           <Directory Id="BackupFolder" Name="backup" />
         </Directory>
@@ -31,7 +35,7 @@
 
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="InstallFolder">
-      <Component Id="ProductComponent" Guid="8A17DDBE-F668-4821-A8FF-DE0878EDD380">
+      <Component Id="BinaryComponent" Guid="8A17DDBE-F668-4821-A8FF-DE0878EDD380" Win64="yes">
         <File Source="$(var.ClrVpin.TargetDir)ClrVpin.exe" />
         <File Source="$(var.ClrVpin.TargetDir)ClrVpin.dll" />
         <File Source="$(var.ClrVpin.TargetDir)ByteSize.dll" />
@@ -43,7 +47,9 @@
         <File Source="$(var.ClrVpin.TargetDir)Microsoft.Xaml.Behaviors.dll" />
         <File Source="$(var.ClrVpin.TargetDir)NLog.dll" />
         <File Source="$(var.ClrVpin.TargetDir)Utils.dll" />
+      </Component>
 
+      <Component Id="ContentComponent" Guid="8A17DDBE-F668-4821-A8FF-DE0878EDD381" Win64="yes">
         <File Source="$(var.ClrVpin.TargetDir)nlog.config" />
         <File Source="$(var.ClrVpin.TargetDir)ClrVpin.runtimeconfig.json" />
       </Component>
@@ -51,7 +57,9 @@
   </Fragment>
 
   <Fragment>
-    <Component Id="Folders" Directory="BackupFolder" Guid="FA5ADFA8-B029-440D-B7B5-6F1EAC53D904">
+    <!--reference to BackupFolder directory-->
+    <Component Id="FolderComponent" Directory="BackupFolder" Guid="FA5ADFA8-B029-440D-B7B5-6F1EAC53D904" Win64="yes">
+      <!--explicitly create folder.. required because no files are being added-->
       <CreateFolder />
     </Component>
   </Fragment>
