@@ -1,7 +1,6 @@
 # ClrVpin
 ![ClrVpin - 1280x640](https://user-images.githubusercontent.com/11408611/117466530-654d2d80-af85-11eb-8493-c49034aa9315.png)
 
-
 ## Virtual Pinball content management.
 - Frontend Media: Videos, Audio, Wheels, etc
 - Content: Tables, Backglasses, POV, etc.

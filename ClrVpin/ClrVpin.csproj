@@ -20,7 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="..\docs\ClrVpin.png" Link="Resources\ClrVpin.png" />
+    <Resource Include="..\docs\ClrVpin.png" Link="Resources\ClrVpin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -95,6 +97,12 @@
 
   <ItemGroup>
     <Folder Include="Resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\docs\license.rtf" Link="Resources\license.rtf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

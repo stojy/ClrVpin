@@ -34,7 +34,22 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\docs\ClrVpinBanner.png">
+      <Link>Resources\ClrVpinBanner.png</Link>
+    </None>
+    <None Include="..\docs\ClrVpinDialog.png">
+      <Link>Resources\ClrVpinDialog.png</Link>
+    </None>
     <Content Include="heat.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />

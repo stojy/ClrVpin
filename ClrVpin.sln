@@ -12,6 +12,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{34B6F8B8-7694-4097-811B-C7B944177E1C}"
 	ProjectSection(SolutionItems) = preProject
 		docs\ClrVpin.xcf = docs\ClrVpin.xcf
+		docs\ClrVpinBanner.xcf = docs\ClrVpinBanner.xcf
+		license.md = license.md
+		docs\license.rtf = docs\license.rtf
+		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "ClrVpin.Setup", "ClrVpin.Setup\ClrVpin.Setup.wixproj", "{DA93AA4C-41AC-491D-934A-AFC39E865184}"
