@@ -7,12 +7,16 @@
     <!-- 64bit.. https://stackoverflow.com/questions/4304253/how-do-i-get-wix-to-generate-a-64-bit-msi 
                  https://sorceryforce.net/en/tips/wix64bit -->
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
-    
+
     <!--https://wixtoolset.org/documentation/manual/v3/wixui/wixui_customizations.html-->
+    <!--https://sorceryforce.net/en/tips/wix-installer-create2-->
     <UIRef Id="WixUI_Minimal" />
     <WixVariable Id="WixUILicenseRtf" Value="$(var.ClrVpin.TargetDir)\Resources\license.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="..\docs\ClrVpinBanner.png" />
     <WixVariable Id="WixUIDialogBmp" Value="..\docs\ClrVpinDialog.png" />
+    <!--icon id must have a '.ico' suffix to keep wix's shortcut creation happy-->
+    <Icon Id="ClrVpx.exe" SourceFile="$(var.ClrVpin.TargetDir)ClrVpin.exe" />
+    <Property Id="ARPPRODUCTICON" Value="ClrVpx.exe" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
@@ -21,9 +25,10 @@
     <Feature Id="ProductFeature1" Title="ClrVpin Setup" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentRef Id="FolderComponent" />
+      <ComponentRef Id="ProgramMenuDir" />
     </Feature>
-  </Product> 
- 
+  </Product>
+
   <Fragment>
     <!-- special folder details.. https://docs.microsoft.com/en-au/windows/win32/msi/property-reference?redirectedfrom=MSDN#system_folder_properties-->
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -32,19 +37,35 @@
           <Directory Id="BackupFolder" Name="backup" />
         </Directory>
       </Directory>
+
+      <!--start menu (shortcut within is defined in ProductGroups)-->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProgramMenuDir" Name="ClrVpin">
+          <Component Id="ProgramMenuDir" Guid="F6C4DAD3-964F-4D08-A054-21B52A35DA4F">
+            <!--some weird Wix requirements to support 'user profile'-->
+            <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+            <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Type="string" Value="" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
     </Directory>
   </Fragment>
 
   <Fragment>
+    <!--empty backup folder-->
     <Component Id="MyBackup" Directory="Backup" Guid="D92C7ACD-D58E-4A7F-83C8-C6AE57E45DFB">
       <CreateFolder />
     </Component>
   </Fragment>
 
   <Fragment>
+    <!--all of the files to be installed into c:\program files\clrvpin-->
     <ComponentGroup Id="ProductComponents" Directory="InstallFolder">
       <Component Id="BinaryComponent" Guid="8A17DDBE-F668-4821-A8FF-DE0878EDD380" Win64="yes">
-        <File Source="$(var.ClrVpin.TargetDir)ClrVpin.exe" />
+        <File Source="$(var.ClrVpin.TargetDir)ClrVpin.exe" KeyPath="yes">
+          <!--shortcut icon-->
+          <Shortcut Id="ClrVpinShortcut" Name="ClrVpin" Directory="ProgramMenuDir" WorkingDirectory="INSTALLDIR" Icon="ClrVpx.exe" IconIndex="0" Advertise="yes" />
+        </File>
         <File Source="$(var.ClrVpin.TargetDir)ClrVpin.dll" />
         <File Source="$(var.ClrVpin.TargetDir)ByteSize.dll" />
         <File Source="$(var.ClrVpin.TargetDir)MaterialDesignColors.dll" />
