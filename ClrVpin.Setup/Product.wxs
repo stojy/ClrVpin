@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--https://wixtoolset.org/documentation/manual/v3/howtos/-->
+<!--https://sorceryforce.net/en/tips/wix-->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="ClrVpin" Language="1033" Version="0.1.0.0" Manufacturer="Stoj" UpgradeCode="65e602aa-6d03-452a-b074-fbdc774e7f9a">
+  <Product Id="F6C4DAD3-964F-4D08-A054-21B52A35DA4F" Name="ClrVpin" Language="1033" Version="0.1.0.0" Manufacturer="Stoj" UpgradeCode="65e602aa-6d03-452a-b074-fbdc774e7f9a">
     <!-- 64bit.. https://stackoverflow.com/questions/4304253/how-do-i-get-wix-to-generate-a-64-bit-msi 
                  https://sorceryforce.net/en/tips/wix64bit -->
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
-
+    
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-    <MediaTemplate />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
 
     <!-- create these components -->
     <Feature Id="ProductFeature1" Title="ClrVpin Setup" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentRef Id="FolderComponent" />
     </Feature>
-  </Product>
-
+  </Product> 
+ 
   <Fragment>
     <!-- special folder details.. https://docs.microsoft.com/en-au/windows/win32/msi/property-reference?redirectedfrom=MSDN#system_folder_properties-->
     <Directory Id="TARGETDIR" Name="SourceDir">
