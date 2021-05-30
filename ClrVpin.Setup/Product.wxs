@@ -10,7 +10,7 @@
   
   <!--upgrade support; https://stackoverflow.com/a/26344742/227110
       - product id must be variable, bind.FileVersion is to nuspec Assembly File Version (nor product version = package version, or assembly version = ??)-->
-  <Product Id="*" Name="ClrVpin" Language="1033" Version="$(var.Version)" Manufacturer="Stoj" UpgradeCode="$(var.UpgradeCode)">
+  <Product Id="*" Name="ClrVpin v$(var.Version)" Language="1033" Version="$(var.Version)" Manufacturer="Stoj" UpgradeCode="$(var.UpgradeCode)">
     <!-- 64bit.. https://stackoverflow.com/questions/4304253/how-do-i-get-wix-to-generate-a-64-bit-msi 
                  https://sorceryforce.net/en/tips/wix64bit -->
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
