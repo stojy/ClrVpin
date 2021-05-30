@@ -17,14 +17,16 @@
 
     <!--https://wixtoolset.org/documentation/manual/v3/wixui/wixui_customizations.html-->
     <!--https://sorceryforce.net/en/tips/wix-installer-create2-->
-    <UIRef Id="WixUI_Minimal" />
+    <!--dir id must be in uppercase! https://wixtoolset.org//documentation/manual/v3/wixui/dialog_reference/wixui_installdir.html-->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UIRef Id="WixUI_InstallDir" />
     <WixVariable Id="WixUILicenseRtf" Value="$(var.ClrVpin.TargetDir)\Resources\license.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="..\docs\ClrVpinBanner.png" />
     <WixVariable Id="WixUIDialogBmp" Value="..\docs\ClrVpinDialog.png" />
     <!--icon id must have a '.ico' suffix to keep wix's shortcut creation happy-->
     <Icon Id="ClrVpx.exe" SourceFile="$(var.ClrVpin.TargetDir)ClrVpin.exe" />
+    
     <Property Id="ARPPRODUCTICON" Value="ClrVpx.exe" />
-
 
     <!--not strictly required at the moment.. but kept here for future use if/when version upgrade constraints are requried-->
     <Upgrade Id="$(var.UpgradeCode)">
@@ -52,7 +54,7 @@
     <!-- special folder details.. https://docs.microsoft.com/en-au/windows/win32/msi/property-reference?redirectedfrom=MSDN#system_folder_properties-->
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
-        <Directory Id="InstallFolder" Name="ClrVpin">
+        <Directory Id="INSTALLFOLDER" Name="ClrVpin">
           <Directory Id="BackupFolder" Name="backup" />
         </Directory>
       </Directory>
@@ -79,7 +81,7 @@
 
   <Fragment>
     <!--all of the files to be installed into c:\program files\clrvpin-->
-    <ComponentGroup Id="ProductComponents" Directory="InstallFolder">
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="BinaryComponent" Guid="8A17DDBE-F668-4821-A8FF-DE0878EDD380" Win64="yes">
         <File Id="ClrVpxExe" Source="$(var.ClrVpin.TargetDir)ClrVpin.exe" KeyPath="yes">
           <!--shortcut icon-->
