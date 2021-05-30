@@ -19,7 +19,13 @@
     <!--https://sorceryforce.net/en/tips/wix-installer-create2-->
     <UIRef Id="WixUI_InstallDir" />
 
-    <!--dir id must be in uppercase! https://wixtoolset.org//documentation/manual/v3/wixui/dialog_reference/wixui_installdir.html-->
+    <!--retrieve previously installed folder: https://stackoverflow.com/a/36941018/227110-->
+    <!--stash/retrieve settings: https://robmensching.com/blog/posts/2010/5/2/the-wix-toolsets-remember-property-pattern/-->
+    <Property Id='INSTALLFOLDER'>
+      <RegistrySearch Id='InstallFolderRegSearch' Root='HKCU' Key='SOFTWARE\[Manufacturer]\[ProductName]' Name='InstallFolder' Type='raw' />
+    </Property>
+
+    <!--dir id 'InstallFolder' must be in uppercase! https://wixtoolset.org//documentation/manual/v3/wixui/dialog_reference/wixui_installdir.html-->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     
     <!-- launch app after installation: https://wixtoolset.org/documentation/manual/v3/howtos/ui_and_localization/run_program_after_install.html-->
@@ -41,12 +47,7 @@
 
     <!--not strictly required at the moment.. but kept here for future use if/when version upgrade constraints are requried-->
     <Upgrade Id="$(var.UpgradeCode)">
-      <UpgradeVersion Minimum="0.0.1"
-                      IncludeMinimum="yes"
-                      OnlyDetect="no"
-                      Maximum="$(var.Version)"
-                      IncludeMaximum="no"
-                      Property="OLDVERSIONFOUND" />
+      <UpgradeVersion Minimum="0.0.1" IncludeMinimum="yes" OnlyDetect="no" Maximum="$(var.Version)" IncludeMaximum="no" Property="OLDVERSIONFOUND" />
     </Upgrade>
     
     <!--allow downgrade includes allow same version upgrade (useful for development) AND avoids the double entries in appwiz-->
@@ -58,6 +59,7 @@
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentRef Id="FolderComponent" />
       <ComponentRef Id="ProgramMenuDir" />
+      <ComponentRef Id="InstallFolderRegistry" />
     </Feature>
   </Product>
 
@@ -115,6 +117,12 @@
         <File Source="$(var.ClrVpin.TargetDir)ClrVpin.runtimeconfig.json" />
       </Component>
     </ComponentGroup>
+
+    <!--store specified folder for a future upgrade/repair: https://stackoverflow.com/a/36941018/227110-->
+    <Component Id="InstallFolderRegistry" Directory='INSTALLFOLDER'>
+      <RegistryValue Root='HKCU' Key='SOFTWARE\[Manufacturer]\[ProductName]' Name='InstallFolder' Value='[INSTALLFOLDER]' Type='string' KeyPath="yes" />
+    </Component>
+
   </Fragment>
 
   <Fragment>
