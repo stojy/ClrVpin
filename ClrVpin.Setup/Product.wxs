@@ -5,6 +5,7 @@
 
 <!--https://wixtoolset.org/documentation/manual/v3/howtos/-->
 <!--https://sorceryforce.net/en/tips/wix-->
+<!--https://www.firegiant.com/wix/tutorial/getting-started/the-files-inside/-->
 <!--variable binding: http://windows-installer-xml-wix-toolset.687559.n2.nabble.com/Getting-the-version-from-the-Assembly-file-td2153899i20.html-->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   
@@ -82,6 +83,9 @@
           </Component>
         </Directory>
       </Directory>
+
+      <!--desktop shortcut-->
+      <Directory Id="DesktopFolder" Name="Desktop"/>
     </Directory>
   </Fragment>
 
@@ -97,8 +101,9 @@
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="BinaryComponent" Guid="8A17DDBE-F668-4821-A8FF-DE0878EDD380" Win64="yes">
         <File Id="ClrVpxExe" Source="$(var.ClrVpin.TargetDir)ClrVpin.exe" KeyPath="yes">
-          <!--shortcut icon-->
-          <Shortcut Id="ClrVpinShortcut" Name="ClrVpin" Directory="ProgramMenuDir" WorkingDirectory="INSTALLDIR" Icon="ClrVpxIcon.exe" IconIndex="0" Advertise="yes" />
+          <!--shortcut icons-->
+          <Shortcut Id="StartMenuShortcut" Name="ClrVpin" Directory="ProgramMenuDir" Icon="ClrVpxIcon.exe" Advertise="yes" />
+          <Shortcut Id="DesktopShortcut" Name="ClrVpin" Directory="DesktopFolder" Icon="ClrVpxIcon.exe" Advertise="yes" />
         </File>
         <File Source="$(var.ClrVpin.TargetDir)ClrVpin.dll" />
         <File Source="$(var.ClrVpin.TargetDir)ByteSize.dll" />
