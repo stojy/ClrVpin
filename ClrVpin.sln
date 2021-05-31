@@ -20,6 +20,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{34B6F8B8-7
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "ClrVpin.Setup", "ClrVpin.Setup\ClrVpin.Setup.wixproj", "{DA93AA4C-41AC-491D-934A-AFC39E865184}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "screenshots", "screenshots", "{0F74A07E-1B35-44D9-88FE-4E331CB19F52}"
+	ProjectSection(SolutionItems) = preProject
+		docs\screenshots\about.png = docs\screenshots\about.png
+		docs\screenshots\home.png = docs\screenshots\home.png
+		docs\screenshots\scanner-explorer.png = docs\screenshots\scanner-explorer.png
+		docs\screenshots\scanner-logs.png = docs\screenshots\scanner-logs.png
+		docs\screenshots\scanner-results.png = docs\screenshots\scanner-results.png
+		docs\screenshots\scanner-settings.png = docs\screenshots\scanner-settings.png
+		docs\screenshots\scanner-statistics.png = docs\screenshots\scanner-statistics.png
+		docs\screenshots\settings.png = docs\screenshots\settings.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +75,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0F74A07E-1B35-44D9-88FE-4E331CB19F52} = {34B6F8B8-7694-4097-811B-C7B944177E1C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EEFDE1FF-91E7-4C51-8546-5721BAE8910A}
