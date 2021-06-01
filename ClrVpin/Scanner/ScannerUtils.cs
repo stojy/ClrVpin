@@ -234,7 +234,9 @@ namespace ClrVpin.Scanner
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, mediaFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
-                    game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.TableFile))) != null)
+                    game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.TableFile) ||
+                    game.Description.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.Description))
+                    ) != null)
                 {
                     // todo; add more 'fuzzy' checks
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, mediaFile);
