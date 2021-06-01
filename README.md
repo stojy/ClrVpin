@@ -8,7 +8,7 @@ It will keep your Visual Pinball content collection up to date freeing up more o
 
 ## Features
 Maintain a clean set of VP (Visual Pinball) content..
-- Frontend Media: Videos, Audio, Wheels, etc
+- Frontend Media: Videos, Audio, Wheels, etc.
 - Content: Tables, Backglasses, POV, etc.
 
 ## Screenshots
