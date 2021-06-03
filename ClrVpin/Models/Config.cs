@@ -119,7 +119,7 @@ namespace ClrVpin.Models
 
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
 
-            BackupFolder = Path.Combine(Directory.GetCurrentDirectory(), "backup");
+            BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
 
             TrainerWheels = true;
 
