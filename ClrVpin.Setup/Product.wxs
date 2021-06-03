@@ -69,7 +69,6 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER" Name="ClrVpin">
-          <Directory Id="BackupFolder" Name="backup" />
         </Directory>
       </Directory>
 
@@ -84,16 +83,16 @@
         </Directory>
       </Directory>
 
+      <Directory Id="CommonAppDataFolder">
+        <Directory Id="CommonAppDataManufacturerFolder" Name="ClrVpin">
+          <Directory Id="BackupFolder" Name="Backup">
+          </Directory>
+        </Directory>
+      </Directory>
+
       <!--desktop shortcut-->
       <Directory Id="DesktopFolder" Name="Desktop"/>
     </Directory>
-  </Fragment>
-
-  <Fragment>
-    <!--empty backup folder-->
-    <Component Id="MyBackup" Directory="Backup" Guid="D92C7ACD-D58E-4A7F-83C8-C6AE57E45DFB">
-      <CreateFolder />
-    </Component>
   </Fragment>
 
   <Fragment>
