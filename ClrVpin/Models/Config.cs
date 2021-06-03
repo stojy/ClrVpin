@@ -114,7 +114,7 @@ namespace ClrVpin.Models
                 //new ContentType_Obsolete {Enum = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
                 //new ContentType_Obsolete {Enum = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
                 //new ContentType_Obsolete {Enum = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            };
+            }; 
             defaultFrontendFolders.ForEach(x => x.Description = x.Enum.GetDescription());
 
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
