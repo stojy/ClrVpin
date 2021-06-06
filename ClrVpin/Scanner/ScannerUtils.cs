@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models;
-using Microsoft.Xaml.Behaviors.Core;
 using Utils;
 
 namespace ClrVpin.Scanner
@@ -70,7 +71,13 @@ namespace ClrVpin.Scanner
             return unknownFiles;
         }
 
-        public static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> unknownFileDetails, string backupFolder)
+        public static async Task<List<FixFileDetail>> FixAsync(List<Game> games, List<FixFileDetail> unknownFileDetails, string backupFolder)
+        {
+            var fixedFileDetails = await Task.Run(() => Fix(games, unknownFileDetails, backupFolder));
+            return fixedFileDetails;
+        }
+
+        private static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> unknownFileDetails, string backupFolder)
         {
             _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
 
