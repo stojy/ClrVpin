@@ -7,6 +7,7 @@ using ByteSizeLib;
 using ClrVpin.Models;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
+using Utils;
 
 namespace ClrVpin.Scanner
 {
@@ -49,19 +50,37 @@ namespace ClrVpin.Scanner
         private void CreateStatistics(ICollection<FixFileDetail> fixFiles)
         {
             Statistics =
-                $"{CreateHitTypeStatistics()}\n" +
+                $"{CreateHitTypeStatistics(fixFiles)}\n" +
                 $"{CreateTotalStatistics(fixFiles)}";
         }
 
-        private string CreateHitTypeStatistics()
+        private string CreateHitTypeStatistics(ICollection<FixFileDetail> fixFileDetails)
         {
             // for every hit type, create stats against every content type
             var hitStatistics = Config.HitTypes.Select(hitType =>
             {
-                var title = $"{(hitType.Enum == HitTypeEnum.Missing ? "" : "Fixed ")}{hitType.Description}";
+                var prefix = hitType.Enum switch
+                {
+                    HitTypeEnum.Unknown => "Removed ",
+                    HitTypeEnum.Missing => "",
+                    _ => "Fixed/Removed "
+                };
+                var title = $"{prefix}{hitType.Description}";
+                
+                var contents = "";
+                if (hitType.Enum != HitTypeEnum.Unknown)
+                {
+                    // all known content has an associated game
+                    contents = string.Join("\n", Config.ContentTypes.Select(contentType =>
+                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetContentStatistics(contentType.Description, hitType.Enum)}"));
+                }
+                else
+                {
+                    // unknown matches aren't attributed to a game.. so we treat them a little differently
+                    contents = string.Join("\n", Config.ContentTypes.Select(contentType =>
+                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetContentUnknownStatistics(contentType.Enum, hitType.Enum, fixFileDetails)}"));
+                }
 
-                var contents = string.Join("\n", Config.ContentTypes.Select(contentType =>
-                    $"- {contentType.Description,StatisticsKeyWidth + 2}{GetContentStatistics(contentType.Description, hitType.Enum)}"));
                 return $"{title}\n{contents}";
             });
 
@@ -69,6 +88,16 @@ namespace ClrVpin.Scanner
             return $"{overview}\n\n{string.Join("\n\n", hitStatistics)}";
         }
 
+        private string GetContentUnknownStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, ICollection<FixFileDetail> fixFileDetails)
+        {
+            if (!Model.Config.CheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.CheckHitTypes.Contains(hitType))
+                return "skipped";
+
+            var matchingFiles = fixFileDetails.Where(x => x.HitType == HitTypeEnum.Unknown && x.ContentType == contentType).ToList();
+
+            return CreateFileStatistic(matchingFiles.Count, matchingFiles.Sum(x => x.Size));
+        }
+        
         private string GetContentStatistics(string contentType, HitTypeEnum hitType)
         {
             if (!Model.Config.CheckContentTypes.Contains(contentType) || !Model.Config.CheckHitTypes.Contains(hitType))

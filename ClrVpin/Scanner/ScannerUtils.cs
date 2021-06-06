@@ -59,7 +59,7 @@ namespace ClrVpin.Scanner
             checkContentTypes.ForEach(contentType =>
             {
                 var mediaFiles = GetMedia(contentType);
-                var unknownMedia = AddMediaToGames(games, mediaFiles, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Description));
+                var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Description));
 
                 // todo; scan non-media content, e.g. tables and b2s
 
@@ -148,7 +148,7 @@ namespace ClrVpin.Scanner
                 Delete(hit.Path, hit.Type, hit.ContentType);
             }
 
-            return new FixFileDetail(hit.Type, deleted, false, hit.Path, hit.Size ?? 0);
+            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, deleted, false, hit.Path, hit.Size ?? 0);
         }
 
         private static void Delete(string file, HitTypeEnum hitType, string contentType)
@@ -185,7 +185,7 @@ namespace ClrVpin.Scanner
                 }
             }
 
-            return new FixFileDetail(hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
+            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
         }
 
         private static string CreateBackupFileName(string file)
@@ -211,7 +211,8 @@ namespace ClrVpin.Scanner
             });
         }
 
-        private static IEnumerable<FixFileDetail> AddMediaToGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, Func<Game, ContentHits> getContentHits)
+        private static IEnumerable<FixFileDetail> AddMediaToGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
+            Func<Game, ContentHits> getContentHits)
         {
             var unknownMediaFiles = new List<FixFileDetail>();
 
@@ -250,7 +251,7 @@ namespace ClrVpin.Scanner
                 }
                 else
                 {
-                    unknownMediaFiles.Add(new FixFileDetail(HitTypeEnum.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
+                    unknownMediaFiles.Add(new FixFileDetail(contentTypeEnum, HitTypeEnum.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
                 }
             });
 
