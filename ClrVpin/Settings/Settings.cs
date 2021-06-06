@@ -68,7 +68,7 @@ namespace ClrVpin.Settings
             {
                 // for storage
                 x.ContentType.Folder = x.ContentType.IsDatabase
-                    ? $@"{Config.FrontendFolder}\Media\Databases\Visual Pinball"
+                    ? $@"{Config.FrontendFolder}\Databases\Visual Pinball"
                     : $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
 
                 // for display
