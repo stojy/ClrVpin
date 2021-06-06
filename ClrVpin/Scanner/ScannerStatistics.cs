@@ -32,7 +32,7 @@ namespace ClrVpin.Scanner
                 Left = left,
                 Top = top,
                 Width = 400,
-                Height = 900,
+                Height = 885,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ScannerStatisticsTemplate") as DataTemplate
