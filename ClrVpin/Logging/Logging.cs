@@ -21,7 +21,7 @@ namespace ClrVpin.Logging
         public string File { get; }
         public ICommand NavigateToFileCommand { get; }
 
-        public void Show(Window parentWindow, double left, double top, int height)
+        public void Show(Window parentWindow, double left, double top, double height)
         {
             _window = new MaterialWindow
             {

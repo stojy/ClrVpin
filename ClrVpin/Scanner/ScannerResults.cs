@@ -16,9 +16,6 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerResults
     {
-        public const int Width = 530;
-        public const int Height = 500;
-
         public ScannerResults(ObservableCollection<Game> games)
         {
             Games = games;
@@ -57,8 +54,8 @@ namespace ClrVpin.Scanner
                 Title = "Scanner Results",
                 Left = left,
                 Top = top,
-                Width = Width,
-                Height = Height,
+                Width = 570,
+                Height = 500,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ScannerResultsTemplate") as DataTemplate

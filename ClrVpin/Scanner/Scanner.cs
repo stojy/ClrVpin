@@ -160,13 +160,13 @@ namespace ClrVpin.Scanner
             scannerResults.Show(_scannerWindow, 5, 5);
 
             var scannerStatistics = new ScannerStatistics(Games, duration, fixFiles);
-            scannerStatistics.Show(_scannerWindow, 5, scannerResults.Window.Height + WindowMargin);
+            scannerStatistics.Show(_scannerWindow, 5, scannerResults.Window.Height + WindowMargin, scannerResults.Window.Width);
 
             var scannerExplorer = new ScannerExplorer(Games);
             scannerExplorer.Show(_scannerWindow, scannerStatistics.Window.Width + WindowMargin, scannerResults.Window.Height + WindowMargin, scannerStatistics.Window.Height);
 
             _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_scannerWindow, ScannerResults.Width + +WindowMargin, 5, ScannerResults.Height);
+            _loggingWindow.Show(_scannerWindow, scannerResults.Window.Width + WindowMargin, 5, scannerResults.Window.Height);
 
             scannerResults.Window.Closed += (_, _) =>
             {

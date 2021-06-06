@@ -25,7 +25,7 @@ namespace ClrVpin.Scanner
         public string Statistics { get; set; }
         public Window Window { get; private set; }
 
-        public void Show(Window parentWindow, double left, double top)
+        public void Show(Window parentWindow, double left, double top, double width)
         {
             Window = new MaterialWindow
             {
@@ -33,7 +33,7 @@ namespace ClrVpin.Scanner
                 Title = "Scanner Statistics",
                 Left = left,
                 Top = top,
-                Width = 530,
+                Width = width,
                 Height = 885,
                 Content = this,
                 Resources = parentWindow.Resources,
@@ -59,7 +59,6 @@ namespace ClrVpin.Scanner
             // for every hit type, create stats against every content type
             var hitStatistics = Config.HitTypes.Select(hitType =>
             {
-                var title = $"{(hitType.Enum == HitTypeEnum.Missing ? "" : "Fixed ")}{hitType.Description}";
 
                 string contents;
                 if (hitType.Enum != HitTypeEnum.Unknown)
@@ -75,11 +74,10 @@ namespace ClrVpin.Scanner
                         $"- {contentType.Description,StatisticsKeyWidth + 2}{GetContentUnknownStatistics(contentType.Enum, hitType.Enum, fixFileDetails)}"));
                 }
 
-                return $"{title}\n{contents}";
+                return $"{hitType.Description}\n{contents}";
             });
 
-            var overview = "Criteria statistics for each content type";
-            return $"{overview}\n\n{string.Join("\n\n", hitStatistics)}";
+            return $"Criteria statistics for each content type\n\n{string.Join("\n\n", hitStatistics)}";
         }
 
         private string GetContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
@@ -87,7 +85,9 @@ namespace ClrVpin.Scanner
             if (!Model.Config.CheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.CheckHitTypes.Contains(hitType))
                 return "skipped";
 
-            var statistics = _games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType)) + "/" + _games.Count;
+            var fixPrefix = hitType == HitTypeEnum.Missing ? "irreparable" : Model.Config.FixHitTypes.Contains(hitType) ? "fixed" : "fixable";
+
+            var statistics = $"{fixPrefix} {_games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType))}/{_games.Count}";
 
             // don't show removed for missing files, since it's n/a
             if (hitType != HitTypeEnum.Missing)
@@ -96,7 +96,7 @@ namespace ClrVpin.Scanner
             return statistics;
         }
 
-        private string GetContentUnknownStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
+        private static string GetContentUnknownStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
         {
             if (!Model.Config.CheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.CheckHitTypes.Contains(hitType))
                 return "skipped";
@@ -106,7 +106,8 @@ namespace ClrVpin.Scanner
 
         private static string CreateMissingFileStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
         {
-            return $"removed {CreateFileStatistic(fixFileDetails.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
+            var removePrefix = Model.Config.FixHitTypes.Contains(hitType) ? "removed" : "removable";
+            return $"{removePrefix} {CreateFileStatistic(fixFileDetails.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
         }
 
         private string CreateTotalStatistics(ICollection<FixFileDetail> fixFiles)
