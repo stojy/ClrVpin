@@ -22,6 +22,7 @@ namespace ClrVpin.Scanner
         }
 
         public string Statistics { get; set; }
+        public Window Window { get; private set; }
 
         public void Show(Window parentWindow, double left, double top)
         {
@@ -57,18 +58,18 @@ namespace ClrVpin.Scanner
             // for every hit type, create stats against every content type
             var hitStatistics = Config.HitTypes.Select(hitType =>
             {
-                var title = $"{hitType.Description}";
+                var title = $"{(hitType.Enum == HitTypeEnum.Missing ? "" : "Fixed ")}{hitType.Description}";
 
-                var contents = string.Join("\n",
-                    Config.ContentTypes.Select(contentType =>
-                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetSmellyStatistics(contentType.Description, hitType.Enum)}"));
+                var contents = string.Join("\n", Config.ContentTypes.Select(contentType =>
+                    $"- {contentType.Description,StatisticsKeyWidth + 2}{GetContentStatistics(contentType.Description, hitType.Enum)}"));
                 return $"{title}\n{contents}";
             });
 
-            return $"{string.Join("\n\n", hitStatistics)}";
+            var overview = "Criteria statistics for each content type";
+            return $"{overview}\n\n{string.Join("\n\n", hitStatistics)}";
         }
 
-        private string GetSmellyStatistics(string contentType, HitTypeEnum hitType)
+        private string GetContentStatistics(string contentType, HitTypeEnum hitType)
         {
             if (!Model.Config.CheckContentTypes.Contains(contentType) || !Model.Config.CheckHitTypes.Contains(hitType))
                 return "skipped";
@@ -88,7 +89,7 @@ namespace ClrVpin.Scanner
             var fixFilesDeletedSize = fixFilesDeleted.Sum(x => x.Size);
             var fixFilesRenamed = fixFiles.Where(x => x.Renamed).ToList();
             var fixFilesRenamedSize = fixFilesRenamed.Sum(x => x.Size);
-            
+
             // identify unknown fix files for separate statistics
             var unknownFiles = fixFiles.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
             var unknownFilesIgnored = unknownFiles.Where(x => x.Ignored && !x.Renamed).ToList();
@@ -116,7 +117,6 @@ namespace ClrVpin.Scanner
 
         private readonly ObservableCollection<Game> _games;
         private readonly TimeSpan _scanStopWatch;
-        public Window Window { get; private set; }
 
         private const int StatisticsKeyWidth = -25;
     }
