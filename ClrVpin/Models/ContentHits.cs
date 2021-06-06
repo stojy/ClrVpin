@@ -22,7 +22,15 @@ namespace ClrVpin.Models
         {
             // for missing content.. the path is the description, i.e. desirable file name without an extension
             if (hitType == HitTypeEnum.Missing)
-                path = @$"{_contentType.Folder}\{path}.{string.Join(", ", _contentType.Extensions)}";
+            {
+                // display format: <file>.<ext1> (or .<ext2>, .<ext3>)
+                var extensions = _contentType.Extensions.Split(",").Select(x => x.Trim().TrimStart('*')).ToList();
+                path = @$"{_contentType.Folder}\{path}{extensions.First()}";
+
+                var otherExtensions = extensions.Skip(1).ToList();
+                if (otherExtensions.Any())
+                    path += $" (or {string.Join(", ", otherExtensions)})";
+            }
 
             // only add hit type for valid hits OR if it has been configured to be checked
             if (hitType == HitTypeEnum.Valid || Model.Config.CheckHitTypes.Contains(hitType))
