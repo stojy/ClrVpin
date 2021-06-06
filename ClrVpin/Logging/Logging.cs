@@ -29,7 +29,7 @@ namespace ClrVpin.Logging
                 Title = "Logs",
                 WindowStartupLocation = WindowStartupLocation.Manual,
                 Height = height,
-                Width = 1790,
+                Width = 1920,
                 Content = this,
                 Left = left,
                 Top = top,

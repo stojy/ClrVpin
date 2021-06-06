@@ -59,7 +59,7 @@ namespace ClrVpin.Scanner
             checkContentTypes.ForEach(contentType =>
             {
                 var mediaFiles = GetMedia(contentType);
-                var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Description));
+                var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
 
                 // todo; scan non-media content, e.g. tables and b2s
 

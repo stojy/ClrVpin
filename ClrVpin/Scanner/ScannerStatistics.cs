@@ -33,7 +33,7 @@ namespace ClrVpin.Scanner
                 Title = "Scanner Statistics",
                 Left = left,
                 Top = top,
-                Width = 400,
+                Width = 530,
                 Height = 885,
                 Content = this,
                 Resources = parentWindow.Resources,
@@ -59,20 +59,14 @@ namespace ClrVpin.Scanner
             // for every hit type, create stats against every content type
             var hitStatistics = Config.HitTypes.Select(hitType =>
             {
-                var prefix = hitType.Enum switch
-                {
-                    HitTypeEnum.Unknown => "Removed ",
-                    HitTypeEnum.Missing => "",
-                    _ => "Fixed/Removed "
-                };
-                var title = $"{prefix}{hitType.Description}";
-                
-                var contents = "";
+                var title = $"{(hitType.Enum == HitTypeEnum.Missing ? "" : "Fixed ")}{hitType.Description}";
+
+                string contents;
                 if (hitType.Enum != HitTypeEnum.Unknown)
                 {
                     // all known content has an associated game
                     contents = string.Join("\n", Config.ContentTypes.Select(contentType =>
-                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetContentStatistics(contentType.Description, hitType.Enum)}"));
+                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetContentStatistics(contentType.Enum, hitType.Enum, fixFileDetails)}"));
                 }
                 else
                 {
@@ -88,22 +82,31 @@ namespace ClrVpin.Scanner
             return $"{overview}\n\n{string.Join("\n\n", hitStatistics)}";
         }
 
-        private string GetContentUnknownStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, ICollection<FixFileDetail> fixFileDetails)
+        private string GetContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
         {
             if (!Model.Config.CheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.CheckHitTypes.Contains(hitType))
                 return "skipped";
 
-            var matchingFiles = fixFileDetails.Where(x => x.HitType == HitTypeEnum.Unknown && x.ContentType == contentType).ToList();
+            var statistics = _games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType)) + "/" + _games.Count;
 
-            return CreateFileStatistic(matchingFiles.Count, matchingFiles.Sum(x => x.Size));
+            // don't show removed for missing files, since it's n/a
+            if (hitType != HitTypeEnum.Missing)
+                statistics += $", {CreateMissingFileStatistics(contentType, hitType, fixFileDetails)}";
+
+            return statistics;
         }
-        
-        private string GetContentStatistics(string contentType, HitTypeEnum hitType)
+
+        private string GetContentUnknownStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
         {
-            if (!Model.Config.CheckContentTypes.Contains(contentType) || !Model.Config.CheckHitTypes.Contains(hitType))
+            if (!Model.Config.CheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.CheckHitTypes.Contains(hitType))
                 return "skipped";
 
-            return _games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType)) + "/" + _games.Count;
+            return CreateMissingFileStatistics(contentType, hitType, fixFileDetails);
+        }
+
+        private static string CreateMissingFileStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
+        {
+            return $"removed {CreateFileStatistic(fixFileDetails.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
         }
 
         private string CreateTotalStatistics(ICollection<FixFileDetail> fixFiles)
@@ -140,6 +143,11 @@ namespace ClrVpin.Scanner
                    $"\n{"- Ignored Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
                    $"\n{"  (Unknown Files)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesIgnored.Count, unknownFilesIgnoredSize)}" +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.TotalSeconds:f2}s";
+        }
+
+        private static string CreateFileStatistic(ICollection<FixFileDetail> removedFiles)
+        {
+            return CreateFileStatistic(removedFiles.Count, removedFiles.Sum(x => x.Size));
         }
 
         private static string CreateFileStatistic(long count, long size) => $"{count} ({(size == 0 ? "0 B" : ByteSize.FromBytes(size).ToString("0.#"))})";
