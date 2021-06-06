@@ -40,7 +40,8 @@
           <Setter Property="IsEnabled" Value="{Binding IsPresent}" />
 
           <!-- add tooltip to list box item instead of within pack icon so that it's not restricted to the mouse over the actual icon image -->
-          <Setter Property="ToolTip" Value="{Binding Description}" />
+          <Setter Property="ToolTipService.ToolTip" Value="{Binding Description}" />
+          <Setter Property="ToolTipService.ShowOnDisabled" Value="true" />
         </Style>
       </ListBox.ItemContainerStyle>
     </ListBox>
@@ -85,6 +86,7 @@
                 materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8">
         <DataGrid.Columns>
           <DataGridTextColumn Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTemplateColumn Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True" />
           <DataGridTemplateColumn Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
           <DataGridTextColumn Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
@@ -93,7 +95,6 @@
           <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
           <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTemplateColumn Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True" />
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />
         </DataGrid.Columns>
