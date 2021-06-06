@@ -44,7 +44,7 @@ namespace ClrVpin.Settings
                 Content = this,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Height = 760,
-                Width = 610,
+                Width = 660,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("SettingsTemplate") as DataTemplate,

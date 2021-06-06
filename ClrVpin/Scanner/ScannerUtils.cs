@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using ClrVpin.Logging;
@@ -36,7 +35,7 @@ namespace ClrVpin.Scanner
                     g.Number = number++;
                     g.Ipdb = g.IpdbId ?? g.IpdbNr;
                     g.IpdbUrl = string.IsNullOrEmpty(g.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={g.Ipdb}";
-                    g.NavigateToIpdbCommand = new Utils.ActionCommand(() => NavigateToIpdb(g.IpdbUrl));
+                    g.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(g.IpdbUrl));
                 });
 
                 games.AddRange(menu.Games);
@@ -49,35 +48,40 @@ namespace ClrVpin.Scanner
 
         public static List<FixFileDetail> Check(List<Game> games)
         {
-            var unknownFiles = new List<FixFileDetail>();
+            var otherFiles = new List<FixFileDetail>();
 
             // for the configured content types only.. check the installed content files against those specified in the database
             var checkContentTypes = Model.Config.GetFrontendFolders()
                 .Where(x => !x.IsDatabase)
                 .Where(type => Model.Config.CheckContentTypes.Contains(type.Description));
 
-            checkContentTypes.ForEach(contentType =>
+            foreach (var contentType in checkContentTypes)
             {
                 var mediaFiles = GetMedia(contentType);
                 var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+                otherFiles.AddRange(unknownMedia);
+
+                if (Model.Config.CheckHitTypes.Contains(HitTypeEnum.Unsupported))
+                {
+                    var unsupportedFiles = GetUnsupportedMedia(contentType);
+                    otherFiles.AddRange(unsupportedFiles);
+                }
 
                 // todo; scan non-media content, e.g. tables and b2s
-
-                unknownFiles.AddRange(unknownMedia);
-            });
+            }
 
             CheckMissing(games);
 
-            return unknownFiles;
+            return otherFiles;
         }
 
-        public static async Task<List<FixFileDetail>> FixAsync(List<Game> games, List<FixFileDetail> unknownFileDetails, string backupFolder)
+        public static async Task<List<FixFileDetail>> FixAsync(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
         {
-            var fixedFileDetails = await Task.Run(() => Fix(games, unknownFileDetails, backupFolder));
+            var fixedFileDetails = await Task.Run(() => Fix(games, otherFileDetails, backupFolder));
             return fixedFileDetails;
         }
 
-        private static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> unknownFileDetails, string backupFolder)
+        private static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
         {
             _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
 
@@ -108,9 +112,10 @@ namespace ClrVpin.Scanner
             });
 
             // delete files NOT associated with games, i.e. unknown files
-            unknownFileDetails.ForEach(x =>
+            otherFileDetails.ForEach(x =>
             {
-                if (Model.Config.FixHitTypes.Contains(HitTypeEnum.Unknown))
+                if (x.HitType == HitTypeEnum.Unknown && Model.Config.FixHitTypes.Contains(HitTypeEnum.Unknown) ||
+                    x.HitType == HitTypeEnum.Unsupported && Model.Config.FixHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     x.Deleted = true;
                     Delete(x.Path, x.HitType, null);
@@ -217,7 +222,7 @@ namespace ClrVpin.Scanner
             var unknownMediaFiles = new List<FixFileDetail>();
 
             // for each file, associate it with a game or if one can't be found, then mark it as unknown
-            mediaFiles.ForEach(mediaFile =>
+            foreach (var mediaFile in mediaFiles)
             {
                 Game matchedGame;
 
@@ -253,7 +258,7 @@ namespace ClrVpin.Scanner
                 {
                     unknownMediaFiles.Add(new FixFileDetail(contentTypeEnum, HitTypeEnum.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
                 }
-            });
+            }
 
             return unknownMediaFiles;
         }
@@ -263,6 +268,20 @@ namespace ClrVpin.Scanner
             var files = contentType.ExtensionsList.Select(ext => Directory.GetFiles(contentType.Folder, ext));
 
             return files.SelectMany(x => x).ToList();
+        }
+
+        private static IEnumerable<FixFileDetail> GetUnsupportedMedia(ContentType contentType)
+        {
+            // return all files that don't match the supported extensions
+            var supportedExtensions = contentType.ExtensionsList.Select(x => x.TrimStart('*').ToLower());
+
+            var allFiles = Directory.EnumerateFiles(contentType.Folder).Select(x => x.ToLower());
+            
+            var unsupportedFiles = allFiles.Where(file => !supportedExtensions.Any(file.EndsWith));
+
+            var unsupportedFixFiles = unsupportedFiles.Select(file => new FixFileDetail(contentType.Enum, HitTypeEnum.Unsupported, false, false, file, new FileInfo(file).Length));
+
+            return unsupportedFixFiles.ToList();
         }
 
         private static string _activeBackupFolder;

@@ -15,8 +15,10 @@ namespace ClrVpin.Models
 
         [Description("Duplicate Extension")] DuplicateExtension,
 
-        [Description("Missing")] Missing,
+        [Description("Missing File")] Missing,
         
-        [Description("Unknown")] Unknown    // unknown files do not relate to any specific game
+        [Description("Unknown Table")] Unknown,    // unknown files do not relate to any specific game
+        
+        [Description("Unsupported File Type")] Unsupported    // unsupported files do not relate to any supported extension
     }
 }

@@ -22,7 +22,7 @@
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="CheckHitTypes" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[1,2,3,4,5,6]</Value>
+      <Value Profile="(Default)">[1,2,3,4,5,6,7]</Value>
     </Setting>
     <Setting Name="FixHitTypes" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -34,7 +34,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="RequiredVersion" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">25</Value>
+      <Value Profile="(Default)">26</Value>
     </Setting>
     <Setting Name="ActualVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
