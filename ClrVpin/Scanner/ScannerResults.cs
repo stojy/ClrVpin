@@ -54,7 +54,7 @@ namespace ClrVpin.Scanner
                 Title = "Scanner Results",
                 Left = left,
                 Top = top,
-                Width = 570,
+                Width = 600,
                 Height = 500,
                 Content = this,
                 Resources = parentWindow.Resources,

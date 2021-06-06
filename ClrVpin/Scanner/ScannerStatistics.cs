@@ -116,19 +116,28 @@ namespace ClrVpin.Scanner
 
             var eligibleHits = _games.Count * Model.Config.CheckContentTypes.Count;
 
-            var fixFilesIgnored = fixFiles.Where(x => x.Ignored).ToList();
-            var fixFilesIgnoredSize = fixFilesIgnored.Sum(x => x.Size);
-            var fixFilesDeleted = fixFiles.Where(x => x.Deleted).ToList();
-            var fixFilesDeletedSize = fixFilesDeleted.Sum(x => x.Size);
+            // renamed
+            // - must be configured as a fix hit type
+            // - unknown is n/a apply for renamable, i.e. since we don't know what game/table to rename it to
             var fixFilesRenamed = fixFiles.Where(x => x.Renamed).ToList();
             var fixFilesRenamedSize = fixFilesRenamed.Sum(x => x.Size);
 
-            // identify unknown fix files for separate statistics
-            var unknownFiles = fixFiles.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
-            var unknownFilesIgnored = unknownFiles.Where(x => x.Ignored && !x.Renamed).ToList();
-            var unknownFilesIgnoredSize = unknownFilesIgnored.Sum(x => x.Size);
-            var unknownFilesDeleted = unknownFiles.Where(x => x.Deleted).ToList();
-            var unknownFilesDeletedSize = unknownFilesDeleted.Sum(x => x.Size);
+            // removed (deleted)
+            // - must be configured as a fix hit type
+            var fixFilesDeleted = fixFiles.Where(x => x.Deleted).ToList();
+            var fixFilesDeletedSize = fixFilesDeleted.Sum(x => x.Size);
+            var fixFilesDeletedUnknown = fixFilesDeleted.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
+            var fixFilesDeletedUnknownSize = fixFilesDeletedUnknown.Sum(x => x.Size);
+
+            // ignored (removable and renamable)
+            // - includes renamable AND removable files
+            // - unknown..
+            //   - n/a apply for renamable, i.e. since we don't know what game/table to rename it to
+            //   - applicable for removable
+            var fixFilesIgnored = fixFiles.Where(x => x.Ignored).ToList();
+            var fixFilesIgnoredSize = fixFilesIgnored.Sum(x => x.Size);
+            var fixFilesIgnoredUnknown = fixFilesIgnored.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
+            var fixFilesIgnoredUnknownSize = fixFilesIgnoredUnknown.Sum(x => x.Size);
 
             return "\n-----------------------------------------------\n" +
                    "\nTotals" +
@@ -140,9 +149,9 @@ namespace ClrVpin.Scanner
                    $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(fixFiles.Count, fixFiles.Sum(x => x.Size))}" +
                    $"\n{"- renamed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +
                    $"\n{"- removed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeleted.Count, fixFilesDeletedSize)}" +
-                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesDeleted.Count, unknownFilesDeletedSize)}" +
-                   $"\n{"- removable",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
-                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesIgnored.Count, unknownFilesIgnoredSize)}" +
+                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeletedUnknown.Count, fixFilesDeletedUnknownSize)}" +
+                   $"\n{"- renamable and removable",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
+                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnoredUnknown.Count, fixFilesIgnoredUnknownSize)}" +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.TotalSeconds:f2}s";
         }
 
@@ -156,6 +165,6 @@ namespace ClrVpin.Scanner
         private readonly ObservableCollection<Game> _games;
         private readonly TimeSpan _scanStopWatch;
 
-        private const int StatisticsKeyWidth = -25;
+        private const int StatisticsKeyWidth = -26;
     }
 }
