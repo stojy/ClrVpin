@@ -85,9 +85,9 @@ namespace ClrVpin.Scanner
             if (!Model.Config.CheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.CheckHitTypes.Contains(hitType))
                 return "skipped";
 
-            var fixPrefix = hitType == HitTypeEnum.Missing ? "irreparable" : Model.Config.FixHitTypes.Contains(hitType) ? "fixed" : "fixable";
+            var renamePrefix = hitType == HitTypeEnum.Missing ? "irreparable" : Model.Config.FixHitTypes.Contains(hitType) ? "renamed" : "renamable";
 
-            var statistics = $"{fixPrefix} {_games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType))}/{_games.Count}";
+            var statistics = $"{renamePrefix} {_games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType))}/{_games.Count}";
 
             // don't show removed for missing files, since it's n/a
             if (hitType != HitTypeEnum.Missing)
@@ -137,12 +137,12 @@ namespace ClrVpin.Scanner
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
                    $"\n{"- Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
-                   $"\n\n{"Fixed and Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(fixFiles.Count, fixFiles.Sum(x => x.Size))}" +
-                   $"\n{"- Renamed Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +
-                   $"\n{"- Deleted Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeleted.Count, fixFilesDeletedSize)}" +
-                   $"\n{"  (Unknown Files)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesDeleted.Count, unknownFilesDeletedSize)}" +
-                   $"\n{"- Ignored Files",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
-                   $"\n{"  (Unknown Files)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesIgnored.Count, unknownFilesIgnoredSize)}" +
+                   $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(fixFiles.Count, fixFiles.Sum(x => x.Size))}" +
+                   $"\n{"- renamed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +
+                   $"\n{"- removed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeleted.Count, fixFilesDeletedSize)}" +
+                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesDeleted.Count, unknownFilesDeletedSize)}" +
+                   $"\n{"- removable",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
+                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(unknownFilesIgnored.Count, unknownFilesIgnoredSize)}" +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.TotalSeconds:f2}s";
         }
 
