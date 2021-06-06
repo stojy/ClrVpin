@@ -57,7 +57,7 @@
 
           <!-- front end content folders - handled generically to make it a little simpler ot manage -->
           <StackPanel>
-            <Button Width="90" Margin="5,15,0,5" HorizontalAlignment="Left" Command="{Binding AutoAssignFoldersCommand}">Auto Assign</Button>
+            <Button Width="90" Margin="5,15,0,5" HorizontalAlignment="Left" Command="{Binding AutoAssignFoldersCommand}">Auto Assign (Visual Pinball)</Button>
 
             <ItemsControl ItemsSource="{Binding FrontendFolders}" BorderThickness="0">
               <ItemsControl.ItemTemplate>
