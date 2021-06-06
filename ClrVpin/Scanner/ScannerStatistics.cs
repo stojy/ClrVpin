@@ -116,6 +116,10 @@ namespace ClrVpin.Scanner
 
             var eligibleHits = _games.Count * Model.Config.CheckContentTypes.Count;
 
+            // all files
+            var allFilesCount = validHits.Count + fixFiles.Count;
+            var allFilesSize = validHits.Sum(x => x.Size) + fixFiles.Sum(x => x.Size) ?? 0;
+
             // renamed
             // - must be configured as a fix hit type
             // - unknown is n/a apply for renamable, i.e. since we don't know what game/table to rename it to
@@ -144,6 +148,7 @@ namespace ClrVpin.Scanner
                    $"\n{"- Available Games",StatisticsKeyWidth}{_games.Count}" +
                    $"\n{"- Possible Content",StatisticsKeyWidth}{_games.Count * Config.ContentTypes.Length}" +
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
+                   $"\n\n{"All Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +
                    $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
                    $"\n{"- Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
                    $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(fixFiles.Count, fixFiles.Sum(x => x.Size))}" +
