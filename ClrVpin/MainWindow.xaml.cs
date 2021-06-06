@@ -20,8 +20,9 @@ namespace ClrVpin
 
             Activated += (_, _) =>
             {
-                if (Model.Config.WasReset)
+                if (Model.Config.WasReset && !_configWasResetHandled)
                 {
+                    _configWasResetHandled = true;
                     DialogHost.Show(new Message
                     {
                         Title = "New settings are available",
@@ -32,5 +33,6 @@ namespace ClrVpin
         }
 
         public Model Model { get; set; }
+        private bool _configWasResetHandled;
     }
 }
