@@ -147,7 +147,7 @@ namespace ClrVpin.Scanner
             var fixFiles = await ScannerUtils.FixAsync(games, unknownFiles, Model.Config.BackupFolder);
 
             progress.Update("Preparing Results", 100);
-            await Task.Delay(1);
+            await Task.Delay(10);
             Games = new ObservableCollection<Game>(games);
             ShowResults(fixFiles.Concat(unknownFiles).ToList(), progress.Duration);
          

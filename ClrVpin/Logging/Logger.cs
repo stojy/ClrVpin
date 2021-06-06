@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows.Threading;
 using NLog;
 using NLog.Targets;
 
@@ -13,6 +14,7 @@ namespace ClrVpin.Logging
 
         static Logger()
         {
+            _dispatch = Dispatcher.CurrentDispatcher;
             File = GetLogFile();
         }
         
@@ -52,8 +54,12 @@ namespace ClrVpin.Logging
             Add(Level.Error, message);
         }
 
-        private static void Add(Level level, string message) => Logs.Add(new Log(level, message));
+        private static void Add(Level level, string message)
+        {
+            _dispatch.BeginInvoke(() => Logs.Add(new Log(level, message)));
+        }
 
         private static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Dispatcher _dispatch;
     }
 }

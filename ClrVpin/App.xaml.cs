@@ -11,7 +11,7 @@ namespace ClrVpin
         {
             base.OnStartup(e);
 
-            Logging.Logger.Info("Starting ClrVPin..");
+            Logging.Logger.Info("ClrVPin started");
 
             SetupExceptionHandling();
         }
