@@ -18,7 +18,7 @@ namespace ClrVpin.Scanner
             var databaseDetail = Model.Config.GetFrontendFolders().First(x => x.IsDatabase);
 
             // scan through all the databases in the folder
-            var files = Directory.GetFiles(databaseDetail.Folder, databaseDetail.Extensions);
+            var files = Directory.EnumerateFiles(databaseDetail.Folder, databaseDetail.Extensions);
 
             var games = new List<Game>();
 
@@ -122,6 +122,11 @@ namespace ClrVpin.Scanner
                 }
             });
 
+            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
+            var files = Directory.EnumerateFiles(_activeBackupFolder, "*", SearchOption.AllDirectories);
+            if (!files.Any())
+                Directory.Delete(_activeBackupFolder, true);
+
             return fixedFileDetails;
         }
 
@@ -198,8 +203,10 @@ namespace ClrVpin.Scanner
             var baseFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
             var folder = Path.Combine(_activeBackupFolder, baseFolder);
             var destFileName = Path.Combine(folder, Path.GetFileName(file));
+            
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
+            
             return destFileName;
         }
 
@@ -265,7 +272,7 @@ namespace ClrVpin.Scanner
 
         private static IEnumerable<string> GetMedia(ContentType contentType)
         {
-            var files = contentType.ExtensionsList.Select(ext => Directory.GetFiles(contentType.Folder, ext));
+            var files = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(contentType.Folder, ext));
 
             return files.SelectMany(x => x).ToList();
         }
