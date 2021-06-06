@@ -12,6 +12,8 @@ namespace ClrVpin.Settings
     [AddINotifyPropertyChangedInterface]
     public class Settings
     {
+        private MaterialWindow _window;
+
         public Settings()
         {
             //TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder));
@@ -21,6 +23,7 @@ namespace ClrVpin.Settings
             BackupFolderModel = new FolderTypeModel("Backup Root", Config.BackupFolder, folder => Config.BackupFolder = folder);
 
             AutoAssignFoldersCommand = new ActionCommand(AutoAssignFolders);
+            ResetCommand = new ActionCommand(Reset);
 
             var configFrontendFolders = Config.GetFrontendFolders();
             FrontendFolders = configFrontendFolders!.Select(folder => new ContentTypeModel(folder, () => Config.SetFrontendFolders(FrontendFolders.Select(x => x.ContentType)))).ToList();
@@ -31,6 +34,7 @@ namespace ClrVpin.Settings
         public FolderTypeModel BackupFolderModel { get; set; }
 
         public ICommand AutoAssignFoldersCommand { get; }
+        public ICommand ResetCommand { get; }
 
         public Config Config { get; } = Model.Config;
 
@@ -38,12 +42,12 @@ namespace ClrVpin.Settings
 
         public void Show(Window parent)
         {
-            var window = new MaterialWindow
+            _window = new MaterialWindow
             {
                 Owner = parent,
                 Content = this,
                 //SizeToContent = SizeToContent.WidthAndHeight,
-                Height = 760,
+                Height = 800,
                 Width = 660,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Resources = parent.Resources,
@@ -51,14 +55,19 @@ namespace ClrVpin.Settings
                 ResizeMode = ResizeMode.NoResize,
                 Title = "Settings"
             };
-            window.Show();
+            _window.Show();
             parent.Hide();
 
-            window.Closed += (_, _) =>
+            _window.Closed += (_, _) =>
             {
                 Model.Config.Save();
                 parent.Show();
             };
+        }
+
+        private void Close()
+        {
+            _window.Close();
         }
 
         private void AutoAssignFolders()
@@ -76,6 +85,12 @@ namespace ClrVpin.Settings
             });
             
             Config.SetFrontendFolders(FrontendFolders.Select(x => x.ContentType));
+        }
+
+        private void Reset()
+        {
+            Config.Reset();
+            Close();
         }
     }
 }

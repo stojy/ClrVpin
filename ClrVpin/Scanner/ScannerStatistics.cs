@@ -61,7 +61,7 @@ namespace ClrVpin.Scanner
             {
 
                 string contents;
-                if (hitType.Enum != HitTypeEnum.Unknown)
+                if (hitType.Enum != HitTypeEnum.Unknown && hitType.Enum != HitTypeEnum.Unsupported)
                 {
                     // all known content has an associated game
                     contents = string.Join("\n", Config.ContentTypes.Select(contentType =>

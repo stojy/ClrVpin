@@ -99,7 +99,7 @@ namespace ClrVpin.Models
             IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
         }
 
-        private void Reset()
+        public void Reset()
         {
             var defaultFrontendFolders = new List<ContentType>
             {

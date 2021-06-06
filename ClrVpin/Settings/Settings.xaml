@@ -95,6 +95,8 @@
             <ToggleButton ToolTip="When enabled, fixing files is effectively ignored.  No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />
             <TextBlock Margin="10,0,0,0" Text="Trainer Wheels"/>
           </WrapPanel>
+
+          <Button ToolTip="Reset the entire config to their installation values" Width="90" Margin="5,15,0,5" HorizontalAlignment="Left" Command="{Binding ResetCommand}">Reset</Button>
         </StackPanel>
       </GroupBox>
 
