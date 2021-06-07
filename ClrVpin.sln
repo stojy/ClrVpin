@@ -32,6 +32,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "screenshots", "screenshots"
 		docs\screenshots\settings.png = docs\screenshots\settings.png
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wiki", "wiki", "{7ACAABF4-86F5-4DEB-A6D8-0B0DC0801498}"
+	ProjectSection(SolutionItems) = preProject
+		..\ClrVpin.wiki\_Sidebar.md = ..\ClrVpin.wiki\_Sidebar.md
+		..\ClrVpin.wiki\Home.md = ..\ClrVpin.wiki\Home.md
+		..\ClrVpin.wiki\Inner-Workings.md = ..\ClrVpin.wiki\Inner-Workings.md
+		..\ClrVpin.wiki\Overview.md = ..\ClrVpin.wiki\Overview.md
+		..\ClrVpin.wiki\Roadmap.md = ..\ClrVpin.wiki\Roadmap.md
+		..\ClrVpin.wiki\Screenshots.md = ..\ClrVpin.wiki\Screenshots.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +88,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0F74A07E-1B35-44D9-88FE-4E331CB19F52} = {34B6F8B8-7694-4097-811B-C7B944177E1C}
+		{7ACAABF4-86F5-4DEB-A6D8-0B0DC0801498} = {34B6F8B8-7694-4097-811B-C7B944177E1C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EEFDE1FF-91E7-4C51-8546-5721BAE8910A}
