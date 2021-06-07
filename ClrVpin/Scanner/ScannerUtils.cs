@@ -123,9 +123,15 @@ namespace ClrVpin.Scanner
             });
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-            var files = Directory.EnumerateFiles(_activeBackupFolder, "*", SearchOption.AllDirectories);
-            if (!files.Any())
-                Directory.Delete(_activeBackupFolder, true);
+            if (Directory.Exists(_activeBackupFolder))
+            {
+                var files = Directory.EnumerateFiles(_activeBackupFolder, "*", SearchOption.AllDirectories);
+                if (!files.Any())
+                {
+                    Logger.Info($"Deleting empty backup folder: '{_activeBackupFolder}'");
+                    Directory.Delete(_activeBackupFolder, true);
+                }
+            }
 
             return fixedFileDetails;
         }
