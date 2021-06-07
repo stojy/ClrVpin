@@ -145,7 +145,7 @@ namespace ClrVpin.Scanner
 
             return "\n-----------------------------------------------\n" +
                    "\nTotals" +
-                   $"\n{"- Available Games",StatisticsKeyWidth}{_games.Count}" +
+                   $"\n{"- Available Tables",StatisticsKeyWidth}{_games.Count}" +
                    $"\n{"- Possible Content",StatisticsKeyWidth}{_games.Count * Config.ContentTypes.Length}" +
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"All Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +

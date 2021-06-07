@@ -36,6 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wiki", "wiki", "{7ACAABF4-8
 	ProjectSection(SolutionItems) = preProject
 		..\ClrVpin.wiki\_Sidebar.md = ..\ClrVpin.wiki\_Sidebar.md
 		..\ClrVpin.wiki\Home.md = ..\ClrVpin.wiki\Home.md
+		..\ClrVpin.wiki\How-To-Use.md = ..\ClrVpin.wiki\How-To-Use.md
 		..\ClrVpin.wiki\Inner-Workings.md = ..\ClrVpin.wiki\Inner-Workings.md
 		..\ClrVpin.wiki\Overview.md = ..\ClrVpin.wiki\Overview.md
 		..\ClrVpin.wiki\Roadmap.md = ..\ClrVpin.wiki\Roadmap.md

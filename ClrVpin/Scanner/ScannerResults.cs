@@ -51,7 +51,7 @@ namespace ClrVpin.Scanner
             Window = new MaterialWindow
             {
                 Owner = parentWindow,
-                Title = "Scanner Results",
+                Title = "Scanner Results (Issues)",
                 Left = left,
                 Top = top,
                 Width = 600,
