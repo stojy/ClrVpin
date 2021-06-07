@@ -27,10 +27,20 @@
   <DataTemplate x:Key="FolderSelection" DataType="settings:FolderTypeDetail">
     <WrapPanel Margin="5,0,0,5" Height="50">
       <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}">
+        <TextBox.Resources>
+          <settings:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+        </TextBox.Resources>
         <TextBox.Text>
           <Binding Path="Folder" UpdateSourceTrigger="PropertyChanged">
             <Binding.ValidationRules>
               <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
+              <settings:FilePatternValidation ValidatesOnTargetUpdated="True">
+                <!-- convoluted args property and bindingproxy required to support adding a new property that doesn't directly support binding
+                     - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx -->
+                <settings:FilePatternValidation.Args>
+                  <settings:Args Pattern="{Binding Data.Pattern, Source={StaticResource Proxy}}"/>
+                </settings:FilePatternValidation.Args>
+              </settings:FilePatternValidation>
             </Binding.ValidationRules>
           </Binding>
         </TextBox.Text>
