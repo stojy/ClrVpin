@@ -63,7 +63,7 @@
           <GroupBox Margin="5" Padding="2" Header="Content">
             <ItemsControl ItemsSource="{Binding FilteredContentTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="scanner:FeatureType">
+                <DataTemplate DataType="models:FeatureType">
                   <CheckBox Margin="0" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
@@ -73,7 +73,7 @@
           <GroupBox Margin="5" Padding="2" Header="Criteria">
             <ItemsControl ItemsSource="{Binding FilteredHitTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="scanner:FeatureType">
+                <DataTemplate DataType="models:FeatureType">
                   <CheckBox Margin="0" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>

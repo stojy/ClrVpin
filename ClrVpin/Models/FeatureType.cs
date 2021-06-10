@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using PropertyChanged;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Models
 {
     [AddINotifyPropertyChangedInterface]
     public class FeatureType
@@ -12,6 +12,5 @@ namespace ClrVpin.Scanner
         public bool IsNeverSupported { get; set; }
         public bool IsActive { get; set; }
         public ICommand SelectedCommand { get; set; }
-
     }
 }

@@ -25,17 +25,23 @@ namespace ClrVpin.Models
 
         public Config()
         {
+            // scanner
             CheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.CheckContentTypes).Observable;
-            CheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value)
-                .Observable;
+            CheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value).Observable;
             FixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.FixHitTypes, value => Properties.Settings.Default.FixHitTypes = value).Observable;
+            HitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
+
+            // rebuilder
+            MatchHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.MatchHitTypes, value => Properties.Settings.Default.MatchHitTypes = value).Observable;
+            SelectedOverwriteOptions = new ObservableCollectionJson<OverwriteOptionEnum>(Properties.Settings.Default.OverwriteOptions, value => Properties.Settings.Default.OverwriteOptions = value).Observable;
+            MatchTypes.ForEach(x => x.Description = x.Enum.GetDescription());
+            OverwriteOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // reset the settings if the user's stored settings version differs to the default version
             if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
                 Reset();
 
             ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).ToArray();
-            HitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
             UpdateIsValid();
         }
@@ -117,6 +123,7 @@ namespace ClrVpin.Models
             };
             defaultFrontendFolders.ForEach(x => x.Description = x.Enum.GetDescription());
 
+            // entire front end folder object is stored to disk, e.g. including the enum description
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
 
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
@@ -131,21 +138,42 @@ namespace ClrVpin.Models
             WasReset = true;
         }
 
+        // scanner
         public ObservableCollection<string> CheckContentTypes;
         public ObservableCollection<HitTypeEnum> CheckHitTypes;
         public ObservableCollection<HitTypeEnum> FixHitTypes;
 
-        // todo; change from enum to class and include tool tip
-        // all possible hit types - to be used elsewhere to create check and fix collections
+        // all possible hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] HitTypes =
         {
             new HitType {Enum = HitTypeEnum.Missing, Tip = "Files that should match but are missing"},
-            new HitType {Enum = HitTypeEnum.TableName, Tip = "Files matches against table instead of the description"},
-            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Files matches with multiple extensions (e.g. mp3 and wav)"},
-            new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Files matches that have the wrong case"},
-            new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "Files matches based on some 'fuzzy logic'"},
+            new HitType {Enum = HitTypeEnum.TableName, Tip = "Allow matching against table instead of the description"},
+            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Files that match with multiple extensions (e.g. mp3 and wav)"},
+            new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Case insensitive file matching"},
+            new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "'Fuzzy logic' file matching"},
             new HitType {Enum = HitTypeEnum.Unknown, Tip = "Unknown files that don't match any tables"},
             new HitType {Enum = HitTypeEnum.Unsupported, Tip = "Unsupported files that don't match the configured file extension types"}
+        };
+
+        // rebuilder
+        public ObservableCollection<HitTypeEnum> MatchHitTypes;
+        public ObservableCollection<OverwriteOptionEnum> SelectedOverwriteOptions;
+
+        // all possible match criteria types - to be used elsewhere (rebuilder)
+        public static HitType[] MatchTypes =
+        {
+            new HitType {Enum = HitTypeEnum.TableName, Tip = "Allow matching against table instead of the description"},
+            new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Case insensitive file matching"},
+            new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "'Fuzzy logic' file matching"},
+        };
+
+        // all possible file overwrite options - to be used elsewhere (rebuilder)
+        public static OverwriteOption[] OverwriteOptions =
+        {
+            new OverwriteOption {Enum = OverwriteOptionEnum.IgnoreSmaller, Tip = "Ignore any source files if their size is less than 90% of the destination file"},
+            new OverwriteOption {Enum = OverwriteOptionEnum.IgnoreOlder, Tip = "Ignore any source files if their modified timestamp is older than the destination file"},
+            new OverwriteOption {Enum = OverwriteOptionEnum.PreserveTimestamp, Tip = "The timestamp of the source file will be used for created or overwritten destination file"},
+            new OverwriteOption {Enum = OverwriteOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"},
         };
     }
 }

@@ -1,22 +1,73 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:models="clr-namespace:ClrVpin.Models"
-                    xmlns:rebuilder="clr-namespace:ClrVpin.Rebuilder">
+                    xmlns:rebuilder="clr-namespace:ClrVpin.Rebuilder"
+                    xmlns:settings="clr-namespace:ClrVpin.Settings"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
 
-  <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
-    <WrapPanel>
-      <RadioButton /> <!--todo-->
-      <TextBlock Margin="2,0" Width="20" Text="{Binding}" />
-      <TextBlock Margin="2,0" Text="{Binding SizeString}" />
-      <TextBlock Margin="2,0" Text="{Binding Path}" />
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <ResourceDictionary Source="..\Styles.xaml" />
+  </ResourceDictionary.MergedDictionaries>
+
+  <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+    <Setter Property="Width" Value="400" />
+    <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
+  </Style>
+
+  <!--present folder name with open folder button-->
+  <DataTemplate x:Key="FolderSelection" DataType="settings:FolderTypeDetail">
+    <WrapPanel Margin="5,0,0,5" Height="50">
+      <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}">
+        <TextBox.Text>
+          <Binding Path="Folder" UpdateSourceTrigger="PropertyChanged">
+            <Binding.ValidationRules>
+              <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
+            </Binding.ValidationRules>
+          </Binding>
+        </TextBox.Text>
+        <b:Interaction.Triggers>
+          <b:EventTrigger EventName="TextChanged">
+            <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
+          </b:EventTrigger>
+        </b:Interaction.Triggers>
+      </TextBox>
+
+      <Button Command="{Binding FolderExplorerCommand}" Height="27">Select</Button>
     </WrapPanel>
   </DataTemplate>
 
   <DataTemplate x:Key="RebuilderTemplate" DataType="{x:Type rebuilder:Rebuilder}">
-    <DockPanel>
-      <Button DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="5" Width="120px" Command="{Binding StartCommand}">Start</Button>
-    </DockPanel>
+    <StackPanel Margin="5">
+      <TextBlock Style="{StaticResource Title}">Criteria to Match</TextBlock>
+      <ItemsControl ItemsSource="{Binding MatchCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="models:FeatureType">
+            <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                      Command="{Binding SelectedCommand}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
 
+      <TextBlock Style="{StaticResource Title}">Overwrite Options</TextBlock>
+      <ItemsControl ItemsSource="{Binding OverwriteCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="models:FeatureType">
+            <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                      Command="{Binding SelectedCommand}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <TextBlock Style="{StaticResource Title}">Source Folder</TextBlock>
+      <WrapPanel Orientation="Vertical">
+        <ComboBox Width="250" HorizontalAlignment="Left"/>
+        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding TableFolderModel}" />
+      </WrapPanel>
+
+      <Button Margin="5" Width="50" Command="{Binding StartCommand}" Style="{StaticResource AlternateButton}">Start</Button>
+    </StackPanel>
   </DataTemplate>
 
 </ResourceDictionary>

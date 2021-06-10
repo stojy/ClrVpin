@@ -161,5 +161,29 @@ namespace ClrVpin.Properties {
                 this["TrainerWheels"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[1,2,3,4,5,6,7]")]
+        public string MatchHitTypes {
+            get {
+                return ((string)(this["MatchHitTypes"]));
+            }
+            set {
+                this["MatchHitTypes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[0, 1,2,3,4]")]
+        public string OverwriteOptions {
+            get {
+                return ((string)(this["OverwriteOptions"]));
+            }
+            set {
+                this["OverwriteOptions"] = value;
+            }
+        }
     }
 }
