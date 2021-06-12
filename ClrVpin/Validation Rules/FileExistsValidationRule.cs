@@ -2,9 +2,9 @@
 using System.IO;
 using System.Windows.Controls;
 
-namespace ClrVpin.Settings
+namespace ClrVpin.Validation_Rules
 {
-    public class FileExistsValidation : ValidationRule
+    public class FileExistsValidationRule : ValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {

@@ -79,6 +79,13 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.TrainerWheels = value;
         }
 
+        // rebuilder
+        public string SourceFolder
+        {
+            get => Properties.Settings.Default.SourceFolder;
+            set => Properties.Settings.Default.SourceFolder = value;
+        }
+
         public bool WasReset { get; private set; }
         public bool IsValid { get; private set; } 
 
@@ -129,6 +136,8 @@ namespace ClrVpin.Models
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
 
             TrainerWheels = true;
+
+            SourceFolder = SpecialFolder.Downloads;
 
             // update actual version to indicate the config is now compatible and doesn't need to be reset again
             Properties.Settings.Default.ActualVersion = Properties.Settings.Default.RequiredVersion;

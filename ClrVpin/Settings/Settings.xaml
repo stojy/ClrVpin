@@ -3,7 +3,8 @@
                     xmlns:settings="clr-namespace:ClrVpin.Settings"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -28,19 +29,19 @@
     <WrapPanel Margin="5,0,0,5" Height="50">
       <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}">
         <TextBox.Resources>
-          <settings:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+          <validationRules:BindingProxy x:Key="Proxy" Data="{Binding}"/>
         </TextBox.Resources>
         <TextBox.Text>
           <Binding Path="Folder" UpdateSourceTrigger="PropertyChanged">
             <Binding.ValidationRules>
-              <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
-              <settings:FilePatternValidation ValidatesOnTargetUpdated="True">
+              <validationRules:FileExistsValidationRule ValidatesOnTargetUpdated="True" />
+              <validationRules:FilePatternValidation ValidatesOnTargetUpdated="True">
                 <!-- convoluted args property and bindingproxy required to support adding a new property that doesn't directly support binding
                      - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx -->
-                <settings:FilePatternValidation.Args>
-                  <settings:Args Pattern="{Binding Data.Pattern, Source={StaticResource Proxy}}"/>
-                </settings:FilePatternValidation.Args>
-              </settings:FilePatternValidation>
+                <validationRules:FilePatternValidation.Args>
+                  <validationRules:Args Pattern="{Binding Data.Pattern, Source={StaticResource Proxy}}"/>
+                </validationRules:FilePatternValidation.Args>
+              </validationRules:FilePatternValidation>
             </Binding.ValidationRules>
           </Binding>
         </TextBox.Text>
@@ -51,7 +52,7 @@
         </b:Interaction.Triggers>
       </TextBox>
 
-      <Button Command="{Binding FolderExplorerCommand}" Height="27">Select</Button>
+      <Button Command="{Binding FolderExplorerCommand}" Height="27">Change</Button>
     </WrapPanel>
   </DataTemplate>
 
@@ -79,7 +80,7 @@
                       <TextBox.Text>
                         <Binding Path="Extensions" UpdateSourceTrigger="PropertyChanged">
                           <Binding.ValidationRules>
-                            <settings:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
+                            <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
                           </Binding.ValidationRules>
                         </Binding>
                       </TextBox.Text>

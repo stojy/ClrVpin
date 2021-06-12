@@ -48,5 +48,8 @@
     <Setting Name="OverwriteOptions" Type="System.String" Scope="User">
       <Value Profile="(Default)">[0, 1,2,3,4]</Value>
     </Setting>
+    <Setting Name="SourceFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

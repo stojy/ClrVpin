@@ -1,8 +1,9 @@
 ﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using ClrVpin.Settings;
 
-namespace ClrVpin.Settings
+namespace ClrVpin.Validation_Rules
 {
     public class FilePatternValidation : ValidationRule
     {

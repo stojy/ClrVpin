@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Resources;
 using ClrVpin.Models;
 using ClrVpin.Scanner;
+using ClrVpin.Settings;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
@@ -22,12 +24,19 @@ namespace ClrVpin.Rebuilder
             StartCommand = new ActionCommand(Start);
             
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
-
             OverwriteCriteriaTypesView = new ListCollectionView(CreateOverwriteOptions().ToList());
+
+            SourceFolderModel = new FolderTypeModel("Source", Model.Config.SourceFolder, folder => Model.Config.SourceFolder = folder);
+            var destinationContentTypes = Model.Config.GetFrontendFolders().Where(x=> !x.IsDatabase).Select(x => x.Description);
+            DestinationContentTypes = new ObservableCollection<string>(destinationContentTypes);
         }
 
         public ListCollectionView MatchCriteriaTypesView { get; set; }
         public ListCollectionView OverwriteCriteriaTypesView { get; set; }
+        
+        public FolderTypeModel SourceFolderModel { get; set; }
+        public ObservableCollection<string> DestinationContentTypes { get; set; }
+        public string DestinationContentType { get; set; }
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
@@ -39,8 +48,8 @@ namespace ClrVpin.Rebuilder
                 Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
-                Width = 500,
-                Height = 500,
+                Width = 650,
+                Height = 400,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,

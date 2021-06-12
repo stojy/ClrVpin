@@ -4,7 +4,8 @@
                     xmlns:rebuilder="clr-namespace:ClrVpin.Rebuilder"
                     xmlns:settings="clr-namespace:ClrVpin.Settings"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -23,7 +24,7 @@
         <TextBox.Text>
           <Binding Path="Folder" UpdateSourceTrigger="PropertyChanged">
             <Binding.ValidationRules>
-              <settings:FileExistsValidation ValidatesOnTargetUpdated="True" />
+              <validationRules:FileExistsValidationRule ValidatesOnTargetUpdated="True" />
             </Binding.ValidationRules>
           </Binding>
         </TextBox.Text>
@@ -34,7 +35,7 @@
         </b:Interaction.Triggers>
       </TextBox>
 
-      <Button Command="{Binding FolderExplorerCommand}" Height="27">Select</Button>
+      <Button Command="{Binding FolderExplorerCommand}" Height="27" VerticalAlignment="Bottom">Change</Button>
     </WrapPanel>
   </DataTemplate>
 
@@ -60,10 +61,21 @@
         </ItemsControl.ItemTemplate>
       </ItemsControl>
 
-      <TextBlock Style="{StaticResource Title}">Source Folder</TextBlock>
-      <WrapPanel Orientation="Vertical">
-        <ComboBox Width="250" HorizontalAlignment="Left"/>
-        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding TableFolderModel}" />
+      <TextBlock Style="{StaticResource Title}">Folders</TextBlock>
+      <WrapPanel>
+        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding SourceFolderModel}" />
+
+        <ComboBox materialDesign:HintAssist.Hint="Destination" ItemsSource="{Binding DestinationContentTypes}"
+                  Width="150" VerticalAlignment="Top" Margin="10,0,0,0"
+                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" materialDesign:TextFieldAssist.HasClearButton="True">
+          <ComboBox.SelectedItem>
+            <Binding Path="DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+              <Binding.ValidationRules>
+                <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" Description="Content type" />
+              </Binding.ValidationRules>
+            </Binding>
+          </ComboBox.SelectedItem>
+        </ComboBox>
       </WrapPanel>
 
       <Button Margin="5" Width="50" Command="{Binding StartCommand}" Style="{StaticResource AlternateButton}">Start</Button>
