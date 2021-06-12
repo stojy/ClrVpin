@@ -25,9 +25,24 @@ namespace ClrVpin.Rebuilder
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
             OverwriteCriteriaTypesView = new ListCollectionView(CreateOverwriteOptions().ToList());
 
-            SourceFolderModel = new FolderTypeModel("Source", Model.Config.SourceFolder, folder => Model.Config.SourceFolder = folder);
-            var destinationContentTypes = Model.Config.GetFrontendFolders().Where(x=> !x.IsDatabase).Select(x => x.Description);
-            DestinationContentTypes = new ObservableCollection<string>(destinationContentTypes);
+            SourceFolderModel = new FolderTypeModel("Source", Model.Config.SourceFolder, folder =>
+            {
+                Model.Config.SourceFolder = folder;
+                TryUpdateDestinationFolder(folder);
+            });
+
+            _destinationContentTypes = Model.Config.GetFrontendFolders().Where(x=> !x.IsDatabase).Select(x => x.Description);
+            DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
+
+            // instead of saving the destination folder/type, we derive it from the source folder instead (which is saved)
+            TryUpdateDestinationFolder(Model.Config.SourceFolder);
+        }
+
+        private void TryUpdateDestinationFolder(string folder)
+        {
+            // attempt to assign destination folder automatically based on the specified folder
+            var contentType = _destinationContentTypes.FirstOrDefault(folder.EndsWith);
+            DestinationContentType ??= contentType;
         }
 
         public ListCollectionView MatchCriteriaTypesView { get; set; }
@@ -157,6 +172,7 @@ namespace ClrVpin.Rebuilder
 
         private Window _rebuilderWindow;
         private Logging.Logging _loggingWindow;
+        private IEnumerable<string> _destinationContentTypes;
         private const int WindowMargin = 12;
     }
 }
