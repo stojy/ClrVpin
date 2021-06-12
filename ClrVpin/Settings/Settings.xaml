@@ -2,59 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:settings="clr-namespace:ClrVpin.Settings"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="../Styles.xaml" />
+    <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
-
-  <Style x:Key="TextBlockStyle" TargetType="TextBlock">
-    <Setter Property="Width" Value="150" />
-    <Setter Property="FontSize" Value="14" />
-    <Setter Property="VerticalAlignment" Value="Center" />
-  </Style>
-
-  <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
-    <Setter Property="Width" Value="400" />
-    <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
-  </Style>
-
-  <converters:ListToStringConverter x:Key="ListToStringConverter" />
-
-  <!--present folder name with open folder button-->
-  <DataTemplate x:Key="FolderSelection" DataType="settings:FolderTypeDetail">
-    <WrapPanel Margin="5,0,0,5" Height="50">
-      <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}">
-        <TextBox.Resources>
-          <validationRules:BindingProxy x:Key="Proxy" Data="{Binding}"/>
-        </TextBox.Resources>
-        <TextBox.Text>
-          <Binding Path="Folder" UpdateSourceTrigger="PropertyChanged">
-            <Binding.ValidationRules>
-              <validationRules:FileExistsValidationRule ValidatesOnTargetUpdated="True" />
-              <validationRules:FilePatternValidation ValidatesOnTargetUpdated="True">
-                <!-- convoluted args property and bindingproxy required to support adding a new property that doesn't directly support binding
-                     - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx -->
-                <validationRules:FilePatternValidation.Args>
-                  <validationRules:Args Pattern="{Binding Data.Pattern, Source={StaticResource Proxy}}"/>
-                </validationRules:FilePatternValidation.Args>
-              </validationRules:FilePatternValidation>
-            </Binding.ValidationRules>
-          </Binding>
-        </TextBox.Text>
-        <b:Interaction.Triggers>
-          <b:EventTrigger EventName="TextChanged">
-            <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
-          </b:EventTrigger>
-        </b:Interaction.Triggers>
-      </TextBox>
-
-      <Button Command="{Binding FolderExplorerCommand}" Height="27">Change</Button>
-    </WrapPanel>
-  </DataTemplate>
 
   <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:Settings}">
     <StackPanel Margin="0">

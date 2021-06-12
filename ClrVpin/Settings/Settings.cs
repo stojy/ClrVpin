@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;

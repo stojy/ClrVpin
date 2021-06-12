@@ -2,7 +2,7 @@
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
 
-namespace ClrVpin.Settings
+namespace ClrVpin.Controls.FolderSelection
 {
     [AddINotifyPropertyChangedInterface]
     public class FolderTypeModel : FolderTypeDetail

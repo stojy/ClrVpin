@@ -2,42 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:rebuilder="clr-namespace:ClrVpin.Rebuilder"
-                    xmlns:settings="clr-namespace:ClrVpin.Settings"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="..\Styles.xaml" />
+    <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
-
-  <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
-    <Setter Property="Width" Value="400" />
-    <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
-  </Style>
-
-  <!--present folder name with open folder button-->
-  <DataTemplate x:Key="FolderSelection" DataType="settings:FolderTypeDetail">
-    <WrapPanel Margin="5,0,0,5" Height="50">
-      <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}">
-        <TextBox.Text>
-          <Binding Path="Folder" UpdateSourceTrigger="PropertyChanged">
-            <Binding.ValidationRules>
-              <validationRules:FileExistsValidationRule ValidatesOnTargetUpdated="True" />
-            </Binding.ValidationRules>
-          </Binding>
-        </TextBox.Text>
-        <b:Interaction.Triggers>
-          <b:EventTrigger EventName="TextChanged">
-            <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
-          </b:EventTrigger>
-        </b:Interaction.Triggers>
-      </TextBox>
-
-      <Button Command="{Binding FolderExplorerCommand}" Height="27" VerticalAlignment="Bottom">Change</Button>
-    </WrapPanel>
-  </DataTemplate>
 
   <DataTemplate x:Key="RebuilderTemplate" DataType="{x:Type rebuilder:Rebuilder}">
     <StackPanel Margin="5">
