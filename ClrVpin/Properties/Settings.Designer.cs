@@ -69,36 +69,36 @@ namespace ClrVpin.Properties {
   <string>Backglass Videos</string>
   <string>Wheel Images</string>
 </ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection CheckContentTypes {
+        public global::System.Collections.Specialized.StringCollection SelectedCheckContentTypes {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["CheckContentTypes"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["SelectedCheckContentTypes"]));
             }
             set {
-                this["CheckContentTypes"] = value;
+                this["SelectedCheckContentTypes"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("[1,2,3,4,5,6,7]")]
-        public string CheckHitTypes {
+        public string SelectedCheckHitTypes {
             get {
-                return ((string)(this["CheckHitTypes"]));
+                return ((string)(this["SelectedCheckHitTypes"]));
             }
             set {
-                this["CheckHitTypes"] = value;
+                this["SelectedCheckHitTypes"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FixHitTypes {
+        public string SelectedFixHitTypes {
             get {
-                return ((string)(this["FixHitTypes"]));
+                return ((string)(this["SelectedFixHitTypes"]));
             }
             set {
-                this["FixHitTypes"] = value;
+                this["SelectedFixHitTypes"] = value;
             }
         }
         

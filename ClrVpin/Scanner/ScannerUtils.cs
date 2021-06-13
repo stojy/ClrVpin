@@ -53,7 +53,7 @@ namespace ClrVpin.Scanner
             // for the configured content types only.. check the installed content files against those specified in the database
             var checkContentTypes = Model.Config.GetFrontendFolders()
                 .Where(x => !x.IsDatabase)
-                .Where(type => Model.Config.CheckContentTypes.Contains(type.Description));
+                .Where(type => Model.Config.SelectedCheckContentTypes.Contains(type.Description));
 
             foreach (var contentType in checkContentTypes)
             {
@@ -61,7 +61,7 @@ namespace ClrVpin.Scanner
                 var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
                 otherFiles.AddRange(unknownMedia);
 
-                if (Model.Config.CheckHitTypes.Contains(HitTypeEnum.Unsupported))
+                if (Model.Config.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     var unsupportedFiles = GetUnsupportedMedia(contentType);
                     otherFiles.AddRange(unsupportedFiles);
@@ -114,8 +114,8 @@ namespace ClrVpin.Scanner
             // delete files NOT associated with games, i.e. unknown files
             otherFileDetails.ForEach(x =>
             {
-                if (x.HitType == HitTypeEnum.Unknown && Model.Config.FixHitTypes.Contains(HitTypeEnum.Unknown) ||
-                    x.HitType == HitTypeEnum.Unsupported && Model.Config.FixHitTypes.Contains(HitTypeEnum.Unsupported))
+                if (x.HitType == HitTypeEnum.Unknown && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
+                    x.HitType == HitTypeEnum.Unsupported && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     x.Deleted = true;
                     Delete(x.Path, x.HitType, null);
@@ -158,7 +158,7 @@ namespace ClrVpin.Scanner
             var deleted = false;
 
             // only delete file if configured to do so
-            if (Model.Config.FixHitTypes.Contains(hit.Type))
+            if (Model.Config.SelectedFixHitTypes.Contains(hit.Type))
             {
                 deleted = true;
                 Delete(hit.Path, hit.Type, hit.ContentType);
@@ -182,7 +182,7 @@ namespace ClrVpin.Scanner
         {
             var renamed = false;
 
-            if (Model.Config.FixHitTypes.Contains(hit.Type))
+            if (Model.Config.SelectedFixHitTypes.Contains(hit.Type))
             {
                 renamed = true;
 

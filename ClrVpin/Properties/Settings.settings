@@ -11,7 +11,7 @@
     <Setting Name="TableFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\vp\tables\vpx</Value>
     </Setting>
-    <Setting Name="CheckContentTypes" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="SelectedCheckContentTypes" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;string&gt;Table Audio&lt;/string&gt;
@@ -21,10 +21,10 @@
   &lt;string&gt;Wheel Images&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
-    <Setting Name="CheckHitTypes" Type="System.String" Scope="User">
+    <Setting Name="SelectedCheckHitTypes" Type="System.String" Scope="User">
       <Value Profile="(Default)">[1,2,3,4,5,6,7]</Value>
     </Setting>
-    <Setting Name="FixHitTypes" Type="System.String" Scope="User">
+    <Setting Name="SelectedFixHitTypes" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="FrontendFoldersJson" Type="System.String" Scope="User">

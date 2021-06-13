@@ -26,9 +26,9 @@ namespace ClrVpin.Models
         public Config()
         {
             // scanner
-            CheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.CheckContentTypes).Observable;
-            CheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.CheckHitTypes, value => Properties.Settings.Default.CheckHitTypes = value).Observable;
-            FixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.FixHitTypes, value => Properties.Settings.Default.FixHitTypes = value).Observable;
+            SelectedCheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.SelectedCheckContentTypes).Observable;
+            SelectedCheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedCheckHitTypes, value => Properties.Settings.Default.SelectedCheckHitTypes = value).Observable;
+            SelectedFixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedFixHitTypes, value => Properties.Settings.Default.SelectedFixHitTypes = value).Observable;
             HitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // rebuilder
@@ -154,9 +154,9 @@ namespace ClrVpin.Models
         }
 
         // scanner
-        public ObservableCollection<string> CheckContentTypes;
-        public ObservableCollection<HitTypeEnum> CheckHitTypes;
-        public ObservableCollection<HitTypeEnum> FixHitTypes;
+        public ObservableCollection<string> SelectedCheckContentTypes;
+        public ObservableCollection<HitTypeEnum> SelectedCheckHitTypes;
+        public ObservableCollection<HitTypeEnum> SelectedFixHitTypes;
 
         // all possible hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] HitTypes =
