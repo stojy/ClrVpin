@@ -17,8 +17,7 @@
       <ItemsControl ItemsSource="{Binding MatchCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
         <ItemsControl.ItemTemplate>
           <DataTemplate DataType="models:FeatureType">
-            <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                      Command="{Binding SelectedCommand}" />
+            <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
@@ -27,8 +26,7 @@
       <ItemsControl ItemsSource="{Binding OverwriteCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
         <ItemsControl.ItemTemplate>
           <DataTemplate DataType="models:FeatureType">
-            <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                      Command="{Binding SelectedCommand}" />
+            <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>

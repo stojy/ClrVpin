@@ -8,8 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using ClrVpin.Models;
-
 namespace ClrVpin.Properties {
     
     
@@ -130,7 +128,7 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("26")]
+        [global::System.Configuration.DefaultSettingValueAttribute("27")]
         public int RequiredVersion {
             get {
                 return ((int)(this["RequiredVersion"]));
@@ -166,19 +164,19 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("[1,2,3,4,5,6,7]")]
-        public string MatchHitTypes {
+        [global::System.Configuration.DefaultSettingValueAttribute("[0, 1,2,3,4,5,6,7]")]
+        public string SelectedMatchTypes {
             get {
-                return ((string)(this["MatchHitTypes"]));
+                return ((string)(this["SelectedMatchTypes"]));
             }
             set {
-                this["MatchHitTypes"] = value;
+                this["SelectedMatchTypes"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("[0, 1,2,3,4]")]
+        [global::System.Configuration.DefaultSettingValueAttribute("[0,1,2,3,4]")]
         public string OverwriteOptions {
             get {
                 return ((string)(this["OverwriteOptions"]));

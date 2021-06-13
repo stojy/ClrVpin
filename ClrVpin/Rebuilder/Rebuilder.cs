@@ -92,8 +92,8 @@ namespace ClrVpin.Rebuilder
                     Description = matchType.Description,
                     Tip = matchType.Tip,
                     IsSupported = true,
-                    IsActive = Model.Config.CheckContentTypes.Contains(matchType.Description), // todo
-                    SelectedCommand = new ActionCommand(() => Model.Config.MatchHitTypes.Toggle(matchType.Enum))
+                    IsActive = Model.Config.SelectedMatchTypes.Contains(matchType.Enum),
+                    SelectedCommand = new ActionCommand(() => Model.Config.SelectedMatchTypes.Toggle(matchType.Enum))
                 };
 
                 return featureType;

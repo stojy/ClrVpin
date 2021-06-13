@@ -13,6 +13,8 @@ namespace Utils
     {
         public ObservableCollectionJson(string json, Action<string> setJsonCallback)
         {
+            // when converting to List<enum>, the json must represent the enum's underlying integer value
+            // - e.g. "[0,2]" --> Enum.First and Enum.Third
             var obj = json == "" ? new List<T>() : JsonSerializer.Deserialize<List<T>>(json);
             Observable = new ObservableCollection<T>(((IList<T>) obj)!);
 

@@ -34,7 +34,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="RequiredVersion" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">26</Value>
+      <Value Profile="(Default)">27</Value>
     </Setting>
     <Setting Name="ActualVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -42,11 +42,11 @@
     <Setting Name="TrainerWheels" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="MatchHitTypes" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[1,2,3,4,5,6,7]</Value>
+    <Setting Name="SelectedMatchTypes" Type="System.String" Scope="User">
+      <Value Profile="(Default)">[0, 1,2,3,4,5,6,7]</Value>
     </Setting>
     <Setting Name="OverwriteOptions" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[0, 1,2,3,4]</Value>
+      <Value Profile="(Default)">[0,1,2,3,4]</Value>
     </Setting>
     <Setting Name="SourceFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

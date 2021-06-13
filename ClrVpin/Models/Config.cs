@@ -32,7 +32,7 @@ namespace ClrVpin.Models
             HitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // rebuilder
-            MatchHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.MatchHitTypes, value => Properties.Settings.Default.MatchHitTypes = value).Observable;
+            SelectedMatchTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedMatchTypes, value => Properties.Settings.Default.SelectedMatchTypes = value).Observable;
             SelectedOverwriteOptions = new ObservableCollectionJson<OverwriteOptionEnum>(Properties.Settings.Default.OverwriteOptions, value => Properties.Settings.Default.OverwriteOptions = value).Observable;
             MatchTypes.ForEach(x => x.Description = x.Enum.GetDescription());
             OverwriteOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -171,7 +171,7 @@ namespace ClrVpin.Models
         };
 
         // rebuilder
-        public ObservableCollection<HitTypeEnum> MatchHitTypes;
+        public ObservableCollection<HitTypeEnum> SelectedMatchTypes;
         public ObservableCollection<OverwriteOptionEnum> SelectedOverwriteOptions;
 
         // all possible match criteria types - to be used elsewhere (rebuilder)
