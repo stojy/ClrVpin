@@ -86,6 +86,12 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.SourceFolder = value;
         }
 
+        public string DestinationContentType
+        {
+            get => Properties.Settings.Default.DestinationContentType;
+            set => Properties.Settings.Default.DestinationContentType = value;
+        }
+
         public bool WasReset { get; private set; }
         public bool IsValid { get; private set; } 
 

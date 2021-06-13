@@ -41,7 +41,7 @@
                   Width="150" VerticalAlignment="Top" Margin="10,0,0,0"
                   Style="{StaticResource MaterialDesignFloatingHintComboBox}" materialDesign:TextFieldAssist.HasClearButton="True">
           <ComboBox.SelectedItem>
-            <Binding Path="DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+            <Binding Path="Config.DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
               <Binding.ValidationRules>
                 <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" Description="Content type" />
               </Binding.ValidationRules>

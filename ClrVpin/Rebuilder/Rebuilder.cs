@@ -34,15 +34,15 @@ namespace ClrVpin.Rebuilder
             _destinationContentTypes = Model.Config.GetFrontendFolders().Where(x=> !x.IsDatabase).Select(x => x.Description);
             DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
 
-            // instead of saving the destination folder/type, we derive it from the source folder instead (which is saved)
-            TryUpdateDestinationFolder(Model.Config.SourceFolder);
+            Config = Model.Config;
         }
 
         private void TryUpdateDestinationFolder(string folder)
         {
             // attempt to assign destination folder automatically based on the specified folder
             var contentType = _destinationContentTypes.FirstOrDefault(folder.EndsWith);
-            DestinationContentType ??= contentType;
+            if (contentType != null)
+                Config.DestinationContentType = contentType;
         }
 
         public ListCollectionView MatchCriteriaTypesView { get; set; }
@@ -54,6 +54,7 @@ namespace ClrVpin.Rebuilder
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
+        public Config Config { get; set; }
 
         public void Show(Window parent)
         {

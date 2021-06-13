@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using ClrVpin.Models;
+
 namespace ClrVpin.Properties {
     
     
@@ -195,6 +197,18 @@ namespace ClrVpin.Properties {
             }
             set {
                 this["SourceFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DestinationContentType {
+            get {
+                return ((string)(this["DestinationContentType"]));
+            }
+            set {
+                this["DestinationContentType"] = value;
             }
         }
     }
