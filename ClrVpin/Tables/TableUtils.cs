@@ -1,16 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models;
+using ClrVpin.Scanner;
 using Utils;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Tables
 {
-    public static class ScannerUtils
+    public static class TableUtils
     {
+        public static List<Game> GetDatabases()
+        {
+            var databaseDetail = Model.Config.GetFrontendFolders().First(x => x.IsDatabase);
+
+            // scan through all the databases in the folder
+            var files = Directory.EnumerateFiles(databaseDetail.Folder, databaseDetail.Extensions);
+
+            var games = new List<Game>();
+
+            files.ForEach(file =>
+            {
+                var doc = XDocument.Load(file);
+                if (doc.Root == null)
+                    throw new Exception("Failed to load database");
+
+                var menu = doc.Root.Deserialize<Menu>();
+                var number = 1;
+                menu.Games.ForEach(g =>
+                {
+                    g.Number = number++;
+                    g.Ipdb = g.IpdbId ?? g.IpdbNr;
+                    g.IpdbUrl = string.IsNullOrEmpty(g.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={g.Ipdb}";
+                    g.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(g.IpdbUrl));
+                });
+
+                games.AddRange(menu.Games);
+            });
+
+            return games;
+        }
+
+        private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
+
         public static List<FixFileDetail> Check(List<Game> games)
         {
             var otherFiles = new List<FixFileDetail>();
@@ -108,7 +144,6 @@ namespace ClrVpin.Scanner
             return hit != null;
         }
 
-        // todo.. move/reference TableUtils or similar?
         private static IEnumerable<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit)
         {
             var deleted = new List<FixFileDetail>();

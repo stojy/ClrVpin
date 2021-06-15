@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Models;
+using ClrVpin.Tables;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
@@ -138,7 +139,7 @@ namespace ClrVpin.Scanner
             // todo; retrieve 'missing games' from spreadsheet
 
             progress.Update("Loading Database", 0);
-            var games = ScannerUtils.GetDatabases();
+            var games = TableUtils.GetDatabases();
             
             progress.Update("Checking Files", 30);
             var unknownFiles = ScannerUtils.Check(games);

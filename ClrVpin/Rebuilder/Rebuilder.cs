@@ -9,6 +9,7 @@ using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
 using ClrVpin.Scanner;
+using ClrVpin.Tables;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
@@ -132,10 +133,10 @@ namespace ClrVpin.Rebuilder
             // todo; retrieve 'missing games' from spreadsheet
 
             progress.Update("Loading Database", 0);
-            var games = ScannerUtils.GetDatabases();
+            var games = TableUtils.GetDatabases();
 
             progress.Update("Checking Files", 30);
-            //var unknownFiles = ScannerUtils.Check(games);
+            var unknownFiles = ScannerUtils.Check(games);
 
             progress.Update("Fixing Files", 60);
             //var fixFiles = await ScannerUtils.FixAsync(games, unknownFiles, Model.Config.BackupFolder);

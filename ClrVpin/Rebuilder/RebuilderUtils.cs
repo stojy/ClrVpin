@@ -5,11 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models;
+using ClrVpin.Scanner;
 using Utils;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Rebuilder
 {
-    public static class ScannerUtils
+    public static class RebuilderUtils
     {
         public static List<FixFileDetail> Check(List<Game> games)
         {
@@ -108,7 +109,6 @@ namespace ClrVpin.Scanner
             return hit != null;
         }
 
-        // todo.. move/reference TableUtils or similar?
         private static IEnumerable<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit)
         {
             var deleted = new List<FixFileDetail>();
