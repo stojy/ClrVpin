@@ -24,7 +24,7 @@
         <ResourceDictionary Source="Scanner/ScannerExplorer.xaml" />
         <ResourceDictionary Source="Scanner/ScannerResults.xaml" />
         <ResourceDictionary Source="Scanner/ScannerStatistics.xaml" />
-        <ResourceDictionary Source="Scanner/Progress.xaml" />
+        <ResourceDictionary Source="Shared/Progress.xaml" />
         <ResourceDictionary Source="Rebuilder/Rebuilder.xaml" />
         <ResourceDictionary Source="Settings/Settings.xaml" />
         <ResourceDictionary Source="About/About.xaml" />

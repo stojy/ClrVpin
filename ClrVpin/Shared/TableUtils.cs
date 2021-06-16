@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models;
-using ClrVpin.Scanner;
 using Utils;
 
-namespace ClrVpin.Tables
+namespace ClrVpin.Shared
 {
     public static class TableUtils
     {
@@ -45,97 +43,29 @@ namespace ClrVpin.Tables
             return games;
         }
 
+        public static IEnumerable<string> GetMedia(ContentType contentType, string folder)
+        {
+            var files = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(folder, ext));
+
+            return files.SelectMany(x => x).ToList();
+        }
+
+        public static IEnumerable<FixFileDetail> GetUnsupportedMedia(ContentType contentType, string folder)
+        {
+            // return all files that don't match the supported file extensions
+            var supportedExtensions = contentType.ExtensionsList.Select(x => x.TrimStart('*').ToLower());
+
+            var allFiles = Directory.EnumerateFiles(folder).Select(x => x.ToLower());
+
+            var unsupportedFiles = allFiles.Where(file => !supportedExtensions.Any(file.EndsWith));
+
+            var unsupportedFixFiles = unsupportedFiles.Select(file => new FixFileDetail(contentType.Enum, HitTypeEnum.Unsupported, false, false, file, new FileInfo(file).Length));
+
+            return unsupportedFixFiles.ToList();
+        }
+
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
 
-        public static List<FixFileDetail> Check(List<Game> games)
-        {
-            var otherFiles = new List<FixFileDetail>();
-
-            // for the configured content types only.. check the installed content files against those specified in the database
-            var checkContentTypes = Model.Config.GetFrontendFolders()
-                .Where(x => !x.IsDatabase)
-                .Where(type => Model.Config.SelectedCheckContentTypes.Contains(type.Description));
-
-            foreach (var contentType in checkContentTypes)
-            {
-                var mediaFiles = GetMedia(contentType);
-                var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
-                otherFiles.AddRange(unknownMedia);
-
-                if (Model.Config.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
-                {
-                    var unsupportedFiles = GetUnsupportedMedia(contentType);
-                    otherFiles.AddRange(unsupportedFiles);
-                }
-
-                // todo; scan non-media content, e.g. tables and b2s
-            }
-
-            CheckMissing(games);
-
-            return otherFiles;
-        }
-
-        public static async Task<List<FixFileDetail>> FixAsync(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
-        {
-            var fixedFileDetails = await Task.Run(() => Fix(games, otherFileDetails, backupFolder));
-            return fixedFileDetails;
-        }
-
-        private static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
-        {
-            _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
-
-            var fixedFileDetails = new List<FixFileDetail>();
-
-            // fix files associated with games
-            games.ForEach(game =>
-            {
-                game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
-                {
-                    if (TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
-                    {
-                        // valid hit exists.. so delete everything else
-                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
-                    }
-                    else if (TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
-                    {
-                        // for all 3 hit types.. rename file and delete other entries
-                        fixedFileDetails.Add(Rename(hit, game));
-                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
-                    }
-
-                    // other hit types are n/a
-                    // - duplicate extension - already taken care as a valid hit will exist
-                    // - unknown - not associated with a game.. handled elsewhere
-                    // - missing - can't be fixed.. requires file to be downloaded
-                });
-            });
-
-            // delete files NOT associated with games, i.e. unknown files
-            otherFileDetails.ForEach(x =>
-            {
-                if (x.HitType == HitTypeEnum.Unknown && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
-                    x.HitType == HitTypeEnum.Unsupported && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
-                {
-                    x.Deleted = true;
-                    Delete(x.Path, x.HitType, null);
-                }
-            });
-
-            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-            if (Directory.Exists(_activeBackupFolder))
-            {
-                var files = Directory.EnumerateFiles(_activeBackupFolder, "*", SearchOption.AllDirectories);
-                if (!files.Any())
-                {
-                    Logger.Info($"Deleting empty backup folder: '{_activeBackupFolder}'");
-                    Directory.Delete(_activeBackupFolder, true);
-                }
-            }
-
-            return fixedFileDetails;
-        }
 
         private static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
         {
@@ -210,10 +140,10 @@ namespace ClrVpin.Tables
             var baseFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
             var folder = Path.Combine(_activeBackupFolder, baseFolder);
             var destFileName = Path.Combine(folder, Path.GetFileName(file));
-            
+
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
-            
+
             return destFileName;
         }
 
@@ -261,8 +191,8 @@ namespace ClrVpin.Tables
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, mediaFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
-                    game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.TableFile) ||
-                    game.Description.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.Description))
+                        game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.TableFile) ||
+                        game.Description.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.Description))
                     ) != null)
                 {
                     // todo; add more 'fuzzy' checks
@@ -275,27 +205,6 @@ namespace ClrVpin.Tables
             }
 
             return unknownMediaFiles;
-        }
-
-        private static IEnumerable<string> GetMedia(ContentType contentType)
-        {
-            var files = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(contentType.Folder, ext));
-
-            return files.SelectMany(x => x).ToList();
-        }
-
-        private static IEnumerable<FixFileDetail> GetUnsupportedMedia(ContentType contentType)
-        {
-            // return all files that don't match the supported extensions
-            var supportedExtensions = contentType.ExtensionsList.Select(x => x.TrimStart('*').ToLower());
-
-            var allFiles = Directory.EnumerateFiles(contentType.Folder).Select(x => x.ToLower());
-            
-            var unsupportedFiles = allFiles.Where(file => !supportedExtensions.Any(file.EndsWith));
-
-            var unsupportedFixFiles = unsupportedFiles.Select(file => new FixFileDetail(contentType.Enum, HitTypeEnum.Unsupported, false, false, file, new FileInfo(file).Length));
-
-            return unsupportedFixFiles.ToList();
         }
 
         private static string _activeBackupFolder;

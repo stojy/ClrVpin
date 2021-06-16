@@ -26,7 +26,7 @@
 
   <!--un-keyed style required by windows created in code, e.g. XxxWindow.Show()-->
   <Style TargetType="mde:MaterialWindow" BasedOn="{StaticResource MaterialWindow}" />
-
+ 
   <Style x:Key="RaisedDarkButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
     <Setter Property="Margin" Value="5,0" />
     <Setter Property="Padding" Value="5" />

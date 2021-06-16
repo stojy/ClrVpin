@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models;
-using ClrVpin.Scanner;
+using ClrVpin.Shared;
 using Utils;
 
 namespace ClrVpin.Rebuilder
@@ -16,27 +16,18 @@ namespace ClrVpin.Rebuilder
         {
             var otherFiles = new List<FixFileDetail>();
 
-            // for the configured content types only.. check the installed content files against those specified in the database
-            var checkContentTypes = Model.Config.GetFrontendFolders()
-                .Where(x => !x.IsDatabase)
-                .Where(type => Model.Config.SelectedCheckContentTypes.Contains(type.Description));
+            // determine the destination type
+            // - todo; scan non-media content, e.g. tables and b2s
+            var contentType = Model.Config.GetFrontendFolders().First(x => x.Description == Model.Config.DestinationContentType);
 
-            foreach (var contentType in checkContentTypes)
-            {
-                var mediaFiles = GetMedia(contentType);
-                var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
-                otherFiles.AddRange(unknownMedia);
+            // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
+            var mediaFiles = TableUtils.GetMedia(contentType, Model.Config.SourceFolder);
+            var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+            otherFiles.AddRange(unknownMedia);
 
-                if (Model.Config.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
-                {
-                    var unsupportedFiles = GetUnsupportedMedia(contentType);
-                    otherFiles.AddRange(unsupportedFiles);
-                }
-
-                // todo; scan non-media content, e.g. tables and b2s
-            }
-
-            CheckMissing(games);
+            // identify any unsupported files, i.e. files in the directory that don't have a matching extension
+            var unsupportedFiles = TableUtils.GetUnsupportedMedia(contentType, Model.Config.SourceFolder);
+            otherFiles.AddRange(unsupportedFiles);
 
             return otherFiles;
         }
@@ -182,21 +173,7 @@ namespace ClrVpin.Rebuilder
             return destFileName;
         }
 
-        private static void CheckMissing(List<Game> games)
-        {
-            games.ForEach(game =>
-            {
-                // add missing content
-                game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
-                {
-                    if (!contentHitCollection.Hits.Any(hit => hit.Type == HitTypeEnum.Valid || hit.Type == HitTypeEnum.WrongCase))
-                        contentHitCollection.Add(HitTypeEnum.Missing, game.Description);
-                });
-            });
-        }
-
-        private static IEnumerable<FixFileDetail> AddMediaToGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
-            Func<Game, ContentHits> getContentHits)
+        private static IEnumerable<FixFileDetail> AddMediaToGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum, Func<Game, ContentHits> getContentHits)
         {
             var unknownMediaFiles = new List<FixFileDetail>();
 
@@ -240,27 +217,6 @@ namespace ClrVpin.Rebuilder
             }
 
             return unknownMediaFiles;
-        }
-
-        private static IEnumerable<string> GetMedia(ContentType contentType)
-        {
-            var files = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(contentType.Folder, ext));
-
-            return files.SelectMany(x => x).ToList();
-        }
-
-        private static IEnumerable<FixFileDetail> GetUnsupportedMedia(ContentType contentType)
-        {
-            // return all files that don't match the supported extensions
-            var supportedExtensions = contentType.ExtensionsList.Select(x => x.TrimStart('*').ToLower());
-
-            var allFiles = Directory.EnumerateFiles(contentType.Folder).Select(x => x.ToLower());
-            
-            var unsupportedFiles = allFiles.Where(file => !supportedExtensions.Any(file.EndsWith));
-
-            var unsupportedFixFiles = unsupportedFiles.Select(file => new FixFileDetail(contentType.Enum, HitTypeEnum.Unsupported, false, false, file, new FileInfo(file).Length));
-
-            return unsupportedFixFiles.ToList();
         }
 
         private static string _activeBackupFolder;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using ByteSizeLib;
 using ClrVpin.Models;
+using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;

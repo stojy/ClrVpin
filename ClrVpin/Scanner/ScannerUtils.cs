@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models;
+using ClrVpin.Shared;
 using Utils;
 
 namespace ClrVpin.Scanner
@@ -15,27 +16,29 @@ namespace ClrVpin.Scanner
         {
             var otherFiles = new List<FixFileDetail>();
 
-            // for the configured content types only.. check the installed content files against those specified in the database
+            // determine the configured content types
+            // - todo; scan non-media content, e.g. tables and b2s
             var checkContentTypes = Model.Config.GetFrontendFolders()
                 .Where(x => !x.IsDatabase)
                 .Where(type => Model.Config.SelectedCheckContentTypes.Contains(type.Description));
 
             foreach (var contentType in checkContentTypes)
             {
-                var mediaFiles = GetMedia(contentType);
+                // for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
+                var mediaFiles = TableUtils.GetMedia(contentType, contentType.Folder);
                 var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
                 otherFiles.AddRange(unknownMedia);
 
+                // identify any unsupported files, i.e. files in the directory that don't have a matching extension
                 if (Model.Config.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
-                    var unsupportedFiles = GetUnsupportedMedia(contentType);
+                    var unsupportedFiles = TableUtils.GetUnsupportedMedia(contentType, contentType.Folder);
                     otherFiles.AddRange(unsupportedFiles);
                 }
-
-                // todo; scan non-media content, e.g. tables and b2s
             }
 
-            CheckMissing(games);
+            // update each table status as missing if their were no matches
+            AddMissingStatus(games);
 
             return otherFiles;
         }
@@ -182,7 +185,7 @@ namespace ClrVpin.Scanner
             return destFileName;
         }
 
-        private static void CheckMissing(List<Game> games)
+        private static void AddMissingStatus(List<Game> games)
         {
             games.ForEach(game =>
             {
@@ -240,27 +243,6 @@ namespace ClrVpin.Scanner
             }
 
             return unknownMediaFiles;
-        }
-
-        private static IEnumerable<string> GetMedia(ContentType contentType)
-        {
-            var files = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(contentType.Folder, ext));
-
-            return files.SelectMany(x => x).ToList();
-        }
-
-        private static IEnumerable<FixFileDetail> GetUnsupportedMedia(ContentType contentType)
-        {
-            // return all files that don't match the supported extensions
-            var supportedExtensions = contentType.ExtensionsList.Select(x => x.TrimStart('*').ToLower());
-
-            var allFiles = Directory.EnumerateFiles(contentType.Folder).Select(x => x.ToLower());
-            
-            var unsupportedFiles = allFiles.Where(file => !supportedExtensions.Any(file.EndsWith));
-
-            var unsupportedFixFiles = unsupportedFiles.Select(file => new FixFileDetail(contentType.Enum, HitTypeEnum.Unsupported, false, false, file, new FileInfo(file).Length));
-
-            return unsupportedFixFiles.ToList();
         }
 
         private static string _activeBackupFolder;

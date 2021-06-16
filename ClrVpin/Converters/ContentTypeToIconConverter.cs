@@ -5,7 +5,7 @@ using System.Windows.Data;
 using ClrVpin.Models;
 using MaterialDesignThemes.Wpf;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Converters
 {
     [ValueConversion(typeof(ContentTypeEnum), typeof(string))]
     public class ContentTypeToIconConverter : IValueConverter

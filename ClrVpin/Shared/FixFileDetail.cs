@@ -1,6 +1,6 @@
 ﻿using ClrVpin.Models;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Shared
 {
     public class FixFileDetail : FileDetail
     {

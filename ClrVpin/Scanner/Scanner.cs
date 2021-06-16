@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Models;
-using ClrVpin.Tables;
+using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;

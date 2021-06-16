@@ -6,7 +6,7 @@ using System.Windows.Input;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Shared
 {
     [AddINotifyPropertyChangedInterface]
     internal class Progress

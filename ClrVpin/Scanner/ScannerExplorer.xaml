@@ -10,7 +10,7 @@
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <scanner:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />
+  <converters:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />
   <converters:BoolToStringConverter x:Key="SmellyToIconConverter" True="Exclamation" False="Check" />
 
   <DataTemplate x:Key="HitTemplate" DataType="models:Hit">

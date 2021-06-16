@@ -9,7 +9,7 @@ using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
 using ClrVpin.Scanner;
-using ClrVpin.Tables;
+using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
@@ -51,7 +51,6 @@ namespace ClrVpin.Rebuilder
         
         public FolderTypeModel SourceFolderModel { get; set; }
         public ObservableCollection<string> DestinationContentTypes { get; set; }
-        public string DestinationContentType { get; set; }
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
@@ -65,7 +64,7 @@ namespace ClrVpin.Rebuilder
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 650,
-                Height = 400,
+                Height = 350,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,
@@ -130,21 +129,20 @@ namespace ClrVpin.Rebuilder
             var progress = new Progress();
             progress.Show(_rebuilderWindow);
 
-            // todo; retrieve 'missing games' from spreadsheet
-
             progress.Update("Loading Database", 0);
             var games = TableUtils.GetDatabases();
 
             progress.Update("Checking Files", 30);
-            var unknownFiles = ScannerUtils.Check(games);
+            var unknownFiles = RebuilderUtils.Check(games);
 
-            progress.Update("Fixing Files", 60);
+            progress.Update("Merging Files", 60);
             //var fixFiles = await ScannerUtils.FixAsync(games, unknownFiles, Model.Config.BackupFolder);
 
             progress.Update("Preparing Results", 100);
             await Task.Delay(10);
             Games = new ObservableCollection<Game>(games);
             //ShowResults(fixFiles.Concat(unknownFiles).ToList(), progress.Duration);
+            ShowResults(unknownFiles.ToList(), progress.Duration);
 
             progress.Close();
         }
@@ -174,7 +172,7 @@ namespace ClrVpin.Rebuilder
 
         private Window _rebuilderWindow;
         private Logging.Logging _loggingWindow;
-        private IEnumerable<string> _destinationContentTypes;
+        private readonly IEnumerable<string> _destinationContentTypes;
         private const int WindowMargin = 12;
     }
 }

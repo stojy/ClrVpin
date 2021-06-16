@@ -1,4 +1,4 @@
-﻿namespace ClrVpin.Scanner
+﻿namespace ClrVpin.Shared
 {
     public class FileDetail
     {
