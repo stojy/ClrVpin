@@ -12,7 +12,7 @@ namespace ClrVpin.Shared
 {
     public static class TableUtils
     {
-        public static List<Game> GetDatabases()
+        public static List<Game> GetGamesFromDatabases()
         {
             var databaseDetail = Model.Config.GetFrontendFolders().First(x => x.IsDatabase);
 
@@ -25,7 +25,7 @@ namespace ClrVpin.Shared
             {
                 var doc = XDocument.Load(file);
                 if (doc.Root == null)
-                    throw new Exception("Failed to load database");
+                    throw new Exception($"Failed to load database: '{file}'");
 
                 var menu = doc.Root.Deserialize<Menu>();
                 var number = 1;
@@ -43,14 +43,14 @@ namespace ClrVpin.Shared
             return games;
         }
 
-        public static IEnumerable<string> GetMedia(ContentType contentType, string folder)
+        public static IEnumerable<string> GetMediaFileNames(ContentType contentType, string folder)
         {
             var files = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(folder, ext));
 
             return files.SelectMany(x => x).ToList();
         }
 
-        public static IEnumerable<FixFileDetail> GetUnsupportedMedia(ContentType contentType, string folder)
+        public static IEnumerable<FixFileDetail> GetUnsupportedMediaFileDetails(ContentType contentType, string folder)
         {
             // return all files that don't match the supported file extensions
             var supportedExtensions = contentType.ExtensionsList.Select(x => x.TrimStart('*').ToLower());
@@ -64,8 +64,59 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
+        public static string GetActiveBackupFolder(string backupFolder)
+        {
+            return _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
+        }
 
+        public static IEnumerable<FixFileDetail> AssociateMediaFilesToGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
+            Func<Game, ContentHits> getContentHits)
+        {
+            var unknownMediaFiles = new List<FixFileDetail>();
+
+            // for each file, associate it with a game or if one can't be found, then mark it as unknown
+            foreach (var mediaFile in mediaFiles)
+            {
+                Game matchedGame;
+
+                // check for hit..
+                // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
+                // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
+                // - todo; fuzzy match.. e.g. partial matches, etc.
+                if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
+                {
+                    // if a match already exists, then assume this match is a duplicate name with wrong extension
+                    // - file extension order is important as it determines the priority of the preferred extension
+                    var contentHits = getContentHits(matchedGame);
+                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.Valid) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.Valid, mediaFile);
+                }
+                else if ((matchedGame =
+                    games.FirstOrDefault(game => string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                {
+                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, mediaFile);
+                }
+                else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
+                {
+                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, mediaFile);
+                }
+                else if ((matchedGame = games.FirstOrDefault(game =>
+                        game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.TableFile) ||
+                        game.Description.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.Description))
+                    ) != null)
+                {
+                    // todo; add more 'fuzzy' checks
+                    getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, mediaFile);
+                }
+                else
+                {
+                    unknownMediaFiles.Add(new FixFileDetail(contentTypeEnum, HitTypeEnum.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
+                }
+            }
+
+            return unknownMediaFiles;
+        }
+
+        private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
 
         private static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
         {
@@ -158,53 +209,6 @@ namespace ClrVpin.Shared
                         contentHitCollection.Add(HitTypeEnum.Missing, game.Description);
                 });
             });
-        }
-
-        private static IEnumerable<FixFileDetail> AddMediaToGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
-            Func<Game, ContentHits> getContentHits)
-        {
-            var unknownMediaFiles = new List<FixFileDetail>();
-
-            // for each file, associate it with a game or if one can't be found, then mark it as unknown
-            foreach (var mediaFile in mediaFiles)
-            {
-                Game matchedGame;
-
-                // check for hit..
-                // - skip hit types that aren't configured
-                // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
-                // - todo; fuzzy match.. e.g. partial matches, etc.
-                if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                {
-                    // if a match already exists, then assume this match is a duplicate name with wrong extension
-                    // - file extension order is important as it determines the priority of the preferred extension
-                    var contentHits = getContentHits(matchedGame);
-                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.Valid) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.Valid, mediaFile);
-                }
-                else if ((matchedGame =
-                    games.FirstOrDefault(game => string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
-                {
-                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, mediaFile);
-                }
-                else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                {
-                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, mediaFile);
-                }
-                else if ((matchedGame = games.FirstOrDefault(game =>
-                        game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.TableFile) ||
-                        game.Description.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.Description))
-                    ) != null)
-                {
-                    // todo; add more 'fuzzy' checks
-                    getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, mediaFile);
-                }
-                else
-                {
-                    unknownMediaFiles.Add(new FixFileDetail(contentTypeEnum, HitTypeEnum.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
-                }
-            }
-
-            return unknownMediaFiles;
         }
 
         private static string _activeBackupFolder;

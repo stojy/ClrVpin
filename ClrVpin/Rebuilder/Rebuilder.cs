@@ -130,13 +130,13 @@ namespace ClrVpin.Rebuilder
             progress.Show(_rebuilderWindow);
 
             progress.Update("Loading Database", 0);
-            var games = TableUtils.GetDatabases();
+            var games = TableUtils.GetGamesFromDatabases();
 
             progress.Update("Checking Files", 30);
             var unknownFiles = RebuilderUtils.Check(games);
 
             progress.Update("Merging Files", 60);
-            //var fixFiles = await ScannerUtils.FixAsync(games, unknownFiles, Model.Config.BackupFolder);
+            var mergedFiles = await RebuilderUtils.MergeAsync(games, unknownFiles, Model.Config.BackupFolder);
 
             progress.Update("Preparing Results", 100);
             await Task.Delay(10);

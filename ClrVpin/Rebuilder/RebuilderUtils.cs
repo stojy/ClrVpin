@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,30 +20,30 @@ namespace ClrVpin.Rebuilder
             var contentType = Model.Config.GetFrontendFolders().First(x => x.Description == Model.Config.DestinationContentType);
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
-            var mediaFiles = TableUtils.GetMedia(contentType, Model.Config.SourceFolder);
-            var unknownMedia = AddMediaToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+            var mediaFiles = TableUtils.GetMediaFileNames(contentType, Model.Config.SourceFolder);
+            var unknownMedia = TableUtils.AssociateMediaFilesToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
             otherFiles.AddRange(unknownMedia);
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
-            var unsupportedFiles = TableUtils.GetUnsupportedMedia(contentType, Model.Config.SourceFolder);
+            var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, Model.Config.SourceFolder);
             otherFiles.AddRange(unsupportedFiles);
 
             return otherFiles;
         }
 
-        public static async Task<List<FixFileDetail>> FixAsync(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
+        public static async Task<List<FixFileDetail>> MergeAsync(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
         {
-            var fixedFileDetails = await Task.Run(() => Fix(games, otherFileDetails, backupFolder));
-            return fixedFileDetails;
+            var mergedFileDetails = await Task.Run(() => Merge(games, otherFileDetails, backupFolder));
+            return mergedFileDetails;
         }
 
-        private static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
+        private static List<FixFileDetail> Merge(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
         {
-            _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
+            _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
 
-            var fixedFileDetails = new List<FixFileDetail>();
+            var mergedFileDetails = new List<FixFileDetail>();
 
-            // fix files associated with games
+            // merge files associated with games, if they satisfy the merge criteria
             games.ForEach(game =>
             {
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
@@ -52,13 +51,13 @@ namespace ClrVpin.Rebuilder
                     if (TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
                     {
                         // valid hit exists.. so delete everything else
-                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
+                        mergedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
                     }
                     else if (TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
                     {
                         // for all 3 hit types.. rename file and delete other entries
-                        fixedFileDetails.Add(Rename(hit, game));
-                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
+                        mergedFileDetails.Add(Rename(hit, game));
+                        mergedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
                     }
 
                     // other hit types are n/a
@@ -90,7 +89,7 @@ namespace ClrVpin.Rebuilder
                 }
             }
 
-            return fixedFileDetails;
+            return mergedFileDetails;
         }
 
         private static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
@@ -171,52 +170,6 @@ namespace ClrVpin.Rebuilder
                 Directory.CreateDirectory(folder);
             
             return destFileName;
-        }
-
-        private static IEnumerable<FixFileDetail> AddMediaToGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum, Func<Game, ContentHits> getContentHits)
-        {
-            var unknownMediaFiles = new List<FixFileDetail>();
-
-            // for each file, associate it with a game or if one can't be found, then mark it as unknown
-            foreach (var mediaFile in mediaFiles)
-            {
-                Game matchedGame;
-
-                // check for hit..
-                // - skip hit types that aren't configured
-                // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
-                // - todo; fuzzy match.. e.g. partial matches, etc.
-                if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                {
-                    // if a match already exists, then assume this match is a duplicate name with wrong extension
-                    // - file extension order is important as it determines the priority of the preferred extension
-                    var contentHits = getContentHits(matchedGame);
-                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.Valid) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.Valid, mediaFile);
-                }
-                else if ((matchedGame =
-                    games.FirstOrDefault(game => string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
-                {
-                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, mediaFile);
-                }
-                else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
-                {
-                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, mediaFile);
-                }
-                else if ((matchedGame = games.FirstOrDefault(game =>
-                    game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.TableFile) ||
-                    game.Description.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.Description))
-                    ) != null)
-                {
-                    // todo; add more 'fuzzy' checks
-                    getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, mediaFile);
-                }
-                else
-                {
-                    unknownMediaFiles.Add(new FixFileDetail(contentTypeEnum, HitTypeEnum.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
-                }
-            }
-
-            return unknownMediaFiles;
         }
 
         private static string _activeBackupFolder;
