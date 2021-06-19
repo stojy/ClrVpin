@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models;
 using ClrVpin.Shared;
-using Utils;
 
 namespace ClrVpin.Scanner
 {
@@ -60,16 +58,16 @@ namespace ClrVpin.Scanner
             {
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
                 {
-                    if (TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
+                    if (TableUtils.TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
                     {
                         // valid hit exists.. so delete other hits, i.e. other hits aren't as relevant
-                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
+                        fixedFileDetails.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
                     }
-                    else if (TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
+                    else if (TableUtils.TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
                     {
                         // for all 3 hit types.. rename file and delete other entries
-                        fixedFileDetails.Add(Rename(hit, game, Model.Config.SelectedFixHitTypes));
-                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
+                        fixedFileDetails.Add(TableUtils.Rename(hit, game, Model.Config.SelectedFixHitTypes));
+                        fixedFileDetails.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
                     }
 
                     // other hit types are n/a
@@ -86,7 +84,7 @@ namespace ClrVpin.Scanner
                     x.HitType == HitTypeEnum.Unsupported && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     x.Deleted = true;
-                    Delete(x.Path, x.HitType, null);
+                    TableUtils.Delete(x.Path, x.HitType, null);
                 }
             });
 
@@ -102,87 +100,6 @@ namespace ClrVpin.Scanner
             }
 
             return fixedFileDetails;
-        }
-
-        private static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
-        {
-            // return the first entry found
-            hit = hits.FirstOrDefault(h => hitTypes.Contains(h.Type));
-            return hit != null;
-        }
-
-        private static IEnumerable<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
-        {
-            var deleted = new List<FixFileDetail>();
-
-            // delete all 'real' files except the specified hit
-            hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h, supportedHitTypes)));
-
-            return deleted;
-        }
-
-        private static FixFileDetail Delete(Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
-        {
-            var deleted = false;
-
-            // only delete file if configured to do so
-            if (supportedHitTypes.Contains(hit.Type))
-            {
-                deleted = true;
-                Delete(hit.Path, hit.Type, hit.ContentType);
-            }
-
-            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, deleted, false, hit.Path, hit.Size ?? 0);
-        }
-
-        private static void Delete(string file, HitTypeEnum hitType, string contentType)
-        {
-            var backupFileName = CreateBackupFileName(file);
-
-            var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
-            Logger.Warn($"{prefix}Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}, backup: {backupFileName}");
-
-            if (!Model.Config.TrainerWheels)
-                File.Move(file, backupFileName, true);
-        }
-
-        private static FixFileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
-        {
-            var renamed = false;
-
-            if (supportedHitTypes.Contains(hit.Type))
-            {
-                renamed = true;
-
-                var extension = Path.GetExtension(hit.Path);
-                var path = Path.GetDirectoryName(hit.Path);
-                var newFile = Path.Combine(path!, $"{game.Description}{extension}");
-
-                var backupFileName = CreateBackupFileName(hit.Path);
-                var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
-                Logger.Info($"{prefix}Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}, backup: {backupFileName}");
-
-                if (!Model.Config.TrainerWheels)
-                {
-                    File.Copy(hit.Path!, backupFileName, true);
-                    File.Move(hit.Path!, newFile, true);
-                }
-            }
-
-            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
-        }
-
-        private static string CreateBackupFileName(string file)
-        {
-            var baseFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
-            var folder = Path.Combine(_activeBackupFolder, baseFolder);
-            var destFileName = Path.Combine(folder, Path.GetFileName(file));
-            
-            // store backup file in the same folder structure as the source file
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-            
-            return destFileName;
         }
 
         private static void AddMissingStatus(List<Game> games)

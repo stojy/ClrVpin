@@ -118,29 +118,29 @@ namespace ClrVpin.Shared
 
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
 
-        private static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
+        public static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
         {
             // return the first entry found
             hit = hits.FirstOrDefault(h => hitTypes.Contains(h.Type));
             return hit != null;
         }
 
-        private static IEnumerable<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit)
+        public static IEnumerable<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var deleted = new List<FixFileDetail>();
 
             // delete all 'real' files except the specified hit
-            hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h)));
+            hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h, supportedHitTypes)));
 
             return deleted;
         }
 
-        private static FixFileDetail Delete(Hit hit)
+        private static FixFileDetail Delete(Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var deleted = false;
 
             // only delete file if configured to do so
-            if (Model.Config.SelectedFixHitTypes.Contains(hit.Type))
+            if (supportedHitTypes.Contains(hit.Type))
             {
                 deleted = true;
                 Delete(hit.Path, hit.Type, hit.ContentType);
@@ -149,7 +149,7 @@ namespace ClrVpin.Shared
             return new FixFileDetail(hit.ContentTypeEnum, hit.Type, deleted, false, hit.Path, hit.Size ?? 0);
         }
 
-        private static void Delete(string file, HitTypeEnum hitType, string contentType)
+        public static void Delete(string file, HitTypeEnum hitType, string contentType)
         {
             var backupFileName = CreateBackupFileName(file);
 
@@ -160,11 +160,11 @@ namespace ClrVpin.Shared
                 File.Move(file, backupFileName, true);
         }
 
-        private static FixFileDetail Rename(Hit hit, Game game)
+        public static FixFileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var renamed = false;
 
-            if (Model.Config.SelectedFixHitTypes.Contains(hit.Type))
+            if (supportedHitTypes.Contains(hit.Type))
             {
                 renamed = true;
 
@@ -186,31 +186,19 @@ namespace ClrVpin.Shared
             return new FixFileDetail(hit.ContentTypeEnum, hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
         }
 
-        private static string CreateBackupFileName(string file)
+        public static string CreateBackupFileName(string file)
         {
             var baseFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
             var folder = Path.Combine(_activeBackupFolder, baseFolder);
             var destFileName = Path.Combine(folder, Path.GetFileName(file));
 
+            // store backup file in the same folder structure as the source file
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
             return destFileName;
         }
-
-        private static void CheckMissing(List<Game> games)
-        {
-            games.ForEach(game =>
-            {
-                // add missing content
-                game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
-                {
-                    if (!contentHitCollection.Hits.Any(hit => hit.Type == HitTypeEnum.Valid || hit.Type == HitTypeEnum.WrongCase))
-                        contentHitCollection.Add(HitTypeEnum.Missing, game.Description);
-                });
-            });
-        }
-
+        
         private static string _activeBackupFolder;
     }
 }
