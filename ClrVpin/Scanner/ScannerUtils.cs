@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace ClrVpin.Scanner
             {
                 // for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
                 var mediaFiles = TableUtils.GetMediaFileNames(contentType, contentType.Folder);
-                var unknownMedia = TableUtils.AssociateMediaFilesToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+                var unknownMedia = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
                 otherFiles.AddRange(unknownMedia);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
@@ -61,14 +62,14 @@ namespace ClrVpin.Scanner
                 {
                     if (TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
                     {
-                        // valid hit exists.. so delete everything else
-                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
+                        // valid hit exists.. so delete other hits, i.e. other hits aren't as relevant
+                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
                     }
                     else if (TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
                     {
                         // for all 3 hit types.. rename file and delete other entries
-                        fixedFileDetails.Add(Rename(hit, game));
-                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
+                        fixedFileDetails.Add(Rename(hit, game, Model.Config.SelectedFixHitTypes));
+                        fixedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
                     }
 
                     // other hit types are n/a
@@ -110,23 +111,22 @@ namespace ClrVpin.Scanner
             return hit != null;
         }
 
-        // todo.. move/reference TableUtils or similar?
-        private static IEnumerable<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit)
+        private static IEnumerable<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var deleted = new List<FixFileDetail>();
 
             // delete all 'real' files except the specified hit
-            hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h)));
+            hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h, supportedHitTypes)));
 
             return deleted;
         }
 
-        private static FixFileDetail Delete(Hit hit)
+        private static FixFileDetail Delete(Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var deleted = false;
 
             // only delete file if configured to do so
-            if (Model.Config.SelectedFixHitTypes.Contains(hit.Type))
+            if (supportedHitTypes.Contains(hit.Type))
             {
                 deleted = true;
                 Delete(hit.Path, hit.Type, hit.ContentType);
@@ -146,11 +146,11 @@ namespace ClrVpin.Scanner
                 File.Move(file, backupFileName, true);
         }
 
-        private static FixFileDetail Rename(Hit hit, Game game)
+        private static FixFileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var renamed = false;
 
-            if (Model.Config.SelectedFixHitTypes.Contains(hit.Type))
+            if (supportedHitTypes.Contains(hit.Type))
             {
                 renamed = true;
 

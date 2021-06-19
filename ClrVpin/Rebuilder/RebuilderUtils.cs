@@ -21,7 +21,7 @@ namespace ClrVpin.Rebuilder
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
             var mediaFiles = TableUtils.GetMediaFileNames(contentType, Model.Config.SourceFolder);
-            var unknownMedia = TableUtils.AssociateMediaFilesToGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+            var unknownMedia = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
             otherFiles.AddRange(unknownMedia);
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
@@ -41,30 +41,35 @@ namespace ClrVpin.Rebuilder
         {
             _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
 
-            var mergedFileDetails = new List<FixFileDetail>();
+            var deletedFiles = new List<FixFileDetail>();
+            var matchedMergedFiles = new List<FixFileDetail>();
+            var matchedUnusedFiles = new List<FixFileDetail>();
 
             // merge files associated with games, if they satisfy the merge criteria
             games.ForEach(game =>
             {
-                game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
+                // determine the destination content type and relevant hit collection from the games collection
+                var contentType = Model.Config.GetFrontendFolders().First(x => x.Description == Model.Config.DestinationContentType);
+                var contentHitCollection = game.Content.ContentHitsCollection.First(x => x.Type == contentType.Enum);
+                
+                if (TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
                 {
-                    if (TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
-                    {
-                        // valid hit exists.. so delete everything else
-                        mergedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
-                    }
-                    else if (TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
-                    {
-                        // for all 3 hit types.. rename file and delete other entries
-                        mergedFileDetails.Add(Rename(hit, game));
-                        mergedFileDetails.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
-                    }
 
-                    // other hit types are n/a
-                    // - duplicate extension - already taken care as a valid hit will exist
-                    // - unknown - not associated with a game.. handled elsewhere
-                    // - missing - can't be fixed.. requires file to be downloaded
-                });
+                    // valid hit exists.. so copy file and delete other hits, i.e. other hits aren't as relevant
+                    matchedMergedFiles.Add(Merge(hit, game));
+                    matchedUnusedFiles.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
+                }
+                else if (TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
+                {
+                    // for all 3 hit types.. rename file and delete other entries
+                    deletedFiles.Add(Rename(hit, game));
+                    matchedUnusedFiles.AddRange(DeleteAllExcept(contentHitCollection.Hits, hit));
+                }
+
+                // other hit types are n/a
+                // - duplicate extension - already taken care as a valid hit will exist
+                // - unknown - not associated with a game.. handled elsewhere
+                // - missing - can't be fixed.. requires file to be downloaded
             });
 
             // delete files NOT associated with games, i.e. unknown files
@@ -89,7 +94,7 @@ namespace ClrVpin.Rebuilder
                 }
             }
 
-            return mergedFileDetails;
+            return matchedUnusedFiles;
         }
 
         private static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
@@ -136,6 +141,35 @@ namespace ClrVpin.Rebuilder
 
         private static FixFileDetail Rename(Hit hit, Game game)
         {
+            var renamed = false;
+
+            if (Model.Config.SelectedFixHitTypes.Contains(hit.Type))
+            {
+                renamed = true;
+
+                var extension = Path.GetExtension(hit.Path);
+                var path = Path.GetDirectoryName(hit.Path);
+                var newFile = Path.Combine(path!, $"{game.Description}{extension}");
+
+                var backupFileName = CreateBackupFileName(hit.Path);
+                var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
+                Logger.Info($"{prefix}Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}, backup: {backupFileName}");
+
+                if (!Model.Config.TrainerWheels)
+                {
+                    File.Copy(hit.Path!, backupFileName, true);
+                    File.Move(hit.Path!, newFile, true);
+                }
+            }
+
+            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
+        }
+
+        private static FixFileDetail Merge(Hit hit, Game game)
+        {
+            //var matched = new FixFileDetail(hit.ContentTypeEnum, hit.Type, false, false, hit.Path, hit.Size ?? 0);
+            //matchedMergedFiles.Add(matched);
+
             var renamed = false;
 
             if (Model.Config.SelectedFixHitTypes.Contains(hit.Type))

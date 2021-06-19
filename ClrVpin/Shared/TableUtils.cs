@@ -69,7 +69,7 @@ namespace ClrVpin.Shared
             return _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
         }
 
-        public static IEnumerable<FixFileDetail> AssociateMediaFilesToGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
+        public static IEnumerable<FixFileDetail> AssociateMediaFilesWithGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
             Func<Game, ContentHits> getContentHits)
         {
             var unknownMediaFiles = new List<FixFileDetail>();
