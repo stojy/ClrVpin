@@ -22,7 +22,7 @@ namespace ClrVpin.Rebuilder
         public Rebuilder()
         {
             StartCommand = new ActionCommand(Start);
-            
+
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
             MergeCriteriaTypesView = new ListCollectionView(CreateMergeOptions().ToList());
 
@@ -32,23 +32,19 @@ namespace ClrVpin.Rebuilder
                 TryUpdateDestinationFolder(folder);
             });
 
-            _destinationContentTypes = Model.Config.GetFrontendFolders().Where(x=> !x.IsDatabase).Select(x => x.Description);
+            _destinationContentTypes = Model.Config.GetFrontendFolders().Where(x => !x.IsDatabase).Select(x => x.Description);
             DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
 
             Config = Model.Config;
+
+            UpdateIsValid();
         }
 
-        private void TryUpdateDestinationFolder(string folder)
-        {
-            // attempt to assign destination folder automatically based on the specified folder
-            var contentType = _destinationContentTypes.FirstOrDefault(folder.EndsWith);
-            if (contentType != null)
-                Config.DestinationContentType = contentType;
-        }
+        public bool IsValid { get; set; }
 
         public ListCollectionView MatchCriteriaTypesView { get; set; }
         public ListCollectionView MergeCriteriaTypesView { get; set; }
-        
+
         public FolderTypeModel SourceFolderModel { get; set; }
         public ObservableCollection<string> DestinationContentTypes { get; set; }
 
@@ -80,6 +76,17 @@ namespace ClrVpin.Rebuilder
                 Model.Config.Save();
                 parent.Show();
             };
+        }
+
+        private void UpdateIsValid() => IsValid = !string.IsNullOrEmpty(Config.DestinationContentType);
+
+        private void TryUpdateDestinationFolder(string folder)
+        {
+            // attempt to assign destination folder automatically based on the specified folder
+            var contentType = _destinationContentTypes.FirstOrDefault(folder.EndsWith);
+            if (contentType != null)
+                Config.DestinationContentType = contentType;
+            UpdateIsValid();
         }
 
         private static IEnumerable<FeatureType> CreateMatchCriteriaTypes()
@@ -170,9 +177,10 @@ namespace ClrVpin.Rebuilder
             };
         }
 
+        private readonly IEnumerable<string> _destinationContentTypes;
+
         private Window _rebuilderWindow;
         private Logging.Logging _loggingWindow;
-        private readonly IEnumerable<string> _destinationContentTypes;
         private const int WindowMargin = 12;
     }
 }

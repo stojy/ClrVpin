@@ -34,7 +34,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="RequiredVersion" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">27</Value>
+      <Value Profile="(Default)">31</Value>
     </Setting>
     <Setting Name="ActualVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -43,7 +43,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SelectedMatchTypes" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[0, 1,2,3,4,5,6,7]</Value>
+      <Value Profile="(Default)">[0, 1, 2, 3]</Value>
     </Setting>
     <Setting Name="MergeOptions" Type="System.String" Scope="User">
       <Value Profile="(Default)">[0,1,2,3,4]</Value>

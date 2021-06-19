@@ -96,6 +96,9 @@ namespace ClrVpin.Models
         public bool IsValid { get; private set; } 
 
         public List<ContentType> GetFrontendFolders() => JsonSerializer.Deserialize<List<ContentType>>(FrontendFoldersJson);
+
+        public static ContentType GetDestinationContentType() => Model.Config.GetFrontendFolders().First(x => x.Description == Model.Config.DestinationContentType);
+
         public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
 
         public void Save()
@@ -144,6 +147,7 @@ namespace ClrVpin.Models
             TrainerWheels = true;
 
             SourceFolder = SpecialFolder.Downloads;
+            DestinationContentType = null;
 
             // update actual version to indicate the config is now compatible and doesn't need to be reset again
             Properties.Settings.Default.ActualVersion = Properties.Settings.Default.RequiredVersion;

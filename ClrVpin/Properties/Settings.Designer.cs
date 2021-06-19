@@ -128,7 +128,7 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("27")]
+        [global::System.Configuration.DefaultSettingValueAttribute("31")]
         public int RequiredVersion {
             get {
                 return ((int)(this["RequiredVersion"]));
@@ -164,7 +164,7 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("[0, 1,2,3,4,5,6,7]")]
+        [global::System.Configuration.DefaultSettingValueAttribute("[0, 1, 2, 3]")]
         public string SelectedMatchTypes {
             get {
                 return ((string)(this["SelectedMatchTypes"]));
