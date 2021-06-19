@@ -177,12 +177,12 @@ namespace ClrVpin.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("[0,1,2,3,4]")]
-        public string OverwriteOptions {
+        public string MergeOptions {
             get {
-                return ((string)(this["OverwriteOptions"]));
+                return ((string)(this["MergeOptions"]));
             }
             set {
-                this["OverwriteOptions"] = value;
+                this["MergeOptions"] = value;
             }
         }
         

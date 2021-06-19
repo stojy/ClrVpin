@@ -33,9 +33,9 @@ namespace ClrVpin.Models
 
             // rebuilder
             SelectedMatchTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedMatchTypes, value => Properties.Settings.Default.SelectedMatchTypes = value).Observable;
-            SelectedOverwriteOptions = new ObservableCollectionJson<OverwriteOptionEnum>(Properties.Settings.Default.OverwriteOptions, value => Properties.Settings.Default.OverwriteOptions = value).Observable;
+            SelectedMergeOptions = new ObservableCollectionJson<MergeOptionEnum>(Properties.Settings.Default.MergeOptions, value => Properties.Settings.Default.MergeOptions = value).Observable;
             MatchTypes.ForEach(x => x.Description = x.Enum.GetDescription());
-            OverwriteOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // reset the settings if the user's stored settings version differs to the default version
             if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
@@ -172,7 +172,7 @@ namespace ClrVpin.Models
 
         // rebuilder
         public ObservableCollection<HitTypeEnum> SelectedMatchTypes;
-        public ObservableCollection<OverwriteOptionEnum> SelectedOverwriteOptions;
+        public ObservableCollection<MergeOptionEnum> SelectedMergeOptions;
 
         // all possible match criteria types - to be used elsewhere (rebuilder)
         public static HitType[] MatchTypes =
@@ -182,13 +182,13 @@ namespace ClrVpin.Models
             new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "'Fuzzy logic' file matching"},
         };
 
-        // all possible file overwrite options - to be used elsewhere (rebuilder)
-        public static OverwriteOption[] OverwriteOptions =
+        // all possible file merge options - to be used elsewhere (rebuilder)
+        public static MergeOption[] MergeOptions =
         {
-            new OverwriteOption {Enum = OverwriteOptionEnum.IgnoreSmaller, Tip = "Ignore any source files if their size is less than 90% of the destination file"},
-            new OverwriteOption {Enum = OverwriteOptionEnum.IgnoreOlder, Tip = "Ignore any source files if their modified timestamp is older than the destination file"},
-            new OverwriteOption {Enum = OverwriteOptionEnum.PreserveTimestamp, Tip = "The timestamp of the source file will be used for created or overwritten destination file"},
-            new OverwriteOption {Enum = OverwriteOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"},
+            new MergeOption {Enum = MergeOptionEnum.IgnoreSmaller, Tip = "Ignore any source files if their size is less than 90% of the destination file"},
+            new MergeOption {Enum = MergeOptionEnum.IgnoreOlder, Tip = "Ignore any source files if their modified timestamp is older than the destination file"},
+            new MergeOption {Enum = MergeOptionEnum.PreserveTimestamp, Tip = "The timestamp of the source file will be used for created or overwritten destination file"},
+            new MergeOption {Enum = MergeOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"},
         };
     }
 }

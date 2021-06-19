@@ -24,7 +24,7 @@ namespace ClrVpin.Rebuilder
             StartCommand = new ActionCommand(Start);
             
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
-            OverwriteCriteriaTypesView = new ListCollectionView(CreateOverwriteOptions().ToList());
+            MergeCriteriaTypesView = new ListCollectionView(CreateMergeOptions().ToList());
 
             SourceFolderModel = new FolderTypeModel("Source", Model.Config.SourceFolder, folder =>
             {
@@ -47,7 +47,7 @@ namespace ClrVpin.Rebuilder
         }
 
         public ListCollectionView MatchCriteriaTypesView { get; set; }
-        public ListCollectionView OverwriteCriteriaTypesView { get; set; }
+        public ListCollectionView MergeCriteriaTypesView { get; set; }
         
         public FolderTypeModel SourceFolderModel { get; set; }
         public ObservableCollection<string> DestinationContentTypes { get; set; }
@@ -102,18 +102,18 @@ namespace ClrVpin.Rebuilder
             return matchTypes.ToList();
         }
 
-        private IEnumerable<FeatureType> CreateOverwriteOptions()
+        private IEnumerable<FeatureType> CreateMergeOptions()
         {
-            // show all overwrite options
-            var featureTypes = Config.OverwriteOptions.Select(overwriteOption =>
+            // show all merge options
+            var featureTypes = Config.MergeOptions.Select(mergeOption =>
             {
                 var featureType = new FeatureType
                 {
-                    Description = overwriteOption.Description,
-                    Tip = overwriteOption.Tip,
+                    Description = mergeOption.Description,
+                    Tip = mergeOption.Tip,
                     IsSupported = true,
-                    IsActive = Model.Config.SelectedOverwriteOptions.Contains(overwriteOption.Enum),
-                    SelectedCommand = new ActionCommand(() => Model.Config.SelectedOverwriteOptions.Toggle(overwriteOption.Enum))
+                    IsActive = Model.Config.SelectedMergeOptions.Contains(mergeOption.Enum),
+                    SelectedCommand = new ActionCommand(() => Model.Config.SelectedMergeOptions.Toggle(mergeOption.Enum))
                 };
 
                 return featureType;

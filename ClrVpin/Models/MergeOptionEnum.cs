@@ -2,7 +2,7 @@
 
 namespace ClrVpin.Models
 {
-    public enum OverwriteOptionEnum
+    public enum MergeOptionEnum
     {
         [Description("Preserve Source Timestamp")] PreserveTimestamp,
         [Description("Ignore Older Files")] IgnoreOlder,
