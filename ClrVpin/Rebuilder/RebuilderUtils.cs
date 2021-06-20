@@ -124,23 +124,26 @@ namespace ClrVpin.Rebuilder
                 //var path = Path.GetDirectoryName(hit.Path);
                 //var newFile = Path.Combine(path!, $"{game.Description}{extension}");
 
-                // todo; split file name
-                var backupFileName = TableUtils.CreateBackupFileName(hit.Path);
+                // todo; move generic merge code (after checking complete) into Utils
+                merged = true;
 
                 var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
-                Logger.Info($"{prefix}Merging file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, existing: {destinationFileInfo?.FullName ?? "n/a"}, source: {hit.Path}, backup-existing: {backupFileName}, backup-source: {backupFileName}");
+                Logger.Info($"{prefix}Merging file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, existing: {destinationFileInfo?.FullName ?? "n/a"}, source: {hit.Path}");
 
                 if (!Model.Config.TrainerWheels)
                 {
                     if (destinationFileInfo != null)
-                        File.Copy(destinationFileInfo.FullName, backupFileName, true);
+                    {
+                        // todo; add options checking!
+                        TableUtils.Backup(destinationFileInfo.FullName, "deleted");
+                    }
 
-                    File.Copy(hit.Path, backupFileName, true);
+                    TableUtils.Backup(hit.Path, "merged");
                     File.Move(hit.Path, destinationFileName, true);
                 }
             }
 
-            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, false, merged, hit.Path, hit.Size ?? 0);
+            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, merged ? FixFileTypeEnum.Merged : null, hit.Path, hit.Size ?? 0);
         }
 
         private static string _activeBackupFolder;

@@ -59,7 +59,7 @@ namespace ClrVpin.Shared
 
             var unsupportedFiles = allFiles.Where(file => !supportedExtensions.Any(file.EndsWith));
 
-            var unsupportedFixFiles = unsupportedFiles.Select(file => new FixFileDetail(contentType.Enum, HitTypeEnum.Unsupported, false, false, file, new FileInfo(file).Length));
+            var unsupportedFixFiles = unsupportedFiles.Select(file => new FixFileDetail(contentType.Enum, HitTypeEnum.Unsupported, null, file, new FileInfo(file).Length));
 
             return unsupportedFixFiles.ToList();
         }
@@ -109,14 +109,12 @@ namespace ClrVpin.Shared
                 }
                 else
                 {
-                    unknownMediaFiles.Add(new FixFileDetail(contentTypeEnum, HitTypeEnum.Unknown, false, false, mediaFile, new FileInfo(mediaFile).Length));
+                    unknownMediaFiles.Add(new FixFileDetail(contentTypeEnum, HitTypeEnum.Unknown, null, mediaFile, new FileInfo(mediaFile).Length));
                 }
             }
 
             return unknownMediaFiles;
         }
-
-        private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
 
         public static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
         {
@@ -135,29 +133,16 @@ namespace ClrVpin.Shared
             return deleted;
         }
 
-        private static FixFileDetail Delete(Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
-        {
-            var deleted = false;
-
-            // only delete file if configured to do so
-            if (supportedHitTypes.Contains(hit.Type))
-            {
-                deleted = true;
-                Delete(hit.Path, hit.Type, hit.ContentType);
-            }
-
-            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, deleted, false, hit.Path, hit.Size ?? 0);
-        }
-
         public static void Delete(string file, HitTypeEnum hitType, string contentType)
         {
-            var backupFileName = CreateBackupFileName(file);
-
             var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
-            Logger.Warn($"{prefix}Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}, backup: {backupFileName}");
+            Logger.Warn($"{prefix}Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
 
             if (!Model.Config.TrainerWheels)
-                File.Move(file, backupFileName, true);
+            {
+                Backup(file, "deleted");
+                File.Delete(file);
+            }
         }
 
         public static FixFileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
@@ -172,24 +157,46 @@ namespace ClrVpin.Shared
                 var path = Path.GetDirectoryName(hit.Path);
                 var newFile = Path.Combine(path!, $"{game.Description}{extension}");
 
-                var backupFileName = CreateBackupFileName(hit.Path);
                 var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
-                Logger.Info($"{prefix}Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}, backup: {backupFileName}");
+                Logger.Info($"{prefix}Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}");
 
                 if (!Model.Config.TrainerWheels)
                 {
-                    File.Copy(hit.Path!, backupFileName, true);
+                    Backup(hit.Path, "renamed");
                     File.Move(hit.Path!, newFile, true);
                 }
             }
 
-            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, false, renamed, hit.Path, hit.Size ?? 0);
+            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, renamed ? FixFileTypeEnum.Renamed : null, hit.Path, hit.Size ?? 0);
         }
 
-        public static string CreateBackupFileName(string file)
+        public static void Backup(string file, string subFolder = "")
         {
-            var baseFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
-            var folder = Path.Combine(_activeBackupFolder, baseFolder);
+            // backup file (aka copy) to the specified sub folder
+            var backupFile = CreateBackupFileName(file, subFolder);
+            File.Copy(file, backupFile, true);
+        }
+
+        private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
+
+        private static FixFileDetail Delete(Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
+        {
+            var deleted = false;
+
+            // only delete file if configured to do so
+            if (supportedHitTypes.Contains(hit.Type))
+            {
+                deleted = true;
+                Delete(hit.Path, hit.Type, hit.ContentType);
+            }
+
+            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, deleted ? FixFileTypeEnum.Deleted : null, hit.Path, hit.Size ?? 0);
+        }
+
+        private static string CreateBackupFileName(string file, string subFolder = "")
+        {
+            var contentFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
+            var folder = Path.Combine(_activeBackupFolder, subFolder, contentFolder);
             var destFileName = Path.Combine(folder, Path.GetFileName(file));
 
             // store backup file in the same folder structure as the source file
@@ -198,7 +205,7 @@ namespace ClrVpin.Shared
 
             return destFileName;
         }
-        
+
         private static string _activeBackupFolder;
     }
 }
