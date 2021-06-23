@@ -54,10 +54,13 @@ namespace ClrVpin.Rebuilder
                 var contentHitCollection = game.Content.ContentHitsCollection.FirstOrDefault(x => x.Type == contentType.Enum && x.Hits.Any());
                 if (contentHitCollection == null)
                     return;
-
+                
+                // todo; for all of the supported hit types.. perform merge.  first one wins.. others to be deleted!
                 if (TableUtils.TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
                 {
                     // valid hit exists.. so merge file and delete any other hits, i.e. other hits aren't as relevant
+                    
+                    // todo; matchedMergedFiles - don't add if canMerge = false
                     matchedMergedFiles.Add(Merge(hit, game, Model.Config.SelectedMatchTypes));
                     matchedUnusedFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedMatchTypes));
                 }
@@ -75,15 +78,15 @@ namespace ClrVpin.Rebuilder
             });
 
             // delete files NOT associated with games, i.e. unknown files
-            otherFileDetails.ForEach(x =>
-            {
-                if (x.HitType == HitTypeEnum.Unknown && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
-                    x.HitType == HitTypeEnum.Unsupported && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
-                {
-                    x.Deleted = true;
-                    TableUtils.Delete(x.Path, x.HitType, null);
-                }
-            });
+            //otherFileDetails.ForEach(x =>
+            //{
+            //    if (x.HitType == HitTypeEnum.Unknown && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
+            //        x.HitType == HitTypeEnum.Unsupported && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
+            //    {
+            //        x.Deleted = true;
+            //        TableUtils.Delete(x.Path, x.HitType, null);
+            //    }
+            //});
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
             if (Directory.Exists(_activeBackupFolder))
@@ -101,49 +104,60 @@ namespace ClrVpin.Rebuilder
 
         private static FixFileDetail Merge(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
         {
-            //var matched = new FixFileDetail(hit.ContentTypeEnum, hit.Type, false, false, hit.Path, hit.Size ?? 0);
-            //matchedMergedFiles.Add(matched);
+            var canMerge = false;
+            var sourceFileName = hit.Path;
 
-            var merged = false;
+            // construct the destination file name - i.e. the location the source file will be copied to
+            var contentType = Config.GetDestinationContentType();
+            var destinationFileName = Path.Combine(contentType.Folder, hit.File);
 
             if (supportedHitTypes.Contains(hit.Type))
             {
-                // get destination file details (if any)
-                var contentType = Config.GetDestinationContentType();
-                var destinationFileName = Path.Combine(contentType.Folder, hit.File);
-                FileInfo destinationFileInfo = null;
-
-                if (File.Exists(destinationFileName))
+                canMerge = CanMerge(hit.Type.GetDescription(), sourceFileName, destinationFileName);
+                if (canMerge)
                 {
-                    destinationFileInfo = new FileInfo(destinationFileName);
+                    var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
+                    Logger.Info($"{prefix}Merging file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, source: {sourceFileName}, destination: {destinationFileName}");
 
-                    // todo; apply merge options
-                }
-
-                //var extension = Path.GetExtension(hit.Path);
-                //var path = Path.GetDirectoryName(hit.Path);
-                //var newFile = Path.Combine(path!, $"{game.Description}{extension}");
-
-                // todo; move generic merge code (after checking complete) into Utils
-                merged = true;
-
-                var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
-                Logger.Info($"{prefix}Merging file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, existing: {destinationFileInfo?.FullName ?? "n/a"}, source: {hit.Path}");
-
-                if (!Model.Config.TrainerWheels)
-                {
-                    if (destinationFileInfo != null)
+                    if (!Model.Config.TrainerWheels)
                     {
-                        // todo; add options checking!
-                        TableUtils.Backup(destinationFileInfo.FullName, "deleted");
-                    }
+                        if (File.Exists(destinationFileName))
+                            TableUtils.Backup(destinationFileName, "deleted");
 
-                    TableUtils.Backup(hit.Path, "merged");
-                    File.Move(hit.Path, destinationFileName, true);
+                        TableUtils.Backup(sourceFileName, "merged");
+
+                        // todo; preserve timestamp
+                        // todo; copy vs move.. i.e. delete source file
+                        File.Move(sourceFileName, destinationFileName, true);
+                    }
                 }
             }
 
-            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, merged ? FixFileTypeEnum.Merged : null, hit.Path, hit.Size ?? 0);
+            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, canMerge ? FixFileTypeEnum.Merged : null, sourceFileName, hit.Size ?? 0);
+        }
+
+        private static bool CanMerge(string hitTypeDescription, string sourceFileName, string destinationFileName)
+        {
+            if (File.Exists(destinationFileName))
+            {
+                var sourceFileInfo = new FileInfo(sourceFileName);
+                var destinationFileInfo = new FileInfo(destinationFileName);
+
+                if (Model.Config.SelectedMergeOptions.Contains(MergeOptionEnum.IgnoreSmaller) && sourceFileInfo.Length * 0.5 < destinationFileInfo.Length)
+                    return SkipMerge(MergeOptionEnum.IgnoreSmaller, hitTypeDescription, sourceFileInfo, destinationFileInfo);
+                if (Model.Config.SelectedMergeOptions.Contains(MergeOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime < destinationFileInfo.LastWriteTime)
+                    return SkipMerge(MergeOptionEnum.IgnoreOlder, hitTypeDescription, sourceFileInfo, destinationFileInfo);
+            }
+
+            // if the file doesn't exist
+            return true;
+        }
+
+        private static bool SkipMerge(MergeOptionEnum mergeOption, string hitTypeDescription, FileInfo sourceFileInfo, FileInfo destinationFileInfo)
+        {
+            Logger.Info(
+                $"Skipped merging - '{mergeOption.GetDescription()}', type: {hitTypeDescription}, existing: {destinationFileInfo.FullName} ({destinationFileInfo.Length}), source: {sourceFileInfo.FullName} ({sourceFileInfo.Length})");
+            return false;
         }
 
         private static string _activeBackupFolder;

@@ -6,7 +6,7 @@ namespace ClrVpin.Models
     {
         [Description("Preserve Source Timestamp")] PreserveTimestamp,
         [Description("Ignore Older Files")] IgnoreOlder,
-        [Description("Ignore Smaller Files (90% or less)")] IgnoreSmaller,
+        [Description("Ignore Smaller Files (less than 50%)")] IgnoreSmaller,
         [Description("Remove Matched Source Files")] RemoveSource
     }
 }

@@ -189,9 +189,9 @@ namespace ClrVpin.Models
         // all possible file merge options - to be used elsewhere (rebuilder)
         public static MergeOption[] MergeOptions =
         {
-            new MergeOption {Enum = MergeOptionEnum.IgnoreSmaller, Tip = "Ignore any source files if their size is less than 90% of the destination file"},
-            new MergeOption {Enum = MergeOptionEnum.IgnoreOlder, Tip = "Ignore any source files if their modified timestamp is older than the destination file"},
-            new MergeOption {Enum = MergeOptionEnum.PreserveTimestamp, Tip = "The timestamp of the source file will be used for created or overwritten destination file"},
+            new MergeOption {Enum = MergeOptionEnum.IgnoreSmaller, Tip = "Ignore source files that are significantly smaller size (<50%) than the existing files"},
+            new MergeOption {Enum = MergeOptionEnum.IgnoreOlder, Tip = "Ignore source files that are older (using modified timestamp) than the existing files"},
+            new MergeOption {Enum = MergeOptionEnum.PreserveTimestamp, Tip = "The (modified) timestamp of the source file will be used for created or overwritten destination file"},
             new MergeOption {Enum = MergeOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"},
         };
     }
