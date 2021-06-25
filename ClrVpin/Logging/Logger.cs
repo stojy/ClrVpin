@@ -9,26 +9,14 @@ namespace ClrVpin.Logging
 {
     public class Logger
     {
-        public static ObservableCollection<Log> Logs { get; } = new ObservableCollection<Log>();
-        public static string File { get; }
-
         static Logger()
         {
             _dispatch = Dispatcher.CurrentDispatcher;
             File = GetLogFile();
         }
-        
-        private static string GetLogFile()
-        {
-            var fileTarget = (FileTarget)LogManager.Configuration.FindTargetByName("Service");
-            
-            // Need to set timestamp here if filename uses date. e.g. filename="${basedir}/logs/${shortdate}/trace.log"
-            var logEventInfo = new LogEventInfo { TimeStamp = DateTime.Now };
-            var fileName = fileTarget.FileName.Render(logEventInfo);
-            var path = Path.GetFullPath(fileName);
 
-            return path;
-        }
+        public static ObservableCollection<Log> Logs { get; } = new ObservableCollection<Log>();
+        public static string File { get; }
 
         public static void Info(string message)
         {
@@ -52,6 +40,23 @@ namespace ClrVpin.Logging
         {
             _logger.Error(message);
             Add(Level.Error, message);
+        }
+
+        public static void Clear()
+        {
+            _dispatch.BeginInvoke(() => Logs.Clear());
+        }
+
+        private static string GetLogFile()
+        {
+            var fileTarget = (FileTarget) LogManager.Configuration.FindTargetByName("Service");
+
+            // Need to set timestamp here if filename uses date. e.g. filename="${basedir}/logs/${shortdate}/trace.log"
+            var logEventInfo = new LogEventInfo {TimeStamp = DateTime.Now};
+            var fileName = fileTarget.FileName.Render(logEventInfo);
+            var path = Path.GetFullPath(fileName);
+
+            return path;
         }
 
         private static void Add(Level level, string message)

@@ -132,6 +132,7 @@ namespace ClrVpin.Rebuilder
         private async void Start()
         {
             _rebuilderWindow.Hide();
+            Logging.Logger.Clear();
 
             var progress = new Progress();
             progress.Show(_rebuilderWindow);

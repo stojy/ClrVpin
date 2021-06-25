@@ -132,6 +132,7 @@ namespace ClrVpin.Scanner
         private async void Start()
         {
             _scannerWindow.Hide();
+            Logging.Logger.Clear();
 
             var progress = new Progress();
             progress.Show(_scannerWindow);
