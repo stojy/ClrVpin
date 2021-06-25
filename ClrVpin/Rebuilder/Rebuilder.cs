@@ -140,16 +140,16 @@ namespace ClrVpin.Rebuilder
             var games = TableUtils.GetGamesFromDatabases();
 
             progress.Update("Checking Files", 30);
-            var unknownFiles = RebuilderUtils.Check(games);
+            var otherFiles = RebuilderUtils.Check(games);
 
             progress.Update("Merging Files", 60);
-            var mergedFiles = await RebuilderUtils.MergeAsync(games, unknownFiles, Model.Config.BackupFolder);
+            var mergedFiles = await RebuilderUtils.MergeAsync(games, otherFiles, Model.Config.BackupFolder);
 
             progress.Update("Preparing Results", 100);
             await Task.Delay(10);
             Games = new ObservableCollection<Game>(games);
             //ShowResults(fixFiles.Concat(unknownFiles).ToList(), progress.Duration);
-            ShowResults(unknownFiles.ToList(), progress.Duration);
+            ShowResults(otherFiles.ToList(), progress.Duration);
 
             progress.Close();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Utils
 {
@@ -35,6 +36,11 @@ namespace Utils
                 source.Remove(item);
             else
                 source.Add(item);
+        }
+
+        public static bool In<T>(this T item, IEnumerable<T> source)
+        {
+            return source.Contains(item);
         }
     }
 }

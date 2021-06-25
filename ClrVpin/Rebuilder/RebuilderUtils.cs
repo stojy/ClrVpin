@@ -37,56 +37,29 @@ namespace ClrVpin.Rebuilder
             return mergedFileDetails;
         }
 
-        private static List<FixFileDetail> Merge(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
+        private static List<FixFileDetail> Merge(IEnumerable<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
         {
             _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
 
-            var deletedFiles = new List<FixFileDetail>();
-            var matchedMergedFiles = new List<FixFileDetail>();
-            var matchedUnusedFiles = new List<FixFileDetail>();
-
+            // filter games to only those that have hits for the destination content type
+            // - the hits are for ALL criteria, i.e. irrespective of whether they are selected or not!
             var contentType = Config.GetDestinationContentType();
+            var gamesWithContent = games.Where(g => g.Content.ContentHitsCollection.Any(x => x.Type == contentType.Enum && x.Hits.Any()));
 
             // merge files associated with games, if they satisfy the merge criteria
-            games.ForEach(game =>
+            var mergedFileDetails = new List<FixFileDetail>();
+            gamesWithContent.ForEach(game =>
             {
-                // determine the destination content type and relevant hit collection from the games collection
-                var contentHitCollection = game.Content.ContentHitsCollection.FirstOrDefault(x => x.Type == contentType.Enum && x.Hits.Any());
-                if (contentHitCollection == null)
-                    return;
+                // retrieve the relevant content hit collection
+                var contentHitCollection = game.Content.ContentHitsCollection.First(x => x.Hits.Any());
                 
-                // todo; for all of the supported hit types.. perform merge.  first one wins.. others to be deleted!
-                if (TableUtils.TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
-                {
-                    // valid hit exists.. so merge file and delete any other hits, i.e. other hits aren't as relevant
-                    
-                    // todo; matchedMergedFiles - don't add if canMerge = false
-                    matchedMergedFiles.Add(Merge(hit, game, Model.Config.SelectedMatchTypes));
-                    matchedUnusedFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedMatchTypes));
-                }
-                else if (TableUtils.TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
-                {
-                    // for all 3 hit types.. rename file and delete other entries
-                    deletedFiles.Add(TableUtils.Rename(hit, game, Model.Config.SelectedMatchTypes));
-                    matchedUnusedFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedMatchTypes));
-                }
+                // merge ALL of the selected hit types
+                // - if their are multiple hit type matches.. then a subsequent 'scanner' (aka clean) run will be required
+                var mergeableHits = contentHitCollection.Hits.Where(hit => hit.Type.In(Config.FixablePrioritizedHitTypeEnums));
 
-                // other hit types are n/a
-                // - duplicate extension - already taken care as a valid hit will exist
-                // - unknown - not associated with a game.. handled elsewhere
-                // - missing - can't be fixed.. requires file to be downloaded
+                // merge each hit
+                mergeableHits.ForEach(hit => mergedFileDetails.Add(Merge(hit, game, Model.Config.SelectedMatchTypes)));
             });
-
-            // delete files NOT associated with games, i.e. unknown files
-            //otherFileDetails.ForEach(x =>
-            //{
-            //    if (x.HitType == HitTypeEnum.Unknown && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
-            //        x.HitType == HitTypeEnum.Unsupported && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
-            //    {
-            //        x.Deleted = true;
-            //        TableUtils.Delete(x.Path, x.HitType, null);
-            //    }
-            //});
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
             if (Directory.Exists(_activeBackupFolder))
@@ -99,7 +72,7 @@ namespace ClrVpin.Rebuilder
                 }
             }
 
-            return matchedUnusedFiles;
+            return mergedFileDetails;
         }
 
         private static FixFileDetail Merge(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)

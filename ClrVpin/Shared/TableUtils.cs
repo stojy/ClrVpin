@@ -75,6 +75,7 @@ namespace ClrVpin.Shared
             var unknownMediaFiles = new List<FixFileDetail>();
 
             // for each file, associate it with a game or if one can't be found, then mark it as unknown
+            // - association is done irrespective of the user's selected preference, i.e. the use selections are checked elsewhere
             foreach (var mediaFile in mediaFiles)
             {
                 Game matchedGame;

@@ -162,6 +162,16 @@ namespace ClrVpin.Models
         public ObservableCollection<HitTypeEnum> SelectedCheckHitTypes;
         public ObservableCollection<HitTypeEnum> SelectedFixHitTypes;
 
+        // hit types in priority order as determined by matching algorithm - refer AssociateMediaFilesWithGames
+        public static HitTypeEnum[] FixablePrioritizedHitTypeEnums =
+        {
+            HitTypeEnum.Valid,
+            HitTypeEnum.DuplicateExtension,
+            HitTypeEnum.WrongCase,
+            HitTypeEnum.TableName,
+            HitTypeEnum.Fuzzy
+        };
+
         // all possible hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] HitTypes =
         {
