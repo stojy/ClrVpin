@@ -193,6 +193,7 @@ namespace ClrVpin.Models
         {
             new HitType {Enum = HitTypeEnum.TableName, Tip = "Allow matching against table instead of the description"},
             new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Case insensitive file matching"},
+            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Allow matching against multiple files with same file name but different file extensions (e.g. mkv and mp4"},
             new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "'Fuzzy logic' file matching"},
         };
 

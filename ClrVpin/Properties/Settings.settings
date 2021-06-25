@@ -43,7 +43,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SelectedMatchTypes" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[0, 1, 2, 3]</Value>
+      <Value Profile="(Default)">[0, 1, 2, 3, 4]</Value>
     </Setting>
     <Setting Name="MergeOptions" Type="System.String" Scope="User">
       <Value Profile="(Default)">[0,1,2,3,4]</Value>

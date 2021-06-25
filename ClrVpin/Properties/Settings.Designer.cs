@@ -164,7 +164,7 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("[0, 1, 2, 3]")]
+        [global::System.Configuration.DefaultSettingValueAttribute("[0, 1, 2, 3, 4]")]
         public string SelectedMatchTypes {
             get {
                 return ((string)(this["SelectedMatchTypes"]));
