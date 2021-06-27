@@ -157,22 +157,18 @@ namespace ClrVpin.Rebuilder
 
         private void ShowResults(ICollection<FixFileDetail> fixFiles, TimeSpan duration)
         {
-            var scannerResults = new ScannerResults(Games);
-            scannerResults.Show(_rebuilderWindow, 5, 5);
+            var rebuilderResults = new RebuilderResults(Games);
+            rebuilderResults.Show(_rebuilderWindow, 5, 5);
 
-            var scannerStatistics = new ScannerStatistics(Games, duration, fixFiles);
-            scannerStatistics.Show(_rebuilderWindow, 5, scannerResults.Window.Height + WindowMargin, scannerResults.Window.Width);
-
-            var scannerExplorer = new ScannerExplorer(Games);
-            scannerExplorer.Show(_rebuilderWindow, scannerStatistics.Window.Width + WindowMargin, scannerResults.Window.Height + WindowMargin, scannerStatistics.Window.Height);
+            var rebuilderStatistics = new RebuilderStatistics(Games, duration, fixFiles);
+            rebuilderStatistics.Show(_rebuilderWindow, 5, rebuilderResults.Window.Height + WindowMargin, rebuilderResults.Window.Width);
 
             _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_rebuilderWindow, scannerResults.Window.Width + WindowMargin, 5, scannerResults.Window.Height);
+            _loggingWindow.Show(_rebuilderWindow, rebuilderResults.Window.Width + WindowMargin, 5, rebuilderResults.Window.Height);
 
-            scannerResults.Window.Closed += (_, _) =>
+            rebuilderResults.Window.Closed += (_, _) =>
             {
-                scannerStatistics.Close();
-                scannerExplorer.Close();
+                rebuilderStatistics.Close();
                 _loggingWindow.Close();
                 _rebuilderWindow.Show();
             };

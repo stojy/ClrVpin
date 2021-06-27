@@ -11,12 +11,12 @@ using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Rebuilder
 {
     [AddINotifyPropertyChangedInterface]
-    public class ScannerResults
+    public class RebuilderResults
     {
-        public ScannerResults(ObservableCollection<Game> games)
+        public RebuilderResults(ObservableCollection<Game> games)
         {
             Games = games;
 
@@ -51,21 +51,21 @@ namespace ClrVpin.Scanner
             Window = new MaterialWindow
             {
                 Owner = parentWindow,
-                Title = "Scanner Table Results (Issues)",
+                Title = "Rebuilder Table Results (Issues)",
                 Left = left,
                 Top = top,
                 Width = 600,
                 Height = 500,
                 Content = this,
                 Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("ScannerResultsTemplate") as DataTemplate
+                ContentTemplate = parentWindow.FindResource("RebuilderResultsTemplate") as DataTemplate
             };
             Window.Show();
         }
 
         private IEnumerable<FeatureType> CreateFilteredHitTypes()
         {
-            // show all hit types, but assign enabled and active based on the scanner configuration
+            // show all hit types, but assign enabled and active based on the rebuilder configuration
             var filteredContentTypes = Config.HitTypes.Select(hitType => new FeatureType
             {
                 Description = hitType.Description,
@@ -79,7 +79,7 @@ namespace ClrVpin.Scanner
 
         private IEnumerable<FeatureType> CreateFilteredContentTypes()
         {
-            // show all content types, but assign enabled and active based on the scanner configuration
+            // show all content types, but assign enabled and active based on the rebuilder configuration
             var filteredContentTypes = Config.ContentTypes.Select(contentType => new FeatureType
             {
                 Description = contentType.Description,
