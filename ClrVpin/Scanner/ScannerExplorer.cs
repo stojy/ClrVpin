@@ -14,27 +14,27 @@ namespace ClrVpin.Scanner
             Games = games;
         }
 
-        public void Show(Window parentWindow, double left, double top, double height)
+        public void Show(Window parentWindow, double left, double top)
         {
-            _window = new MaterialWindow
+            Window = new MaterialWindow
             {
                 Owner = parentWindow,
                 Title = "Scanner Explorer",
                 Left = left,
                 Top = top,
-                MinHeight = 500,
-                Height = height,
+                Width = Model.ScreenWorkArea.Width - left - 5,
+                Height = (Model.ScreenWorkArea.Height - 10) / 3,
                 MinWidth = 400,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
             };
-            _window.Show();
+            Window.Show();
         }
 
-        public void Close() => _window.Close();
+        public void Close() => Window.Close();
 
-        private Window _window;
+        public Window Window { get; private set; }
         public ObservableCollection<Game> Games { get; }
     }
 }

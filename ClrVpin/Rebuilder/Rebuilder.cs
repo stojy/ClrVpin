@@ -157,18 +157,18 @@ namespace ClrVpin.Rebuilder
 
         private void ShowResults(ICollection<FixFileDetail> fixFiles, TimeSpan duration)
         {
-            var rebuilderResults = new RebuilderResults(Games);
-            rebuilderResults.Show(_rebuilderWindow, 5, 5);
-
             var rebuilderStatistics = new RebuilderStatistics(Games, duration, fixFiles);
-            rebuilderStatistics.Show(_rebuilderWindow, 5, rebuilderResults.Window.Height + WindowMargin, rebuilderResults.Window.Width);
+            rebuilderStatistics.Show(_rebuilderWindow, WindowMargin, WindowMargin);
+
+            var rebuilderResults = new RebuilderResults(Games);
+            rebuilderResults.Show(_rebuilderWindow, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
 
             _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_rebuilderWindow, rebuilderResults.Window.Width + WindowMargin, 5, rebuilderResults.Window.Height);
+            _loggingWindow.Show(_rebuilderWindow, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
 
-            rebuilderResults.Window.Closed += (_, _) =>
+            rebuilderStatistics.Window.Closed += (_, _) =>
             {
-                rebuilderStatistics.Close();
+                rebuilderResults.Close();
                 _loggingWindow.Close();
                 _rebuilderWindow.Show();
             };
@@ -178,6 +178,7 @@ namespace ClrVpin.Rebuilder
 
         private Window _rebuilderWindow;
         private Logging.Logging _loggingWindow;
-        private const int WindowMargin = 12;
+
+        private const int WindowMargin = 5;
     }
 }

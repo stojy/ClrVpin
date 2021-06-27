@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System.Drawing;
+using System.Text;
+using System.Windows;
+using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 
@@ -20,6 +23,8 @@ namespace ClrVpin
 
             Activated += (_, _) =>
             {
+                Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
+
                 if (Model.Config.WasReset && !_configWasResetHandled)
                 {
                     _configWasResetHandled = true;

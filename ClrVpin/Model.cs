@@ -22,5 +22,6 @@ namespace ClrVpin
         public ActionCommand AboutCommand { get; set; }
 
         public static Config Config { get; set; }
+        public static Rect ScreenWorkArea { get; set; }
     }
 }

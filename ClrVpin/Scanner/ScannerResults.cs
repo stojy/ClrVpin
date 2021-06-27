@@ -46,7 +46,7 @@ namespace ClrVpin.Scanner
 
         public Window Window { get; set; }
 
-        public void Show(Window parentWindow, int left, int top)
+        public void Show(Window parentWindow, double left, double top)
         {
             Window = new MaterialWindow
             {
@@ -54,14 +54,16 @@ namespace ClrVpin.Scanner
                 Title = "Scanner Table Results (Issues)",
                 Left = left,
                 Top = top,
-                Width = 600,
-                Height = 500,
+                Width = Model.ScreenWorkArea.Width - left - 5,
+                Height = (Model.ScreenWorkArea.Height - 10) / 3,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ScannerResultsTemplate") as DataTemplate
             };
             Window.Show();
         }
+
+        public void Close() => Window.Close();
 
         private IEnumerable<FeatureType> CreateFilteredHitTypes()
         {

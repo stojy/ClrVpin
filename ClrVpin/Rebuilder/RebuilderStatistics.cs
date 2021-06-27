@@ -26,7 +26,7 @@ namespace ClrVpin.Rebuilder
         public string Statistics { get; set; }
         public Window Window { get; private set; }
 
-        public void Show(Window parentWindow, double left, double top, double width)
+        public void Show(Window parentWindow, double left, double top)
         {
             Window = new MaterialWindow
             {
@@ -34,8 +34,8 @@ namespace ClrVpin.Rebuilder
                 Title = "Rebuilder Statistics",
                 Left = left,
                 Top = top,
-                Width = width,
-                Height = 885,
+                Width = 600,
+                Height = Model.ScreenWorkArea.Height - 10,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("RebuilderStatisticsTemplate") as DataTemplate

@@ -46,7 +46,7 @@ namespace ClrVpin.Rebuilder
 
         public Window Window { get; set; }
 
-        public void Show(Window parentWindow, int left, int top)
+        public void Show(Window parentWindow, double left, double top)
         {
             Window = new MaterialWindow
             {
@@ -54,8 +54,8 @@ namespace ClrVpin.Rebuilder
                 Title = "Rebuilder Table Results (Issues)",
                 Left = left,
                 Top = top,
-                Width = 600,
-                Height = 500,
+                Width = Model.ScreenWorkArea.Width - left - 5,
+                Height = (Model.ScreenWorkArea.Height - 10) / 2,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("RebuilderResultsTemplate") as DataTemplate
@@ -154,5 +154,10 @@ namespace ClrVpin.Rebuilder
         private readonly IEnumerable<FeatureType> _filteredHitTypes;
 
         private DispatcherTimer _searchTextChangedDelayTimer;
+
+        public void Close()
+        {
+            Window.Close();
+        }
     }
 }

@@ -21,18 +21,18 @@ namespace ClrVpin.Logging
         public string File { get; }
         public ICommand NavigateToFileCommand { get; }
 
-        public void Show(Window parentWindow, double left, double top, double height)
+        public void Show(Window parentWindow, double left, double top)
         {
             _window = new MaterialWindow
             {
                 Owner = parentWindow,
                 Title = "Logs",
                 WindowStartupLocation = WindowStartupLocation.Manual,
-                Height = height,
-                Width = 1920,
-                Content = this,
                 Left = left,
                 Top = top,
+                Width = Model.ScreenWorkArea.Width - left - 5,
+                Height = Model.ScreenWorkArea.Height - top - 5,
+                Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("LoggingTemplate") as DataTemplate
             };

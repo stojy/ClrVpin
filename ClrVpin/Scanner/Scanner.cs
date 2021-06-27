@@ -158,21 +158,21 @@ namespace ClrVpin.Scanner
 
         private void ShowResults(ICollection<FixFileDetail> fixFiles, TimeSpan duration)
         {
-            var scannerResults = new ScannerResults(Games);
-            scannerResults.Show(_scannerWindow, 5, 5);
-
             var scannerStatistics = new ScannerStatistics(Games, duration, fixFiles);
-            scannerStatistics.Show(_scannerWindow, 5, scannerResults.Window.Height + WindowMargin, scannerResults.Window.Width);
+            scannerStatistics.Show(_scannerWindow, WindowMargin, WindowMargin);
+
+            var scannerResults = new ScannerResults(Games);
+            scannerResults.Show(_scannerWindow, scannerStatistics.Window.Left + scannerStatistics.Window.Width + WindowMargin, scannerStatistics.Window.Top);
 
             var scannerExplorer = new ScannerExplorer(Games);
-            scannerExplorer.Show(_scannerWindow, scannerStatistics.Window.Width + WindowMargin, scannerResults.Window.Height + WindowMargin, scannerStatistics.Window.Height);
+            scannerExplorer.Show(_scannerWindow, scannerResults.Window.Left, scannerResults.Window.Top + scannerResults.Window.Height + WindowMargin);
 
             _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_scannerWindow, scannerResults.Window.Width + WindowMargin, 5, scannerResults.Window.Height);
+            _loggingWindow.Show(_scannerWindow, scannerExplorer.Window.Left, scannerExplorer.Window.Top + scannerExplorer.Window.Height + WindowMargin);
 
-            scannerResults.Window.Closed += (_, _) =>
+            scannerStatistics.Window.Closed += (_, _) =>
             {
-                scannerStatistics.Close();
+                scannerResults.Close();
                 scannerExplorer.Close();
                 _loggingWindow.Close();
                 _scannerWindow.Show();
@@ -182,6 +182,6 @@ namespace ClrVpin.Scanner
         private readonly IEnumerable<FeatureType> _fixHitTypes;
         private Window _scannerWindow;
         private Logging.Logging _loggingWindow;
-        private const int WindowMargin = 12;
+        private const int WindowMargin = 5;
     }
 }
