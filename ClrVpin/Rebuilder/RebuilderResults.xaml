@@ -70,7 +70,7 @@
             </ItemsControl>
           </GroupBox>
 
-          <GroupBox Margin="5" Padding="2" Header="Criteria">
+          <GroupBox Margin="5" Padding="2" Header="Criteria To Match">
             <ItemsControl ItemsSource="{Binding FilteredHitTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">

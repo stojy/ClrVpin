@@ -23,7 +23,7 @@ namespace ClrVpin.Rebuilder
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
 
-            _filteredContentTypes = CreateFilteredContentTypes();
+            _filteredContentTypes = CreateFilteredDestinationContentTypes();
             FilteredContentTypesView = new ListCollectionView(_filteredContentTypes.ToList());
 
             _filteredHitTypes = CreateFilteredHitTypes();
@@ -69,23 +69,24 @@ namespace ClrVpin.Rebuilder
             var filteredContentTypes = Config.HitTypes.Select(hitType => new FeatureType
             {
                 Description = hitType.Description,
-                IsSupported = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum),
-                IsActive = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum),
+                IsSupported = Model.Config.SelectedMatchTypes.Contains(hitType.Enum),
+                IsActive = Model.Config.SelectedMatchTypes.Contains(hitType.Enum),
                 SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
             });
 
             return filteredContentTypes.ToList();
         }
 
-        private IEnumerable<FeatureType> CreateFilteredContentTypes()
+        private IEnumerable<FeatureType> CreateFilteredDestinationContentTypes()
         {
             // show all content types, but assign enabled and active based on the rebuilder configuration
+            // - rebuilder only supports one destination content type, but display them all as a list for consistency with ScannerResults
             var filteredContentTypes = Config.ContentTypes.Select(contentType => new FeatureType
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,
-                IsSupported = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
-                IsActive = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
+                IsSupported = false, // don't allow user to deselect the destination type
+                IsActive = Config.GetDestinationContentType().Enum == contentType.Enum,
                 SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
             });
 
