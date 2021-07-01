@@ -5,8 +5,8 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:scanner="clr-namespace:ClrVpin.Scanner"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:shared="clr-namespace:ClrVpin.Shared">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -43,7 +43,7 @@
 
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />
 
-  <DataTemplate x:Key="ScannerResultsTemplate" DataType="{x:Type scanner:ScannerResults}">
+  <DataTemplate x:Key="ResultsTemplate" DataType="{x:Type shared:Results}">
     <!--dock panel to provide a scrollbar for the treeview-->
     <DockPanel Margin="5">
       <StackPanel DockPanel.Dock="Top">
@@ -70,7 +70,7 @@
             </ItemsControl>
           </GroupBox>
 
-          <GroupBox Margin="5" Padding="2" Header="Criteria">
+          <GroupBox Margin="5" Padding="2" Header="Criteria To Match">
             <ItemsControl ItemsSource="{Binding FilteredHitTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">

@@ -24,13 +24,13 @@
         <ResourceDictionary Source="Scanner/Scanner.xaml" />
         <ResourceDictionary Source="Scanner/ScannerStatistics.xaml" />
         <ResourceDictionary Source="Scanner/ScannerExplorer.xaml" />
-        <ResourceDictionary Source="Scanner/ScannerResults.xaml" />
         
         <ResourceDictionary Source="Rebuilder/Rebuilder.xaml" />
         <ResourceDictionary Source="Rebuilder/RebuilderStatistics.xaml" />
-        <ResourceDictionary Source="Rebuilder/RebuilderResults.xaml" />
 
+        <ResourceDictionary Source="Shared/Results.xaml" />
         <ResourceDictionary Source="Shared/Progress.xaml" />
+
         <ResourceDictionary Source="Settings/Settings.xaml" />
         <ResourceDictionary Source="About/About.xaml" />
         <ResourceDictionary Source="Logging/Logging.xaml" />
