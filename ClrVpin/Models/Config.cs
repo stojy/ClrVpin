@@ -25,17 +25,19 @@ namespace ClrVpin.Models
 
         public Config()
         {
+            AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
+
             // scanner
             SelectedCheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.SelectedCheckContentTypes).Observable;
             SelectedCheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedCheckHitTypes, value => Properties.Settings.Default.SelectedCheckHitTypes = value).Observable;
             SelectedFixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedFixHitTypes, value => Properties.Settings.Default.SelectedFixHitTypes = value).Observable;
-            HitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
+            HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.Valid).ToArray();
 
             // rebuilder
             SelectedMatchTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedMatchTypes, value => Properties.Settings.Default.SelectedMatchTypes = value).Observable;
             SelectedMergeOptions = new ObservableCollectionJson<MergeOptionEnum>(Properties.Settings.Default.MergeOptions, value => Properties.Settings.Default.MergeOptions = value).Observable;
-            MatchTypes.ForEach(x => x.Description = x.Enum.GetDescription());
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            MatchTypes = AllHitTypes.Where(x => x.Enum.In(new []{HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy})).ToArray();
 
             // reset the settings if the user's stored settings version differs to the default version
             if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
@@ -172,30 +174,28 @@ namespace ClrVpin.Models
             HitTypeEnum.Fuzzy
         };
 
-        // all possible hit types - to be used elsewhere (scanner) to create check and fix collections
-        public static HitType[] HitTypes =
+        // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
+        public static HitType[] AllHitTypes =
         {
+            new HitType {Enum = HitTypeEnum.Valid, Tip = "Files that should match but are missing"},
             new HitType {Enum = HitTypeEnum.Missing, Tip = "Files that should match but are missing"},
             new HitType {Enum = HitTypeEnum.TableName, Tip = "Allow matching against table instead of the description"},
-            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Files that match with multiple extensions (e.g. mp3 and wav)"},
+            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Allow matching against multiple files with same file name but different file extensions (e.g. mkv and mp4"},
             new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Case insensitive file matching"},
             new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "'Fuzzy logic' file matching"},
             new HitType {Enum = HitTypeEnum.Unknown, Tip = "Unknown files that don't match any tables"},
             new HitType {Enum = HitTypeEnum.Unsupported, Tip = "Unsupported files that don't match the configured file extension types"}
         };
 
+        // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
+        public static HitType[] HitTypes;
+
         // rebuilder
         public ObservableCollection<HitTypeEnum> SelectedMatchTypes;
         public ObservableCollection<MergeOptionEnum> SelectedMergeOptions;
 
-        // all possible match criteria types - to be used elsewhere (rebuilder)
-        public static HitType[] MatchTypes =
-        {
-            new HitType {Enum = HitTypeEnum.TableName, Tip = "Allow matching against table instead of the description"},
-            new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Case insensitive file matching"},
-            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Allow matching against multiple files with same file name but different file extensions (e.g. mkv and mp4"},
-            new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "'Fuzzy logic' file matching"},
-        };
+        // rebuilder matching criteria types - to be used elsewhere (rebuilder)
+        public static HitType[] MatchTypes;
 
         // all possible file merge options - to be used elsewhere (rebuilder)
         public static MergeOption[] MergeOptions =
