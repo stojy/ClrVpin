@@ -5,7 +5,7 @@ namespace ClrVpin.Models
     public enum HitTypeEnum
     {
         // not displayed
-        [Description("Valid")] Valid,
+        [Description("Perfect Match (no fixes required)")] Valid,
 
         [Description("Table Name Match")] TableName,
 

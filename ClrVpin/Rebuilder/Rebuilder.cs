@@ -94,7 +94,7 @@ namespace ClrVpin.Rebuilder
             // show all match criteria types
             var matchTypes = Config.MatchTypes.Select(matchType =>
             {
-                var featureType = new FeatureType
+                var featureType = new FeatureType((int)matchType.Enum)
                 {
                     Description = matchType.Description,
                     Tip = matchType.Tip,
@@ -114,7 +114,7 @@ namespace ClrVpin.Rebuilder
             // show all merge options
             var featureTypes = Config.MergeOptions.Select(mergeOption =>
             {
-                var featureType = new FeatureType
+                var featureType = new FeatureType((int)mergeOption.Enum)
                 {
                     Description = mergeOption.Description,
                     Tip = mergeOption.Tip,

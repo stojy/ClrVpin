@@ -13,11 +13,16 @@ namespace ClrVpin.Shared
 {
     public abstract class Results
     {
+        // all games referenced in the DB.. irrespective of hits
         public ObservableCollection<Game> Games { get; set; }
+        
+        // games referenced in the DB that have hits
+        public ObservableCollection<Game> HitGames { get; set; }
+
         public ListCollectionView FilteredContentTypesView { get; set; }
         public ListCollectionView FilteredHitTypesView { get; set; }
-        public ListCollectionView SmellyGamesView { get; set; }
-        public ObservableCollection<Game> SmellyGames { get; set; }
+        public ListCollectionView HitGamesView { get; set; }
+
         public ActionCommand<bool> ExpandGamesCommand { get; set; }
         public string SearchText { get; set; } = "";
         public ICommand SearchTextCommand { get; set; }
@@ -38,46 +43,46 @@ namespace ClrVpin.Shared
 
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
-            UpdateSmellyStatus(Games);
-            InitSmellyGamesView();
+            UpdateStatus(Games);
+            InitView();
         }
 
-        protected abstract IEnumerable<FeatureType> CreateFilteredContentTypes();
-        protected abstract IEnumerable<FeatureType> CreateFilteredHitTypes();
+        protected abstract IList<FeatureType> CreateFilteredContentTypes();
+        protected abstract IList<FeatureType> CreateFilteredHitTypes();
 
-        protected void UpdateSmellyStatus(IEnumerable<Game> games)
+        protected void UpdateStatus(IEnumerable<Game> games)
         {
             games.ForEach(game =>
             {
-                // update smelly status of each game based AND filter the view based on the selected content and/or hit criteria
+                // update status of each game based AND filter the view based on the selected content and/or hit criteria
                 game.Content.Update(
-                    () => FilteredContentTypes.Where(x => x.IsActive).Select(x => x.Description),
-                    () => FilteredHitTypes.Where(x => x.IsActive).Select(x => x.Description));
+                    () => FilteredContentTypes.Where(x => x.IsActive).Select(x => x.Id),
+                    () => FilteredHitTypes.Where(x => x.IsActive).Select(x => x.Id));
             });
         }
 
-        protected void UpdateSmellyHitsView()
+        protected void UpdateHitsView()
         {
-            Games.ForEach(game => game.Content.SmellyHitsView.Refresh());
-            SmellyGamesView.Refresh();
+            Games.ForEach(game => game.Content.HitsView.Refresh());
+            HitGamesView.Refresh();
         }
 
         protected void ExpandItems(bool expand)
         {
-            SmellyGames.ForEach(game => game.IsExpanded = expand);
-            SmellyGamesView.Refresh();
+            HitGames.ForEach(game => game.IsExpanded = expand);
+            HitGamesView.Refresh();
         }
 
-        protected void InitSmellyGamesView()
+        protected void InitView()
         {
-            SmellyGames = new ObservableCollection<Game>(Games.Where(game => game.Content.SmellyHitsView.Count > 0));
-            SmellyGamesView = new ListCollectionView(SmellyGames);
+            HitGames = new ObservableCollection<Game>(Games.Where(game => game.Content.Hits.Count > 0));
+            HitGamesView = new ListCollectionView(HitGames);
 
             // text filter
-            SmellyGamesView.Filter += gameObject =>
+            HitGamesView.Filter += gameObject =>
             {
-                // only display games that have smelly hits AND those smelly hits haven't already been filtered out (e.g. filtered on content or hit type)
-                if (((Game) gameObject).Content.SmellyHitsView.Count == 0)
+                // only display games that have hits AND those hits haven't already been filtered out (e.g. filtered on content or hit type)
+                if (((Game) gameObject).Content.HitsView.Count == 0)
                     return false;
 
                 // return hits based on description match against the search text
@@ -94,7 +99,7 @@ namespace ClrVpin.Shared
                 _searchTextChangedDelayTimer.Tick += (_, _) =>
                 {
                     _searchTextChangedDelayTimer.Stop();
-                    SmellyGamesView.Refresh();
+                    HitGamesView.Refresh();
                 };
             }
 

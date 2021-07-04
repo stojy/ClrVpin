@@ -67,7 +67,7 @@ namespace ClrVpin.Scanner
             // show all hit types
             var featureTypes = Config.ContentTypes.Select(contentType =>
             {
-                var featureType = new FeatureType
+                var featureType = new FeatureType((int)contentType.Enum)
                 {
                     Description = contentType.Description,
                     Tip = contentType.Tip,
@@ -87,7 +87,7 @@ namespace ClrVpin.Scanner
             // show all hit types
             var featureTypes = Config.HitTypes.Select(hitType =>
             {
-                var featureType = new FeatureType
+                var featureType = new FeatureType((int)hitType.Enum)
                 {
                     Description = hitType.Description,
                     Tip = hitType.Tip,
@@ -116,7 +116,7 @@ namespace ClrVpin.Scanner
         private static IEnumerable<FeatureType> CreateFixHitTypes()
         {
             // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
-            var contentTypes = Config.HitTypes.Select(hitType => new FeatureType
+            var contentTypes = Config.HitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
                 Tip = hitType.Tip,

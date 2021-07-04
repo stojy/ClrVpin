@@ -36,33 +36,36 @@ namespace ClrVpin.Scanner
             Window.Show();
         }
 
-        protected override IEnumerable<FeatureType> CreateFilteredHitTypes()
+        protected override IList<FeatureType> CreateFilteredContentTypes()
         {
-            // show all hit types, but assign enabled and active based on the scanner configuration
-            var filteredContentTypes = Config.HitTypes.Select(hitType => new FeatureType
+            // show all content types, but assign enabled and active based on the scanner configuration
+            var filteredContentTypes = Config.ContentTypes.Select(contentType => new FeatureType((int)contentType.Enum)
             {
-                Description = hitType.Description,
-                IsSupported = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum),
-                IsActive = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum),
-                SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
+                Description = contentType.Description,
+                Tip = contentType.Tip,
+                
+                // todo; use id
+                IsSupported = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
+                IsActive = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
+                SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 
             return filteredContentTypes.ToList();
         }
 
-        protected override IEnumerable<FeatureType> CreateFilteredContentTypes()
+        protected override IList<FeatureType> CreateFilteredHitTypes()
         {
-            // show all content types, but assign enabled and active based on the scanner configuration
-            var filteredContentTypes = Config.ContentTypes.Select(contentType => new FeatureType
+            // show all hit types, but assign enabled and active based on the scanner configuration
+            // - for completeness the valid hits are also visible, but disabled by default since no fixes were required
+            var filteredContentTypes = Config.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
-                Description = contentType.Description,
-                Tip = contentType.Tip,
-                IsSupported = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
-                IsActive = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
-                SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
+                Description = hitType.Description,
+                IsSupported = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.Valid,
+                IsActive = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum),
+                SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 
-            return filteredContentTypes;
+            return filteredContentTypes.ToList();
         }
     }
 }

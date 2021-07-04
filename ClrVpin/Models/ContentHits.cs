@@ -14,9 +14,8 @@ namespace ClrVpin.Models
         public ContentTypeEnum Type => _contentType.Enum;
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
-        public bool IsMissing => Hits.Any(hit => hit.Type == HitTypeEnum.Missing);
-        public bool IsSmelly => SmellyHits.Any();
-        public IEnumerable<Hit> SmellyHits => Hits.Where(hit => hit.Type != HitTypeEnum.Valid);
+        // todo; remove (expensive) expression getters
+        public bool IsSmelly => Hits.Any(hit => hit.Type != HitTypeEnum.Valid);
 
         public void Add(HitTypeEnum hitType, string path)
         {

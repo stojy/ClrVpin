@@ -13,31 +13,31 @@
     <ResourceDictionary Source="..\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <ContextMenu x:Key="SmellyGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
+  <ContextMenu x:Key="HitGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
     <MenuItem Header="Open File" Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsPresent}" />
     <MenuItem Header="Show in Explorer" Command="{Binding ExplorerCommand}" IsEnabled="{Binding IsPresent}" />
     <MenuItem Header="Copy Path" Command="{Binding CopyPathCommand}" />
   </ContextMenu>
 
-  <Style x:Key="SmellyGameContentStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
+  <Style x:Key="HitGameContentStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
     <Setter Property="FontWeight" Value="Normal" />
-    <Setter Property="ContextMenu" Value="{StaticResource SmellyGameContentContextMenu}" />
+    <Setter Property="ContextMenu" Value="{StaticResource HitGameContentContextMenu}" />
     <Setter Property="controls:MouseDoubleClick.Command" Value="{Binding OpenFileCommand}" />
   </Style>
 
-  <Style x:Key="SmellyGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
+  <Style x:Key="HitGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
   </Style>
 
-  <HierarchicalDataTemplate x:Key="SmellyResultTemplate" DataType="models:Hit">
+  <HierarchicalDataTemplate x:Key="HitResultTemplate" DataType="models:Hit">
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
-  <HierarchicalDataTemplate x:Key="SmellyGamesItemTemplate" DataType="models:Game"
-                            ItemsSource="{Binding Content.SmellyHitsView}"
-                            ItemTemplate="{StaticResource SmellyResultTemplate}"
-                            ItemContainerStyle="{StaticResource SmellyGameContentStyle}">
+  <HierarchicalDataTemplate x:Key="HitGamesItemTemplate" DataType="models:Game"
+                            ItemsSource="{Binding Content.HitsView}"
+                            ItemTemplate="{StaticResource HitResultTemplate}"
+                            ItemContainerStyle="{StaticResource HitGameContentStyle}">
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
@@ -70,7 +70,7 @@
             </ItemsControl>
           </GroupBox>
 
-          <GroupBox Margin="5" Padding="2" Header="Criteria To Match">
+          <GroupBox Margin="5" Padding="2" Header="Criteria">
             <ItemsControl ItemsSource="{Binding FilteredHitTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">
@@ -89,17 +89,16 @@
 
           <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right">
             <TextBlock Text="Total: " />
-            <TextBlock Text="{Binding SmellyGamesView.Count}" />
+            <TextBlock Text="{Binding HitGamesView.Count}" />
             <TextBlock Text=" / " />
             <TextBlock Text="{Binding Games.Count}" />
           </WrapPanel>
         </DockPanel>
       </StackPanel>
 
-      <TreeView DockPanel.Dock="Bottom" ItemsSource="{Binding SmellyGamesView}"
-                ItemTemplate="{StaticResource SmellyGamesItemTemplate}" 
-                ItemContainerStyle="{StaticResource SmellyGameStyle}" />
-      <!--ItemContainerStyle="{StaticResource SmellyGameStyle}"-->
+      <TreeView DockPanel.Dock="Bottom" ItemsSource="{Binding HitGamesView}"
+                ItemTemplate="{StaticResource HitGamesItemTemplate}" 
+                ItemContainerStyle="{StaticResource HitGameStyle}" />
     </DockPanel>
 
   </DataTemplate>

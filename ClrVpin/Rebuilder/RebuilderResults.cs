@@ -36,31 +36,32 @@ namespace ClrVpin.Rebuilder
             Window.Show();
         }
 
-        protected override IEnumerable<FeatureType> CreateFilteredContentTypes()
+        protected override IList<FeatureType> CreateFilteredContentTypes()
         {
             // show all content types, but assign enabled and active based on the rebuilder configuration
             // - rebuilder only supports one destination content type, but display them all as a list for consistency with ScannerResults
-            var filteredContentTypes = Config.ContentTypes.Select(contentType => new FeatureType
+            var filteredContentTypes = Config.ContentTypes.Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,
                 IsSupported = false, // don't allow user to deselect the destination type
                 IsActive = Config.GetDestinationContentType().Enum == contentType.Enum,
-                SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
+                SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 
-            return filteredContentTypes;
+            return filteredContentTypes.ToList();
         }
 
-        protected override IEnumerable<FeatureType> CreateFilteredHitTypes()
+        protected override IList<FeatureType> CreateFilteredHitTypes()
         {
             // show all hit types, but assign enabled and active based on the rebuilder configuration
-            var filteredContentTypes = Config.HitTypes.Select(hitType => new FeatureType
+            // - valid hits are also visible, enabled by default since these files are copied across without any file name fixing
+            var filteredContentTypes = Config.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
-                IsSupported = Model.Config.SelectedMatchTypes.Contains(hitType.Enum),
+                IsSupported = Model.Config.SelectedMatchTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.Valid,
                 IsActive = Model.Config.SelectedMatchTypes.Contains(hitType.Enum),
-                SelectedCommand = new ActionCommand(UpdateSmellyHitsView)
+                SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 
             return filteredContentTypes.ToList();
