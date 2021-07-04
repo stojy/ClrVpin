@@ -35,6 +35,7 @@ namespace ClrVpin.Scanner
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
+        public Config Config { get; } = Model.Config;
 
         public void Show(Window parent)
         {
@@ -44,7 +45,7 @@ namespace ClrVpin.Scanner
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 400,
-                Height = 435,
+                Height = 465,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate,

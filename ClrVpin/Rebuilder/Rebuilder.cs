@@ -8,7 +8,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
-using ClrVpin.Scanner;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
@@ -35,8 +34,6 @@ namespace ClrVpin.Rebuilder
             _destinationContentTypes = Model.Config.GetFrontendFolders().Where(x => !x.IsDatabase).Select(x => x.Description);
             DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
 
-            Config = Model.Config;
-
             UpdateIsValid();
         }
 
@@ -50,7 +47,7 @@ namespace ClrVpin.Rebuilder
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
-        public Config Config { get; set; }
+        public Config Config { get; } = Model.Config;
 
         public void Show(Window parent)
         {
@@ -60,7 +57,7 @@ namespace ClrVpin.Rebuilder
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 650,
-                Height = 350,
+                Height = 380,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,
