@@ -89,7 +89,8 @@ namespace ClrVpin.Rebuilder
         private static IEnumerable<FeatureType> CreateMatchCriteriaTypes()
         {
             // show all match criteria types
-            var matchTypes = Config.MatchTypes.Select(matchType =>
+            // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
+            var matchTypes = Config.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
             {
                 var featureType = new FeatureType((int)matchType.Enum)
                 {
@@ -141,20 +142,22 @@ namespace ClrVpin.Rebuilder
             var otherFiles = RebuilderUtils.Check(games);
 
             progress.Update("Merging Files", 60);
-            var mergedFiles = await RebuilderUtils.MergeAsync(games, otherFiles, Model.Config.BackupFolder);
+            var fixedFiles = await RebuilderUtils.MergeAsync(games, Model.Config.BackupFolder);
+
+            // unlike scanner, otherFiles (unsupported and unknown) are deliberately NOT removed
 
             progress.Update("Preparing Results", 100);
             await Task.Delay(10);
             Games = new ObservableCollection<Game>(games);
-            //ShowResults(fixFiles.Concat(unknownFiles).ToList(), progress.Duration);
-            ShowResults(otherFiles.ToList(), progress.Duration);
+
+            ShowResults(fixedFiles, otherFiles, progress.Duration);
 
             progress.Close();
         }
 
-        private void ShowResults(ICollection<FixFileDetail> fixFiles, TimeSpan duration)
+        private void ShowResults(ICollection<FixFileDetail> fixFiles, ICollection<FixFileDetail> otherFiles, TimeSpan duration)
         {
-            var rebuilderStatistics = new RebuilderStatistics(Games, duration, fixFiles);
+            var rebuilderStatistics = new RebuilderStatistics(Games, duration, fixFiles, otherFiles);
             rebuilderStatistics.Show(_rebuilderWindow, WindowMargin, WindowMargin);
 
             var rebuilderResults = new RebuilderResults(Games);

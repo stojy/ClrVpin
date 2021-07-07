@@ -26,6 +26,11 @@ namespace ClrVpin.Models
         public Config()
         {
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
+            AllHitTypeEnums = AllHitTypes.Select(x => x.Enum);
+
+            // reset the settings if the user's stored settings version differs to the default version
+            if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
+                Reset();
 
             // scanner
             SelectedCheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.SelectedCheckContentTypes).Observable;
@@ -37,14 +42,9 @@ namespace ClrVpin.Models
             SelectedMatchTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedMatchTypes, value => Properties.Settings.Default.SelectedMatchTypes = value).Observable;
             SelectedMergeOptions = new ObservableCollectionJson<MergeOptionEnum>(Properties.Settings.Default.MergeOptions, value => Properties.Settings.Default.MergeOptions = value).Observable;
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            MatchTypes = AllHitTypes.Where(x => x.Enum.In(new []{HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy})).ToArray();
-
-            // reset the settings if the user's stored settings version differs to the default version
-            if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
-                Reset();
+            MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).ToArray();
 
             ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).ToArray();
-
             UpdateIsValid();
         }
 
@@ -125,6 +125,8 @@ namespace ClrVpin.Models
 
         public void Reset()
         {
+            // todo; move all the enum default values into code - i.e. out of settings.settings default
+
             var defaultFrontendFolders = new List<ContentType>
             {
                 new ContentType {Enum = ContentTypeEnum.Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
@@ -154,6 +156,8 @@ namespace ClrVpin.Models
             // update actual version to indicate the config is now compatible and doesn't need to be reset again
             Properties.Settings.Default.ActualVersion = Properties.Settings.Default.RequiredVersion;
 
+            Properties.Settings.Default.SelectedMatchTypes = JsonSerializer.Serialize(AllHitTypeEnums.Where(x => x != HitTypeEnum.Missing));
+
             Save();
 
             WasReset = true;
@@ -173,6 +177,8 @@ namespace ClrVpin.Models
             HitTypeEnum.TableName,
             HitTypeEnum.Fuzzy
         };
+
+        public static IEnumerable<HitTypeEnum> AllHitTypeEnums { get; private set; }
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] AllHitTypes =

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,13 +42,13 @@ namespace ClrVpin.Scanner
             return otherFiles;
         }
 
-        public static async Task<List<FixFileDetail>> FixAsync(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
+        public static async Task<List<FixFileDetail>> FixAsync(List<Game> games, string backupFolder)
         {
-            var fixedFileDetails = await Task.Run(() => Fix(games, otherFileDetails, backupFolder));
+            var fixedFileDetails = await Task.Run(() => Fix(games, backupFolder));
             return fixedFileDetails;
         }
 
-        private static List<FixFileDetail> Fix(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
+        private static List<FixFileDetail> Fix(List<Game> games, string backupFolder)
         {
             _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
 
@@ -77,17 +78,6 @@ namespace ClrVpin.Scanner
                 });
             });
 
-            // delete files NOT associated with games, i.e. unknown files
-            otherFileDetails.ForEach(x =>
-            {
-                if (x.HitType == HitTypeEnum.Unknown && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
-                    x.HitType == HitTypeEnum.Unsupported && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
-                {
-                    x.Deleted = true;
-                    TableUtils.Delete(x.Path, x.HitType, null);
-                }
-            });
-
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
             if (Directory.Exists(_activeBackupFolder))
             {
@@ -100,6 +90,25 @@ namespace ClrVpin.Scanner
             }
 
             return fixedFileDetails;
+        }
+
+        public static async Task RemoveAsync(List<FixFileDetail> otherFileDetails)
+        {
+            await Task.Run(() => Remove(otherFileDetails));
+        }
+
+        public static void Remove(List<FixFileDetail> otherFileDetails)
+        {
+            // delete files NOT associated with games, i.e. unknown files
+            otherFileDetails.ForEach(x =>
+            {
+                if (x.HitType == HitTypeEnum.Unknown && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
+                    x.HitType == HitTypeEnum.Unsupported && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
+                {
+                    x.Deleted = true;
+                    TableUtils.Delete(x.Path, x.HitType, null);
+                }
+            });
         }
 
         private static void AddMissingStatus(List<Game> games)

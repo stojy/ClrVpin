@@ -42,5 +42,10 @@ namespace Utils
         {
             return source.Contains(item);
         }
+
+        public static bool In<T>(this T item, params T[] source)
+        {
+            return source.Contains(item);
+        }
     }
 }

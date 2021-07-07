@@ -15,9 +15,9 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerStatistics
     {
-        public ScannerStatistics(ObservableCollection<Game> games, TimeSpan scanStopWatch, ICollection<FixFileDetail> fixFiles)
+        public ScannerStatistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FixFileDetail> fixFiles)
         {
-            _scanStopWatch = scanStopWatch;
+            _elapsedTime = elapsedTime;
             _games = games;
 
             CreateStatistics(fixFiles);
@@ -158,7 +158,7 @@ namespace ClrVpin.Scanner
                    $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeletedUnknown.Count, fixFilesDeletedUnknownSize)}" +
                    $"\n{"- renamable and removable",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
                    $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnoredUnknown.Count, fixFilesIgnoredUnknownSize)}" +
-                   $"\n\n{"Time Taken",StatisticsKeyWidth}{_scanStopWatch.TotalSeconds:f2}s";
+                   $"\n\n{"Time Taken",StatisticsKeyWidth}{_elapsedTime.TotalSeconds:f2}s";
         }
 
         private static string CreateFileStatistic(ICollection<FixFileDetail> removedFiles)
@@ -169,7 +169,7 @@ namespace ClrVpin.Scanner
         private static string CreateFileStatistic(long count, long size) => $"{count} ({(size == 0 ? "0 B" : ByteSize.FromBytes(size).ToString("0.#"))})";
 
         private readonly ObservableCollection<Game> _games;
-        private readonly TimeSpan _scanStopWatch;
+        private readonly TimeSpan _elapsedTime;
 
         private const int StatisticsKeyWidth = -26;
     }

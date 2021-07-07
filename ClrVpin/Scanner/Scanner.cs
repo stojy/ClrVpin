@@ -147,11 +147,16 @@ namespace ClrVpin.Scanner
             var otherFiles = ScannerUtils.Check(games);
 
             progress.Update("Fixing Files", 60);
-            var fixedFiles = await ScannerUtils.FixAsync(games, otherFiles, Model.Config.BackupFolder);
+            var fixedFiles = await ScannerUtils.FixAsync(games, Model.Config.BackupFolder);
+
+            progress.Update("Removing Unknown Files", 90);
+            await ScannerUtils.RemoveAsync(otherFiles);
 
             progress.Update("Preparing Results", 100);
             await Task.Delay(10);
             Games = new ObservableCollection<Game>(games);
+            
+            // todo; remove concat.. for statistics!!
             ShowResults(fixedFiles.Concat(otherFiles).ToList(), progress.Duration);
          
             progress.Close();

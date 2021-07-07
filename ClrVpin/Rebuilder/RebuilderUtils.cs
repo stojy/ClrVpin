@@ -31,13 +31,13 @@ namespace ClrVpin.Rebuilder
             return otherFiles;
         }
 
-        public static async Task<List<FixFileDetail>> MergeAsync(List<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
+        public static async Task<List<FixFileDetail>> MergeAsync(List<Game> games, string backupFolder)
         {
-            var mergedFileDetails = await Task.Run(() => Merge(games, otherFileDetails, backupFolder));
+            var mergedFileDetails = await Task.Run(() => Merge(games, backupFolder));
             return mergedFileDetails;
         }
 
-        private static List<FixFileDetail> Merge(IEnumerable<Game> games, List<FixFileDetail> otherFileDetails, string backupFolder)
+        private static List<FixFileDetail> Merge(IEnumerable<Game> games, string backupFolder)
         {
             _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
 
@@ -129,7 +129,7 @@ namespace ClrVpin.Rebuilder
         private static bool SkipMerge(MergeOptionEnum mergeOption, string hitTypeDescription, FileInfo sourceFileInfo, FileInfo destinationFileInfo)
         {
             Logger.Info(
-                $"Skipped merging - '{mergeOption.GetDescription()}', type: {hitTypeDescription}, existing: {destinationFileInfo.FullName} ({destinationFileInfo.Length}), source: {sourceFileInfo.FullName} ({sourceFileInfo.Length})");
+                $"Skipped merging - option: '{mergeOption.GetDescription()}', type: {hitTypeDescription}, existing: {destinationFileInfo.FullName} ({destinationFileInfo.Length}), source: {sourceFileInfo.FullName} ({sourceFileInfo.Length})");
             return false;
         }
 
