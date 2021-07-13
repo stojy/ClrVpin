@@ -27,7 +27,9 @@ namespace ClrVpin.Models
         {
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
             AllHitTypeEnums = AllHitTypes.Select(x => x.Enum);
-
+            FixablePrioritizedHitTypeEnums = AllHitTypes.Where(x => x.Fixable).Select(x => x.Enum).ToArray();
+            IrreparablePrioritizedHitTypeEnums = AllHitTypes.Where(x => !x.Fixable).Select(x => x.Enum).ToArray();
+            
             // reset the settings if the user's stored settings version differs to the default version
             if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
                 Reset();
@@ -169,28 +171,23 @@ namespace ClrVpin.Models
         public ObservableCollection<HitTypeEnum> SelectedFixHitTypes;
 
         // hit types in priority order as determined by matching algorithm - refer AssociateMediaFilesWithGames
-        public static HitTypeEnum[] FixablePrioritizedHitTypeEnums =
-        {
-            HitTypeEnum.Valid,
-            HitTypeEnum.DuplicateExtension,
-            HitTypeEnum.WrongCase,
-            HitTypeEnum.TableName,
-            HitTypeEnum.Fuzzy
-        };
+        public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; private set; }
 
+        public static HitTypeEnum[] IrreparablePrioritizedHitTypeEnums { get; private set; }
+        
         public static IEnumerable<HitTypeEnum> AllHitTypeEnums { get; private set; }
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] AllHitTypes =
         {
-            new HitType {Enum = HitTypeEnum.Valid, Tip = "Files that should match but are missing"},
-            new HitType {Enum = HitTypeEnum.Missing, Tip = "Files that should match but are missing"},
-            new HitType {Enum = HitTypeEnum.TableName, Tip = "Allow matching against table instead of the description"},
-            new HitType {Enum = HitTypeEnum.DuplicateExtension, Tip = "Allow matching against multiple files with same file name but different file extensions (e.g. mkv and mp4"},
-            new HitType {Enum = HitTypeEnum.WrongCase, Tip = "Case insensitive file matching"},
-            new HitType {Enum = HitTypeEnum.Fuzzy, Tip = "'Fuzzy logic' file matching"},
-            new HitType {Enum = HitTypeEnum.Unknown, Tip = "Unknown files that don't match any tables"},
-            new HitType {Enum = HitTypeEnum.Unsupported, Tip = "Unsupported files that don't match the configured file extension types"}
+            new HitType(HitTypeEnum.Valid,              true,  "Files that should match but are missing"),
+            new HitType(HitTypeEnum.DuplicateExtension, true,  "Allow matching against multiple files with same file name but different file extensions (e.g. mkv and mp4"),
+            new HitType(HitTypeEnum.WrongCase,          true,  "Case insensitive file matching"),
+            new HitType(HitTypeEnum.TableName,          true,  "Allow matching against table instead of the description"),
+            new HitType(HitTypeEnum.Fuzzy,              true,  "'Fuzzy logic' file matching"),
+            new HitType(HitTypeEnum.Missing,            false, "Files that should match but are missing"),
+            new HitType(HitTypeEnum.Unknown,            false, "Unknown files that don't match any tables"),
+            new HitType(HitTypeEnum.Unsupported,        false, "Unsupported files that don't match the configured file extension types")
         };
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections

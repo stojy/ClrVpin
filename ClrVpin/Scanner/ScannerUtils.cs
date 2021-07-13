@@ -11,9 +11,9 @@ namespace ClrVpin.Scanner
 {
     public static class ScannerUtils
     {
-        public static List<FixFileDetail> Check(List<Game> games)
+        public static List<FileDetail> Check(List<Game> games)
         {
-            var otherFiles = new List<FixFileDetail>();
+            var unknownFiles = new List<FileDetail>();
 
             // determine the configured content types
             // - todo; scan non-media content, e.g. tables and b2s
@@ -25,34 +25,37 @@ namespace ClrVpin.Scanner
             {
                 // for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
                 var mediaFiles = TableUtils.GetMediaFileNames(contentType, contentType.Folder);
-                var unknownMedia = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
-                otherFiles.AddRange(unknownMedia);
+                var unmatchedFiles = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+                unknownFiles.AddRange(unmatchedFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
                 if (Model.Config.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, contentType.Folder);
-                    otherFiles.AddRange(unsupportedFiles);
+                    unknownFiles.AddRange(unsupportedFiles);
                 }
             }
 
             // update each table status as missing if their were no matches
             AddMissingStatus(games);
 
-            return otherFiles;
+            return unknownFiles;
         }
 
-        public static async Task<List<FixFileDetail>> FixAsync(List<Game> games, string backupFolder)
+        public static async Task<List<FileDetail>> FixAsync(List<Game> games, string backupFolder)
         {
             var fixedFileDetails = await Task.Run(() => Fix(games, backupFolder));
             return fixedFileDetails;
         }
 
-        private static List<FixFileDetail> Fix(List<Game> games, string backupFolder)
+        private static List<FileDetail> Fix(List<Game> games, string backupFolder)
         {
             _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
 
-            var fixedFileDetails = new List<FixFileDetail>();
+            // the returned gameFiles hits are for ALL criteria, i.e. irrespective of whether..
+            // - match criteria is selected or relevant
+            // - merge options are selected or relevant
+            var gameFiles = new List<FileDetail>();
 
             // fix files associated with games, if they satisfy the fix criteria
             games.ForEach(game =>
@@ -62,17 +65,17 @@ namespace ClrVpin.Scanner
                     if (TableUtils.TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
                     {
                         // valid hit exists.. so delete other hits, i.e. other hits aren't as relevant
-                        fixedFileDetails.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
+                        gameFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
                     }
                     else if (TableUtils.TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
                     {
                         // for all 3 hit types.. rename file and delete other entries
-                        fixedFileDetails.Add(TableUtils.Rename(hit, game, Model.Config.SelectedFixHitTypes));
-                        fixedFileDetails.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
+                        // - duplicate extension is n/a since it's implied a valid hit already exists, i.e. covered above
+                        gameFiles.Add(TableUtils.Rename(hit, game, Model.Config.SelectedFixHitTypes));
+                        gameFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
                     }
 
-                    // other hit types are n/a
-                    // - duplicate extension - already taken care as a valid hit will exist
+                    // other hit types don't require any additional work..
                     // - unknown - not associated with a game.. handled elsewhere
                     // - missing - can't be fixed.. requires file to be downloaded
                 });
@@ -89,15 +92,15 @@ namespace ClrVpin.Scanner
                 }
             }
 
-            return fixedFileDetails;
+            return gameFiles;
         }
 
-        public static async Task RemoveAsync(List<FixFileDetail> otherFileDetails)
+        public static async Task RemoveAsync(List<FileDetail> otherFileDetails)
         {
             await Task.Run(() => Remove(otherFileDetails));
         }
 
-        public static void Remove(List<FixFileDetail> otherFileDetails)
+        public static void Remove(List<FileDetail> otherFileDetails)
         {
             // delete files NOT associated with games, i.e. unknown files
             otherFileDetails.ForEach(x =>

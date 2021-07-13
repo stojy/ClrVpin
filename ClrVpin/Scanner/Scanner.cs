@@ -144,25 +144,25 @@ namespace ClrVpin.Scanner
             var games = TableUtils.GetGamesFromDatabases();
             
             progress.Update("Checking Files", 30);
-            var otherFiles = ScannerUtils.Check(games);
+            var unknownFiles = ScannerUtils.Check(games);
 
             progress.Update("Fixing Files", 60);
-            var fixedFiles = await ScannerUtils.FixAsync(games, Model.Config.BackupFolder);
+            var gameFiles = await ScannerUtils.FixAsync(games, Model.Config.BackupFolder);
 
             progress.Update("Removing Unknown Files", 90);
-            await ScannerUtils.RemoveAsync(otherFiles);
+            await ScannerUtils.RemoveAsync(unknownFiles);
 
             progress.Update("Preparing Results", 100);
             await Task.Delay(10);
             Games = new ObservableCollection<Game>(games);
             
             // todo; remove concat.. for statistics!!
-            ShowResults(fixedFiles.Concat(otherFiles).ToList(), progress.Duration);
+            ShowResults(gameFiles.Concat(unknownFiles).ToList(), progress.Duration);
          
             progress.Close();
         }
 
-        private void ShowResults(ICollection<FixFileDetail> fixFiles, TimeSpan duration)
+        private void ShowResults(ICollection<FileDetail> fixFiles, TimeSpan duration)
         {
             var scannerStatistics = new ScannerStatistics(Games, duration, fixFiles);
             scannerStatistics.Show(_scannerWindow, WindowMargin, WindowMargin);

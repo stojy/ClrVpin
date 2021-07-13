@@ -51,7 +51,7 @@ namespace ClrVpin.Shared
             return files.SelectMany(x => x).ToList();
         }
 
-        public static IEnumerable<FixFileDetail> GetUnsupportedMediaFileDetails(ContentType contentType, string folder)
+        public static IEnumerable<FileDetail> GetUnsupportedMediaFileDetails(ContentType contentType, string folder)
         {
             // return all files that don't match the supported file extensions
             var supportedExtensions = contentType.ExtensionsList.Select(x => x.TrimStart('*').ToLower());
@@ -60,7 +60,7 @@ namespace ClrVpin.Shared
 
             var unsupportedFiles = allFiles.Where(file => !supportedExtensions.Any(file.EndsWith));
 
-            var unsupportedFixFiles = unsupportedFiles.Select(file => new FixFileDetail(contentType.Enum, HitTypeEnum.Unsupported, null, file, new FileInfo(file).Length));
+            var unsupportedFixFiles = unsupportedFiles.Select(file => new FileDetail(contentType.Enum, HitTypeEnum.Unsupported, null, file, new FileInfo(file).Length));
 
             return unsupportedFixFiles.ToList();
         }
@@ -70,10 +70,10 @@ namespace ClrVpin.Shared
             return _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
         }
 
-        public static IEnumerable<FixFileDetail> AssociateMediaFilesWithGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
+        public static IEnumerable<FileDetail> AssociateMediaFilesWithGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
             Func<Game, ContentHits> getContentHits)
         {
-            var unknownMediaFiles = new List<FixFileDetail>();
+            var unknownMediaFiles = new List<FileDetail>();
 
             // for each file, associate it with a game or if one can't be found, then mark it as unknown
             // - association is done irrespective of the user's selected preference, i.e. the use selections are checked elsewhere
@@ -111,7 +111,7 @@ namespace ClrVpin.Shared
                 }
                 else
                 {
-                    unknownMediaFiles.Add(new FixFileDetail(contentTypeEnum, HitTypeEnum.Unknown, null, mediaFile, new FileInfo(mediaFile).Length));
+                    unknownMediaFiles.Add(new FileDetail(contentTypeEnum, HitTypeEnum.Unknown, null, mediaFile, new FileInfo(mediaFile).Length));
                 }
             }
 
@@ -125,9 +125,9 @@ namespace ClrVpin.Shared
             return hit != null;
         }
 
-        public static IEnumerable<FixFileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
+        public static IEnumerable<FileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
         {
-            var deleted = new List<FixFileDetail>();
+            var deleted = new List<FileDetail>();
 
             // delete all 'real' files except the specified hit
             hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h, supportedHitTypes)));
@@ -147,7 +147,7 @@ namespace ClrVpin.Shared
             }
         }
 
-        public static FixFileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
+        public static FileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var renamed = false;
 
@@ -169,7 +169,7 @@ namespace ClrVpin.Shared
                 }
             }
 
-            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, renamed ? FixFileTypeEnum.Renamed : null, hit.Path, hit.Size ?? 0);
+            return new FileDetail(hit.ContentTypeEnum, hit.Type, renamed ? FixFileTypeEnum.Renamed : null, hit.Path, hit.Size ?? 0);
         }
 
         public static void Backup(string file, string subFolder = "")
@@ -181,7 +181,7 @@ namespace ClrVpin.Shared
 
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
 
-        private static FixFileDetail Delete(Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
+        private static FileDetail Delete(Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var deleted = false;
 
@@ -192,7 +192,7 @@ namespace ClrVpin.Shared
                 Delete(hit.Path, hit.Type, hit.ContentType);
             }
 
-            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, deleted ? FixFileTypeEnum.Deleted : null, hit.Path, hit.Size ?? 0);
+            return new FileDetail(hit.ContentTypeEnum, hit.Type, deleted ? FixFileTypeEnum.Deleted : null, hit.Path, hit.Size ?? 0);
         }
 
         private static string CreateBackupFileName(string file, string subFolder = "")

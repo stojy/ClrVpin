@@ -15,7 +15,7 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerStatistics
     {
-        public ScannerStatistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FixFileDetail> fixFiles)
+        public ScannerStatistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> fixFiles)
         {
             _elapsedTime = elapsedTime;
             _games = games;
@@ -48,14 +48,14 @@ namespace ClrVpin.Scanner
             Window.Close();
         }
 
-        private void CreateStatistics(ICollection<FixFileDetail> fixFiles)
+        private void CreateStatistics(ICollection<FileDetail> fixFiles)
         {
             Statistics =
                 $"{CreateHitTypeStatistics(fixFiles)}\n" +
                 $"{CreateTotalStatistics(fixFiles)}";
         }
 
-        private string CreateHitTypeStatistics(ICollection<FixFileDetail> fixFileDetails)
+        private string CreateHitTypeStatistics(ICollection<FileDetail> fixFileDetails)
         {
             // for every hit type, create stats against every content type
             var hitStatistics = Config.HitTypes.Select(hitType =>
@@ -81,7 +81,7 @@ namespace ClrVpin.Scanner
             return $"Criteria statistics for each content type\n\n{string.Join("\n\n", hitStatistics)}";
         }
 
-        private string GetContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
+        private string GetContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FileDetail> fixFileDetails)
         {
             if (!Model.Config.SelectedCheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.SelectedCheckHitTypes.Contains(hitType))
                 return "skipped";
@@ -97,7 +97,7 @@ namespace ClrVpin.Scanner
             return statistics;
         }
 
-        private static string GetContentUnknownStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
+        private static string GetContentUnknownStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FileDetail> fixFileDetails)
         {
             if (!Model.Config.SelectedCheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.SelectedCheckHitTypes.Contains(hitType))
                 return "skipped";
@@ -105,13 +105,13 @@ namespace ClrVpin.Scanner
             return CreateMissingFileStatistics(contentType, hitType, fixFileDetails);
         }
 
-        private static string CreateMissingFileStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FixFileDetail> fixFileDetails)
+        private static string CreateMissingFileStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FileDetail> fixFileDetails)
         {
             var removePrefix = Model.Config.SelectedFixHitTypes.Contains(hitType) ? "removed" : "removable";
             return $"{removePrefix} {CreateFileStatistic(fixFileDetails.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
         }
 
-        private string CreateTotalStatistics(ICollection<FixFileDetail> fixFiles)
+        private string CreateTotalStatistics(ICollection<FileDetail> fixFiles)
         {
             var validHits = _games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.Valid).ToList();
 
@@ -161,7 +161,7 @@ namespace ClrVpin.Scanner
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_elapsedTime.TotalSeconds:f2}s";
         }
 
-        private static string CreateFileStatistic(ICollection<FixFileDetail> removedFiles)
+        private static string CreateFileStatistic(ICollection<FileDetail> removedFiles)
         {
             return CreateFileStatistic(removedFiles.Count, removedFiles.Sum(x => x.Size));
         }

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
+using ClrVpin.Logging;
 using ClrVpin.Models;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
@@ -92,7 +93,7 @@ namespace ClrVpin.Rebuilder
             // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
             var matchTypes = Config.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
             {
-                var featureType = new FeatureType((int)matchType.Enum)
+                var featureType = new FeatureType((int) matchType.Enum)
                 {
                     Description = matchType.Description,
                     Tip = matchType.Tip,
@@ -112,7 +113,7 @@ namespace ClrVpin.Rebuilder
             // show all merge options
             var featureTypes = Config.MergeOptions.Select(mergeOption =>
             {
-                var featureType = new FeatureType((int)mergeOption.Enum)
+                var featureType = new FeatureType((int) mergeOption.Enum)
                 {
                     Description = mergeOption.Description,
                     Tip = mergeOption.Tip,
@@ -130,7 +131,7 @@ namespace ClrVpin.Rebuilder
         private async void Start()
         {
             _rebuilderWindow.Hide();
-            Logging.Logger.Clear();
+            Logger.Clear();
 
             var progress = new Progress();
             progress.Show(_rebuilderWindow);
@@ -139,25 +140,25 @@ namespace ClrVpin.Rebuilder
             var games = TableUtils.GetGamesFromDatabases();
 
             progress.Update("Checking Files", 30);
-            var otherFiles = RebuilderUtils.Check(games);
+            var unknownFiles = RebuilderUtils.Check(games);
 
             progress.Update("Merging Files", 60);
-            var fixedFiles = await RebuilderUtils.MergeAsync(games, Model.Config.BackupFolder);
+            var gameFiles = await RebuilderUtils.MergeAsync(games, Model.Config.BackupFolder);
 
-            // unlike scanner, otherFiles (unsupported and unknown) are deliberately NOT removed
+            // unlike scanner, unknownFiles (unsupported and unknown) are deliberately NOT removed
 
             progress.Update("Preparing Results", 100);
             await Task.Delay(10);
             Games = new ObservableCollection<Game>(games);
 
-            ShowResults(fixedFiles, otherFiles, progress.Duration);
+            ShowResults(gameFiles, unknownFiles, progress.Duration);
 
             progress.Close();
         }
 
-        private void ShowResults(ICollection<FixFileDetail> fixFiles, ICollection<FixFileDetail> otherFiles, TimeSpan duration)
+        private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles, TimeSpan duration)
         {
-            var rebuilderStatistics = new RebuilderStatistics(Games, duration, fixFiles, otherFiles);
+            var rebuilderStatistics = new RebuilderStatistics(Games, duration, gameFiles, unknownFiles);
             rebuilderStatistics.Show(_rebuilderWindow, WindowMargin, WindowMargin);
 
             var rebuilderResults = new RebuilderResults(Games);
@@ -175,7 +176,6 @@ namespace ClrVpin.Rebuilder
         }
 
         private readonly IEnumerable<string> _destinationContentTypes;
-
         private Window _rebuilderWindow;
         private Logging.Logging _loggingWindow;
 

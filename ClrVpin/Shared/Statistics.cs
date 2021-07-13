@@ -13,10 +13,10 @@ namespace ClrVpin.Shared
     [AddINotifyPropertyChangedInterface]
     public abstract class Statistics
     {
-        protected Statistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FixFileDetail> fixFileDetails, ICollection<FixFileDetail> otherFileDetails)
+        protected Statistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
         {
-            _fixFileDetails = fixFileDetails;
-            _otherFileDetails = otherFileDetails;
+            GameFiles = gameFiles;
+            UnknownFiles = unknownFiles;
 
             ElapsedTime = elapsedTime;
             Games = games;
@@ -43,12 +43,12 @@ namespace ClrVpin.Shared
         {
             Result =
                 $"{CreateHitTypeStatistics()}\n" +
-                $"{CreateTotalStatistics(_fixFileDetails)}";
+                $"{CreateTotalStatistics()}";
         }
 
-        protected abstract string CreateTotalStatistics(ICollection<FixFileDetail> fixFiles);
+        protected abstract string CreateTotalStatistics();
 
-        protected static string CreateFileStatistic(ICollection<FixFileDetail> removedFiles)
+        protected static string CreateFileStatistic(ICollection<FileDetail> removedFiles)
         {
             return CreateFileStatistic(removedFiles.Count, removedFiles.Sum(x => x.Size));
         }
@@ -109,11 +109,11 @@ namespace ClrVpin.Shared
         private string CreateMissingFileStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
             var removePrefix = SelectedFixHitTypes.Contains(hitType) ? IsRemoveSupported ? "removed" : "ignored" : "removable";
-            return $"{removePrefix} {CreateFileStatistic(_otherFileDetails.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
+            return $"{removePrefix} {CreateFileStatistic(UnknownFiles.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
         }
 
-        private readonly ICollection<FixFileDetail> _fixFileDetails;
-        private ICollection<FixFileDetail> _otherFileDetails;
+        protected readonly ICollection<FileDetail> GameFiles;
+        protected readonly ICollection<FileDetail> UnknownFiles;
 
         protected const int StatisticsKeyWidth = -26;
     }

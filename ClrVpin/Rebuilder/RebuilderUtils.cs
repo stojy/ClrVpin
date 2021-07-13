@@ -11,54 +11,52 @@ namespace ClrVpin.Rebuilder
 {
     public static class RebuilderUtils
     {
-        public static List<FixFileDetail> Check(List<Game> games)
+        public static List<FileDetail> Check(List<Game> games)
         {
-            var otherFiles = new List<FixFileDetail>();
-
             // determine the destination type
             // - todo; scan non-media content, e.g. tables and b2s
             var contentType = Config.GetDestinationContentType();
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
             var mediaFiles = TableUtils.GetMediaFileNames(contentType, Model.Config.SourceFolder);
-            var unknownMedia = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
-            otherFiles.AddRange(unknownMedia);
+            var unmatchedFiles = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
             var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, Model.Config.SourceFolder);
-            otherFiles.AddRange(unsupportedFiles);
 
-            return otherFiles;
+            return unmatchedFiles.Concat(unsupportedFiles).ToList();
         }
 
-        public static async Task<List<FixFileDetail>> MergeAsync(List<Game> games, string backupFolder)
+        public static async Task<List<FileDetail>> MergeAsync(List<Game> games, string backupFolder)
         {
             var mergedFileDetails = await Task.Run(() => Merge(games, backupFolder));
             return mergedFileDetails;
         }
 
-        private static List<FixFileDetail> Merge(IEnumerable<Game> games, string backupFolder)
+        private static List<FileDetail> Merge(IEnumerable<Game> games, string backupFolder)
         {
             _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
 
             // filter games to only those that have hits for the destination content type
-            // - the hits are for ALL criteria, i.e. irrespective of whether they are selected or not!
             var contentType = Config.GetDestinationContentType();
             var gamesWithContent = games.Where(g => g.Content.ContentHitsCollection.Any(x => x.Type == contentType.Enum && x.Hits.Any()));
 
-            // merge files associated with games, if they satisfy the merge criteria
-            var mergedFileDetails = new List<FixFileDetail>();
+            // the returned gameFiles hits are for ALL criteria, i.e. irrespective of whether..
+            // - match criteria is selected or relevant
+            // - merge options are selected or relevant
+            var gameFiles = new List<FileDetail>();
             gamesWithContent.ForEach(game =>
             {
                 // retrieve the relevant content hit collection
                 var contentHitCollection = game.Content.ContentHitsCollection.First(x => x.Hits.Any());
                 
                 // merge ALL of the selected hit types
-                // - if their are multiple hit type matches.. then a subsequent 'scanner' (aka clean) run will be required
+                // - for each supported file there, there will be 1 hit type
+                // - if their are multiple hit type matches.. then a subsequent 'scanner' (aka clean) run will be required to clean up the extra files
                 var mergeableHits = contentHitCollection.Hits.Where(hit => hit.Type.In(Config.FixablePrioritizedHitTypeEnums));
 
                 // merge each hit
-                mergeableHits.ForEach(hit => mergedFileDetails.Add(Merge(hit, game, Model.Config.SelectedMatchTypes)));
+                mergeableHits.ForEach(hit => gameFiles.Add(Merge(hit, game, Model.Config.SelectedMatchTypes)));
             });
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
@@ -72,10 +70,10 @@ namespace ClrVpin.Rebuilder
                 }
             }
 
-            return mergedFileDetails;
+            return gameFiles;
         }
 
-        private static FixFileDetail Merge(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
+        private static FileDetail Merge(Hit hit, Game _, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var canMerge = false;
             var sourceFileName = hit.Path;
@@ -106,7 +104,7 @@ namespace ClrVpin.Rebuilder
                 }
             }
 
-            return new FixFileDetail(hit.ContentTypeEnum, hit.Type, canMerge ? FixFileTypeEnum.Merged : null, sourceFileName, hit.Size ?? 0);
+            return new FileDetail(hit.ContentTypeEnum, hit.Type, canMerge ? FixFileTypeEnum.Merged : null, sourceFileName, hit.Size ?? 0);
         }
 
         private static bool CanMerge(string hitTypeDescription, string sourceFileName, string destinationFileName)
