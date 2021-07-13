@@ -28,16 +28,18 @@ namespace ClrVpin.Shared
         public string Result { get; set; }
         public Window Window { get; protected set; }
 
-        protected virtual IList<HitTypeEnum> SelectedFixHitTypes { get; set; }
-        protected virtual IList<HitTypeEnum> SelectedCheckHitTypes { get; set; }
-        protected virtual IList<HitType> HitTypes { get; set; }
-        protected virtual IList<ContentType> ContentTypes { get; set; }
-        protected virtual IList<string> SelectedCheckContentTypes { get; set; }
+        public IList<HitTypeEnum> SelectedFixHitTypes { get; set; }
+        public IList<HitTypeEnum> SelectedCheckHitTypes { get; set; }
+        public IList<HitType> SupportedHitTypes { get; set; }
+        public IList<ContentType> SupportedContentTypes { get; set; }
+        public IList<string> SelectedCheckContentTypes { get; set; }
 
-        protected abstract string FixedTerm { get; }   
-        protected abstract string FixableTerm { get; } 
+        public string FixedTerm { get; protected set; }
+        public string FixableTerm { get; protected set; }
 
-        protected abstract int TotalCount { get; } // Games.Count;
+        public int TotalCount { get; protected set; } // Games.Count;
+
+        public bool IsRemoveUnknownSupported { get; protected set; }
 
         protected void CreateStatistics()
         {
@@ -48,30 +50,25 @@ namespace ClrVpin.Shared
 
         protected abstract string CreateTotalStatistics();
 
-        protected static string CreateFileStatistic(ICollection<FileDetail> removedFiles)
-        {
-            return CreateFileStatistic(removedFiles.Count, removedFiles.Sum(x => x.Size));
-        }
-
         protected static string CreateFileStatistic(long count, long size) => $"{count} ({(size == 0 ? "0 B" : ByteSize.FromBytes(size).ToString("0.#"))})";
 
         private string CreateHitTypeStatistics()
         {
             // for every hit type, create stats against every content type
-            var hitStatistics = HitTypes.Select(hitType =>
+            var hitStatistics = SupportedHitTypes.Select(hitType =>
             {
                 string contents;
                 if (hitType.Enum.In(HitTypeEnum.Unknown, HitTypeEnum.Unsupported))
                 {
                     // other files (unknown and unsupported) matches aren't attributed to a game.. so we treat them a little differently
-                    contents = string.Join("\n", ContentTypes.Select(contentType =>
-                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetOtherFilesContentStatistics(contentType.Enum, hitType.Enum)}"));
+                    contents = string.Join("\n", SupportedContentTypes.Select(contentType =>
+                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetUnknownFilesContentStatistics(contentType.Enum, hitType.Enum)}"));
                 }
                 else
                 {
                     // all known content has an associated game
-                    contents = string.Join("\n", ContentTypes.Select(contentType =>
-                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetFixedFilesContentStatistics(contentType.Enum, hitType.Enum)}"));
+                    contents = string.Join("\n", SupportedContentTypes.Select(contentType =>
+                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetGameFilesContentStatistics(contentType.Enum, hitType.Enum)}"));
                 }
 
                 return $"{hitType.Description}\n{contents}";
@@ -80,15 +77,7 @@ namespace ClrVpin.Shared
             return $"Criteria statistics for each content type\n\n{string.Join("\n\n", hitStatistics)}";
         }
 
-        private string GetOtherFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
-        {
-            if (!SelectedCheckContentTypes.Contains(contentType.GetDescription()) || !SelectedCheckHitTypes.Contains(hitType))
-                return "skipped";
-
-            return CreateMissingFileStatistics(contentType, hitType);
-        }
-
-        private string GetFixedFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
+        private string GetGameFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
             if (!SelectedCheckContentTypes.Contains(contentType.GetDescription()) || !SelectedCheckHitTypes.Contains(hitType))
                 return "skipped";
@@ -97,24 +86,39 @@ namespace ClrVpin.Shared
 
             var statistics = $"{renamePrefix} {Games.Sum(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
 
-            // don't show removed for missing files, since it's n/a
-            if (hitType != HitTypeEnum.Missing && IsRemoveSupported)
-                statistics += $", {CreateMissingFileStatistics(contentType, hitType)}";
+            // don't show removed for missing files since it's n/a
+            if (hitType != HitTypeEnum.Missing && IsRemoveUnknownSupported)
+                statistics += $", {CreateRemovedFileStatistics(GameFiles, contentType, hitType)}";
 
             return statistics;
         }
 
-        public abstract bool IsRemoveSupported { get; }
-
-        private string CreateMissingFileStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
+        private string GetUnknownFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
-            var removePrefix = SelectedFixHitTypes.Contains(hitType) ? IsRemoveSupported ? "removed" : "ignored" : "removable";
-            return $"{removePrefix} {CreateFileStatistic(UnknownFiles.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
+            if (!SelectedCheckContentTypes.Contains(contentType.GetDescription()) || !SelectedCheckHitTypes.Contains(hitType))
+                return "skipped";
+
+            return CreateRemovedFileStatistics(UnknownFiles, contentType, hitType);
+        }
+
+        private string CreateRemovedFileStatistics(ICollection<FileDetail> files, ContentTypeEnum contentType, HitTypeEnum hitType)
+        {
+            string removePrefix;
+            if (SelectedFixHitTypes.Contains(hitType))
+                removePrefix = IsRemoveUnknownSupported ? "removed" : "ignored";
+            else
+                removePrefix = "removable";
+
+            return $"{removePrefix} {CreateFileStatistic(files.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
+        }
+
+        private static string CreateFileStatistic(ICollection<FileDetail> removedFiles)
+        {
+            return CreateFileStatistic(removedFiles.Count, removedFiles.Sum(x => x.Size));
         }
 
         protected readonly ICollection<FileDetail> GameFiles;
         protected readonly ICollection<FileDetail> UnknownFiles;
-
         protected const int StatisticsKeyWidth = -26;
     }
 }

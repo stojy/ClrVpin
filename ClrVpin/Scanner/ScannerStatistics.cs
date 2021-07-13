@@ -3,28 +3,39 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using ByteSizeLib;
 using ClrVpin.Models;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
-using PropertyChanged;
-using Utils;
 
 namespace ClrVpin.Scanner
 {
-    [AddINotifyPropertyChangedInterface]
-    public class ScannerStatistics
+    public class ScannerStatistics : Statistics
     {
-        public ScannerStatistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> fixFiles)
+        public ScannerStatistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
+            : base(games, elapsedTime, gameFiles, unknownFiles)
         {
-            _elapsedTime = elapsedTime;
-            _games = games;
+            // hit type stats for all supported types only
+            // - including the extra 'under the hood' types.. valid, unknown, unsupported
+            SupportedHitTypes = Config.HitTypes.ToList();
 
-            CreateStatistics(fixFiles);
+            // content type stats for the single content type being rebuilt
+            SupportedContentTypes = Config.ContentTypes;
+
+            // rebuilder only supports a single selected content type
+            SelectedCheckContentTypes = Model.Config.SelectedCheckContentTypes;
+
+            // rebuilder doesn't support check and fix separately
+            SelectedCheckHitTypes = Model.Config.SelectedCheckHitTypes.ToList();
+            SelectedFixHitTypes = Model.Config.SelectedFixHitTypes.ToList();
+
+            // unlike rebuilder, the total count represents the number of Games
+            TotalCount = Games.Count;
+
+            IsRemoveUnknownSupported = true;
+
+            FixedTerm = "renamed";
+            FixableTerm = "renamable";
         }
-
-        public string Statistics { get; set; }
-        public Window Window { get; private set; }
 
         public void Show(Window parentWindow, double left, double top)
         {
@@ -41,95 +52,29 @@ namespace ClrVpin.Scanner
                 ContentTemplate = parentWindow.FindResource("ScannerStatisticsTemplate") as DataTemplate
             };
             Window.Show();
+
+            CreateStatistics();
         }
 
-        public void Close()
+        protected override string CreateTotalStatistics()
         {
-            Window.Close();
-        }
+            var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.Valid).ToList();
 
-        private void CreateStatistics(ICollection<FileDetail> fixFiles)
-        {
-            Statistics =
-                $"{CreateHitTypeStatistics(fixFiles)}\n" +
-                $"{CreateTotalStatistics(fixFiles)}";
-        }
-
-        private string CreateHitTypeStatistics(ICollection<FileDetail> fixFileDetails)
-        {
-            // for every hit type, create stats against every content type
-            var hitStatistics = Config.HitTypes.Select(hitType =>
-            {
-
-                string contents;
-                if (hitType.Enum != HitTypeEnum.Unknown && hitType.Enum != HitTypeEnum.Unsupported)
-                {
-                    // all known content has an associated game
-                    contents = string.Join("\n", Config.ContentTypes.Select(contentType =>
-                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetContentStatistics(contentType.Enum, hitType.Enum, fixFileDetails)}"));
-                }
-                else
-                {
-                    // unknown matches aren't attributed to a game.. so we treat them a little differently
-                    contents = string.Join("\n", Config.ContentTypes.Select(contentType =>
-                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetContentUnknownStatistics(contentType.Enum, hitType.Enum, fixFileDetails)}"));
-                }
-
-                return $"{hitType.Description}\n{contents}";
-            });
-
-            return $"Criteria statistics for each content type\n\n{string.Join("\n\n", hitStatistics)}";
-        }
-
-        private string GetContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FileDetail> fixFileDetails)
-        {
-            if (!Model.Config.SelectedCheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.SelectedCheckHitTypes.Contains(hitType))
-                return "skipped";
-
-            var renamePrefix = hitType == HitTypeEnum.Missing ? "irreparable" : Model.Config.SelectedFixHitTypes.Contains(hitType) ? "renamed" : "renamable";
-
-            var statistics = $"{renamePrefix} {_games.Count(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Any(hit => hit.Type == hitType))}/{_games.Count}";
-
-            // don't show removed for missing files, since it's n/a
-            if (hitType != HitTypeEnum.Missing)
-                statistics += $", {CreateMissingFileStatistics(contentType, hitType, fixFileDetails)}";
-
-            return statistics;
-        }
-
-        private static string GetContentUnknownStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FileDetail> fixFileDetails)
-        {
-            if (!Model.Config.SelectedCheckContentTypes.Contains(contentType.GetDescription()) || !Model.Config.SelectedCheckHitTypes.Contains(hitType))
-                return "skipped";
-
-            return CreateMissingFileStatistics(contentType, hitType, fixFileDetails);
-        }
-
-        private static string CreateMissingFileStatistics(ContentTypeEnum contentType, HitTypeEnum hitType, IEnumerable<FileDetail> fixFileDetails)
-        {
-            var removePrefix = Model.Config.SelectedFixHitTypes.Contains(hitType) ? "removed" : "removable";
-            return $"{removePrefix} {CreateFileStatistic(fixFileDetails.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
-        }
-
-        private string CreateTotalStatistics(ICollection<FileDetail> fixFiles)
-        {
-            var validHits = _games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.Valid).ToList();
-
-            var eligibleHits = _games.Count * Model.Config.SelectedCheckContentTypes.Count;
+            var eligibleHits = Games.Count * Model.Config.SelectedCheckContentTypes.Count;
 
             // all files
-            var allFilesCount = validHits.Count + fixFiles.Count;
-            var allFilesSize = validHits.Sum(x => x.Size) + fixFiles.Sum(x => x.Size) ?? 0;
+            var allFilesCount = validHits.Count + GameFiles.Count;
+            var allFilesSize = validHits.Sum(x => x.Size) + GameFiles.Sum(x => x.Size) ?? 0;
 
             // renamed
             // - must be configured as a fix hit type
             // - unknown is n/a apply for renamable, i.e. since we don't know what game/table to rename it to
-            var fixFilesRenamed = fixFiles.Where(x => x.Renamed).ToList();
+            var fixFilesRenamed = GameFiles.Where(x => x.Renamed).ToList();
             var fixFilesRenamedSize = fixFilesRenamed.Sum(x => x.Size);
 
             // removed (deleted)
             // - must be configured as a fix hit type
-            var fixFilesDeleted = fixFiles.Where(x => x.Deleted).ToList();
+            var fixFilesDeleted = GameFiles.Where(x => x.Deleted).ToList();
             var fixFilesDeletedSize = fixFilesDeleted.Sum(x => x.Size);
             var fixFilesDeletedUnknown = fixFilesDeleted.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
             var fixFilesDeletedUnknownSize = fixFilesDeletedUnknown.Sum(x => x.Size);
@@ -139,38 +84,26 @@ namespace ClrVpin.Scanner
             // - unknown..
             //   - n/a apply for renamable, i.e. since we don't know what game/table to rename it to
             //   - applicable for removable
-            var fixFilesIgnored = fixFiles.Where(x => x.Ignored).ToList();
+            var fixFilesIgnored = GameFiles.Where(x => x.Ignored).ToList();
             var fixFilesIgnoredSize = fixFilesIgnored.Sum(x => x.Size);
             var fixFilesIgnoredUnknown = fixFilesIgnored.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
             var fixFilesIgnoredUnknownSize = fixFilesIgnoredUnknown.Sum(x => x.Size);
 
             return "\n-----------------------------------------------\n" +
                    "\nTotals" +
-                   $"\n{"- Available Tables",StatisticsKeyWidth}{_games.Count}" +
-                   $"\n{"- Possible Content",StatisticsKeyWidth}{_games.Count * Config.ContentTypes.Length}" +
+                   $"\n{"- Available Tables",StatisticsKeyWidth}{Games.Count}" +
+                   $"\n{"- Possible Content",StatisticsKeyWidth}{Games.Count * Config.ContentTypes.Length}" +
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"All Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +
                    $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
                    $"\n{"- Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
-                   $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(fixFiles.Count, fixFiles.Sum(x => x.Size))}" +
+                   $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Count, GameFiles.Sum(x => x.Size))}" +
                    $"\n{"- renamed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +
                    $"\n{"- removed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeleted.Count, fixFilesDeletedSize)}" +
                    $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeletedUnknown.Count, fixFilesDeletedUnknownSize)}" +
                    $"\n{"- renamable and removable",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
                    $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnoredUnknown.Count, fixFilesIgnoredUnknownSize)}" +
-                   $"\n\n{"Time Taken",StatisticsKeyWidth}{_elapsedTime.TotalSeconds:f2}s";
+                   $"\n\n{"Time Taken",StatisticsKeyWidth}{ElapsedTime.TotalSeconds:f2}s";
         }
-
-        private static string CreateFileStatistic(ICollection<FileDetail> removedFiles)
-        {
-            return CreateFileStatistic(removedFiles.Count, removedFiles.Sum(x => x.Size));
-        }
-
-        private static string CreateFileStatistic(long count, long size) => $"{count} ({(size == 0 ? "0 B" : ByteSize.FromBytes(size).ToString("0.#"))})";
-
-        private readonly ObservableCollection<Game> _games;
-        private readonly TimeSpan _elapsedTime;
-
-        private const int StatisticsKeyWidth = -26;
     }
 }

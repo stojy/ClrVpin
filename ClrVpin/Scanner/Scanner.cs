@@ -157,14 +157,14 @@ namespace ClrVpin.Scanner
             Games = new ObservableCollection<Game>(games);
             
             // todo; remove concat.. for statistics!!
-            ShowResults(gameFiles.Concat(unknownFiles).ToList(), progress.Duration);
+            ShowResults(gameFiles, unknownFiles, progress.Duration);
          
             progress.Close();
         }
 
-        private void ShowResults(ICollection<FileDetail> fixFiles, TimeSpan duration)
+        private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles, TimeSpan duration)
         {
-            var scannerStatistics = new ScannerStatistics(Games, duration, fixFiles);
+            var scannerStatistics = new ScannerStatistics(Games, duration, gameFiles, unknownFiles);
             scannerStatistics.Show(_scannerWindow, WindowMargin, WindowMargin);
 
             var scannerResults = new ScannerResults(Games);
