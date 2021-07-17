@@ -4,7 +4,7 @@
 
   <DataTemplate x:Key="RebuilderStatisticsTemplate" DataType="{x:Type rebuilder:RebuilderStatistics}">
     <DockPanel>
-      <TextBox Text="{Binding Result}" FontFamily="Courier New"></TextBox>
+      <TextBox Text="{Binding Result}" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
     </DockPanel>
   </DataTemplate>
 

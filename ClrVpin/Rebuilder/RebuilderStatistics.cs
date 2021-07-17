@@ -30,11 +30,6 @@ namespace ClrVpin.Rebuilder
 
             // unlike scanner, the total count represents the number of files that were analyzed
             TotalCount = GameFiles.Count + UnknownFiles.Count;
-
-            IsRemoveUnknownSupported = false;
-
-            FixedTerm = "merged";
-            FixableTerm = "mergeable";
         }
 
         public void Show(Window parentWindow, double left, double top)
@@ -45,7 +40,7 @@ namespace ClrVpin.Rebuilder
                 Title = "Rebuilder Statistics",
                 Left = left,
                 Top = top,
-                Width = 600,
+                Width = 750,
                 Height = Model.ScreenWorkArea.Height - 10,
                 Content = this,
                 Resources = parentWindow.Resources,

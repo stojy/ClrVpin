@@ -38,6 +38,12 @@ namespace Utils
                 source.Add(item);
         }
 
+        public static void ToggleOff<T>(this ICollection<T> source, T item)
+        {
+            if (source.Contains(item))
+                source.Remove(item);
+        }
+
         public static bool In<T>(this T item, IEnumerable<T> source)
         {
             return source.Contains(item);

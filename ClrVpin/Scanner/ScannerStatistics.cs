@@ -18,10 +18,9 @@ namespace ClrVpin.Scanner
             // - including the extra 'under the hood' types.. valid, unknown, unsupported
             SupportedHitTypes = Config.HitTypes.ToList();
 
-            // content type stats for the single content type being rebuilt
-            SupportedContentTypes = Config.ContentTypes;
 
-            // rebuilder only supports a single selected content type
+            SupportedContentTypes = Config.ContentTypes.Where(x => Model.Config.SelectedCheckContentTypes.Contains(x.Description)).ToList();
+
             SelectedCheckContentTypes = Model.Config.SelectedCheckContentTypes;
 
             // rebuilder doesn't support check and fix separately
@@ -30,11 +29,6 @@ namespace ClrVpin.Scanner
 
             // unlike rebuilder, the total count represents the number of Games
             TotalCount = Games.Count;
-
-            IsRemoveUnknownSupported = true;
-
-            FixedTerm = "renamed";
-            FixableTerm = "renamable";
         }
 
         public void Show(Window parentWindow, double left, double top)
@@ -45,7 +39,7 @@ namespace ClrVpin.Scanner
                 Title = "Scanner Statistics",
                 Left = left,
                 Top = top,
-                Width = 600,
+                Width = 770,
                 Height = Model.ScreenWorkArea.Height - 10,
                 Content = this,
                 Resources = parentWindow.Resources,

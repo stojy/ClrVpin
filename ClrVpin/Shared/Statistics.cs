@@ -34,12 +34,7 @@ namespace ClrVpin.Shared
         public IList<ContentType> SupportedContentTypes { get; set; }
         public IList<string> SelectedCheckContentTypes { get; set; }
 
-        public string FixedTerm { get; protected set; }
-        public string FixableTerm { get; protected set; }
-
         public int TotalCount { get; protected set; } // Games.Count;
-
-        public bool IsRemoveUnknownSupported { get; protected set; }
 
         protected void CreateStatistics()
         {
@@ -79,42 +74,66 @@ namespace ClrVpin.Shared
 
         private string GetGameFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
-            if (!SelectedCheckContentTypes.Contains(contentType.GetDescription()) || !SelectedCheckHitTypes.Contains(hitType))
-                return "skipped";
+            // identify stats belonging to criteria that was skipped
+            var prefix = "discovered";
+            if (!SelectedCheckHitTypes.Contains(hitType))
+                prefix += " (skipped)";
 
-            var renamePrefix = hitType == HitTypeEnum.Missing ? "irreparable" : SelectedFixHitTypes.Contains(hitType) ? FixedTerm : FixableTerm;
+            // discovered statistics - from the games list
+            var discoveredStatistics = $"{prefix} {Games.Sum(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
 
-            var statistics = $"{renamePrefix} {Games.Sum(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
+            // file statistics - from the file list.. which is also stored in the games list, but more accessible via Games
+            // - for n/a hit types (e.g. ignored) there will be no stats since there are no GameFiles :)
+            var fileStatistics = CreateFileStatistics(GameFiles, contentType, hitType);
 
-            // don't show removed for missing files since it's n/a
-            if (hitType != HitTypeEnum.Missing && IsRemoveUnknownSupported)
-                statistics += $", {CreateRemovedFileStatistics(GameFiles, contentType, hitType)}";
-
-            return statistics;
+            return string.Join(": ", new[] {discoveredStatistics, fileStatistics}.Where(x => !string.IsNullOrEmpty(x)));
         }
 
         private string GetUnknownFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
-            if (!SelectedCheckContentTypes.Contains(contentType.GetDescription()) || !SelectedCheckHitTypes.Contains(hitType))
-                return "skipped";
+            // identify stats belonging to criteria that was skipped
+            var prefix = "discovered";
+            if (!SelectedCheckHitTypes.Contains(hitType))
+                prefix += " (skipped)";
 
-            return CreateRemovedFileStatistics(UnknownFiles, contentType, hitType);
+            // discovered statistics - from the games list
+            var matchedFiles = UnknownFiles.Where(x => x.ContentType == contentType && x.HitType == hitType).ToList();
+            var discoveredStatistics = CreateFileStatistic(prefix, matchedFiles, true);
+                //$"discovered {matchedFiles.Sum(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
+
+            // file statistics - from the file list.. which is also stored in the games list, but more accessible via Games
+            // - for n/a hit types (e.g. ignored) there will be no stats since there are no GameFiles :)
+            var fileStatistics = CreateFileStatistics(UnknownFiles, contentType, hitType);
+
+            return string.Join(": ", new[] { discoveredStatistics, fileStatistics }.Where(x => !string.IsNullOrEmpty(x)));
         }
 
-        private string CreateRemovedFileStatistics(ICollection<FileDetail> files, ContentTypeEnum contentType, HitTypeEnum hitType)
+        private static string CreateFileStatistics(IEnumerable<FileDetail> files, ContentTypeEnum contentType, HitTypeEnum hitType)
         {
-            string removePrefix;
-            if (SelectedFixHitTypes.Contains(hitType))
-                removePrefix = IsRemoveUnknownSupported ? "removed" : "ignored";
-            else
-                removePrefix = "removable";
+            var fileStatistics = new List<string>();
 
-            return $"{removePrefix} {CreateFileStatistic(files.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
+            var matchedFiles = files.Where(x => x.ContentType == contentType && x.HitType == hitType).ToList();
+
+            fileStatistics.Add(CreateFileStatistic("ignored", matchedFiles.Where(x => x.Ignored)));
+            fileStatistics.Add(CreateFileStatistic("renamed", matchedFiles.Where(x => x.Renamed)));
+            fileStatistics.Add(CreateFileStatistic("removed", matchedFiles.Where(x => x.Deleted)));
+            fileStatistics.Add(CreateFileStatistic("merged", matchedFiles.Where(x => x.Merged)));
+
+
+            //string removePrefix;
+            //if (SelectedFixHitTypes.Contains(hitType))
+            //    removePrefix = IsRemoveUnknownSupported ? "removed" : "ignored";
+            //else
+            //    removePrefix = "removable";
+            //return $"{removePrefix} {CreateFileStatistic(files.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
+
+            return string.Join(", ", fileStatistics.Where(x=> x != null));
         }
 
-        private static string CreateFileStatistic(ICollection<FileDetail> removedFiles)
+        private static string CreateFileStatistic(string prefix, IEnumerable<FileDetail> removedFiles, bool includeEmpty = false)
         {
-            return CreateFileStatistic(removedFiles.Count, removedFiles.Sum(x => x.Size));
+            var fileDetails = removedFiles as FileDetail[] ?? removedFiles.ToArray();
+            return fileDetails.Any() || includeEmpty ? $"{prefix} {CreateFileStatistic(fileDetails.Length, fileDetails.Sum(x => x.Size))}" : null;
         }
 
         protected readonly ICollection<FileDetail> GameFiles;
