@@ -31,9 +31,8 @@ namespace ClrVpin.Models
                     path += $" (or {string.Join(", ", otherExtensions)})";
             }
 
-            // only add hit type for valid hits OR if it has been configured to be checked
-            if (hitType == HitTypeEnum.Valid || Model.Config.SelectedCheckHitTypes.Contains(hitType))
-                Hits.Add(new Hit(_contentType.Enum, path, hitType));
+            // always add hit type.. irrespective of whether it's valid or configured
+            Hits.Add(new Hit(_contentType.Enum, path, hitType));
         }
 
         private readonly ContentType _contentType;
