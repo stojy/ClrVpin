@@ -76,17 +76,20 @@ namespace ClrVpin.Rebuilder
 
         private static FileDetail Merge(Hit hit, Game _, ICollection<HitTypeEnum> supportedHitTypes)
         {
-            var canMerge = false;
+            var ignore = false;
             var sourceFileName = hit.Path;
 
             // construct the destination file name - i.e. the location the source file will be copied to
             var contentType = Config.GetDestinationContentType();
             var destinationFileName = Path.Combine(contentType.Folder, hit.File);
 
+            // ignore file from either..
+            // - hit type NOT selected OR
+            // - ignore option selected
             if (supportedHitTypes.Contains(hit.Type))
             {
-                canMerge = ShouldIgnore(hit.Type.GetDescription(), sourceFileName, destinationFileName);
-                if (canMerge)
+                ignore = ShouldIgnore(hit.Type.GetDescription(), sourceFileName, destinationFileName);
+                if (ignore)
                 {
                     var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
                     Logger.Info($"{prefix}Merging file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, source: {sourceFileName}, destination: {destinationFileName}");
@@ -105,7 +108,7 @@ namespace ClrVpin.Rebuilder
                 }
             }
 
-            return new FileDetail(hit.ContentTypeEnum, hit.Type, canMerge ? FixFileTypeEnum.Merged : null, sourceFileName, hit.Size ?? 0);
+            return new FileDetail(hit.ContentTypeEnum, hit.Type, ignore ? FixFileTypeEnum.Merged : null, sourceFileName, hit.Size ?? 0);
         }
 
         private static bool ShouldIgnore(string hitTypeDescription, string sourceFileName, string destinationFileName)
@@ -115,7 +118,7 @@ namespace ClrVpin.Rebuilder
                 var sourceFileInfo = new FileInfo(sourceFileName);
                 var destinationFileInfo = new FileInfo(destinationFileName);
 
-                if (Model.Config.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && sourceFileInfo.Length * 0.5 < destinationFileInfo.Length)
+                if (Model.Config.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && sourceFileInfo.Length < destinationFileInfo.Length * 0.5)
                     return SkipMerge(IgnoreOptionEnum.IgnoreSmaller, hitTypeDescription, sourceFileInfo, destinationFileInfo);
                 if (Model.Config.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime < destinationFileInfo.LastWriteTime)
                     return SkipMerge(IgnoreOptionEnum.IgnoreOlder, hitTypeDescription, sourceFileInfo, destinationFileInfo);

@@ -72,12 +72,13 @@
         </ItemsControl.ItemsPanel>
       </ItemsControl>
 
-      <WrapPanel Margin="5">
-        <ToggleButton ToolTip="When enabled, rebuilder will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />
-        <TextBlock Margin="10,0,0,0" Text="Trainer Wheels"/>
+      <WrapPanel Margin="5,0" HorizontalAlignment="Left">
+        <CheckBox ToolTip="When enabled, rebuilder will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />
+        <TextBlock Margin="5,0,0,0" Text="Trainer Wheels"/>
       </WrapPanel>
 
-      <Button Margin="5" Width="50" Command="{Binding StartCommand}" Style="{StaticResource AlternateButton}" IsEnabled="{Binding IsValid}">Start</Button>
+      <Button Margin="0,15,0,0" Width="50" Command="{Binding StartCommand}" Style="{StaticResource AlternateButton}" IsEnabled="{Binding IsValid}">Start</Button>
+
     </StackPanel>
   </DataTemplate>
 
