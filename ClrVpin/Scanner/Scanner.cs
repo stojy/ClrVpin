@@ -104,8 +104,10 @@ namespace ClrVpin.Scanner
                     var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
                     fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
                     if (!featureType.IsActive)
+                    {
                         fixHitType.IsActive = false;
-                    Model.Config.SelectedFixHitTypes.Toggle(hitType.Enum);
+                        Model.Config.SelectedFixHitTypes.ToggleOff(hitType.Enum);
+                    }
                 });
 
                 return featureType;
