@@ -24,9 +24,9 @@
         </ItemsControl.ItemTemplate>
       </ItemsControl>
 
-      <TextBlock Style="{StaticResource Title}">Criteria to Review</TextBlock>
+      <TextBlock Style="{StaticResource Title}">Criteria</TextBlock>
       <WrapPanel>
-        <GroupBox Margin="5" Padding="2" Header="Check">
+        <GroupBox Margin="5" Padding="2" Header="Match">
           <StackPanel>
             <ItemsControl ItemsSource="{Binding CheckHitTypesView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
@@ -54,7 +54,7 @@
       </WrapPanel>
 
       <WrapPanel Margin="5">
-        <ToggleButton ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />
+        <CheckBox ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />
         <TextBlock Margin="10,0,0,0" Text="Trainer Wheels"/>
       </WrapPanel>
 

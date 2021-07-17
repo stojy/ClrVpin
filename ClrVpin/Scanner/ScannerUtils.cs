@@ -52,9 +52,9 @@ namespace ClrVpin.Scanner
         {
             _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
 
-            // the returned gameFiles hits are for ALL criteria, i.e. irrespective of whether..
+            // EVERY GAME THAT HAS A HIT (IRRESPECTIVE OF MATCH CRITERIA) WILL HAVE A GAME FILE RETURNED, i.e. irrespective of whether..
             // - match criteria is selected or relevant
-            // - merge options are selected or relevant
+            // - skip options are selected or relevant
             var gameFiles = new List<FileDetail>();
 
             // fix files associated with games, if they satisfy the fix criteria
