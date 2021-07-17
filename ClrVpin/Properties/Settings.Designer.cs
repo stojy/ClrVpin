@@ -128,7 +128,7 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("32")]
+        [global::System.Configuration.DefaultSettingValueAttribute("33")]
         public int RequiredVersion {
             get {
                 return ((int)(this["RequiredVersion"]));
@@ -176,7 +176,7 @@ namespace ClrVpin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("[0,1,2,3,4]")]
+        [global::System.Configuration.DefaultSettingValueAttribute("[0,1]")]
         public string MergeOptions {
             get {
                 return ((string)(this["MergeOptions"]));
@@ -207,6 +207,18 @@ namespace ClrVpin.Properties {
             }
             set {
                 this["DestinationContentType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[0,1]")]
+        public string IgnoreOptions {
+            get {
+                return ((string)(this["IgnoreOptions"]));
+            }
+            set {
+                this["IgnoreOptions"] = value;
             }
         }
     }

@@ -34,7 +34,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="RequiredVersion" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">32</Value>
+      <Value Profile="(Default)">33</Value>
     </Setting>
     <Setting Name="ActualVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -46,13 +46,16 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="MergeOptions" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[0,1,2,3,4]</Value>
+      <Value Profile="(Default)">[0,1]</Value>
     </Setting>
     <Setting Name="SourceFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="DestinationContentType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="IgnoreOptions" Type="System.String" Scope="User">
+      <Value Profile="(Default)">[0,1]</Value>
     </Setting>
   </Settings>
 </SettingsFile>

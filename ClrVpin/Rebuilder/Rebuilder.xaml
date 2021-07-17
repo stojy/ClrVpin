@@ -13,7 +13,24 @@
 
   <DataTemplate x:Key="RebuilderTemplate" DataType="{x:Type rebuilder:Rebuilder}">
     <StackPanel Margin="5">
-      <TextBlock Style="{StaticResource Title}">Criteria to Match</TextBlock>
+      <TextBlock Style="{StaticResource Title}">Content to Merge</TextBlock>
+      <WrapPanel>
+        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding SourceFolderModel}" />
+
+        <ComboBox materialDesign:HintAssist.Hint="Destination" ItemsSource="{Binding DestinationContentTypes}"
+                  Width="150" VerticalAlignment="Top" Margin="20,0,0,0"
+                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" materialDesign:TextFieldAssist.HasClearButton="True">
+          <ComboBox.SelectedItem>
+            <Binding Path="Config.DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+              <Binding.ValidationRules>
+                <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" Description="Content type" />
+              </Binding.ValidationRules>
+            </Binding>
+          </ComboBox.SelectedItem>
+        </ComboBox>
+      </WrapPanel>
+
+      <TextBlock Style="{StaticResource Title}">Match Criteria</TextBlock>
       <ItemsControl ItemsSource="{Binding MatchCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
         <ItemsControl.ItemTemplate>
           <DataTemplate DataType="models:FeatureType">
@@ -27,8 +44,8 @@
         </ItemsControl.ItemsPanel>
       </ItemsControl>
 
-      <TextBlock Style="{StaticResource Title}">Merge Options</TextBlock>
-      <ItemsControl ItemsSource="{Binding MergeCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
+      <TextBlock Style="{StaticResource Title}">Ignore Options</TextBlock>
+      <ItemsControl ItemsSource="{Binding IgnoreOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
         <ItemsControl.ItemTemplate>
           <DataTemplate DataType="models:FeatureType">
             <CheckBox Margin="0,0,20,2" Width="270" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
@@ -41,22 +58,19 @@
         </ItemsControl.ItemsPanel>
       </ItemsControl>
 
-      <TextBlock Style="{StaticResource Title}">Folders</TextBlock>
-      <WrapPanel>
-        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding SourceFolderModel}" />
-
-        <ComboBox materialDesign:HintAssist.Hint="Destination" ItemsSource="{Binding DestinationContentTypes}"
-                  Width="150" VerticalAlignment="Top" Margin="10,0,0,0"
-                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" materialDesign:TextFieldAssist.HasClearButton="True">
-          <ComboBox.SelectedItem>
-            <Binding Path="Config.DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-              <Binding.ValidationRules>
-                <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" Description="Content type" />
-              </Binding.ValidationRules>
-            </Binding>
-          </ComboBox.SelectedItem>
-        </ComboBox>
-      </WrapPanel>
+      <TextBlock Style="{StaticResource Title}">Merge Options</TextBlock>
+      <ItemsControl ItemsSource="{Binding MergeOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="models:FeatureType">
+            <CheckBox Margin="0,0,20,2" Width="270" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+      </ItemsControl>
 
       <WrapPanel Margin="5">
         <ToggleButton ToolTip="When enabled, rebuilder will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />

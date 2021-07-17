@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models;
+using ClrVpin.Models.Rebuilder;
 using ClrVpin.Shared;
 using Utils;
 
@@ -84,7 +85,7 @@ namespace ClrVpin.Rebuilder
 
             if (supportedHitTypes.Contains(hit.Type))
             {
-                canMerge = CanMerge(hit.Type.GetDescription(), sourceFileName, destinationFileName);
+                canMerge = ShouldIgnore(hit.Type.GetDescription(), sourceFileName, destinationFileName);
                 if (canMerge)
                 {
                     var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
@@ -107,27 +108,27 @@ namespace ClrVpin.Rebuilder
             return new FileDetail(hit.ContentTypeEnum, hit.Type, canMerge ? FixFileTypeEnum.Merged : null, sourceFileName, hit.Size ?? 0);
         }
 
-        private static bool CanMerge(string hitTypeDescription, string sourceFileName, string destinationFileName)
+        private static bool ShouldIgnore(string hitTypeDescription, string sourceFileName, string destinationFileName)
         {
             if (File.Exists(destinationFileName))
             {
                 var sourceFileInfo = new FileInfo(sourceFileName);
                 var destinationFileInfo = new FileInfo(destinationFileName);
 
-                if (Model.Config.SelectedMergeOptions.Contains(MergeOptionEnum.IgnoreSmaller) && sourceFileInfo.Length * 0.5 < destinationFileInfo.Length)
-                    return SkipMerge(MergeOptionEnum.IgnoreSmaller, hitTypeDescription, sourceFileInfo, destinationFileInfo);
-                if (Model.Config.SelectedMergeOptions.Contains(MergeOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime < destinationFileInfo.LastWriteTime)
-                    return SkipMerge(MergeOptionEnum.IgnoreOlder, hitTypeDescription, sourceFileInfo, destinationFileInfo);
+                if (Model.Config.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && sourceFileInfo.Length * 0.5 < destinationFileInfo.Length)
+                    return SkipMerge(IgnoreOptionEnum.IgnoreSmaller, hitTypeDescription, sourceFileInfo, destinationFileInfo);
+                if (Model.Config.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime < destinationFileInfo.LastWriteTime)
+                    return SkipMerge(IgnoreOptionEnum.IgnoreOlder, hitTypeDescription, sourceFileInfo, destinationFileInfo);
             }
 
             // if the file doesn't exist
             return true;
         }
 
-        private static bool SkipMerge(MergeOptionEnum mergeOption, string hitTypeDescription, FileInfo sourceFileInfo, FileInfo destinationFileInfo)
+        private static bool SkipMerge(IgnoreOptionEnum optionEnum, string hitTypeDescription, FileInfo sourceFileInfo, FileInfo destinationFileInfo)
         {
             Logger.Info(
-                $"Skipped merging - option: '{mergeOption.GetDescription()}', type: {hitTypeDescription}, existing: {destinationFileInfo.FullName} ({destinationFileInfo.Length}), source: {sourceFileInfo.FullName} ({sourceFileInfo.Length})");
+                $"Skipped merging - option: '{optionEnum.GetDescription()}', type: {hitTypeDescription}, existing: {destinationFileInfo.FullName} ({destinationFileInfo.Length}), source: {sourceFileInfo.FullName} ({sourceFileInfo.Length})");
             return false;
         }
 

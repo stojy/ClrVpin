@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using ClrVpin.Models.Rebuilder;
 using PropertyChanged;
 using Utils;
 
@@ -43,7 +44,9 @@ namespace ClrVpin.Models
             // rebuilder
             SelectedMatchTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedMatchTypes, value => Properties.Settings.Default.SelectedMatchTypes = value).Observable;
             SelectedMergeOptions = new ObservableCollectionJson<MergeOptionEnum>(Properties.Settings.Default.MergeOptions, value => Properties.Settings.Default.MergeOptions = value).Observable;
+            SelectedIgnoreOptions = new ObservableCollectionJson<IgnoreOptionEnum>(Properties.Settings.Default.IgnoreOptions, value => Properties.Settings.Default.IgnoreOptions = value).Observable;
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            IgnoreOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).ToArray();
 
             ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).ToArray();
@@ -196,15 +199,21 @@ namespace ClrVpin.Models
         // rebuilder
         public ObservableCollection<HitTypeEnum> SelectedMatchTypes;
         public ObservableCollection<MergeOptionEnum> SelectedMergeOptions;
+        public ObservableCollection<IgnoreOptionEnum> SelectedIgnoreOptions;
 
         // rebuilder matching criteria types - to be used elsewhere (rebuilder)
         public static HitType[] MatchTypes;
 
         // all possible file merge options - to be used elsewhere (rebuilder)
+        public static IgnoreOption[] IgnoreOptions =
+        {
+            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreSmaller, Tip = "Ignore source files that are significantly smaller size (<50%) than the existing files"},
+            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreOlder, Tip = "Ignore source files that are older (using modified timestamp) than the existing files"},
+        };
+
+        // all possible file merge options - to be used elsewhere (rebuilder)
         public static MergeOption[] MergeOptions =
         {
-            new MergeOption {Enum = MergeOptionEnum.IgnoreSmaller, Tip = "Ignore source files that are significantly smaller size (<50%) than the existing files"},
-            new MergeOption {Enum = MergeOptionEnum.IgnoreOlder, Tip = "Ignore source files that are older (using modified timestamp) than the existing files"},
             new MergeOption {Enum = MergeOptionEnum.PreserveTimestamp, Tip = "The (modified) timestamp of the source file will be used for created or overwritten destination file"},
             new MergeOption {Enum = MergeOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"},
         };

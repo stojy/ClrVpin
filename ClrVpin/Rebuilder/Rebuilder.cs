@@ -24,7 +24,8 @@ namespace ClrVpin.Rebuilder
             StartCommand = new ActionCommand(Start);
 
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
-            MergeCriteriaTypesView = new ListCollectionView(CreateMergeOptions().ToList());
+            IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
+            MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
 
             SourceFolderModel = new FolderTypeModel("Source", Model.Config.SourceFolder, folder =>
             {
@@ -38,10 +39,12 @@ namespace ClrVpin.Rebuilder
             UpdateIsValid();
         }
 
+
         public bool IsValid { get; set; }
 
         public ListCollectionView MatchCriteriaTypesView { get; set; }
-        public ListCollectionView MergeCriteriaTypesView { get; set; }
+        public ListCollectionView IgnoreOptionsTypesView { get; set; }
+        public ListCollectionView MergeOptionsTypesView { get; set; }
 
         public FolderTypeModel SourceFolderModel { get; set; }
         public ObservableCollection<string> DestinationContentTypes { get; set; }
@@ -57,8 +60,8 @@ namespace ClrVpin.Rebuilder
                 Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
-                Width = 650,
-                Height = 380,
+                Width = 660,
+                Height = 430,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,
@@ -108,6 +111,26 @@ namespace ClrVpin.Rebuilder
             return matchTypes.ToList();
         }
 
+        private IEnumerable<FeatureType> CreateIgnoreOptions()
+        {
+            // show all merge options
+            var featureTypes = Config.IgnoreOptions.Select(ignoreOption =>
+            {
+                var featureType = new FeatureType((int) ignoreOption.Enum)
+                {
+                    Description = ignoreOption.Description,
+                    Tip = ignoreOption.Tip,
+                    IsSupported = true,
+                    IsActive = Model.Config.SelectedIgnoreOptions.Contains(ignoreOption.Enum),
+                    SelectedCommand = new ActionCommand(() => Model.Config.SelectedIgnoreOptions.Toggle(ignoreOption.Enum))
+                };
+
+                return featureType;
+            });
+
+            return featureTypes.ToList();
+        }
+        
         private IEnumerable<FeatureType> CreateMergeOptions()
         {
             // show all merge options
