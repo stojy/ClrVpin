@@ -13,9 +13,10 @@ namespace ClrVpin.Models
         {
             ContentTypeEnum = contentTypeEnum;
             ContentType = contentTypeEnum.GetDescription();
-            Path = path;
+            Path = path;    // full path + file name
             File = System.IO.Path.GetFileName(path);
-            Size = type == HitTypeEnum.Missing ? null : new FileInfo(path).Length;
+            FileInfo = type == HitTypeEnum.Missing ? null : new FileInfo(path);
+            Size = FileInfo?.Length;
             SizeString = type == HitTypeEnum.Missing ? null : ByteSize.FromBytes(new FileInfo(path).Length).ToString("#");
             Type = type;
 
@@ -31,6 +32,7 @@ namespace ClrVpin.Models
 
         public string Path { get; }
         public string File { get; }
+        public FileInfo FileInfo { get; }
         public string SizeString { get; }
         public long? Size { get; set; }
         public HitTypeEnum Type { get; }

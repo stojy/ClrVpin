@@ -77,62 +77,76 @@ namespace ClrVpin.Rebuilder
         private static FileDetail Merge(Hit hit, Game _, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var ignore = false;
-            var sourceFileName = hit.Path;
+            var sourceFileInfo = hit.FileInfo;  // file to be copied, i.e. into the VP folder (potentially overriding)
 
             // construct the destination file name - i.e. the location the source file will be copied to
             var contentType = Config.GetDestinationContentType();
             var destinationFileName = Path.Combine(contentType.Folder, hit.File);
+            var destinationFileInfo = File.Exists(destinationFileName) ? new FileInfo(destinationFileName) : null;
 
             // ignore file from either..
             // - hit type NOT selected OR
             // - ignore option selected
             if (supportedHitTypes.Contains(hit.Type))
             {
-                ignore = ShouldIgnore(hit.Type.GetDescription(), sourceFileName, destinationFileName);
+                ignore = ShouldIgnore(hit, sourceFileInfo, destinationFileInfo);
                 if (ignore)
                 {
-                    var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
-                    Logger.Info($"{prefix}Merging file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, source: {sourceFileName}, destination: {destinationFileName}");
-
-                    if (!Model.Config.TrainerWheels)
+                    if (Model.Config.TrainerWheels)
+                        Log("Ignored merging", "trainer wheels", hit, sourceFileInfo, destinationFileInfo, destinationFileName);
+                    else
                     {
-                        if (File.Exists(destinationFileName))
-                            TableUtils.Backup(destinationFileName, "deleted");
+                        Log("Merging file", null, hit, sourceFileInfo, destinationFileInfo, destinationFileName);
 
-                        TableUtils.Backup(sourceFileName, "merged");
+                        if (!Model.Config.TrainerWheels)
+                        {
+                            if (File.Exists(destinationFileName))
+                                TableUtils.Backup(destinationFileName, "deleted");
 
-                        // todo; preserve timestamp
-                        // todo; copy vs move.. i.e. delete source file
-                        File.Move(sourceFileName, destinationFileName, true);
+                            TableUtils.Backup(sourceFileInfo.Name, "merged");
+
+                            // todo; preserve timestamp
+                            // todo; copy vs move.. i.e. delete source file
+                            File.Move(sourceFileInfo.Name, destinationFileName, true);
+                        }
                     }
                 }
             }
 
-            return new FileDetail(hit.ContentTypeEnum, hit.Type, ignore ? FixFileTypeEnum.Merged : null, sourceFileName, hit.Size ?? 0);
+            return new FileDetail(hit.ContentTypeEnum, hit.Type, ignore ? FixFileTypeEnum.Merged : null, sourceFileInfo.Name, hit.Size ?? 0);
         }
 
-        private static bool ShouldIgnore(string hitTypeDescription, string sourceFileName, string destinationFileName)
+        private static bool ShouldIgnore(Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo)
         {
-            if (File.Exists(destinationFileName))
+            if (destinationFileInfo != null)
             {
-                var sourceFileInfo = new FileInfo(sourceFileName);
-                var destinationFileInfo = new FileInfo(destinationFileName);
-
                 if (Model.Config.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && sourceFileInfo.Length < destinationFileInfo.Length * 0.5)
-                    return SkipMerge(IgnoreOptionEnum.IgnoreSmaller, hitTypeDescription, sourceFileInfo, destinationFileInfo);
+                    return SkipMerge(IgnoreOptionEnum.IgnoreSmaller, hit, sourceFileInfo, destinationFileInfo);
                 if (Model.Config.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime < destinationFileInfo.LastWriteTime)
-                    return SkipMerge(IgnoreOptionEnum.IgnoreOlder, hitTypeDescription, sourceFileInfo, destinationFileInfo);
+                    return SkipMerge(IgnoreOptionEnum.IgnoreOlder, hit, sourceFileInfo, destinationFileInfo);
             }
 
-            // if the file doesn't exist
+            // if the file doesn't exist then there's no reason to not merge it
             return true;
         }
 
-        private static bool SkipMerge(IgnoreOptionEnum optionEnum, string hitTypeDescription, FileInfo sourceFileInfo, FileInfo destinationFileInfo)
+        private static bool SkipMerge(IgnoreOptionEnum optionEnum, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo)
         {
-            Logger.Info(
-                $"Skipped merging - option: '{optionEnum.GetDescription()}', type: {hitTypeDescription}, existing: {destinationFileInfo.FullName} ({destinationFileInfo.Length}), source: {sourceFileInfo.FullName} ({sourceFileInfo.Length})");
+            Log("Ignored merging", optionEnum.GetDescription(), hit, sourceFileInfo, destinationFileInfo);
             return false;
+        }
+
+        private static void Log(string prefix, string optionDescription, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo, string destinationFileName = null)
+        {
+            // files..
+            // 1. source file - will always exist since this is the new file to be merged
+            // 2. destination file - may not exist, i.e. this is a new file name (aka new content)
+            
+            var optionDetail = optionDescription == null ? "" : $"option: '{optionDescription}', ";
+            var destinationLengthDetail = destinationFileInfo == null ? "NEW" : destinationFileInfo.Length.ToString();
+
+            Logger.Info($"{prefix} - {optionDetail}'type: {hit.Type.GetDescription()}, content: {hit.ContentType}, " +
+                        $"source: {sourceFileInfo.Name} ({sourceFileInfo.Length}), destination: {destinationFileInfo?.Name ?? destinationFileName} ({destinationLengthDetail})");
         }
 
         private static string _activeBackupFolder;
