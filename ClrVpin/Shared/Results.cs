@@ -97,7 +97,7 @@ namespace ClrVpin.Shared
                     return false;
 
                 // return hits based on description match against the search text
-                return SearchText.Length == 0 || ((Game) gameObject).Description.ToLower().Contains(SearchText.ToLower());
+                return string.IsNullOrEmpty(SearchText) || ((Game)gameObject).Description.ToLower().Contains(SearchText.ToLower());
             };
         }
 
