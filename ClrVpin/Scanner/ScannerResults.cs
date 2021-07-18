@@ -24,7 +24,7 @@ namespace ClrVpin.Scanner
             Window = new MaterialWindow
             {
                 Owner = parentWindow,
-                Title = "Scanner Table Results (Issues)",
+                Title = "Results (Issues and Fixes)",
                 Left = left,
                 Top = top,
                 Width = Model.ScreenWorkArea.Width - left - 5,
