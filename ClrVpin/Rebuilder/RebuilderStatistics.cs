@@ -54,12 +54,21 @@ namespace ClrVpin.Rebuilder
         protected override string CreateTotalStatistics()
         {
             // all files
-            var allFilesCount = GameFiles.Count + UnknownFiles.Count;
-            var allFilesSize = GameFiles.Sum(x => x.Size) + UnknownFiles.Sum(x => x.Size);
+            var allFiles = GameFiles.Concat(UnknownFiles).ToList();
+            var mergedFiles = allFiles.Where(x => !x.Ignored);
+            var ignoredFiles = allFiles.Where(x => x.Ignored);
 
             return "\n-----------------------------------------------\n" +
-                   $"\n{"Source Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +
-                   $"\n\n{"Time Taken",StatisticsKeyWidth}{ElapsedTime.TotalSeconds:f2}s";
+                   $"\n{"Source Files",StatisticsKeyWidth}" +
+                   $"\n{"- Total",StatisticsKeyWidth}{CreateFileStatistic(allFiles)}" +
+                   $"\n{"- Matched",StatisticsKeyWidth}{CreateFileStatistic(GameFiles)}" +
+                   $"\n{"- Unknown & Unsupported",StatisticsKeyWidth}{CreateFileStatistic(UnknownFiles)}" +
+                   "\n" +
+                   $"\n{"Destination Files",StatisticsKeyWidth}" +
+                   $"\n{"- Merged",StatisticsKeyWidth}{CreateFileStatistic(mergedFiles)}" +
+                   $"\n{"- Ignored",StatisticsKeyWidth}{CreateFileStatistic(ignoredFiles)}" +
+                   "\n" +
+                   $"\n{"Time Taken",StatisticsKeyWidth}{ElapsedTime.TotalSeconds:f2}s";
         }
     }
 }

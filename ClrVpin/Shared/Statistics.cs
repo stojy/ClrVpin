@@ -45,6 +45,12 @@ namespace ClrVpin.Shared
 
         protected abstract string CreateTotalStatistics();
 
+        protected static string CreateFileStatistic(IEnumerable<FileDetail> fileDetails)
+        {
+            var fileDetailsArray = fileDetails as FileDetail[] ?? fileDetails.ToArray();
+            return CreateFileStatistic(fileDetailsArray.Length, fileDetailsArray.Sum(x => x.Size));
+        }
+
         protected static string CreateFileStatistic(long count, long size) => $"{count} ({(size == 0 ? "0 B" : ByteSize.FromBytes(size).ToString("0.#"))})";
 
         private string CreateHitTypeStatistics()
@@ -77,7 +83,7 @@ namespace ClrVpin.Shared
             // identify stats belonging to criteria that was skipped
             var prefix = "discovered";
             if (!SelectedCheckHitTypes.Contains(hitType))
-                prefix += " (skipped)";
+                prefix += " (ignored)";
 
             // discovered statistics - from the games list
             var discoveredStatistics = $"{prefix} {Games.Sum(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
@@ -94,7 +100,7 @@ namespace ClrVpin.Shared
             // identify stats belonging to criteria that was skipped
             var prefix = "discovered";
             if (!SelectedCheckHitTypes.Contains(hitType))
-                prefix += " (skipped)";
+                prefix += " (ignored)";
 
             // discovered statistics - from the games list
             var matchedFiles = UnknownFiles.Where(x => x.ContentType == contentType && x.HitType == hitType).ToList();
