@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ClrVpin.Logging;
 using ClrVpin.Models;
 using ClrVpin.Shared;
 
@@ -50,7 +47,7 @@ namespace ClrVpin.Scanner
 
         private static List<FileDetail> Fix(List<Game> games, string backupFolder)
         {
-            _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
+            TableUtils.SetActiveBackupFolder(backupFolder);
 
             // EVERY GAME THAT HAS A HIT (IRRESPECTIVE OF MATCH CRITERIA) WILL HAVE A GAME FILE RETURNED, i.e. irrespective of whether..
             // - match criteria is selected or relevant
@@ -82,15 +79,7 @@ namespace ClrVpin.Scanner
             });
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-            if (Directory.Exists(_activeBackupFolder))
-            {
-                var files = Directory.EnumerateFiles(_activeBackupFolder, "*", SearchOption.AllDirectories);
-                if (!files.Any())
-                {
-                    Logger.Info($"Deleting empty backup folder: '{_activeBackupFolder}'");
-                    Directory.Delete(_activeBackupFolder, true);
-                }
-            }
+            TableUtils.DeleteActiveBackupFolderIfEmpty();
 
             return gameFiles;
         }
@@ -126,7 +115,5 @@ namespace ClrVpin.Scanner
                 });
             });
         }
-
-        private static string _activeBackupFolder;
     }
 }

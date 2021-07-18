@@ -81,6 +81,16 @@
           </GroupBox>
         </WrapPanel>
 
+        <WrapPanel Margin="5,0,0,10">
+          <TextBlock Text="Backup Folder: " />
+          <TextBlock DockPanel.Dock="Top" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}">
+            <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}">
+              <TextBlock Text="{Binding BackupFolder}" />
+            </Hyperlink>
+          </TextBlock>
+
+        </WrapPanel>
+
         <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,5,0">
           <CheckBox DockPanel.Dock="Left" Margin="5,5" Command="{Binding ExpandGamesCommand}"
                     CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">

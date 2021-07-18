@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models;
@@ -13,6 +12,8 @@ namespace ClrVpin.Shared
 {
     public static class TableUtils
     {
+        public static string ActiveBackupFolder { get; private set; }
+
         public static List<Game> GetGamesFromDatabases()
         {
             var databaseDetail = Model.Config.GetFrontendFolders().First(x => x.IsDatabase);
@@ -65,9 +66,10 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        public static string GetActiveBackupFolder(string backupFolder)
+        public static string SetActiveBackupFolder(string rootBackupFolder)
         {
-            return _activeBackupFolder = $"{backupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
+            _rootBackupFolder = rootBackupFolder;
+            return ActiveBackupFolder = $"{rootBackupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
         }
 
         public static IEnumerable<FileDetail> AssociateMediaFilesWithGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
@@ -179,6 +181,24 @@ namespace ClrVpin.Shared
             File.Copy(file, backupFile, true);
         }
 
+        public static void DeleteActiveBackupFolderIfEmpty()
+        {
+            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
+            if (Directory.Exists(ActiveBackupFolder))
+            {
+                var files = Directory.EnumerateFiles(ActiveBackupFolder, "*", SearchOption.AllDirectories);
+                if (!files.Any())
+                {
+                    Logger.Info($"Deleting empty backup folder: '{ActiveBackupFolder}'");
+                    Directory.Delete(ActiveBackupFolder, true);
+                }
+            }
+
+            // if directory doesn't exist (e.g. deleted as per above OR never existed), then assign the active folder back to the root folder, i.e. a valid folder that exists
+            if (!Directory.Exists(ActiveBackupFolder)) 
+                ActiveBackupFolder = _rootBackupFolder;
+        }
+
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
 
         private static FileDetail Delete(Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
@@ -198,7 +218,7 @@ namespace ClrVpin.Shared
         private static string CreateBackupFileName(string file, string subFolder = "")
         {
             var contentFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
-            var folder = Path.Combine(_activeBackupFolder, subFolder, contentFolder);
+            var folder = Path.Combine(ActiveBackupFolder, subFolder, contentFolder);
             var destFileName = Path.Combine(folder, Path.GetFileName(file));
 
             // store backup file in the same folder structure as the source file
@@ -208,6 +228,6 @@ namespace ClrVpin.Shared
             return destFileName;
         }
 
-        private static string _activeBackupFolder;
+        private static string _rootBackupFolder;
     }
 }

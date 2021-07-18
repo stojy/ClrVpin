@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -23,10 +24,14 @@ namespace ClrVpin.Shared
         public ListCollectionView FilteredHitTypesView { get; set; }
         public ListCollectionView HitGamesView { get; set; }
 
-        public ActionCommand<bool> ExpandGamesCommand { get; set; }
+        public ICommand ExpandGamesCommand { get; set; }
         public string SearchText { get; set; } = "";
         public ICommand SearchTextCommand { get; set; }
         public Window Window { get; set; }
+
+        public string BackupFolder { get; set; }
+        public ICommand NavigateToBackupFolderCommand { get; set; }
+
 
         public void Close()
         {
@@ -43,9 +48,15 @@ namespace ClrVpin.Shared
 
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
+
+            BackupFolder = TableUtils.ActiveBackupFolder;
+            NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
+
             UpdateStatus(Games);
             InitView();
         }
+
+        private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
         protected abstract IList<FeatureType> CreateFilteredContentTypes();
         protected abstract IList<FeatureType> CreateFilteredHitTypes();

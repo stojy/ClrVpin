@@ -36,7 +36,7 @@ namespace ClrVpin.Rebuilder
 
         private static List<FileDetail> Merge(IEnumerable<Game> games, string backupFolder)
         {
-            _activeBackupFolder = TableUtils.GetActiveBackupFolder(backupFolder);
+            TableUtils.SetActiveBackupFolder(backupFolder);
 
             // filter games to only those that have hits for the destination content type
             var contentType = Config.GetDestinationContentType();
@@ -61,19 +61,12 @@ namespace ClrVpin.Rebuilder
             });
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-            if (Directory.Exists(_activeBackupFolder))
-            {
-                var files = Directory.EnumerateFiles(_activeBackupFolder, "*", SearchOption.AllDirectories);
-                if (!files.Any())
-                {
-                    Logger.Info($"Deleting empty backup folder: '{_activeBackupFolder}'");
-                    Directory.Delete(_activeBackupFolder, true);
-                }
-            }
+            TableUtils.DeleteActiveBackupFolderIfEmpty();
 
             return gameFiles;
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private static FileDetail Merge(Hit hit, Game _, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var ignore = false;
@@ -148,7 +141,5 @@ namespace ClrVpin.Rebuilder
             Logger.Info($"{prefix} - {optionDetail}'type: {hit.Type.GetDescription()}, content: {hit.ContentType}, " +
                         $"source: {sourceFileInfo.Name} ({sourceFileInfo.Length}), destination: {destinationFileInfo?.Name ?? destinationFileName} ({destinationLengthDetail})");
         }
-
-        private static string _activeBackupFolder;
     }
 }

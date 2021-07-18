@@ -8,7 +8,7 @@
 
   <DataTemplate x:Key="LoggingTemplate" DataType="{x:Type logging:Logging}">
     <DockPanel Margin="5">
-      <TextBlock DockPanel.Dock="Top" Margin="0,0,0,10" Foreground="{DynamicResource PrimaryHueDarkBrush}">
+      <TextBlock DockPanel.Dock="Top" Margin="2,0,0,10" Foreground="{DynamicResource PrimaryHueDarkBrush}">
         <Hyperlink NavigateUri="{Binding File}" Command="{Binding NavigateToFileCommand}">
           <TextBlock Text="{Binding File}" />
         </Hyperlink>
