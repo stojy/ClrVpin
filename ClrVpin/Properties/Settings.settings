@@ -8,9 +8,6 @@
     <Setting Name="FrontendFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\vp\apps\PinballX</Value>
     </Setting>
-    <Setting Name="TableFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\vp\tables\vpx</Value>
-    </Setting>
     <Setting Name="SelectedCheckContentTypes" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
@@ -34,7 +31,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="RequiredVersion" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">33</Value>
+      <Value Profile="(Default)">35</Value>
     </Setting>
     <Setting Name="ActualVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>

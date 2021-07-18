@@ -19,7 +19,7 @@ namespace ClrVpin.Settings
         {
             //TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder));
 
-            TableFolderModel = new FolderTypeModel("Tables and Backglasses", Config.TableFolder, folder => Config.TableFolder = folder);
+            TableFolderModel = new FolderTypeModel("Tables and Backglasses", Config.Settings.TableFolder, folder => Config.Settings.TableFolder = folder);
             FrontendFolderModel = new FolderTypeModel("Frontend Root", Config.FrontendFolder, folder => Config.FrontendFolder = folder);
             BackupFolderModel = new FolderTypeModel("Backup Root", Config.BackupFolder, folder => Config.BackupFolder = folder);
 

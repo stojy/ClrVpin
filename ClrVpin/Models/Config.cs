@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using ClrVpin.Models.Rebuilder;
+using ClrVpin.Models.Settings;
 using PropertyChanged;
 using Utils;
 
@@ -26,19 +27,23 @@ namespace ClrVpin.Models
 
         public Config()
         {
+            Settings = SettingsManager.Read();
+
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
             AllHitTypeEnums = AllHitTypes.Select(x => x.Enum);
             FixablePrioritizedHitTypeEnums = AllHitTypes.Where(x => x.Fixable).Select(x => x.Enum).ToArray();
             IrreparablePrioritizedHitTypeEnums = AllHitTypes.Where(x => !x.Fixable).Select(x => x.Enum).ToArray();
-            
+
             // reset the settings if the user's stored settings version differs to the default version
             if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
                 Reset();
 
             // scanner
             SelectedCheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.SelectedCheckContentTypes).Observable;
-            SelectedCheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedCheckHitTypes, value => Properties.Settings.Default.SelectedCheckHitTypes = value).Observable;
-            SelectedFixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedFixHitTypes, value => Properties.Settings.Default.SelectedFixHitTypes = value).Observable;
+            SelectedCheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedCheckHitTypes, value => Properties.Settings.Default.SelectedCheckHitTypes = value)
+                .Observable;
+            SelectedFixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedFixHitTypes, value => Properties.Settings.Default.SelectedFixHitTypes = value)
+                .Observable;
             HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.Valid).ToArray();
 
             // rebuilder
@@ -47,20 +52,17 @@ namespace ClrVpin.Models
             SelectedIgnoreOptions = new ObservableCollectionJson<IgnoreOptionEnum>(Properties.Settings.Default.IgnoreOptions, value => Properties.Settings.Default.IgnoreOptions = value).Observable;
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).ToArray();
+            MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
+                HitTypeEnum.Unsupported)).ToArray();
 
             ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).ToArray();
             UpdateIsValid();
         }
 
+        public Settings.Settings Settings { get; set; }
+
         // all possible content types (except database) - to be used elsewhere to create check collections
         public static ContentType[] ContentTypes { get; set; }
-
-        public string TableFolder
-        {
-            get => Properties.Settings.Default.TableFolder;
-            set => Properties.Settings.Default.TableFolder = value;
-        }
 
         private string FrontendFoldersJson
         {
@@ -79,7 +81,7 @@ namespace ClrVpin.Models
             get => Properties.Settings.Default.BackupFolder;
             set => Properties.Settings.Default.BackupFolder = value;
         }
-        
+
         public bool TrainerWheels
         {
             get => Properties.Settings.Default.TrainerWheels;
@@ -100,7 +102,14 @@ namespace ClrVpin.Models
         }
 
         public bool WasReset { get; private set; }
-        public bool IsValid { get; private set; } 
+        public bool IsValid { get; private set; }
+
+        // hit types in priority order as determined by matching algorithm - refer AssociateMediaFilesWithGames
+        public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; private set; }
+
+        public static HitTypeEnum[] IrreparablePrioritizedHitTypeEnums { get; private set; }
+
+        public static IEnumerable<HitTypeEnum> AllHitTypeEnums { get; private set; }
 
         public List<ContentType> GetFrontendFolders() => JsonSerializer.Deserialize<List<ContentType>>(FrontendFoldersJson);
 
@@ -110,26 +119,17 @@ namespace ClrVpin.Models
 
         public void Save()
         {
+            SettingsManager.Write(Settings);
+
             Properties.Settings.Default.Save();
             WasReset = false;
             UpdateIsValid();
         }
 
-        private void UpdateIsValid()
-        {
-            var paths = new List<string>
-            {
-                TableFolder,
-                FrontendFolder,
-                BackupFolder
-            };
-            paths.AddRange(GetFrontendFolders().Select(x => x.Folder));
-
-            IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
-        }
-
         public void Reset()
         {
+            Settings = SettingsManager.Reset();
+
             // todo; move all the enum default values into code - i.e. out of settings.settings default
 
             var defaultFrontendFolders = new List<ContentType>
@@ -168,38 +168,44 @@ namespace ClrVpin.Models
             WasReset = true;
         }
 
+        private void UpdateIsValid()
+        {
+            var paths = new List<string>
+            {
+                Settings.TableFolder,
+                FrontendFolder,
+                BackupFolder
+            };
+            paths.AddRange(GetFrontendFolders().Select(x => x.Folder));
+
+            IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
+        }
+
         // scanner
         public ObservableCollection<string> SelectedCheckContentTypes;
         public ObservableCollection<HitTypeEnum> SelectedCheckHitTypes;
         public ObservableCollection<HitTypeEnum> SelectedFixHitTypes;
 
-        // hit types in priority order as determined by matching algorithm - refer AssociateMediaFilesWithGames
-        public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; private set; }
-
-        public static HitTypeEnum[] IrreparablePrioritizedHitTypeEnums { get; private set; }
-        
-        public static IEnumerable<HitTypeEnum> AllHitTypeEnums { get; private set; }
-
-        // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
-        public static HitType[] AllHitTypes =
-        {
-            new HitType(HitTypeEnum.Valid,              true,  "Files that should match but are missing"),
-            new HitType(HitTypeEnum.DuplicateExtension, true,  "Allow matching against multiple files with same file name but different file extensions (e.g. mkv and mp4"),
-            new HitType(HitTypeEnum.WrongCase,          true,  "Case insensitive file matching"),
-            new HitType(HitTypeEnum.TableName,          true,  "Allow matching against table instead of the description"),
-            new HitType(HitTypeEnum.Fuzzy,              true,  "'Fuzzy logic' file matching"),
-            new HitType(HitTypeEnum.Missing,            false, "Files that should match but are missing"),
-            new HitType(HitTypeEnum.Unknown,            false, "Unknown files that don't match any tables"),
-            new HitType(HitTypeEnum.Unsupported,        false, "Unsupported files that don't match the configured file extension types")
-        };
-
-        // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
-        public static HitType[] HitTypes;
-
         // rebuilder
         public ObservableCollection<HitTypeEnum> SelectedMatchTypes;
         public ObservableCollection<MergeOptionEnum> SelectedMergeOptions;
         public ObservableCollection<IgnoreOptionEnum> SelectedIgnoreOptions;
+
+        // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
+        public static HitType[] AllHitTypes =
+        {
+            new HitType(HitTypeEnum.Valid, true, "Files that should match but are missing"),
+            new HitType(HitTypeEnum.DuplicateExtension, true, "Allow matching against multiple files with same file name but different file extensions (e.g. mkv and mp4"),
+            new HitType(HitTypeEnum.WrongCase, true, "Case insensitive file matching"),
+            new HitType(HitTypeEnum.TableName, true, "Allow matching against table instead of the description"),
+            new HitType(HitTypeEnum.Fuzzy, true, "'Fuzzy logic' file matching"),
+            new HitType(HitTypeEnum.Missing, false, "Files that should match but are missing"),
+            new HitType(HitTypeEnum.Unknown, false, "Unknown files that don't match any tables"),
+            new HitType(HitTypeEnum.Unsupported, false, "Unsupported files that don't match the configured file extension types")
+        };
+
+        // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
+        public static HitType[] HitTypes;
 
         // rebuilder matching criteria types - to be used elsewhere (rebuilder)
         public static HitType[] MatchTypes;
@@ -208,14 +214,14 @@ namespace ClrVpin.Models
         public static IgnoreOption[] IgnoreOptions =
         {
             new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreSmaller, Tip = "Ignore source files that are significantly smaller size (<50%) than the existing files"},
-            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreOlder, Tip = "Ignore source files that are older (using modified timestamp) than the existing files"},
+            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreOlder, Tip = "Ignore source files that are older (using modified timestamp) than the existing files"}
         };
 
         // all possible file merge options - to be used elsewhere (rebuilder)
         public static MergeOption[] MergeOptions =
         {
             new MergeOption {Enum = MergeOptionEnum.PreserveTimestamp, Tip = "The (modified) timestamp of the source file will be used for created or overwritten destination file"},
-            new MergeOption {Enum = MergeOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"},
+            new MergeOption {Enum = MergeOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"}
         };
     }
 }
