@@ -139,7 +139,7 @@ namespace ClrVpin.Shared
 
         public static void Delete(string file, HitTypeEnum hitType, string contentType)
         {
-            var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
+            var prefix = Model.Config.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
             Logger.Warn($"{prefix}Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
 
             if (!Model.Config.TrainerWheels)
@@ -161,7 +161,7 @@ namespace ClrVpin.Shared
                 var path = Path.GetDirectoryName(hit.Path);
                 var newFile = Path.Combine(path!, $"{game.Description}{extension}");
 
-                var prefix = Model.Config.TrainerWheels ? "Skipped (trainer wheels are on) " : "";
+                var prefix = Model.Config.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
                 Logger.Info($"{prefix}Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}");
 
                 if (!Model.Config.TrainerWheels)

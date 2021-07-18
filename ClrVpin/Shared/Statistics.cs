@@ -80,7 +80,7 @@ namespace ClrVpin.Shared
 
         private string GetGameFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
-            // identify stats belonging to criteria that was skipped
+            // identify stats belonging to criteria that were ignored
             var prefix = "discovered";
             if (!SelectedCheckHitTypes.Contains(hitType))
                 prefix += " (ignored)";
@@ -97,7 +97,7 @@ namespace ClrVpin.Shared
 
         private string GetUnknownFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
-            // identify stats belonging to criteria that was skipped
+            // identify stats belonging to criteria that were ignored
             var prefix = "discovered";
             if (!SelectedCheckHitTypes.Contains(hitType))
                 prefix += " (ignored)";
