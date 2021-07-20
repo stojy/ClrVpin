@@ -73,7 +73,7 @@
       </ItemsControl>
 
       <WrapPanel Margin="5,0" HorizontalAlignment="Left">
-        <CheckBox ToolTip="When enabled, rebuilder will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />
+        <CheckBox ToolTip="When enabled, rebuilder will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
         <TextBlock Margin="5,0,0,0" Text="Trainer Wheels"/>
       </WrapPanel>
 

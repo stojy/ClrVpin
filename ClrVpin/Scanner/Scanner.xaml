@@ -54,7 +54,7 @@
       </WrapPanel>
 
       <WrapPanel Margin="5">
-        <CheckBox ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />
+        <CheckBox ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
         <TextBlock Margin="10,0,0,0" Text="Trainer Wheels"/>
       </WrapPanel>
 

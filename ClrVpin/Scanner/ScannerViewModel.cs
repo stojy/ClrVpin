@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
@@ -149,7 +150,7 @@ namespace ClrVpin.Scanner
             var unknownFiles = ScannerUtils.Check(games);
 
             progress.Update("Fixing Files", 60);
-            var gameFiles = await ScannerUtils.FixAsync(games, Model.Config.BackupFolder);
+            var gameFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder);
 
             progress.Update("Removing Unknown Files", 90);
             await ScannerUtils.RemoveAsync(unknownFiles);
@@ -191,5 +192,6 @@ namespace ClrVpin.Scanner
         private Window _scannerWindow;
         private Logging.Logging _loggingWindow;
         private const int WindowMargin = 5;
+        public Models.Settings.Settings Settings { get; } = SettingsManager.Settings;
     }
 }

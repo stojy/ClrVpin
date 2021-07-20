@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models;
 using ClrVpin.Models.Rebuilder;
+using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using Utils;
 
@@ -12,6 +13,11 @@ namespace ClrVpin.Rebuilder
 {
     public static class RebuilderUtils
     {
+        static RebuilderUtils()
+        {
+            _settings = SettingsManager.Settings;
+        }
+
         public static List<FileDetail> Check(List<Game> games)
         {
             // determine the destination type
@@ -20,7 +26,8 @@ namespace ClrVpin.Rebuilder
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
             var mediaFiles = TableUtils.GetMediaFileNames(contentType, Model.Config.SourceFolder);
-            var unmatchedFiles = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+            var unmatchedFiles = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum,
+                game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
             var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, Model.Config.SourceFolder);
@@ -50,7 +57,7 @@ namespace ClrVpin.Rebuilder
             {
                 // retrieve the relevant content hit collection
                 var contentHitCollection = game.Content.ContentHitsCollection.First(x => x.Hits.Any());
-                
+
                 // merge ALL of the selected hit types
                 // - for each supported file there, there will be 1 hit type
                 // - if their are multiple hit type matches.. then a subsequent 'scanner' (aka clean) run will be required to clean up the extra files
@@ -70,7 +77,7 @@ namespace ClrVpin.Rebuilder
         private static FileDetail Merge(Hit hit, Game _, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var ignore = false;
-            var sourceFileInfo = hit.FileInfo;  // file to be copied, i.e. into the VP folder (potentially overriding)
+            var sourceFileInfo = hit.FileInfo; // file to be copied, i.e. into the VP folder (potentially overriding)
 
             // construct the destination file name - i.e. the location the source file will be copied to
             var contentType = Config.GetDestinationContentType();
@@ -85,13 +92,13 @@ namespace ClrVpin.Rebuilder
                 ignore = ShouldIgnore(hit, sourceFileInfo, destinationFileInfo);
                 if (ignore)
                 {
-                    if (Model.Config.TrainerWheels)
+                    if (_settings.TrainerWheels)
                         Log("Ignored merging", "trainer wheels", hit, sourceFileInfo, destinationFileInfo, destinationFileName);
                     else
                     {
                         Log("Merging file", null, hit, sourceFileInfo, destinationFileInfo, destinationFileName);
 
-                        if (!Model.Config.TrainerWheels)
+                        if (!_settings.TrainerWheels)
                         {
                             if (File.Exists(destinationFileName))
                                 TableUtils.Backup(destinationFileName, "deleted");
@@ -134,12 +141,14 @@ namespace ClrVpin.Rebuilder
             // files..
             // 1. source file - will always exist since this is the new file to be merged
             // 2. destination file - may not exist, i.e. this is a new file name (aka new content)
-            
+
             var optionDetail = optionDescription == null ? "" : $"option: '{optionDescription}', ";
             var destinationLengthDetail = destinationFileInfo == null ? "NEW" : destinationFileInfo.Length.ToString();
 
             Logger.Info($"{prefix} - {optionDetail}'type: {hit.Type.GetDescription()}, content: {hit.ContentType}, " +
                         $"source: {sourceFileInfo.Name} ({sourceFileInfo.Length}), destination: {destinationFileInfo?.Name ?? destinationFileName} ({destinationLengthDetail})");
         }
+
+        private static readonly Models.Settings.Settings _settings;
     }
 }

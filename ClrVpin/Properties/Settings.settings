@@ -21,9 +21,6 @@
     <Setting Name="SelectedFixHitTypes" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="FrontendFoldersJson" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="BackupFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -32,9 +29,6 @@
     </Setting>
     <Setting Name="ActualVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="TrainerWheels" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SelectedMatchTypes" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -50,6 +44,9 @@
     </Setting>
     <Setting Name="IgnoreOptions" Type="System.String" Scope="User">
       <Value Profile="(Default)">[0,1]</Value>
+    </Setting>
+    <Setting Name="FrontendFoldersJson" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

@@ -81,18 +81,6 @@ namespace ClrVpin.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FrontendFoldersJson {
-            get {
-                return ((string)(this["FrontendFoldersJson"]));
-            }
-            set {
-                this["FrontendFoldersJson"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string BackupFolder {
             get {
                 return ((string)(this["BackupFolder"]));
@@ -123,18 +111,6 @@ namespace ClrVpin.Properties {
             }
             set {
                 this["ActualVersion"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool TrainerWheels {
-            get {
-                return ((bool)(this["TrainerWheels"]));
-            }
-            set {
-                this["TrainerWheels"] = value;
             }
         }
         
@@ -195,6 +171,18 @@ namespace ClrVpin.Properties {
             }
             set {
                 this["IgnoreOptions"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FrontendFoldersJson {
+            get {
+                return ((string)(this["FrontendFoldersJson"]));
+            }
+            set {
+                this["FrontendFoldersJson"] = value;
             }
         }
     }

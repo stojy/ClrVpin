@@ -58,7 +58,7 @@
           <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
 
           <WrapPanel Margin="5">
-            <ToggleButton ToolTip="When enabled, all file operations are ignored. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Config.TrainerWheels}" />
+            <ToggleButton ToolTip="When enabled, all file operations are ignored. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
             <TextBlock Margin="10,0,0,0" Text="Trainer Wheels"/>
           </WrapPanel>
 

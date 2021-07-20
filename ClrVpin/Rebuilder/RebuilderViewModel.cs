@@ -9,6 +9,7 @@ using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Logging;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
@@ -52,6 +53,7 @@ namespace ClrVpin.Rebuilder
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
         public Config Config { get; } = Model.Config;
+        public Models.Settings.Settings Settings { get; } = SettingsManager.Settings;
 
         public void Show(Window parent)
         {
@@ -166,7 +168,7 @@ namespace ClrVpin.Rebuilder
             var unknownFiles = RebuilderUtils.Check(games);
 
             progress.Update("Merging Files", 60);
-            var gameFiles = await RebuilderUtils.MergeAsync(games, Model.Config.BackupFolder);
+            var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder);
 
             // unlike scanner, unknownFiles (unsupported and unknown) are deliberately NOT removed
 

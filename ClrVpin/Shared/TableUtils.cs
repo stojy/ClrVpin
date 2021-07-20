@@ -6,12 +6,18 @@ using System.Linq;
 using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using Utils;
 
 namespace ClrVpin.Shared
 {
     public static class TableUtils
     {
+        static TableUtils()
+        {
+            _settings = SettingsManager.Settings;
+        }
+
         public static string ActiveBackupFolder { get; private set; }
 
         public static List<Game> GetGamesFromDatabases()
@@ -139,10 +145,10 @@ namespace ClrVpin.Shared
 
         public static void Delete(string file, HitTypeEnum hitType, string contentType)
         {
-            var prefix = Model.Config.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
+            var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
             Logger.Warn($"{prefix}Deleting file.. type: {hitType.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
 
-            if (!Model.Config.TrainerWheels)
+            if (!_settings.TrainerWheels)
             {
                 Backup(file, "deleted");
                 File.Delete(file);
@@ -161,10 +167,10 @@ namespace ClrVpin.Shared
                 var path = Path.GetDirectoryName(hit.Path);
                 var newFile = Path.Combine(path!, $"{game.Description}{extension}");
 
-                var prefix = Model.Config.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
+                var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
                 Logger.Info($"{prefix}Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}");
 
-                if (!Model.Config.TrainerWheels)
+                if (!_settings.TrainerWheels)
                 {
                     Backup(hit.Path, "renamed");
                     File.Move(hit.Path!, newFile, true);
@@ -195,7 +201,7 @@ namespace ClrVpin.Shared
             }
 
             // if directory doesn't exist (e.g. deleted as per above OR never existed), then assign the active folder back to the root folder, i.e. a valid folder that exists
-            if (!Directory.Exists(ActiveBackupFolder)) 
+            if (!Directory.Exists(ActiveBackupFolder))
                 ActiveBackupFolder = _rootBackupFolder;
         }
 
@@ -229,5 +235,6 @@ namespace ClrVpin.Shared
         }
 
         private static string _rootBackupFolder;
+        private static Models.Settings.Settings _settings;
     }
 }

@@ -22,7 +22,7 @@ namespace ClrVpin.Settings
 
             TableFolderModel = new FolderTypeModel("Tables and Backglasses", Settings.TableFolder, folder => Settings.TableFolder = folder);
             FrontendFolderModel = new FolderTypeModel("Frontend Root", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
-            BackupFolderModel = new FolderTypeModel("Backup Root", Config.BackupFolder, folder => Config.BackupFolder = folder);
+            BackupFolderModel = new FolderTypeModel("Backup Root", Settings.BackupFolder, folder => Settings.BackupFolder = folder);
 
             AutoAssignFoldersCommand = new ActionCommand(AutoAssignFolders);
             ResetCommand = new ActionCommand(Reset);

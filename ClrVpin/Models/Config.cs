@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -66,19 +65,7 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.FrontendFoldersJson = value;
         }
 
-
-        public string BackupFolder
-        {
-            get => Properties.Settings.Default.BackupFolder;
-            set => Properties.Settings.Default.BackupFolder = value;
-        }
-
-        public bool TrainerWheels
-        {
-            get => Properties.Settings.Default.TrainerWheels;
-            set => Properties.Settings.Default.TrainerWheels = value;
-        }
-
+ 
         // rebuilder
         public string SourceFolder
         {
@@ -119,6 +106,7 @@ namespace ClrVpin.Models
 
         public void Reset()
         {
+            SettingsManager.Reset();
             _settings = SettingsManager.Settings;
 
             // todo; move all the enum default values into code - i.e. out of settings.settings default
@@ -142,10 +130,6 @@ namespace ClrVpin.Models
             // entire front end folder object is stored to disk, e.g. including the enum description
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
 
-            BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
-
-            TrainerWheels = true;
-
             SourceFolder = SpecialFolder.Downloads;
             DestinationContentType = null;
 
@@ -165,7 +149,7 @@ namespace ClrVpin.Models
             {
                 _settings.TableFolder,
                 _settings.FrontendFolder,
-                BackupFolder
+                _settings.BackupFolder
             };
             paths.AddRange(GetFrontendFolders().Select(x => x.Folder));
 
