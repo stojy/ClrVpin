@@ -34,7 +34,7 @@ namespace ClrVpin.Rebuilder
                 TryUpdateDestinationFolder(folder);
             });
 
-            _destinationContentTypes = SettingsManager.Settings.FrontendFolders.Where(x => !x.IsDatabase).Select(x => x.Description);
+            _destinationContentTypes = Model.Settings.FrontendFolders.Where(x => !x.IsDatabase).Select(x => x.Description);
             DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
 
             UpdateIsValid();
@@ -52,8 +52,7 @@ namespace ClrVpin.Rebuilder
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
-        public Config Config { get; } = Model.Config;
-        public Models.Settings.Settings Settings { get; } = SettingsManager.Settings;
+        public Models.Settings.Settings Settings { get; } = Model.Settings;
 
         public void Show(Window parent)
         {
@@ -76,7 +75,7 @@ namespace ClrVpin.Rebuilder
 
             _rebuilderWindow.Closed += (_, _) =>
             {
-                SettingsManager.Write();
+                Model.SettingsManager.Write();
                 parent.Show();
             };
         }

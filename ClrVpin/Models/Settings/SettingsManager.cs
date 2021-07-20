@@ -10,7 +10,7 @@ namespace ClrVpin.Models.Settings
     [AddINotifyPropertyChangedInterface]
     public class SettingsManager
     {
-        static SettingsManager()
+        private SettingsManager()
         {
             var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Stoj", "ClrVpin");
             _path = Path.Combine(folder, "ClrVpin.settings");
@@ -21,12 +21,17 @@ namespace ClrVpin.Models.Settings
             Read();
         }
 
-        public static bool WasReset { get; private set; }
-        public static bool IsValid { get; private set; }
+        public bool WasReset { get; private set; }
+        public bool IsValid { get; private set; }
 
-        public static Settings Settings { get; set; }
+        public Settings Settings { get; set; }
 
-        public static void Reset()
+        public static SettingsManager Create()
+        {
+            return _sessionManager ??= new SettingsManager();
+        }
+
+        public void Reset()
         {
             Settings = new Settings();
             Write();
@@ -34,7 +39,7 @@ namespace ClrVpin.Models.Settings
             WasReset = true;
         }
 
-        public static void Write()
+        public void Write()
         {
             var serializedSettings = JsonSerializer.Serialize(Settings);
             File.WriteAllText(_path, serializedSettings);
@@ -42,7 +47,7 @@ namespace ClrVpin.Models.Settings
             UpdateIsValid();
         }
 
-        private static void Read()
+        private void Read()
         {
             // retrieve existing config (from disk) or create a fresh one
             if (File.Exists(_path))
@@ -58,7 +63,7 @@ namespace ClrVpin.Models.Settings
             UpdateIsValid();
         }
 
-        private static void UpdateIsValid()
+        private void UpdateIsValid()
         {
             var paths = new List<string>
             {
@@ -71,6 +76,7 @@ namespace ClrVpin.Models.Settings
             IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
         }
 
-        private static readonly string _path;
+        private readonly string _path;
+        private static SettingsManager _sessionManager;
     }
 }

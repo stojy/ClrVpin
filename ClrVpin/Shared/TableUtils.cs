@@ -6,7 +6,6 @@ using System.Linq;
 using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models;
-using ClrVpin.Models.Settings;
 using Utils;
 
 namespace ClrVpin.Shared
@@ -15,14 +14,14 @@ namespace ClrVpin.Shared
     {
         static TableUtils()
         {
-            _settings = SettingsManager.Settings;
+            _settings = Model.Settings;
         }
 
         public static string ActiveBackupFolder { get; private set; }
 
         public static List<Game> GetGamesFromDatabases()
         {
-            var databaseDetail = SettingsManager.Settings.FrontendFolders.First(x => x.IsDatabase);
+            var databaseDetail = Model.Settings.FrontendFolders.First(x => x.IsDatabase);
 
             // scan through all the databases in the folder
             var files = Directory.EnumerateFiles(databaseDetail.Folder, databaseDetail.Extensions);

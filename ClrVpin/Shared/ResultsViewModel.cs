@@ -41,7 +41,7 @@ namespace ClrVpin.Shared
 
         protected void Initialise()
         {
-            Settings = SettingsManager.Settings;
+            Settings = Model.Settings;
 
             FilteredContentTypes = CreateFilteredContentTypes();
             FilteredContentTypesView = new ListCollectionView(FilteredContentTypes.ToList());

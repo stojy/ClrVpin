@@ -13,7 +13,7 @@ namespace ClrVpin.Models
         public Content()
         {
             // create content hits collection.. 1 entry for every content type
-            var contentTypes = SettingsManager.Settings.FrontendFolders.Where(x => !x.IsDatabase).ToList();
+            var contentTypes = Model.Settings.FrontendFolders.Where(x => !x.IsDatabase).ToList();
             contentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
 

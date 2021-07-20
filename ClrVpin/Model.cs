@@ -9,8 +9,11 @@ namespace ClrVpin
     {
         public Model(Window mainWindow)
         {
+            // static instances of SettingsManager and Settings for convenience/simplicity
+            SettingsManager = SettingsManager.Create();
+            Settings = SettingsManager.Settings;
+
             Config = new Config();
-          //  SettingsManager = SettingsManager;
 
             ScannerCommand = new ActionCommand(() => new Scanner.ScannerViewModel().Show(mainWindow));
             RebuilderCommand = new ActionCommand(() => new Rebuilder.RebuilderViewModel().Show(mainWindow));
@@ -23,8 +26,11 @@ namespace ClrVpin
         public ActionCommand SettingsCommand { get; set; }
         public ActionCommand AboutCommand { get; set; }
 
-        public static Config Config { get; set; }
-        //public static SettingsManager SettingsManager { get; set; }
+        public static Config Config { get; set; } // todo; remove?
+
+        public static SettingsManager SettingsManager { get; set; }
+        public static Models.Settings.Settings Settings { get; set; }
+
         public static Rect ScreenWorkArea { get; set; }
     }
 }

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models;
 using ClrVpin.Models.Rebuilder;
-using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using Utils;
 
@@ -15,7 +14,7 @@ namespace ClrVpin.Rebuilder
     {
         static RebuilderUtils()
         {
-            _settings = SettingsManager.Settings;
+            _settings = Model.Settings;
         }
 
         public static List<FileDetail> Check(List<Game> games)

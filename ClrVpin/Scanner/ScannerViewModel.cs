@@ -37,7 +37,7 @@ namespace ClrVpin.Scanner
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
-        public Models.Settings.Settings Settings { get; } = SettingsManager.Settings;
+        public Models.Settings.Settings Settings { get; } = Model.Settings;
 
         public void Show(Window parent)
         {
@@ -60,7 +60,7 @@ namespace ClrVpin.Scanner
 
             _scannerWindow.Closed += (_, _) =>
             {
-                SettingsManager.Write();
+                Model.SettingsManager.Write();
                 parent.Show();
             };
         }

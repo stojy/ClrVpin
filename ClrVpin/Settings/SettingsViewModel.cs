@@ -27,7 +27,7 @@ namespace ClrVpin.Settings
             AutoAssignFoldersCommand = new ActionCommand(AutoAssignFolders);
             ResetCommand = new ActionCommand(Reset);
 
-            FrontendFolders = SettingsManager.Settings.FrontendFolders
+            FrontendFolders = Model.Settings.FrontendFolders
                 .Select(folder => new ContentTypeModel(folder, () => Config.SetFrontendFolders(FrontendFolders.Select(x => x.ContentType))))
                 .ToList();
         }
@@ -40,7 +40,7 @@ namespace ClrVpin.Settings
         public ICommand ResetCommand { get; }
 
         public Config Config { get; } = Model.Config;
-        public Models.Settings.Settings Settings { get; } = SettingsManager.Settings;
+        public Models.Settings.Settings Settings { get; } = Model.Settings;
 
         public List<ContentTypeModel> FrontendFolders { get; init; }
 
@@ -64,7 +64,7 @@ namespace ClrVpin.Settings
 
             _window.Closed += (_, _) =>
             {
-                SettingsManager.Write();
+                Model.SettingsManager.Write();
                 parent.Show();
             };
         }
@@ -93,7 +93,7 @@ namespace ClrVpin.Settings
 
         private void Reset()
         {
-            SettingsManager.Reset();
+            Model.SettingsManager.Reset();
             Close();
         }
     }

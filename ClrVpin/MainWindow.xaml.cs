@@ -24,7 +24,7 @@ namespace ClrVpin
             {
                 Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
 
-                if (SettingsManager.WasReset && !_configWasResetHandled)
+                if (Model.SettingsManager.WasReset && !_configWasResetHandled)
                 {
                     _configWasResetHandled = true;
                     DialogHost.Show(new Message

@@ -30,7 +30,7 @@ namespace ClrVpin.Models
 
             // reset the settings if the user's stored settings version differs to the default version
             if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
-                SettingsManager.Reset();
+                Model.SettingsManager.Reset();
 
             HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.Valid).ToArray();
 
@@ -57,7 +57,7 @@ namespace ClrVpin.Models
 
         public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => Settings.FrontendFolders = frontendFolders.ToList();
 
-        private static Settings.Settings Settings => SettingsManager.Settings;
+        private static Settings.Settings Settings => Model.Settings;
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] AllHitTypes =

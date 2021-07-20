@@ -22,7 +22,7 @@ namespace ClrVpin.Shared
             ElapsedTime = elapsedTime;
             Games = games;
 
-            Settings = SettingsManager.Settings;
+            Settings = Model.Settings;
         }
 
         protected ObservableCollection<Game> Games { get; }

@@ -2,14 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Models;
-using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 
 namespace ClrVpin.Scanner
 {
     public static class ScannerUtils
     {
-        private static readonly Models.Settings.Settings _settings = SettingsManager.Settings;
+        private static readonly Models.Settings.Settings _settings = Model.Settings;
 
         public static List<FileDetail> Check(List<Game> games)
         {
