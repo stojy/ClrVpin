@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 
 namespace ClrVpin.Scanner
@@ -14,7 +15,7 @@ namespace ClrVpin.Scanner
 
             // determine the configured content types
             // - todo; scan non-media content, e.g. tables and b2s
-            var checkContentTypes = Model.Config.GetFrontendFolders()
+            var checkContentTypes = SettingsManager.Settings.FrontendFolders
                 .Where(x => !x.IsDatabase)
                 .Where(type => Model.Config.SelectedCheckContentTypes.Contains(type.Description));
 

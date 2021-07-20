@@ -27,8 +27,9 @@ namespace ClrVpin.Settings
             AutoAssignFoldersCommand = new ActionCommand(AutoAssignFolders);
             ResetCommand = new ActionCommand(Reset);
 
-            var configFrontendFolders = Config.GetFrontendFolders();
-            FrontendFolders = configFrontendFolders!.Select(folder => new ContentTypeModel(folder, () => Config.SetFrontendFolders(FrontendFolders.Select(x => x.ContentType)))).ToList();
+            FrontendFolders = SettingsManager.Settings.FrontendFolders
+                .Select(folder => new ContentTypeModel(folder, () => Config.SetFrontendFolders(FrontendFolders.Select(x => x.ContentType))))
+                .ToList();
         }
 
         public FolderTypeModel TableFolderModel { get; set; }

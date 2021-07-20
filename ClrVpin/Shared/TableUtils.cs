@@ -22,7 +22,7 @@ namespace ClrVpin.Shared
 
         public static List<Game> GetGamesFromDatabases()
         {
-            var databaseDetail = Model.Config.GetFrontendFolders().First(x => x.IsDatabase);
+            var databaseDetail = SettingsManager.Settings.FrontendFolders.First(x => x.IsDatabase);
 
             // scan through all the databases in the folder
             var files = Directory.EnumerateFiles(databaseDetail.Folder, databaseDetail.Extensions);

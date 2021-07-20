@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
+using ClrVpin.Models.Settings;
 
 namespace ClrVpin.Models
 {
@@ -12,7 +13,7 @@ namespace ClrVpin.Models
         public Content()
         {
             // create content hits collection.. 1 entry for every content type
-            var contentTypes = Model.Config.GetFrontendFolders().Where(x => !x.IsDatabase).ToList();
+            var contentTypes = SettingsManager.Settings.FrontendFolders.Where(x => !x.IsDatabase).ToList();
             contentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
 

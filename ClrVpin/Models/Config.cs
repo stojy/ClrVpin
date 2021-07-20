@@ -52,23 +52,12 @@ namespace ClrVpin.Models
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
                 HitTypeEnum.Unsupported)).ToArray();
 
-            ContentTypes = GetFrontendFolders().Where(x => !x.IsDatabase).ToArray();
+            ContentTypes = _settings.FrontendFolders.Where(x => !x.IsDatabase).ToArray();
             UpdateIsValid();
         }
 
         // all possible content types (except database) - to be used elsewhere to create check collections
         public static ContentType[] ContentTypes { get; set; }
-
-        private string FrontendFoldersJson
-        {
-            get => Properties.Settings.Default.FrontendFoldersJson;
-            set => Properties.Settings.Default.FrontendFoldersJson = value;
-        }
-
- 
-        // rebuilder
- 
-
 
         public bool WasReset { get; private set; }
         public bool IsValid { get; private set; }
@@ -80,11 +69,9 @@ namespace ClrVpin.Models
 
         public static IEnumerable<HitTypeEnum> AllHitTypeEnums { get; private set; }
 
-        public List<ContentType> GetFrontendFolders() => JsonSerializer.Deserialize<List<ContentType>>(FrontendFoldersJson);
+        public ContentType GetDestinationContentType() => _settings.FrontendFolders.First(x => x.Description == _settings.Rebuilder.DestinationContentType);
 
-        public ContentType GetDestinationContentType() => Model.Config.GetFrontendFolders().First(x => x.Description == _settings.Rebuilder.DestinationContentType);
-
-        public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
+        public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => _settings.FrontendFolders = frontendFolders.ToList();
 
         public void Save()
         {
@@ -102,24 +89,6 @@ namespace ClrVpin.Models
 
             // todo; move all the enum default values into code - i.e. out of settings.settings default
 
-            var defaultFrontendFolders = new List<ContentType>
-            {
-                new ContentType {Enum = ContentTypeEnum.Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
-                new ContentType {Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Enum = ContentTypeEnum.TableVideos, Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4, *.mkv"},
-                new ContentType {Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv"},
-                new ContentType {Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.apng, *.jpg"}
-
-                // todo; table folders
-                //new ContentType_Obsolete {Enum = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-                //new ContentType_Obsolete {Enum = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-                //new ContentType_Obsolete {Enum = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-            };
-            defaultFrontendFolders.ForEach(x => x.Description = x.Enum.GetDescription());
-
-            // entire front end folder object is stored to disk, e.g. including the enum description
-            FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
 
             // update actual version to indicate the config is now compatible and doesn't need to be reset again
             Properties.Settings.Default.ActualVersion = Properties.Settings.Default.RequiredVersion;
@@ -139,7 +108,7 @@ namespace ClrVpin.Models
                 _settings.FrontendFolder,
                 _settings.BackupFolder
             };
-            paths.AddRange(GetFrontendFolders().Select(x => x.Folder));
+            paths.AddRange(_settings.FrontendFolders.Select(x => x.Folder));
 
             IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
         }
