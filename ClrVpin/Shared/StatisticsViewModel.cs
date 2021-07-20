@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using ByteSizeLib;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using PropertyChanged;
 using Utils;
 
@@ -20,6 +21,8 @@ namespace ClrVpin.Shared
 
             ElapsedTime = elapsedTime;
             Games = games;
+
+            Settings = SettingsManager.Settings;
         }
 
         protected ObservableCollection<Game> Games { get; }
@@ -35,6 +38,8 @@ namespace ClrVpin.Shared
         public IList<string> SelectedCheckContentTypes { get; set; }
 
         public int TotalCount { get; protected set; } // Games.Count;
+
+        protected Models.Settings.Settings Settings { get; set; }
 
         protected void CreateStatistics()
         {

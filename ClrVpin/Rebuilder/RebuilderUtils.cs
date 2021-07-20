@@ -22,15 +22,15 @@ namespace ClrVpin.Rebuilder
         {
             // determine the destination type
             // - todo; scan non-media content, e.g. tables and b2s
-            var contentType = Config.GetDestinationContentType();
+            var contentType = Model.Config.GetDestinationContentType();
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
-            var mediaFiles = TableUtils.GetMediaFileNames(contentType, Model.Config.SourceFolder);
+            var mediaFiles = TableUtils.GetMediaFileNames(contentType, _settings.Rebuilder.SourceFolder);
             var unmatchedFiles = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum,
                 game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
-            var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, Model.Config.SourceFolder);
+            var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, _settings.Rebuilder.SourceFolder);
 
             return unmatchedFiles.Concat(unsupportedFiles).ToList();
         }
@@ -46,7 +46,7 @@ namespace ClrVpin.Rebuilder
             TableUtils.SetActiveBackupFolder(backupFolder);
 
             // filter games to only those that have hits for the destination content type
-            var contentType = Config.GetDestinationContentType();
+            var contentType = Model.Config.GetDestinationContentType();
             var gamesWithContent = games.Where(g => g.Content.ContentHitsCollection.Any(x => x.Type == contentType.Enum && x.Hits.Any()));
 
             // EVERY GAME THAT HAS A HIT (IRRESPECTIVE OF MATCH CRITERIA) WILL HAVE A GAME FILE RETURNED, i.e. irrespective of whether..
@@ -80,7 +80,7 @@ namespace ClrVpin.Rebuilder
             var sourceFileInfo = hit.FileInfo; // file to be copied, i.e. into the VP folder (potentially overriding)
 
             // construct the destination file name - i.e. the location the source file will be copied to
-            var contentType = Config.GetDestinationContentType();
+            var contentType = Model.Config.GetDestinationContentType();
             var destinationFileName = Path.Combine(contentType.Folder, hit.File);
             var destinationFileInfo = File.Exists(destinationFileName) ? new FileInfo(destinationFileName) : null;
 

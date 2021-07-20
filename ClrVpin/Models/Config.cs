@@ -67,17 +67,8 @@ namespace ClrVpin.Models
 
  
         // rebuilder
-        public string SourceFolder
-        {
-            get => Properties.Settings.Default.SourceFolder;
-            set => Properties.Settings.Default.SourceFolder = value;
-        }
+ 
 
-        public string DestinationContentType
-        {
-            get => Properties.Settings.Default.DestinationContentType;
-            set => Properties.Settings.Default.DestinationContentType = value;
-        }
 
         public bool WasReset { get; private set; }
         public bool IsValid { get; private set; }
@@ -91,7 +82,7 @@ namespace ClrVpin.Models
 
         public List<ContentType> GetFrontendFolders() => JsonSerializer.Deserialize<List<ContentType>>(FrontendFoldersJson);
 
-        public static ContentType GetDestinationContentType() => Model.Config.GetFrontendFolders().First(x => x.Description == Model.Config.DestinationContentType);
+        public ContentType GetDestinationContentType() => Model.Config.GetFrontendFolders().First(x => x.Description == _settings.Rebuilder.DestinationContentType);
 
         public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => FrontendFoldersJson = JsonSerializer.Serialize(frontendFolders);
 
@@ -129,9 +120,6 @@ namespace ClrVpin.Models
 
             // entire front end folder object is stored to disk, e.g. including the enum description
             FrontendFoldersJson = JsonSerializer.Serialize(defaultFrontendFolders);
-
-            SourceFolder = SpecialFolder.Downloads;
-            DestinationContentType = null;
 
             // update actual version to indicate the config is now compatible and doesn't need to be reset again
             Properties.Settings.Default.ActualVersion = Properties.Settings.Default.RequiredVersion;

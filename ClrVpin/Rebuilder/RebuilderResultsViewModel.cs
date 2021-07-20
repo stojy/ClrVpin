@@ -45,7 +45,7 @@ namespace ClrVpin.Rebuilder
                 Description = contentType.Description,
                 Tip = contentType.Tip,
                 IsSupported = false, // don't allow user to deselect the destination type
-                IsActive = Config.GetDestinationContentType().Enum == contentType.Enum,
+                IsActive = Model.Config.GetDestinationContentType().Enum == contentType.Enum,
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 

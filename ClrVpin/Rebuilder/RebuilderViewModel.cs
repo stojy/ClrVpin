@@ -28,9 +28,9 @@ namespace ClrVpin.Rebuilder
             IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
             MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
 
-            SourceFolderModel = new FolderTypeModel("Source", Model.Config.SourceFolder, folder =>
+            SourceFolderModel = new FolderTypeModel("Source", Settings.Rebuilder.SourceFolder, folder =>
             {
-                Model.Config.SourceFolder = folder;
+                Settings.Rebuilder.SourceFolder = folder;
                 TryUpdateDestinationFolder(folder);
             });
 
@@ -81,14 +81,14 @@ namespace ClrVpin.Rebuilder
             };
         }
 
-        private void UpdateIsValid() => IsValid = !string.IsNullOrEmpty(Config.DestinationContentType);
+        private void UpdateIsValid() => IsValid = !string.IsNullOrEmpty(Settings.Rebuilder.DestinationContentType);
 
         private void TryUpdateDestinationFolder(string folder)
         {
             // attempt to assign destination folder automatically based on the specified folder
             var contentType = _destinationContentTypes.FirstOrDefault(folder.EndsWith);
-            if (contentType != null)
-                Config.DestinationContentType = contentType;
+            Settings.Rebuilder.DestinationContentType = contentType;
+            
             UpdateIsValid();
         }
 

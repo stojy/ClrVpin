@@ -19,10 +19,10 @@ namespace ClrVpin.Rebuilder
             SupportedHitTypes = Config.MatchTypes.ToList();
 
             // content type stats for the single content type being rebuilt
-            SupportedContentTypes = new List<ContentType> {Config.GetDestinationContentType()};
+            SupportedContentTypes = new List<ContentType> {Model.Config.GetDestinationContentType()};
 
             // rebuilder only supports a single selected content type
-            SelectedCheckContentTypes = new List<string> {Model.Config.DestinationContentType};
+            SelectedCheckContentTypes = new List<string> {Settings.Rebuilder.DestinationContentType};
 
             // rebuilder doesn't support check and fix separately
             SelectedCheckHitTypes = Model.Config.SelectedMatchTypes.ToList();
