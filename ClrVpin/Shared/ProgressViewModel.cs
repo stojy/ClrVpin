@@ -9,9 +9,9 @@ using Utils;
 namespace ClrVpin.Shared
 {
     [AddINotifyPropertyChangedInterface]
-    internal class Progress
+    internal class ProgressViewModel
     {
-        public Progress()
+        public ProgressViewModel()
         {
             _timer = new Timer(_ => Duration = _durationStopwatch.Elapsed);
             CancelCommand = new ActionCommand(Cancel);

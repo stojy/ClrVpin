@@ -6,7 +6,7 @@
     <ResourceDictionary Source="..\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <DataTemplate x:Key="AboutTemplate" DataType="{x:Type about:About}">
+  <DataTemplate x:Key="AboutTemplate" DataType="{x:Type about:AboutViewModel}">
     <DataTemplate.Resources>
       <Style TargetType="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />

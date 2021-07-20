@@ -11,9 +11,9 @@ using Utils;
 namespace ClrVpin.Shared
 {
     [AddINotifyPropertyChangedInterface]
-    public abstract class Statistics
+    public abstract class StatisticsViewModel
     {
-        protected Statistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
+        protected StatisticsViewModel(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
         {
             GameFiles = gameFiles;
             UnknownFiles = unknownFiles;

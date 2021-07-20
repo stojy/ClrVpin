@@ -9,9 +9,9 @@ using Utils;
 namespace ClrVpin.About
 {
     [AddINotifyPropertyChangedInterface]
-    public class About
+    public class AboutViewModel
     {
-        public About()
+        public AboutViewModel()
         {
             NavigateToGitHubRepoCommand = new ActionCommand(NavigateToGitHubRepo);
             NavigateToGitHubAuthorCommand = new ActionCommand(NavigateToGitHubAuthor);

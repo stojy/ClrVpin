@@ -17,9 +17,9 @@ using Utils;
 namespace ClrVpin.Rebuilder
 {
     [AddINotifyPropertyChangedInterface]
-    public class Rebuilder
+    public class RebuilderViewModel
     {
-        public Rebuilder()
+        public RebuilderViewModel()
         {
             StartCommand = new ActionCommand(Start);
 
@@ -156,7 +156,7 @@ namespace ClrVpin.Rebuilder
             _rebuilderWindow.Hide();
             Logger.Clear();
 
-            var progress = new Progress();
+            var progress = new ProgressViewModel();
             progress.Show(_rebuilderWindow);
 
             progress.Update("Loading Database", 0);
@@ -181,10 +181,10 @@ namespace ClrVpin.Rebuilder
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles, TimeSpan duration)
         {
-            var rebuilderStatistics = new RebuilderStatistics(Games, duration, gameFiles, unknownFiles);
+            var rebuilderStatistics = new RebuilderStatisticsViewModel(Games, duration, gameFiles, unknownFiles);
             rebuilderStatistics.Show(_rebuilderWindow, WindowMargin, WindowMargin);
 
-            var rebuilderResults = new RebuilderResults(Games);
+            var rebuilderResults = new RebuilderResultsViewModel(Games);
             rebuilderResults.Show(_rebuilderWindow, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
 
             _loggingWindow = new Logging.Logging();

@@ -11,7 +11,7 @@
     <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <DataTemplate x:Key="RebuilderTemplate" DataType="{x:Type rebuilder:Rebuilder}">
+  <DataTemplate x:Key="RebuilderTemplate" DataType="{x:Type rebuilder:RebuilderViewModel}">
     <StackPanel Margin="5">
       <TextBlock Style="{StaticResource Title}">Content to Merge</TextBlock>
       <WrapPanel>

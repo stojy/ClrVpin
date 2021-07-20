@@ -9,9 +9,9 @@ using MaterialDesignExtensions.Controls;
 
 namespace ClrVpin.Scanner
 {
-    public class ScannerStatistics : Statistics
+    public class ScannerStatisticsViewModel : StatisticsViewModel
     {
-        public ScannerStatistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
+        public ScannerStatisticsViewModel(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
             : base(games, elapsedTime, gameFiles, unknownFiles)
         {
             // hit type stats for all supported types only

@@ -12,7 +12,7 @@
 
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
 
-  <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:Scanner}">
+  <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:ScannerViewModel}">
     <StackPanel Margin="5">
       <TextBlock Style="{StaticResource Title}">Content to Scan</TextBlock>
       <ItemsControl ItemsSource="{Binding CheckContentTypesView}" BorderThickness="5" HorizontalAlignment="Left">

@@ -8,12 +8,12 @@ using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Rebuilder
+namespace ClrVpin.Scanner
 {
     [AddINotifyPropertyChangedInterface]
-    public class RebuilderResults : Results
+    public class ScannerResultsViewModel : ResultsViewModel
     {
-        public RebuilderResults(ObservableCollection<Game> games)
+        public ScannerResultsViewModel(ObservableCollection<Game> games)
         {
             Games = games;
             Initialise();
@@ -24,11 +24,11 @@ namespace ClrVpin.Rebuilder
             Window = new MaterialWindow
             {
                 Owner = parentWindow,
-                Title = "Results (Matched Files)",
+                Title = "Results (Issues and Fixes)",
                 Left = left,
                 Top = top,
                 Width = Model.ScreenWorkArea.Width - left - 5,
-                Height = (Model.ScreenWorkArea.Height - 10) / 2,
+                Height = (Model.ScreenWorkArea.Height - 10) / 3,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ResultsTemplate") as DataTemplate
@@ -38,14 +38,15 @@ namespace ClrVpin.Rebuilder
 
         protected override IList<FeatureType> CreateFilteredContentTypes()
         {
-            // show all content types, but assign enabled and active based on the rebuilder configuration
-            // - rebuilder only supports one destination content type, but display them all as a list for consistency with ScannerResults
+            // show all content types, but assign enabled and active based on the scanner configuration
             var filteredContentTypes = Config.ContentTypes.Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,
-                IsSupported = false, // don't allow user to deselect the destination type
-                IsActive = Config.GetDestinationContentType().Enum == contentType.Enum,
+                
+                // todo; use id
+                IsSupported = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
+                IsActive = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 
@@ -54,13 +55,13 @@ namespace ClrVpin.Rebuilder
 
         protected override IList<FeatureType> CreateFilteredHitTypes()
         {
-            // show all hit types, but assign enabled and active based on the rebuilder configuration
-            // - valid hits are also visible, enabled by default since these files are copied across without any file name fixing
+            // show all hit types, but assign enabled and active based on the scanner configuration
+            // - for completeness the valid hits are also visible, but disabled by default since no fixes were required
             var filteredContentTypes = Config.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
-                IsSupported = Model.Config.SelectedMatchTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.Valid,
-                IsActive = Model.Config.SelectedMatchTypes.Contains(hitType.Enum),
+                IsSupported = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.Valid,
+                IsActive = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 

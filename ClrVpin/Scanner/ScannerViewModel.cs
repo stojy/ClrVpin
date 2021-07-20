@@ -15,9 +15,9 @@ using Utils;
 namespace ClrVpin.Scanner
 {
     [AddINotifyPropertyChangedInterface]
-    public class Scanner
+    public class ScannerViewModel
     {
-        public Scanner()
+        public ScannerViewModel()
         {
             StartCommand = new ActionCommand(Start);
             //ConfigureCheckContentTypesCommand = new ActionCommand<string>(ConfigureCheckContentTypes);
@@ -137,7 +137,7 @@ namespace ClrVpin.Scanner
             _scannerWindow.Hide();
             Logging.Logger.Clear();
 
-            var progress = new Progress();
+            var progress = new ProgressViewModel();
             progress.Show(_scannerWindow);
             
             // todo; retrieve 'missing games' from spreadsheet
@@ -166,13 +166,13 @@ namespace ClrVpin.Scanner
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles, TimeSpan duration)
         {
-            var scannerStatistics = new ScannerStatistics(Games, duration, gameFiles, unknownFiles);
+            var scannerStatistics = new ScannerStatisticsViewModel(Games, duration, gameFiles, unknownFiles);
             scannerStatistics.Show(_scannerWindow, WindowMargin, WindowMargin);
 
-            var scannerResults = new ScannerResults(Games);
+            var scannerResults = new ScannerResultsViewModel(Games);
             scannerResults.Show(_scannerWindow, scannerStatistics.Window.Left + scannerStatistics.Window.Width + WindowMargin, scannerStatistics.Window.Top);
 
-            var scannerExplorer = new ScannerExplorer(Games);
+            var scannerExplorer = new ScannerExplorerViewModel(Games);
             scannerExplorer.Show(_scannerWindow, scannerResults.Window.Left, scannerResults.Window.Top + scannerResults.Window.Height + WindowMargin);
 
             _loggingWindow = new Logging.Logging();

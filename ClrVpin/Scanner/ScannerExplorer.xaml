@@ -79,7 +79,7 @@
     <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
 
-  <DataTemplate x:Key="ScannerExplorerTemplate" DataType="{x:Type scanner:ScannerExplorer}">
+  <DataTemplate x:Key="ScannerExplorerTemplate" DataType="{x:Type scanner:ScannerExplorerViewModel}">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top" Margin="10,0,0,20">
         <TextBox Width="150" HorizontalAlignment="Left" 

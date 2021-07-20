@@ -3,7 +3,7 @@
                     xmlns:scanner="clr-namespace:ClrVpin.Scanner">
 
 
-  <DataTemplate x:Key="ScannerStatisticsTemplate" DataType="{x:Type scanner:ScannerStatistics}">
+  <DataTemplate x:Key="ScannerStatisticsTemplate" DataType="{x:Type scanner:ScannerStatisticsViewModel}">
     <DockPanel>
       <TextBox Text="{Binding Result}" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
 

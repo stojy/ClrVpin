@@ -12,7 +12,7 @@ using Utils;
 
 namespace ClrVpin.Shared
 {
-    public abstract class Results
+    public abstract class ResultsViewModel
     {
         // all games referenced in the DB.. irrespective of hits
         public ObservableCollection<Game> Games { get; set; }

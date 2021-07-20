@@ -12,9 +12,9 @@ using Utils;
 namespace ClrVpin.Scanner
 {
     [AddINotifyPropertyChangedInterface]
-    public class ScannerExplorer
+    public class ScannerExplorerViewModel
     {
-        public ScannerExplorer(ObservableCollection<Game> games)
+        public ScannerExplorerViewModel(ObservableCollection<Game> games)
         {
             Games = games;
             GamesView = new ListCollectionView<Game>(games);

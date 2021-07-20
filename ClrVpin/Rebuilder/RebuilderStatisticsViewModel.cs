@@ -9,9 +9,9 @@ using MaterialDesignExtensions.Controls;
 
 namespace ClrVpin.Rebuilder
 {
-    public sealed class RebuilderStatistics : Statistics
+    public sealed class RebuilderStatisticsViewModel : StatisticsViewModel
     {
-        public RebuilderStatistics(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
+        public RebuilderStatisticsViewModel(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
             : base(games, elapsedTime, gameFiles, unknownFiles)
         {
             // hit type stats for all supported types only
