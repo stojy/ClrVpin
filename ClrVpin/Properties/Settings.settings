@@ -2,51 +2,11 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClrVpin.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="Test" Type="System.String" Scope="User">
-      <Value Profile="(Default)">hello</Value>
-    </Setting>
-    <Setting Name="SelectedCheckContentTypes" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;string&gt;Table Audio&lt;/string&gt;
-  &lt;string&gt;Launch Audio&lt;/string&gt;
-  &lt;string&gt;Table Videos&lt;/string&gt;
-  &lt;string&gt;Backglass Videos&lt;/string&gt;
-  &lt;string&gt;Wheel Images&lt;/string&gt;
-&lt;/ArrayOfString&gt;</Value>
-    </Setting>
-    <Setting Name="SelectedCheckHitTypes" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[1,2,3,4,5,6,7]</Value>
-    </Setting>
-    <Setting Name="SelectedFixHitTypes" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="BackupFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="RequiredVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">35</Value>
     </Setting>
     <Setting Name="ActualVersion" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="SelectedMatchTypes" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="MergeOptions" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[0,1]</Value>
-    </Setting>
-    <Setting Name="SourceFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="DestinationContentType" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="IgnoreOptions" Type="System.String" Scope="User">
-      <Value Profile="(Default)">[0,1]</Value>
-    </Setting>
-    <Setting Name="FrontendFoldersJson" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ClrVpin.Models.Rebuilder;
-using ClrVpin.Models.Settings;
 using PropertyChanged;
 using Utils;
 
