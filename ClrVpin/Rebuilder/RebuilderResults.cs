@@ -24,7 +24,7 @@ namespace ClrVpin.Rebuilder
             Window = new MaterialWindow
             {
                 Owner = parentWindow,
-                Title = "Results",
+                Title = "Results (Matched Files)",
                 Left = left,
                 Top = top,
                 Width = Model.ScreenWorkArea.Width - left - 5,

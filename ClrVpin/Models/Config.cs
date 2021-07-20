@@ -27,8 +27,6 @@ namespace ClrVpin.Models
 
         public Config()
         {
-            Settings = SettingsManager.Read();
-
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
             AllHitTypeEnums = AllHitTypes.Select(x => x.Enum);
             FixablePrioritizedHitTypeEnums = AllHitTypes.Where(x => x.Fixable).Select(x => x.Enum).ToArray();
@@ -59,8 +57,6 @@ namespace ClrVpin.Models
             UpdateIsValid();
         }
 
-        public Settings.Settings Settings { get; set; }
-
         // all possible content types (except database) - to be used elsewhere to create check collections
         public static ContentType[] ContentTypes { get; set; }
 
@@ -70,11 +66,6 @@ namespace ClrVpin.Models
             set => Properties.Settings.Default.FrontendFoldersJson = value;
         }
 
-        public string FrontendFolder
-        {
-            get => Properties.Settings.Default.FrontendFolder;
-            set => Properties.Settings.Default.FrontendFolder = value;
-        }
 
         public string BackupFolder
         {
@@ -119,7 +110,7 @@ namespace ClrVpin.Models
 
         public void Save()
         {
-            SettingsManager.Write(Settings);
+            SettingsManager.Write();
 
             Properties.Settings.Default.Save();
             WasReset = false;
@@ -128,7 +119,7 @@ namespace ClrVpin.Models
 
         public void Reset()
         {
-            Settings = SettingsManager.Reset();
+            _settings = SettingsManager.Settings;
 
             // todo; move all the enum default values into code - i.e. out of settings.settings default
 
@@ -172,14 +163,16 @@ namespace ClrVpin.Models
         {
             var paths = new List<string>
             {
-                Settings.TableFolder,
-                FrontendFolder,
+                _settings.TableFolder,
+                _settings.FrontendFolder,
                 BackupFolder
             };
             paths.AddRange(GetFrontendFolders().Select(x => x.Folder));
 
             IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
         }
+
+        private Settings.Settings _settings = SettingsManager.Settings;
 
         // scanner
         public ObservableCollection<string> SelectedCheckContentTypes;

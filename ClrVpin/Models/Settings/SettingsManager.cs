@@ -13,42 +13,39 @@ namespace ClrVpin.Models.Settings
 
             // create folder (and sub-folders) if it doesn't exist
             Directory.CreateDirectory(Folder);
+
+            Read();
         }
 
         public static string Folder { get; set; }
         public static string Path { get; set; }
 
-        public static Settings Read()
-        {
-            Settings settings;
+        public static Settings Settings { get; set; }
 
+        public static void Reset()
+        {
+            Settings = new Settings();
+            Write();
+        }
+
+        public static void Write()
+        {
+            var serializedSettings = JsonSerializer.Serialize(Settings);
+            File.WriteAllText(Path, serializedSettings);
+        }
+
+        private static void Read()
+        {
             // retrieve existing config (from disk) or create a fresh one
             if (File.Exists(Path))
             {
                 var data = File.ReadAllText(Path);
-                settings = JsonSerializer.Deserialize<Settings>(data);
+                Settings = JsonSerializer.Deserialize<Settings>(data);
             }
             else
             {
-                return Reset();
+                Reset();
             }
-
-            return settings;
-        }
-
-        public static Settings Reset()
-        {
-            var settings = new Settings();
-
-            Write(settings);
-
-            return settings;
-        }
-
-        public static void Write(Settings settings)
-        {
-            var serializedSettings = JsonSerializer.Serialize(settings);
-            File.WriteAllText(Path, serializedSettings);
         }
     }
 }

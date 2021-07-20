@@ -32,7 +32,7 @@ namespace ClrVpin
                     {
                         Title = "New settings are available",
                         Detail = "Please review your settings."
-                    }).ContinueWith(_ => Dispatcher.Invoke(() => new Settings.Settings().Show(this)));
+                    }).ContinueWith(_ => Dispatcher.Invoke(() => new Settings.SettingsViewModel().Show(this)));
                 }
             };
         }

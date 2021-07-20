@@ -11,7 +11,7 @@
     <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:Settings}">
+  <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:SettingsViewModel}">
     <StackPanel Margin="0">
       <GroupBox Margin="5, 5" Padding="5,2" Header="Virtual Pinball">
         <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding TableFolderModel}" />

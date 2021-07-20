@@ -12,7 +12,7 @@ namespace ClrVpin
 
             ScannerCommand = new ActionCommand(() => new Scanner.Scanner().Show(mainWindow));
             RebuilderCommand = new ActionCommand(() => new Rebuilder.Rebuilder().Show(mainWindow));
-            SettingsCommand = new ActionCommand(() => new Settings.Settings().Show(mainWindow));
+            SettingsCommand = new ActionCommand(() => new Settings.SettingsViewModel().Show(mainWindow));
             AboutCommand = new ActionCommand(() => new About.About().Show(mainWindow));
         }
 

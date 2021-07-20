@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
@@ -11,16 +12,16 @@ using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
 namespace ClrVpin.Settings
 {
     [AddINotifyPropertyChangedInterface]
-    public class Settings
+    public class SettingsViewModel
     {
         private MaterialWindow _window;
 
-        public Settings()
+        public SettingsViewModel()
         {
             //TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder));
 
-            TableFolderModel = new FolderTypeModel("Tables and Backglasses", Config.Settings.TableFolder, folder => Config.Settings.TableFolder = folder);
-            FrontendFolderModel = new FolderTypeModel("Frontend Root", Config.FrontendFolder, folder => Config.FrontendFolder = folder);
+            TableFolderModel = new FolderTypeModel("Tables and Backglasses", Settings.TableFolder, folder => Settings.TableFolder = folder);
+            FrontendFolderModel = new FolderTypeModel("Frontend Root", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
             BackupFolderModel = new FolderTypeModel("Backup Root", Config.BackupFolder, folder => Config.BackupFolder = folder);
 
             AutoAssignFoldersCommand = new ActionCommand(AutoAssignFolders);
@@ -38,6 +39,7 @@ namespace ClrVpin.Settings
         public ICommand ResetCommand { get; }
 
         public Config Config { get; } = Model.Config;
+        public Models.Settings.Settings Settings { get; } = SettingsManager.Settings;
 
         public List<ContentTypeModel> FrontendFolders { get; init; }
 
@@ -78,8 +80,8 @@ namespace ClrVpin.Settings
             {
                 // for storage
                 x.ContentType.Folder = x.ContentType.IsDatabase
-                    ? $@"{Config.FrontendFolder}\Databases\Visual Pinball"
-                    : $@"{Config.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
+                    ? $@"{Settings.FrontendFolder}\Databases\Visual Pinball"
+                    : $@"{Settings.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
 
                 // for display
                 x.Folder = x.ContentType.Folder;
