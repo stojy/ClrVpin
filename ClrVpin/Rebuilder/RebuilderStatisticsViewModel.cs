@@ -25,7 +25,7 @@ namespace ClrVpin.Rebuilder
             SelectedCheckContentTypes = new List<string> {Settings.Rebuilder.DestinationContentType};
 
             // rebuilder doesn't support check and fix separately
-            SelectedCheckHitTypes = Model.Config.SelectedMatchTypes.ToList();
+            SelectedCheckHitTypes = Settings.Rebuilder.SelectedMatchTypes.ToList();
             SelectedFixHitTypes = SelectedCheckHitTypes;
 
             // unlike scanner, the total count represents the number of files that were analyzed

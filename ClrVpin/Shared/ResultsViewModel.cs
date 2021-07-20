@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using Utils;
 
 namespace ClrVpin.Shared
@@ -40,6 +41,8 @@ namespace ClrVpin.Shared
 
         protected void Initialise()
         {
+            Settings = SettingsManager.Settings;
+
             FilteredContentTypes = CreateFilteredContentTypes();
             FilteredContentTypesView = new ListCollectionView(FilteredContentTypes.ToList());
 
@@ -60,6 +63,7 @@ namespace ClrVpin.Shared
 
         protected abstract IList<FeatureType> CreateFilteredContentTypes();
         protected abstract IList<FeatureType> CreateFilteredHitTypes();
+        protected Models.Settings.Settings Settings { get; set; }
 
         protected void UpdateStatus(IEnumerable<Game> games)
         {

@@ -44,9 +44,9 @@ namespace ClrVpin.Models
             HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.Valid).ToArray();
 
             // rebuilder
-            SelectedMatchTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedMatchTypes, value => Properties.Settings.Default.SelectedMatchTypes = value).Observable;
-            SelectedMergeOptions = new ObservableCollectionJson<MergeOptionEnum>(Properties.Settings.Default.MergeOptions, value => Properties.Settings.Default.MergeOptions = value).Observable;
-            SelectedIgnoreOptions = new ObservableCollectionJson<IgnoreOptionEnum>(Properties.Settings.Default.IgnoreOptions, value => Properties.Settings.Default.IgnoreOptions = value).Observable;
+            //SelectedMatchTypes = new ObservableCollectionJson<HitTypeEnum>(_settings.Rebuilder.SelectedMatchTypes, value => Properties.Settings.Default.SelectedMatchTypes = value).Observable;
+            //SelectedMergeOptions = new ObservableCollectionJson<MergeOptionEnum>(Properties.Settings.Default.MergeOptions, value => Properties.Settings.Default.MergeOptions = value).Observable;
+            //SelectedIgnoreOptions = new ObservableCollectionJson<IgnoreOptionEnum>(Properties.Settings.Default.IgnoreOptions, value => Properties.Settings.Default.IgnoreOptions = value).Observable;
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
@@ -119,11 +119,6 @@ namespace ClrVpin.Models
         public ObservableCollection<string> SelectedCheckContentTypes;
         public ObservableCollection<HitTypeEnum> SelectedCheckHitTypes;
         public ObservableCollection<HitTypeEnum> SelectedFixHitTypes;
-
-        // rebuilder
-        public ObservableCollection<HitTypeEnum> SelectedMatchTypes;
-        public ObservableCollection<MergeOptionEnum> SelectedMergeOptions;
-        public ObservableCollection<IgnoreOptionEnum> SelectedIgnoreOptions;
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] AllHitTypes =

@@ -92,7 +92,7 @@ namespace ClrVpin.Rebuilder
             UpdateIsValid();
         }
 
-        private static IEnumerable<FeatureType> CreateMatchCriteriaTypes()
+        private IEnumerable<FeatureType> CreateMatchCriteriaTypes()
         {
             // show all match criteria types
             // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
@@ -103,8 +103,8 @@ namespace ClrVpin.Rebuilder
                     Description = matchType.Description,
                     Tip = matchType.Tip,
                     IsSupported = true,
-                    IsActive = Model.Config.SelectedMatchTypes.Contains(matchType.Enum),
-                    SelectedCommand = new ActionCommand(() => Model.Config.SelectedMatchTypes.Toggle(matchType.Enum))
+                    IsActive = Settings.Rebuilder.SelectedMatchTypes.Contains(matchType.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMatchTypes.Toggle(matchType.Enum))
                 };
 
                 return featureType;
@@ -123,8 +123,8 @@ namespace ClrVpin.Rebuilder
                     Description = ignoreOption.Description,
                     Tip = ignoreOption.Tip,
                     IsSupported = true,
-                    IsActive = Model.Config.SelectedIgnoreOptions.Contains(ignoreOption.Enum),
-                    SelectedCommand = new ActionCommand(() => Model.Config.SelectedIgnoreOptions.Toggle(ignoreOption.Enum))
+                    IsActive = Settings.Rebuilder.SelectedIgnoreOptions.Contains(ignoreOption.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedIgnoreOptions.Toggle(ignoreOption.Enum))
                 };
 
                 return featureType;
@@ -143,8 +143,8 @@ namespace ClrVpin.Rebuilder
                     Description = mergeOption.Description,
                     Tip = mergeOption.Tip,
                     IsSupported = true,
-                    IsActive = Model.Config.SelectedMergeOptions.Contains(mergeOption.Enum),
-                    SelectedCommand = new ActionCommand(() => Model.Config.SelectedMergeOptions.Toggle(mergeOption.Enum))
+                    IsActive = Settings.Rebuilder.SelectedMergeOptions.Contains(mergeOption.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMergeOptions.Toggle(mergeOption.Enum))
                 };
 
                 return featureType;

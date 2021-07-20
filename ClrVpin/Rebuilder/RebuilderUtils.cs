@@ -64,7 +64,7 @@ namespace ClrVpin.Rebuilder
                 var mergeableHits = contentHitCollection.Hits.Where(hit => hit.Type.In(Config.FixablePrioritizedHitTypeEnums));
 
                 // merge each hit
-                mergeableHits.ForEach(hit => gameFiles.Add(Merge(hit, game, Model.Config.SelectedMatchTypes)));
+                mergeableHits.ForEach(hit => gameFiles.Add(Merge(hit, game, _settings.Rebuilder.SelectedMatchTypes)));
             });
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
@@ -120,9 +120,9 @@ namespace ClrVpin.Rebuilder
         {
             if (destinationFileInfo != null)
             {
-                if (Model.Config.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && sourceFileInfo.Length < destinationFileInfo.Length * 0.5)
+                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && sourceFileInfo.Length < destinationFileInfo.Length * 0.5)
                     return SkipMerge(IgnoreOptionEnum.IgnoreSmaller, hit, sourceFileInfo, destinationFileInfo);
-                if (Model.Config.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime < destinationFileInfo.LastWriteTime)
+                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime < destinationFileInfo.LastWriteTime)
                     return SkipMerge(IgnoreOptionEnum.IgnoreOlder, hit, sourceFileInfo, destinationFileInfo);
             }
 
