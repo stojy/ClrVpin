@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using ClrVpin.Logging;
 using ClrVpin.Models;
 using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
@@ -36,7 +37,7 @@ namespace ClrVpin.Scanner
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
-        public Config Config { get; } = Model.Config;
+        public Models.Settings.Settings Settings { get; } = SettingsManager.Settings;
 
         public void Show(Window parent)
         {
@@ -64,18 +65,18 @@ namespace ClrVpin.Scanner
             };
         }
 
-        private static IEnumerable<FeatureType> CreateCheckContentTypes()
+        private IEnumerable<FeatureType> CreateCheckContentTypes()
         {
             // show all hit types
             var featureTypes = Config.ContentTypes.Select(contentType =>
             {
-                var featureType = new FeatureType((int)contentType.Enum)
+                var featureType = new FeatureType((int) contentType.Enum)
                 {
                     Description = contentType.Description,
                     Tip = contentType.Tip,
                     IsSupported = true,
-                    IsActive = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
-                    SelectedCommand = new ActionCommand(() => Model.Config.SelectedCheckContentTypes.Toggle(contentType.Description))
+                    IsActive = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
+                    SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedCheckContentTypes.Toggle(contentType.Description))
                 };
 
                 return featureType;
@@ -89,17 +90,17 @@ namespace ClrVpin.Scanner
             // show all hit types
             var featureTypes = Config.HitTypes.Select(hitType =>
             {
-                var featureType = new FeatureType((int)hitType.Enum)
+                var featureType = new FeatureType((int) hitType.Enum)
                 {
                     Description = hitType.Description,
                     Tip = hitType.Tip,
                     IsSupported = true,
-                    IsActive = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum)
+                    IsActive = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum)
                 };
 
                 featureType.SelectedCommand = new ActionCommand(() =>
                 {
-                    Model.Config.SelectedCheckHitTypes.Toggle(hitType.Enum);
+                    Settings.Scanner.SelectedCheckHitTypes.Toggle(hitType.Enum);
 
                     // toggle the fix hit type checked & enabled
                     var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
@@ -107,7 +108,7 @@ namespace ClrVpin.Scanner
                     if (!featureType.IsActive)
                     {
                         fixHitType.IsActive = false;
-                        Model.Config.SelectedFixHitTypes.ToggleOff(hitType.Enum);
+                        Settings.Scanner.SelectedFixHitTypes.ToggleOff(hitType.Enum);
                     }
                 });
 
@@ -117,17 +118,17 @@ namespace ClrVpin.Scanner
             return featureTypes.ToList();
         }
 
-        private static IEnumerable<FeatureType> CreateFixHitTypes()
+        private IEnumerable<FeatureType> CreateFixHitTypes()
         {
             // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
-            var contentTypes = Config.HitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
+            var contentTypes = Config.HitTypes.Select(hitType => new FeatureType((int) hitType.Enum)
             {
                 Description = hitType.Description,
                 Tip = hitType.Tip,
                 IsNeverSupported = hitType.Enum == HitTypeEnum.Missing,
-                IsSupported = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
-                IsActive = Model.Config.SelectedFixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
-                SelectedCommand = new ActionCommand(() => Model.Config.SelectedFixHitTypes.Toggle(hitType.Enum))
+                IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
+                IsActive = Settings.Scanner.SelectedFixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
+                SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedFixHitTypes.Toggle(hitType.Enum))
             });
 
             return contentTypes.ToList();
@@ -136,16 +137,16 @@ namespace ClrVpin.Scanner
         private async void Start()
         {
             _scannerWindow.Hide();
-            Logging.Logger.Clear();
+            Logger.Clear();
 
             var progress = new ProgressViewModel();
             progress.Show(_scannerWindow);
-            
+
             // todo; retrieve 'missing games' from spreadsheet
 
             progress.Update("Loading Database", 0);
             var games = TableUtils.GetGamesFromDatabases();
-            
+
             progress.Update("Checking Files", 30);
             var unknownFiles = ScannerUtils.Check(games);
 
@@ -158,10 +159,10 @@ namespace ClrVpin.Scanner
             progress.Update("Preparing Results", 100);
             await Task.Delay(10);
             Games = new ObservableCollection<Game>(games);
-            
+
             // todo; remove concat.. for statistics!!
             ShowResults(gameFiles, unknownFiles, progress.Duration);
-         
+
             progress.Close();
         }
 
@@ -192,6 +193,5 @@ namespace ClrVpin.Scanner
         private Window _scannerWindow;
         private Logging.Logging _loggingWindow;
         private const int WindowMargin = 5;
-        public Models.Settings.Settings Settings { get; } = SettingsManager.Settings;
     }
 }

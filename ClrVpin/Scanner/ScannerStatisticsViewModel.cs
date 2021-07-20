@@ -18,14 +18,13 @@ namespace ClrVpin.Scanner
             // - including the extra 'under the hood' types.. valid, unknown, unsupported
             SupportedHitTypes = Config.HitTypes.ToList();
 
+            SupportedContentTypes = Config.ContentTypes.Where(x => Settings.Scanner.SelectedCheckContentTypes.Contains(x.Description)).ToList();
 
-            SupportedContentTypes = Config.ContentTypes.Where(x => Model.Config.SelectedCheckContentTypes.Contains(x.Description)).ToList();
-
-            SelectedCheckContentTypes = Model.Config.SelectedCheckContentTypes;
+            SelectedCheckContentTypes = Settings.Scanner.SelectedCheckContentTypes;
 
             // rebuilder doesn't support check and fix separately
-            SelectedCheckHitTypes = Model.Config.SelectedCheckHitTypes.ToList();
-            SelectedFixHitTypes = Model.Config.SelectedFixHitTypes.ToList();
+            SelectedCheckHitTypes = Settings.Scanner.SelectedCheckHitTypes.ToList();
+            SelectedFixHitTypes = Settings.Scanner.SelectedFixHitTypes.ToList();
 
             // unlike rebuilder, the total count represents the number of Games
             TotalCount = Games.Count;
@@ -54,7 +53,7 @@ namespace ClrVpin.Scanner
         {
             var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.Valid).ToList();
 
-            var eligibleHits = Games.Count * Model.Config.SelectedCheckContentTypes.Count;
+            var eligibleHits = Games.Count * Settings.Scanner.SelectedCheckContentTypes.Count;
 
             // all files
             var allFilesCount = validHits.Count + GameFiles.Count;

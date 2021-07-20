@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -35,18 +34,9 @@ namespace ClrVpin.Models
             if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
                 Reset();
 
-            // scanner
-            SelectedCheckContentTypes = new ObservableStringCollection<string>(Properties.Settings.Default.SelectedCheckContentTypes).Observable;
-            SelectedCheckHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedCheckHitTypes, value => Properties.Settings.Default.SelectedCheckHitTypes = value)
-                .Observable;
-            SelectedFixHitTypes = new ObservableCollectionJson<HitTypeEnum>(Properties.Settings.Default.SelectedFixHitTypes, value => Properties.Settings.Default.SelectedFixHitTypes = value)
-                .Observable;
             HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.Valid).ToArray();
 
             // rebuilder
-            //SelectedMatchTypes = new ObservableCollectionJson<HitTypeEnum>(_settings.Rebuilder.SelectedMatchTypes, value => Properties.Settings.Default.SelectedMatchTypes = value).Observable;
-            //SelectedMergeOptions = new ObservableCollectionJson<MergeOptionEnum>(Properties.Settings.Default.MergeOptions, value => Properties.Settings.Default.MergeOptions = value).Observable;
-            //SelectedIgnoreOptions = new ObservableCollectionJson<IgnoreOptionEnum>(Properties.Settings.Default.IgnoreOptions, value => Properties.Settings.Default.IgnoreOptions = value).Observable;
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
@@ -89,7 +79,6 @@ namespace ClrVpin.Models
 
             // todo; move all the enum default values into code - i.e. out of settings.settings default
 
-
             // update actual version to indicate the config is now compatible and doesn't need to be reset again
             Properties.Settings.Default.ActualVersion = Properties.Settings.Default.RequiredVersion;
 
@@ -114,11 +103,6 @@ namespace ClrVpin.Models
         }
 
         private Settings.Settings _settings = SettingsManager.Settings;
-
-        // scanner
-        public ObservableCollection<string> SelectedCheckContentTypes;
-        public ObservableCollection<HitTypeEnum> SelectedCheckHitTypes;
-        public ObservableCollection<HitTypeEnum> SelectedFixHitTypes;
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] AllHitTypes =

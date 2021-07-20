@@ -45,8 +45,8 @@ namespace ClrVpin.Scanner
                 Tip = contentType.Tip,
                 
                 // todo; use id
-                IsSupported = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
-                IsActive = Model.Config.SelectedCheckContentTypes.Contains(contentType.Description),
+                IsSupported = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
+                IsActive = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 
@@ -60,8 +60,8 @@ namespace ClrVpin.Scanner
             var filteredContentTypes = Config.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
-                IsSupported = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.Valid,
-                IsActive = Model.Config.SelectedCheckHitTypes.Contains(hitType.Enum),
+                IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.Valid,
+                IsActive = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 

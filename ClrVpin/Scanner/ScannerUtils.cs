@@ -9,15 +9,17 @@ namespace ClrVpin.Scanner
 {
     public static class ScannerUtils
     {
+        private static readonly Models.Settings.Settings _settings = SettingsManager.Settings;
+
         public static List<FileDetail> Check(List<Game> games)
         {
             var unknownFiles = new List<FileDetail>();
 
             // determine the configured content types
             // - todo; scan non-media content, e.g. tables and b2s
-            var checkContentTypes = SettingsManager.Settings.FrontendFolders
+            var checkContentTypes = _settings.FrontendFolders
                 .Where(x => !x.IsDatabase)
-                .Where(type => Model.Config.SelectedCheckContentTypes.Contains(type.Description));
+                .Where(type => _settings.Scanner.SelectedCheckContentTypes.Contains(type.Description));
 
             foreach (var contentType in checkContentTypes)
             {
@@ -27,7 +29,7 @@ namespace ClrVpin.Scanner
                 unknownFiles.AddRange(unmatchedFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
-                if (Model.Config.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
+                if (_settings.Scanner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, contentType.Folder);
                     unknownFiles.AddRange(unsupportedFiles);
@@ -63,14 +65,14 @@ namespace ClrVpin.Scanner
                     if (TableUtils.TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
                     {
                         // valid hit exists.. so delete other hits, i.e. other hits aren't as relevant
-                        gameFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
+                        gameFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, _settings.Scanner.SelectedFixHitTypes));
                     }
                     else if (TableUtils.TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
                     {
                         // for all 3 hit types.. rename file and delete other entries
                         // - duplicate extension is n/a since it's implied a valid hit already exists, i.e. covered above
-                        gameFiles.Add(TableUtils.Rename(hit, game, Model.Config.SelectedFixHitTypes));
-                        gameFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, Model.Config.SelectedFixHitTypes));
+                        gameFiles.Add(TableUtils.Rename(hit, game, _settings.Scanner.SelectedFixHitTypes));
+                        gameFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, _settings.Scanner.SelectedFixHitTypes));
                     }
 
                     // other hit types don't require any additional work..
@@ -95,8 +97,8 @@ namespace ClrVpin.Scanner
             // delete files NOT associated with games, i.e. unknown files
             otherFileDetails.ForEach(x =>
             {
-                if (x.HitType == HitTypeEnum.Unknown && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
-                    x.HitType == HitTypeEnum.Unsupported && Model.Config.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
+                if (x.HitType == HitTypeEnum.Unknown && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
+                    x.HitType == HitTypeEnum.Unsupported && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     x.Deleted = true;
                     TableUtils.Delete(x.Path, x.HitType, null);

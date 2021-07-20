@@ -11,7 +11,8 @@ namespace ClrVpin.Models.Settings
     {
         public Settings()
         {
-            // default settings - will be overwritten AFTER ctor by the deserialized settings if they exist
+            // default settings
+            // - during json.net deserialization.. ctor is invoked BEFORE deserialized version overwrites the values, i.e. they will be overwritten where a stored setting exists
             TableFolder = @"C:\vp\tables\vpx";
             FrontendFolder = @"C:\vp\apps\PinballX";
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
@@ -34,6 +35,7 @@ namespace ClrVpin.Models.Settings
             FrontendFolders.ForEach(x => x.Description = x.Enum.GetDescription());
 
             Rebuilder = new RebuilderSettings();
+            Scanner = new ScannerSettings();
         }
 
         public string TableFolder { get; set; }
@@ -42,6 +44,7 @@ namespace ClrVpin.Models.Settings
         public bool TrainerWheels { get; set; }
         public List<ContentType> FrontendFolders { get; set; }
 
+        public ScannerSettings Scanner { get; set; }
         public RebuilderSettings Rebuilder { get; set; }
     }
 }
