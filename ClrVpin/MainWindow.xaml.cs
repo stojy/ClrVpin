@@ -1,6 +1,5 @@
-﻿using System.Drawing;
-using System.Text;
-using System.Windows;
+﻿using System.Text;
+using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
@@ -25,7 +24,7 @@ namespace ClrVpin
             {
                 Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
 
-                if (Model.Config.WasReset && !_configWasResetHandled)
+                if (SettingsManager.WasReset && !_configWasResetHandled)
                 {
                     _configWasResetHandled = true;
                     DialogHost.Show(new Message

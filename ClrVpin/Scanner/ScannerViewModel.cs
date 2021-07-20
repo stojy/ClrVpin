@@ -60,7 +60,7 @@ namespace ClrVpin.Scanner
 
             _scannerWindow.Closed += (_, _) =>
             {
-                Model.Config.Save();
+                SettingsManager.Write();
                 parent.Show();
             };
         }

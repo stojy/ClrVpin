@@ -64,7 +64,7 @@ namespace ClrVpin.Settings
 
             _window.Closed += (_, _) =>
             {
-                Model.Config.Save();
+                SettingsManager.Write();
                 parent.Show();
             };
         }
@@ -93,7 +93,7 @@ namespace ClrVpin.Settings
 
         private void Reset()
         {
-            Config.Reset();
+            SettingsManager.Reset();
             Close();
         }
     }

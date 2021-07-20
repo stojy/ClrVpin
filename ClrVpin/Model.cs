@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using Utils;
 
 namespace ClrVpin
@@ -9,6 +10,7 @@ namespace ClrVpin
         public Model(Window mainWindow)
         {
             Config = new Config();
+          //  SettingsManager = SettingsManager;
 
             ScannerCommand = new ActionCommand(() => new Scanner.ScannerViewModel().Show(mainWindow));
             RebuilderCommand = new ActionCommand(() => new Rebuilder.RebuilderViewModel().Show(mainWindow));
@@ -22,6 +24,7 @@ namespace ClrVpin
         public ActionCommand AboutCommand { get; set; }
 
         public static Config Config { get; set; }
+        //public static SettingsManager SettingsManager { get; set; }
         public static Rect ScreenWorkArea { get; set; }
     }
 }

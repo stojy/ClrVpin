@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using ClrVpin.Models.Rebuilder;
 using ClrVpin.Models.Settings;
 using PropertyChanged;
@@ -32,7 +30,7 @@ namespace ClrVpin.Models
 
             // reset the settings if the user's stored settings version differs to the default version
             if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
-                Reset();
+                SettingsManager.Reset();
 
             HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.Valid).ToArray();
 
@@ -42,15 +40,11 @@ namespace ClrVpin.Models
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
                 HitTypeEnum.Unsupported)).ToArray();
 
-            ContentTypes = _settings.FrontendFolders.Where(x => !x.IsDatabase).ToArray();
-            UpdateIsValid();
+            ContentTypes = Settings.FrontendFolders.Where(x => !x.IsDatabase).ToArray();
         }
 
         // all possible content types (except database) - to be used elsewhere to create check collections
         public static ContentType[] ContentTypes { get; set; }
-
-        public bool WasReset { get; private set; }
-        public bool IsValid { get; private set; }
 
         // hit types in priority order as determined by matching algorithm - refer AssociateMediaFilesWithGames
         public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; private set; }
@@ -59,50 +53,11 @@ namespace ClrVpin.Models
 
         public static IEnumerable<HitTypeEnum> AllHitTypeEnums { get; private set; }
 
-        public ContentType GetDestinationContentType() => _settings.FrontendFolders.First(x => x.Description == _settings.Rebuilder.DestinationContentType);
+        public ContentType GetDestinationContentType() => Settings.FrontendFolders.First(x => x.Description == Settings.Rebuilder.DestinationContentType);
 
-        public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => _settings.FrontendFolders = frontendFolders.ToList();
+        public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => Settings.FrontendFolders = frontendFolders.ToList();
 
-        public void Save()
-        {
-            SettingsManager.Write();
-
-            Properties.Settings.Default.Save();
-            WasReset = false;
-            UpdateIsValid();
-        }
-
-        public void Reset()
-        {
-            SettingsManager.Reset();
-            _settings = SettingsManager.Settings;
-
-            // todo; move all the enum default values into code - i.e. out of settings.settings default
-
-            // update actual version to indicate the config is now compatible and doesn't need to be reset again
-            Properties.Settings.Default.ActualVersion = Properties.Settings.Default.RequiredVersion;
-
-            Properties.Settings.Default.SelectedMatchTypes = JsonSerializer.Serialize(AllHitTypeEnums.Where(x => x != HitTypeEnum.Missing));
-
-            Save();
-
-            WasReset = true;
-        }
-
-        private void UpdateIsValid()
-        {
-            var paths = new List<string>
-            {
-                _settings.TableFolder,
-                _settings.FrontendFolder,
-                _settings.BackupFolder
-            };
-            paths.AddRange(_settings.FrontendFolders.Select(x => x.Folder));
-
-            IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
-        }
-
-        private Settings.Settings _settings = SettingsManager.Settings;
+        private static Settings.Settings Settings => SettingsManager.Settings;
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] AllHitTypes =

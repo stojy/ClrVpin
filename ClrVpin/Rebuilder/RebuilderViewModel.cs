@@ -76,7 +76,7 @@ namespace ClrVpin.Rebuilder
 
             _rebuilderWindow.Closed += (_, _) =>
             {
-                Model.Config.Save();
+                SettingsManager.Write();
                 parent.Show();
             };
         }
