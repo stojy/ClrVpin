@@ -103,11 +103,11 @@ namespace ClrVpin.Rebuilder
                             if (File.Exists(destinationFileName))
                                 TableUtils.Backup(destinationFileName, "deleted");
 
-                            TableUtils.Backup(sourceFileInfo.Name, "merged");
+                            TableUtils.Backup(sourceFileInfo.FullName, "merged");
 
                             // todo; preserve timestamp
                             // todo; copy vs move.. i.e. delete source file
-                            File.Move(sourceFileInfo.Name, destinationFileName, true);
+                            File.Move(sourceFileInfo.FullName, destinationFileName, true);
                         }
                     }
                 }
