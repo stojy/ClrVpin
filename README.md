@@ -17,4 +17,4 @@ Refer [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots).
 Refer [Inner Workings](https://github.com/stojy/ClrVpin/wiki/Inner-Workings).
 
 ## Roadmap
-Refer [roadmap](https://github.com/stojy/ClrVpin/wiki/Roadmap).
+Refer [Roadmap](https://github.com/stojy/ClrVpin/wiki/Roadmap).
