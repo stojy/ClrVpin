@@ -27,10 +27,6 @@ namespace ClrVpin.Models
             FixablePrioritizedHitTypeEnums = AllHitTypes.Where(x => x.Fixable).Select(x => x.Enum).ToArray();
             IrreparablePrioritizedHitTypeEnums = AllHitTypes.Where(x => !x.Fixable).Select(x => x.Enum).ToArray();
 
-            // reset the settings if the user's stored settings version differs to the default version
-            if (Properties.Settings.Default.ActualVersion < Properties.Settings.Default.RequiredVersion)
-                Model.SettingsManager.Reset();
-
             HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.Valid).ToArray();
 
             // rebuilder

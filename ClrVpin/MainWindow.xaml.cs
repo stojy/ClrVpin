@@ -29,8 +29,8 @@ namespace ClrVpin
                     _configWasResetHandled = true;
                     DialogHost.Show(new Message
                     {
-                        Title = "New settings are available",
-                        Detail = "Please review your settings."
+                        Title = "Your settings have been reset",
+                        Detail = "Please review the updated settings."
                     }).ContinueWith(_ => Dispatcher.Invoke(() => new Settings.SettingsViewModel().Show(this)));
                 }
             };

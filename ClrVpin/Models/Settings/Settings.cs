@@ -13,6 +13,8 @@ namespace ClrVpin.Models.Settings
         {
             // default settings
             // - during json.net deserialization.. ctor is invoked BEFORE deserialized version overwrites the values, i.e. they will be overwritten where a stored setting exists
+            Version = MinVersion;
+
             TableFolder = @"C:\vp\tables\vpx";
             FrontendFolder = @"C:\vp\apps\PinballX";
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
@@ -38,6 +40,8 @@ namespace ClrVpin.Models.Settings
             Scanner = new ScannerSettings();
         }
 
+        public int Version { get; set; }
+
         public string TableFolder { get; set; }
         public string FrontendFolder { get; set; }
         public string BackupFolder { get; set; }
@@ -46,5 +50,7 @@ namespace ClrVpin.Models.Settings
 
         public ScannerSettings Scanner { get; set; }
         public RebuilderSettings Rebuilder { get; set; }
+
+        public static int MinVersion = 1;
     }
 }

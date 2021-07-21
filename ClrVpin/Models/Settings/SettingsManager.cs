@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using ClrVpin.Logging;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Settings
@@ -23,7 +24,6 @@ namespace ClrVpin.Models.Settings
 
         public bool WasReset { get; private set; }
         public bool IsValid { get; private set; }
-
         public Settings Settings { get; set; }
 
         public static SettingsManager Create()
@@ -53,7 +53,20 @@ namespace ClrVpin.Models.Settings
             if (File.Exists(_path))
             {
                 var data = File.ReadAllText(_path);
-                Settings = JsonSerializer.Deserialize<Settings>(data);
+
+                try
+                {
+                    Settings = JsonSerializer.Deserialize<Settings>(data);
+
+                    // reset the settings if the user's stored settings version differs to the default version
+                    if (Settings!.Version < Settings.MinVersion)
+                        Reset();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, "Failed to deserialize settings.. resetting settings");
+                    Reset();
+                }
             }
             else
             {

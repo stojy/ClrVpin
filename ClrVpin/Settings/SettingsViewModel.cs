@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
-using ClrVpin.Models.Settings;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
