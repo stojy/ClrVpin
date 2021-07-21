@@ -1,26 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ClrVpin.Models.Rebuilder;
-using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Models
+namespace ClrVpin.Models.Settings
 {
-    [AddINotifyPropertyChangedInterface]
-    public class Config
+    public static class StaticSettings
     {
-        // abstract the underlying settings designer class because..
-        // - users are agnostic to the underlying Properties.Settings.Default get/set implementation
-        // - simpler xaml binding to avoid need for either..
-        //   - StaticResource reference; prone to errors if Default isn't referenced in Folder (i.e. else new class used)
-        //     e.g. <properties:Settings x:Key="Settings"/>
-        //          Text="{Binding Source={StaticResource Settings}, Folder=Default.FrontendFolder}"
-        //   - Static reference; too long
-        //     e.g. Text="{Binding Source={x:Static p:Settings.Default}, Folder=FrontendFolder}"
-        //   - vs a simple regular data binding
-        //     e.g. Text="{Binding FrontendFolder}"
-
-        public Config()
+        static StaticSettings()
         {
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
             AllHitTypeEnums = AllHitTypes.Select(x => x.Enum);
@@ -34,25 +21,16 @@ namespace ClrVpin.Models
             IgnoreOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
                 HitTypeEnum.Unsupported)).ToArray();
-
-            ContentTypes = Settings.FrontendFolders.Where(x => !x.IsDatabase).ToArray();
         }
 
-        // all possible content types (except database) - to be used elsewhere to create check collections
-        public static ContentType[] ContentTypes { get; set; }
-
         // hit types in priority order as determined by matching algorithm - refer AssociateMediaFilesWithGames
-        public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; private set; }
+        public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; }
 
-        public static HitTypeEnum[] IrreparablePrioritizedHitTypeEnums { get; private set; }
+        public static HitTypeEnum[] IrreparablePrioritizedHitTypeEnums { get; }
 
-        public static IEnumerable<HitTypeEnum> AllHitTypeEnums { get; private set; }
+        public static IEnumerable<HitTypeEnum> AllHitTypeEnums { get; }
 
-        public ContentType GetDestinationContentType() => Settings.FrontendFolders.First(x => x.Description == Settings.Rebuilder.DestinationContentType);
-
-        public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => Settings.FrontendFolders = frontendFolders.ToList();
-
-        private static Settings.Settings Settings => Model.Settings;
+        //private static Settings Settings => Model.Settings;
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] AllHitTypes =

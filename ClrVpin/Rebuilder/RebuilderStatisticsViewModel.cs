@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
 
@@ -16,10 +17,10 @@ namespace ClrVpin.Rebuilder
         {
             // hit type stats for all supported types only
             // - including the extra 'under the hood' types.. valid, unknown, unsupported
-            SupportedHitTypes = Config.MatchTypes.ToList();
+            SupportedHitTypes = StaticSettings.MatchTypes.ToList();
 
             // content type stats for the single content type being rebuilt
-            SupportedContentTypes = new List<ContentType> {Model.Config.GetDestinationContentType()};
+            SupportedContentTypes = new List<ContentType> {Settings.GetDestinationContentType()};
 
             // rebuilder only supports a single selected content type
             SelectedCheckContentTypes = new List<string> {Settings.Rebuilder.DestinationContentType};

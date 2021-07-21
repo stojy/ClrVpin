@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using ClrVpin.Models;
 using ClrVpin.Models.Settings;
 using Utils;
 
@@ -13,8 +12,6 @@ namespace ClrVpin
             SettingsManager = SettingsManager.Create();
             Settings = SettingsManager.Settings;
 
-            Config = new Config();
-
             ScannerCommand = new ActionCommand(() => new Scanner.ScannerViewModel().Show(mainWindow));
             RebuilderCommand = new ActionCommand(() => new Rebuilder.RebuilderViewModel().Show(mainWindow));
             SettingsCommand = new ActionCommand(() => new Settings.SettingsViewModel().Show(mainWindow));
@@ -25,8 +22,6 @@ namespace ClrVpin
         public ActionCommand RebuilderCommand { get; set; }
         public ActionCommand SettingsCommand { get; set; }
         public ActionCommand AboutCommand { get; set; }
-
-        public static Config Config { get; set; } // todo; remove?
 
         public static SettingsManager SettingsManager { get; set; }
         public static Models.Settings.Settings Settings { get; set; }

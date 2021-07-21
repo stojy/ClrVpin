@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
 
@@ -16,9 +17,9 @@ namespace ClrVpin.Scanner
         {
             // hit type stats for all supported types only
             // - including the extra 'under the hood' types.. valid, unknown, unsupported
-            SupportedHitTypes = Config.HitTypes.ToList();
+            SupportedHitTypes = StaticSettings.HitTypes.ToList();
 
-            SupportedContentTypes = Config.ContentTypes.Where(x => Settings.Scanner.SelectedCheckContentTypes.Contains(x.Description)).ToList();
+            SupportedContentTypes = Settings.GetContentTypes().Where(x => Settings.Scanner.SelectedCheckContentTypes.Contains(x.Description)).ToList();
 
             SelectedCheckContentTypes = Settings.Scanner.SelectedCheckContentTypes;
 
@@ -85,7 +86,7 @@ namespace ClrVpin.Scanner
             return "\n-----------------------------------------------\n" +
                    "\nTotals" +
                    $"\n{"- Available Tables",StatisticsKeyWidth}{Games.Count}" +
-                   $"\n{"- Possible Content",StatisticsKeyWidth}{Games.Count * Config.ContentTypes.Length}" +
+                   $"\n{"- Possible Content",StatisticsKeyWidth}{Games.Count * Settings.GetContentTypes().Length}" +
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"All Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +
                    $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +

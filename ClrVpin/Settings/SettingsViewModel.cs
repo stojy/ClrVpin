@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
@@ -17,7 +18,7 @@ namespace ClrVpin.Settings
 
         public SettingsViewModel()
         {
-            //TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", Config.TableFolder, folder => Config.TableFolder = folder));
+            //TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", StaticSettings.TableFolder, folder => StaticSettings.TableFolder = folder));
 
             TableFolderModel = new FolderTypeModel("Tables and Backglasses", Settings.TableFolder, folder => Settings.TableFolder = folder);
             FrontendFolderModel = new FolderTypeModel("Frontend Root", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
@@ -26,10 +27,12 @@ namespace ClrVpin.Settings
             AutoAssignFoldersCommand = new ActionCommand(AutoAssignFolders);
             ResetCommand = new ActionCommand(Reset);
 
-            FrontendFolders = Model.Settings.FrontendFolders
-                .Select(folder => new ContentTypeModel(folder, () => Config.SetFrontendFolders(FrontendFolders.Select(x => x.ContentType))))
+            FrontendFolderModels = Model.Settings.FrontendFolders
+                .Select(folder => new ContentTypeModel(folder, () => SetFrontendFolders(FrontendFolderModels.Select(x => x.ContentType))))
                 .ToList();
         }
+
+        public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => Settings.FrontendFolders = frontendFolders.ToList();
 
         public FolderTypeModel TableFolderModel { get; set; }
         public FolderTypeModel FrontendFolderModel { get; set; }
@@ -38,10 +41,9 @@ namespace ClrVpin.Settings
         public ICommand AutoAssignFoldersCommand { get; }
         public ICommand ResetCommand { get; }
 
-        public Config Config { get; } = Model.Config;
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
-        public List<ContentTypeModel> FrontendFolders { get; init; }
+        public List<ContentTypeModel> FrontendFolderModels { get; init; }
 
         public void Show(Window parent)
         {
@@ -76,7 +78,7 @@ namespace ClrVpin.Settings
         private void AutoAssignFolders()
         {
             // automatically assign folders based on the frontend root folder
-            FrontendFolders.ForEach(x =>
+            FrontendFolderModels.ForEach(x =>
             {
                 // for storage
                 x.ContentType.Folder = x.ContentType.IsDatabase
@@ -87,7 +89,7 @@ namespace ClrVpin.Settings
                 x.Folder = x.ContentType.Folder;
             });
             
-            Config.SetFrontendFolders(FrontendFolders.Select(x => x.ContentType));
+            SetFrontendFolders(FrontendFolderModels.Select(x => x.ContentType));
         }
 
         private void Reset()

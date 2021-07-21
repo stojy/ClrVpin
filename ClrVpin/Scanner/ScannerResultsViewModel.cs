@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using ClrVpin.Models;
+using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
@@ -39,7 +40,7 @@ namespace ClrVpin.Scanner
         protected override IList<FeatureType> CreateFilteredContentTypes()
         {
             // show all content types, but assign enabled and active based on the scanner configuration
-            var filteredContentTypes = Config.ContentTypes.Select(contentType => new FeatureType((int)contentType.Enum)
+            var filteredContentTypes = Settings.GetContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,
@@ -57,7 +58,7 @@ namespace ClrVpin.Scanner
         {
             // show all hit types, but assign enabled and active based on the scanner configuration
             // - for completeness the valid hits are also visible, but disabled by default since no fixes were required
-            var filteredContentTypes = Config.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
+            var filteredContentTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
                 IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.Valid,

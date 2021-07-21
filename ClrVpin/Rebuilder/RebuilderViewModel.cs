@@ -95,7 +95,7 @@ namespace ClrVpin.Rebuilder
         {
             // show all match criteria types
             // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
-            var matchTypes = Config.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
+            var matchTypes = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
             {
                 var featureType = new FeatureType((int) matchType.Enum)
                 {
@@ -115,7 +115,7 @@ namespace ClrVpin.Rebuilder
         private IEnumerable<FeatureType> CreateIgnoreOptions()
         {
             // show all merge options
-            var featureTypes = Config.IgnoreOptions.Select(ignoreOption =>
+            var featureTypes = StaticSettings.IgnoreOptions.Select(ignoreOption =>
             {
                 var featureType = new FeatureType((int) ignoreOption.Enum)
                 {
@@ -135,7 +135,7 @@ namespace ClrVpin.Rebuilder
         private IEnumerable<FeatureType> CreateMergeOptions()
         {
             // show all merge options
-            var featureTypes = Config.MergeOptions.Select(mergeOption =>
+            var featureTypes = StaticSettings.MergeOptions.Select(mergeOption =>
             {
                 var featureType = new FeatureType((int) mergeOption.Enum)
                 {

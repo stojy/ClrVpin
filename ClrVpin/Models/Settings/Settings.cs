@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using PropertyChanged;
 using Utils;
 
@@ -39,7 +40,7 @@ namespace ClrVpin.Models.Settings
             Rebuilder = new RebuilderSettings();
             Scanner = new ScannerSettings();
         }
-
+        
         public int Version { get; set; }
 
         public string TableFolder { get; set; }
@@ -52,5 +53,10 @@ namespace ClrVpin.Models.Settings
         public RebuilderSettings Rebuilder { get; set; }
 
         public static int MinVersion = 1;
+
+        public ContentType GetDestinationContentType() => FrontendFolders.First(x => x.Description == Rebuilder.DestinationContentType);
+
+        // all possible content types (except database) - to be used elsewhere to create check collections
+        public ContentType[] GetContentTypes() => FrontendFolders.Where(x => !x.IsDatabase).ToArray();
     }
 }
