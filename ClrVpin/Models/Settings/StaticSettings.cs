@@ -61,7 +61,7 @@ namespace ClrVpin.Models.Settings
         // all possible file merge options - to be used elsewhere (rebuilder)
         public static MergeOption[] MergeOptions =
         {
-            new MergeOption {Enum = MergeOptionEnum.PreserveTimestamp, Tip = "The (modified) timestamp of the source file will be used for created or overwritten destination file"},
+            new MergeOption {Enum = MergeOptionEnum.PreserveDateModified, Tip = "Date modified timestamp of merged file (in the destination folder) will match the source file, else the current time will be used"},
             new MergeOption {Enum = MergeOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"}
         };
     }

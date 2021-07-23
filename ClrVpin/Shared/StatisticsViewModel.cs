@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using ByteSizeLib;
 using ClrVpin.Models;
-using ClrVpin.Models.Settings;
 using PropertyChanged;
 using Utils;
 

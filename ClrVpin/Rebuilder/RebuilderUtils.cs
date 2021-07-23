@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -100,14 +101,23 @@ namespace ClrVpin.Rebuilder
 
                         if (!_settings.TrainerWheels)
                         {
+                            // backup source and destination files
                             if (File.Exists(destinationFileName))
                                 TableUtils.Backup(destinationFileName, "deleted");
-
                             TableUtils.Backup(sourceFileInfo.FullName, "merged");
 
-                            // todo; preserve timestamp
-                            // todo; copy vs move.. i.e. delete source file
-                            File.Move(sourceFileInfo.FullName, destinationFileName, true);
+                            // move or copy source file
+                            if (MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions))
+                                File.Move(sourceFileInfo.FullName, destinationFileName, true);
+                            else
+                                File.Copy(sourceFileInfo.FullName, destinationFileName, true);
+
+                            // reset date modified if preservation isn't selected
+                            // - moved file.. last access and change timestamps are updated
+                            // - copied file.. last access and creation timestamps are updated
+                            // - neither move or copy modify the 'last write' timestamp --> so by default, a copied file will have a modified timestamp before the file was created!!
+                            if (!MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions))
+                                File.SetLastWriteTime(destinationFileName, DateTime.Now);
                         }
                     }
                 }
