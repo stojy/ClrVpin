@@ -2,13 +2,12 @@
 ![ClrVpin - 1280x640](https://user-images.githubusercontent.com/11408611/117466530-654d2d80-af85-11eb-8493-c49034aa9315.png)
 
 ## Purpose
-[Visual Pinball](https://github.com/vpinball/vpinball) content management tool.
-Maintain your Visual Pinball content collection to free up your time for playing the tables.
+A [Visual Pinball](https://github.com/vpinball/vpinball) content management tool intended to maintain the collection of content files used by VPX and front end (PBY, PBX. etc).
 
 ## Features
 Maintain a clean set of VP (Visual Pinball) content..
-- Frontend Media: Videos, Audio, Wheels, etc.
-- Content: Tables, Backglasses, POV, etc.
+- [PBY](https://github.com/mjrgh/PinballY)/[PBX](https://www.pinballx.com/): Videos, Audio, Wheels, etc.
+- [VPX](https://github.com/vpinball/vpinball): Tables, Backglasses, POV, etc.
 
 ## Screenshots
 Refer [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots).
