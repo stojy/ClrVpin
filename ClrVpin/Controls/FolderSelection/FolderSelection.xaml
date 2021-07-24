@@ -30,7 +30,7 @@
                 <!-- convoluted args property and bindingproxy required to support adding a new property that doesn't directly support binding
                      - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx -->
                 <validationRules:FilePatternValidation.Args>
-                  <validationRules:Args Pattern="{Binding Data.Pattern, Source={StaticResource Proxy}}"/>
+                  <validationRules:Args Pattern="{Binding Data.PatternValidation, Source={StaticResource Proxy}}"/>
                 </validationRules:FilePatternValidation.Args>
               </validationRules:FilePatternValidation>
             </Binding.ValidationRules>

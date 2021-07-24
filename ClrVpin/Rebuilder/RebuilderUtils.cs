@@ -23,7 +23,7 @@ namespace ClrVpin.Rebuilder
         {
             // determine the destination type
             // - todo; scan non-media content, e.g. tables and b2s
-            var contentType = _settings.GetDestinationContentType();
+            var contentType = _settings.GetSelectedDestinationContentType();
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
             var mediaFiles = TableUtils.GetMediaFileNames(contentType, _settings.Rebuilder.SourceFolder);
@@ -47,7 +47,7 @@ namespace ClrVpin.Rebuilder
             TableUtils.SetActiveBackupFolder(backupFolder);
 
             // filter games to only those that have hits for the destination content type
-            var contentType = _settings.GetDestinationContentType();
+            var contentType = _settings.GetSelectedDestinationContentType();
             var gamesWithContent = games.Where(g => g.Content.ContentHitsCollection.Any(x => x.Type == contentType.Enum && x.Hits.Any()));
 
             // EVERY GAME THAT HAS A HIT (IRRESPECTIVE OF MATCH CRITERIA) WILL HAVE A GAME FILE RETURNED, i.e. irrespective of whether..
@@ -81,7 +81,7 @@ namespace ClrVpin.Rebuilder
             var sourceFileInfo = hit.FileInfo; // file to be copied, i.e. into the VP folder (potentially overriding)
 
             // construct the destination file name - i.e. the location the source file will be copied to
-            var contentType = _settings.GetDestinationContentType();
+            var contentType = _settings.GetSelectedDestinationContentType();
             var destinationFileName = Path.Combine(contentType.Folder, hit.File);
             var destinationFileInfo = File.Exists(destinationFileName) ? new FileInfo(destinationFileName) : null;
 

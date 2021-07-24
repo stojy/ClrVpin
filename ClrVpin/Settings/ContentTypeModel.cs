@@ -1,5 +1,4 @@
-﻿using System;
-using ClrVpin.Controls.FolderSelection;
+﻿using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
@@ -9,7 +8,7 @@ namespace ClrVpin.Settings
     [AddINotifyPropertyChangedInterface]
     public class ContentTypeModel : FolderTypeDetail
     {
-        public ContentTypeModel(ContentType contentType, Action updateFolderDetail) 
+        public ContentTypeModel(ContentType contentType) 
         {
             ContentType = contentType;
             Folder = contentType.Folder;
@@ -17,8 +16,8 @@ namespace ClrVpin.Settings
             
             // add a validation pattern (checked elsewhere to ensure the base folder matches the description, i.e. to avoid any unexpected folders being specified (e.g. c:\)
             // - refer FilePatternValidation
-            if (!contentType.IsDatabase)
-                Pattern = contentType.Description;
+            if (contentType.Category != ContentTypeCategoryEnum.Database)
+                PatternValidation = contentType.Description;
 
             Extensions = string.Join(", ", contentType.Extensions);
 
@@ -27,7 +26,6 @@ namespace ClrVpin.Settings
                 // for storage
                 contentType.Folder = Folder;
                 contentType.Extensions = Extensions;
-                updateFolderDetail();
             });
             
             FolderExplorerCommand = new ActionCommand(() => FolderUtil.Get(Description, Folder, folder =>
@@ -37,7 +35,6 @@ namespace ClrVpin.Settings
 
                 // for storage
                 contentType.Folder = folder;
-                updateFolderDetail();
             }));
         }
 

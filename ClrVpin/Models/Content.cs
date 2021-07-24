@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
-using ClrVpin.Models.Settings;
 
 namespace ClrVpin.Models
 {
@@ -13,13 +12,12 @@ namespace ClrVpin.Models
         public Content()
         {
             // create content hits collection.. 1 entry for every content type
-            var contentTypes = Model.Settings.FrontendFolders.Where(x => !x.IsDatabase).ToList();
-            contentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
+            var frontendContentTypes = Model.Settings.GetMediaContentTypes().ToList();
+            frontendContentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
 
         // 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
         public List<ContentHits> ContentHitsCollection { get; set; } = new List<ContentHits>();
-
        
         // flattened collection of all media file hits (including valid) across all content types (that checking is enabled)
         public ObservableCollection<Hit> Hits { get; set; }

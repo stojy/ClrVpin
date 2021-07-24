@@ -41,12 +41,12 @@ namespace ClrVpin.Rebuilder
         {
             // show all content types, but assign enabled and active based on the rebuilder configuration
             // - rebuilder only supports one destination content type, but display them all as a list for consistency with ScannerResultsViewModel
-            var filteredContentTypes = Settings.GetContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
+            var filteredContentTypes = Settings.GetMediaContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,
                 IsSupported = false, // don't allow user to deselect the destination type
-                IsActive = Settings.GetDestinationContentType().Enum == contentType.Enum,
+                IsActive = Settings.GetSelectedDestinationContentType().Enum == contentType.Enum,
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             });
 

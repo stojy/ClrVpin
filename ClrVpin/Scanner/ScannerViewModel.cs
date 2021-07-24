@@ -68,7 +68,7 @@ namespace ClrVpin.Scanner
         private IEnumerable<FeatureType> CreateCheckContentTypes()
         {
             // show all hit types
-            var featureTypes = Settings.GetContentTypes().Select(contentType =>
+            var featureTypes = Settings.GetMediaContentTypes().Select(contentType =>
             {
                 var featureType = new FeatureType((int) contentType.Enum)
                 {

@@ -34,7 +34,7 @@ namespace ClrVpin.Rebuilder
                 TryUpdateDestinationFolder(folder);
             });
 
-            _destinationContentTypes = Model.Settings.FrontendFolders.Where(x => !x.IsDatabase).Select(x => x.Description);
+            _destinationContentTypes = Model.Settings.GetMediaContentTypes().Select(x => x.Description);
             DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
 
             UpdateIsValid();

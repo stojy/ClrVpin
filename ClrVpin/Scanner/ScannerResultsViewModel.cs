@@ -40,7 +40,7 @@ namespace ClrVpin.Scanner
         protected override IList<FeatureType> CreateFilteredContentTypes()
         {
             // show all content types, but assign enabled and active based on the scanner configuration
-            var filteredContentTypes = Settings.GetContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
+            var filteredContentTypes = Settings.GetMediaContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,

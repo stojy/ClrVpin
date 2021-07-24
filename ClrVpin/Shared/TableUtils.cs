@@ -21,10 +21,10 @@ namespace ClrVpin.Shared
 
         public static List<Game> GetGamesFromDatabases()
         {
-            var databaseDetail = Model.Settings.FrontendFolders.First(x => x.IsDatabase);
+            var databaseContentType = Model.Settings.GetDatabaseContentType();
 
             // scan through all the databases in the folder
-            var files = Directory.EnumerateFiles(databaseDetail.Folder, databaseDetail.Extensions);
+            var files = Directory.EnumerateFiles(databaseContentType.Folder, databaseContentType.Extensions);
 
             var games = new List<Game>();
 

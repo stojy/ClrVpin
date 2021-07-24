@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
-using ClrVpin.Models.Settings;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
@@ -18,32 +17,35 @@ namespace ClrVpin.Settings
 
         public SettingsViewModel()
         {
-            //TablesFolderCommand = new ActionCommand(() => FolderUtil.Get("Table and B2S", StaticSettings.TableFolder, folder => StaticSettings.TableFolder = folder));
+            PinballFolderModel = new FolderTypeModel("Visual Pinball", Settings.PinballFolder, folder => Settings.PinballFolder = folder);
 
-            TableFolderModel = new FolderTypeModel("Tables and Backglasses", Settings.TableFolder, folder => Settings.TableFolder = folder);
-            FrontendFolderModel = new FolderTypeModel("Frontend Root", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
+            PinballContentTypeModels = Model.Settings.GetPinballContentTypes()
+                .Select(contentType => new ContentTypeModel(contentType))
+                .ToList();
+
+            FrontendFolderModel = new FolderTypeModel("Frontend", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
+            FrontendContentTypeModels = Model.Settings.GetFrontendContentTypes()
+                .Select(contentType => new ContentTypeModel(contentType))
+                .ToList();
+
             BackupFolderModel = new FolderTypeModel("Backup Root", Settings.BackupFolder, folder => Settings.BackupFolder = folder);
 
             AutoAssignFoldersCommand = new ActionCommand(AutoAssignFolders);
             ResetCommand = new ActionCommand(Reset);
-
-            FrontendFolderModels = Model.Settings.FrontendFolders
-                .Select(folder => new ContentTypeModel(folder, () => SetFrontendFolders(FrontendFolderModels.Select(x => x.ContentType))))
-                .ToList();
         }
 
-        public void SetFrontendFolders(IEnumerable<ContentType> frontendFolders) => Settings.FrontendFolders = frontendFolders.ToList();
+        public FolderTypeModel PinballFolderModel { get; set; }
+        public List<ContentTypeModel> PinballContentTypeModels { get; set; }
 
-        public FolderTypeModel TableFolderModel { get; set; }
         public FolderTypeModel FrontendFolderModel { get; set; }
+        public List<ContentTypeModel> FrontendContentTypeModels { get; init; }
+        
         public FolderTypeModel BackupFolderModel { get; set; }
 
         public ICommand AutoAssignFoldersCommand { get; }
         public ICommand ResetCommand { get; }
 
         public Models.Settings.Settings Settings { get; } = Model.Settings;
-
-        public List<ContentTypeModel> FrontendFolderModels { get; init; }
 
         public void Show(Window parent)
         {
@@ -78,18 +80,16 @@ namespace ClrVpin.Settings
         private void AutoAssignFolders()
         {
             // automatically assign folders based on the frontend root folder
-            FrontendFolderModels.ForEach(x =>
+            FrontendContentTypeModels.ForEach(x =>
             {
                 // for storage
-                x.ContentType.Folder = x.ContentType.IsDatabase
+                x.ContentType.Folder = x.ContentType.Category == ContentTypeCategoryEnum.Database
                     ? $@"{Settings.FrontendFolder}\Databases\Visual Pinball"
                     : $@"{Settings.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
 
                 // for display
                 x.Folder = x.ContentType.Folder;
             });
-            
-            SetFrontendFolders(FrontendFolderModels.Select(x => x.ContentType));
         }
 
         private void Reset()

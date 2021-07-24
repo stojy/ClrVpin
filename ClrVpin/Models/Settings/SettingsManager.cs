@@ -80,11 +80,11 @@ namespace ClrVpin.Models.Settings
         {
             var paths = new List<string>
             {
-                Settings.TableFolder,
+                Settings.PinballFolder,
                 Settings.FrontendFolder,
                 Settings.BackupFolder
             };
-            paths.AddRange(Settings.FrontendFolders.Select(x => x.Folder));
+            paths.AddRange(Settings.GetAllContentTypes().Select(x => x.Folder));
 
             IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
         }

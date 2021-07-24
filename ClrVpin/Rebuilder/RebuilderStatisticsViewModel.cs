@@ -20,7 +20,7 @@ namespace ClrVpin.Rebuilder
             SupportedHitTypes = StaticSettings.MatchTypes.ToList();
 
             // content type stats for the single content type being rebuilt
-            SupportedContentTypes = new List<ContentType> {Settings.GetDestinationContentType()};
+            SupportedContentTypes = new List<ContentType> {Settings.GetSelectedDestinationContentType()};
 
             // rebuilder only supports a single selected content type
             SelectedCheckContentTypes = new List<string> {Settings.Rebuilder.DestinationContentType};

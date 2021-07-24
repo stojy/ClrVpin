@@ -16,8 +16,7 @@ namespace ClrVpin.Scanner
 
             // determine the configured content types
             // - todo; scan non-media content, e.g. tables and b2s
-            var checkContentTypes = _settings.FrontendFolders
-                .Where(x => !x.IsDatabase)
+            var checkContentTypes = _settings.GetMediaContentTypes()
                 .Where(type => _settings.Scanner.SelectedCheckContentTypes.Contains(type.Description));
 
             foreach (var contentType in checkContentTypes)

@@ -16,47 +16,53 @@ namespace ClrVpin.Models.Settings
             // - during json.net deserialization.. ctor is invoked BEFORE deserialized version overwrites the values, i.e. they will be overwritten where a stored setting exists
             Version = MinVersion;
 
-            TableFolder = @"C:\vp\tables\vpx";
-            FrontendFolder = @"C:\vp\apps\PinballX";
+            PinballFolder = @"C:\vp\vpx";
+
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
             TrainerWheels = true;
 
-            FrontendFolders = new List<ContentType>
+            FrontendFolder = @"C:\vp\apps\PinballX";
+            AllContentTypes = new List<ContentType>
             {
-                new ContentType {Enum = ContentTypeEnum.Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", IsDatabase = true},
-                new ContentType {Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav"},
-                new ContentType {Enum = ContentTypeEnum.TableVideos, Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4, *.mkv"},
-                new ContentType {Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv"},
-                new ContentType {Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.apng, *.jpg"}
-
-                // todo; table folders
-                //new ContentType_Obsolete {Enum = "Tables", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-                //new ContentType_Obsolete {Enum = "Backglass", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
-                //new ContentType_Obsolete {Enum = "Point of View", Extensions = new[] {"*.png"}, GetXxxHits = g => g.WheelImageHits},
+                new ContentType {Enum = ContentTypeEnum.Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", Category = ContentTypeCategoryEnum.Database},
+                new ContentType {Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.TableVideos, Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.apng, *.jpg", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.Tables, Folder = @"C:\vp\tables\vpx", Tip = "Playfield table", Extensions = "*.vpx, *.vpt", Category = ContentTypeCategoryEnum.Pinball},
+                new ContentType {Enum = ContentTypeEnum.Backglasses, Folder = @"C:\vp\tables\vpx", Tip = "Image used for the backglass", Extensions = "*.directb2s", Category = ContentTypeCategoryEnum.Pinball},
+                new ContentType {Enum = ContentTypeEnum.PointOfViews, Folder = @"C:\vp\tables\vpx", Tip = "3D camera configuration", Extensions = "*.pov", Category = ContentTypeCategoryEnum.Pinball}
             };
-            FrontendFolders.ForEach(x => x.Description = x.Enum.GetDescription());
+            AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
             Rebuilder = new RebuilderSettings();
             Scanner = new ScannerSettings();
         }
-        
+
         public int Version { get; set; }
 
-        public string TableFolder { get; set; }
+        public string PinballFolder { get; set; } // todo; remove?
+        
         public string FrontendFolder { get; set; }
+        public List<ContentType> AllContentTypes { get; set; }
+
         public string BackupFolder { get; set; }
         public bool TrainerWheels { get; set; }
-        public List<ContentType> FrontendFolders { get; set; }
 
         public ScannerSettings Scanner { get; set; }
         public RebuilderSettings Rebuilder { get; set; }
 
         public static int MinVersion = 1;
 
-        public ContentType GetDestinationContentType() => FrontendFolders.First(x => x.Description == Rebuilder.DestinationContentType);
 
-        // all possible content types (except database) - to be used elsewhere to create check collections
-        public ContentType[] GetContentTypes() => FrontendFolders.Where(x => !x.IsDatabase).ToArray();
+        // helper methods for accessing the content types
+        public ContentType[] GetAllContentTypes() => AllContentTypes.ToArray();
+        public ContentType[] GetPinballContentTypes() => AllContentTypes.Where(x => x.Category == ContentTypeCategoryEnum.Pinball).ToArray();
+        public ContentType[] GetFrontendContentTypes() => AllContentTypes.Where(x => x.Category != ContentTypeCategoryEnum.Pinball).ToArray();
+        public ContentType[] GetMediaContentTypes() => AllContentTypes.Where(x => x.Category == ContentTypeCategoryEnum.Media).ToArray();
+        public ContentType GetDatabaseContentType() => AllContentTypes.First(x => x.Category == ContentTypeCategoryEnum.Database);
+        
+        public ContentType GetSelectedDestinationContentType() => AllContentTypes.First(x => x.Description == Rebuilder.DestinationContentType);
     }
 }
