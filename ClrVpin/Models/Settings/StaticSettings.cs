@@ -23,7 +23,7 @@ namespace ClrVpin.Models.Settings
                 HitTypeEnum.Unsupported)).ToArray();
         }
 
-        // hit types in priority order as determined by matching algorithm - refer AssociateMediaFilesWithGames
+        // hit types in priority order as determined by matching algorithm - refer AssociateContentFilesWithGames
         public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; }
 
         public static HitTypeEnum[] IrreparablePrioritizedHitTypeEnums { get; }

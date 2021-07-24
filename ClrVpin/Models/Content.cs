@@ -11,9 +11,9 @@ namespace ClrVpin.Models
     {
         public Content()
         {
-            // create content hits collection.. 1 entry for every content type
-            var frontendContentTypes = Model.Settings.GetMediaContentTypes().ToList();
-            frontendContentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
+            // create content hits collection.. for all content types irrespective of whether they are selected!
+            var contentTypes = Model.Settings.GetFixableContentTypes().ToList();
+            contentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
 
         // 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)

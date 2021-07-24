@@ -22,8 +22,8 @@ namespace ClrVpin.Scanner
         public ScannerViewModel()
         {
             StartCommand = new ActionCommand(Start);
-            //ConfigureCheckContentTypesCommand = new ActionCommand<string>(ConfigureCheckContentTypes);
-            CheckContentTypesView = new ListCollectionView(CreateCheckContentTypes().ToList());
+            CheckPinballContentTypesView = new ListCollectionView(CreateCheckMediaContentTypes(Settings.GetPinballContentTypes()).ToList());
+            CheckMediaContentTypesView = new ListCollectionView(CreateCheckMediaContentTypes(Settings.GetMediaContentTypes()).ToList());
 
             CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
 
@@ -31,7 +31,8 @@ namespace ClrVpin.Scanner
             FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
         }
 
-        public ListCollectionView CheckContentTypesView { get; set; }
+        public ListCollectionView CheckMediaContentTypesView { get; set; }
+        public ListCollectionView CheckPinballContentTypesView { get; set; }
         public ListCollectionView CheckHitTypesView { get; set; }
         public ListCollectionView FixHitTypesView { get; set; }
 
@@ -47,7 +48,7 @@ namespace ClrVpin.Scanner
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 400,
-                Height = 465,
+                Height = 500,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate,
@@ -65,10 +66,10 @@ namespace ClrVpin.Scanner
             };
         }
 
-        private IEnumerable<FeatureType> CreateCheckContentTypes()
+        private IEnumerable<FeatureType> CreateCheckMediaContentTypes(IEnumerable<ContentType> contentTypes)
         {
             // show all hit types
-            var featureTypes = Settings.GetMediaContentTypes().Select(contentType =>
+            var featureTypes = contentTypes.Select(contentType =>
             {
                 var featureType = new FeatureType((int) contentType.Enum)
                 {

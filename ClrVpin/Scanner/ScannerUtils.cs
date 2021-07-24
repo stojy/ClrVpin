@@ -14,16 +14,14 @@ namespace ClrVpin.Scanner
         {
             var unknownFiles = new List<FileDetail>();
 
-            // determine the configured content types
-            // - todo; scan non-media content, e.g. tables and b2s
-            var checkContentTypes = _settings.GetMediaContentTypes()
-                .Where(type => _settings.Scanner.SelectedCheckContentTypes.Contains(type.Description));
+            // for each selected check content types
+            var checkContentTypes = _settings.GetSelectedCheckContentTypes();
 
             foreach (var contentType in checkContentTypes)
             {
                 // for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
-                var mediaFiles = TableUtils.GetMediaFileNames(contentType, contentType.Folder);
-                var unmatchedFiles = TableUtils.AssociateMediaFilesWithGames(games, mediaFiles, contentType.Enum, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+                var mediaFiles = TableUtils.GetContentFileNames(contentType, contentType.Folder);
+                var unmatchedFiles = TableUtils.AssociateContentFilesWithGames(games, mediaFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
                 unknownFiles.AddRange(unmatchedFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension

@@ -5,12 +5,14 @@ namespace ClrVpin.Models
 {
     public class Game
     {
-        [XmlAttribute("name")] public string TableFile { get; set; } // VPX table, b2s, and pov must match name
+        [XmlAttribute("name")]
+        public string TableFile { get; set; } // used by VPX (table, b2s, and pov - filename must match this property
 
         [XmlElement("description", IsNullable = true)]
-        public string Description { get; set; } // from IPDB - PBY/PBX media files must match description
+        public string Description { get; set; } // used by frontends (pbx/pby) - filename must match this property
 
-        [XmlElement("rom", IsNullable = true)] public string Rom { get; set; }
+        [XmlElement("rom", IsNullable = true)]
+        public string Rom { get; set; }
 
         [XmlElement("manufacturer", IsNullable = true)]
         public string Manufacturer { get; set; }
@@ -64,14 +66,14 @@ namespace ClrVpin.Models
         public string DateModified { get; set; }
 
         // calculated properties..
-        
+
         // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
         [XmlIgnore]
         public Content Content { get; set; } = new Content();
-        
+
         [XmlIgnore]
         public string TableFileWithExtension => TableFile + ".pbx";
-        
+
         [XmlIgnore]
         public int Number { get; set; }
 

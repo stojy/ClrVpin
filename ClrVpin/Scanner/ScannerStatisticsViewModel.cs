@@ -19,7 +19,7 @@ namespace ClrVpin.Scanner
             // - including the extra 'under the hood' types.. valid, unknown, unsupported
             SupportedHitTypes = StaticSettings.HitTypes.ToList();
 
-            SupportedContentTypes = Settings.GetMediaContentTypes().Where(x => Settings.Scanner.SelectedCheckContentTypes.Contains(x.Description)).ToList();
+            SupportedContentTypes = Settings.GetFixableContentTypes().Where(x => Settings.Scanner.SelectedCheckContentTypes.Contains(x.Description)).ToList();
 
             SelectedCheckContentTypes = Settings.Scanner.SelectedCheckContentTypes;
 
@@ -86,7 +86,7 @@ namespace ClrVpin.Scanner
             return "\n-----------------------------------------------\n" +
                    "\nTotals" +
                    $"\n{"- Available Tables",StatisticsKeyWidth}{Games.Count}" +
-                   $"\n{"- Possible Content",StatisticsKeyWidth}{Games.Count * Settings.GetMediaContentTypes().Length}" +
+                   $"\n{"- Possible Content",StatisticsKeyWidth}{Games.Count * Settings.GetFixableContentTypes().Length}" +
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"All Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +
                    $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +

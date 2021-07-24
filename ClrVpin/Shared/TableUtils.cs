@@ -50,7 +50,7 @@ namespace ClrVpin.Shared
             return games;
         }
 
-        public static IEnumerable<string> GetMediaFileNames(ContentType contentType, string folder)
+        public static IEnumerable<string> GetContentFileNames(ContentType contentType, string folder)
         {
             var files = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(folder, ext));
 
@@ -77,48 +77,50 @@ namespace ClrVpin.Shared
             return ActiveBackupFolder = $"{rootBackupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
         }
 
-        public static IEnumerable<FileDetail> AssociateMediaFilesWithGames(IReadOnlyCollection<Game> games, IEnumerable<string> mediaFiles, ContentTypeEnum contentTypeEnum,
+        public static IEnumerable<FileDetail> AssociateContentFilesWithGames(IReadOnlyCollection<Game> games, IEnumerable<string> matchedFiles, ContentType contentType,
             Func<Game, ContentHits> getContentHits)
         {
             var unknownMediaFiles = new List<FileDetail>();
 
             // for each file, associate it with a game or if one can't be found, then mark it as unknown
             // - ASSOCIATION IS DONE IRRESPECTIVE OF THE USER'S SELECTED PREFERENCE, I.E. THE USE SELECTIONS ARE CHECKED ELSEWHERE
-            foreach (var mediaFile in mediaFiles)
+            foreach (var matchedFile in matchedFiles)
             {
                 Game matchedGame;
+
+                var nameToMatch = contentType.Category == ContentTypeCategoryEnum.Media ? new Func<Game, string>(game => game.Description) : game => game.TableFile;
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
                 // - todo; fuzzy match.. e.g. partial matches, etc.
-                if ((matchedGame = games.FirstOrDefault(game => game.Description == Path.GetFileNameWithoutExtension(mediaFile))) != null)
+                if ((matchedGame = games.FirstOrDefault(game => nameToMatch(game) == Path.GetFileNameWithoutExtension(matchedFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
                     var contentHits = getContentHits(matchedGame);
-                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.Valid) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.Valid, mediaFile);
+                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.Valid) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.Valid, matchedFile);
                 }
                 else if ((matchedGame =
-                    games.FirstOrDefault(game => string.Equals(game.Description, Path.GetFileNameWithoutExtension(mediaFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                    games.FirstOrDefault(game => string.Equals(nameToMatch(game), Path.GetFileNameWithoutExtension(matchedFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, mediaFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, matchedFile);
                 }
-                else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(mediaFile))) != null)
+                else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(matchedFile))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, mediaFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
-                        game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.TableFile) ||
-                        game.Description.StartsWith(Path.GetFileNameWithoutExtension(mediaFile)) || Path.GetFileNameWithoutExtension(mediaFile).StartsWith(game.Description))
+                        game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(matchedFile)) || Path.GetFileNameWithoutExtension(matchedFile).StartsWith(game.TableFile) ||
+                        game.Description.StartsWith(Path.GetFileNameWithoutExtension(matchedFile)) || Path.GetFileNameWithoutExtension(matchedFile).StartsWith(game.Description))
                     ) != null)
                 {
                     // todo; add more 'fuzzy' checks
-                    getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, mediaFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }
                 else
                 {
-                    unknownMediaFiles.Add(new FileDetail(contentTypeEnum, HitTypeEnum.Unknown, null, mediaFile, new FileInfo(mediaFile).Length));
+                    unknownMediaFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, null, matchedFile, new FileInfo(matchedFile).Length));
                 }
             }
 

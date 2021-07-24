@@ -12,50 +12,66 @@
 
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
 
+  <DataTemplate x:Key="ContentTypeTemplate" DataType="models:FeatureType">
+    <CheckBox Width="150" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+              Command="{Binding SelectedCommand}" />
+  </DataTemplate>
+
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:ScannerViewModel}">
     <StackPanel Margin="5">
-      <TextBlock Style="{StaticResource Title}">Content to Scan</TextBlock>
-      <ItemsControl ItemsSource="{Binding CheckContentTypesView}" BorderThickness="5" HorizontalAlignment="Left">
-        <ItemsControl.ItemTemplate>
-          <DataTemplate DataType="models:FeatureType">
-            <CheckBox Width="150" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                      Command="{Binding SelectedCommand}" />
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
 
+      <!-- content -->
+      <TextBlock Style="{StaticResource Title}">Content</TextBlock>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Margin="5" Padding="2" Header="Pinball">
+          <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource ContentTypeTemplate}" />
+        </GroupBox>
+
+        <GroupBox Grid.Column="1" Margin="5" Padding="2" Header="Media">
+          <ItemsControl ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource ContentTypeTemplate}" />
+        </GroupBox>
+      </Grid>
+
+      <!-- criteria -->
       <TextBlock Style="{StaticResource Title}">Criteria</TextBlock>
-      <WrapPanel>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
         <GroupBox Margin="5" Padding="2" Header="Match">
-          <StackPanel>
-            <ItemsControl ItemsSource="{Binding CheckHitTypesView}" BorderThickness="5">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="models:FeatureType">
-                  <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                            Command="{Binding SelectedCommand}" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-          </StackPanel>
+          <ItemsControl ItemsSource="{Binding CheckHitTypesView}" BorderThickness="5">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="models:FeatureType">
+                <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                          Command="{Binding SelectedCommand}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
         </GroupBox>
 
-        <GroupBox Margin="5" Padding="2" Header="Fix">
-          <StackPanel>
-            <ItemsControl ItemsSource="{Binding FixHitTypesView}" BorderThickness="5">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="models:FeatureType">
-                  <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                            Command="{Binding SelectedCommand}" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-          </StackPanel>
+        <GroupBox Grid.Column="1" Margin="5" Padding="2" Header="Fix">
+          <ItemsControl ItemsSource="{Binding FixHitTypesView}" BorderThickness="5">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="models:FeatureType">
+                <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                          Command="{Binding SelectedCommand}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
         </GroupBox>
-      </WrapPanel>
+      </Grid>
 
       <WrapPanel Margin="5">
-        <CheckBox ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
-        <TextBlock Margin="10,0,0,0" Text="Trainer Wheels"/>
+        <CheckBox ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
+                  IsChecked="{Binding Settings.TrainerWheels}" />
+        <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
       </WrapPanel>
 
       <Button Margin="5" Width="50" Command="{Binding StartCommand}" Style="{StaticResource AlternateButton}">Start</Button>
