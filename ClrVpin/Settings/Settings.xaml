@@ -11,55 +11,57 @@
     <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
+  <DataTemplate x:Key="ContentTypeModelTemplate" DataType="settings:ContentTypeModel">
+    <WrapPanel Margin="0,0,0,10" Height="50">
+      <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding}" />
+
+      <TextBox Margin="5,0,0,0" Width="150" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="File Extension(s)">
+        <TextBox.Text>
+          <Binding Path="Extensions" UpdateSourceTrigger="PropertyChanged">
+            <Binding.ValidationRules>
+              <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
+            </Binding.ValidationRules>
+          </Binding>
+        </TextBox.Text>
+        <b:Interaction.Triggers>
+          <b:EventTrigger EventName="TextChanged">
+            <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
+          </b:EventTrigger>
+        </b:Interaction.Triggers>
+      </TextBox>
+    </WrapPanel>
+  </DataTemplate>
+
   <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:SettingsViewModel}">
     <StackPanel Margin="0">
+      <!-- pinball (vpx) folders -->
       <GroupBox Margin="5, 5" Padding="5,2" Header="Visual Pinball">
-        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding PinballFolderModel}" />
+        <StackPanel>
+          <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding PinballFolderModel}" />
+
+          <Button ToolTip="Auto assign pinball folders" Width="90" Margin="5,15,0,5" HorizontalAlignment="Left" Command="{Binding AutoAssignPinballFoldersCommand}">Auto Assign</Button>
+          <ItemsControl ItemsSource="{Binding PinballContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}" />
+        </StackPanel>
       </GroupBox>
 
+      <!-- front end folders -->
       <GroupBox Margin="5, 5" Padding="5,2" Header="Frontend">
         <StackPanel>
           <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding FrontendFolderModel}" />
 
-          <!-- front end content folders - handled generically to make it a little simpler ot manage -->
-          <StackPanel>
-            <Button ToolTip="Auto assign folders suitable for 'Visual Pinball'" Width="90" Margin="5,15,0,5" HorizontalAlignment="Left" Command="{Binding AutoAssignFoldersCommand}">Auto Assign</Button>
-
-            <ItemsControl ItemsSource="{Binding FrontendContentTypeModels}" BorderThickness="0">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="settings:ContentTypeModel">
-                  <WrapPanel Margin="0,0,0,10" Height="50">
-                    <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding}" />
-
-                    <TextBox Margin="5,0,0,0" Width="150" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="File Extension(s)">
-                      <TextBox.Text>
-                        <Binding Path="Extensions" UpdateSourceTrigger="PropertyChanged">
-                          <Binding.ValidationRules>
-                            <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
-                          </Binding.ValidationRules>
-                        </Binding>
-                      </TextBox.Text>
-                      <b:Interaction.Triggers>
-                        <b:EventTrigger EventName="TextChanged">
-                          <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
-                        </b:EventTrigger>
-                      </b:Interaction.Triggers>
-                    </TextBox>
-                  </WrapPanel>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-          </StackPanel>
+          <Button ToolTip="Auto assign frontend folders (for 'Visual Pinball')" Width="90" Margin="5,15,0,5" HorizontalAlignment="Left" Command="{Binding AutoAssignFrontendFoldersCommand}">Auto Assign</Button>
+          <ItemsControl ItemsSource="{Binding FrontendContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}" />
         </StackPanel>
       </GroupBox>
 
+      <!-- general -->
       <GroupBox Margin="5, 5" Padding="5,2" Header="General">
         <StackPanel>
           <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
 
           <WrapPanel Margin="5">
             <ToggleButton ToolTip="When enabled, all file operations are ignored. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
-            <TextBlock Margin="10,0,0,0" Text="Trainer Wheels"/>
+            <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
           </WrapPanel>
 
           <Button ToolTip="Reset the entire config to their installation values" Width="90" Margin="5,15,0,5" HorizontalAlignment="Left" Command="{Binding ResetCommand}">Reset</Button>
@@ -67,7 +69,6 @@
       </GroupBox>
 
     </StackPanel>
-
   </DataTemplate>
 
 </ResourceDictionary>

@@ -16,7 +16,7 @@ namespace ClrVpin.Settings
             
             // add a validation pattern (checked elsewhere to ensure the base folder matches the description, i.e. to avoid any unexpected folders being specified (e.g. c:\)
             // - refer FilePatternValidation
-            if (contentType.Category != ContentTypeCategoryEnum.Database)
+            if (contentType.Category == ContentTypeCategoryEnum.Media)
                 PatternValidation = contentType.Description;
 
             Extensions = string.Join(", ", contentType.Extensions);

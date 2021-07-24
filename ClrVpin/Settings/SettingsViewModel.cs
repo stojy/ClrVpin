@@ -17,20 +17,17 @@ namespace ClrVpin.Settings
 
         public SettingsViewModel()
         {
-            PinballFolderModel = new FolderTypeModel("Visual Pinball", Settings.PinballFolder, folder => Settings.PinballFolder = folder);
+            PinballFolderModel = new FolderTypeModel("Visual Pinball Executable", Settings.PinballFolder, folder => Settings.PinballFolder = folder);
 
-            PinballContentTypeModels = Model.Settings.GetPinballContentTypes()
-                .Select(contentType => new ContentTypeModel(contentType))
-                .ToList();
+            PinballContentTypeModels = Model.Settings.GetPinballContentTypes().Select(contentType => new ContentTypeModel(contentType)).ToList();
 
-            FrontendFolderModel = new FolderTypeModel("Frontend", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
-            FrontendContentTypeModels = Model.Settings.GetFrontendContentTypes()
-                .Select(contentType => new ContentTypeModel(contentType))
-                .ToList();
+            FrontendFolderModel = new FolderTypeModel("Frontend Executable", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
+            FrontendContentTypeModels = Model.Settings.GetFrontendContentTypes().Select(contentType => new ContentTypeModel(contentType)).ToList();
 
             BackupFolderModel = new FolderTypeModel("Backup Root", Settings.BackupFolder, folder => Settings.BackupFolder = folder);
 
-            AutoAssignFoldersCommand = new ActionCommand(AutoAssignFolders);
+            AutoAssignPinballFoldersCommand = new ActionCommand(AutoAssignPinballFolders);
+            AutoAssignFrontendFoldersCommand = new ActionCommand(AutoAssignFrontendFolders);
             ResetCommand = new ActionCommand(Reset);
         }
 
@@ -42,7 +39,8 @@ namespace ClrVpin.Settings
         
         public FolderTypeModel BackupFolderModel { get; set; }
 
-        public ICommand AutoAssignFoldersCommand { get; }
+        public ICommand AutoAssignPinballFoldersCommand { get; }
+        public ICommand AutoAssignFrontendFoldersCommand { get; }
         public ICommand ResetCommand { get; }
 
         public Models.Settings.Settings Settings { get; } = Model.Settings;
@@ -54,7 +52,7 @@ namespace ClrVpin.Settings
                 Owner = parent,
                 Content = this,
                 //SizeToContent = SizeToContent.WidthAndHeight,
-                Height = 800,
+                Height = 1010,
                 Width = 660,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Resources = parent.Resources,
@@ -77,7 +75,20 @@ namespace ClrVpin.Settings
             _window.Close();
         }
 
-        private void AutoAssignFolders()
+        private void AutoAssignPinballFolders()
+        {
+            // automatically assign folders based on the pinball root folder
+            PinballContentTypeModels.ForEach(x =>
+            {
+                // for storage
+                x.ContentType.Folder = $@"{Settings.PinballFolder}\Tables";
+
+                // for display
+                x.Folder = x.ContentType.Folder;
+            });
+        }
+
+        private void AutoAssignFrontendFolders()
         {
             // automatically assign folders based on the frontend root folder
             FrontendContentTypeModels.ForEach(x =>

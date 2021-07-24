@@ -16,7 +16,7 @@ namespace ClrVpin.Models.Settings
             // - during json.net deserialization.. ctor is invoked BEFORE deserialized version overwrites the values, i.e. they will be overwritten where a stored setting exists
             Version = MinVersion;
 
-            PinballFolder = @"C:\vp\vpx";
+            PinballFolder = @"C:\vp\apps\vpx";
 
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
             TrainerWheels = true;
