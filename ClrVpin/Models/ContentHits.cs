@@ -7,10 +7,11 @@ namespace ClrVpin.Models
     {
         public ContentHits(ContentType contentType)
         {
-            _contentType = contentType;
+            ContentType = contentType;
         }
 
-        public ContentTypeEnum Type => _contentType.Enum;
+        public ContentType ContentType { get; }
+        public ContentTypeEnum Enum => ContentType.Enum;
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
         // todo; remove (expensive) expression getters
@@ -22,8 +23,8 @@ namespace ClrVpin.Models
             if (hitType == HitTypeEnum.Missing)
             {
                 // display format: <file>.<ext1> (or .<ext2>, .<ext3>)
-                var extensions = _contentType.Extensions.Split(",").Select(x => x.Trim().TrimStart('*')).ToList();
-                path = @$"{_contentType.Folder}\{path}{extensions.First()}";
+                var extensions = ContentType.Extensions.Split(",").Select(x => x.Trim().TrimStart('*')).ToList();
+                path = @$"{ContentType.Folder}\{path}{extensions.First()}";
 
                 var otherExtensions = extensions.Skip(1).ToList();
                 if (otherExtensions.Any())
@@ -31,9 +32,7 @@ namespace ClrVpin.Models
             }
 
             // always add hit type.. irrespective of whether it's valid or configured
-            Hits.Add(new Hit(_contentType.Enum, path, hitType));
+            Hits.Add(new Hit(ContentType.Enum, path, hitType));
         }
-
-        private readonly ContentType _contentType;
     }
 }

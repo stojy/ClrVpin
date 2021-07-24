@@ -35,14 +35,14 @@ namespace ClrVpin.Models.Settings
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] AllHitTypes =
         {
-            new HitType(HitTypeEnum.Valid, true, "Files that should match but are missing"),
-            new HitType(HitTypeEnum.DuplicateExtension, true, "Allow matching against multiple files with same file name but different file extensions (e.g. mkv and mp4"),
-            new HitType(HitTypeEnum.WrongCase, true, "Case insensitive file matching"),
-            new HitType(HitTypeEnum.TableName, true, "Allow matching against table instead of the description"),
-            new HitType(HitTypeEnum.Fuzzy, true, "'Fuzzy logic' file matching"),
+            new HitType(HitTypeEnum.Valid, true, "Files that match perfectly!"),
+            new HitType(HitTypeEnum.DuplicateExtension, true, "Files that match the correct name AND have a configured file extension, but multiple extension matches exist (e.g. mkv and mp4"),
+            new HitType(HitTypeEnum.WrongCase, true, "Files that match the correct name, but have the wrong case"),
+            new HitType(HitTypeEnum.TableName, true, "Files that match against the table name instead of the table description - ONLY APPLICABLE FOR MEDIA CONTENT, since tables ALWAYS match the table name"),
+            new HitType(HitTypeEnum.Fuzzy, true, "Files that match the 'Fuzzy logic' algorithms"),
             new HitType(HitTypeEnum.Missing, false, "Files that should match but are missing"),
-            new HitType(HitTypeEnum.Unknown, false, "Unknown files that don't match any tables"),
-            new HitType(HitTypeEnum.Unsupported, false, "Unsupported files that don't match the configured file extension types")
+            new HitType(HitTypeEnum.Unknown, false, "Files that do match the configured file extension type, but don't match any of the tables in the database"),
+            new HitType(HitTypeEnum.Unsupported, false, "Files that don't match the configured file extension types - ONLY APPLICABLE FOR MEDIA CONTENT, since unsupported files are expected to exist in the tables folder (e.g. txt, exe, etc)")
         };
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections

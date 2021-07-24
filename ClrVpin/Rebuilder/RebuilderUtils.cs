@@ -28,7 +28,7 @@ namespace ClrVpin.Rebuilder
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
             var mediaFiles = TableUtils.GetContentFileNames(contentType, _settings.Rebuilder.SourceFolder);
             var unmatchedFiles = TableUtils.AssociateContentFilesWithGames(games, mediaFiles, contentType,
-                game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+                game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
             var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, _settings.Rebuilder.SourceFolder);
@@ -48,7 +48,7 @@ namespace ClrVpin.Rebuilder
 
             // filter games to only those that have hits for the destination content type
             var contentType = _settings.GetSelectedDestinationContentType();
-            var gamesWithContent = games.Where(g => g.Content.ContentHitsCollection.Any(x => x.Type == contentType.Enum && x.Hits.Any()));
+            var gamesWithContent = games.Where(g => g.Content.ContentHitsCollection.Any(x => x.Enum == contentType.Enum && x.Hits.Any()));
 
             // EVERY GAME THAT HAS A HIT (IRRESPECTIVE OF MATCH CRITERIA) WILL HAVE A GAME FILE RETURNED, i.e. irrespective of whether..
             // - match criteria is selected or relevant

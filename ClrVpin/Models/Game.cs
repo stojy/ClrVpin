@@ -6,10 +6,10 @@ namespace ClrVpin.Models
     public class Game
     {
         [XmlAttribute("name")]
-        public string TableFile { get; set; } // used by VPX (table, b2s, and pov - filename must match this property
+        public string TableFile { get; set; } // used by VPX (table, b2s, and pov - filename must match this property.  Refer GetContentName
 
         [XmlElement("description", IsNullable = true)]
-        public string Description { get; set; } // used by frontends (pbx/pby) - filename must match this property
+        public string Description { get; set; } // used by frontends (pbx/pby) - filename must match this property.  Refer GetContentName
 
         [XmlElement("rom", IsNullable = true)]
         public string Rom { get; set; }
@@ -91,5 +91,11 @@ namespace ClrVpin.Models
 
         [XmlIgnore]
         public ICommand NavigateToIpdbCommand { get; set; }
+
+        public string GetContentName(ContentTypeCategoryEnum category)
+        {
+            // determine the correct name - different for media vs pinball
+            return category == ContentTypeCategoryEnum.Media ? Description : TableFile;
+        }
     }
 }

@@ -21,14 +21,18 @@ namespace ClrVpin.Scanner
             {
                 // for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
                 var mediaFiles = TableUtils.GetContentFileNames(contentType, contentType.Folder);
-                var unmatchedFiles = TableUtils.AssociateContentFilesWithGames(games, mediaFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Type == contentType.Enum));
+                var unmatchedFiles = TableUtils.AssociateContentFilesWithGames(games, mediaFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum));
                 unknownFiles.AddRange(unmatchedFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
                 if (_settings.Scanner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, contentType.Folder);
-                    unknownFiles.AddRange(unsupportedFiles);
+
+                    // n/a for pinball - since it's expected that extra files will exist in same tables folder
+                    // - e.g. vpx, directb2s, pov, ogg, txt, exe, etc
+                    if (contentType.Category == ContentTypeCategoryEnum.Media)
+                        unknownFiles.AddRange(unsupportedFiles);
                 }
             }
 
@@ -54,6 +58,7 @@ namespace ClrVpin.Scanner
             var gameFiles = new List<FileDetail>();
 
             // fix files associated with games, if they satisfy the fix criteria
+            // - non-selected check types are iterated through too!.. todo; fix this?
             games.ForEach(game =>
             {
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
@@ -110,7 +115,7 @@ namespace ClrVpin.Scanner
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
                 {
                     if (!contentHitCollection.Hits.Any(hit => hit.Type == HitTypeEnum.Valid || hit.Type == HitTypeEnum.WrongCase))
-                        contentHitCollection.Add(HitTypeEnum.Missing, game.Description);
+                        contentHitCollection.Add(HitTypeEnum.Missing, game.GetContentName(contentHitCollection.ContentType.Category));
                 });
             });
         }

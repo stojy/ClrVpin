@@ -65,6 +65,6 @@ namespace ClrVpin.Models.Settings
 
         public ContentType[] GetSelectedCheckContentTypes() => AllContentTypes.Where(type => Scanner.SelectedCheckContentTypes.Contains(type.Description)).ToArray();
         public ContentType GetSelectedDestinationContentType() => AllContentTypes.First(x => x.Description == Rebuilder.DestinationContentType);
-
+        public ContentType GetContentType(ContentTypeEnum contentTypeEnum) => AllContentTypes.First(x => x.Enum == contentTypeEnum);
     }
 }

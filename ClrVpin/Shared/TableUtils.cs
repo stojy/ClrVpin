@@ -88,25 +88,23 @@ namespace ClrVpin.Shared
             {
                 Game matchedGame;
 
-                var nameToMatch = contentType.Category == ContentTypeCategoryEnum.Media ? new Func<Game, string>(game => game.Description) : game => game.TableFile;
-
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
                 // - todo; fuzzy match.. e.g. partial matches, etc.
-                if ((matchedGame = games.FirstOrDefault(game => nameToMatch(game) == Path.GetFileNameWithoutExtension(matchedFile))) != null)
+                if ((matchedGame = games.FirstOrDefault(game => game.GetContentName(contentType.Category) == Path.GetFileNameWithoutExtension(matchedFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
                     var contentHits = getContentHits(matchedGame);
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.Valid) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.Valid, matchedFile);
                 }
-                else if ((matchedGame =
-                    games.FirstOrDefault(game => string.Equals(nameToMatch(game), Path.GetFileNameWithoutExtension(matchedFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                else if ((matchedGame = games.FirstOrDefault(game =>
+                    string.Equals(game.GetContentName(contentType.Category), Path.GetFileNameWithoutExtension(matchedFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, matchedFile);
                 }
-                else if ((matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(matchedFile))) != null)
+                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(matchedFile))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
@@ -120,6 +118,9 @@ namespace ClrVpin.Shared
                 }
                 else
                 {
+                    // possible for..
+                    // - pinball --> new table files added AND the database not updated yet
+                    // - media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
                     unknownMediaFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, null, matchedFile, new FileInfo(matchedFile).Length));
                 }
             }
@@ -164,9 +165,12 @@ namespace ClrVpin.Shared
             {
                 renamed = true;
 
+                // determine the correct name - different for media vs pinball
+                var correctName = game.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category);
+
                 var extension = Path.GetExtension(hit.Path);
                 var path = Path.GetDirectoryName(hit.Path);
-                var newFile = Path.Combine(path!, $"{game.Description}{extension}");
+                var newFile = Path.Combine(path!, $"{correctName}{extension}");
 
                 var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
                 Logger.Info($"{prefix}Renaming file.. type: {hit.Type.GetDescription()}, content: {hit.ContentType}, original: {hit.Path}, new: {newFile}");
@@ -236,6 +240,6 @@ namespace ClrVpin.Shared
         }
 
         private static string _rootBackupFolder;
-        private static Models.Settings.Settings _settings;
+        private static readonly Models.Settings.Settings _settings;
     }
 }

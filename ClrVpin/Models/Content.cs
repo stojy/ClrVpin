@@ -11,8 +11,8 @@ namespace ClrVpin.Models
     {
         public Content()
         {
-            // create content hits collection.. for all content types irrespective of whether they are selected!
-            var contentTypes = Model.Settings.GetFixableContentTypes().ToList();
+            // create content hits collection
+            var contentTypes = Model.Settings.GetSelectedCheckContentTypes().ToList();
             contentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
 
