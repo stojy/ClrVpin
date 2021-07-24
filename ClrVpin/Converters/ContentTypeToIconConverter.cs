@@ -17,6 +17,9 @@ namespace ClrVpin.Converters
 
             var icon = (ContentTypeEnum) value switch
             {
+                ContentTypeEnum.Tables => PackIconKind.GamepadVariant,
+                ContentTypeEnum.Backglasses => PackIconKind.ImageArea,
+                ContentTypeEnum.PointOfViews => PackIconKind.EyeOutline,
                 ContentTypeEnum.Database => PackIconKind.Database,
                 ContentTypeEnum.TableAudio => PackIconKind.Music,
                 ContentTypeEnum.LaunchAudio => PackIconKind.MusicNote,

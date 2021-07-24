@@ -24,9 +24,9 @@ namespace ClrVpin.Models.Settings
             FrontendFolder = @"C:\vp\apps\PinballX";
             AllContentTypes = new List<ContentType>
             {
-                new ContentType {Enum = ContentTypeEnum.Tables, Folder = @"C:\vp\tables\vpx", Tip = "Playfield table", Extensions = "*.vpx, *.vpt", Category = ContentTypeCategoryEnum.Pinball},
-                new ContentType {Enum = ContentTypeEnum.Backglasses, Folder = @"C:\vp\tables\vpx", Tip = "Image used for the backglass", Extensions = "*.directb2s", Category = ContentTypeCategoryEnum.Pinball},
-                new ContentType {Enum = ContentTypeEnum.PointOfViews, Folder = @"C:\vp\tables\vpx", Tip = "3D camera configuration", Extensions = "*.pov", Category = ContentTypeCategoryEnum.Pinball},
+                new ContentType {Enum = ContentTypeEnum.Tables, Tip = "Playfield table", Extensions = "*.vpx, *.vpt", Category = ContentTypeCategoryEnum.Pinball},
+                new ContentType {Enum = ContentTypeEnum.Backglasses, Tip = "Image used for the backglass", Extensions = "*.directb2s", Category = ContentTypeCategoryEnum.Pinball},
+                new ContentType {Enum = ContentTypeEnum.PointOfViews, Tip = "3D camera configuration", Extensions = "*.pov", Category = ContentTypeCategoryEnum.Pinball},
                 new ContentType {Enum = ContentTypeEnum.Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", Category = ContentTypeCategoryEnum.Database},
                 new ContentType {Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},

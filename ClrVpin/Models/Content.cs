@@ -12,7 +12,8 @@ namespace ClrVpin.Models
         public Content()
         {
             // create content hits collection
-            var contentTypes = Model.Settings.GetSelectedCheckContentTypes().ToList();
+            // - all fixable content types used (vs selections) to avoid issues with.. conflicts with scanner vs rebuilder
+            var contentTypes = Model.Settings.GetFixableContentTypes().ToList();
             contentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
         }
 

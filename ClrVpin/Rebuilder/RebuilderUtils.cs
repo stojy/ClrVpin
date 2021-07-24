@@ -22,7 +22,6 @@ namespace ClrVpin.Rebuilder
         public static List<FileDetail> Check(List<Game> games)
         {
             // determine the destination type
-            // - todo; scan non-media content, e.g. tables and b2s
             var contentType = _settings.GetSelectedDestinationContentType();
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
