@@ -11,6 +11,9 @@ namespace ClrVpin.Models.Settings
         public RebuilderSettings()
         {
             SourceFolder = SpecialFolder.Downloads;
+            
+            // valid hit type (i.e. a perfect name match) is always supported when rebuilding
+            SelectedMatchTypes.Add(HitTypeEnum.Valid);
         }
 
         public string SourceFolder { get; set; }

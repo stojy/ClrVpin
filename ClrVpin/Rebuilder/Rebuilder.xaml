@@ -17,7 +17,7 @@
       <WrapPanel>
         <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding SourceFolderModel}" />
 
-        <ComboBox materialDesign:HintAssist.Hint="Destination" ItemsSource="{Binding DestinationContentTypes}"
+        <ComboBox materialDesign:HintAssist.Hint="Destination Type" ItemsSource="{Binding DestinationContentTypes}"
                   Width="150" VerticalAlignment="Top" Margin="20,0,0,0"
                   Style="{StaticResource MaterialDesignFloatingHintComboBox}" materialDesign:TextFieldAssist.HasClearButton="True">
           <ComboBox.SelectedItem>
