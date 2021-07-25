@@ -146,7 +146,7 @@ namespace ClrVpin.Scanner
             // todo; retrieve 'missing games' from spreadsheet
 
             progress.Update("Loading Database", 0);
-            var games = TableUtils.GetGamesFromDatabases();
+            var games = TableUtils.GetGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
 
             progress.Update("Checking Files", 30);
             var unknownFiles = ScannerUtils.Check(games);
@@ -161,7 +161,6 @@ namespace ClrVpin.Scanner
             await Task.Delay(10);
             Games = new ObservableCollection<Game>(games);
 
-            // todo; remove concat.. for statistics!!
             ShowResults(gameFiles, unknownFiles, progress.Duration);
 
             progress.Close();

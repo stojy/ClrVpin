@@ -6,18 +6,16 @@ using System.Windows.Data;
 
 namespace ClrVpin.Models
 {
-    // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
     public class Content
     {
-        public Content()
+        public void Init(IList<ContentType> contentTypes)
         {
-            // create content hits collection
-            // - all fixable content types used (vs selections) to avoid issues with.. conflicts with scanner vs rebuilder
-            var contentTypes = Model.Settings.GetFixableContentTypes().ToList();
-            contentTypes.ForEach(contentType => ContentHitsCollection.Add(new ContentHits(contentType)));
+            // create content hits collection for the specified contentTypes, e.g. the selected contentTypes
+            ContentHitsCollection.AddRange(contentTypes.Select(contentType => new ContentHits(contentType)));
         }
 
         // 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
+        // - only the selected content types are added to the collection
         public List<ContentHits> ContentHitsCollection { get; set; } = new List<ContentHits>();
        
         // flattened collection of all media file hits (including valid) across all content types (that checking is enabled)

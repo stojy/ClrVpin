@@ -19,7 +19,7 @@ namespace ClrVpin.Shared
 
         public static string ActiveBackupFolder { get; private set; }
 
-        public static List<Game> GetGamesFromDatabases()
+        public static List<Game> GetGamesFromDatabases(IList<ContentType> contentTypes)
         {
             var databaseContentType = Model.Settings.GetDatabaseContentType();
 
@@ -36,12 +36,13 @@ namespace ClrVpin.Shared
 
                 var menu = doc.Root.Deserialize<Menu>();
                 var number = 1;
-                menu.Games.ForEach(g =>
+                menu.Games.ForEach(game =>
                 {
-                    g.Number = number++;
-                    g.Ipdb = g.IpdbId ?? g.IpdbNr;
-                    g.IpdbUrl = string.IsNullOrEmpty(g.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={g.Ipdb}";
-                    g.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(g.IpdbUrl));
+                    game.Number = number++;
+                    game.Ipdb = game.IpdbId ?? game.IpdbNr;
+                    game.IpdbUrl = string.IsNullOrEmpty(game.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
+                    game.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.IpdbUrl));
+                    game.Content.Init(contentTypes);
                 });
 
                 games.AddRange(menu.Games);

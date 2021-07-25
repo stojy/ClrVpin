@@ -42,7 +42,7 @@ namespace ClrVpin.Models.Settings
 
         public int Version { get; set; }
 
-        public string PinballFolder { get; set; } // todo; remove?
+        public string PinballFolder { get; set; }
         
         public string FrontendFolder { get; set; }
         public List<ContentType> AllContentTypes { get; set; }

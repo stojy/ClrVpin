@@ -58,7 +58,6 @@ namespace ClrVpin.Scanner
             var gameFiles = new List<FileDetail>();
 
             // fix files associated with games, if they satisfy the fix criteria
-            // - non-selected check types are iterated through too!.. todo; fix this?
             games.ForEach(game =>
             {
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>

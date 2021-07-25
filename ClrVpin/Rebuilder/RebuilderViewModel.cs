@@ -161,7 +161,7 @@ namespace ClrVpin.Rebuilder
             progress.Show(_rebuilderWindow);
 
             progress.Update("Loading Database", 0);
-            var games = TableUtils.GetGamesFromDatabases();
+            var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
 
             progress.Update("Checking Files", 30);
             var unknownFiles = RebuilderUtils.Check(games);
