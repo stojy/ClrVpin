@@ -27,7 +27,7 @@ namespace ClrVpin.Models
         // true if game contains any hits types that are not valid
         public bool IsSmelly { get; set; }
 
-        public void Update(Func<IEnumerable<int>> getFilteredContentTypes, Func<IEnumerable<int>> getFilteredHitTypes)
+        public void Update(Func<IEnumerable<int>> getActiveContentFeatureTypes, Func<IEnumerable<int>> getActiveHitContentTypes)
         {
             // standard properties to avoid cost of recalculating getters during every request (e.g. wpf bindings)
             IsSmelly = ContentHitsCollection.Any(contentHits => contentHits.IsSmelly);
@@ -37,8 +37,8 @@ namespace ClrVpin.Models
             {
                 // update HitsView based on the updated filtering content type and/or hit type
                 // - the getFilteredXxx return their respective enum as an integer via FeatureType.Id
-                Filter = hitObject => getFilteredContentTypes().Contains((int) ((Hit) hitObject).ContentTypeEnum) &&
-                                      getFilteredHitTypes().Contains((int) ((Hit) hitObject).Type)
+                Filter = hitObject => getActiveContentFeatureTypes().Contains((int) ((Hit) hitObject).ContentTypeEnum) &&
+                                      getActiveHitContentTypes().Contains((int) ((Hit) hitObject).Type)
             };
         }
     }

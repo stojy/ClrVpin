@@ -8,7 +8,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ClrVpin.Models;
-using ClrVpin.Models.Settings;
 using Utils;
 
 namespace ClrVpin.Shared
@@ -21,8 +20,8 @@ namespace ClrVpin.Shared
         // games referenced in the DB that have hits
         public ObservableCollection<Game> HitGames { get; set; }
 
-        public ListCollectionView FilteredContentTypesView { get; set; }
-        public ListCollectionView FilteredHitTypesView { get; set; }
+        public ListCollectionView AllContentFeatureTypesView { get; set; }
+        public ListCollectionView AllHitFeatureTypesView { get; set; }
         public ListCollectionView HitGamesView { get; set; }
 
         public ICommand ExpandGamesCommand { get; set; }
@@ -43,11 +42,11 @@ namespace ClrVpin.Shared
         {
             Settings = Model.Settings;
 
-            FilteredContentTypes = CreateFilteredContentTypes();
-            FilteredContentTypesView = new ListCollectionView(FilteredContentTypes.ToList());
+            AllContentFeatureTypes = CreateAllContentFeatureTypes();
+            AllContentFeatureTypesView = new ListCollectionView(AllContentFeatureTypes.ToList());
 
-            FilteredHitTypes = CreateFilteredHitTypes();
-            FilteredHitTypesView = new ListCollectionView(FilteredHitTypes.ToList());
+            AllHitFeatureTypes = CreateAllHitFeatureTypes();
+            AllHitFeatureTypesView = new ListCollectionView(AllHitFeatureTypes.ToList());
 
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
@@ -61,8 +60,8 @@ namespace ClrVpin.Shared
 
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
-        protected abstract IList<FeatureType> CreateFilteredContentTypes();
-        protected abstract IList<FeatureType> CreateFilteredHitTypes();
+        protected abstract IList<FeatureType> CreateAllContentFeatureTypes();
+        protected abstract IList<FeatureType> CreateAllHitFeatureTypes();
         protected Models.Settings.Settings Settings { get; set; }
 
         protected void UpdateStatus(IEnumerable<Game> games)
@@ -71,8 +70,8 @@ namespace ClrVpin.Shared
             {
                 // update status of each game based AND filter the view based on the selected content and/or hit criteria
                 game.Content.Update(
-                    () => FilteredContentTypes.Where(x => x.IsActive).Select(x => x.Id),
-                    () => FilteredHitTypes.Where(x => x.IsActive).Select(x => x.Id));
+                    () => AllContentFeatureTypes.Where(x => x.IsActive).Select(x => x.Id),
+                    () => AllHitFeatureTypes.Where(x => x.IsActive).Select(x => x.Id));
             });
         }
 
@@ -122,8 +121,8 @@ namespace ClrVpin.Shared
             _searchTextChangedDelayTimer.Start();
         }
 
-        protected IEnumerable<FeatureType> FilteredContentTypes;
-        protected IEnumerable<FeatureType> FilteredHitTypes;
+        protected IEnumerable<FeatureType> AllContentFeatureTypes;
+        protected IEnumerable<FeatureType> AllHitFeatureTypes;
         private DispatcherTimer _searchTextChangedDelayTimer;
     }
 }

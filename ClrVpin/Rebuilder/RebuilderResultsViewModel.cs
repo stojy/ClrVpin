@@ -37,7 +37,7 @@ namespace ClrVpin.Rebuilder
             Window.Show();
         }
 
-        protected override IList<FeatureType> CreateFilteredContentTypes()
+        protected override IList<FeatureType> CreateAllContentFeatureTypes()
         {
             // show all content types, but assign enabled and active based on the rebuilder configuration
             // - rebuilder only supports one destination content type, but display them all as a list for consistency with ScannerResultsViewModel
@@ -53,7 +53,7 @@ namespace ClrVpin.Rebuilder
             return filteredContentTypes.ToList();
         }
 
-        protected override IList<FeatureType> CreateFilteredHitTypes()
+        protected override IList<FeatureType> CreateAllHitFeatureTypes()
         {
             // show all hit types, but assign enabled and active based on the rebuilder configuration
             // - valid hits are also visible, enabled by default since these files are copied across without any file name fixing

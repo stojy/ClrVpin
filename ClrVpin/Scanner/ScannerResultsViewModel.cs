@@ -37,7 +37,7 @@ namespace ClrVpin.Scanner
             Window.Show();
         }
 
-        protected override IList<FeatureType> CreateFilteredContentTypes()
+        protected override IList<FeatureType> CreateAllContentFeatureTypes()
         {
             // show all content types, but assign enabled and active based on the scanner configuration
             var filteredContentTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
@@ -54,7 +54,7 @@ namespace ClrVpin.Scanner
             return filteredContentTypes.ToList();
         }
 
-        protected override IList<FeatureType> CreateFilteredHitTypes()
+        protected override IList<FeatureType> CreateAllHitFeatureTypes()
         {
             // show all hit types, but assign enabled and active based on the scanner configuration
             // - for completeness the valid hits are also visible, but disabled by default since no fixes were required
