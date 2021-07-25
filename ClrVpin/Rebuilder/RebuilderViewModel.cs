@@ -23,6 +23,7 @@ namespace ClrVpin.Rebuilder
         public RebuilderViewModel()
         {
             StartCommand = new ActionCommand(Start);
+            DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
 
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
             IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
@@ -50,9 +51,11 @@ namespace ClrVpin.Rebuilder
         public FolderTypeModel SourceFolderModel { get; set; }
         public ObservableCollection<string> DestinationContentTypes { get; set; }
 
+        public ICommand DestinationContentTypeSelectedCommand { get; set; }
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
+
 
         public void Show(Window parent)
         {

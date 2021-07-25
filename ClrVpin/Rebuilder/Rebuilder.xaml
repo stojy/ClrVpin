@@ -3,7 +3,8 @@
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:rebuilder="clr-namespace:ClrVpin.Rebuilder"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
+                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -27,6 +28,11 @@
               </Binding.ValidationRules>
             </Binding>
           </ComboBox.SelectedItem>
+          <b:Interaction.Triggers>
+            <b:EventTrigger EventName="SelectionChanged">
+              <b:InvokeCommandAction Command="{Binding DestinationContentTypeSelectedCommand}"/>
+            </b:EventTrigger>
+          </b:Interaction.Triggers>
         </ComboBox>
       </WrapPanel>
 
