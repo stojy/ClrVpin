@@ -14,7 +14,7 @@ namespace ClrVpin.Models.Settings
             Version = MinVersion;
 
             PinballFolder = @"C:\vp\apps\vpx";
-            PinballTablesFolder = @"C:\vp\tables";
+            PinballTablesFolder = @"C:\vp\tables\vpx";
             FrontendFolder = @"C:\vp\apps\PinballX";
         }
 

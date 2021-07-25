@@ -13,12 +13,8 @@ namespace ClrVpin.Models.Settings
         {
             SettingsHelper.CreateRootFolder(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Stoj", "ClrVpin"));
 
-            //_settingsPath = Path.Combine(folder, "settings.json");
-            //_defaultSettingsPath = Path.Combine(folder, "defaults.json");
-
-
-            _defaultSettings = SettingsHelper.Read<DefaultSettings>(_defaultSettingsPath, null);
-            Settings = SettingsHelper.Read<Settings>(_settingsPath, _defaultSettings);
+            _defaultSettings = SettingsHelper.Read<DefaultSettings>(null);
+            Settings = SettingsHelper.Read<Settings>(_defaultSettings);
 
             UpdateIsValid();
         }
@@ -35,15 +31,15 @@ namespace ClrVpin.Models.Settings
         public void Reset()
         {
             // reset Settings, but keep defaultSettings unchanged.. i.e. the defaultSettings are used to seed the reset Settings
-            Settings = SettingsHelper.Reset<Settings>(_settingsPath, _defaultSettings);
+            Settings = SettingsHelper.Reset<Settings>(_defaultSettings);
             WasReset = true;
         }
 
         public void Write()
         {
             // write default and settings
-            SettingsHelper.Write(_defaultSettings, _defaultSettingsPath);
-            SettingsHelper.Write(Settings, _settingsPath);
+            SettingsHelper.Write(_defaultSettings);
+            SettingsHelper.Write(Settings);
 
             UpdateIsValid();
         }
@@ -62,8 +58,6 @@ namespace ClrVpin.Models.Settings
         }
 
         private readonly DefaultSettings _defaultSettings;
-        private readonly string _settingsPath;
-        private readonly string _defaultSettingsPath;
         private static SettingsManager _sessionManager;
     }
 }

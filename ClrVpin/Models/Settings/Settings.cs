@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
 using PropertyChanged;
 using Utils;
 
@@ -13,6 +12,10 @@ namespace ClrVpin.Models.Settings
     {
         public Settings()
         {
+            // temporary default settings instance to prevent the json deserializer exceptions as it invoke the property getters/setters
+            // - the 'real' defaultSettings will be assigned after construction via Init()
+            _defaultSettings = new DefaultSettings();
+
             // default settings
             // - during json.net deserialization.. ctor is invoked BEFORE deserialized version overwrites the values, i.e. they will be overwritten where a stored setting exists
             Version = MinVersion;
@@ -20,7 +23,6 @@ namespace ClrVpin.Models.Settings
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
             TrainerWheels = true;
 
-            FrontendFolder = @"C:\vp\apps\PinballX";
             AllContentTypes = new List<ContentType>
             {
                 new ContentType {Enum = ContentTypeEnum.Tables, Tip = "Playfield table", Extensions = "*.vpx, *.vpt", Category = ContentTypeCategoryEnum.Pinball},
@@ -30,10 +32,7 @@ namespace ClrVpin.Models.Settings
                 new ContentType {Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.TableVideos, Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
-                new ContentType
-                {
-                    Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media
-                },
+                new ContentType {Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.apng, *.jpg", Category = ContentTypeCategoryEnum.Media}
             };
             AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -42,14 +41,25 @@ namespace ClrVpin.Models.Settings
             Scanner = new ScannerSettings();
         }
 
-        // these settings are included int he model (and json serialized for completeness), but the underlying values come from defaultSettings
+        // default settings are assigned to the underlying DefaultSettings class so that they are maintained when the config is reset, e.g. via the settings-reset ui
         public string PinballFolder
         {
             get => _defaultSettings.PinballFolder;
             set => _defaultSettings.PinballFolder = value;
         }
 
-        public string FrontendFolder { get; set; }
+        public string PinballTablesFolder
+        {
+            get => _defaultSettings.PinballTablesFolder;
+            set => _defaultSettings.PinballTablesFolder = value;
+        }
+
+        public string FrontendFolder
+        {
+            get => _defaultSettings.FrontendFolder;
+            set => _defaultSettings.FrontendFolder = value;
+        }
+
         public List<ContentType> AllContentTypes { get; set; }
 
         public string BackupFolder { get; set; }
@@ -58,14 +68,13 @@ namespace ClrVpin.Models.Settings
         public ScannerSettings Scanner { get; set; }
         public RebuilderSettings Rebuilder { get; set; }
 
+        public int Version { get; set; }
+        public int MinVersion { get; set; } = 1;
+
         public void Init(DefaultSettings defaultSettings)
         {
             _defaultSettings = defaultSettings;
         }
-
-        public int Version { get; set; }
-
-        public int MinVersion { get; set; } = 1;
 
         // helper methods for accessing the content types
         public ContentType[] GetAllContentTypes() => AllContentTypes.ToArray();
