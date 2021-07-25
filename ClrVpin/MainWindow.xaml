@@ -43,7 +43,7 @@
               <StackPanel Margin="10">
                 <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" />
                 <TextBlock Margin="0,20,0,0" Text="{Binding Detail}" />
-                <Button Margin="0,20,0,0" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" HorizontalAlignment="Center" Content="Show Me"
+                <Button Margin="0,20,0,0" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" HorizontalAlignment="Center" Content="Restart"
                         Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
               </StackPanel>
             </DataTemplate>

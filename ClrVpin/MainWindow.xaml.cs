@@ -1,5 +1,6 @@
-﻿using System.Text;
-using ClrVpin.Models.Settings;
+﻿using System.Diagnostics;
+using System.Text;
+using System.Windows;
 using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
@@ -30,10 +31,17 @@ namespace ClrVpin
                     DialogHost.Show(new Message
                     {
                         Title = "Your settings have been reset",
-                        Detail = "Please review the updated settings."
-                    }).ContinueWith(_ => Dispatcher.Invoke(() => new Settings.SettingsViewModel().Show(this)));
+                        Detail = "ClrVpin will now be restarted."
+                    }).ContinueWith(_ => Dispatcher.Invoke(Restart));
                 }
             };
+        }
+
+        private static void Restart()
+        {
+            var executablePath = Process.GetCurrentProcess().MainModule!.FileName;
+            Process.Start(executablePath!);
+            Application.Current.Shutdown();
         }
 
         public Model Model { get; set; }
