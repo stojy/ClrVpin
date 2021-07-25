@@ -39,8 +39,7 @@ namespace ClrVpin
 
         private static void Restart()
         {
-            var executablePath = Process.GetCurrentProcess().MainModule!.FileName;
-            Process.Start(executablePath!);
+            Process.Start(Process.GetCurrentProcess().MainModule!.FileName!);
             Application.Current.Shutdown();
         }
 

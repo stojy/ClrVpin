@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using PropertyChanged;
 using Utils;
 
 namespace ClrVpin.Models.Settings
 {
     [AddINotifyPropertyChangedInterface]
-    public class Settings
+    public class Settings : ISettings
     {
         public Settings()
         {
             // default settings
             // - during json.net deserialization.. ctor is invoked BEFORE deserialized version overwrites the values, i.e. they will be overwritten where a stored setting exists
             Version = MinVersion;
-
-            PinballFolder = @"C:\vp\apps\vpx";
 
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
             TrainerWheels = true;
@@ -31,7 +30,10 @@ namespace ClrVpin.Models.Settings
                 new ContentType {Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.TableVideos, Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
+                new ContentType
+                {
+                    Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media
+                },
                 new ContentType {Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.apng, *.jpg", Category = ContentTypeCategoryEnum.Media}
             };
             AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -40,10 +42,13 @@ namespace ClrVpin.Models.Settings
             Scanner = new ScannerSettings();
         }
 
-        public int Version { get; set; }
+        // these settings are included int he model (and json serialized for completeness), but the underlying values come from defaultSettings
+        public string PinballFolder
+        {
+            get => _defaultSettings.PinballFolder;
+            set => _defaultSettings.PinballFolder = value;
+        }
 
-        public string PinballFolder { get; set; }
-        
         public string FrontendFolder { get; set; }
         public List<ContentType> AllContentTypes { get; set; }
 
@@ -53,7 +58,14 @@ namespace ClrVpin.Models.Settings
         public ScannerSettings Scanner { get; set; }
         public RebuilderSettings Rebuilder { get; set; }
 
-        public static int MinVersion = 1;
+        public void Init(DefaultSettings defaultSettings)
+        {
+            _defaultSettings = defaultSettings;
+        }
+
+        public int Version { get; set; }
+
+        public int MinVersion { get; set; } = 1;
 
         // helper methods for accessing the content types
         public ContentType[] GetAllContentTypes() => AllContentTypes.ToArray();
@@ -66,5 +78,6 @@ namespace ClrVpin.Models.Settings
         public ContentType[] GetSelectedCheckContentTypes() => AllContentTypes.Where(type => Scanner.SelectedCheckContentTypes.Contains(type.Description)).ToArray();
         public ContentType GetSelectedDestinationContentType() => AllContentTypes.First(x => x.Description == Rebuilder.DestinationContentType);
         public ContentType GetContentType(ContentTypeEnum contentTypeEnum) => AllContentTypes.First(x => x.Enum == contentTypeEnum);
+        private DefaultSettings _defaultSettings;
     }
 }

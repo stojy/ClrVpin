@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
-using ClrVpin.Logging;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Settings
@@ -13,13 +11,16 @@ namespace ClrVpin.Models.Settings
     {
         private SettingsManager()
         {
-            var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Stoj", "ClrVpin");
-            _path = Path.Combine(folder, "ClrVpin.settings");
+            SettingsHelper.CreateRootFolder(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Stoj", "ClrVpin"));
 
-            // create folder (and sub-folders) if it doesn't exist
-            Directory.CreateDirectory(folder);
+            //_settingsPath = Path.Combine(folder, "settings.json");
+            //_defaultSettingsPath = Path.Combine(folder, "defaults.json");
 
-            Read();
+
+            _defaultSettings = SettingsHelper.Read<DefaultSettings>(_defaultSettingsPath, null);
+            Settings = SettingsHelper.Read<Settings>(_settingsPath, _defaultSettings);
+
+            UpdateIsValid();
         }
 
         public bool WasReset { get; private set; }
@@ -33,45 +34,16 @@ namespace ClrVpin.Models.Settings
 
         public void Reset()
         {
-            Settings = new Settings();
-            Write();
-
+            // reset Settings, but keep defaultSettings unchanged.. i.e. the defaultSettings are used to seed the reset Settings
+            Settings = SettingsHelper.Reset<Settings>(_settingsPath, _defaultSettings);
             WasReset = true;
         }
 
         public void Write()
         {
-            var serializedSettings = JsonSerializer.Serialize(Settings);
-            File.WriteAllText(_path, serializedSettings);
-
-            UpdateIsValid();
-        }
-
-        private void Read()
-        {
-            // retrieve existing config (from disk) or create a fresh one
-            if (File.Exists(_path))
-            {
-                var data = File.ReadAllText(_path);
-
-                try
-                {
-                    Settings = JsonSerializer.Deserialize<Settings>(data);
-
-                    // reset the settings if the user's stored settings version differs to the default version
-                    if (Settings!.Version < Settings.MinVersion)
-                        Reset();
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e, "Failed to deserialize settings.. resetting settings");
-                    Reset();
-                }
-            }
-            else
-            {
-                Reset();
-            }
+            // write default and settings
+            SettingsHelper.Write(_defaultSettings, _defaultSettingsPath);
+            SettingsHelper.Write(Settings, _settingsPath);
 
             UpdateIsValid();
         }
@@ -89,7 +61,9 @@ namespace ClrVpin.Models.Settings
             IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
         }
 
-        private readonly string _path;
+        private readonly DefaultSettings _defaultSettings;
+        private readonly string _settingsPath;
+        private readonly string _defaultSettingsPath;
         private static SettingsManager _sessionManager;
     }
 }
