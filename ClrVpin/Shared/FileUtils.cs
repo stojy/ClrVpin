@@ -35,7 +35,69 @@ namespace ClrVpin.Shared
             }
         }
 
-        public static void Rename(string originalFile, string newFile, HitTypeEnum hitTypeEnum, string contentType)
+        public static IEnumerable<FileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
+        {
+            var deleted = new List<FileDetail>();
+
+            // delete all 'real' files except the specified hit
+            hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h, supportedHitTypes)));
+
+            return deleted;
+        }
+
+        public static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, IEnumerable<string> kindredExtensions)
+        {
+            // merge the specific file
+            Merge(sourceFile, destinationFile, hitTypeEnum, contentType, deleteSource, preserveDateModified);
+
+            // merge any kindred files
+            ExecuteForKindred(kindredExtensions, sourceFile, destinationFile, (source, destination) => Merge(source, destination, hitTypeEnum, contentType, deleteSource, preserveDateModified));
+        }
+
+        public static FileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes, IEnumerable<string> kindredExtensions)
+        {
+            var renamed = false;
+
+            if (supportedHitTypes.Contains(hit.Type))
+            {
+                renamed = true;
+
+                // determine the correct name - different for media vs pinball
+                var correctName = game.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category);
+
+                var extension = Path.GetExtension(hit.Path);
+                var path = Path.GetDirectoryName(hit.Path);
+                var newFile = Path.Combine(path!, $"{correctName}{extension}");
+
+                // rename specific file
+                Rename(hit.Path, newFile, hit.Type, hit.ContentType);
+
+                // rename any kindred files
+                ExecuteForKindred(kindredExtensions, hit.Path, newFile, (source, destination) => Rename(source, destination, hit.Type, hit.ContentType));
+            }
+
+            return new FileDetail(hit.ContentTypeEnum, hit.Type, renamed ? FixFileTypeEnum.Renamed : null, hit.Path, hit.Size ?? 0);
+        }
+
+        public static void DeleteActiveBackupFolderIfEmpty()
+        {
+            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
+            if (Directory.Exists(ActiveBackupFolder))
+            {
+                var files = Directory.EnumerateFiles(ActiveBackupFolder, "*", SearchOption.AllDirectories);
+                if (!files.Any())
+                {
+                    Logger.Info($"Deleting empty backup folder: '{ActiveBackupFolder}'");
+                    Directory.Delete(ActiveBackupFolder, true);
+                }
+            }
+
+            // if directory doesn't exist (e.g. deleted as per above OR never existed), then assign the active folder back to the root folder, i.e. a valid folder that exists
+            if (!Directory.Exists(ActiveBackupFolder))
+                ActiveBackupFolder = _rootBackupFolder;
+        }
+
+        private static void Rename(string originalFile, string newFile, HitTypeEnum hitTypeEnum, string contentType)
         {
             var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
             Logger.Info($"{prefix}Renaming file.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, original: {originalFile}, new: {newFile}");
@@ -47,7 +109,32 @@ namespace ClrVpin.Shared
             }
         }
 
-        public static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified)
+        private static void ExecuteForKindred(IEnumerable<string> kindredExtensions, string sourceFile, string destinationFile, Action<string, string> action)
+        {
+            // merge any kindred files
+            var kindredFiles = GetKindredFiles(new FileInfo(sourceFile), kindredExtensions);
+            var destinationFolder = Path.GetDirectoryName(destinationFile);
+
+            kindredFiles.ForEach(file =>
+            {
+                // use source file name (minus extension) instead of kindred file name to ensure the case is correct!
+                var fileName = $"{Path.GetFileNameWithoutExtension(destinationFile)}{Path.GetExtension(file)}";
+
+                var destinationFileName = Path.Combine(destinationFolder!, fileName);
+                action(file, destinationFileName);
+            });
+        }
+
+        private static IEnumerable<string> GetKindredFiles(FileInfo fileInfo, IEnumerable<string> kindredExtensionsList)
+        {
+            var kindredExtensions = kindredExtensionsList.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.TrimStart('*').ToLower());
+            var allFiles = Directory.EnumerateFiles(fileInfo.DirectoryName!, $"{Path.GetFileNameWithoutExtension(fileInfo.Name)}.*").Select(x => x.ToLower()).ToList();
+
+            var kindredFiles = allFiles.Where(file => kindredExtensions.Any(file.EndsWith)).ToList();
+            return kindredFiles;
+        }
+
+        private static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified)
         {
             var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
 
@@ -81,69 +168,11 @@ namespace ClrVpin.Shared
             }
         }
 
-        public static IEnumerable<FileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
-        {
-            var deleted = new List<FileDetail>();
-
-            // delete all 'real' files except the specified hit
-            hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h, supportedHitTypes)));
-
-            return deleted;
-        }
-
-        public static FileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
-        {
-            var renamed = false;
-
-            if (supportedHitTypes.Contains(hit.Type))
-            {
-                renamed = true;
-
-                // determine the correct name - different for media vs pinball
-                var correctName = game.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category);
-
-                var extension = Path.GetExtension(hit.Path);
-                var path = Path.GetDirectoryName(hit.Path);
-                var newFile = Path.Combine(path!, $"{correctName}{extension}");
-
-                Rename(hit.Path, newFile, hit.Type, hit.ContentType);
-            }
-
-            return new FileDetail(hit.ContentTypeEnum, hit.Type, renamed ? FixFileTypeEnum.Renamed : null, hit.Path, hit.Size ?? 0);
-        }
-
-        public static void DeleteActiveBackupFolderIfEmpty()
-        {
-            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-            if (Directory.Exists(ActiveBackupFolder))
-            {
-                var files = Directory.EnumerateFiles(ActiveBackupFolder, "*", SearchOption.AllDirectories);
-                if (!files.Any())
-                {
-                    Logger.Info($"Deleting empty backup folder: '{ActiveBackupFolder}'");
-                    Directory.Delete(ActiveBackupFolder, true);
-                }
-            }
-
-            // if directory doesn't exist (e.g. deleted as per above OR never existed), then assign the active folder back to the root folder, i.e. a valid folder that exists
-            if (!Directory.Exists(ActiveBackupFolder))
-                ActiveBackupFolder = _rootBackupFolder;
-        }
-
         private static void Backup(string file, string subFolder = "")
         {
             // backup file (aka copy) to the specified sub folder
             var backupFile = CreateBackupFileName(file, subFolder);
             File.Copy(file, backupFile, true);
-        }
-
-        public static IEnumerable<string> GetKindredFiles(FileInfo fileInfo, IEnumerable<string> kindredExtensionsList)
-        {
-            var kindredExtensions = kindredExtensionsList.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.TrimStart('*').ToLower());
-            var allFiles = Directory.EnumerateFiles(fileInfo.DirectoryName!, $"{Path.GetFileNameWithoutExtension(fileInfo.Name)}.*").Select(x => x.ToLower()).ToList();
-
-            var kindredFiles = allFiles.Where(file => kindredExtensions.Any(file.EndsWith)).ToList();
-            return kindredFiles;
         }
 
         private static string CreateBackupFileName(string file, string subFolder = "")

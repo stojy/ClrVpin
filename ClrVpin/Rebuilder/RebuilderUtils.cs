@@ -94,15 +94,7 @@ namespace ClrVpin.Rebuilder
                 {
                     var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
                     var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
-                    FileUtils.Merge(sourceFileInfo.FullName, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified);
-
-                    // merge any kindred files
-                    var kindredFiles = FileUtils.GetKindredFiles(sourceFileInfo, contentType.KindredExtensionsList);
-                    kindredFiles.ForEach(file =>
-                    {
-                        destinationFileName = Path.Combine(contentType.Folder, Path.GetFileName(file));
-                        FileUtils.Merge(file, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified);
-                    });
+                    FileUtils.Merge(sourceFileInfo.FullName, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified, contentType.KindredExtensionsList);
                 }
             }
 

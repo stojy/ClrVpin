@@ -71,7 +71,7 @@ namespace ClrVpin.Scanner
                     {
                         // for all 3 hit types.. rename file and delete other entries
                         // - duplicate extension is n/a since it's implied a valid hit already exists, i.e. covered above
-                        gameFiles.Add(FileUtils.Rename(hit, game, _settings.Scanner.SelectedFixHitTypes));
+                        gameFiles.Add(FileUtils.Rename(hit, game, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(hit.ContentTypeEnum).KindredExtensionsList));
                         gameFiles.AddRange(FileUtils.DeleteAllExcept(contentHitCollection.Hits, hit, _settings.Scanner.SelectedFixHitTypes));
                     }
 
