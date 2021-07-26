@@ -50,7 +50,7 @@ namespace ClrVpin.Scanner
 
         private static List<FileDetail> Fix(List<Game> games, string backupFolder)
         {
-            TableUtils.SetActiveBackupFolder(backupFolder);
+            FileUtils.SetActiveBackupFolder(backupFolder);
 
             // EVERY GAME THAT HAS A HIT (IRRESPECTIVE OF MATCH CRITERIA) WILL HAVE A GAME FILE RETURNED, i.e. irrespective of whether..
             // - match criteria is selected or relevant
@@ -65,14 +65,14 @@ namespace ClrVpin.Scanner
                     if (TableUtils.TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
                     {
                         // valid hit exists.. so delete other hits, i.e. other hits aren't as relevant
-                        gameFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, _settings.Scanner.SelectedFixHitTypes));
+                        gameFiles.AddRange(FileUtils.DeleteAllExcept(contentHitCollection.Hits, hit, _settings.Scanner.SelectedFixHitTypes));
                     }
                     else if (TableUtils.TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
                     {
                         // for all 3 hit types.. rename file and delete other entries
                         // - duplicate extension is n/a since it's implied a valid hit already exists, i.e. covered above
-                        gameFiles.Add(TableUtils.Rename(hit, game, _settings.Scanner.SelectedFixHitTypes));
-                        gameFiles.AddRange(TableUtils.DeleteAllExcept(contentHitCollection.Hits, hit, _settings.Scanner.SelectedFixHitTypes));
+                        gameFiles.Add(FileUtils.Rename(hit, game, _settings.Scanner.SelectedFixHitTypes));
+                        gameFiles.AddRange(FileUtils.DeleteAllExcept(contentHitCollection.Hits, hit, _settings.Scanner.SelectedFixHitTypes));
                     }
 
                     // other hit types don't require any additional work..
@@ -82,7 +82,7 @@ namespace ClrVpin.Scanner
             });
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-            TableUtils.DeleteActiveBackupFolderIfEmpty();
+            FileUtils.DeleteActiveBackupFolderIfEmpty();
 
             return gameFiles;
         }
@@ -101,7 +101,7 @@ namespace ClrVpin.Scanner
                     x.HitType == HitTypeEnum.Unsupported && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     x.Deleted = true;
-                    TableUtils.Delete(x.Path, x.HitType, null);
+                    FileUtils.Delete(x.Path, x.HitType, null);
                 }
             });
         }

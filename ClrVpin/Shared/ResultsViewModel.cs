@@ -51,7 +51,7 @@ namespace ClrVpin.Shared
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
 
-            BackupFolder = TableUtils.ActiveBackupFolder;
+            BackupFolder = FileUtils.ActiveBackupFolder;
             NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
 
             UpdateStatus(Games);

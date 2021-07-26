@@ -42,7 +42,7 @@ namespace ClrVpin.Models.Settings
             new HitType(HitTypeEnum.Fuzzy, true, "Files that match the 'Fuzzy logic' algorithms"),
             new HitType(HitTypeEnum.Missing, false, "Files that should match but are missing"),
             new HitType(HitTypeEnum.Unknown, false, "Files that do match the configured file extension type, but don't match any of the tables in the database"),
-            new HitType(HitTypeEnum.Unsupported, false, "Files that don't match the configured file extension types - ONLY APPLICABLE FOR MEDIA CONTENT, since unsupported files are expected to exist in the tables folder (e.g. txt, exe, vbs, etc)")
+            new HitType(HitTypeEnum.Unsupported, false, "Files that don't match the configured file extension types - ONLY APPLICABLE FOR MEDIA CONTENT, since unsupported files are EXPECTED to exist in the tables folder (e.g. txt, exe, ogg, etc)")
         };
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections

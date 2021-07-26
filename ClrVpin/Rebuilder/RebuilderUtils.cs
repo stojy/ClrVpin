@@ -43,7 +43,7 @@ namespace ClrVpin.Rebuilder
 
         private static List<FileDetail> Merge(IEnumerable<Game> games, string backupFolder)
         {
-            TableUtils.SetActiveBackupFolder(backupFolder);
+            FileUtils.SetActiveBackupFolder(backupFolder);
 
             // filter games to only those that have hits for the destination content type
             var contentType = _settings.GetSelectedDestinationContentType();
@@ -68,7 +68,7 @@ namespace ClrVpin.Rebuilder
             });
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-            TableUtils.DeleteActiveBackupFolderIfEmpty();
+            FileUtils.DeleteActiveBackupFolderIfEmpty();
 
             return gameFiles;
         }
@@ -92,33 +92,9 @@ namespace ClrVpin.Rebuilder
                 ignore = ShouldIgnore(hit, sourceFileInfo, destinationFileInfo);
                 if (ignore)
                 {
-                    if (_settings.TrainerWheels)
-                        Log("Ignored merging", "trainer wheels", hit, sourceFileInfo, destinationFileInfo, destinationFileName);
-                    else
-                    {
-                        Log("Merging file", null, hit, sourceFileInfo, destinationFileInfo, destinationFileName);
-
-                        if (!_settings.TrainerWheels)
-                        {
-                            // backup source and destination files
-                            if (File.Exists(destinationFileName))
-                                TableUtils.Backup(destinationFileName, "deleted");
-                            TableUtils.Backup(sourceFileInfo.FullName, "merged");
-
-                            // move or copy source file
-                            if (MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions))
-                                File.Move(sourceFileInfo.FullName, destinationFileName, true);
-                            else
-                                File.Copy(sourceFileInfo.FullName, destinationFileName, true);
-
-                            // reset date modified if preservation isn't selected
-                            // - moved file.. last access and change timestamps are updated
-                            // - copied file.. last access and creation timestamps are updated
-                            // - neither move or copy modify the 'last write' timestamp --> so by default, a copied file will have a modified timestamp before the file was created!!
-                            if (!MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions))
-                                File.SetLastWriteTime(destinationFileName, DateTime.Now);
-                        }
-                    }
+                    var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
+                    var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
+                    FileUtils.Merge(sourceFileInfo.FullName, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified);
                 }
             }
 
