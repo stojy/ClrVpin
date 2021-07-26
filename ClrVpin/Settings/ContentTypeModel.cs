@@ -21,12 +21,14 @@ namespace ClrVpin.Settings
                 PatternValidation = contentType.Description;
 
             Extensions = string.Join(", ", contentType.Extensions);
+            KindredExtensions = string.Join(", ", contentType.KindredExtensions);
 
             TextChangedCommand = new ActionCommand(() =>
             {
                 // for storage
                 contentType.Folder = Folder;
                 contentType.Extensions = Extensions;
+                contentType.KindredExtensions = KindredExtensions;
 
                 updatedAction?.Invoke();
             });
