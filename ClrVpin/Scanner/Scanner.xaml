@@ -70,8 +70,7 @@
 
       <WrapPanel Margin="5">
         <CheckBox ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
-                  IsChecked="{Binding Settings.TrainerWheels}" />
-        <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
+                  IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels"/>
       </WrapPanel>
 
       <Button Margin="5" Width="50" Command="{Binding StartCommand}" Style="{StaticResource AlternateButton}">Start</Button>

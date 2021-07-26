@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Utils
 {
     public static class LinqExtensions
     {
+        [DebuggerStepThrough]
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             if (source == null)

@@ -137,6 +137,14 @@ namespace ClrVpin.Shared
             File.Copy(file, backupFile, true);
         }
 
+        public static IEnumerable<string> GetKindredFiles(FileInfo fileInfo, IEnumerable<string> kindredExtensionsList)
+        {
+            var kindredExtensions = kindredExtensionsList.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.TrimStart('*').ToLower());
+            var allFiles = Directory.EnumerateFiles(fileInfo.DirectoryName!, $"{Path.GetFileNameWithoutExtension(fileInfo.Name)}.*").Select(x => x.ToLower()).ToList();
+
+            var kindredFiles = allFiles.Where(file => kindredExtensions.Any(file.EndsWith)).ToList();
+            return kindredFiles;
+        }
 
         private static string CreateBackupFileName(string file, string subFolder = "")
         {
