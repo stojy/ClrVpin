@@ -29,7 +29,11 @@ namespace ClrVpin.Scanner
 
             _fixHitTypes = CreateFixHitTypes();
             FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
+
+            UpdateIsValid();
         }
+
+        public bool IsValid { get; set; }
 
         public ListCollectionView CheckMediaContentTypesView { get; set; }
         public ListCollectionView CheckPinballContentTypesView { get; set; }
@@ -66,6 +70,8 @@ namespace ClrVpin.Scanner
             };
         }
 
+        private void UpdateIsValid() => IsValid = Settings.Scanner.SelectedCheckContentTypes.Any();
+
         private IEnumerable<FeatureType> CreateCheckMediaContentTypes(IEnumerable<ContentType> contentTypes)
         {
             // show all hit types
@@ -77,7 +83,11 @@ namespace ClrVpin.Scanner
                     Tip = contentType.Tip,
                     IsSupported = true,
                     IsActive = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
-                    SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedCheckContentTypes.Toggle(contentType.Description))
+                    SelectedCommand = new ActionCommand(() =>
+                    {
+                        Settings.Scanner.SelectedCheckContentTypes.Toggle(contentType.Description);
+                        UpdateIsValid();
+                    })
                 };
 
                 return featureType;
