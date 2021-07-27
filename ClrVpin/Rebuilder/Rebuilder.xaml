@@ -14,7 +14,7 @@
 
   <DataTemplate x:Key="RebuilderTemplate" DataType="{x:Type rebuilder:RebuilderViewModel}">
     <StackPanel Margin="5">
-      <TextBlock Style="{StaticResource Title}">Content to Merge</TextBlock>
+      <TextBlock Style="{StaticResource Title}">Content</TextBlock>
       <WrapPanel>
         <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding SourceFolderModel}" />
 

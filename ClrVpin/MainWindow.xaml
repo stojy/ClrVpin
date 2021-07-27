@@ -10,7 +10,7 @@
                     d:DataContext="{d:DesignData }"
                     WindowStartupLocation="CenterScreen"
                     ResizeMode="NoResize"
-                    Width="335" Height="340"
+                    Width="415" Height="340"
                     Title="ClrVpin" WindowState="Normal"
                     Style="{DynamicResource MaterialWindow}">
 
@@ -33,6 +33,8 @@
 
         <ResourceDictionary Source="Settings/Settings.xaml" />
         <ResourceDictionary Source="About/About.xaml" />
+        <ResourceDictionary Source="Donate/Donate.xaml" />
+        
         <ResourceDictionary Source="Logging/Logging.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
@@ -72,10 +74,16 @@
                   <materialDesign:PackIcon Kind="Cog" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding AboutCommand}" Width="70"  ToolTip="Some background info">
+              <Button Command="{Binding AboutCommand}" Width="70" ToolTip="Some background info">
                 <StackPanel>
                   <TextBlock Text="About" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="AboutOutline" Height="40" Width="40" />
+                </StackPanel>
+              </Button>
+              <Button Command="{Binding DonateCommand}" Width="70" ToolTip="Like the app? Then please donate a few $$$ to show your support.">
+                <StackPanel>
+                  <TextBlock Text="Donate" HorizontalAlignment="Center" />
+                  <materialDesign:PackIcon Kind="GiftOutline" Height="40" Width="40" />
                 </StackPanel>
               </Button>
             </WrapPanel>
@@ -87,5 +95,4 @@
   </Window.Resources>
 
   <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource MainWindowTemplate}" />
-
 </mde:MaterialWindow>

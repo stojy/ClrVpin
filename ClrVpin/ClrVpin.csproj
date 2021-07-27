@@ -7,7 +7,7 @@
     <Authors>Stojy</Authors>
     <Company>Stoj</Company>
     <ApplicationIcon>ClrVpin.ico</ApplicationIcon>
-    <AssemblyVersion>0.100.0.0</AssemblyVersion>
+    <AssemblyVersion>0.101.0.0</AssemblyVersion>
     <FileVersion>0.101.0.0</FileVersion>
     <Version>0.101.0-beta</Version>
   </PropertyGroup>
@@ -18,10 +18,18 @@
 
   <ItemGroup>
     <None Remove="C:\Users\stoj\.nuget\packages\nlog.config\4.7.9\contentFiles\any\any\NLog.config" />
+    <None Remove="Resources\PayPal.png" />
+    <None Remove="Resources\PayPalQr.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="..\docs\ClrVpin.png" Link="Resources\ClrVpin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\PayPal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\PayPalQr.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
@@ -54,6 +62,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Donate\Donate.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Logging\Logging.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -90,7 +102,6 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>

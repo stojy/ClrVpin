@@ -80,7 +80,6 @@ namespace ClrVpin.Shared
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
-                // - todo; fuzzy match.. e.g. partial matches, etc.
                 if ((matchedGame = games.FirstOrDefault(game => game.GetContentName(contentType.Category) == Path.GetFileNameWithoutExtension(matchedFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
@@ -101,7 +100,6 @@ namespace ClrVpin.Shared
                     game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(matchedFile)) || Path.GetFileNameWithoutExtension(matchedFile).StartsWith(game.TableFile) ||
                     game.Description.StartsWith(Path.GetFileNameWithoutExtension(matchedFile)) || Path.GetFileNameWithoutExtension(matchedFile).StartsWith(game.Description))) != null)
                 {
-                    // todo; add more 'fuzzy' checks
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }
                 else
