@@ -20,12 +20,12 @@
         <Hyperlink Command="{Binding NavigateToPayPalCommand}">
           <StackPanel>
             <Image Source="/Resources/PayPal.png" MaxHeight="250" Margin="10,10,10,0" />
-            <TextBlock Text="(click image to donate)" HorizontalAlignment="Center" FontSize="12" />
+            <TextBlock Text="(click above image to donate)" HorizontalAlignment="Center" />
           </StackPanel>
         </Hyperlink>
       </TextBlock>
 
-      <TextBlock Margin="0,20" HorizontalAlignment="Center" Text="Or" />
+      <TextBlock Margin="0,30" HorizontalAlignment="Center" Text="Or scan this barcode on your phone.." />
 
       <Image Source="/Resources/PayPalQr.png" HorizontalAlignment="Center" Stretch="None" />
 
