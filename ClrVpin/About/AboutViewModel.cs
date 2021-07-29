@@ -17,7 +17,7 @@ namespace ClrVpin.About
             NavigateToGitHubAuthorCommand = new ActionCommand(NavigateToGitHubAuthor);
 
             var version = Assembly.GetEntryAssembly()?.GetName().Version!;
-            AssemblyVersion = $"v{version?.Major}.{version?.Minor}.{version?.Build}";
+            AssemblyVersion = $"v{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
         }
 
         public string GitHubRepoUrl { get; set; } = @"https://github.com/stojy/ClrVpin";
