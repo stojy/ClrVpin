@@ -76,6 +76,7 @@ namespace ClrVpin.Shared
             foreach (var matchedFile in matchedFiles)
             {
                 Game matchedGame;
+                var fuzzyName = GetFuzzyName(matchedFile);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
@@ -97,8 +98,8 @@ namespace ClrVpin.Shared
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
-                    game.TableFile.StartsWith(Path.GetFileNameWithoutExtension(matchedFile)) || Path.GetFileNameWithoutExtension(matchedFile).StartsWith(game.TableFile) ||
-                    game.Description.StartsWith(Path.GetFileNameWithoutExtension(matchedFile)) || Path.GetFileNameWithoutExtension(matchedFile).StartsWith(game.Description))) != null)
+                    game.TableFile.StartsWith(fuzzyName) || fuzzyName.StartsWith(game.TableFile) ||
+                    game.Description.StartsWith(fuzzyName) || fuzzyName.StartsWith(game.Description))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }
@@ -112,6 +113,17 @@ namespace ClrVpin.Shared
             }
 
             return unknownMediaFiles;
+        }
+
+        private static string GetFuzzyName(string fileName)
+        {
+            // return the fuzzy portion of the filename..
+            // - no file extensions
+            // - ignoring everything after the first parenthesis
+            var withoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            var trimmed = withoutExtension.Split("(").First();
+
+            return trimmed;
         }
 
         public static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
