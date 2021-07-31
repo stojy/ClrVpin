@@ -108,7 +108,8 @@
 
       <TreeView DockPanel.Dock="Bottom" ItemsSource="{Binding HitGamesView}"
                 ItemTemplate="{StaticResource HitGamesItemTemplate}" 
-                ItemContainerStyle="{StaticResource HitGameStyle}" />
+                ItemContainerStyle="{StaticResource HitGameStyle}" 
+                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
     </DockPanel>
 
   </DataTemplate>
