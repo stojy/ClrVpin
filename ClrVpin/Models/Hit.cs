@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -30,7 +31,7 @@ namespace ClrVpin.Models
             CopyPathCommand = new ActionCommand(CopyPath);
         }
 
-        public string Path { get; }
+        public string Path { get; set; }
         public string File { get; }
         public FileInfo FileInfo { get; }
         public string SizeString { get; }
@@ -47,15 +48,24 @@ namespace ClrVpin.Models
 
         private void OpenFile()
         {
-            // launch file via the shell to open via the associated application
-            var process = new Process
+            try
             {
-                StartInfo = new ProcessStartInfo(Path)
+                // launch file via the shell to open via the associated application
+                var process = new Process
                 {
-                    UseShellExecute = true
-                }
-            };
-            process.Start();
+                    StartInfo = new ProcessStartInfo(Path)
+                    {
+                        UseShellExecute = true
+                    }
+                };
+                process.Start();
+            }
+            catch (Exception e)
+            {
+                Logging.Logger.Error(e, $"failed to open file: {Path}");
+
+                // don't rethrow
+            }
         }
 
         private void ShowInExplorer() => Process.Start("explorer.exe", $"/select,{Path}");

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -48,6 +47,18 @@ namespace UtilsTests
             Assert.AreEqual(des.Legs, Sheep.Legs);
             Assert.AreNotSame(des, Sheep);
         }
+
+        [TestMethod]
+        public void Test1()
+        {
+            var a = new Animal {Name = "a"};
+            var b = a.Name;
+
+            b = "b";
+
+            Assert.AreNotEqual(a.Name, b);
+
+        }
     }
 
     public static class ExtensionMethods
@@ -84,6 +95,8 @@ namespace UtilsTests
         [XmlElement("names")]
         public string[] Names { get; set; }
     }
+
+    
 
     public enum Nutrition
     {

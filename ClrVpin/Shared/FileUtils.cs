@@ -23,14 +23,14 @@ namespace ClrVpin.Shared
             return ActiveBackupFolder = $"{rootBackupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
         }
 
-        public static void Delete(string file, HitTypeEnum hitTypeEnum, string contentType)
+        public static void Delete(string file, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
             var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
             Logger.Warn($"{prefix}Deleting file.. type: {hitTypeEnum.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
 
             if (!_settings.TrainerWheels)
             {
-                Backup(file, "deleted");
+                Backup(file, "deleted", backupAction);
                 File.Delete(file);
             }
         }
@@ -45,10 +45,10 @@ namespace ClrVpin.Shared
             return deleted;
         }
 
-        public static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, IEnumerable<string> kindredExtensions)
+        public static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, IEnumerable<string> kindredExtensions, Action<string> backupAction)
         {
             // merge the specific file
-            Merge(sourceFile, destinationFile, hitTypeEnum, contentType, deleteSource, preserveDateModified);
+            Merge(sourceFile, destinationFile, hitTypeEnum, contentType, deleteSource, preserveDateModified, backupAction);
 
             // merge any kindred files
             ExecuteForKindred(kindredExtensions, sourceFile, destinationFile, (source, destination) => Merge(source, destination, hitTypeEnum, contentType, deleteSource, preserveDateModified));
@@ -70,7 +70,7 @@ namespace ClrVpin.Shared
                 var newFile = Path.Combine(path!, $"{correctName}{extension}");
 
                 // rename specific file
-                Rename(hit.Path, newFile, hit.Type, hit.ContentType);
+                Rename(hit.Path, newFile, hit.Type, hit.ContentType, backupFile => hit.Path = backupFile);
 
                 // rename any kindred files
                 ExecuteForKindred(kindredExtensions, hit.Path, newFile, (source, destination) => Rename(source, destination, hit.Type, hit.ContentType));
@@ -97,14 +97,14 @@ namespace ClrVpin.Shared
                 ActiveBackupFolder = _rootBackupFolder;
         }
 
-        private static void Rename(string originalFile, string newFile, HitTypeEnum hitTypeEnum, string contentType)
+        private static void Rename(string originalFile, string newFile, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
             var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
             Logger.Info($"{prefix}Renaming file.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, original: {originalFile}, new: {newFile}");
 
             if (!_settings.TrainerWheels)
             {
-                Backup(originalFile, "renamed");
+                Backup(originalFile, "renamed", backupAction);
                 File.Move(originalFile, newFile, true);
             }
         }
@@ -134,7 +134,7 @@ namespace ClrVpin.Shared
             return kindredFiles;
         }
 
-        private static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified)
+        private static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, Action<string> backupAction = null)
         {
             var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
 
@@ -150,7 +150,7 @@ namespace ClrVpin.Shared
                 }
 
                 // backup the source file that is to be used
-                Backup(sourceFile, "merged");
+                Backup(sourceFile, "merged", backupAction);
                 File.Copy(sourceFile, destinationFile, true);
                 Logger.Info($"- copying.. source: {sourceFile}, destination: {destinationFile}");
 
@@ -168,11 +168,13 @@ namespace ClrVpin.Shared
             }
         }
 
-        private static void Backup(string file, string subFolder = "")
+        private static void Backup(string file, string subFolder, Action<string> backupAction = null)
         {
             // backup file (aka copy) to the specified sub folder
             var backupFile = CreateBackupFileName(file, subFolder);
             File.Copy(file, backupFile, true);
+
+            backupAction?.Invoke(backupFile);
         }
 
         private static string CreateBackupFileName(string file, string subFolder = "")
@@ -196,7 +198,7 @@ namespace ClrVpin.Shared
             if (supportedHitTypes.Contains(hit.Type))
             {
                 deleted = true;
-                Delete(hit.Path, hit.Type, hit.ContentType);
+                Delete(hit.Path, hit.Type, hit.ContentType, newFile => hit.Path = newFile);
             }
 
             return new FileDetail(hit.ContentTypeEnum, hit.Type, deleted ? FixFileTypeEnum.Deleted : null, hit.Path, hit.Size ?? 0);
