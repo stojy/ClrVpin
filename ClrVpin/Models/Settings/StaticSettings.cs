@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ClrVpin.Models.Rebuilder;
+using ClrVpin.Models.Scanner;
 using Utils;
 
 namespace ClrVpin.Models.Settings
@@ -9,12 +10,14 @@ namespace ClrVpin.Models.Settings
     {
         static StaticSettings()
         {
+            // scanner
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
             AllHitTypeEnums = AllHitTypes.Select(x => x.Enum);
             FixablePrioritizedHitTypeEnums = AllHitTypes.Where(x => x.Fixable).Select(x => x.Enum).ToArray();
             IrreparablePrioritizedHitTypeEnums = AllHitTypes.Where(x => !x.Fixable).Select(x => x.Enum).ToArray();
 
             HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.Valid).ToArray();
+            MultipleMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // rebuilder
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -63,6 +66,14 @@ namespace ClrVpin.Models.Settings
         {
             new MergeOption {Enum = MergeOptionEnum.PreserveDateModified, Tip = "Date modified timestamp of merged file (in the destination folder) will match the source file, else the current time will be used"},
             new MergeOption {Enum = MergeOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"}
+        };
+
+        // all possible multiple match fix options
+        public static MultipleMatchOption[] MultipleMatchOptions =
+        {
+            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.CorrectName, Tip = "File with the correct matching name is used. If it doesn't exist then use the following (in order): WrongCase, TableName, and Fuzzy."},
+            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.MostRecent, Tip = "File with the most recent modified timestamp is used"},
+            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.LargestSize, Tip = "File with the largest size is used"}
         };
     }
 }

@@ -22,6 +22,5 @@ namespace ClrVpin.Models.Settings
         public ObservableCollection<HitTypeEnum> SelectedMatchTypes { get; set; } = new ObservableCollection<HitTypeEnum>();
         public ObservableCollection<MergeOptionEnum> SelectedMergeOptions { get; set; } = new ObservableCollection<MergeOptionEnum>();
         public ObservableCollection<IgnoreOptionEnum> SelectedIgnoreOptions { get; set; } = new ObservableCollection<IgnoreOptionEnum>();
-
     }
 }

@@ -68,6 +68,20 @@
         </GroupBox>
       </Grid>
 
+      <!-- fix options -->
+      <TextBlock Style="{StaticResource Title}">Options</TextBlock>
+      <GroupBox Margin="5" Padding="2" Header="Multiple Match Preference">
+        <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="models:FeatureType">
+              <RadioButton GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                        Command="{Binding SelectedCommand}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </GroupBox>
+
+      <!-- trainer wheels -->
       <WrapPanel Margin="5">
         <CheckBox ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
                   IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels"/>

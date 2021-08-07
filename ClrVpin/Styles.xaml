@@ -51,7 +51,7 @@
 
   <!--with or without this style the appearance doesn't seem to change!-->
   <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" />
-
+  <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}" />
   <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" />
 
 </ResourceDictionary>

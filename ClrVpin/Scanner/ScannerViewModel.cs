@@ -30,6 +30,8 @@ namespace ClrVpin.Scanner
             _fixHitTypes = CreateFixHitTypes();
             FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
 
+            MultipleMatchOptionsView = new ListCollectionView(CreateMultipleMatchOptionTypes().ToList());
+
             UpdateIsValid();
         }
 
@@ -39,6 +41,7 @@ namespace ClrVpin.Scanner
         public ListCollectionView CheckPinballContentTypesView { get; set; }
         public ListCollectionView CheckHitTypesView { get; set; }
         public ListCollectionView FixHitTypesView { get; set; }
+        public ListCollectionView MultipleMatchOptionsView { get; set; }
 
         public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
@@ -52,7 +55,7 @@ namespace ClrVpin.Scanner
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 400,
-                Height = 500,
+                Height = 640,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate,
@@ -140,6 +143,21 @@ namespace ClrVpin.Scanner
                 IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
                 IsActive = Settings.Scanner.SelectedFixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
                 SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedFixHitTypes.Toggle(hitType.Enum))
+            });
+
+            return contentTypes.ToList();
+        }
+
+        private IEnumerable<FeatureType> CreateMultipleMatchOptionTypes()
+        {
+            // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
+            var contentTypes = StaticSettings.MultipleMatchOptions.Select(hitType => new FeatureType((int) hitType.Enum)
+            {
+                Description = hitType.Description,
+                Tip = hitType.Tip,
+                IsSupported = true,
+                IsActive = Settings.Scanner.SelectedMultipleMatchOption == hitType.Enum,
+                SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedMultipleMatchOption = hitType.Enum)
             });
 
             return contentTypes.ToList();
