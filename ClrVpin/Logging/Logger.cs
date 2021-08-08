@@ -18,6 +18,12 @@ namespace ClrVpin.Logging
         public static ObservableCollection<Log> Logs { get; } = new ObservableCollection<Log>();
         public static string File { get; }
 
+        public static void Debug(string message)
+        {
+            _logger.Debug(message);
+            Add(Level.Debug, message);
+        }
+
         public static void Info(string message)
         {
             _logger.Info(message);

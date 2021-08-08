@@ -15,7 +15,7 @@ namespace ClrVpin.Models
         public ObservableCollection<Hit> Hits { get; set; } = new ObservableCollection<Hit>();
 
         // todo; remove (expensive) expression getters
-        public bool IsSmelly => Hits.Any(hit => hit.Type != HitTypeEnum.Valid);
+        public bool IsSmelly => Hits.Any(hit => hit.Type != HitTypeEnum.CorrectName);
 
         public void Add(HitTypeEnum hitType, string path)
         {

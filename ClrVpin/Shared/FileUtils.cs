@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ByteSizeLib;
 using ClrVpin.Logging;
 using ClrVpin.Models;
 using Utils;
@@ -25,14 +26,10 @@ namespace ClrVpin.Shared
 
         public static void Delete(string file, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
-            var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
-            Logger.Warn($"{prefix}Deleting file.. type: {hitTypeEnum.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
+            //Logger.Info($"Deleting file{GetTrainerWheelsDisclosure()}.. type: {hitTypeEnum.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
 
-            if (!_settings.TrainerWheels)
-            {
-                Backup(file, "deleted", backupAction);
-                File.Delete(file);
-            }
+            Backup(file, "deleted", backupAction);
+            Delete(file);
         }
 
         public static IEnumerable<FileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
@@ -45,7 +42,8 @@ namespace ClrVpin.Shared
             return deleted;
         }
 
-        public static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, IEnumerable<string> kindredExtensions, Action<string> backupAction)
+        public static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, IEnumerable<string> kindredExtensions,
+            Action<string> backupAction)
         {
             // merge the specific file
             Merge(sourceFile, destinationFile, hitTypeEnum, contentType, deleteSource, preserveDateModified, backupAction);
@@ -97,16 +95,44 @@ namespace ClrVpin.Shared
                 ActiveBackupFolder = _rootBackupFolder;
         }
 
-        private static void Rename(string originalFile, string newFile, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
+        public static string GetFileInfoStatistics(string file)
         {
-            var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
-            Logger.Info($"{prefix}Renaming file.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, original: {originalFile}, new: {newFile}");
+            FileInfo fileInfo = null;
+            if (File.Exists(file))
+                fileInfo = new FileInfo(file);
 
-            if (!_settings.TrainerWheels)
-            {
-                Backup(originalFile, "renamed", backupAction);
-                File.Move(originalFile, newFile, true);
-            }
+            return fileInfo != null ? $"{ByteSize.FromBytes(fileInfo.Length).ToString("0.#"),-8} {fileInfo.LastWriteTime:dd/MM/yy HH:mm:ss} - {file}" : $"{"(n/a: new file)",-26} - {file}";
+        }
+
+        private static void Rename(string sourceFile, string newFile, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
+        {
+            //Logger.Info($"Renaming file{GetTrainerWheelsDisclosure()}.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, original: {sourceFile}, new: {newFile}");
+
+            Backup(sourceFile, "renamed", backupAction);
+            Rename(sourceFile, newFile);
+        }
+
+        private static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, Action<string> backupAction = null)
+        {
+            Logger.Info($"Merging file{GetTrainerWheelsDisclosure()}.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, source: {sourceFile}, destination: {destinationFile}");
+
+            // backup the existing file (if any) before overwriting
+            Backup(destinationFile, "deleted");
+
+            // backup the source file before merging it
+            Backup(sourceFile, "merged", backupAction);
+
+            // copy the source file into the 'merged' destination folder
+            Copy(sourceFile, destinationFile);
+
+            // delete the source file if required - no need to backup as this is already done in the "merged" folder
+            if (deleteSource)
+                Delete(sourceFile);
+
+            // optionally reset date modified if preservation isn't selected
+            // - by default windows behaviour when copying file.. last access & creation timestamps are DateTime.Now, but last modified is unchanged!
+            if (!preserveDateModified)
+                File.SetLastWriteTime(destinationFile, DateTime.Now);
         }
 
         private static void ExecuteForKindred(IEnumerable<string> kindredExtensions, string sourceFile, string destinationFile, Action<string, string> action)
@@ -134,47 +160,17 @@ namespace ClrVpin.Shared
             return kindredFiles;
         }
 
-        private static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, Action<string> backupAction = null)
-        {
-            var prefix = _settings.TrainerWheels ? "Ignored (trainer wheels are on) " : "";
-
-            Logger.Info($"{prefix}Merging file.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, source: {sourceFile}, destination: {destinationFile}");
-
-            if (!_settings.TrainerWheels)
-            {
-                // backup the existing file (if any) before overwriting
-                if (File.Exists(destinationFile))
-                {
-                    Logger.Info($"- deleting.. file: {destinationFile}");
-                    Backup(destinationFile, "deleted");
-                }
-
-                // backup the source file that is to be used
-                Backup(sourceFile, "merged", backupAction);
-                File.Copy(sourceFile, destinationFile, true);
-                Logger.Info($"- copying.. source: {sourceFile}, destination: {destinationFile}");
-
-                // delete the source file if required - no need to backup as this is already done in the "merged" folder
-                if (deleteSource)
-                {
-                    Logger.Info($"- deleting.. file: {sourceFile}");
-                    File.Delete(sourceFile);
-                }
-
-                // optionally reset date modified if preservation isn't selected
-                // - by default windows behaviour when copying file.. last access & creation timestamps are DateTime.Now, but last modified is unchanged!
-                if (!preserveDateModified)
-                    File.SetLastWriteTime(destinationFile, DateTime.Now);
-            }
-        }
-
         private static void Backup(string file, string subFolder, Action<string> backupAction = null)
         {
-            // backup file (aka copy) to the specified sub folder
-            var backupFile = CreateBackupFileName(file, subFolder);
-            File.Copy(file, backupFile, true);
+            if (!_settings.TrainerWheels && File.Exists(file))
+            {
+                // backup file (aka copy) to the specified sub folder
+                // - no logging since the backup is intended to be transparent
+                var backupFile = CreateBackupFileName(file, subFolder);
+                File.Copy(file, backupFile, true);
 
-            backupAction?.Invoke(backupFile);
+                backupAction?.Invoke(backupFile);
+            }
         }
 
         private static string CreateBackupFileName(string file, string subFolder = "")
@@ -204,8 +200,34 @@ namespace ClrVpin.Shared
             return new FileDetail(hit.ContentTypeEnum, hit.Type, deleted ? FixFileTypeEnum.Deleted : null, hit.Path, hit.Size ?? 0);
         }
 
-        private static string _rootBackupFolder;
+        private static void Delete(string sourceFile)
+        {
+            Logger.Debug($"- deleting{GetTrainerWheelsDisclosure()}..\n  src: {GetFileInfoStatistics(sourceFile)}");
 
+            if (!_settings.TrainerWheels)
+                File.Delete(sourceFile);
+        }
+
+        private static void Rename(string sourceFile, string destinationFile)
+        {
+            Logger.Debug($"- renaming{GetTrainerWheelsDisclosure()}..\n  src: {GetFileInfoStatistics(sourceFile)}\n  dst: {GetFileInfoStatistics(destinationFile)}");
+
+            if (!_settings.TrainerWheels)
+                File.Move(sourceFile, destinationFile, true);
+        }
+
+        private static void Copy(string sourceFile, string destinationFile)
+        {
+            Logger.Debug($"- copying{GetTrainerWheelsDisclosure()}..\n  src: {GetFileInfoStatistics(sourceFile)}\n  dst: {GetFileInfoStatistics(destinationFile)}");
+
+            if (!_settings.TrainerWheels)
+                File.Copy(sourceFile, destinationFile, true);
+        }
+
+
+        private static string GetTrainerWheelsDisclosure() => _settings.TrainerWheels ? " (ignored: trainer wheels)" : "";
+
+        private static string _rootBackupFolder;
         private static readonly Models.Settings.Settings _settings;
     }
 }

@@ -2,18 +2,18 @@
 
 namespace ClrVpin.Models
 {
+    // decreasing priority order.. important when using 'name' as the multiple file preference
     public enum HitTypeEnum
     {
-        // not displayed
-        [Description("Perfect Match")] Valid,
+        [Description("Correct Name")] CorrectName,   // expected to be the first entry
+
+        [Description("Wrong Case")] WrongCase,
 
         [Description("Table Name Match")] TableName,
 
         [Description("Fuzzy Name Match")] Fuzzy,
 
-        [Description("Wrong Case")] WrongCase,
-
-        [Description("Duplicate Extension")] DuplicateExtension,
+        [Description("Duplicate Extension")] DuplicateExtension,    // requires that a 'CorrectName' hit also exist
 
         [Description("Missing File")] Missing,
         

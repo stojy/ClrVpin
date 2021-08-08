@@ -16,13 +16,13 @@ namespace ClrVpin.Models.Settings
             FixablePrioritizedHitTypeEnums = AllHitTypes.Where(x => x.Fixable).Select(x => x.Enum).ToArray();
             IrreparablePrioritizedHitTypeEnums = AllHitTypes.Where(x => !x.Fixable).Select(x => x.Enum).ToArray();
 
-            HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.Valid).ToArray();
+            HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.CorrectName).ToArray();
             MultipleMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // rebuilder
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
+            MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
                 HitTypeEnum.Unsupported)).ToArray();
         }
 
@@ -38,12 +38,12 @@ namespace ClrVpin.Models.Settings
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
         public static HitType[] AllHitTypes =
         {
-            new HitType(HitTypeEnum.Valid, true, "Files that match perfectly!"),
-            new HitType(HitTypeEnum.DuplicateExtension, true, "Files that match the correct name AND have a configured file extension, but multiple extension matches exist (e.g. mkv and mp4"),
+            new HitType(HitTypeEnum.CorrectName, true, "Files that match perfectly!"),
             new HitType(HitTypeEnum.WrongCase, true, "Files that match the correct name, but have the wrong case"),
             new HitType(HitTypeEnum.TableName, true, "Files that match against the table name instead of the table description - ONLY APPLICABLE FOR MEDIA CONTENT, since tables ALWAYS match the table name"),
             new HitType(HitTypeEnum.Fuzzy, true, "Files that match the 'Fuzzy logic' algorithms"),
-            new HitType(HitTypeEnum.Missing, false, "Files that should match but are missing"),
+            new HitType(HitTypeEnum.DuplicateExtension, true, "Files that match the correct name AND have a configured file extension, but multiple extension matches exist (e.g. mkv and mp4"),
+            new HitType(HitTypeEnum.Missing, false, "Files that are missing, i.e. they need to be downloaded from your favorite pinball site(s)"),
             new HitType(HitTypeEnum.Unknown, false, "Files that do match the configured file extension type, but don't match any of the tables in the database"),
             new HitType(HitTypeEnum.Unsupported, false, "Files that don't match the configured file extension types - ONLY APPLICABLE FOR MEDIA CONTENT, since unsupported files are EXPECTED to exist in the tables folder (e.g. txt, exe, ogg, etc)")
         };
@@ -71,7 +71,7 @@ namespace ClrVpin.Models.Settings
         // all possible multiple match fix options
         public static MultipleMatchOption[] MultipleMatchOptions =
         {
-            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.CorrectName, Tip = "File with the correct matching name is used. If it doesn't exist then use the following (in order): WrongCase, TableName, and Fuzzy."},
+            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.CorrectName, Tip = "File with the correct matching name is used, if it doesn't exist then the following names are used (in descending order): WrongCase, TableName, and Fuzzy."},
             new MultipleMatchOption {Enum = MultipleMatchOptionEnum.MostRecent, Tip = "File with the most recent modified timestamp is used"},
             new MultipleMatchOption {Enum = MultipleMatchOptionEnum.LargestSize, Tip = "File with the largest size is used"}
         };

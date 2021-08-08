@@ -17,7 +17,7 @@ namespace ClrVpin.Scanner
         {
             // hit type stats for all supported types only
             // - including the extra 'under the hood' types.. valid, unknown, unsupported
-            SupportedHitTypes = StaticSettings.HitTypes.ToList();
+            SupportedHitTypes = StaticSettings.AllHitTypes.ToList();
 
             SupportedContentTypes = Settings.GetFixableContentTypes().Where(x => Settings.Scanner.SelectedCheckContentTypes.Contains(x.Description)).ToList();
 
@@ -52,7 +52,7 @@ namespace ClrVpin.Scanner
 
         protected override string CreateTotalStatistics()
         {
-            var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.Valid).ToList();
+            var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
 
             var eligibleHits = Games.Count * Settings.Scanner.SelectedCheckContentTypes.Count;
 
@@ -89,7 +89,7 @@ namespace ClrVpin.Scanner
                    $"\n{"- Possible Content",StatisticsKeyWidth}{Games.Count * Settings.GetFixableContentTypes().Length}" +
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"All Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +
-                   $"\n\n{"Valid Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
+                   $"\n\n{"CorrectName Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
                    $"\n{"- Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
                    $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Count, GameFiles.Sum(x => x.Size))}" +
                    $"\n{"- renamed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +

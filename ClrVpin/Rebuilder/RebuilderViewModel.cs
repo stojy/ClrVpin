@@ -98,7 +98,7 @@ namespace ClrVpin.Rebuilder
         {
             // show all match criteria types
             // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
-            var matchTypes = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.Valid, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
+            var matchTypes = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
             {
                 var featureType = new FeatureType((int) matchType.Enum)
                 {

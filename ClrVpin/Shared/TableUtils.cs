@@ -86,7 +86,7 @@ namespace ClrVpin.Shared
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
                     var contentHits = getContentHits(matchedGame);
-                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.Valid) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.Valid, matchedFile);
+                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, matchedFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
                     string.Equals(game.GetContentName(contentType.Category), Path.GetFileNameWithoutExtension(matchedFile), StringComparison.CurrentCultureIgnoreCase))) != null)

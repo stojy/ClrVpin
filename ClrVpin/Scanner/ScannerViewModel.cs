@@ -55,7 +55,7 @@ namespace ClrVpin.Scanner
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 400,
-                Height = 640,
+                Height = 655,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate,
@@ -102,7 +102,7 @@ namespace ClrVpin.Scanner
         private IEnumerable<FeatureType> CreateCheckHitTypes()
         {
             // show all hit types
-            var featureTypes = StaticSettings.HitTypes.Select(hitType =>
+            var featureTypes = StaticSettings.AllHitTypes.Select(hitType =>
             {
                 var featureType = new FeatureType((int) hitType.Enum)
                 {
@@ -135,7 +135,7 @@ namespace ClrVpin.Scanner
         private IEnumerable<FeatureType> CreateFixHitTypes()
         {
             // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
-            var contentTypes = StaticSettings.HitTypes.Select(hitType => new FeatureType((int) hitType.Enum)
+            var contentTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int) hitType.Enum)
             {
                 Description = hitType.Description,
                 Tip = hitType.Tip,

@@ -13,7 +13,7 @@ namespace ClrVpin.Models.Settings
             SourceFolder = SpecialFolder.Downloads;
             
             // valid hit type (i.e. a perfect name match) is always supported when rebuilding
-            SelectedMatchTypes.Add(HitTypeEnum.Valid);
+            SelectedMatchTypes.Add(HitTypeEnum.CorrectName);
         }
 
         public string SourceFolder { get; set; }

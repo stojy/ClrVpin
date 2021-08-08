@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using ClrVpin.Logging;
 using ClrVpin.Models;
+using ClrVpin.Models.Scanner;
 using ClrVpin.Shared;
+using Utils;
 
 namespace ClrVpin.Scanner
 {
@@ -57,27 +62,34 @@ namespace ClrVpin.Scanner
             // - skip options are selected or relevant
             var gameFiles = new List<FileDetail>();
 
+            // fixable game exclude following hit types..
+            // - missing - associated with game as the default entry, but can't be fixed.. requires file to be downloaded
+            // - unknown - not associated with a game (i.e. no need to check here).. handled elsewhere
+            // - unsupported - not associated with any known content type, e.g. Magic.ini
+            var fixableGames = games.Where(game => game.Content.ContentHitsCollection.Any(x => x.Hits.Any(hit => hit.Type != HitTypeEnum.Missing))).ToList();
+
             // fix files associated with games, if they satisfy the fix criteria
-            games.ForEach(game =>
+            fixableGames.ForEach(game =>
             {
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
                 {
-                    if (TableUtils.TryGet(contentHitCollection.Hits, out var hit, HitTypeEnum.Valid))
-                    {
-                        // valid hit exists.. so delete other hits, i.e. other hits aren't as relevant
-                        gameFiles.AddRange(FileUtils.DeleteAllExcept(contentHitCollection.Hits, hit, _settings.Scanner.SelectedFixHitTypes));
-                    }
-                    else if (TableUtils.TryGet(contentHitCollection.Hits, out hit, HitTypeEnum.WrongCase, HitTypeEnum.TableName, HitTypeEnum.Fuzzy))
-                    {
-                        // for all 3 hit types.. rename file and delete other entries
-                        // - duplicate extension is n/a since it's implied a valid hit already exists, i.e. covered above
-                        gameFiles.Add(FileUtils.Rename(hit, game, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(hit.ContentTypeEnum).KindredExtensionsList));
-                        gameFiles.AddRange(FileUtils.DeleteAllExcept(contentHitCollection.Hits, hit, _settings.Scanner.SelectedFixHitTypes));
-                    }
+                    // the underlying HitTypeEnum is declared in descending priority order
+                    var orderedByHitType = contentHitCollection.Hits.OrderBy(hit => hit.Type);
 
-                    // other hit types don't require any additional work..
-                    // - unknown - not associated with a game.. handled elsewhere
-                    // - missing - can't be fixed.. requires file to be downloaded
+                    switch (_settings.Scanner.SelectedMultipleMatchOption)
+                    {
+                        case MultipleMatchOptionEnum.CorrectName:
+                            FixOrderedHits(orderedByHitType.ToList(), gameFiles, game);
+                            break;
+                        case MultipleMatchOptionEnum.LargestSize:
+                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo.Length).ToList(), gameFiles, game);
+                            break;
+                        case MultipleMatchOptionEnum.MostRecent:
+                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo.LastWriteTime).ToList(), gameFiles, game);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 });
             });
 
@@ -87,12 +99,30 @@ namespace ClrVpin.Scanner
             return gameFiles;
         }
 
+        private static void FixOrderedHits(IList<Hit> orderedHits, List<FileDetail> gameFiles, Game game)
+        {
+            // nothing to fix if we only have 1 hit and it's a 'correct name' type
+            if (orderedHits.Count == 1 && orderedHits.First().Type == HitTypeEnum.CorrectName)
+                return;
+
+            // delete all hit files except the first
+            var preferredHit = orderedHits.First();
+
+            Logger.Info($"Fixing.. table: {game.GetContentName(_settings.GetContentType(preferredHit.ContentTypeEnum).Category)}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {_settings.Scanner.SelectedMultipleMatchOption.GetDescription()}");
+            Logger.Debug($"- keeping..\n  src: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}");
+            gameFiles.AddRange(FileUtils.DeleteAllExcept(orderedHits, preferredHit, _settings.Scanner.SelectedFixHitTypes));
+
+            // if the preferred hit file isn't 'CorrectName', then rename it
+            if (preferredHit.Type != HitTypeEnum.CorrectName)
+                gameFiles.Add(FileUtils.Rename(preferredHit, game, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
+        }
+
         public static async Task RemoveAsync(List<FileDetail> otherFileDetails)
         {
             await Task.Run(() => Remove(otherFileDetails));
         }
 
-        public static void Remove(List<FileDetail> otherFileDetails)
+        private static void Remove(List<FileDetail> otherFileDetails)
         {
             // delete files NOT associated with games, i.e. unknown files
             otherFileDetails.ForEach(x =>
@@ -101,6 +131,8 @@ namespace ClrVpin.Scanner
                     x.HitType == HitTypeEnum.Unsupported && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     x.Deleted = true;
+
+                    Logger.Info($"Removing redundant file - type: {x.HitType.GetDescription()}, content: n/a");
                     FileUtils.Delete(x.Path, x.HitType, null);
                 }
             });
@@ -113,7 +145,7 @@ namespace ClrVpin.Scanner
                 // add missing content
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
                 {
-                    if (!contentHitCollection.Hits.Any(hit => hit.Type == HitTypeEnum.Valid || hit.Type == HitTypeEnum.WrongCase))
+                    if (!contentHitCollection.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName || hit.Type == HitTypeEnum.WrongCase))
                         contentHitCollection.Add(HitTypeEnum.Missing, game.GetContentName(contentHitCollection.ContentType.Category));
                 });
             });

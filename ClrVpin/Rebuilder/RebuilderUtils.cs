@@ -117,7 +117,7 @@ namespace ClrVpin.Rebuilder
 
         private static bool SkipMerge(IgnoreOptionEnum optionEnum, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo)
         {
-            Log("Ignored merging", optionEnum.GetDescription(), hit, sourceFileInfo, destinationFileInfo);
+            Log("Merging ignored", optionEnum.GetDescription(), hit, sourceFileInfo, destinationFileInfo);
             return false;
         }
 

@@ -60,7 +60,7 @@ namespace ClrVpin.Rebuilder
             var filteredContentTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
-                IsSupported = Settings.Rebuilder.SelectedMatchTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.Valid,
+                IsSupported = Settings.Rebuilder.SelectedMatchTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.CorrectName,
                 IsActive = Settings.Rebuilder.SelectedMatchTypes.Contains(hitType.Enum),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             });

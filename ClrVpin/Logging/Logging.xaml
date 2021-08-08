@@ -17,7 +17,7 @@
       <ListView ItemsSource="{Binding LogsView}">
         <ItemsControl.ItemTemplate>
           <DataTemplate DataType="logging:Log">
-            <TextBlock Padding="0" Margin="0" Text="{Binding Message}" Foreground="{Binding Level, Converter={StaticResource LogLevelConverter}}" />
+            <TextBlock Padding="0" Margin="0" FontFamily="Courier New" Text="{Binding Message}" Foreground="{Binding Level, Converter={StaticResource LogLevelConverter}}" />
           </DataTemplate>
         </ItemsControl.ItemTemplate>
 

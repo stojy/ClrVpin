@@ -16,9 +16,10 @@ namespace ClrVpin.Logging
 
             var color = (Level) value switch
             {
+                Level.Debug => Colors.DarkGray,
                 Level.Warn => Colors.DarkSalmon,
                 Level.Error => Colors.IndianRed,
-                _ => Colors.White
+                _ => Colors.White   // info
             };
 
             return new SolidColorBrush(color);

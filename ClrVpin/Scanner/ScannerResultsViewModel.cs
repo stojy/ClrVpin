@@ -61,7 +61,7 @@ namespace ClrVpin.Scanner
             var filteredContentTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
-                IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.Valid,
+                IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.CorrectName,
                 IsActive = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             });
