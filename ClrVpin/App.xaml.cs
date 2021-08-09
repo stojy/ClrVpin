@@ -11,7 +11,7 @@ namespace ClrVpin
         {
             base.OnStartup(e);
 
-            Logging.Logger.Info("ClrVPin started");
+            Logging.Logger.Info($"ClrVPin started - v{Assembly.GetEntryAssembly()?.GetName().Version}");
 
             SetupExceptionHandling();
         }

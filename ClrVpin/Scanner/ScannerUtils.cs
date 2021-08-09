@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
@@ -99,15 +98,36 @@ namespace ClrVpin.Scanner
             return gameFiles;
         }
 
-        private static void FixOrderedHits(IList<Hit> orderedHits, List<FileDetail> gameFiles, Game game)
+        private static void FixOrderedHits(ICollection<Hit> orderedHits, List<FileDetail> gameFiles, Game game)
         {
-            // nothing to fix if we only have 1 hit and it's a 'correct name' type
-            if (orderedHits.Count == 1 && orderedHits.First().Type == HitTypeEnum.CorrectName)
+            var preferredHit = orderedHits.First();
+            var nonPreferredHits = orderedHits.Skip(1).ToList();
+
+            // nothing to fix if the preferred hit is 'correct name' AND there's only 1 hit
+            if (preferredHit.Type == HitTypeEnum.CorrectName && orderedHits.Count == 1)
                 return;
 
-            // delete all hit files except the first
-            var preferredHit = orderedHits.First();
+            // nothing to fix if the preferred hit 'correct name' AND the other hits aren't selected
+            // - e.g. preferred = wrong case, other=correct name (not selected)
+            if (preferredHit.Type == HitTypeEnum.CorrectName && !nonPreferredHits.Any(hit => hit.Type.In(_settings.Scanner.SelectedFixHitTypes)))
+            {
+                Logger.Info($"Skipping (fix criteria not selected).. table: {game.GetContentName(_settings.GetContentType(preferredHit.ContentTypeEnum).Category)}, " +
+                            $"preferred type: {preferredHit.Type.GetDescription()}, required fix types (unselected): {string.Join('|', nonPreferredHits.Select(x => x.Type.GetDescription()).Distinct())}, " +
+                            $"content: {preferredHit.ContentType}, multi option: {_settings.Scanner.SelectedMultipleMatchOption.GetDescription()}");
+                return;
+            }
 
+            // nothing to fix if the preferred hit isn't selected
+            // - e.g. correct name not selected
+            if (preferredHit.Type != HitTypeEnum.CorrectName && !preferredHit.Type.In(_settings.Scanner.SelectedFixHitTypes))
+            {
+                Logger.Info($"Skipping (fix criteria not selected).. table: {game.GetContentName(_settings.GetContentType(preferredHit.ContentTypeEnum).Category)}, " +
+                            $"preferred type (unselected): {preferredHit.Type.GetDescription()}, " +
+                            $"content: {preferredHit.ContentType}, multi option: {_settings.Scanner.SelectedMultipleMatchOption.GetDescription()}");
+                return;
+            }
+
+            // delete all hit files except the first
             Logger.Info($"Fixing.. table: {game.GetContentName(_settings.GetContentType(preferredHit.ContentTypeEnum).Category)}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {_settings.Scanner.SelectedMultipleMatchOption.GetDescription()}");
             Logger.Debug($"- keeping..\n  src: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}");
             gameFiles.AddRange(FileUtils.DeleteAllExcept(orderedHits, preferredHit, _settings.Scanner.SelectedFixHitTypes));
