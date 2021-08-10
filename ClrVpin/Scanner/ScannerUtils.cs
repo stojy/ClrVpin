@@ -52,7 +52,7 @@ namespace ClrVpin.Scanner
             return fixedFileDetails;
         }
 
-        private static List<FileDetail> Fix(List<Game> games, string backupFolder)
+        private static List<FileDetail> Fix(IEnumerable<Game> games, string backupFolder)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 

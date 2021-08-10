@@ -50,7 +50,7 @@ namespace ClrVpin.Settings
                 Owner = parent,
                 Content = this,
                 //SizeToContent = SizeToContent.WidthAndHeight,
-                Height = 1010,
+                Height = 1080,
                 Width = 820,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Resources = parent.Resources,
@@ -99,9 +99,17 @@ namespace ClrVpin.Settings
             FrontendContentTypeModels.ForEach(x =>
             {
                 // for storage
-                x.ContentType.Folder = x.ContentType.Category == ContentTypeCategoryEnum.Database
-                    ? $@"{Settings.FrontendFolder}\Databases\Visual Pinball"
-                    : $@"{Settings.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
+                switch (x.ContentType.Category)
+                {
+                    case ContentTypeCategoryEnum.Database:
+                        x.ContentType.Folder = $@"{Settings.FrontendFolder}\Databases\Visual Pinball";
+                        break;
+                    case ContentTypeCategoryEnum.Media:
+                        x.ContentType.Folder = x.ContentType.Enum == ContentTypeEnum.InstructionCards
+                            ? $@"{Settings.FrontendFolder}\Media\{x.ContentType.Description}"
+                            : $@"{Settings.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
+                        break;
+                }
 
                 // for display
                 x.Folder = x.ContentType.Folder;

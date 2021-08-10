@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using PropertyChanged;
 using Utils;
 
@@ -34,7 +35,8 @@ namespace ClrVpin.Models.Settings
                 new ContentType {Enum = ContentTypeEnum.TableVideos, Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.apng, *.jpg", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.TopperVideos, Tip = "Video used when displaying the topper", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media}
+                new ContentType {Enum = ContentTypeEnum.TopperVideos, Tip = "Video used when displaying the topper", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.InstructionCards, Tip = "Image used when displaying instruction cards", Extensions = "*.png, *.jpg, *.swf", Category = ContentTypeCategoryEnum.Media}
             };
             AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
@@ -70,7 +72,9 @@ namespace ClrVpin.Models.Settings
         public RebuilderSettings Rebuilder { get; set; }
 
         public int Version { get; set; }
-        public int MinVersion { get; set; } = 1;
+        
+        [JsonIgnore]
+        public int MinVersion { get; set; } = 2;
 
         public void Init(DefaultSettings defaultSettings)
         {

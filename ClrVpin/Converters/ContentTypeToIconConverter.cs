@@ -27,6 +27,7 @@ namespace ClrVpin.Converters
                 ContentTypeEnum.TableVideos => PackIconKind.Video3dVariant,
                 ContentTypeEnum.WheelImages => PackIconKind.Image,
                 ContentTypeEnum.TopperVideos => PackIconKind.VideoVintage,
+                ContentTypeEnum.InstructionCards => PackIconKind.FileDocumentOutline,
                 _ => PackIconKind.Help
             };
 

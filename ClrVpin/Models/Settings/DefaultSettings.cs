@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Settings
@@ -23,6 +24,8 @@ namespace ClrVpin.Models.Settings
         public string FrontendFolder { get; set; }
 
         public int Version { get; set; }
+        
+        [JsonIgnore]
         public int MinVersion { get; set; } = 1;
 
         public void Init(DefaultSettings defaultSettings) => throw new NotImplementedException("Init not required for DefaultSettings");

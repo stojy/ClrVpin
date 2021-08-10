@@ -26,8 +26,8 @@ namespace ClrVpin.Models
         [Description("Topper Videos")]
         TopperVideos,
 
-        //[Description("Instruction Cards")]
-        //InstructionCards,
+        [Description("Instruction Cards")]
+        InstructionCards,
 
         //[Description("Flyer Images")]
         //FlyerImages,
