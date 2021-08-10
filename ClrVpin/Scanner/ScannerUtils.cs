@@ -152,7 +152,7 @@ namespace ClrVpin.Scanner
                 {
                     x.Deleted = true;
 
-                    Logger.Info($"Removing redundant file - type: {x.HitType.GetDescription()}, content: n/a");
+                    Logger.Info($"Fixing.. unknown/unsupported file, table: n/a, type: {x.HitType.GetDescription()}, content: n/a");
                     FileUtils.Delete(x.Path, x.HitType, null);
                 }
             });

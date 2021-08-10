@@ -114,8 +114,6 @@ namespace ClrVpin.Shared
 
         private static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, Action<string> backupAction = null)
         {
-            Logger.Info($"Merging file{GetTrainerWheelsDisclosure()}.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, source: {sourceFile}, destination: {destinationFile}");
-
             // backup the existing file (if any) before overwriting
             Backup(destinationFile, "deleted");
 
