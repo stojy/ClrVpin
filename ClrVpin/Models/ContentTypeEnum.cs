@@ -23,6 +23,15 @@ namespace ClrVpin.Models
         [Description("Wheel Images")]
         WheelImages,
 
+        [Description("Topper Videos")]
+        TopperVideos,
+
+        //[Description("Instruction Cards")]
+        //InstructionCards,
+
+        //[Description("Flyer Images")]
+        //FlyerImages,
+
         // pinball - VPX
         [Description("Tables")]
         Tables,
