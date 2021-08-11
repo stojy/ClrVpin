@@ -13,78 +13,77 @@
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
 
   <DataTemplate x:Key="ContentTypeTemplate" DataType="models:FeatureType">
-    <CheckBox Width="150" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+    <CheckBox Width="180" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
               Command="{Binding SelectedCommand}" />
   </DataTemplate>
+
+  <ItemsPanelTemplate x:Key="ContentTypeItemsTemplate">
+    <WrapPanel Orientation="Vertical" />
+  </ItemsPanelTemplate>
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:ScannerViewModel}">
     <StackPanel Margin="5">
 
       <!-- content -->
       <TextBlock Style="{StaticResource Title}">Content</TextBlock>
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition />
-          <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-
+      <WrapPanel>
         <GroupBox Margin="5" Padding="2" Header="Pinball">
-          <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource ContentTypeTemplate}" />
+          <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource ContentTypeTemplate}"
+                        ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
 
-        <GroupBox Grid.Column="1" Margin="5" Padding="2" Header="Media">
-          <ItemsControl ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource ContentTypeTemplate}" />
+        <GroupBox Margin="5" Padding="2" Header="Media">
+          <ItemsControl Height="165" ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource ContentTypeTemplate}"
+                        ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
-      </Grid>
+      </WrapPanel>
 
       <!-- criteria -->
       <TextBlock Style="{StaticResource Title}">Criteria</TextBlock>
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition />
-          <ColumnDefinition />
-        </Grid.ColumnDefinitions>
 
+      <WrapPanel>
         <GroupBox Margin="5" Padding="2" Header="Match">
           <ItemsControl ItemsSource="{Binding CheckHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="models:FeatureType">
-                <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                <CheckBox Width="180" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
                           Command="{Binding SelectedCommand}" />
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
         </GroupBox>
 
-        <GroupBox Grid.Column="1" Margin="5" Padding="2" Header="Fix">
+        <GroupBox Margin="5" Padding="2" Header="Fix">
           <ItemsControl ItemsSource="{Binding FixHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="models:FeatureType">
-                <CheckBox Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                <CheckBox Width="180" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
                           Command="{Binding SelectedCommand}" />
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
         </GroupBox>
-      </Grid>
+      </WrapPanel>
 
       <!-- fix options -->
       <TextBlock Style="{StaticResource Title}">Options</TextBlock>
-      <GroupBox Margin="5" Padding="2" Header="Multiple Match Preference">
-        <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="models:FeatureType">
-              <RadioButton GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                        Command="{Binding SelectedCommand}" />
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </GroupBox>
+      <WrapPanel>
+        <GroupBox Margin="5" Padding="2" Header="Multiple Match Preference">
+          <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="models:FeatureType">
+                <RadioButton Width="180" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                             Command="{Binding SelectedCommand}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </GroupBox>
+      </WrapPanel>
 
       <!-- trainer wheels -->
       <WrapPanel Margin="5">
         <CheckBox ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
-                  IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels"/>
+                  IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels" />
       </WrapPanel>
 
       <Button Margin="5" Width="50" Command="{Binding StartCommand}" IsEnabled="{Binding IsValid}" Style="{StaticResource AlternateButton}">Start</Button>

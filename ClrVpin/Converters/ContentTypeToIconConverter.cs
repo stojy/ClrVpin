@@ -28,6 +28,14 @@ namespace ClrVpin.Converters
                 ContentTypeEnum.WheelImages => PackIconKind.Image,
                 ContentTypeEnum.TopperVideos => PackIconKind.VideoVintage,
                 ContentTypeEnum.InstructionCards => PackIconKind.FileDocumentOutline,
+                ContentTypeEnum.FlyerImagesBack => PackIconKind.SignRealEstate,
+                ContentTypeEnum.FlyerImagesFront => PackIconKind.SignRealEstate,
+                ContentTypeEnum.FlyerImagesInside1 => PackIconKind.SignRealEstate,
+                ContentTypeEnum.FlyerImagesInside2 => PackIconKind.SignRealEstate,
+                ContentTypeEnum.FlyerImagesInside3 => PackIconKind.SignRealEstate,
+                ContentTypeEnum.FlyerImagesInside4 => PackIconKind.SignRealEstate,
+                ContentTypeEnum.FlyerImagesInside5 => PackIconKind.SignRealEstate,
+                ContentTypeEnum.FlyerImagesInside6 => PackIconKind.SignRealEstate,
                 _ => PackIconKind.Help
             };
 

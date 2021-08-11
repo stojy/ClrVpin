@@ -19,7 +19,7 @@
         <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding SourceFolderModel}" />
 
         <ComboBox materialDesign:HintAssist.Hint="Destination Type" ItemsSource="{Binding DestinationContentTypes}"
-                  Width="150" VerticalAlignment="Top" Margin="20,0,0,0"
+                  Width="170" VerticalAlignment="Top" Margin="20,0,0,0"
                   Style="{StaticResource MaterialDesignFloatingHintComboBox}" materialDesign:TextFieldAssist.HasClearButton="True">
           <ComboBox.SelectedItem>
             <Binding Path="Settings.Rebuilder.DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
@@ -40,9 +40,12 @@
       <ItemsControl ItemsSource="{Binding MatchCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
         <ItemsControl.ItemTemplate>
           <DataTemplate DataType="models:FeatureType">
+            <!-- fixed width to have items align nicely --> 
             <CheckBox Margin="0,0,20,2" Width="270" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
           </DataTemplate>
         </ItemsControl.ItemTemplate>
+        
+        <!-- placed in a wrap panel to scroll horizontally -->
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
             <WrapPanel />

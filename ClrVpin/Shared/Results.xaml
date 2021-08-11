@@ -61,22 +61,39 @@
           </TextBox>
 
           <GroupBox Margin="5" Padding="2" Header="Content">
-            <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5">
+            <!-- fixed height control to get items in to columns -->
+            <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">
-                  <CheckBox Margin="0" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
+                  <!-- fixed width so they align nicely -->
+                  <CheckBox Margin="0" Width="170" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
+
+              <!-- scroll vertically then horizontally -->
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
             </ItemsControl>
           </GroupBox>
 
           <GroupBox Margin="5" Padding="2" Header="Criteria">
-            <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5">
+            <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">
-                  <CheckBox Margin="0" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
+                  <!-- fixed width so they align nicely -->
+                  <CheckBox Margin="0" Width="170" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
+            
+              <!-- scroll vertically then horizontally -->
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
             </ItemsControl>
           </GroupBox>
         </WrapPanel>

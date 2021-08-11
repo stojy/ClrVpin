@@ -19,7 +19,11 @@ namespace ClrVpin.Shared
             // - DpiScaleX/Y - multiplying factor relative to 96dpi
             var dpiScale = VisualTreeHelper.GetDpi(window);
 
-            // convert resolution to WPF screen independent units (96dpi)
+            // convert resolution to WPF screen independent units, i.e. all WPF sizing is relative to 96dpi --> BUT, a 'dot' does NOT equate to a physical pixel!
+            // - e.g. 3840 pixel monitor at 150% scaling --> WPF width = 3840 / 1.5 = 2560px
+            // - e.g. 3840 pixel monitor at 100% scaling --> WPF width = 3840 / 11 = 3840px
+            // - e.g. 1920 pixel monitor at 100% scaling --> WPF width = 1920 / 11 = 1920px
+            // - i.e. WPF window.Width=1000px on 1920 @ 100% scaling (max width=1920) will be LARGER vs 3840 @ 150% scaling (max width=2560)
             return new Rect {Width = screen.WorkingArea.Width / dpiScale.DpiScaleX, Height = screen.WorkingArea.Height / dpiScale.DpiScaleY};
         }
     }

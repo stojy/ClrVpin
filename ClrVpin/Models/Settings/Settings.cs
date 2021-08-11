@@ -36,7 +36,15 @@ namespace ClrVpin.Models.Settings
                 new ContentType {Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.apng, *.jpg", Category = ContentTypeCategoryEnum.Media},
                 new ContentType {Enum = ContentTypeEnum.TopperVideos, Tip = "Video used when displaying the topper", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.InstructionCards, Tip = "Image used when displaying instruction cards", Extensions = "*.png, *.jpg, *.swf", Category = ContentTypeCategoryEnum.Media}
+                new ContentType {Enum = ContentTypeEnum.InstructionCards, Tip = "Image used when displaying instruction cards", Extensions = "*.png, *.jpg, *.swf", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.FlyerImagesBack, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.FlyerImagesFront, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside1, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside2, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside3, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside4, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside5, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
+                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside6, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media}
             };
             AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 

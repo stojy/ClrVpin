@@ -29,8 +29,22 @@ namespace ClrVpin.Models
         [Description("Instruction Cards")]
         InstructionCards,
 
-        //[Description("Flyer Images")]
-        //FlyerImages,
+        [Description("Flyer Images\\Back")]
+        FlyerImagesBack,
+        [Description("Flyer Images\\Front")]
+        FlyerImagesFront,
+        [Description("Flyer Images\\Inside1")]
+        FlyerImagesInside1,
+        [Description("Flyer Images\\Inside2")]
+        FlyerImagesInside2,
+        [Description("Flyer Images\\Inside3")]
+        FlyerImagesInside3,
+        [Description("Flyer Images\\Inside4")]
+        FlyerImagesInside4,
+        [Description("Flyer Images\\Inside5")]
+        FlyerImagesInside5,
+        [Description("Flyer Images\\Inside6")]
+        FlyerImagesInside6,
 
         // pinball - VPX
         [Description("Tables")]

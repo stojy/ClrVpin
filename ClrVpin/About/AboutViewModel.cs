@@ -34,7 +34,7 @@ namespace ClrVpin.About
                 Owner = parent,
                 Content = this,
                 //SizeToContent = SizeToContent.WidthAndHeight,
-                Width = 520,
+                Width = 500,
                 Height = 630,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Resources = parent.Resources,

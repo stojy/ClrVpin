@@ -64,7 +64,7 @@ namespace ClrVpin.Rebuilder
                 Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
-                Width = 660,
+                Width = 680,
                 Height = 425,
                 Content = this,
                 Resources = parent.Resources,

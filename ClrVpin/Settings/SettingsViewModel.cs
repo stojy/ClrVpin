@@ -50,8 +50,8 @@ namespace ClrVpin.Settings
                 Owner = parent,
                 Content = this,
                 //SizeToContent = SizeToContent.WidthAndHeight,
-                Height = 1080,
                 Width = 820,
+                Height = 1365,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("SettingsTemplate") as DataTemplate,
@@ -105,9 +105,23 @@ namespace ClrVpin.Settings
                         x.ContentType.Folder = $@"{Settings.FrontendFolder}\Databases\Visual Pinball";
                         break;
                     case ContentTypeCategoryEnum.Media:
-                        x.ContentType.Folder = x.ContentType.Enum == ContentTypeEnum.InstructionCards
-                            ? $@"{Settings.FrontendFolder}\Media\{x.ContentType.Description}"
-                            : $@"{Settings.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
+                        switch (x.ContentType.Enum)
+                        {
+                            case ContentTypeEnum.InstructionCards:
+                            case ContentTypeEnum.FlyerImagesBack:
+                            case ContentTypeEnum.FlyerImagesFront:
+                            case ContentTypeEnum.FlyerImagesInside1:
+                            case ContentTypeEnum.FlyerImagesInside2:
+                            case ContentTypeEnum.FlyerImagesInside3:
+                            case ContentTypeEnum.FlyerImagesInside4:
+                            case ContentTypeEnum.FlyerImagesInside5:
+                            case ContentTypeEnum.FlyerImagesInside6:
+                                x.ContentType.Folder = $@"{Settings.FrontendFolder}\Media\{x.ContentType.Description}";
+                                break;
+                            default:
+                                x.ContentType.Folder = $@"{Settings.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
+                                break;
+                        }
                         break;
                 }
 
