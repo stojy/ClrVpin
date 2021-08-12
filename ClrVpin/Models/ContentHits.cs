@@ -34,5 +34,7 @@ namespace ClrVpin.Models
             // always add hit type.. irrespective of whether it's valid or configured
             Hits.Add(new Hit(ContentType.Enum, path, hitType));
         }
+
+        public override string ToString() => $"ContentType: {ContentType}, Hits: {Hits.Count}, IsSmelly: {IsSmelly}";
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using PropertyChanged;
+using Utils;
 
 namespace ClrVpin.Models
 {
@@ -16,5 +17,7 @@ namespace ClrVpin.Models
 
         public IEnumerable<string> ExtensionsList => Extensions?.Split(",").Select(x => x.Trim()) ?? new List<string>();
         public IEnumerable<string> KindredExtensionsList => KindredExtensions?.Split(",").Select(x => x.Trim()) ?? new List<string>();
+
+        public override string ToString() => $"{Enum.GetDescription()}";
     }
 }

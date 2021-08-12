@@ -97,5 +97,7 @@ namespace ClrVpin.Models
             // determine the correct name - different for media vs pinball
             return category == ContentTypeCategoryEnum.Media ? Description : TableFile;
         }
+
+        public override string ToString() => $"Table: {TableFileWithExtension}, IsSmelly: {Content?.IsSmelly}";
     }
 }
