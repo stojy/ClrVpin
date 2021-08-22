@@ -123,7 +123,7 @@ namespace ClrVpin.Rebuilder
             // files..
             // 1. source file - will always exist since this is the new file to be merged
             // 2. destination file - may not exist, i.e. this is a new file name (aka new content)
-            Logger.Debug($"- keeping..\n  src: {FileUtils.GetFileInfoStatistics(sourceFileInfo.FullName)}\n  dst: {FileUtils.GetFileInfoStatistics(destinationFileInfo.FullName)}");
+            Logger.Debug($"- ignored..\n  src: {FileUtils.GetFileInfoStatistics(sourceFileInfo.FullName)}\n  dst: {FileUtils.GetFileInfoStatistics(destinationFileInfo.FullName)}");
 
             return false;
         }

@@ -135,7 +135,7 @@ namespace ClrVpin.Scanner
 
             // delete all hit files except the first
             Logger.Info($"Fixing.. table: {game.GetContentName(_settings.GetContentType(preferredHit.ContentTypeEnum).Category)}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {_settings.Scanner.SelectedMultipleMatchOption.GetDescription()}");
-            Logger.Debug($"- keeping..\n  src: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}");
+            Logger.Debug($"- matched..\n  src: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}");
             gameFiles.AddRange(FileUtils.DeleteAllExcept(orderedHits, preferredHit, _settings.Scanner.SelectedFixHitTypes));
 
             // if the preferred hit file isn't 'CorrectName', then rename it
