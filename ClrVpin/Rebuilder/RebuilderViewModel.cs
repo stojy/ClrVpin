@@ -66,7 +66,7 @@ namespace ClrVpin.Rebuilder
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 680,
-                Height = 425,
+                Height = 555,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,

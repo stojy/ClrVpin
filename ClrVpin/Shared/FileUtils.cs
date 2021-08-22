@@ -26,8 +26,6 @@ namespace ClrVpin.Shared
 
         public static void Delete(string file, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
-            //Logger.Info($"Deleting file{GetTrainerWheelsDisclosure()}.. type: {hitTypeEnum.GetDescription()}, content: {contentType ?? "n/a"}, file: {file}");
-
             Backup(file, "deleted", backupAction);
             Delete(file);
         }

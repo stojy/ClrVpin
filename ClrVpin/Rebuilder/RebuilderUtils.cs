@@ -89,7 +89,7 @@ namespace ClrVpin.Rebuilder
             if (supportedHitTypes.Contains(hit.Type))
             {
                 ignore = ShouldIgnore(game, hit, sourceFileInfo, destinationFileInfo);
-                if (ignore)
+                if (!ignore)
                 {
                     var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
                     var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
@@ -107,25 +107,35 @@ namespace ClrVpin.Rebuilder
             if (destinationFileInfo != null)
             {
                 if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && sourceFileInfo.Length < destinationFileInfo.Length * 0.5)
-                    return SkipMerge(game, IgnoreOptionEnum.IgnoreSmaller, hit, sourceFileInfo, destinationFileInfo);
+                    return ProcessIgnore(game, IgnoreOptionEnum.IgnoreSmaller, hit, sourceFileInfo, destinationFileInfo);
                 if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime < destinationFileInfo.LastWriteTime)
-                    return SkipMerge(game, IgnoreOptionEnum.IgnoreOlder, hit, sourceFileInfo, destinationFileInfo);
+                    return ProcessIgnore(game, IgnoreOptionEnum.IgnoreOlder, hit, sourceFileInfo, destinationFileInfo);
             }
 
             // if the file doesn't exist then there's no reason to not merge it
-            return true;
+            return false;
         }
 
-        private static bool SkipMerge(Game game, IgnoreOptionEnum optionEnum, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo)
+        private static bool ProcessIgnore(Game game, IgnoreOptionEnum optionEnum, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo)
         {
-            Logger.Info($"Skipping (ignore option selected).. table: {game.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category)}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}, ignore option: {optionEnum.GetDescription()}");
+            var prefix = _settings.Rebuilder.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
+            Logger.Info($"{prefix}.. table: {game.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category)}, type: {hit.Type.GetDescription()}, " +
+                        $"content: {hit.ContentType}, ignore option: {optionEnum.GetDescription()}, delete ignored: {_settings.Rebuilder.DeleteIgnoredFiles}");
 
-            // files..
-            // 1. source file - will always exist since this is the new file to be merged
-            // 2. destination file - may not exist, i.e. this is a new file name (aka new content)
-            Logger.Debug($"- ignored..\n  src: {FileUtils.GetFileInfoStatistics(sourceFileInfo.FullName)}\n  dst: {FileUtils.GetFileInfoStatistics(destinationFileInfo.FullName)}");
+            if (_settings.Rebuilder.DeleteIgnoredFiles)
+            {
+                FileUtils.Delete(hit.Path, hit.Type, hit.ContentType, newFile => hit.Path = newFile);
+                Logger.Debug($"  dst: {FileUtils.GetFileInfoStatistics(destinationFileInfo.FullName)}");
+            }
+            else
+            {
+                // files..
+                // 1. source file - will always exist since this is the new file to be merged
+                // 2. destination file - may not exist, i.e. this is a new file name (aka new content)
+                Logger.Debug($"- ignored..\n  src: {FileUtils.GetFileInfoStatistics(sourceFileInfo.FullName)}\n  dst: {FileUtils.GetFileInfoStatistics(destinationFileInfo.FullName)}");
+            }
 
-            return false;
+            return true;
         }
 
         private static readonly Models.Settings.Settings _settings;

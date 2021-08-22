@@ -18,6 +18,7 @@ namespace ClrVpin.Models.Settings
 
         public string SourceFolder { get; set; }
         public string DestinationContentType { get; set; }
+        public bool DeleteIgnoredFiles { get; set; }
 
         public ObservableCollection<HitTypeEnum> SelectedMatchTypes { get; set; } = new ObservableCollection<HitTypeEnum>();
         public ObservableCollection<MergeOptionEnum> SelectedMergeOptions { get; set; } = new ObservableCollection<MergeOptionEnum>();
