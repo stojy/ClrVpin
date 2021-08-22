@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Threading;
+using ByteSizeLib;
 using NLog;
 using NLog.Targets;
 
@@ -13,6 +15,25 @@ namespace ClrVpin.Logging
         {
             _dispatch = Dispatcher.CurrentDispatcher;
             File = GetLogFile();
+
+            var currentProcess = Process.GetCurrentProcess();
+
+            var computerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
+            var systemInfo = "\n\n---------- System Info ----------\n" +
+                             $"Start Time:            {currentProcess.StartTime}\n" +
+                             $"App:                   {currentProcess.ProcessName}\n" +
+                             $"Version:               {currentProcess.MainModule?.FileVersionInfo.ProductVersion}\n" +
+                             $"Path:                  {currentProcess.MainModule?.FileName}\n" +
+                             $"Command Line:          {Environment.CommandLine}\n" +
+                             $"Processor Type:        {Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER")}\n" +           // https://en.wikichip.org/wiki/intel/cpuid
+                             $"Processor Count:       {Environment.ProcessorCount}\n" +
+                             $"Free Physical Memory:  {ByteSize.FromBytes(computerInfo.AvailablePhysicalMemory).ToString("0.#")}\n" +
+                             $"Free Virtual Memory:   {ByteSize.FromBytes(computerInfo.AvailableVirtualMemory).ToString("0.#")}\n" +
+                             $"OS:                    {Environment.OSVersion}\n" +
+                             $"64 bit:                {Environment.Is64BitOperatingSystem}\n" +
+                             $"CLI Version:           {Environment.Version}\n" +
+                             "---------------------------------";
+            Info(systemInfo);
         }
 
         public static ObservableCollection<Log> Logs { get; } = new ObservableCollection<Log>();

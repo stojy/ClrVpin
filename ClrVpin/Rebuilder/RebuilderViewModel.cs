@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -157,12 +158,14 @@ namespace ClrVpin.Rebuilder
 
         private async void Start()
         {
+            Logger.Info($"\nRebuilder started, settings={JsonSerializer.Serialize(Settings)}");
+
             _rebuilderWindow.Hide();
             Logger.Clear();
 
             var progress = new ProgressViewModel();
             progress.Show(_rebuilderWindow);
-
+            
             progress.Update("Loading Database", 0);
             var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
 

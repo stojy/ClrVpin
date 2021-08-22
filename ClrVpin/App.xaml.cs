@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using ClrVpin.Models.Settings;
 
 namespace ClrVpin
 {
@@ -11,7 +13,7 @@ namespace ClrVpin
         {
             base.OnStartup(e);
 
-            Logging.Logger.Info($"ClrVPin started - v{Assembly.GetEntryAssembly()?.GetName().Version}");
+            Logging.Logger.Info($"App started, settings={JsonSerializer.Serialize(SettingsManager.Create().Settings)}");
 
             SetupExceptionHandling();
         }

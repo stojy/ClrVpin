@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -164,6 +165,8 @@ namespace ClrVpin.Scanner
 
         private async void Start()
         {
+            Logger.Info($"\nScanner started, settings={JsonSerializer.Serialize(Settings)}");
+
             _scannerWindow.Hide();
             Logger.Clear();
 
