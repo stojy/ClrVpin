@@ -89,7 +89,7 @@ namespace ClrVpin.Rebuilder
         private void TryUpdateDestinationFolder(string folder)
         {
             // attempt to assign destination folder automatically based on the specified folder
-            var contentType = _destinationContentTypes.FirstOrDefault(folder.EndsWith);
+            var contentType = _destinationContentTypes.FirstOrDefault(c => folder.ToLower().EndsWith(c.ToLower()));
             Settings.Rebuilder.DestinationContentType = contentType;
             
             UpdateIsValid();
