@@ -124,8 +124,7 @@ namespace ClrVpin.Rebuilder
 
             if (_settings.Rebuilder.DeleteIgnoredFiles)
             {
-                FileUtils.Delete(hit.Path, hit.Type, hit.ContentType, newFile => hit.Path = newFile);
-                Logger.Debug($"  dst: {FileUtils.GetFileInfoStatistics(destinationFileInfo.FullName)}");
+                FileUtils.DeleteIgnored(hit.Path, destinationFileInfo.FullName, hit.Type, hit.ContentType, newFile => hit.Path = newFile);
             }
             else
             {

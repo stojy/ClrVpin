@@ -30,6 +30,12 @@ namespace ClrVpin.Shared
             Delete(file);
         }
 
+        public static void DeleteIgnored(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
+        {
+            Backup(sourceFile, "deleted.ignored", backupAction);
+            DeleteIgnored(sourceFile, destinationFile);
+        }
+
         public static IEnumerable<FileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var deleted = new List<FileDetail>();
@@ -199,6 +205,15 @@ namespace ClrVpin.Shared
         private static void Delete(string sourceFile)
         {
             Logger.Debug($"- deleting{GetTrainerWheelsDisclosure()}..\n  src: {GetFileInfoStatistics(sourceFile)}");
+
+            if (!_settings.TrainerWheels)
+                File.Delete(sourceFile);
+        }
+
+        // same as delete, but also logging the destination file info (for comparison)
+        private static void DeleteIgnored(string sourceFile, string destinationFile)
+        {
+            Logger.Debug($"- deleting ignored{GetTrainerWheelsDisclosure()}..\n  src: {GetFileInfoStatistics(sourceFile)}\n  dst: {GetFileInfoStatistics(destinationFile)}");
 
             if (!_settings.TrainerWheels)
                 File.Delete(sourceFile);
