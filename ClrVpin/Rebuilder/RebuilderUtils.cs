@@ -108,7 +108,7 @@ namespace ClrVpin.Rebuilder
             {
                 if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && sourceFileInfo.Length < destinationFileInfo.Length * 0.5)
                     return ProcessIgnore(game, IgnoreOptionEnum.IgnoreSmaller, hit, sourceFileInfo, destinationFileInfo);
-                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime < destinationFileInfo.LastWriteTime)
+                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime <= destinationFileInfo.LastWriteTime)
                     return ProcessIgnore(game, IgnoreOptionEnum.IgnoreOlder, hit, sourceFileInfo, destinationFileInfo);
             }
 
