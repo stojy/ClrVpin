@@ -98,8 +98,8 @@ namespace ClrVpin.Shared
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
-                    game.TableFile.StartsWith(fuzzyName) || fuzzyName.StartsWith(game.TableFile) ||
-                    game.Description.StartsWith(fuzzyName) || fuzzyName.StartsWith(game.Description))) != null)
+                    game.TableFile.ToLower().StartsWith(fuzzyName) || fuzzyName.ToLower().StartsWith(game.TableFile) ||
+                    game.Description.ToLower().StartsWith(fuzzyName) || fuzzyName.ToLower().StartsWith(game.Description))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }
@@ -123,7 +123,7 @@ namespace ClrVpin.Shared
             var withoutExtension = Path.GetFileNameWithoutExtension(fileName);
             var trimmed = withoutExtension.Split("(").First();
 
-            return trimmed;
+            return trimmed.ToLower();
         }
 
         public static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
