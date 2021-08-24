@@ -76,7 +76,7 @@ namespace ClrVpin.Shared
             foreach (var matchedFile in matchedFiles)
             {
                 Game matchedGame;
-                var fuzzyName = GetFuzzyName(matchedFile);
+                var fuzzyFileName = GetFuzzyFileName(matchedFile);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
@@ -97,9 +97,8 @@ namespace ClrVpin.Shared
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
-                else if ((matchedGame = games.FirstOrDefault(game =>
-                    game.TableFile.ToLower().StartsWith(fuzzyName) || fuzzyName.ToLower().StartsWith(game.TableFile) ||
-                    game.Description.ToLower().StartsWith(fuzzyName) || fuzzyName.ToLower().StartsWith(game.Description))) != null)
+                else if ((matchedGame = games.FirstOrDefault(game => 
+                    FuzzyMatch(game.TableFile, fuzzyFileName) || FuzzyMatch(game.Description, fuzzyFileName))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }
@@ -115,7 +114,14 @@ namespace ClrVpin.Shared
             return unknownMediaFiles;
         }
 
-        private static string GetFuzzyName(string fileName)
+        public static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
+        {
+            // return the first entry found
+            hit = hits.FirstOrDefault(h => hitTypes.Contains(h.Type));
+            return hit != null;
+        }
+
+        private static string GetFuzzyFileName(string fileName)
         {
             // return the fuzzy portion of the filename..
             // - no file extensions
@@ -126,11 +132,39 @@ namespace ClrVpin.Shared
             return trimmed.ToLower();
         }
 
-        public static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
+        private static bool FuzzyMatch(string first, string second)
         {
-            // return the first entry found
-            hit = hits.FirstOrDefault(h => hitTypes.Contains(h.Type));
-            return hit != null;
+            var firstCleaned = FuzzyClean(first);
+            var secondCleaned = FuzzyClean(second);
+
+            var fuzzyMatch = firstCleaned.StartsWith(secondCleaned) || secondCleaned.StartsWith(firstCleaned);
+
+            return fuzzyMatch;
+        }
+
+        private static string FuzzyClean(string first)
+        {
+            // clean the string to make it a little cleaner for subsequent matching
+            // - lower case
+            // - remove/replace irrelevant text.. the, "'", etc
+            // - whitespace
+            // - etc
+            var fuzzyClean = first.ToLower()
+                    .Replace("the", "")
+                    .Replace("'", "")
+                    .Replace("`", "")
+                    .Replace(",", "")
+                    .Replace(";", "")
+                    .Replace("-", "")
+                    .Replace(" - ", "")
+                    .Replace("_", "")
+                    .Replace("&", "and")
+                    .Replace(" ", "")
+                    .TrimStart()
+                    .Trim()
+                ;
+
+            return fuzzyClean;
         }
 
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
