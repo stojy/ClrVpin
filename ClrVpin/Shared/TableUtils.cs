@@ -131,14 +131,16 @@ namespace ClrVpin.Shared
             return trimmed.ToLower();
         }
 
-        private static bool FuzzyMatch(string first, string second)
+        public static bool FuzzyMatch(string first, string second)
         {
             var firstCleaned = FuzzyClean(GetFuzzyFileName(first));
             var secondCleaned = FuzzyClean(GetFuzzyFileName(second));
 
-            var fuzzyMatch = firstCleaned.StartsWith(secondCleaned) || secondCleaned.StartsWith(firstCleaned);
+            var exactMatch = firstCleaned == secondCleaned;
 
-            return fuzzyMatch;
+            var startsMatch = firstCleaned.Length >= 15 && secondCleaned.Length >= 15 && (firstCleaned.StartsWith(secondCleaned) || secondCleaned.StartsWith(firstCleaned));
+
+            return exactMatch || startsMatch;
         }
 
         private static string FuzzyClean(string first)
@@ -155,11 +157,13 @@ namespace ClrVpin.Shared
                     .Replace(",", "")
                     .Replace(";", "")
                     .Replace("!", "")
-                    .Replace("-", "")
+                    .Replace("-", " ")
                     .Replace(" - ", "")
-                    .Replace("_", "")
-                    .Replace("&", "and")
-                    .Replace(" ", "")
+                    .Replace("_", " ")
+                    .Replace("&", " and ")
+                    .Replace("    ", " ")
+                    .Replace("   ", " ")
+                    .Replace("  ", " ")
                     .TrimStart()
                     .Trim()
                 ;
