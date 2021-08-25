@@ -76,7 +76,6 @@ namespace ClrVpin.Shared
             foreach (var matchedFile in matchedFiles)
             {
                 Game matchedGame;
-                var fuzzyFileName = GetFuzzyFileName(matchedFile);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
@@ -98,7 +97,7 @@ namespace ClrVpin.Shared
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game => 
-                    FuzzyMatch(game.TableFile, fuzzyFileName) || FuzzyMatch(game.Description, fuzzyFileName))) != null)
+                    FuzzyMatch(game.TableFile, matchedFile) || FuzzyMatch(game.Description, matchedFile))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }
@@ -134,8 +133,8 @@ namespace ClrVpin.Shared
 
         private static bool FuzzyMatch(string first, string second)
         {
-            var firstCleaned = FuzzyClean(first);
-            var secondCleaned = FuzzyClean(second);
+            var firstCleaned = FuzzyClean(GetFuzzyFileName(first));
+            var secondCleaned = FuzzyClean(GetFuzzyFileName(second));
 
             var fuzzyMatch = firstCleaned.StartsWith(secondCleaned) || secondCleaned.StartsWith(firstCleaned);
 
@@ -155,6 +154,7 @@ namespace ClrVpin.Shared
                     .Replace("`", "")
                     .Replace(",", "")
                     .Replace(";", "")
+                    .Replace("!", "")
                     .Replace("-", "")
                     .Replace(" - ", "")
                     .Replace("_", "")
