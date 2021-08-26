@@ -23,7 +23,8 @@ namespace ClrVpin.Tests
         [TestCase("medieval    madness (Williams 2006)", "medieval madness (blah 2000)", true, TestName = "remove x4 whitespace")]
         [TestCase("medieval     madness (Williams 2006)", "medieval madness (blah 2000)", true, TestName = "remove x5 whitespace")]
         [TestCase("medieval              madness (Williams 2006)", "medieval madness (blah 2000)", false, TestName = "remove lots of whitespace")]
-        [TestCase("medieval madnesas (Williams 2006)", "medieval madness", false)]
+        [TestCase("medieval madnesas (Williams 2006)", "medieval madness", false, TestName = "typo")]
+        [TestCase("ali (Stern 1980)", "ali", true, TestName = "short name exact match")]
         [TestCase("ali (Williams 2006)", "alien (blah)", false, TestName = "#1 - minimum 15 characters required for partial match")]
         [TestCase("black knight 2000", "black knight", false, TestName = "#2 - minimum 15 characters required for partial match")]
         [TestCase("black knight returns 2000", "black knight", false, TestName = "#3 - minimum 15 characters required for partial match")]
@@ -39,6 +40,8 @@ namespace ClrVpin.Tests
         [TestCase("black_knight", "black knight", true, TestName = "remove '_'")]
         [TestCase("black&knight", "black and knight", true, TestName = "replace '&'")]
         [TestCase("black & knight", "black and knight", true, TestName = "replace ' & '")]
+        [TestCase("Rocky and Bullwinkle And Friends (Data East 1993)", "Adventures of Rocky and Bullwinkle and Friends (1993).directb2s", true, TestName = "#1 contains - 20 characters satisified")]
+        [TestCase("Rocky and Bullwinkl", "Adventures of Rocky and Bullwinkle and Friends (1993).directb2s", false, TestName = "#1 contains - 20 characters not satisified")]
         public void FuzzyMatchTest(string first, string second, bool expectedIsMatch)
         {
             var isMatch = TableUtils.FuzzyMatch(first, second);

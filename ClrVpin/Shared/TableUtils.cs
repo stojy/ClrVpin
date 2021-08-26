@@ -96,8 +96,8 @@ namespace ClrVpin.Shared
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
-                else if ((matchedGame = games.FirstOrDefault(game => 
-                    FuzzyMatch(game.TableFile, matchedFile) || FuzzyMatch(game.Description, matchedFile))) != null)
+                // fuzzy match against table name (non-media) or description (media)
+                else if ((matchedGame = games.FirstOrDefault(game => FuzzyMatch(game.TableFile, matchedFile) || FuzzyMatch(game.Description, matchedFile))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }
@@ -139,8 +139,10 @@ namespace ClrVpin.Shared
             var exactMatch = firstCleaned == secondCleaned;
 
             var startsMatch = firstCleaned.Length >= 15 && secondCleaned.Length >= 15 && (firstCleaned.StartsWith(secondCleaned) || secondCleaned.StartsWith(firstCleaned));
+            
+            var containsMatch = firstCleaned.Length >= 20 && secondCleaned.Length >= 20 && (firstCleaned.Contains(secondCleaned) || secondCleaned.Contains(firstCleaned));
 
-            return exactMatch || startsMatch;
+            return exactMatch || startsMatch || containsMatch;
         }
 
         private static string FuzzyClean(string first)
