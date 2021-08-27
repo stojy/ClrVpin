@@ -202,7 +202,7 @@ namespace ClrVpin.Shared
             return fuzzyClean;
         }
 
-        private static readonly Regex _fuzzyFileNameRegex = new Regex(@"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*");
+        private static readonly Regex _fuzzyFileNameRegex = new Regex(@"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*", RegexOptions.Compiled);
      
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
     }
