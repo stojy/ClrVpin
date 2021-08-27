@@ -170,7 +170,7 @@ namespace ClrVpin.Rebuilder
             var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
 
             progress.Update("Checking Files", 30);
-            var unknownFiles = RebuilderUtils.Check(games);
+            var unknownFiles = await RebuilderUtils.CheckAsync(games);
 
             progress.Update("Merging Files", 60);
             var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder);

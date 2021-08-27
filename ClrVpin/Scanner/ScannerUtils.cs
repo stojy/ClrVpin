@@ -14,7 +14,13 @@ namespace ClrVpin.Scanner
     {
         private static readonly Models.Settings.Settings _settings = Model.Settings;
 
-        public static List<FileDetail> Check(List<Game> games)
+        public static async Task<List<FileDetail>> CheckAsync(List<Game> games)
+        {
+            var unknownFiles = await Task.Run(() => Check(games));
+            return unknownFiles;
+        }
+
+        private static List<FileDetail> Check(List<Game> games)
         {
             var unknownFiles = new List<FileDetail>();
 

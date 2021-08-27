@@ -132,7 +132,9 @@ namespace ClrVpin.Shared
             string manufacturer = null;
             int? year = null;
 
+            fileName = Path.GetFileNameWithoutExtension(fileName);
             var result = _fuzzyFileNameRegex.Match(fileName);
+
             if (result.Success)
             {
                 // strip any additional parenthesis content out
@@ -144,7 +146,7 @@ namespace ClrVpin.Shared
                     year = parsedYear;
             }
             else
-                name = Path.GetFileNameWithoutExtension(fileName).ToNull();
+                name = fileName.ToNull();
 
             return (name, manufacturer, year);
         }

@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using ClrVpin.Shared;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace ClrVpin.Tests
 {
@@ -78,6 +77,7 @@ namespace ClrVpin.Tests
         [TestCase("Indiana Jones (Stern)", "Indiana Jones (Williams1993).directb2s", true, TestName = "#7 check year - year missing")]
         [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones (1995).directb2s", false, TestName = "#8 check year - year only, but too large")]
         [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones (1994).directb2s", true, TestName = "#9 check year - year only, ok")]
+        [TestCase("Indiana Jones (Stern 2008)", @"C:\temp\_download\vp\Backglasses\Indiana Jones (Stern 2008) by Starlion.directb2s", true, TestName = "full path")]
         public void FuzzyMatchTest(string first, string second, bool expectedIsMatch)
         {
             var isMatch = TableUtils.FuzzyMatch(first, second);

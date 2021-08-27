@@ -18,7 +18,13 @@ namespace ClrVpin.Rebuilder
             _settings = Model.Settings;
         }
 
-        public static List<FileDetail> Check(List<Game> games)
+        public static async Task<List<FileDetail>> CheckAsync(List<Game> games)
+        {
+            var unknownFiles = await Task.Run(() => Check(games));
+            return unknownFiles;
+        }
+
+        private static List<FileDetail> Check(List<Game> games)
         {
             // determine the destination type
             var contentType = _settings.GetSelectedDestinationContentType();
