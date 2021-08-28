@@ -138,9 +138,9 @@ namespace ClrVpin.Shared
             if (result.Success)
             {
                 // strip any additional parenthesis content out
-                name = result.Groups["name"].Value.Split("(")[0].ToNull();
+                name = result.Groups["name"].Value.ToNull();
 
-                manufacturer = result.Groups["manufacturer"].Value.ToNull();
+                manufacturer = result.Groups["manufacturer"].Value.Split("(").Last().ToNull();
 
                 if (int.TryParse(result.Groups["year"].Value, out var parsedYear))
                     year = parsedYear;
@@ -202,7 +202,10 @@ namespace ClrVpin.Shared
             return fuzzyClean;
         }
 
-        private static readonly Regex _fuzzyFileNameRegex = new Regex(@"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*", RegexOptions.Compiled);
+        // regex
+        // - faster: name via looking for the first opening parenthesis.. https://regex101.com/r/CxKJK1/1
+        // - slower: name is greedy search using the last opening parenthesis.. https://regex101.com/r/xiXsML/1.. @"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*"
+        private static readonly Regex _fuzzyFileNameRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)(?<year>\d*)\)", RegexOptions.Compiled);
      
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
     }
