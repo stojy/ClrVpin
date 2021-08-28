@@ -188,7 +188,7 @@ namespace ClrVpin.Scanner
             await ScannerUtils.RemoveAsync(unknownFiles);
 
             progress.Update("Preparing Results", 100);
-            await Task.Delay(10);
+            await Task.Delay(1);
             Games = new ObservableCollection<Game>(games);
 
             ShowResults(gameFiles, unknownFiles, progress.Duration);

@@ -15,6 +15,7 @@ namespace ClrVpin.Tests
         [TestCase("Indiana Jones.directb2s", "indiana jones", null, null)]
         [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", "indiana jones", "williams", 1993, TestName = "only last most parenthesis is used")]
         [TestCase("", null, null, null, TestName = "empty string")]
+        [TestCase(null, null, null, null, TestName = "null string")]
         [TestCase("123", "123", null, null, TestName = "number title")]
         [TestCase("123 (Williams 1993)", "123", "williams", 1993, TestName = "number title with manufacturer and year")]
         [TestCase("123 (Williams)", "123", "williams", null, TestName = "number title with manufacturer only")]

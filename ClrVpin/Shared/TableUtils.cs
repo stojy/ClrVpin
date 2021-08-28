@@ -77,6 +77,7 @@ namespace ClrVpin.Shared
             foreach (var matchedFile in matchedFiles)
             {
                 Game matchedGame;
+                var fuzzyFileNameDetails = GetFuzzyFileNameDetails(matchedFile);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
@@ -98,7 +99,7 @@ namespace ClrVpin.Shared
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
                 // fuzzy match against table name (non-media) or description (media)
-                else if ((matchedGame = games.FirstOrDefault(game => FuzzyMatch(game.TableFile, matchedFile) || FuzzyMatch(game.Description, matchedFile))) != null)
+                else if ((matchedGame = games.FirstOrDefault(game => FuzzyMatch(game.TableFile, fuzzyFileNameDetails) || FuzzyMatch(game.Description, fuzzyFileNameDetails))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }
@@ -132,7 +133,7 @@ namespace ClrVpin.Shared
             string manufacturer = null;
             int? year = null;
 
-            fileName = Path.GetFileNameWithoutExtension(fileName);
+            fileName = Path.GetFileNameWithoutExtension(fileName ?? "");
             var result = _fuzzyFileNameRegex.Match(fileName);
 
             if (result.Success)
@@ -148,6 +149,9 @@ namespace ClrVpin.Shared
             else
                 name = fileName.ToNull();
 
+            // fuzzy clean the name field
+            name = FuzzyClean(name);
+
             return (name, manufacturer, year);
         }
 
@@ -155,20 +159,21 @@ namespace ClrVpin.Shared
 
         public static bool FuzzyMatch(string first, string second)
         {
-            var firstFuzzyFileNameDetails = GetFuzzyFileNameDetails(first);
-            var firstCleaned = FuzzyClean(firstFuzzyFileNameDetails.name);
+            return FuzzyMatch(first, GetFuzzyFileNameDetails(second));
+        }
+        
+        private static bool FuzzyMatch(string first, (string name, string manufacturer, int? year) secondFuzzy)
+        {
+            var firstFuzzy = GetFuzzyFileNameDetails(first);
 
-            var secondFuzzyFileNameDetails = GetFuzzyFileNameDetails(second);
-            var secondCleaned = FuzzyClean(secondFuzzyFileNameDetails.name);
+            var exactMatch = firstFuzzy.name == secondFuzzy.name;
 
-            var exactMatch = firstCleaned == secondCleaned;
+            var startsMatch = firstFuzzy.name.Length >= 15 && secondFuzzy.name.Length >= 15 && (firstFuzzy.name.StartsWith(secondFuzzy.name) || secondFuzzy.name.StartsWith(firstFuzzy.name));
 
-            var startsMatch = firstCleaned.Length >= 15 && secondCleaned.Length >= 15 && (firstCleaned.StartsWith(secondCleaned) || secondCleaned.StartsWith(firstCleaned));
-
-            var containsMatch = firstCleaned.Length >= 20 && secondCleaned.Length >= 20 && (firstCleaned.Contains(secondCleaned) || secondCleaned.Contains(firstCleaned));
+            var containsMatch = firstFuzzy.name.Length >= 20 && secondFuzzy.name.Length >= 20 && (firstFuzzy.name.Contains(secondFuzzy.name) || secondFuzzy.name.Contains(firstFuzzy.name));
 
             // if both names include years.. then they must match
-            var yearMismatch = firstFuzzyFileNameDetails.year.HasValue && secondFuzzyFileNameDetails.year.HasValue && Math.Abs(firstFuzzyFileNameDetails.year.Value - secondFuzzyFileNameDetails.year.Value) > 1;
+            var yearMismatch = firstFuzzy.year.HasValue && secondFuzzy.year.HasValue && Math.Abs(firstFuzzy.year.Value - secondFuzzy.year.Value) > 1;
 
             return !yearMismatch && (exactMatch || startsMatch || containsMatch);
         }
@@ -180,7 +185,7 @@ namespace ClrVpin.Shared
             // - remove/replace irrelevant text.. the, "'", etc
             // - whitespace
             // - etc
-            var fuzzyClean = first.ToLower()
+            var fuzzyClean = first?.ToLower()
                     .Replace("the", "")
                     .Replace("&apos;", "")
                     .Replace("'", "")
