@@ -43,14 +43,7 @@ namespace ClrVpin.Rebuilder
             IgnoreWordsString = string.Join(", ", Settings.Rebuilder.IgnoreIWords);
             IgnoreWordsChangedCommand = new ActionCommand(IgnoreWordsChanged);
 
-            UpdateIgnoreOptionsSmallerChecked();
-
             UpdateIsValid();
-        }
-
-        private void IgnoreWordsChanged()
-        {
-            Settings.Rebuilder.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
         }
 
         public bool IsValid { get; set; }
@@ -67,10 +60,12 @@ namespace ClrVpin.Rebuilder
         public ICommand StartCommand { get; set; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
-        public bool IgnoreOptionSmallerChecked { get; set; }
-
         public string IgnoreWordsString { get; set; }
         public ICommand IgnoreWordsChangedCommand { get; set; }
+
+        public FeatureType IgnoreIfNotNewerFeature { get; set; }
+        public FeatureType IgnoreIfSmallerFeature { get; set; }
+        public FeatureType IgnoreIfContainsWordsFeature { get; set; }
 
         public void Show(Window parent)
         {
@@ -80,7 +75,7 @@ namespace ClrVpin.Rebuilder
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 680,
-                Height = 655,
+                Height = 625,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,
@@ -96,6 +91,11 @@ namespace ClrVpin.Rebuilder
                 Model.SettingsManager.Write();
                 parent.Show();
             };
+        }
+
+        private void IgnoreWordsChanged()
+        {
+            Settings.Rebuilder.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
         }
 
         private void UpdateIsValid() => IsValid = !string.IsNullOrEmpty(Settings.Rebuilder.DestinationContentType);
@@ -141,22 +141,18 @@ namespace ClrVpin.Rebuilder
                     Tip = ignoreOption.Tip,
                     IsSupported = true,
                     IsActive = Settings.Rebuilder.SelectedIgnoreOptions.Contains(ignoreOption.Enum),
-                    SelectedCommand = new ActionCommand(() =>
-                    {
-                        Settings.Rebuilder.SelectedIgnoreOptions.Toggle(ignoreOption.Enum);
-                        UpdateIgnoreOptionsSmallerChecked();
-                    })
+                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedIgnoreOptions.Toggle(ignoreOption.Enum))
                 };
 
                 return featureType;
-            });
+            }).ToList();
+
+            IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfContainsWords);
+            IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfSmaller);
+            IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfNotNewer);
+
 
             return featureTypes.ToList();
-        }
-
-        private void UpdateIgnoreOptionsSmallerChecked()
-        {
-            IgnoreOptionSmallerChecked = Settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfSmaller);
         }
 
         private IEnumerable<FeatureType> CreateMergeOptions()
