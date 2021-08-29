@@ -78,7 +78,7 @@ namespace ClrVpin.Shared
                 ExecuteForKindred(kindredExtensions, hit.Path, newFile, (source, destination) => Rename(source, destination, hit.Type, hit.ContentType));
             }
 
-            return new FileDetail(hit.ContentTypeEnum, hit.Type, renamed ? FixFileTypeEnum.Renamed : null, hit.Path, hit.Size ?? 0);
+            return new FileDetail(hit.ContentTypeEnum, hit.Type, renamed ? FixFileTypeEnum.Renamed : FixFileTypeEnum.Skipped, hit.Path, hit.Size ?? 0);
         }
 
         public static void DeleteActiveBackupFolderIfEmpty()
@@ -199,7 +199,7 @@ namespace ClrVpin.Shared
                 Delete(hit.Path, hit.Type, hit.ContentType, newFile => hit.Path = newFile);
             }
 
-            return new FileDetail(hit.ContentTypeEnum, hit.Type, deleted ? FixFileTypeEnum.Deleted : null, hit.Path, hit.Size ?? 0);
+            return new FileDetail(hit.ContentTypeEnum, hit.Type, deleted ? FixFileTypeEnum.Deleted : FixFileTypeEnum.Skipped, hit.Path, hit.Size ?? 0);
         }
 
         private static void Delete(string sourceFile)

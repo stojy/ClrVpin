@@ -62,7 +62,7 @@ namespace ClrVpin.Shared
 
             var unsupportedFiles = allFiles.Where(file => !supportedExtensions.Any(file.EndsWith));
 
-            var unsupportedFixFiles = unsupportedFiles.Select(file => new FileDetail(contentType.Enum, HitTypeEnum.Unsupported, null, file, new FileInfo(file).Length));
+            var unsupportedFixFiles = unsupportedFiles.Select(file => new FileDetail(contentType.Enum, HitTypeEnum.Unsupported, FixFileTypeEnum.Skipped, file, new FileInfo(file).Length));
 
             return unsupportedFixFiles.ToList();
         }
@@ -108,7 +108,7 @@ namespace ClrVpin.Shared
                     // possible for..
                     // - pinball --> new table files added AND the database not updated yet
                     // - media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
-                    unknownMediaFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, null, matchedFile, new FileInfo(matchedFile).Length));
+                    unknownMediaFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, matchedFile, new FileInfo(matchedFile).Length));
                 }
             }
 

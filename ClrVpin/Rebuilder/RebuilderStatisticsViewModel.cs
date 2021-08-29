@@ -56,15 +56,17 @@ namespace ClrVpin.Rebuilder
         {
             // all files
             var allFiles = GameFiles.Concat(UnknownFiles).ToList();
-            var mergedFiles = allFiles.Where(x => !x.Ignored);
-            var notMergedFiles = allFiles.Where(x => x.Ignored);
+            //var mergedFiles = allFiles.Where(x => x.Merged);
 
             return "\n-----------------------------------------------\n" +
                    $"\n{"Source Files",StatisticsKeyWidth}" +
                    $"\n{"- Total",StatisticsKeyWidth}{CreateFileStatistic(allFiles)}" +
-                   $"\n{"- Merged",StatisticsKeyWidth}{CreateFileStatistic(mergedFiles)}" +
-                   $"\n{"- Ignored: Matched",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Where(x => x.Ignored))}" +
-                   $"\n{"- Ignored: Unmatched",StatisticsKeyWidth}{CreateFileStatistic(UnknownFiles.Where(x => x.Ignored))}" +
+                   $"\n{"- Matched",StatisticsKeyWidth}{CreateFileStatistic(GameFiles)}" +
+                   $"\n{"  - Merged",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x=> x.Merged))}" +
+                   $"\n{"  - Ignored",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Ignored))}" +
+                   $"\n{"  - Skipped",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Skipped))}" +
+                   $"\n{"- Unmatched",StatisticsKeyWidth}{CreateFileStatistic(UnknownFiles)}" +
+                   "\n  (Unknown & Unsupported)" +
                    "\n" +
                    $"\n{"Time Taken",StatisticsKeyWidth}{ElapsedTime.TotalSeconds:f2}s";
         }

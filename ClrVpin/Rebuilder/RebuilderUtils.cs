@@ -81,7 +81,7 @@ namespace ClrVpin.Rebuilder
         // ReSharper disable once UnusedParameter.Local
         private static FileDetail Merge(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
         {
-            var merged = false;
+            var fixFileType = FixFileTypeEnum.Skipped;
             var sourceFileInfo = hit.FileInfo; // file to be copied, i.e. into the VP folder (potentially overriding)
 
             // construct the destination file name - i.e. the location the source file will be copied to
@@ -94,9 +94,11 @@ namespace ClrVpin.Rebuilder
             // - ignore option selected
             if (supportedHitTypes.Contains(hit.Type))
             {
+                fixFileType = FixFileTypeEnum.Ignored;
+
                 if (!ShouldIgnore(game, hit, sourceFileInfo, destinationFileInfo))
                 {
-                    merged = true;
+                    fixFileType = FixFileTypeEnum.Merged;
 
                     var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
                     var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
@@ -106,7 +108,7 @@ namespace ClrVpin.Rebuilder
                 }
             }
 
-            return new FileDetail(hit.ContentTypeEnum, hit.Type, merged ? FixFileTypeEnum.Merged : null, sourceFileInfo.Name, hit.Size ?? 0);
+            return new FileDetail(hit.ContentTypeEnum, hit.Type, fixFileType, sourceFileInfo.Name, hit.Size ?? 0);
         }
 
         private static bool ShouldIgnore(Game game, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo)

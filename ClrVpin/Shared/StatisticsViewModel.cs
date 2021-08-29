@@ -86,8 +86,6 @@ namespace ClrVpin.Shared
         {
             // identify stats belonging to criteria that were not selected for checking/fixing
             var prefix = "discovered";
-            if (!SelectedCheckHitTypes.Contains(hitType))
-                prefix += " (skipped)";
 
             // discovered statistics - from the games list
             var discoveredStatistics = $"{prefix} {Games.Sum(g => g.Content.ContentHitsCollection.First(x => x.Enum == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
@@ -103,12 +101,10 @@ namespace ClrVpin.Shared
         {
             // identify stats belonging to criteria that were not selected for checking/fixing
             var prefix = "discovered";
-            if (!SelectedCheckHitTypes.Contains(hitType))
-                prefix += " (skipped)";
 
-            // discovered statistics - from the games list
+            // discovered statistics - from the unknown files list
             var matchedFiles = UnknownFiles.Where(x => x.ContentType == contentType && x.HitType == hitType).ToList();
-            var discoveredStatistics = CreateFileStatistic(prefix, matchedFiles, true);
+            var discoveredStatistics = $"{prefix} {matchedFiles.Count}";
 
             // file statistics - from the file list.. which is also stored in the games list, but more accessible via Games
             // - for n/a hit types (e.g. ignored) there will be no stats since there are no GameFiles :)
@@ -123,18 +119,11 @@ namespace ClrVpin.Shared
 
             var matchedFiles = files.Where(x => x.ContentType == contentType && x.HitType == hitType).ToList();
 
+            fileStatistics.Add(CreateFileStatistic("skipped", matchedFiles.Where(x => x.Skipped)));
             fileStatistics.Add(CreateFileStatistic("ignored", matchedFiles.Where(x => x.Ignored)));
             fileStatistics.Add(CreateFileStatistic("renamed", matchedFiles.Where(x => x.Renamed)));
             fileStatistics.Add(CreateFileStatistic("removed", matchedFiles.Where(x => x.Deleted)));
             fileStatistics.Add(CreateFileStatistic("merged", matchedFiles.Where(x => x.Merged)));
-
-
-            //string removePrefix;
-            //if (SelectedFixHitTypes.Contains(hitType))
-            //    removePrefix = IsRemoveUnknownSupported ? "removed" : "ignored";
-            //else
-            //    removePrefix = "removable";
-            //return $"{removePrefix} {CreateFileStatistic(files.Where(x => x.HitType == hitType && x.ContentType == contentType).ToList())}";
 
             return string.Join(", ", fileStatistics.Where(x=> x != null));
         }
