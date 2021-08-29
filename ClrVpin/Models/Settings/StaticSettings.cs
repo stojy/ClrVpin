@@ -57,8 +57,9 @@ namespace ClrVpin.Models.Settings
         // all possible file merge options - to be used elsewhere (rebuilder)
         public static IgnoreOption[] IgnoreOptions =
         {
+            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfContainsWords, Tip = "If the file is matched: ignore the source file if it contains any of the configured words"},
             new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfSmaller, Tip =  "If a destination file with the same name already exists: ignore the source file if it's smaller based on the specified percentage"},
-            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"}
+            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"},
         };
 
         // all possible file merge options - to be used elsewhere (rebuilder)

@@ -6,5 +6,6 @@ namespace ClrVpin.Models.Rebuilder
     {
         [Description("Ignore If Not Newer")] IgnoreIfNotNewer,
         [Description("Ignore If Smaller By Percentage")] IgnoreIfSmaller,
+        [Description("Ignore If Contains Words")] IgnoreIfContainsWords,
     }
 }

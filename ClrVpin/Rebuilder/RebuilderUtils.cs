@@ -115,11 +115,17 @@ namespace ClrVpin.Rebuilder
         {
             // opt out: scan through each ignore criteria to determine if the file should be considered 'merge worthy'
             // - unlike scanner 'multiple match preference'.. which is more of an 'opt in'
+
+            // contains words - destination file isn't required (although a table match is required)
+            if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfContainsWords) && _settings.Rebuilder.IgnoreIWords.Any(x => sourceFileInfo.Name.ToLower().Contains(x)))
+                return ProcessIgnore(game, IgnoreOptionEnum.IgnoreIfContainsWords.GetDescription(), hit, sourceFileInfo, destinationFileInfo);
+
+            // source vs destination file
             if (destinationFileInfo != null)
             {
                 var thresholdSizePercentage = _settings.Rebuilder.IgnoreIfSmallerPercentage / 100;
                 var actualSizePercentage = (decimal)sourceFileInfo.Length / destinationFileInfo.Length;
-                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfSmaller) && actualSizePercentage < thresholdSizePercentage)
+                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfSmaller) && actualSizePercentage <= thresholdSizePercentage)
                     return ProcessIgnore(game, $"{IgnoreOptionEnum.IgnoreIfSmaller.GetDescription()} (threshold: {thresholdSizePercentage:P2}, actual:{actualSizePercentage:P2}", hit, sourceFileInfo, destinationFileInfo);
                 
                 if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfNotNewer) && sourceFileInfo.LastWriteTime <= destinationFileInfo.LastWriteTime)
@@ -138,7 +144,7 @@ namespace ClrVpin.Rebuilder
 
             if (_settings.Rebuilder.DeleteIgnoredFiles)
             {
-                FileUtils.DeleteIgnored(hit.Path, destinationFileInfo.FullName, hit.Type, hit.ContentType, newFile => hit.Path = newFile);
+                FileUtils.DeleteIgnored(hit.Path, destinationFileInfo?.FullName, hit.Type, hit.ContentType, newFile => hit.Path = newFile);
             }
             else
             {

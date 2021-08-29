@@ -59,7 +59,6 @@
       <TextBlock Style="{StaticResource Title}" Text="Ignore" ToolTip="Multiple criteria whereby source files will not be considered for merging"/>
       <GroupBox Margin="5" Padding="2" Header="Options" Width="560" HorizontalAlignment="Left">
         <StackPanel>
-
           <ItemsControl ItemsSource="{Binding IgnoreOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="models:FeatureType">
@@ -74,7 +73,19 @@
             </ItemsControl.ItemsPanel>
           </ItemsControl>
 
-          <Slider Margin="5,0" Width="250" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}" IsEnabled="{Binding IgnoreOptionSmallerChecked}" />
+          <!--todo; show/hide template next to content-->
+          <Slider Margin="5,0" Width="250" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}" IsEnabled="{Binding IgnoreOptionSmallerChecked}"
+                  ToolTip="Ignore if file is smaller than the specified percentage"/>
+
+          <TextBox Margin="5,5,0,0" Width="250" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
+                   ToolTip="Ignore if file contain the following words (case insensitive, comma delimited)"
+                   Text="{Binding IgnoreWordsString, UpdateSourceTrigger=PropertyChanged}">
+            <b:Interaction.Triggers>
+              <b:EventTrigger EventName="TextChanged">
+                <b:InvokeCommandAction Command="{Binding IgnoreWordsChangedCommand}" />
+              </b:EventTrigger>
+            </b:Interaction.Triggers>
+          </TextBox>
 
           <CheckBox Margin="3,15,0,5" IsChecked="{Binding Settings.Rebuilder.DeleteIgnoredFiles}" Content="Delete Ignored Files"
                     ToolTip="When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled)." />

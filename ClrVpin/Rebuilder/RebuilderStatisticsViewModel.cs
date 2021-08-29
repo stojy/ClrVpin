@@ -54,13 +54,9 @@ namespace ClrVpin.Rebuilder
 
         protected override string CreateTotalStatistics()
         {
-            // all files
-            var allFiles = GameFiles.Concat(UnknownFiles).ToList();
-            //var mergedFiles = allFiles.Where(x => x.Merged);
-
             return "\n-----------------------------------------------\n" +
                    $"\n{"Source Files",StatisticsKeyWidth}" +
-                   $"\n{"- Total",StatisticsKeyWidth}{CreateFileStatistic(allFiles)}" +
+                   $"\n{"- Total",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Concat(UnknownFiles).ToList())}" +
                    $"\n{"- Matched",StatisticsKeyWidth}{CreateFileStatistic(GameFiles)}" +
                    $"\n{"  - Merged",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x=> x.Merged))}" +
                    $"\n{"  - Ignored",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Ignored))}" +

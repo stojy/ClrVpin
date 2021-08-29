@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ClrVpin.Models.Rebuilder;
 using PropertyChanged;
 using Utils;
@@ -20,6 +21,7 @@ namespace ClrVpin.Models.Settings
         public string DestinationContentType { get; set; }
 
         public decimal IgnoreIfSmallerPercentage { get; set; } = 75;
+        public List<string> IgnoreIWords { get; set; } = new List<string>{"nude", "adult", "tba", "original"};
 
         public bool DeleteIgnoredFiles { get; set; }
 

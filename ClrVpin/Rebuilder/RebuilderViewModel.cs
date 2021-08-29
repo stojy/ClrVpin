@@ -40,11 +40,18 @@ namespace ClrVpin.Rebuilder
             _destinationContentTypes = Model.Settings.GetFixableContentTypes().Select(x => x.Description);
             DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
 
+            IgnoreWordsString = string.Join(", ", Settings.Rebuilder.IgnoreIWords);
+            IgnoreWordsChangedCommand = new ActionCommand(IgnoreWordsChanged);
+
             UpdateIgnoreOptionsSmallerChecked();
 
             UpdateIsValid();
         }
 
+        private void IgnoreWordsChanged()
+        {
+            Settings.Rebuilder.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
+        }
 
         public bool IsValid { get; set; }
 
@@ -62,6 +69,8 @@ namespace ClrVpin.Rebuilder
 
         public bool IgnoreOptionSmallerChecked { get; set; }
 
+        public string IgnoreWordsString { get; set; }
+        public ICommand IgnoreWordsChangedCommand { get; set; }
 
         public void Show(Window parent)
         {
@@ -71,7 +80,7 @@ namespace ClrVpin.Rebuilder
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 680,
-                Height = 595,
+                Height = 655,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,
