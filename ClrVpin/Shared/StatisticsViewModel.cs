@@ -84,10 +84,10 @@ namespace ClrVpin.Shared
 
         private string GetGameFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
-            // identify stats belonging to criteria that were ignored
+            // identify stats belonging to criteria that were not selected for checking/fixing
             var prefix = "discovered";
             if (!SelectedCheckHitTypes.Contains(hitType))
-                prefix += " (ignored)";
+                prefix += " (skipped)";
 
             // discovered statistics - from the games list
             var discoveredStatistics = $"{prefix} {Games.Sum(g => g.Content.ContentHitsCollection.First(x => x.Enum == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
@@ -101,15 +101,14 @@ namespace ClrVpin.Shared
 
         private string GetUnknownFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
-            // identify stats belonging to criteria that were ignored
+            // identify stats belonging to criteria that were not selected for checking/fixing
             var prefix = "discovered";
             if (!SelectedCheckHitTypes.Contains(hitType))
-                prefix += " (ignored)";
+                prefix += " (skipped)";
 
             // discovered statistics - from the games list
             var matchedFiles = UnknownFiles.Where(x => x.ContentType == contentType && x.HitType == hitType).ToList();
             var discoveredStatistics = CreateFileStatistic(prefix, matchedFiles, true);
-                //$"discovered {matchedFiles.Sum(g => g.Content.ContentHitsCollection.First(x => x.Type == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
 
             // file statistics - from the file list.. which is also stored in the games list, but more accessible via Games
             // - for n/a hit types (e.g. ignored) there will be no stats since there are no GameFiles :)

@@ -236,7 +236,7 @@ namespace ClrVpin.Shared
         }
 
 
-        private static string GetTrainerWheelsDisclosure() => _settings.TrainerWheels ? " (ignored: trainer wheels)" : "";
+        private static string GetTrainerWheelsDisclosure() => _settings.TrainerWheels ? " (skipped: trainer wheels)" : "";
 
         private static string _rootBackupFolder;
         private static readonly Models.Settings.Settings _settings;
