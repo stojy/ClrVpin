@@ -34,7 +34,7 @@ namespace ClrVpin.Tests
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
         [Test]
         [TestCase("medieval madness", "medieval madness", true)]
-        [TestCase("medieval madness.vpx", "medieval madness", true)]
+        [TestCase("medieval madness.vpx", "medieval madness", true, TestName = "remove extension")]
         [TestCase("medieval madness.vpx", "medieval madness", true)]
         [TestCase("medieval madness", "medieval madness.vpx", true)]
         [TestCase("medieval madness", "medieval madness.vpx", true)]
@@ -61,6 +61,8 @@ namespace ClrVpin.Tests
         [TestCase("black, knight", "black knight", true, TestName = "remove ','")]
         [TestCase("black; knight", "black knight", true, TestName = "remove ';'")]
         [TestCase("black knight!", "black knight", true, TestName = "remove '!'")]
+        [TestCase("black? knight", "black knight", true, TestName = "remove '?'")]
+        [TestCase("black.knight.blah", "black knight", true, TestName = "replace '.'")]
         [TestCase("black-knight", "black knight", true, TestName = "remove '-'")]
         [TestCase("black - knight", "black knight", true, TestName = "remove ' - '")]
         [TestCase("black_knight", "black knight", true, TestName = "remove '_'")]
@@ -84,6 +86,8 @@ namespace ClrVpin.Tests
         [TestCase("The Getaway High Speed 2 (Williams 1992)", @"C:\temp\_MegaSync\b2s\Getaway, The - High Speed II v1.04.directb2s", true, TestName = "roman numeral conversion - II")]
         [TestCase("The Getaway High Speed 3 (Williams 1992)", @"C:\temp\_MegaSync\b2s\Getaway, The - High Speed III v1.04.directb2s", true, TestName = "roman numeral conversion - III")]
         [TestCase("The Getaway High Speed 4 (Williams 1992)", @"C:\temp\_MegaSync\b2s\Getaway, The - High Speed IV v1.04.directb2s", true, TestName = "roman numeral conversion - IV")]
+        [TestCase("Lights...Camera...Action! (Premier 1989).blah", @"Lights Camera Action (1989).directb2s", true, TestName = "ellipsis")]
+        [TestCase("Lights...Camera...Action! (Premier 1989)", @"Lights Camera Action (1989).directb2s", false, TestName = "ellipsis - without file extension not supported :(")]
         public void FuzzyMatchTest(string first, string second, bool expectedIsMatch)
         {
             var isMatch = TableUtils.FuzzyMatch(first, second);
