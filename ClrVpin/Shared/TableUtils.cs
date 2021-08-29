@@ -181,10 +181,7 @@ namespace ClrVpin.Shared
         private static string FuzzyClean(string first)
         {
             // clean the string to make it a little cleaner for subsequent matching
-            // - lower case
-            // - remove/replace irrelevant text.. the, "'", etc
-            // - whitespace
-            // - etc
+            // - order is important!
             var fuzzyClean = first?.ToLower()
                     .Replace("the", "")
                     .Replace("&apos;", "")

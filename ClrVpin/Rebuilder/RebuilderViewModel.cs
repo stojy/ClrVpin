@@ -10,6 +10,7 @@ using System.Windows.Input;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Logging;
 using ClrVpin.Models;
+using ClrVpin.Models.Rebuilder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
@@ -39,6 +40,8 @@ namespace ClrVpin.Rebuilder
             _destinationContentTypes = Model.Settings.GetFixableContentTypes().Select(x => x.Description);
             DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
 
+            UpdateIgnoreOptionsSmallerChecked();
+
             UpdateIsValid();
         }
 
@@ -57,6 +60,8 @@ namespace ClrVpin.Rebuilder
         public ICommand StartCommand { get; set; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
+        public bool IgnoreOptionSmallerChecked { get; set; }
+
 
         public void Show(Window parent)
         {
@@ -66,7 +71,7 @@ namespace ClrVpin.Rebuilder
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 //SizeToContent = SizeToContent.WidthAndHeight,
                 Width = 680,
-                Height = 555,
+                Height = 595,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,
@@ -91,7 +96,7 @@ namespace ClrVpin.Rebuilder
             // attempt to assign destination folder automatically based on the specified folder
             var contentType = _destinationContentTypes.FirstOrDefault(c => folder.ToLower().EndsWith(c.ToLower()));
             Settings.Rebuilder.DestinationContentType = contentType;
-            
+
             UpdateIsValid();
         }
 
@@ -127,7 +132,11 @@ namespace ClrVpin.Rebuilder
                     Tip = ignoreOption.Tip,
                     IsSupported = true,
                     IsActive = Settings.Rebuilder.SelectedIgnoreOptions.Contains(ignoreOption.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedIgnoreOptions.Toggle(ignoreOption.Enum))
+                    SelectedCommand = new ActionCommand(() =>
+                    {
+                        Settings.Rebuilder.SelectedIgnoreOptions.Toggle(ignoreOption.Enum);
+                        UpdateIgnoreOptionsSmallerChecked();
+                    })
                 };
 
                 return featureType;
@@ -135,7 +144,12 @@ namespace ClrVpin.Rebuilder
 
             return featureTypes.ToList();
         }
-        
+
+        private void UpdateIgnoreOptionsSmallerChecked()
+        {
+            IgnoreOptionSmallerChecked = Settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller);
+        }
+
         private IEnumerable<FeatureType> CreateMergeOptions()
         {
             // show all merge options
@@ -165,7 +179,7 @@ namespace ClrVpin.Rebuilder
 
             var progress = new ProgressViewModel();
             progress.Show(_rebuilderWindow);
-            
+
             progress.Update("Loading Database", 0);
             var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
 

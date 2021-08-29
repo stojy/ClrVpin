@@ -18,6 +18,9 @@ namespace ClrVpin.Models.Settings
 
         public string SourceFolder { get; set; }
         public string DestinationContentType { get; set; }
+
+        public decimal IgnoreSmallerFilesPercentage { get; set; } = 75;
+
         public bool DeleteIgnoredFiles { get; set; }
 
         public ObservableCollection<HitTypeEnum> SelectedMatchTypes { get; set; } = new ObservableCollection<HitTypeEnum>();

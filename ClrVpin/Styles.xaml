@@ -49,6 +49,13 @@
     <Setter Property="Margin" Value="0,9,0,4"></Setter>
   </Style>
 
+  <Style TargetType="Slider" BasedOn="{StaticResource MaterialDesignDiscreteSlider}">
+    <Setter Property="Minimum" Value="0"/>
+    <Setter Property="Maximum" Value="100"/>
+    <Setter Property="TickFrequency" Value="5"/>
+    <Setter Property="TickPlacement" Value="BottomRight"/>
+  </Style>
+
   <!--with or without this style the appearance doesn't seem to change!-->
   <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" />
   <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}" />

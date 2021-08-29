@@ -58,22 +58,28 @@
 
       <TextBlock Style="{StaticResource Title}">Ignore</TextBlock>
       <GroupBox Margin="5" Padding="2" Header="Options" Width="560" HorizontalAlignment="Left">
-        <ItemsControl ItemsSource="{Binding IgnoreOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="models:FeatureType">
-              <CheckBox Margin="0,0,20,2" Width="250" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                        Command="{Binding SelectedCommand}" />
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel />
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-        </ItemsControl>
+        <StackPanel>
+
+          <ItemsControl ItemsSource="{Binding IgnoreOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="models:FeatureType">
+                <CheckBox Margin="0,0,20,2" Width="250" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                          Command="{Binding SelectedCommand}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+          </ItemsControl>
+
+          <Slider Margin="5,0" Width="250" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreSmallerFilesPercentage}" IsEnabled="{Binding IgnoreOptionSmallerChecked}" />
+
+          <CheckBox Margin="3,15,0,5" IsChecked="{Binding Settings.Rebuilder.DeleteIgnoredFiles}" Content="Delete Ignored Files"
+                    ToolTip="When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled)." />
+        </StackPanel>
       </GroupBox>
-      <CheckBox Margin="3,5,0,5" IsChecked="{Binding Settings.Rebuilder.DeleteIgnoredFiles}" Content="Delete Ignored Files"
-                ToolTip="When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled)." />
 
       <TextBlock Style="{StaticResource Title}">Merge</TextBlock>
       <GroupBox Margin="5,0,0,5" Padding="2" Header="Options" Width="560" HorizontalAlignment="Left">

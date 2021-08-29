@@ -57,8 +57,8 @@ namespace ClrVpin.Models.Settings
         // all possible file merge options - to be used elsewhere (rebuilder)
         public static IgnoreOption[] IgnoreOptions =
         {
-            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreSmaller, Tip = "Ignore source files that are significantly smaller size (<50%) than the existing files"},
-            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreOlder, Tip = "Ignore source files that are older (using modified timestamp) than the existing files"}
+            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreSmaller, Tip = "Ignore source files that are smaller relative to the destination file (if one exists) based on the specified percentage"},
+            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreOlder, Tip = "Ignore source files that are older (using last modified timestamp) relative to the destination file (if one exists)"}
         };
 
         // all possible file merge options - to be used elsewhere (rebuilder)

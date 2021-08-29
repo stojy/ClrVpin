@@ -24,7 +24,7 @@ namespace ClrVpin.Rebuilder
             return unknownFiles;
         }
 
-        private static List<FileDetail> Check(List<Game> games)
+        private static List<FileDetail> Check(IReadOnlyCollection<Game> games)
         {
             // determine the destination type
             var contentType = _settings.GetSelectedDestinationContentType();
@@ -112,21 +112,24 @@ namespace ClrVpin.Rebuilder
         {
             if (destinationFileInfo != null)
             {
-                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && sourceFileInfo.Length < destinationFileInfo.Length * 0.5)
-                    return ProcessIgnore(game, IgnoreOptionEnum.IgnoreSmaller, hit, sourceFileInfo, destinationFileInfo);
+                var thresholdSizePercentage = _settings.Rebuilder.IgnoreSmallerFilesPercentage / 100;
+                var actualSizePercentage = (decimal)sourceFileInfo.Length / destinationFileInfo.Length;
+                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && actualSizePercentage < thresholdSizePercentage)
+                    return ProcessIgnore(game, $"{IgnoreOptionEnum.IgnoreSmaller.GetDescription()} (threshold: {thresholdSizePercentage:P2}, actual:{actualSizePercentage:P2}", hit, sourceFileInfo, destinationFileInfo);
+                
                 if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime <= destinationFileInfo.LastWriteTime)
-                    return ProcessIgnore(game, IgnoreOptionEnum.IgnoreOlder, hit, sourceFileInfo, destinationFileInfo);
+                    return ProcessIgnore(game, IgnoreOptionEnum.IgnoreOlder.GetDescription(), hit, sourceFileInfo, destinationFileInfo);
             }
 
             // if the file doesn't exist then there's no reason to not merge it
             return false;
         }
 
-        private static bool ProcessIgnore(Game game, IgnoreOptionEnum optionEnum, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo)
+        private static bool ProcessIgnore(Game game, string ignoreOptionDescription, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo)
         {
             var prefix = _settings.Rebuilder.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
             Logger.Info($"{prefix}.. table: {game.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category)}, type: {hit.Type.GetDescription()}, " +
-                        $"content: {hit.ContentType}, ignore option: {optionEnum.GetDescription()}, delete ignored: {_settings.Rebuilder.DeleteIgnoredFiles}");
+                        $"content: {hit.ContentType}, ignore option: {ignoreOptionDescription}, delete ignored: {_settings.Rebuilder.DeleteIgnoredFiles}");
 
             if (_settings.Rebuilder.DeleteIgnoredFiles)
             {
