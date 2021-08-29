@@ -40,7 +40,7 @@ namespace ClrVpin.Shared
         {
             var deleted = new List<FileDetail>();
 
-            // delete all 'real' files except the specified hit
+            // delete all 'real' files except the specified hit, e.g. HitType=Missing won't have any Size
             hits.Except(hit).Where(x => x.Size.HasValue).ForEach(h => deleted.Add(Delete(h, supportedHitTypes)));
 
             return deleted;

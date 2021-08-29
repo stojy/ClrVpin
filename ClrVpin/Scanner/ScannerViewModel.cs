@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Logging;
 using ClrVpin.Models;
+using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using MaterialDesignExtensions.Controls;
@@ -32,7 +33,8 @@ namespace ClrVpin.Scanner
             FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
 
             MultipleMatchOptionsView = new ListCollectionView(CreateMultipleMatchOptionTypes().ToList());
-
+            
+            UpdateExceedThresholdChecked();
             UpdateIsValid();
         }
 
@@ -48,6 +50,8 @@ namespace ClrVpin.Scanner
         public ICommand StartCommand { get; set; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
+        public bool ExceedSizeThresholdSelected { get; set; }
+
         public void Show(Window parent)
         {
             _scannerWindow = new MaterialWindow
@@ -55,7 +59,7 @@ namespace ClrVpin.Scanner
                 Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 SizeToContent = SizeToContent.Width,
-                Height = 720,
+                Height = 770,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate,
@@ -157,10 +161,19 @@ namespace ClrVpin.Scanner
                 Tip = hitType.Tip,
                 IsSupported = true,
                 IsActive = Settings.Scanner.SelectedMultipleMatchOption == hitType.Enum,
-                SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedMultipleMatchOption = hitType.Enum)
+                SelectedCommand = new ActionCommand(() =>
+                {
+                    Settings.Scanner.SelectedMultipleMatchOption = hitType.Enum;
+                    UpdateExceedThresholdChecked();
+                })
             });
 
             return contentTypes.ToList();
+        }
+
+        private void UpdateExceedThresholdChecked()
+        {
+            ExceedSizeThresholdSelected = Settings.Scanner.SelectedMultipleMatchOption == MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold;
         }
 
         private async void Start()

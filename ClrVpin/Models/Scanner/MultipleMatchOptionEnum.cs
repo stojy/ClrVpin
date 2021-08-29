@@ -6,6 +6,7 @@ namespace ClrVpin.Models.Scanner
     {
         [Description("Prefer Correct Name")] PreferCorrectName,
         [Description("Prefer Most Recent")] PreferMostRecent,
-        [Description("Prefer Largest Size")] PreferLargestSize
+        [Description("Prefer Largest Size")] PreferLargestSize,
+        [Description("Prefer Most Recent and Exceeds Size Threshold")] PreferMostRecentAndExceedSizeThreshold
     }
 }

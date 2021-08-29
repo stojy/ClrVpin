@@ -73,7 +73,8 @@ namespace ClrVpin.Models.Settings
         {
             new MultipleMatchOption {Enum = MultipleMatchOptionEnum.PreferCorrectName, Tip = "File with the correct matching name is used, if it doesn't exist then the following names are used (in descending order): WrongCase, TableName, and Fuzzy."},
             new MultipleMatchOption {Enum = MultipleMatchOptionEnum.PreferMostRecent, Tip = "File with the most recent modified timestamp is used"},
-            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.PreferLargestSize, Tip = "File with the largest size is used"}
+            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.PreferLargestSize, Tip = "File with the largest size is used"},
+            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold, Tip = "File with the most recent modified timestamp AND exceeds the size threshold of the existing correct file (if one exists) is used, i.e. avoid using newer but smaller files"}
         };
     }
 }

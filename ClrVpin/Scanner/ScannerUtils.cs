@@ -76,7 +76,7 @@ namespace ClrVpin.Scanner
                 // - missing - associated with game as the default entry, but can't be fixed.. requires file to be downloaded
                 // - unknown - not associated with a game (i.e. no need to check here).. handled elsewhere
                 // - unsupported - not associated with any known content type, e.g. Magic.ini
-                var fixableContentGames = games.Where(game => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.All(hit => hit.Type != HitTypeEnum.Missing))).ToList();
+                var fixableContentGames = games.Where(game => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing))).ToList();
 
                 // fix files associated with games, if they satisfy the fix criteria
                 fixableContentGames.ForEach(game =>
@@ -86,22 +86,35 @@ namespace ClrVpin.Scanner
                     // the underlying HitTypeEnum is declared in descending priority order
                     var orderedByHitType = gameContentHits.Hits.OrderBy(hit => hit.Type);
 
+                    // when fixing order, need to cater for no FileInfo, e.g. file missing
                     switch (_settings.Scanner.SelectedMultipleMatchOption)
                     {
                         case MultipleMatchOptionEnum.PreferCorrectName:
                             FixOrderedHits(orderedByHitType.ToList(), gameFiles, game);
                             break;
                         case MultipleMatchOptionEnum.PreferLargestSize:
-                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo.Length).ToList(), gameFiles, game);
+                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo?.Length).ToList(), gameFiles, game);
                             break;
                         case MultipleMatchOptionEnum.PreferMostRecent:
-                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo.LastWriteTime).ToList(), gameFiles, game);
+                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo?.LastWriteTime).ToList(), gameFiles, game);
+                            break;
+                        case MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold:
+                            var orderedByMostRecent = orderedByHitType.OrderByDescending(hit => hit.FileInfo?.LastWriteTime).ToList();
+
+                            // if the correct name file exists, then apply additional ordering to filter out (aka de-prioritize) files that don't exceed the threshold
+                            decimal? correctHitLength = orderedByMostRecent.FirstOrDefault(x => x.Type == HitTypeEnum.CorrectName)?.FileInfo.Length;
+                            if (correctHitLength != null)
+                            {
+                                var sizeThreshold = _settings.Scanner.MultipleMatchExceedSizeThresholdPercentage / 100;
+                                orderedByMostRecent = orderedByMostRecent.OrderByDescending(hit => hit.FileInfo?.Length / correctHitLength > sizeThreshold).ToList();
+                            }
+
+                            FixOrderedHits(orderedByMostRecent.ToList(), gameFiles, game);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
                 });
-
             }
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
@@ -112,6 +125,10 @@ namespace ClrVpin.Scanner
 
         private static void FixOrderedHits(ICollection<Hit> orderedHits, List<FileDetail> gameFiles, Game game)
         {
+            // first hit may be HitType.Missing.. i.e. no file info present
+            // - this is filtered out during the file delete/rename/etc because..
+            //   a. SelectedFixHitTypes - does not support Missing (yet)
+            //   b. Missing files have Size=null
             var preferredHit = orderedHits.First();
             var nonPreferredHits = orderedHits.Skip(1).ToList();
 
@@ -119,13 +136,17 @@ namespace ClrVpin.Scanner
             if (preferredHit.Type == HitTypeEnum.CorrectName && orderedHits.Count == 1)
                 return;
 
+            var multiOptionDescription = _settings.Scanner.SelectedMultipleMatchOption.GetDescription();
+            if (_settings.Scanner.SelectedMultipleMatchOption == MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold)
+                multiOptionDescription = $"{multiOptionDescription} (criteria: {_settings.Scanner.MultipleMatchExceedSizeThresholdPercentage / 100:P2})";
+
             // nothing to fix if the preferred hit 'correct name' AND the other hits aren't selected
             // - e.g. preferred = wrong case, other=correct name (not selected)
             if (preferredHit.Type == HitTypeEnum.CorrectName && !nonPreferredHits.Any(hit => hit.Type.In(_settings.Scanner.SelectedFixHitTypes)))
             {
                 Logger.Info($"Skipping (fix criteria not selected).. table: {game.GetContentName(_settings.GetContentType(preferredHit.ContentTypeEnum).Category)}, " +
                             $"preferred type: {preferredHit.Type.GetDescription()}, required fix types (unselected): {string.Join('|', nonPreferredHits.Select(x => x.Type.GetDescription()).Distinct())}, " +
-                            $"content: {preferredHit.ContentType}, multi option: {_settings.Scanner.SelectedMultipleMatchOption.GetDescription()}");
+                            $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
             }
 
@@ -135,12 +156,12 @@ namespace ClrVpin.Scanner
             {
                 Logger.Info($"Skipping (fix criteria not selected).. table: {game.GetContentName(_settings.GetContentType(preferredHit.ContentTypeEnum).Category)}, " +
                             $"preferred type (unselected): {preferredHit.Type.GetDescription()}, " +
-                            $"content: {preferredHit.ContentType}, multi option: {_settings.Scanner.SelectedMultipleMatchOption.GetDescription()}");
+                            $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
             }
 
             // delete all hit files except the first
-            Logger.Info($"Fixing.. table: {game.TableFile}, description: {game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {_settings.Scanner.SelectedMultipleMatchOption.GetDescription()}");
+            Logger.Info($"Fixing.. table: {game.TableFile}, description: {game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
             Logger.Debug($"- matched..\n  src: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}");
             gameFiles.AddRange(FileUtils.DeleteAllExcept(orderedHits, preferredHit, _settings.Scanner.SelectedFixHitTypes));
 

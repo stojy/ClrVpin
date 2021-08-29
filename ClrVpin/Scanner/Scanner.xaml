@@ -69,14 +69,18 @@
       <TextBlock Style="{StaticResource Title}">Options</TextBlock>
       <WrapPanel>
         <GroupBox Margin="5" Padding="2" Header="Multiple Match Preference">
-          <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate DataType="models:FeatureType">
-                <RadioButton Width="180" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                             Command="{Binding SelectedCommand}" />
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
+          <StackPanel>
+            <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="models:FeatureType">
+                  <RadioButton Width="330" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                               Command="{Binding SelectedCommand}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Slider Margin="27,0,10,10" Width="300" HorizontalAlignment="Left" Value="{Binding Settings.Scanner.MultipleMatchExceedSizeThresholdPercentage}" IsEnabled="{Binding ExceedSizeThresholdSelected}" />
+          </StackPanel>
         </GroupBox>
       </WrapPanel>
 
