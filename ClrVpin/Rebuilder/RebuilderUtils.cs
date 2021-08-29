@@ -110,15 +110,17 @@ namespace ClrVpin.Rebuilder
 
         private static bool ShouldIgnore(Game game, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo)
         {
+            // opt out: scan through each ignore criteria to determine if the file should be considered 'merge worthy'
+            // - unlike scanner 'multiple match preference'.. which is more of an 'opt in'
             if (destinationFileInfo != null)
             {
-                var thresholdSizePercentage = _settings.Rebuilder.IgnoreSmallerFilesPercentage / 100;
+                var thresholdSizePercentage = _settings.Rebuilder.IgnoreIfSmallerPercentage / 100;
                 var actualSizePercentage = (decimal)sourceFileInfo.Length / destinationFileInfo.Length;
-                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller) && actualSizePercentage < thresholdSizePercentage)
-                    return ProcessIgnore(game, $"{IgnoreOptionEnum.IgnoreSmaller.GetDescription()} (threshold: {thresholdSizePercentage:P2}, actual:{actualSizePercentage:P2}", hit, sourceFileInfo, destinationFileInfo);
+                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfSmaller) && actualSizePercentage < thresholdSizePercentage)
+                    return ProcessIgnore(game, $"{IgnoreOptionEnum.IgnoreIfSmaller.GetDescription()} (threshold: {thresholdSizePercentage:P2}, actual:{actualSizePercentage:P2}", hit, sourceFileInfo, destinationFileInfo);
                 
-                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreOlder) && sourceFileInfo.LastWriteTime <= destinationFileInfo.LastWriteTime)
-                    return ProcessIgnore(game, IgnoreOptionEnum.IgnoreOlder.GetDescription(), hit, sourceFileInfo, destinationFileInfo);
+                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfNotNewer) && sourceFileInfo.LastWriteTime <= destinationFileInfo.LastWriteTime)
+                    return ProcessIgnore(game, IgnoreOptionEnum.IgnoreIfNotNewer.GetDescription(), hit, sourceFileInfo, destinationFileInfo);
             }
 
             // if the file doesn't exist then there's no reason to not merge it

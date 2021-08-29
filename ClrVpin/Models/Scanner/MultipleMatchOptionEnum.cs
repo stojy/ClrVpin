@@ -4,8 +4,8 @@ namespace ClrVpin.Models.Scanner
 {
     public enum MultipleMatchOptionEnum
     {
-        [Description("Correct Name")] CorrectName,
-        [Description("Most Recent")] MostRecent,
-        [Description("Largest Size")] LargestSize
+        [Description("Prefer Correct Name")] PreferCorrectName,
+        [Description("Prefer Most Recent")] PreferMostRecent,
+        [Description("Prefer Largest Size")] PreferLargestSize
     }
 }

@@ -57,8 +57,8 @@ namespace ClrVpin.Models.Settings
         // all possible file merge options - to be used elsewhere (rebuilder)
         public static IgnoreOption[] IgnoreOptions =
         {
-            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreSmaller, Tip = "Ignore source files that are smaller relative to the destination file (if one exists) based on the specified percentage"},
-            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreOlder, Tip = "Ignore source files that are older (using last modified timestamp) relative to the destination file (if one exists)"}
+            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfSmaller, Tip =  "If a destination file with the same name already exists: ignore the source file if it's smaller based on the specified percentage"},
+            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"}
         };
 
         // all possible file merge options - to be used elsewhere (rebuilder)
@@ -71,9 +71,9 @@ namespace ClrVpin.Models.Settings
         // all possible multiple match fix options
         public static MultipleMatchOption[] MultipleMatchOptions =
         {
-            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.CorrectName, Tip = "File with the correct matching name is used, if it doesn't exist then the following names are used (in descending order): WrongCase, TableName, and Fuzzy."},
-            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.MostRecent, Tip = "File with the most recent modified timestamp is used"},
-            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.LargestSize, Tip = "File with the largest size is used"}
+            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.PreferCorrectName, Tip = "File with the correct matching name is used, if it doesn't exist then the following names are used (in descending order): WrongCase, TableName, and Fuzzy."},
+            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.PreferMostRecent, Tip = "File with the most recent modified timestamp is used"},
+            new MultipleMatchOption {Enum = MultipleMatchOptionEnum.PreferLargestSize, Tip = "File with the largest size is used"}
         };
     }
 }

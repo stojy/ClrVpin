@@ -147,7 +147,7 @@ namespace ClrVpin.Rebuilder
 
         private void UpdateIgnoreOptionsSmallerChecked()
         {
-            IgnoreOptionSmallerChecked = Settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreSmaller);
+            IgnoreOptionSmallerChecked = Settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfSmaller);
         }
 
         private IEnumerable<FeatureType> CreateMergeOptions()

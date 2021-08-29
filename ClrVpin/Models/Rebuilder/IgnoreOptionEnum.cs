@@ -4,7 +4,7 @@ namespace ClrVpin.Models.Rebuilder
 {
     public enum IgnoreOptionEnum
     {
-        [Description("Ignore Older Files")] IgnoreOlder,
-        [Description("Ignore Smaller Files By Percentage")] IgnoreSmaller,
+        [Description("Ignore If Not Newer")] IgnoreIfNotNewer,
+        [Description("Ignore If Smaller By Percentage")] IgnoreIfSmaller,
     }
 }

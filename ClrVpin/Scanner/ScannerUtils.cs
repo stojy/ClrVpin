@@ -88,13 +88,13 @@ namespace ClrVpin.Scanner
 
                     switch (_settings.Scanner.SelectedMultipleMatchOption)
                     {
-                        case MultipleMatchOptionEnum.CorrectName:
+                        case MultipleMatchOptionEnum.PreferCorrectName:
                             FixOrderedHits(orderedByHitType.ToList(), gameFiles, game);
                             break;
-                        case MultipleMatchOptionEnum.LargestSize:
+                        case MultipleMatchOptionEnum.PreferLargestSize:
                             FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo.Length).ToList(), gameFiles, game);
                             break;
-                        case MultipleMatchOptionEnum.MostRecent:
+                        case MultipleMatchOptionEnum.PreferMostRecent:
                             FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo.LastWriteTime).ToList(), gameFiles, game);
                             break;
                         default:

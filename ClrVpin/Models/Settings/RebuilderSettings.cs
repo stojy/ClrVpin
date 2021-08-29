@@ -19,7 +19,7 @@ namespace ClrVpin.Models.Settings
         public string SourceFolder { get; set; }
         public string DestinationContentType { get; set; }
 
-        public decimal IgnoreSmallerFilesPercentage { get; set; } = 75;
+        public decimal IgnoreIfSmallerPercentage { get; set; } = 75;
 
         public bool DeleteIgnoredFiles { get; set; }
 
