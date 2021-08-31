@@ -185,24 +185,25 @@ namespace ClrVpin.Rebuilder
             var progress = new ProgressViewModel();
             progress.Show(_rebuilderWindow);
 
-            progress.Update("Loading Database", 0);
+            progress.Update("Loading Database");
             var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
 
-            progress.Update("Checking Files", 30);
+            progress.Update("Checking Files");
             var unknownFiles = await RebuilderUtils.CheckAsync(games);
 
-            progress.Update("Merging Files", 60);
-            var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder);
+            var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, (description, percentage) => UpdateProgress("Merging Files", description, percentage));
 
             // unlike scanner, unknownFiles (unsupported and unknown) are deliberately NOT removed
 
-            progress.Update("Preparing Results", 100);
+            progress.Update("Preparing Results");
             await Task.Delay(1);
             Games = new ObservableCollection<Game>(games);
 
             ShowResults(gameFiles, unknownFiles, progress.Duration);
 
             progress.Close();
+
+            void UpdateProgress(string title, string detail, int percentage) => progress.Update(title, percentage, detail);
         }
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles, TimeSpan duration)

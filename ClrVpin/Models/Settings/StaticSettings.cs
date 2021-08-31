@@ -41,7 +41,7 @@ namespace ClrVpin.Models.Settings
             new HitType(HitTypeEnum.CorrectName, true, "Files that match perfectly!"),
             new HitType(HitTypeEnum.WrongCase, true, "Files that match the correct name, but have the wrong case"),
             new HitType(HitTypeEnum.TableName, true, "Files that match against the table name instead of the table description - ONLY APPLICABLE FOR MEDIA CONTENT, since tables ALWAYS match the table name"),
-            new HitType(HitTypeEnum.Fuzzy, true, "Files that match the 'Fuzzy logic' algorithms"),
+            new HitType(HitTypeEnum.Fuzzy, true, "Files that match the 'Fuzzy logic' algorithms, refer https://github.com/stojy/ClrVpin/wiki/Inner-Workings"),
             new HitType(HitTypeEnum.DuplicateExtension, true, "Files that match the correct name AND have a configured file extension, but multiple extension matches exist (e.g. mkv and mp4"),
             new HitType(HitTypeEnum.Missing, false, "Files that are missing, i.e. they need to be downloaded from your favorite pinball site(s)"),
             new HitType(HitTypeEnum.Unknown, false, "Files that do match the configured file extension type, but don't match any of the tables in the database"),

@@ -14,6 +14,7 @@
         <TextBlock DockPanel.Dock="Right" Text="{Binding Duration.TotalSeconds, StringFormat={}{0:f0}s}"/>
         <TextBlock Text="{Binding Status}" />
       </DockPanel>
+      <TextBlock HorizontalAlignment="Left" Text="{Binding Detail}" TextTrimming="CharacterEllipsis"/>
       <Button Command="{Binding CancelCommand}" Width="60" Margin="0,10,0,0" Content="Cancel"/>
     </StackPanel>
   </DataTemplate>

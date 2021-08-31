@@ -14,13 +14,20 @@ namespace ClrVpin.Shared
         public ProgressViewModel()
         {
             _timer = new Timer(_ => Duration = _durationStopwatch.Elapsed);
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken = _cancellationTokenSource.Token;
+            
             CancelCommand = new ActionCommand(Cancel);
         }
+
+        public CancellationToken CancellationToken { get; set; }
 
         public bool IsCancelled { get; set; }
 
         public TimeSpan Duration { get; set; }
         public string Status { get; set; }
+        public string Detail { get; set; }
         public int Percentage { get; set; }
 
         public ICommand CancelCommand { get; set; }
@@ -30,8 +37,11 @@ namespace ClrVpin.Shared
         public void Cancel()
         {
             IsCancelled = true;
+            
             Cancelled?.Invoke();
-            Close();
+            _cancellationTokenSource.Cancel();
+
+            Environment.Exit(-1);
         }
 
         public void Show(Window parentWindow)
@@ -65,15 +75,19 @@ namespace ClrVpin.Shared
             _timer.Change(0, 0);
         }
 
-        public void Update(string status, int percentageComplete)
+        public void Update(string status, int? percentageComplete = null, string detail = null)
         {
             Status = status;
-            Percentage = percentageComplete;
+            Detail = detail;
+
+            if (percentageComplete != null)
+                Percentage = percentageComplete.Value;
         }
 
         private readonly Timer _timer;
 
         private Window _window;
         private Stopwatch _durationStopwatch;
+        private readonly CancellationTokenSource _cancellationTokenSource;
     }
 }

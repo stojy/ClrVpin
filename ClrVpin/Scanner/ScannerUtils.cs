@@ -52,13 +52,13 @@ namespace ClrVpin.Scanner
             return unknownFiles;
         }
 
-        public static async Task<List<FileDetail>> FixAsync(List<Game> games, string backupFolder)
+        public static async Task<List<FileDetail>> FixAsync(List<Game> games, string backupFolder, Action<string, int> updateProgress)
         {
-            var fixedFileDetails = await Task.Run(() => Fix(games, backupFolder));
+            var fixedFileDetails = await Task.Run(() => Fix(games, backupFolder, updateProgress));
             return fixedFileDetails;
         }
 
-        private static List<FileDetail> Fix(ICollection<Game> games, string backupFolder)
+        private static List<FileDetail> Fix(ICollection<Game> games, string backupFolder, Action<string, int> updateProgress)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 
@@ -67,22 +67,32 @@ namespace ClrVpin.Scanner
             // - skip options are selected or relevant
             var gameFiles = new List<FileDetail>();
 
-            var selectedContentTypes = _settings.GetSelectedCheckContentTypes();
+            var selectedContentTypes = _settings.GetSelectedCheckContentTypes().ToList();
+
+            var gamesWithContentCount = 0;
+            var gamesWithContentMaxCount = 0;
+            selectedContentTypes.ForEach(contentType =>
+            {
+                gamesWithContentMaxCount += games.Count(game => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.All(hit => hit.Type != HitTypeEnum.Missing)));
+            });
 
             // iterate through each selected content type
-            foreach (var contentType in selectedContentTypes)
+            selectedContentTypes.ForEach(contentType =>
             {
                 // fixable game exclude following hit types..
                 // - missing - associated with game as the default entry, but can't be fixed.. requires file to be downloaded
                 // - unknown - not associated with a game (i.e. no need to check here).. handled elsewhere
                 // - unsupported - not associated with any known content type, e.g. Magic.ini
-                var fixableContentGames = games.Where(game => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing))).ToList();
+                var fixableContentGames = games.Where(game =>
+                    game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.All(hit => hit.Type != HitTypeEnum.Missing))).ToList();
 
                 // fix files associated with games, if they satisfy the fix criteria
                 fixableContentGames.ForEach(game =>
                 {
+                    updateProgress(game.Description, 100 * ++gamesWithContentCount / gamesWithContentMaxCount);
+
                     var gameContentHits = game.Content.ContentHitsCollection.First(contentHits => contentHits.ContentType == contentType);
-                    
+
                     // the underlying HitTypeEnum is declared in descending priority order
                     var orderedByHitType = gameContentHits.Hits.OrderBy(hit => hit.Type);
 
@@ -115,7 +125,7 @@ namespace ClrVpin.Scanner
                             throw new ArgumentOutOfRangeException();
                     }
                 });
-            }
+            });
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
             FileUtils.DeleteActiveBackupFolderIfEmpty();

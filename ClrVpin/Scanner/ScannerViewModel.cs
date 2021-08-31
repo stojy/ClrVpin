@@ -188,25 +188,26 @@ namespace ClrVpin.Scanner
 
             // todo; retrieve 'missing games' from spreadsheet
 
-            progress.Update("Loading Database", 0);
+            progress.Update("Loading Database");
             var games = TableUtils.GetGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
 
-            progress.Update("Checking Files", 30);
+            progress.Update("Checking Files");
             var unknownFiles = await ScannerUtils.CheckAsync(games);
 
-            progress.Update("Fixing Files", 60);
-            var gameFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder);
+            var gameFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder, (description, percentage) => UpdateProgress("Fixing Files", description, percentage));
 
-            progress.Update("Removing Unknown Files", 90);
+            progress.Update("Removing Unknown Files");
             await ScannerUtils.RemoveAsync(unknownFiles);
 
-            progress.Update("Preparing Results", 100);
+            progress.Update("Preparing Results");
             await Task.Delay(1);
             Games = new ObservableCollection<Game>(games);
 
             ShowResults(gameFiles, unknownFiles, progress.Duration);
 
             progress.Close();
+
+            void UpdateProgress(string title, string detail, int percentage) => progress.Update(title, percentage, detail);
         }
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles, TimeSpan duration)

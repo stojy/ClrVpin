@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,26 +41,28 @@ namespace ClrVpin.Rebuilder
             return unmatchedFiles.Concat(unsupportedFiles).ToList();
         }
 
-        public static async Task<List<FileDetail>> MergeAsync(List<Game> games, string backupFolder)
+        public static async Task<List<FileDetail>> MergeAsync(List<Game> games, string backupFolder, Action<string, int> updateProgress)
         {
-            var mergedFileDetails = await Task.Run(() => Merge(games, backupFolder));
+            var mergedFileDetails = await Task.Run(() => Merge(games, backupFolder, updateProgress));
             return mergedFileDetails;
         }
 
-        private static List<FileDetail> Merge(IEnumerable<Game> games, string backupFolder)
+        private static List<FileDetail> Merge(IEnumerable<Game> games, string backupFolder, Action<string, int> updateProgress)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 
             // filter games to only those that have hits for the destination content type
             var contentType = _settings.GetSelectedDestinationContentType();
-            var gamesWithContent = games.Where(g => g.Content.ContentHitsCollection.Any(x => x.Enum == contentType.Enum && x.Hits.Any()));
+            var gamesWithContent = games.Where(g => g.Content.ContentHitsCollection.Any(x => x.Enum == contentType.Enum && x.Hits.Any())).ToList();
 
             // EVERY GAME THAT HAS A HIT (IRRESPECTIVE OF MATCH CRITERIA) WILL HAVE A GAME FILE RETURNED, i.e. irrespective of whether..
             // - match criteria is selected or relevant
             // - skip options are selected or relevant
             var gameFiles = new List<FileDetail>();
-            gamesWithContent.ForEach(game =>
+            gamesWithContent.ForEach((game, i) =>
             {
+                updateProgress(game.Description, 100 * i / gamesWithContent.Count);
+
                 // retrieve the relevant content hit collection
                 var contentHitCollection = game.Content.ContentHitsCollection.First(x => x.Hits.Any());
 
