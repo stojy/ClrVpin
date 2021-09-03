@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using ClrVpin.Models;
 using Utils;
@@ -77,7 +76,7 @@ namespace ClrVpin.Shared
             foreach (var matchedFile in matchedFiles)
             {
                 Game matchedGame;
-                var fuzzyFileNameDetails = GetFuzzyFileNameDetails(matchedFile);
+                var fuzzyFileNameDetails = Fuzzy.GetFileDetails(matchedFile);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
@@ -99,7 +98,7 @@ namespace ClrVpin.Shared
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
                 // fuzzy match against table name (non-media) or description (media)
-                else if ((matchedGame = games.FirstOrDefault(game => FuzzyMatch(game.TableFile, fuzzyFileNameDetails) || FuzzyMatch(game.Description, fuzzyFileNameDetails))) != null)
+                else if ((matchedGame = games.FirstOrDefault(game => Fuzzy.Match(game.TableFile, fuzzyFileNameDetails) || Fuzzy.Match(game.Description, fuzzyFileNameDetails))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }
@@ -115,108 +114,6 @@ namespace ClrVpin.Shared
             return unknownMediaFiles;
         }
         
-        public static (string name, string nameNoWhiteSpace, string manufacturer, int? year) GetFuzzyFileNameDetails(string fileName)
-        {
-            // return the fuzzy portion of the filename..
-            // - no file extensions
-            // - name: up to last opening parenthesis (if it exists!)
-            // - manufacturer: words up to the first year (if it exists!)
-            // - year: digits up to the first closing parenthesis (if it exists!)
-            string name;
-            string manufacturer = null;
-            int? year = null;
-
-            fileName = Path.GetFileNameWithoutExtension(fileName ?? "");
-            var result = _fuzzyFileNameRegex.Match(fileName);
-
-            if (result.Success)
-            {
-                // strip any additional parenthesis content out
-                name = result.Groups["name"].Value.ToNull();
-
-                manufacturer = result.Groups["manufacturer"].Value.Split("(").Last().ToNull();
-
-                if (int.TryParse(result.Groups["year"].Value, out var parsedYear))
-                    year = parsedYear;
-            }
-            else
-                name = fileName.ToNull();
-
-            // fuzzy clean the name field
-            name = FuzzyClean(name, false);
-            var nameNoWhiteSpace = FuzzyClean(name, true);
-
-            return (name, nameNoWhiteSpace, manufacturer, year);
-        }
-
-        private static string ToNull(this string name) => name == "" ? null : name.ToLower().Trim();
-
-        public static bool FuzzyMatch(string first, string second)
-        {
-            return FuzzyMatch(first, GetFuzzyFileNameDetails(second));
-        }
-        
-        private static bool FuzzyMatch(string first, (string name, string nameNoWhiteSpace, string manufacturer, int? year) secondFuzzy)
-        {
-            var firstFuzzy = GetFuzzyFileNameDetails(first);
-
-            var exactMatch = IsFuzzyExactMatch(firstFuzzy.name, secondFuzzy.name) || IsFuzzyExactMatch(firstFuzzy.nameNoWhiteSpace, secondFuzzy.nameNoWhiteSpace);
-
-            var startsMatch = IsFuzzyStartsMatch(firstFuzzy.name, secondFuzzy.name) || IsFuzzyStartsMatch(firstFuzzy.nameNoWhiteSpace, secondFuzzy.nameNoWhiteSpace);
-
-            var containsMatch = IsFuzzyContainsMatch(firstFuzzy.name, secondFuzzy.name) || IsFuzzyContainsMatch(firstFuzzy.nameNoWhiteSpace, secondFuzzy.nameNoWhiteSpace);
-
-            // if both names include years.. then they must match
-            var yearMismatch = firstFuzzy.year.HasValue && secondFuzzy.year.HasValue && Math.Abs(firstFuzzy.year.Value - secondFuzzy.year.Value) > 1;
-
-            return !yearMismatch && (exactMatch || startsMatch || containsMatch);
-        }
-
-        private static bool IsFuzzyExactMatch(string firstFuzzyName, string secondFuzzyName) => firstFuzzyName == secondFuzzyName;
-
-        private static bool IsFuzzyContainsMatch(string firstFuzzyName, string secondFuzzyName) => firstFuzzyName.Length >= 20 && secondFuzzyName.Length >= 20 && (firstFuzzyName.Contains(secondFuzzyName) || secondFuzzyName.Contains(firstFuzzyName));
-
-        private static bool IsFuzzyStartsMatch(string firstFuzzyName, string secondFuzzyName) => firstFuzzyName.Length >= 15 && secondFuzzyName.Length >= 15 && (firstFuzzyName.StartsWith(secondFuzzyName) || secondFuzzyName.StartsWith(firstFuzzyName));
-
-        private static string FuzzyClean(string first, bool removeAllWhiteSpace)
-        {
-            // clean the string to make it a little cleaner for subsequent matching
-            // - order is important!
-            var fuzzyClean = first?.ToLower()
-                    .Replace("the", "")
-                    .Replace("&apos;", "")
-                    .Replace("'", "")
-                    .Replace("`", "")
-                    .Replace(",", "")
-                    .Replace(";", "")
-                    .Replace("!", "")
-                    .Replace("?", "")
-                    .Replace("-", " ")
-                    .Replace(" - ", "")
-                    .Replace("_", " ")
-                    .Replace(".", " ")
-                    .Replace("&", " and ")
-                    .Replace(" iv", " 4")
-                    .Replace(" iii", " 3")
-                    .Replace(" ii", " 2")
-                    .Replace("    ", " ")
-                    .Replace("   ", " ")
-                    .Replace("  ", " ")
-                    .TrimStart()
-                    .Trim()
-                ;
-
-            if (removeAllWhiteSpace)
-                fuzzyClean = fuzzyClean?.Replace(" ", "");
-
-            return fuzzyClean;
-        }
-
-        // regex
-        // - faster: name via looking for the first opening parenthesis.. https://regex101.com/r/CxKJK1/1
-        // - slower: name is greedy search using the last opening parenthesis.. https://regex101.com/r/xiXsML/1.. @"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*"
-        private static readonly Regex _fuzzyFileNameRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)(?<year>\d*)\)", RegexOptions.Compiled);
-     
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
     }
 }

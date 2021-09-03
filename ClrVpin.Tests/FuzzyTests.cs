@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace ClrVpin.Tests
 {
-    public class TableUtilsTests
+    public class FuzzyTests
     {
 
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
@@ -25,7 +25,7 @@ namespace ClrVpin.Tests
         [TestCase("1-2-3 (1971)", "1 2 3", "123", null, 1971, TestName = "dashes removed.. white space and no white space")]
         public void FuzzyGetFuzzyFileNameDetailsTest(string fileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, int? expectedYear)
         {
-            var (name, nameNoWhiteSpace, manufacturer, year) = TableUtils.GetFuzzyFileNameDetails(fileName);
+            var (name, nameNoWhiteSpace, manufacturer, year) = Fuzzy.GetFileDetails(fileName);
 
             Assert.That(name, Is.EqualTo(expectedName));
             Assert.That(nameNoWhiteSpace, Is.EqualTo(expectedNameNoWhiteSpace));
@@ -97,7 +97,7 @@ namespace ClrVpin.Tests
         [TestCase("1-2-3 (Premier 1989)", "1 2 3 (Premier1989)", true, TestName = "#1 white space - kept")]
         public void FuzzyMatchTest(string first, string second, bool expectedIsMatch)
         {
-            var isMatch = TableUtils.FuzzyMatch(first, second);
+            var isMatch = Fuzzy.Match(first, Fuzzy.GetFileDetails(second));
 
             Assert.That(isMatch, Is.EqualTo(expectedIsMatch));
         }
