@@ -114,15 +114,8 @@ namespace ClrVpin.Shared
 
             return unknownMediaFiles;
         }
-
-        public static bool TryGet(IEnumerable<Hit> hits, out Hit hit, params HitTypeEnum[] hitTypes)
-        {
-            // return the first entry found
-            hit = hits.FirstOrDefault(h => hitTypes.Contains(h.Type));
-            return hit != null;
-        }
-
-        public static (string name, string manufacturer, int? year) GetFuzzyFileNameDetails(string fileName)
+        
+        public static (string name, string nameNoWhiteSpace, string manufacturer, int? year) GetFuzzyFileNameDetails(string fileName)
         {
             // return the fuzzy portion of the filename..
             // - no file extensions
@@ -150,9 +143,10 @@ namespace ClrVpin.Shared
                 name = fileName.ToNull();
 
             // fuzzy clean the name field
-            name = FuzzyClean(name);
+            name = FuzzyClean(name, false);
+            var nameNoWhiteSpace = FuzzyClean(name, true);
 
-            return (name, manufacturer, year);
+            return (name, nameNoWhiteSpace, manufacturer, year);
         }
 
         private static string ToNull(this string name) => name == "" ? null : name.ToLower().Trim();
@@ -162,15 +156,15 @@ namespace ClrVpin.Shared
             return FuzzyMatch(first, GetFuzzyFileNameDetails(second));
         }
         
-        private static bool FuzzyMatch(string first, (string name, string manufacturer, int? year) secondFuzzy)
+        private static bool FuzzyMatch(string first, (string name, string nameNoWhiteSpace, string manufacturer, int? year) secondFuzzy)
         {
             var firstFuzzy = GetFuzzyFileNameDetails(first);
 
-            var exactMatch = firstFuzzy.name == secondFuzzy.name;
+            var exactMatch = IsFuzzyExactMatch(firstFuzzy.name, secondFuzzy.name) || IsFuzzyExactMatch(firstFuzzy.nameNoWhiteSpace, secondFuzzy.nameNoWhiteSpace);
 
-            var startsMatch = firstFuzzy.name.Length >= 15 && secondFuzzy.name.Length >= 15 && (firstFuzzy.name.StartsWith(secondFuzzy.name) || secondFuzzy.name.StartsWith(firstFuzzy.name));
+            var startsMatch = IsFuzzyStartsMatch(firstFuzzy.name, secondFuzzy.name) || IsFuzzyStartsMatch(firstFuzzy.nameNoWhiteSpace, secondFuzzy.nameNoWhiteSpace);
 
-            var containsMatch = firstFuzzy.name.Length >= 20 && secondFuzzy.name.Length >= 20 && (firstFuzzy.name.Contains(secondFuzzy.name) || secondFuzzy.name.Contains(firstFuzzy.name));
+            var containsMatch = IsFuzzyContainsMatch(firstFuzzy.name, secondFuzzy.name) || IsFuzzyContainsMatch(firstFuzzy.nameNoWhiteSpace, secondFuzzy.nameNoWhiteSpace);
 
             // if both names include years.. then they must match
             var yearMismatch = firstFuzzy.year.HasValue && secondFuzzy.year.HasValue && Math.Abs(firstFuzzy.year.Value - secondFuzzy.year.Value) > 1;
@@ -178,7 +172,13 @@ namespace ClrVpin.Shared
             return !yearMismatch && (exactMatch || startsMatch || containsMatch);
         }
 
-        private static string FuzzyClean(string first)
+        private static bool IsFuzzyExactMatch(string firstFuzzyName, string secondFuzzyName) => firstFuzzyName == secondFuzzyName;
+
+        private static bool IsFuzzyContainsMatch(string firstFuzzyName, string secondFuzzyName) => firstFuzzyName.Length >= 20 && secondFuzzyName.Length >= 20 && (firstFuzzyName.Contains(secondFuzzyName) || secondFuzzyName.Contains(firstFuzzyName));
+
+        private static bool IsFuzzyStartsMatch(string firstFuzzyName, string secondFuzzyName) => firstFuzzyName.Length >= 15 && secondFuzzyName.Length >= 15 && (firstFuzzyName.StartsWith(secondFuzzyName) || secondFuzzyName.StartsWith(firstFuzzyName));
+
+        private static string FuzzyClean(string first, bool removeAllWhiteSpace)
         {
             // clean the string to make it a little cleaner for subsequent matching
             // - order is important!
@@ -205,6 +205,9 @@ namespace ClrVpin.Shared
                     .TrimStart()
                     .Trim()
                 ;
+
+            if (removeAllWhiteSpace)
+                fuzzyClean = fuzzyClean?.Replace(" ", "");
 
             return fuzzyClean;
         }

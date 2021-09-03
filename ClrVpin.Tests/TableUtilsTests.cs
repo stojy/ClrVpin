@@ -9,24 +9,26 @@ namespace ClrVpin.Tests
 
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
         [Test]
-        [TestCase("Indiana Jones (Williams 1993) blah.directb2s", "indiana jones", "williams", 1993)]
-        [TestCase("Indiana Jones (Williams) blah.directb2s", "indiana jones", "williams", null)]
-        [TestCase("Indiana Jones (1993) blah.directb2s", "indiana jones", null, 1993)]
-        [TestCase("Indiana Jones.directb2s", "indiana jones", null, null)]
-        [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", "indiana jones", "williams", 1993, TestName = "only last most parenthesis is used")]
-        [TestCase("", null, null, null, TestName = "empty string")]
-        [TestCase(null, null, null, null, TestName = "null string")]
-        [TestCase("123", "123", null, null, TestName = "number title")]
-        [TestCase("123 (Williams 1993)", "123", "williams", 1993, TestName = "number title with manufacturer and year")]
-        [TestCase("123 (Williams)", "123", "williams", null, TestName = "number title with manufacturer only")]
-        [TestCase("123 (1993)", "123", null, 1993, TestName = "number titleand with year only")]
-        [TestCase("123 blah (Williams 1993)", "123 blah", "williams", 1993, TestName = "number and word title with manufacturer and year")]
-        [TestCase("123 blah (1993)", "123 blah", null, 1993, TestName = "number title with word and year only")]
-        public void FuzzyGetFuzzyFileNameDetailsTest(string fileName, string expectedName, string expectedManufacturer, int? expectedYear)
+        [TestCase("Indiana Jones (Williams 1993) blah.directb2s", "indiana jones", "indianajones", "williams", 1993)]
+        [TestCase("Indiana Jones (Williams) blah.directb2s", "indiana jones", "indianajones", "williams", null)]
+        [TestCase("Indiana Jones (1993) blah.directb2s", "indiana jones", "indianajones", null, 1993)]
+        [TestCase("Indiana Jones.directb2s", "indiana jones", "indianajones", null, null)]
+        [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", "indiana jones", "indianajones", "williams", 1993, TestName = "only last most parenthesis is used")]
+        [TestCase("", null, null, null, null, TestName = "empty string")]
+        [TestCase(null, null, null, null, null, TestName = "null string")]
+        [TestCase("123", "123", "123", null, null, TestName = "number title")]
+        [TestCase("123 (Williams 1993)", "123", "123", "williams", 1993, TestName = "number title with manufacturer and year")]
+        [TestCase("123 (Williams)", "123", "123", "williams", null, TestName = "number title with manufacturer only")]
+        [TestCase("123 (1993)", "123", "123", null, 1993, TestName = "number titleand with year only")]
+        [TestCase("123 blah (Williams 1993)", "123 blah", "123blah", "williams", 1993, TestName = "number and word title with manufacturer and year")]
+        [TestCase("123 blah (1993)", "123 blah", "123blah", null, 1993, TestName = "number title with word and year only")]
+        [TestCase("1-2-3 (1971)", "1 2 3", "123", null, 1971, TestName = "dashes removed.. white space and no white space")]
+        public void FuzzyGetFuzzyFileNameDetailsTest(string fileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, int? expectedYear)
         {
-            var (name, manufacturer, year) = TableUtils.GetFuzzyFileNameDetails(fileName);
+            var (name, nameNoWhiteSpace, manufacturer, year) = TableUtils.GetFuzzyFileNameDetails(fileName);
 
             Assert.That(name, Is.EqualTo(expectedName));
+            Assert.That(nameNoWhiteSpace, Is.EqualTo(expectedNameNoWhiteSpace));
             Assert.That(manufacturer, Is.EqualTo(expectedManufacturer));
             Assert.That(year, Is.EqualTo(expectedYear));
         }
@@ -88,6 +90,11 @@ namespace ClrVpin.Tests
         [TestCase("The Getaway High Speed 4 (Williams 1992)", @"C:\temp\_MegaSync\b2s\Getaway, The - High Speed IV v1.04.directb2s", true, TestName = "roman numeral conversion - IV")]
         [TestCase("Lights...Camera...Action! (Premier 1989).blah", @"Lights Camera Action (1989).directb2s", true, TestName = "ellipsis")]
         [TestCase("Lights...Camera...Action! (Premier 1989)", @"Lights Camera Action (1989).directb2s", false, TestName = "ellipsis - without file extension not supported :(")]
+        [TestCase("1-2-3 (Premier 1989)", "123 (Premier1989)", true, TestName = "#1 white space - removed")]
+        [TestCase("123 (Premier 1989)", "1 2 3 (Premier1989)", true, TestName = "#1 white space - removed 2")]
+        [TestCase("1 2 3 (Premier 1989)", "1-2-3-(Premier1989)", true, TestName = "#1 white space - removed 3")]
+        [TestCase("1 2   3 (Premier 1989)", "1-2-3-(Premier1989)", true, TestName = "#1 white space - removed 4")]
+        [TestCase("1-2-3 (Premier 1989)", "1 2 3 (Premier1989)", true, TestName = "#1 white space - kept")]
         public void FuzzyMatchTest(string first, string second, bool expectedIsMatch)
         {
             var isMatch = TableUtils.FuzzyMatch(first, second);
