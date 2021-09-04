@@ -98,7 +98,7 @@ namespace ClrVpin.Shared
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
                 }
                 // fuzzy match against table name (non-media) or description (media)
-                else if ((matchedGame = games.FirstOrDefault(game => Fuzzy.Match(game.TableFile, fuzzyFileNameDetails) || Fuzzy.Match(game.Description, fuzzyFileNameDetails))) != null)
+                else if ((matchedGame = games.FirstOrDefault(game => Fuzzy.Match(game.TableFile, fuzzyFileNameDetails).success || Fuzzy.Match(game.Description, fuzzyFileNameDetails).success)) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
                 }

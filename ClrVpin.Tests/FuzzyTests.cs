@@ -6,7 +6,6 @@ namespace ClrVpin.Tests
 {
     public class FuzzyTests
     {
-
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
         [Test]
         [TestCase("Indiana Jones (Williams 1993) blah.directb2s", "indiana jones", "indianajones", "williams", 1993)]
@@ -23,7 +22,7 @@ namespace ClrVpin.Tests
         [TestCase("123 blah (Williams 1993)", "123 blah", "123blah", "williams", 1993, TestName = "number and word title with manufacturer and year")]
         [TestCase("123 blah (1993)", "123 blah", "123blah", null, 1993, TestName = "number title with word and year only")]
         [TestCase("1-2-3 (1971)", "1 2 3", "123", null, 1971, TestName = "dashes removed.. white space and no white space")]
-        public void FuzzyGetFuzzyFileNameDetailsTest(string fileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, int? expectedYear)
+        public void GetFileNameDetailsTest(string fileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, int? expectedYear)
         {
             var (name, nameNoWhiteSpace, manufacturer, year) = Fuzzy.GetFileDetails(fileName);
 
@@ -72,16 +71,6 @@ namespace ClrVpin.Tests
         [TestCase("black & knight", "black and knight", true, TestName = "replace ' & '")]
         [TestCase("Rocky and Bullwinkle And Friends (Data East 1993)", "Adventures of Rocky and Bullwinkle and Friends (1993).directb2s", true, TestName = "#1 contains - 20 characters satisified")]
         [TestCase("Rocky and Bullwinkl", "Adventures of Rocky and Bullwinkle and Friends (1993).directb2s", false, TestName = "#1 contains - 20 characters not satisified")]
-        [TestCase("Indiana Jones (Stern 2008)", "Indiana Jones (Stern 2006) by Starlion.directb2s", false, TestName = "#0 - check year - exact match must not exceed 1 either")]
-        [TestCase("Indiana Jones (Stern 2008)", "Indiana Jones (Williams 2010).directb2s", false, TestName = "#1 check year - exceeds 1")]
-        [TestCase("Indiana Jones (Stern 2006)", "Indiana Jones (Williams 2008).directb2s", false, TestName = "#2 check year - exceeds 1")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones (Williams 1994).directb2s", true, TestName = "#3 check year - 1 ok")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones (Williams 1992).directb2s", true, TestName = "#4 check year - 1 ok")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones (Williams 1993).directb2s", true, TestName = "#5 check year - match ok")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones (Williams).directb2s", true, TestName = "#6 check year - year missing")]
-        [TestCase("Indiana Jones (Stern)", "Indiana Jones (Williams1993).directb2s", true, TestName = "#7 check year - year missing")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones (1995).directb2s", false, TestName = "#8 check year - year only, but too large")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones (1994).directb2s", true, TestName = "#9 check year - year only, ok")]
         [TestCase("Indiana Jones (Stern 2008)", @"C:\temp\_download\vp\Backglasses\Indiana Jones (Stern 2008) by Starlion.directb2s", true, TestName = "full path")]
         [TestCase("Indiana Jones The Pinball Adventure (1993).directb2s", @"Indiana Jones The Pinball Adventure (Williams 1993).directb2s", true, TestName = "misc")]
         [TestCase("The Getaway High Speed II (Williams 1992)", @"C:\temp\_MegaSync\b2s\Getaway, The - High Speed II v1.04.directb2s", true, TestName = "full path 2")]
@@ -95,11 +84,44 @@ namespace ClrVpin.Tests
         [TestCase("1 2 3 (Premier 1989)", "1-2-3-(Premier1989)", true, TestName = "#1 white space - removed 3")]
         [TestCase("1 2   3 (Premier 1989)", "1-2-3-(Premier1989)", true, TestName = "#1 white space - removed 4")]
         [TestCase("1-2-3 (Premier 1989)", "1 2 3 (Premier1989)", true, TestName = "#1 white space - kept")]
-        public void FuzzyMatchTest(string first, string second, bool expectedIsMatch)
+        [TestCase("AC-DC LUCI Premium (Stern 2013).directb2s", "AC-DC LUCI (Stern 2013).directb2s", true, TestName = "remove 'premium'")]
+        [TestCase("Indiana Jones (Stern 1993).directb2s", "Indiana Jones (Stern 1991).directb2s", true, TestName = "#1 scoring - exact match with 2 year mismatch")]
+        [TestCase("Indiana Jones (Stern 1993).directb2s", "Indiana Jones (Stern 1990).directb2s", false, TestName = "#1 scoring - exact match with 3 year mismatch")]
+        public void MatchTest(string first, string second, bool expectedSuccess)
         {
-            var isMatch = Fuzzy.Match(first, Fuzzy.GetFileDetails(second));
+            var isMatch = Fuzzy.Match(first, Fuzzy.GetFileDetails(second)).success;
 
-            Assert.That(isMatch, Is.EqualTo(expectedIsMatch));
+            Assert.That(isMatch, Is.EqualTo(expectedSuccess));
+        }
+
+        [Test]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern)", true, 150, TestName = "exact name and missing year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 200, TestName = "exact name and exact year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1994)", true, 190, TestName = "exact name and +/-1 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1995)", true, 100, TestName = "exact name and +/-2 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1996)", false, 50, TestName = "exact name and +/-3 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1997)", false, -850, TestName = "exact name and +/-3 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern)", true, 100, TestName = "starts name 15char and missing year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1993)", true, 150, TestName = "starts name 15char and exact year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1994)", true, 140, TestName = "starts name 15char and +/-1 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1995)", false, 50, TestName = "starts name 15char and +/-2 year")]
+        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern)", false, 60, TestName = "starts name 10char and missing year")]
+        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 110, TestName = "starts name 10char and exact year")]
+        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1992)", true, 100, TestName = "starts name 10char and +/-1 year")]
+        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1991)", false, 10, TestName = "starts name 10char and +/-1 year")]
+        [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern)", true, 100, TestName = "contains name 20char and missing year")]
+        [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1993)", true, 150, TestName = "contains name 20char and exact year")]
+        [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1994)", true, 140, TestName = "contains name 20char and +/-1 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", false, 60, TestName = "contains name 13char and missing year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 110, TestName = "contains name 13char and exact year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 100, TestName = "contains name 13char and +/-1 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 10, TestName = "contains name 13char and +/-2 year")]
+        public void MatchScoreTest(string first, string second, bool expectedSuccess, int expectedScore)
+        {
+            var (success, score) = Fuzzy.Match(first, Fuzzy.GetFileDetails(second));
+
+            Assert.That(success, Is.EqualTo(expectedSuccess));
+            Assert.That(score, Is.EqualTo(expectedScore));
         }
     }
 }

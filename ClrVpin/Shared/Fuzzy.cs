@@ -41,31 +41,66 @@ namespace ClrVpin.Shared
             return (name, nameNoWhiteSpace, manufacturer, year);
         }
 
-        public static bool Match(string first, (string name, string nameNoWhiteSpace, string manufacturer, int? year) secondFuzzy)
+        public static (bool success, int score) Match(string first, (string name, string nameNoWhiteSpace, string manufacturer, int? year) secondFuzzy)
         {
             var firstFuzzy = GetFileDetails(first);
 
-            var exactMatch = IsExactMatch(firstFuzzy.name, secondFuzzy.name) || IsExactMatch(firstFuzzy.nameNoWhiteSpace, secondFuzzy.nameNoWhiteSpace);
+            var nameMatchScore = GetNameMatchScore(firstFuzzy.name, firstFuzzy.nameNoWhiteSpace, secondFuzzy.name, secondFuzzy.nameNoWhiteSpace);
+            var yearMatchScore = YearMatchScore(firstFuzzy.year, secondFuzzy.year);
+            var score = yearMatchScore + nameMatchScore;
 
-            var startsMatch = IsStartsMatch(firstFuzzy.name, secondFuzzy.name) || IsStartsMatch(firstFuzzy.nameNoWhiteSpace, secondFuzzy.nameNoWhiteSpace);
+            // total 'identity check/match' score must be 100 or more
+            return (score >= 100, score);
+        }
 
-            var containsMatch = IsContainsMatch(firstFuzzy.name, secondFuzzy.name) || IsContainsMatch(firstFuzzy.nameNoWhiteSpace, secondFuzzy.nameNoWhiteSpace);
+        private static int YearMatchScore(int? firstYear, int? secondYear)
+        {
+            var yearMatchScore = 0;
 
-            // if both names include years.. then they must match
-            var yearMismatch = firstFuzzy.year.HasValue && secondFuzzy.year.HasValue && Math.Abs(firstFuzzy.year.Value - secondFuzzy.year.Value) > 1;
+            // if both names include years.. then check adjust the score based on the difference
+            if (firstYear.HasValue && secondYear.HasValue)
+            {
+                var yearDifference = Math.Abs(firstYear.Value - secondYear.Value);
 
-            return !yearMismatch && (exactMatch || startsMatch || containsMatch);
+                yearMatchScore = yearDifference switch
+                {
+                    0 => 50,
+                    1 => 40,
+                    2 => -50,
+                    3 => -100,
+                    _ => -1000
+                };
+            }
+
+            return yearMatchScore;
+        }
+
+        private static int GetNameMatchScore(string firstName, string firstNameNoWhiteSpace, string secondName, string secondNameNoWhiteSpace)
+        {
+            var score = IsExactMatch(firstName, secondName) || IsExactMatch(firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 150 : 0;
+            
+            if (score == 0)
+                score = IsStartsMatch(15, firstName, secondName) || IsStartsMatch(15, firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 100 : 0;
+            if (score == 0)
+                score = IsStartsMatch(10, firstName, secondName) || IsStartsMatch(10, firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 60 : 0;
+
+            if (score == 0)
+                score = IsContainsMatch(20, firstName, secondName) || IsContainsMatch(20, firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 100 : 0;
+            if (score == 0)
+                score = IsContainsMatch(13, firstName, secondName) || IsContainsMatch(13, firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 60 : 0;
+            
+            return score;
         }
 
         private static string ToNull(this string name) => name == "" ? null : name.ToLower().Trim();
 
         private static bool IsExactMatch(string firstFuzzyName, string secondFuzzyName) => firstFuzzyName == secondFuzzyName;
 
-        private static bool IsContainsMatch(string firstFuzzyName, string secondFuzzyName) =>
-            firstFuzzyName.Length >= 20 && secondFuzzyName.Length >= 20 && (firstFuzzyName.Contains(secondFuzzyName) || secondFuzzyName.Contains(firstFuzzyName));
+        private static bool IsContainsMatch(int numCharsToMatch, string firstFuzzyName, string secondFuzzyName) =>
+            firstFuzzyName.Length >= numCharsToMatch && secondFuzzyName.Length >= numCharsToMatch && (firstFuzzyName.Contains(secondFuzzyName) || secondFuzzyName.Contains(firstFuzzyName));
 
-        private static bool IsStartsMatch(string firstFuzzyName, string secondFuzzyName) =>
-            firstFuzzyName.Length >= 15 && secondFuzzyName.Length >= 15 && (firstFuzzyName.StartsWith(secondFuzzyName) || secondFuzzyName.StartsWith(firstFuzzyName));
+        private static bool IsStartsMatch(int numCharsToMatch, string firstFuzzyName, string secondFuzzyName) =>
+            firstFuzzyName.Length >= numCharsToMatch && secondFuzzyName.Length >= numCharsToMatch && (firstFuzzyName.StartsWith(secondFuzzyName) || secondFuzzyName.StartsWith(firstFuzzyName));
 
         private static string Clean(string first, bool removeAllWhiteSpace)
         {
@@ -73,6 +108,7 @@ namespace ClrVpin.Shared
             // - order is important!
             var fuzzyClean = first?.ToLower()
                     .Replace("the", "")
+                    .Replace("premium", "")
                     .Replace("&apos;", "")
                     .Replace("'", "")
                     .Replace("`", "")
