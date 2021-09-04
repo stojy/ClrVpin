@@ -194,6 +194,9 @@ namespace ClrVpin.Rebuilder
             var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, (description, percentage) => UpdateProgress("Merging Files", description, percentage));
 
             // unlike scanner, unknownFiles (unsupported and unknown) are deliberately NOT removed
+            // todo; delete inmatched files with word hits.. if "delete ignored" is on
+            progress.Update("Removing Unneeded Files");
+            //await ScannerUtils.RemoveAsync(unknownFiles);
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
