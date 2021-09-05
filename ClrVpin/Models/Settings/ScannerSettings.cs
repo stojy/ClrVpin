@@ -11,7 +11,7 @@ namespace ClrVpin.Models.Settings
         public ObservableCollection<HitTypeEnum> SelectedCheckHitTypes { get; set; } = new ObservableCollection<HitTypeEnum>();
         public ObservableCollection<HitTypeEnum> SelectedFixHitTypes { get; set; } = new ObservableCollection<HitTypeEnum>();
         
-        public MultipleMatchOptionEnum SelectedMultipleMatchOption { get; set; } = MultipleMatchOptionEnum.PreferCorrectName;
+        public MultipleMatchOptionEnum SelectedMultipleMatchOption { get; set; } = MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold;
         public decimal MultipleMatchExceedSizeThresholdPercentage { get; set; } = 85;
     }
 }

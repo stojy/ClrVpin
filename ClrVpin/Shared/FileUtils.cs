@@ -101,11 +101,18 @@ namespace ClrVpin.Shared
 
         public static string GetFileInfoStatistics(string file)
         {
-            FileInfo fileInfo = null;
+            string details;
             if (File.Exists(file))
-                fileInfo = new FileInfo(file);
+            {
+                var fileInfo = new FileInfo(file);
+                details = $"{ByteSize.FromBytes(fileInfo.Length).ToString("0.#"),-8} {fileInfo.LastWriteTime:dd/MM/yy HH:mm:ss} - {file}";
+            }
+            else if (file != null)
+                details = $"{"(n/a: new file)",-26} - {file}";
+            else
+                details = $"{"(n/a: unmatched file)",-26}";
 
-            return fileInfo != null ? $"{ByteSize.FromBytes(fileInfo.Length).ToString("0.#"),-8} {fileInfo.LastWriteTime:dd/MM/yy HH:mm:ss} - {file}" : $"{"(n/a: new file)",-26} - {file}";
+            return details;
         }
 
         private static void Rename(string sourceFile, string newFile, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)

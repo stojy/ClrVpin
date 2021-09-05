@@ -189,29 +189,27 @@ namespace ClrVpin.Rebuilder
             var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
 
             progress.Update("Checking Files");
-            var unknownFiles = await RebuilderUtils.CheckAsync(games);
+            var unmatchedFiles = await RebuilderUtils.CheckAsync(games);
 
             var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, (description, percentage) => UpdateProgress("Merging Files", description, percentage));
 
-            // unlike scanner, unknownFiles (unsupported and unknown) are deliberately NOT removed
-            // todo; delete inmatched files with word hits.. if "delete ignored" is on
-            progress.Update("Removing Unneeded Files");
-            //await ScannerUtils.RemoveAsync(unknownFiles);
+            progress.Update("Removing Unmatched Files");
+            await RebuilderUtils.RemoveAsync(unmatchedFiles);
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
             Games = new ObservableCollection<Game>(games);
 
-            ShowResults(gameFiles, unknownFiles, progress.Duration);
+            ShowResults(gameFiles, unmatchedFiles, progress.Duration);
 
             progress.Close();
 
             void UpdateProgress(string title, string detail, int percentage) => progress.Update(title, percentage, detail);
         }
 
-        private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles, TimeSpan duration)
+        private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
-            var rebuilderStatistics = new RebuilderStatisticsViewModel(Games, duration, gameFiles, unknownFiles);
+            var rebuilderStatistics = new RebuilderStatisticsViewModel(Games, duration, gameFiles, unmatchedFiles);
             rebuilderStatistics.Show(_rebuilderWindow, WindowMargin, WindowMargin);
 
             var rebuilderResults = new RebuilderResultsViewModel(Games);

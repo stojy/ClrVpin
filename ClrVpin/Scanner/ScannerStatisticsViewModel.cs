@@ -12,8 +12,8 @@ namespace ClrVpin.Scanner
 {
     public class ScannerStatisticsViewModel : StatisticsViewModel
     {
-        public ScannerStatisticsViewModel(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
-            : base(games, elapsedTime, gameFiles, unknownFiles)
+        public ScannerStatisticsViewModel(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
+            : base(games, elapsedTime, gameFiles, unmatchedFiles)
         {
             // hit type stats for all supported types only
             // - including the extra 'under the hood' types.. valid, unknown, unsupported

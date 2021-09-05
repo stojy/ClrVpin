@@ -16,13 +16,13 @@ namespace ClrVpin.Scanner
 
         public static async Task<List<FileDetail>> CheckAsync(List<Game> games)
         {
-            var unknownFiles = await Task.Run(() => Check(games));
-            return unknownFiles;
+            var unmatchedFiles = await Task.Run(() => Check(games));
+            return unmatchedFiles;
         }
 
         private static List<FileDetail> Check(List<Game> games)
         {
-            var unknownFiles = new List<FileDetail>();
+            var unmatchedFiles = new List<FileDetail>();
 
             // for each selected check content types
             var checkContentTypes = _settings.GetSelectedCheckContentTypes();
@@ -31,8 +31,8 @@ namespace ClrVpin.Scanner
             {
                 // for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
                 var mediaFiles = TableUtils.GetContentFileNames(contentType, contentType.Folder);
-                var unmatchedFiles = TableUtils.AssociateContentFilesWithGames(games, mediaFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum));
-                unknownFiles.AddRange(unmatchedFiles);
+                var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, mediaFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum));
+                unmatchedFiles.AddRange(unknownFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
                 if (_settings.Scanner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
@@ -42,14 +42,15 @@ namespace ClrVpin.Scanner
                     // n/a for pinball - since it's expected that extra files will exist in same tables folder
                     // - e.g. vpx, directb2s, pov, ogg, txt, exe, etc
                     if (contentType.Category == ContentTypeCategoryEnum.Media)
-                        unknownFiles.AddRange(unsupportedFiles);
+                        unmatchedFiles.AddRange(unsupportedFiles);
                 }
             }
 
             // update each table status as missing if their were no matches
             AddMissingStatus(games);
 
-            return unknownFiles;
+            // unmatchedFiles = unknownFiles + unsupportedFiles
+            return unmatchedFiles;
         }
 
         public static async Task<List<FileDetail>> FixAsync(List<Game> games, string backupFolder, Action<string, int> updateProgress)
@@ -180,23 +181,23 @@ namespace ClrVpin.Scanner
                 gameFiles.Add(FileUtils.Rename(preferredHit, game, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
         }
 
-        public static async Task RemoveAsync(List<FileDetail> otherFileDetails)
+        public static async Task RemoveAsync(List<FileDetail> unmatchedFiles)
         {
-            await Task.Run(() => Remove(otherFileDetails));
+            await Task.Run(() => Remove(unmatchedFiles));
         }
 
-        private static void Remove(List<FileDetail> otherFileDetails)
+        private static void Remove(List<FileDetail> unmatchedFiles)
         {
-            // delete files NOT associated with games, i.e. unknown files
-            otherFileDetails.ForEach(x =>
+            // delete files NOT associated with games, aka unmatched files
+            unmatchedFiles.ForEach(unmatchedFile =>
             {
-                if (x.HitType == HitTypeEnum.Unknown && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
-                    x.HitType == HitTypeEnum.Unsupported && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
+                if (unmatchedFile.HitType == HitTypeEnum.Unknown && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
+                    unmatchedFile.HitType == HitTypeEnum.Unsupported && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
-                    x.Deleted = true;
+                    unmatchedFile.Deleted = true;
 
-                    Logger.Info($"Fixing.. unknown/unsupported file, table: n/a, type: {x.HitType.GetDescription()}, content: n/a");
-                    FileUtils.Delete(x.Path, x.HitType, null);
+                    Logger.Info($"Fixing.. unknown/unsupported file, table: n/a, type: {unmatchedFile.HitType.GetDescription()}, content: n/a");
+                    FileUtils.Delete(unmatchedFile.Path, unmatchedFile.HitType, null);
                 }
             });
         }

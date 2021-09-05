@@ -192,27 +192,27 @@ namespace ClrVpin.Scanner
             var games = TableUtils.GetGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
 
             progress.Update("Checking Files");
-            var unknownFiles = await ScannerUtils.CheckAsync(games);
+            var unmatchedFiles = await ScannerUtils.CheckAsync(games);
 
             var gameFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder, (description, percentage) => UpdateProgress("Fixing Files", description, percentage));
 
-            progress.Update("Removing Unknown Files");
-            await ScannerUtils.RemoveAsync(unknownFiles);
+            progress.Update("Removing Unmatched Files");
+            await ScannerUtils.RemoveAsync(unmatchedFiles);
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
             Games = new ObservableCollection<Game>(games);
 
-            ShowResults(gameFiles, unknownFiles, progress.Duration);
+            ShowResults(gameFiles, unmatchedFiles, progress.Duration);
 
             progress.Close();
 
             void UpdateProgress(string title, string detail, int percentage) => progress.Update(title, percentage, detail);
         }
 
-        private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles, TimeSpan duration)
+        private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
-            var scannerStatistics = new ScannerStatisticsViewModel(Games, duration, gameFiles, unknownFiles);
+            var scannerStatistics = new ScannerStatisticsViewModel(Games, duration, gameFiles, unmatchedFiles);
             scannerStatistics.Show(_scannerWindow, WindowMargin, WindowMargin);
 
             var scannerResults = new ScannerResultsViewModel(Games);

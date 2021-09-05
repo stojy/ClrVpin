@@ -13,10 +13,10 @@ namespace ClrVpin.Shared
     [AddINotifyPropertyChangedInterface]
     public abstract class StatisticsViewModel
     {
-        protected StatisticsViewModel(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unknownFiles)
+        protected StatisticsViewModel(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
         {
             GameFiles = gameFiles;
-            UnknownFiles = unknownFiles;
+            UnmatchedFiles = unmatchedFiles;
 
             ElapsedTime = elapsedTime;
             Games = games;
@@ -67,7 +67,7 @@ namespace ClrVpin.Shared
                 {
                     // other files (unknown and unsupported) matches aren't attributed to a game.. so we treat them a little differently
                     contents = string.Join("\n", SupportedContentTypes.Select(contentType =>
-                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetUnknownFilesContentStatistics(contentType.Enum, hitType.Enum)}"));
+                        $"- {contentType.Description,StatisticsKeyWidth + 2}{GetUnmatchedFilesContentStatistics(contentType.Enum, hitType.Enum)}"));
                 }
                 else
                 {
@@ -97,18 +97,18 @@ namespace ClrVpin.Shared
             return string.Join(": ", new[] {discoveredStatistics, fileStatistics}.Where(x => !string.IsNullOrEmpty(x)));
         }
 
-        private string GetUnknownFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
+        private string GetUnmatchedFilesContentStatistics(ContentTypeEnum contentType, HitTypeEnum hitType)
         {
             // identify stats belonging to criteria that were not selected for checking/fixing
             var prefix = "discovered";
 
             // discovered statistics - from the unknown files list
-            var matchedFiles = UnknownFiles.Where(x => x.ContentType == contentType && x.HitType == hitType).ToList();
-            var discoveredStatistics = $"{prefix} {matchedFiles.Count}";
+            var files = UnmatchedFiles.Where(x => x.ContentType == contentType && x.HitType == hitType).ToList();
+            var discoveredStatistics = $"{prefix} {files.Count}";
 
             // file statistics - from the file list.. which is also stored in the games list, but more accessible via Games
             // - for n/a hit types (e.g. ignored) there will be no stats since there are no GameFiles :)
-            var fileStatistics = CreateFileStatistics(UnknownFiles, contentType, hitType);
+            var fileStatistics = CreateFileStatistics(UnmatchedFiles, contentType, hitType);
 
             return string.Join(": ", new[] { discoveredStatistics, fileStatistics }.Where(x => !string.IsNullOrEmpty(x)));
         }
@@ -135,7 +135,7 @@ namespace ClrVpin.Shared
         }
 
         protected readonly ICollection<FileDetail> GameFiles;
-        protected readonly ICollection<FileDetail> UnknownFiles;
+        protected readonly ICollection<FileDetail> UnmatchedFiles;
         protected const int StatisticsKeyWidth = -26;
     }
 }
