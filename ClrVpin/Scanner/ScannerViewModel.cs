@@ -194,10 +194,11 @@ namespace ClrVpin.Scanner
             progress.Update("Checking Files");
             var unmatchedFiles = await ScannerUtils.CheckAsync(games);
 
-            var gameFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder, (description, percentage) => UpdateProgress("Fixing Files", description, percentage));
+            progress.Update("Fixing Files");
+            var gameFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
 
             progress.Update("Removing Unmatched Files");
-            await ScannerUtils.RemoveAsync(unmatchedFiles);
+            await ScannerUtils.RemoveAsync(unmatchedFiles, UpdateProgress);
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
@@ -207,7 +208,7 @@ namespace ClrVpin.Scanner
 
             progress.Close();
 
-            void UpdateProgress(string title, string detail, int percentage) => progress.Update(title, percentage, detail);
+            void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
         }
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)

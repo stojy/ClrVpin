@@ -191,10 +191,11 @@ namespace ClrVpin.Rebuilder
             progress.Update("Checking Files");
             var unmatchedFiles = await RebuilderUtils.CheckAsync(games);
 
-            var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, (description, percentage) => UpdateProgress("Merging Files", description, percentage));
+            progress.Update("Merging Files");
+            var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, UpdateProgress);
 
             progress.Update("Removing Unmatched Files");
-            await RebuilderUtils.RemoveAsync(unmatchedFiles);
+            await RebuilderUtils.RemoveAsync(unmatchedFiles, UpdateProgress);
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
@@ -204,7 +205,7 @@ namespace ClrVpin.Rebuilder
 
             progress.Close();
 
-            void UpdateProgress(string title, string detail, int percentage) => progress.Update(title, percentage, detail);
+            void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
         }
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)

@@ -8,8 +8,7 @@ using ClrVpin.Models;
 using ClrVpin.Models.Rebuilder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
-using EnumExtensions = Utils.EnumExtensions;
-using LinqExtensions = Utils.LinqExtensions;
+using Utils;
 
 namespace ClrVpin.Rebuilder
 {
@@ -32,9 +31,9 @@ namespace ClrVpin.Rebuilder
             return mergedFileDetails;
         }
 
-        public static async Task RemoveAsync(List<FileDetail> unmatchedFiles)
+        public static async Task RemoveAsync(List<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
         {
-            await Task.Run(() => Remove(unmatchedFiles));
+            await Task.Run(() => Remove(unmatchedFiles, updateProgress));
         }
 
         private static List<FileDetail> Check(IReadOnlyCollection<Game> games)
@@ -66,7 +65,7 @@ namespace ClrVpin.Rebuilder
             // - match criteria is selected or relevant
             // - skip options are selected or relevant
             var gameFiles = new List<FileDetail>();
-            LinqExtensions.ForEach(gamesWithContent, (game, i) =>
+            gamesWithContent.ForEach((game, i) =>
             {
                 updateProgress(game.Description, 100 * i / gamesWithContent.Count);
 
@@ -76,10 +75,10 @@ namespace ClrVpin.Rebuilder
                 // merge ALL of the selected hit types
                 // - for each supported file there, there will be 1 hit type
                 // - if their are multiple hit type matches.. then a subsequent 'scanner' (aka clean) run will be required to clean up the extra files
-                var mergeableHits = contentHitCollection.Hits.Where(hit => LinqExtensions.In(hit.Type, StaticSettings.FixablePrioritizedHitTypeEnums));
+                var mergeableHits = contentHitCollection.Hits.Where(hit => hit.Type.In(StaticSettings.FixablePrioritizedHitTypeEnums));
 
                 // merge each hit
-                LinqExtensions.ForEach(mergeableHits, hit => gameFiles.Add(Merge(hit, game, _settings.Rebuilder.SelectedMatchTypes)));
+                mergeableHits.ForEach(hit => gameFiles.Add(Merge(hit, game, _settings.Rebuilder.SelectedMatchTypes)));
             });
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
@@ -110,10 +109,10 @@ namespace ClrVpin.Rebuilder
                 {
                     fixFileType = FixFileTypeEnum.Merged;
 
-                    var shouldDeleteSource = LinqExtensions.In(MergeOptionEnum.RemoveSource, Model.Settings.Rebuilder.SelectedMergeOptions);
-                    var preserveDateModified = LinqExtensions.In(MergeOptionEnum.PreserveDateModified, Model.Settings.Rebuilder.SelectedMergeOptions);
+                    var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
+                    var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
 
-                    Logger.Info($"Merging.. table: {game.TableFile}, description: {game.Description}, type: {EnumExtensions.GetDescription(hit.Type)}, content: {hit.ContentType}");
+                    Logger.Info($"Merging.. table: {game.TableFile}, description: {game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}");
                     FileUtils.Merge(hit.Path, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified, contentType.KindredExtensionsList, backupFile => hit.Path = backupFile);
                 }
             }
@@ -128,7 +127,7 @@ namespace ClrVpin.Rebuilder
 
             // contains words - destination file isn't required (although a table match is required)
             if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfContainsWords) && _settings.Rebuilder.IgnoreIWords.Any(x => sourceFileInfo.Name.ToLower().Contains(x)))
-                return ProcessIgnore(game, EnumExtensions.GetDescription(IgnoreOptionEnum.IgnoreIfContainsWords), hit, sourceFileInfo, destinationFileInfo);
+                return ProcessIgnore(game, IgnoreOptionEnum.IgnoreIfContainsWords.GetDescription(), hit, sourceFileInfo, destinationFileInfo);
 
             // source vs destination file
             if (destinationFileInfo != null)
@@ -136,10 +135,10 @@ namespace ClrVpin.Rebuilder
                 var thresholdSizePercentage = _settings.Rebuilder.IgnoreIfSmallerPercentage / 100;
                 var actualSizePercentage = (decimal) sourceFileInfo.Length / destinationFileInfo.Length;
                 if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfSmaller) && actualSizePercentage <= thresholdSizePercentage)
-                    return ProcessIgnore(game, $"{EnumExtensions.GetDescription(IgnoreOptionEnum.IgnoreIfSmaller)} (threshold: {thresholdSizePercentage:P2}, actual:{actualSizePercentage:P2}", hit, sourceFileInfo, destinationFileInfo);
+                    return ProcessIgnore(game, $"{IgnoreOptionEnum.IgnoreIfSmaller.GetDescription()} (threshold: {thresholdSizePercentage:P2}, actual:{actualSizePercentage:P2}", hit, sourceFileInfo, destinationFileInfo);
 
                 if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfNotNewer) && sourceFileInfo.LastWriteTime <= destinationFileInfo.LastWriteTime)
-                    return ProcessIgnore(game, EnumExtensions.GetDescription(IgnoreOptionEnum.IgnoreIfNotNewer), hit, sourceFileInfo, destinationFileInfo);
+                    return ProcessIgnore(game, IgnoreOptionEnum.IgnoreIfNotNewer.GetDescription(), hit, sourceFileInfo, destinationFileInfo);
             }
 
             // if the file doesn't exist then there's no reason to not merge it
@@ -153,12 +152,12 @@ namespace ClrVpin.Rebuilder
             FileSystemInfo destinationFileInfo)
         {
             var prefix = _settings.Rebuilder.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
-            Logger.Info($"{prefix}.. table: {game?.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category) ?? "n/a"}, type: {EnumExtensions.GetDescription(hitTypeEnum)}, " +
-                        $"content: {EnumExtensions.GetDescription(contentTypeEnum)}, ignore option: {ignoreOptionDescription}, delete ignored: {_settings.Rebuilder.DeleteIgnoredFiles}");
+            Logger.Info($"{prefix}.. table: {game?.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category) ?? "n/a"}, type: {hitTypeEnum.GetDescription()}, " +
+                        $"content: {contentTypeEnum.GetDescription()}, ignore option: {ignoreOptionDescription}, delete ignored: {_settings.Rebuilder.DeleteIgnoredFiles}");
 
             if (_settings.Rebuilder.DeleteIgnoredFiles)
             {
-                FileUtils.DeleteIgnored(sourceFileInfo.FullName, destinationFileInfo?.FullName, hitTypeEnum, EnumExtensions.GetDescription(contentTypeEnum), newFile =>
+                FileUtils.DeleteIgnored(sourceFileInfo.FullName, destinationFileInfo?.FullName, hitTypeEnum, contentTypeEnum.GetDescription(), newFile =>
                 {
                     if (hit != null)
                         hit.Path = newFile;
@@ -175,21 +174,25 @@ namespace ClrVpin.Rebuilder
             return true;
         }
 
-        private static void Remove(List<FileDetail> unmatchedFiles)
+        private static void Remove(IEnumerable<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
         {
             // delete files NOT associated with games, i.e. unknown files
             // - only applicable for 'ignore if contains words' AND 'delete ignored files' is enabled
             //   i.e. others are n/a as they require a table match (e.g. if smaller and if newer)
-            unmatchedFiles.ForEach(fileDetail =>
-            {
-                if (_settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfContainsWords) && _settings.Rebuilder.IgnoreIWords.Any(x => fileDetail.Path.ToLower().Contains(x)))
-                {
-                    ProcessIgnore(null, EnumExtensions.GetDescription(IgnoreOptionEnum.IgnoreIfContainsWords), fileDetail.HitType, fileDetail.ContentType, null, new FileInfo(fileDetail.Path), null);
+            var unmatchedFilesToDelete = unmatchedFiles
+                .Where(unmatchedFile => _settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfContainsWords) && _settings.Rebuilder.IgnoreIWords.Any(x => unmatchedFile.Path.ToLower().Contains(x)))
+                .ToList();
 
-                    fileDetail.Deleted = true;
-                }
+            unmatchedFilesToDelete.ForEach((fileDetail, i) =>
+            {
+                updateProgress(Path.GetFileName(fileDetail.Path), 100 * i / unmatchedFilesToDelete.Count);
+
+                ProcessIgnore(null, IgnoreOptionEnum.IgnoreIfContainsWords.GetDescription(), fileDetail.HitType, fileDetail.ContentType, null, new FileInfo(fileDetail.Path), null);
+
+                fileDetail.Deleted = true;
             });
         }
+
         private static readonly Models.Settings.Settings _settings;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
@@ -181,24 +182,26 @@ namespace ClrVpin.Scanner
                 gameFiles.Add(FileUtils.Rename(preferredHit, game, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
         }
 
-        public static async Task RemoveAsync(List<FileDetail> unmatchedFiles)
+        public static async Task RemoveAsync(List<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
         {
-            await Task.Run(() => Remove(unmatchedFiles));
+            await Task.Run(() => Remove(unmatchedFiles, updateProgress));
         }
 
-        private static void Remove(List<FileDetail> unmatchedFiles)
+        private static void Remove(IEnumerable<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
         {
             // delete files NOT associated with games, aka unmatched files
-            unmatchedFiles.ForEach(unmatchedFile =>
-            {
-                if (unmatchedFile.HitType == HitTypeEnum.Unknown && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
-                    unmatchedFile.HitType == HitTypeEnum.Unsupported && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))
-                {
-                    unmatchedFile.Deleted = true;
+            var unmatchedFilesToDelete = unmatchedFiles.Where(unmatchedFile =>
+                unmatchedFile.HitType == HitTypeEnum.Unknown && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
+                unmatchedFile.HitType == HitTypeEnum.Unsupported && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported)).ToList();
 
-                    Logger.Info($"Fixing.. unknown/unsupported file, table: n/a, type: {unmatchedFile.HitType.GetDescription()}, content: n/a");
-                    FileUtils.Delete(unmatchedFile.Path, unmatchedFile.HitType, null);
-                }
+            unmatchedFilesToDelete.ForEach((fileDetail, i) =>
+            {
+                updateProgress(Path.GetFileName(fileDetail.Path), 100 * i / unmatchedFilesToDelete.Count);
+
+                Logger.Info($"Fixing.. unknown/unsupported file, table: n/a, type: {fileDetail.HitType.GetDescription()}, content: n/a");
+                FileUtils.Delete(fileDetail.Path, fileDetail.HitType, null);
+
+                fileDetail.Deleted = true;
             });
         }
 
