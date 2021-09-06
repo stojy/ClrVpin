@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using ClrVpin.Shared;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 namespace ClrVpin.Tests
 {
@@ -41,7 +42,7 @@ namespace ClrVpin.Tests
         [TestCase("medieval madness", "medieval madness.vpx", true)]
         [TestCase("medieval madness", "medieval madness (Williams 2006)", true)]
         [TestCase("medieval madness (Williams 2006)", "medieval madness", true)]
-        [TestCase("medieval madnes (Williams 2006)", "medieval madness", true)]
+        [TestCase("medieval madnes (Williams 2006)", "medieval madness", true, TestName="15 char minimum")]
         [TestCase("medieval madness (Williams 2006)", "medieval madness (blah 2006)", true)]
         [TestCase("medieval madness (  Williams 2006)", "medieval madness (blah 2006)", true)]
         [TestCase(" medieval madness (Williams 2006)", "medieval madness (blah 2006)", true, TestName = "trim whitespace")]
@@ -70,7 +71,7 @@ namespace ClrVpin.Tests
         [TestCase("black&knight", "black and knight", true, TestName = "replace '&'")]
         [TestCase("black & knight", "black and knight", true, TestName = "replace ' & '")]
         [TestCase("Rocky and Bullwinkle And Friends (Data East 1993)", "Adventures of Rocky and Bullwinkle and Friends (1993).directb2s", true, TestName = "#1 contains - 20 characters satisified")]
-        [TestCase("Rocky and Bullwinkl", "Adventures of Rocky and Bullwinkle and Friends (1993).directb2s", false, TestName = "#1 contains - 20 characters not satisified")]
+        [TestCase("Rocky and Bull", "Adventures of Rocky and Bullwinkle and Friends (1993).directb2s", false, TestName = "#1 contains - characters not satisified")]
         [TestCase("Indiana Jones (Stern 2008)", @"C:\temp\_download\vp\Backglasses\Indiana Jones (Stern 2008) by Starlion.directb2s", true, TestName = "full path")]
         [TestCase("Indiana Jones The Pinball Adventure (1993).directb2s", @"Indiana Jones The Pinball Adventure (Williams 1993).directb2s", true, TestName = "misc")]
         [TestCase("The Getaway High Speed II (Williams 1992)", @"C:\temp\_MegaSync\b2s\Getaway, The - High Speed II v1.04.directb2s", true, TestName = "full path 2")]
@@ -85,8 +86,7 @@ namespace ClrVpin.Tests
         [TestCase("1 2   3 (Premier 1989)", "1-2-3-(Premier1989)", true, TestName = "#1 white space - removed 4")]
         [TestCase("1-2-3 (Premier 1989)", "1 2 3 (Premier1989)", true, TestName = "#1 white space - kept")]
         [TestCase("AC-DC LUCI Premium (Stern 2013).directb2s", "AC-DC LUCI (Stern 2013).directb2s", true, TestName = "remove 'premium'")]
-        [TestCase("Indiana Jones (Stern 1993).directb2s", "Indiana Jones (Stern 1991).directb2s", true, TestName = "#1 scoring - exact match with 2 year mismatch")]
-        [TestCase("Indiana Jones (Stern 1993).directb2s", "Indiana Jones (Stern 1990).directb2s", false, TestName = "#1 scoring - exact match with 3 year mismatch")]
+        [TestCase("Amazon Hunt baby baby VPX 1.6.directb2s", "Amazon Hunt baby baby (1983).directb2s", true, TestName = "remove 'vpx'")]
         public void MatchTest(string first, string second, bool expectedSuccess)
         {
             var isMatch = Fuzzy.Match(first, Fuzzy.GetFileDetails(second)).success;
@@ -112,10 +112,10 @@ namespace ClrVpin.Tests
         [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern)", true, 100, TestName = "contains name 20char and missing year")]
         [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1993)", true, 150, TestName = "contains name 20char and exact year")]
         [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1994)", true, 140, TestName = "contains name 20char and +/-1 year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", false, 60, TestName = "contains name 13char and missing year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 110, TestName = "contains name 13char and exact year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 100, TestName = "contains name 13char and +/-1 year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 10, TestName = "contains name 13char and +/-2 year")]
+        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", false, 60, TestName = "contains name 13char and missing year")]
+        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 110, TestName = "contains name 13char and exact year")]
+        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 100, TestName = "contains name 13char and +/-1 year")]
+        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 10, TestName = "contains name 13char and +/-2 year")]
         public void MatchScoreTest(string first, string second, bool expectedSuccess, int expectedScore)
         {
             var (success, score) = Fuzzy.Match(first, Fuzzy.GetFileDetails(second));

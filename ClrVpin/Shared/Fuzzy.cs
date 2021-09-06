@@ -80,14 +80,14 @@ namespace ClrVpin.Shared
             var score = IsExactMatch(firstName, secondName) || IsExactMatch(firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 150 : 0;
             
             if (score == 0)
-                score = IsStartsMatch(15, firstName, secondName) || IsStartsMatch(15, firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 100 : 0;
+                score = IsStartsMatch(15, firstName, secondName) || IsStartsMatch(13, secondNameNoWhiteSpace, firstNameNoWhiteSpace)  ? 100 : 0;
             if (score == 0)
-                score = IsStartsMatch(10, firstName, secondName) || IsStartsMatch(10, firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 60 : 0;
+                score = IsStartsMatch(10, firstName, secondName) || IsStartsMatch(9, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
 
             if (score == 0)
-                score = IsContainsMatch(20, firstName, secondName) || IsContainsMatch(20, firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 100 : 0;
+                score = IsContainsMatch(17, firstName, secondName) || IsContainsMatch(14, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 100 : 0;
             if (score == 0)
-                score = IsContainsMatch(13, firstName, secondName) || IsContainsMatch(13, firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 60 : 0;
+                score = IsContainsMatch(13, firstName, secondName) || IsContainsMatch(12, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
             
             return score;
         }
@@ -109,6 +109,7 @@ namespace ClrVpin.Shared
             var fuzzyClean = first?.ToLower()
                     .Replace("the", "")
                     .Replace("premium", "")
+                    .Replace("vpx", "")
                     .Replace("&apos;", "")
                     .Replace("'", "")
                     .Replace("`", "")
