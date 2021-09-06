@@ -116,6 +116,7 @@ namespace ClrVpin.Tests
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 110, TestName = "contains name 13char and exact year")]
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 100, TestName = "contains name 13char and +/-1 year")]
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 10, TestName = "contains name 13char and +/-2 year")]
+        [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 100, TestName = "contains name 13char and +/-2 year")]
         public void MatchScoreTest(string first, string second, bool expectedSuccess, int expectedScore)
         {
             var (success, score) = Fuzzy.Match(first, Fuzzy.GetFileDetails(second));

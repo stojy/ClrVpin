@@ -80,14 +80,14 @@ namespace ClrVpin.Shared
             var score = IsExactMatch(firstName, secondName) || IsExactMatch(firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 150 : 0;
             
             if (score == 0)
-                score = IsStartsMatch(15, firstName, secondName) || IsStartsMatch(13, secondNameNoWhiteSpace, firstNameNoWhiteSpace)  ? 100 : 0;
+                score = IsStartsMatch(14, firstName, secondName) || IsStartsMatch(14, secondNameNoWhiteSpace, firstNameNoWhiteSpace)  ? 100 : 0;
             if (score == 0)
-                score = IsStartsMatch(10, firstName, secondName) || IsStartsMatch(9, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
+                score = IsStartsMatch(10, firstName, secondName) || IsStartsMatch(10, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
 
             if (score == 0)
-                score = IsContainsMatch(17, firstName, secondName) || IsContainsMatch(14, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 100 : 0;
+                score = IsContainsMatch(17, firstName, secondName) || IsContainsMatch(17, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 100 : 0;
             if (score == 0)
-                score = IsContainsMatch(13, firstName, secondName) || IsContainsMatch(12, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
+                score = IsContainsMatch(13, firstName, secondName) || IsContainsMatch(13, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
             
             return score;
         }
