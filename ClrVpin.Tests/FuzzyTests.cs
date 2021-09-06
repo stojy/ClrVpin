@@ -60,6 +60,7 @@ namespace ClrVpin.Tests
         [TestCase("black&apos; knight", "black knight", true, TestName = "remove '&apos;'")]
         [TestCase("black' knight", "black knight", true, TestName = "remove '''")]
         [TestCase("black` knight", "black knight", true, TestName = "remove '`'")]
+        [TestCase("black’ knight", "black knight", true, TestName = "remove '’'")]
         [TestCase("black, knight", "black knight", true, TestName = "remove ','")]
         [TestCase("black; knight", "black knight", true, TestName = "remove ';'")]
         [TestCase("black knight!", "black knight", true, TestName = "remove '!'")]

@@ -115,6 +115,7 @@ namespace ClrVpin.Shared
                     .Replace("&apos;", "")
                     .Replace("'", "")
                     .Replace("`", "")
+                    .Replace("’", "")
                     .Replace(",", "")
                     .Replace(";", "")
                     .Replace("!", "")
