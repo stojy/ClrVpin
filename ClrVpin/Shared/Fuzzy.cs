@@ -83,6 +83,8 @@ namespace ClrVpin.Shared
                 score = IsStartsMatch(14, firstName, secondName) || IsStartsMatch(14, secondNameNoWhiteSpace, firstNameNoWhiteSpace)  ? 100 : 0;
             if (score == 0)
                 score = IsStartsMatch(10, firstName, secondName) || IsStartsMatch(10, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
+            if (score == 0)
+                score = IsStartsMatch(8, firstName, secondName) || IsStartsMatch(8, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 50 : 0;
 
             if (score == 0)
                 score = IsContainsMatch(17, firstName, secondName) || IsContainsMatch(17, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 100 : 0;

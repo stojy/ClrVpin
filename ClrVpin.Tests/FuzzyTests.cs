@@ -109,6 +109,8 @@ namespace ClrVpin.Tests
         [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 110, TestName = "starts name 10char and exact year")]
         [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1992)", true, 100, TestName = "starts name 10char and +/-1 year")]
         [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1991)", false, 10, TestName = "starts name 10char and +/-1 year")]
+        [TestCase("CARtoon baby (Stern 1993)", "CARtoon (Stern 1993)", false, 50, TestName = "starts name 7 char and exact year")]
+        [TestCase("CARtoons baby (Stern 1993)", "CARtoons (Stern 1993)", true, 100, TestName = "starts name 8 char and exact year")]
         [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern)", true, 100, TestName = "contains name 20char and missing year")]
         [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1993)", true, 150, TestName = "contains name 20char and exact year")]
         [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1994)", true, 140, TestName = "contains name 20char and +/-1 year")]
