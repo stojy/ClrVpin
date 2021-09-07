@@ -75,18 +75,20 @@ namespace ClrVpin.Scanner
             var gamesWithContentMaxCount = 0;
             selectedContentTypes.ForEach(contentType =>
             {
-                gamesWithContentMaxCount += games.Count(game => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.All(hit => hit.Type != HitTypeEnum.Missing)));
+                gamesWithContentMaxCount += games.Count(game => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing)));
             });
 
             // iterate through each selected content type
             selectedContentTypes.ForEach(contentType =>
             {
                 // fixable game exclude following hit types..
-                // - missing - associated with game as the default entry, but can't be fixed.. requires file to be downloaded
+                // - missing - associated with game as the default entry
+                //   - can be fixed if other (non-correct name) matches are available (e.g. fuzzy match( but can't be fixed.. requires file to be downloaded
+                //   - if no other matches exist, then the content can't be fixed as the content needs to be downloaded
                 // - unknown - not associated with a game (i.e. no need to check here).. handled elsewhere
                 // - unsupported - not associated with any known content type, e.g. Magic.ini
                 var fixableContentGames = games.Where(game =>
-                    game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.All(hit => hit.Type != HitTypeEnum.Missing))).ToList();
+                    game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing))).ToList();
 
                 // fix files associated with games, if they satisfy the fix criteria
                 fixableContentGames.ForEach(game =>
