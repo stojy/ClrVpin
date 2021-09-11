@@ -4,13 +4,16 @@
                     xmlns:rebuilder="clr-namespace:ClrVpin.Rebuilder"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
-                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:converters="clr-namespace:ClrVpin.Converters">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="..\Styles.xaml" />
     <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
+
+  <converters:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
 
   <DataTemplate x:Key="FeatureTypeTemplate" DataType="models:FeatureType">
     <CheckBox Margin="0,0,0,2" Width="230" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
@@ -46,8 +49,14 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="models:FeatureType">
               <!-- fixed width to have items align nicely -->
-              <CheckBox Margin="0,0,20,2" Width="250" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                        Command="{Binding SelectedCommand}" />
+              <WrapPanel Width="250">
+                <CheckBox Margin="0,0,10,2" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                          Command="{Binding SelectedCommand}" />
+                <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
+                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN">
+                  <materialDesign:PackIcon Kind="InformationOutline" />
+                </Button>
+              </WrapPanel>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
 

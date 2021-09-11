@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -121,7 +122,9 @@ namespace ClrVpin.Rebuilder
                     Tip = matchType.Tip,
                     IsSupported = true,
                     IsActive = Settings.Rebuilder.SelectedMatchTypes.Contains(matchType.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMatchTypes.Toggle(matchType.Enum))
+                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMatchTypes.Toggle(matchType.Enum)),
+                    IsHelpSupported = matchType.HelpUrl != null,
+                    HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) {UseShellExecute = true}))
                 };
 
                 return featureType;

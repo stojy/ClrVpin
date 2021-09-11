@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -113,7 +114,9 @@ namespace ClrVpin.Scanner
                     Description = hitType.Description,
                     Tip = hitType.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum)
+                    IsActive = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum),
+                    IsHelpSupported = hitType.HelpUrl != null,
+                    HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
                 };
 
                 featureType.SelectedCommand = new ActionCommand(() =>
@@ -146,7 +149,9 @@ namespace ClrVpin.Scanner
                 IsNeverSupported = hitType.Enum == HitTypeEnum.Missing,
                 IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
                 IsActive = Settings.Scanner.SelectedFixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
-                SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedFixHitTypes.Toggle(hitType.Enum))
+                SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedFixHitTypes.Toggle(hitType.Enum)),
+                IsHelpSupported = hitType.HelpUrl != null,
+                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
             });
 
             return contentTypes.ToList();

@@ -3,7 +3,9 @@
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:scanner="clr-namespace:ClrVpin.Scanner"
-                    xmlns:models="clr-namespace:ClrVpin.Models">
+                    xmlns:models="clr-namespace:ClrVpin.Models"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:converters="clr-namespace:ClrVpin.Converters">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -11,6 +13,7 @@
   </ResourceDictionary.MergedDictionaries>
 
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
+  <converters:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
 
   <DataTemplate x:Key="ContentTypeTemplate" DataType="models:FeatureType">
     <CheckBox Width="180" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
@@ -46,8 +49,15 @@
           <ItemsControl ItemsSource="{Binding CheckHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="models:FeatureType">
-                <CheckBox Width="180" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                          Command="{Binding SelectedCommand}" />
+                <!-- fixed width to have items align nicely -->
+                <WrapPanel Width="180">
+                  <CheckBox Margin="0,0,10,0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                            Command="{Binding SelectedCommand}" />
+                  <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
+                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN">
+                    <materialDesign:PackIcon Kind="InformationOutline" />
+                  </Button>
+                </WrapPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
@@ -57,8 +67,15 @@
           <ItemsControl ItemsSource="{Binding FixHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="models:FeatureType">
-                <CheckBox Width="180" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                          Command="{Binding SelectedCommand}" />
+                <!-- fixed width to have items align nicely -->
+                <WrapPanel Width="180">
+                  <CheckBox Margin="0,0,10,0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                            Command="{Binding SelectedCommand}" />
+                  <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
+                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN">
+                    <materialDesign:PackIcon Kind="InformationOutline" />
+                  </Button>
+                </WrapPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
