@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace ClrVpin.Converters
 {
-    [ValueConversion(typeof(bool), typeof(string))]
+    [ValueConversion(typeof(bool), typeof(Visibility))]
     public class BoolToCollapsedConverter : IValueConverter
     {
         public Visibility True { get; set; } = Visibility.Visible;

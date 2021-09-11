@@ -115,6 +115,7 @@ namespace ClrVpin.Scanner
                     Tip = hitType.Tip,
                     IsSupported = true,
                     IsActive = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum),
+                    IsHighlighted = hitType.IsHighlighted,
                     IsHelpSupported = hitType.HelpUrl != null,
                     HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
                 };
@@ -150,6 +151,7 @@ namespace ClrVpin.Scanner
                 IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
                 IsActive = Settings.Scanner.SelectedFixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
                 SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedFixHitTypes.Toggle(hitType.Enum)),
+                IsHighlighted = hitType.IsHighlighted,
                 IsHelpSupported = hitType.HelpUrl != null,
                 HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
             });

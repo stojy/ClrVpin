@@ -123,6 +123,7 @@ namespace ClrVpin.Rebuilder
                     IsSupported = true,
                     IsActive = Settings.Rebuilder.SelectedMatchTypes.Contains(matchType.Enum),
                     SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMatchTypes.Toggle(matchType.Enum)),
+                    IsHighlighted = matchType.IsHighlighted,
                     IsHelpSupported = matchType.HelpUrl != null,
                     HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) {UseShellExecute = true}))
                 };

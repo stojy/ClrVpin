@@ -19,6 +19,7 @@ namespace ClrVpin.Models
         public bool IsNeverSupported { get; set; }
         public bool IsActive { get; set; }
         public ICommand SelectedCommand { get; set; }
+        public bool IsHighlighted { get; set; }
         public bool IsHelpSupported { get; set; }
         public ActionCommand HelpAction { get; set; }
     }

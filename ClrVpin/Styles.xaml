@@ -1,7 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml">
+                    xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:models="clr-namespace:ClrVpin.Models"
+                    mc:Ignorable="d">
 
   <ResourceDictionary.MergedDictionaries>
     <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Blue" SecondaryColor="Green" />
@@ -11,8 +15,8 @@
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml crates MainWindow.xaml -->
   <Style x:Key="MaterialWindowBase" TargetType="Window">
     <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
-    <Setter Property="TextElement.Foreground" Value="{DynamicResource MaterialDesignBody}"/>
-    <Setter Property="FontFamily" Value="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"/>
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource MaterialDesignBody}" />
+    <Setter Property="FontFamily" Value="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" />
     <Setter Property="TextElement.FontWeight" Value="Medium" />
     <Setter Property="TextElement.FontSize" Value="14" />
   </Style>
@@ -21,12 +25,12 @@
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml crates MainWindow.xaml -->
   <Style x:Key="MaterialWindow" TargetType="mde:MaterialWindow" BasedOn="{StaticResource MaterialWindowBase}">
-    <Setter Property="BorderBackgroundBrush" Value="{DynamicResource MaterialDesignPaper}"></Setter>
+    <Setter Property="BorderBackgroundBrush" Value="{DynamicResource MaterialDesignPaper}" />
   </Style>
 
   <!--un-keyed style required by windows created in code, e.g. XxxWindow.Show()-->
   <Style TargetType="mde:MaterialWindow" BasedOn="{StaticResource MaterialWindow}" />
- 
+
   <Style x:Key="RaisedDarkButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
     <Setter Property="Margin" Value="5,0" />
     <Setter Property="Padding" Value="5" />
@@ -45,19 +49,27 @@
     <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4" />
   </Style>
 
-  <Style x:Key="Title" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}" >
-    <Setter Property="Margin" Value="0,9,0,4"></Setter>
+  <Style x:Key="Title" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}">
+    <Setter Property="Margin" Value="0,9,0,4" />
   </Style>
 
   <Style TargetType="Slider" BasedOn="{StaticResource MaterialDesignDiscreteSlider}">
-    <Setter Property="Minimum" Value="0"/>
-    <Setter Property="Maximum" Value="100"/>
-    <Setter Property="TickFrequency" Value="5"/>
-    <Setter Property="TickPlacement" Value="BottomRight"/>
+    <Setter Property="Minimum" Value="0" />
+    <Setter Property="Maximum" Value="100" />
+    <Setter Property="TickFrequency" Value="5" />
+    <Setter Property="TickPlacement" Value="BottomRight" />
   </Style>
 
   <!--with or without this style the appearance doesn't seem to change!-->
-  <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" />
+  <!--<Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}"/>-->
+  <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance models:FeatureType}">
+        <Setter Property="Foreground" Value="Coral" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
+
   <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}" />
   <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" />
 
