@@ -54,24 +54,39 @@ namespace ClrVpin.Shared
             var tableMatches = games.Select(game => new { game, match = Match(game.TableFile, fuzzyFileDetails) }).Where(x => x.match.success);
             var descriptionMatches = games.Select(game => new { game, match = Match(game.Description, fuzzyFileDetails) }).Where(x => x.match.success);
 
-            var preferredMatch = tableMatches.Concat(descriptionMatches).OrderByDescending(x => x.match.score).FirstOrDefault();
+            var preferredMatch = tableMatches.Concat(descriptionMatches)
+                .OrderByDescending(x => x.match.score)
+                .ThenByDescending(x => x.game.TableFile.Length) // tie breaker
+                .FirstOrDefault();
 
             return preferredMatch?.game;
         }
 
-        public static (bool success, int score) Match(string first, (string name, string nameNoWhiteSpace, string manufacturer, int? year) secondFuzzy)
+        public static (bool success, int score) Match(string gameDetail, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fileFuzzyDetails)
         {
-            var firstFuzzy = GetFileDetails(first);
+            var gameDetailFuzzyDetails = GetFileDetails(gameDetail);
 
-            var nameMatchScore = GetNameMatchScore(firstFuzzy.name, firstFuzzy.nameNoWhiteSpace, secondFuzzy.name, secondFuzzy.nameNoWhiteSpace);
-            var yearMatchScore = YearMatchScore(firstFuzzy.year, secondFuzzy.year);
-            var score = yearMatchScore + nameMatchScore;
+            var nameMatchScore = GetNameMatchScore(gameDetailFuzzyDetails.name, gameDetailFuzzyDetails.nameNoWhiteSpace, fileFuzzyDetails.name, fileFuzzyDetails.nameNoWhiteSpace);
+            var yearMatchScore = GetYearMatchScore(gameDetailFuzzyDetails.year, fileFuzzyDetails.year);
+            var lengthScore = GetLengthMatchScore(gameDetailFuzzyDetails);
+
+            var score = yearMatchScore + nameMatchScore + lengthScore;
 
             // total 'identity check/match' score must be 100 or more
             return (score >= 100, score);
         }
 
-        private static int YearMatchScore(int? firstYear, int? secondYear)
+        public static int GetLengthMatchScore((string name, string nameNoWhiteSpace, string manufacturer, int? year) fuzzyGameDetails)
+        {
+            // score the match length of the underlying game database entry (i.e. not the file!!)
+            // - use the sanitized name to avoid white space, manufacturer, year, etc
+            // - 1 for every character beyond 8 characters.. to a maximum of 15pts
+            var lengthScore = fuzzyGameDetails.nameNoWhiteSpace.Length - 8;
+
+            return Math.Max(0, Math.Min(15, lengthScore));
+        }
+
+        private static int GetYearMatchScore(int? firstYear, int? secondYear)
         {
             var yearMatchScore = 0;
 
@@ -127,6 +142,8 @@ namespace ClrVpin.Shared
             // clean the string to make it a little cleaner for subsequent matching
             // - order is important!
             var fuzzyClean = first?.ToLower()
+                    //.Replace(" a ", "")
+                    //.Replace("and", "")
                     .Replace("the", "")
                     .Replace("premium", "")
                     .Replace("vpx", "")

@@ -99,42 +99,56 @@ namespace ClrVpin.Tests
         }
 
         [Test]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern)", true, 150, TestName = "exact name and missing year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 200, TestName = "exact name and exact year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1994)", true, 190, TestName = "exact name and +/-1 year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1995)", true, 100, TestName = "exact name and +/-2 year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1996)", false, 50, TestName = "exact name and +/-3 year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1997)", false, -850, TestName = "exact name and +/-3 year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern)", true, 100, TestName = "starts name 15char and missing year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1993)", true, 150, TestName = "starts name 15char and exact year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1994)", true, 140, TestName = "starts name 15char and +/-1 year")]
-        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1995)", false, 50, TestName = "starts name 15char and +/-2 year")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern)", false, 60, TestName = "starts name 10char and missing year")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 110, TestName = "starts name 10char and exact year")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1992)", true, 100, TestName = "starts name 10char and +/-1 year")]
-        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1991)", false, 10, TestName = "starts name 10char and +/-1 year")]
-        [TestCase("CARtoon baby (Stern 1993)", "CARtoon (Stern 1993)", false, 50, TestName = "starts name 7 char and exact year")]
-        [TestCase("CARtoons baby (Stern 1993)", "CARtoons (Stern 1993)", true, 100, TestName = "starts name 8 char and exact year")]
-        [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern)", true, 100, TestName = "contains name 20char and missing year")]
-        [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1993)", true, 150, TestName = "contains name 20char and exact year")]
-        [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1994)", true, 140, TestName = "contains name 20char and +/-1 year")]
-        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", false, 60, TestName = "contains name 13char and missing year")]
-        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 110, TestName = "contains name 13char and exact year")]
-        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 100, TestName = "contains name 13char and +/-1 year")]
-        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 10, TestName = "contains name 13char and +/-2 year")]
-        [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 100, TestName = "contains name 13char and +/-2 year")]
-        [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 200, TestName = "after chars removed - perfect match")]
-        [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 150, TestName = "after chars removed - partial match")]
-        public void MatchScoreTest(string first, string second, bool expectedSuccess, int expectedScore)
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern)", true, 159, TestName = "exact name and missing year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 209, TestName = "exact name and exact year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1994)", true, 199, TestName = "exact name and +/-1 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1995)", true, 109, TestName = "exact name and +/-2 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1996)", false, 59, TestName = "exact name and +/-3 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1997)", false, -841, TestName = "exact name and +/-3 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern)", true, 109, TestName = "starts name 15char and missing year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1993)", true, 159, TestName = "starts name 15char and exact year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1994)", true, 149, TestName = "starts name 15char and +/-1 year")]
+        [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1995)", false, 59, TestName = "starts name 15char and +/-2 year")]
+        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern)", false, 64, TestName = "starts name 10char and missing year")]
+        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 114, TestName = "starts name 10char and exact year")]
+        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1992)", true, 104, TestName = "starts name 10char and +/-1 year")]
+        [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1991)", false, 14, TestName = "starts name 10char and +/-1 year")]
+        [TestCase("CARtoon baby (Stern 1993)", "CARtoon (Stern 1993)", false, 53, TestName = "starts name 7 char and exact year")]
+        [TestCase("CARtoons baby (Stern 1993)", "CARtoons (Stern 1993)", true, 104, TestName = "starts name 8 char and exact year")]
+        [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern)", true, 113, TestName = "contains name 20char and missing year")]
+        [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1993)", true, 163, TestName = "contains name 20char and exact year")]
+        [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1994)", true, 153, TestName = "contains name 20char and +/-1 year")]
+        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", false, 65, TestName = "contains name 13char and missing year")]
+        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 115, TestName = "contains name 13char and exact year")]
+        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 105, TestName = "contains name 13char and +/-1 year")]
+        [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 15, TestName = "contains name 13char and +/-2 year")]
+        [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 115, TestName = "contains name 13char and +/-2 year")]
+        [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 207, TestName = "after chars removed - perfect match")]
+        [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 157, TestName = "after chars removed - partial match")]
+        public void MatchScoreTest(string gameDetail, string fileDetail, bool expectedSuccess, int expectedScore)
         {
-            var (success, score) = Fuzzy.Match(first, Fuzzy.GetFileDetails(second));
+            var (success, score) = Fuzzy.Match(gameDetail, Fuzzy.GetFileDetails(fileDetail));
 
             Assert.That(success, Is.EqualTo(expectedSuccess));
             Assert.That(score, Is.EqualTo(expectedScore));
         }
 
         [Test]
-        public void GameMatch()
+        [TestCase("too small", 0)]
+        [TestCase("a little bigger", 5)]
+        [TestCase("a lot lot lot bigger", 8)]
+        [TestCase("a lot lot lot lot lot bigger", 14)]
+        [TestCase("this one maxes out the upper size limit", 15)]
+        public void MatchLengthTest(string name, int expectedScore)
+        {
+            var fuzzyNameFileDetails = Fuzzy.GetFileDetails(name);
+            var score = Fuzzy.GetLengthMatchScore(fuzzyNameFileDetails);
+
+            Assert.That(score, Is.EqualTo(expectedScore));
+        }
+
+        [Test]
+        public void GameMatchTest()
         {
             var games = new List<Game>()
             {
@@ -144,20 +158,30 @@ namespace ClrVpin.Tests
                 new Game {Ipdb = "4", TableFile = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
             };
 
-            //exact match #1
+            // exact match #1
             var fileDetails = Fuzzy.GetFileDetails("Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v");
             var game = games.Match(fileDetails);
             Assert.That(game.Ipdb, Is.EqualTo("1"));
 
-            // exact match #2
+            // exact match #2 - i.,e. not the first match
             fileDetails = Fuzzy.GetFileDetails("Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v");
             game = games.Match(fileDetails);
             Assert.That(game.Ipdb, Is.EqualTo("2"));
 
-            //// longest match chosen
-            //var fileDetails = Fuzzy.GetFileDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v");
-            //var game = games.Match(fileDetails);
-            //Assert.That(game.Ipdb, Is.EqualTo("4"));
+            // longest match chosen - i.e. not the first match
+            fileDetails = Fuzzy.GetFileDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v");
+            game = games.Match(fileDetails);
+            Assert.That(game.Ipdb, Is.EqualTo("4"));
+
+            // partial match
+            fileDetails = Fuzzy.GetFileDetails("Blah Cowboy Eight Ball blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v");
+            game = games.Match(fileDetails);
+            Assert.That(game.Ipdb, Is.EqualTo("1"));
+
+            // no match chosen - i.e. not the first match
+            fileDetails = Fuzzy.GetFileDetails("what the heck is this file.f4v");
+            game = games.Match(fileDetails);
+            Assert.IsNull(game);
         }
     }
 }
