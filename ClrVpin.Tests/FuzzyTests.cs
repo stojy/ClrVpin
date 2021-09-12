@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using ClrVpin.Models;
 using ClrVpin.Shared;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace ClrVpin.Tests
 {
@@ -12,6 +11,7 @@ namespace ClrVpin.Tests
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
         [Test]
         [TestCase("Indiana Jones (Williams 1993) blah.directb2s", "indiana jones", "indianajones", "williams", 1993)]
+        [TestCase("Indiana Jones (Williams 1993 blah) blah.directb2s", "indiana jones", "indianajones", "williams", 1993, TestName = "year doesn't need to be at the end of the parenthesis")]
         [TestCase("Indiana Jones (Williams) blah.directb2s", "indiana jones", "indianajones", "williams", null)]
         [TestCase("Indiana Jones (1993) blah.directb2s", "indiana jones", "indianajones", null, 1993)]
         [TestCase("Indiana Jones.directb2s", "indiana jones", "indianajones", null, null)]

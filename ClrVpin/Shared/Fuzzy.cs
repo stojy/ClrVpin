@@ -186,8 +186,8 @@ namespace ClrVpin.Shared
         }
 
         // regex
-        // - faster: name via looking for the first opening parenthesis.. https://regex101.com/r/CxKJK1/1
+        // - faster: name via looking for the first opening parenthesis.. https://regex101.com/r/tRqeOH/1
         // - slower: name is greedy search using the last opening parenthesis.. https://regex101.com/r/xiXsML/1.. @"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*"
-        private static readonly Regex _fuzzyFileNameRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)(?<year>\d*)\)", RegexOptions.Compiled);
+        private static readonly Regex _fuzzyFileNameRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)(?<year>\d*)\D*\)", RegexOptions.Compiled);
     }
 }
