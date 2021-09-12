@@ -68,6 +68,11 @@ namespace ClrVpin.Tests
         [TestCase("black; knight", "black knight", true, TestName = "remove ';'")]
         [TestCase("black knight!", "black knight", true, TestName = "remove '!'")]
         [TestCase("black? knight", "black knight", true, TestName = "remove '?'")]
+        [TestCase("JP's black knight", "black knight", true, TestName = "remove 'JP's")]
+        [TestCase("JPs black knight", "black knight", true, TestName = "remove 'JPs")]
+        [TestCase("black and knight", "black knight", true, TestName = "remove 'and'")]
+        [TestCase("black a knight", "black knight", true, TestName = "remove ' a '")]
+        [TestCase("a black knight", "black knight", true, TestName = "remove starting 'a '")]
         [TestCase("black.knight.blah", "black knight", true, TestName = "replace '.'")]
         [TestCase("black-knight", "black knight", true, TestName = "remove '-'")]
         [TestCase("black - knight", "black knight", true, TestName = "remove ' - '")]
@@ -135,9 +140,9 @@ namespace ClrVpin.Tests
 
         [Test]
         [TestCase("too small", 0)]
-        [TestCase("a little bigger", 5)]
-        [TestCase("a lot lot lot bigger", 8)]
-        [TestCase("a lot lot lot lot lot bigger", 14)]
+        [TestCase("a little bigger", 4)]
+        [TestCase("a lot lot lot bigger", 7)]
+        [TestCase("a lot lot lot lot lot bigger", 13)]
         [TestCase("this one maxes out the upper size limit", 15)]
         public void MatchLengthTest(string name, int expectedScore)
         {

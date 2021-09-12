@@ -137,17 +137,25 @@ namespace ClrVpin.Shared
         private static bool IsStartsMatch(int numCharsToMatch, string firstFuzzyName, string secondFuzzyName) =>
             firstFuzzyName.Length >= numCharsToMatch && secondFuzzyName.Length >= numCharsToMatch && (firstFuzzyName.StartsWith(secondFuzzyName) || secondFuzzyName.StartsWith(firstFuzzyName));
 
-        private static string Clean(string first, bool removeAllWhiteSpace)
+        private static string Clean(string name, bool removeAllWhiteSpace)
         {
+            var fuzzyClean = name;
+
+            // trim starting characters
+            if (fuzzyClean?.StartsWith("a ") == true)
+                fuzzyClean = fuzzyClean.TrimStart('a');
+
             // clean the string to make it a little cleaner for subsequent matching
             // - order is important!
-            var fuzzyClean = first?.ToLower()
-                    //.Replace(" a ", "")
-                    //.Replace("and", "")
+            fuzzyClean = fuzzyClean?.ToLower()
+                    .Replace(" a ", "")
+                    .Replace("and", "")
                     .Replace("the", "")
                     .Replace("premium", "")
                     .Replace("vpx", "")
                     .Replace("&apos;", "")
+                    .Replace("jp's", "")
+                    .Replace("jps", "")
                     .Replace("ï¿½", "")
                     .Replace("'", "")
                     .Replace("`", "")
