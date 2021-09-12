@@ -1,4 +1,6 @@
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using ClrVpin.Models;
 using ClrVpin.Shared;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -59,8 +61,9 @@ namespace ClrVpin.Tests
         [TestCase("the black knight", "black knight", true, TestName = "remove 'the'")]
         [TestCase("black&apos; knight", "black knight", true, TestName = "remove '&apos;'")]
         [TestCase("black' knight", "black knight", true, TestName = "remove '''")]
+        [TestCase("blackï¿½ knight", "black knight", true, TestName = "remove 'ï¿½'")]
         [TestCase("black` knight", "black knight", true, TestName = "remove '`'")]
-        [TestCase("black� knight", "black knight", true, TestName = "remove '�'")]
+        [TestCase("black’ knight", "black knight", true, TestName = "remove '’'")]
         [TestCase("black, knight", "black knight", true, TestName = "remove ','")]
         [TestCase("black; knight", "black knight", true, TestName = "remove ';'")]
         [TestCase("black knight!", "black knight", true, TestName = "remove '!'")]
@@ -120,12 +123,41 @@ namespace ClrVpin.Tests
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 100, TestName = "contains name 13char and +/-1 year")]
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 10, TestName = "contains name 13char and +/-2 year")]
         [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 100, TestName = "contains name 13char and +/-2 year")]
+        [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 200, TestName = "after chars removed - perfect match")]
+        [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 150, TestName = "after chars removed - partial match")]
         public void MatchScoreTest(string first, string second, bool expectedSuccess, int expectedScore)
         {
             var (success, score) = Fuzzy.Match(first, Fuzzy.GetFileDetails(second));
 
             Assert.That(success, Is.EqualTo(expectedSuccess));
             Assert.That(score, Is.EqualTo(expectedScore));
+        }
+
+        [Test]
+        public void GameMatch()
+        {
+            var games = new List<Game>()
+            {
+                new Game {Ipdb = "1", TableFile = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
+                new Game {Ipdb = "2", TableFile = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
+                new Game {Ipdb = "3", TableFile = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
+                new Game {Ipdb = "4", TableFile = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
+            };
+
+            //exact match #1
+            var fileDetails = Fuzzy.GetFileDetails("Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v");
+            var game = games.Match(fileDetails);
+            Assert.That(game.Ipdb, Is.EqualTo("1"));
+
+            // exact match #2
+            fileDetails = Fuzzy.GetFileDetails("Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v");
+            game = games.Match(fileDetails);
+            Assert.That(game.Ipdb, Is.EqualTo("2"));
+
+            //// longest match chosen
+            //var fileDetails = Fuzzy.GetFileDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v");
+            //var game = games.Match(fileDetails);
+            //Assert.That(game.Ipdb, Is.EqualTo("4"));
         }
     }
 }

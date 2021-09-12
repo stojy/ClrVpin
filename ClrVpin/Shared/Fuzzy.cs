@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ClrVpin.Models;
 
 namespace ClrVpin.Shared
 {
@@ -39,6 +41,22 @@ namespace ClrVpin.Shared
             var nameNoWhiteSpace = Clean(name, true);
 
             return (name, nameNoWhiteSpace, manufacturer, year);
+        }
+
+        // fuzzy match against all games
+        public static Game Match(this IReadOnlyCollection<Game> games, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fuzzyFileDetails)
+        {
+            // Check EVERY game so that the most appropriate game is selected
+            //   e.g. the 2nd DB entry (i.e. the sequel) should be matche..
+            //        - fuzzy file="Cowboy Eight Ball 2"
+            //        - DB entries (in order)="Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"
+            // Match table name (non-media) OR description (media)
+            var tableMatches = games.Select(game => new { game, match = Match(game.TableFile, fuzzyFileDetails) }).Where(x => x.match.success);
+            var descriptionMatches = games.Select(game => new { game, match = Match(game.Description, fuzzyFileDetails) }).Where(x => x.match.success);
+
+            var preferredMatch = tableMatches.Concat(descriptionMatches).OrderByDescending(x => x.match.score).FirstOrDefault();
+
+            return preferredMatch?.game;
         }
 
         public static (bool success, int score) Match(string first, (string name, string nameNoWhiteSpace, string manufacturer, int? year) secondFuzzy)
@@ -113,6 +131,7 @@ namespace ClrVpin.Shared
                     .Replace("premium", "")
                     .Replace("vpx", "")
                     .Replace("&apos;", "")
+                    .Replace("ï¿½", "")
                     .Replace("'", "")
                     .Replace("`", "")
                     .Replace("’", "")

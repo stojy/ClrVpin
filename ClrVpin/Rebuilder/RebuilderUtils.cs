@@ -42,8 +42,8 @@ namespace ClrVpin.Rebuilder
             var contentType = _settings.GetSelectedDestinationContentType();
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
-            var mediaFiles = TableUtils.GetContentFileNames(contentType, _settings.Rebuilder.SourceFolder);
-            var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, mediaFiles, contentType,
+            var supportedFiles = TableUtils.GetContentFileNames(contentType, _settings.Rebuilder.SourceFolder);
+            var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, supportedFiles, contentType,
                 game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension

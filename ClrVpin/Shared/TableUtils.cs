@@ -45,9 +45,9 @@ namespace ClrVpin.Shared
 
         public static IEnumerable<string> GetContentFileNames(ContentType contentType, string folder)
         {
-            var files = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(folder, ext));
+            var supportedFiles = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(folder, ext));
 
-            return files.SelectMany(x => x).ToList();
+            return supportedFiles.SelectMany(x => x).ToList();
         }
 
         public static IEnumerable<FileDetail> GetUnsupportedMediaFileDetails(ContentType contentType, string folder)
@@ -66,52 +66,53 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        public static IEnumerable<FileDetail> AssociateContentFilesWithGames(IReadOnlyCollection<Game> games, IEnumerable<string> matchedFiles, ContentType contentType,
+        public static IEnumerable<FileDetail> AssociateContentFilesWithGames(IReadOnlyCollection<Game> games, IEnumerable<string> supportedFiles, ContentType contentType,
             Func<Game, ContentHits> getContentHits)
         {
-            var unknownMediaFiles = new List<FileDetail>();
+            var unknownSupportedFiles = new List<FileDetail>();
 
             // for each file, associate it with a game or if one can't be found, then mark it as unknown
             // - ASSOCIATION IS DONE IRRESPECTIVE OF THE USER'S SELECTED PREFERENCE, I.E. THE USE SELECTIONS ARE CHECKED ELSEWHERE
-            foreach (var matchedFile in matchedFiles)
+            foreach (var supportedFile in supportedFiles)
             {
                 Game matchedGame;
-                var fuzzyFileNameDetails = Fuzzy.GetFileDetails(matchedFile);
+                var fuzzyFileNameDetails = Fuzzy.GetFileDetails(supportedFile);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
-                if ((matchedGame = games.FirstOrDefault(game => game.GetContentName(contentType.Category) == Path.GetFileNameWithoutExtension(matchedFile))) != null)
+                if ((matchedGame = games.FirstOrDefault(game => game.GetContentName(contentType.Category) == Path.GetFileNameWithoutExtension(supportedFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
                     var contentHits = getContentHits(matchedGame);
-                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, matchedFile);
+                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, supportedFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
-                    string.Equals(game.GetContentName(contentType.Category), Path.GetFileNameWithoutExtension(matchedFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                    string.Equals(game.GetContentName(contentType.Category), Path.GetFileNameWithoutExtension(supportedFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, matchedFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, supportedFile);
                 }
-                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(matchedFile))) != null)
+                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(supportedFile))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, matchedFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, supportedFile);
                 }
-                // fuzzy match against table name (non-media) or description (media)
-                else if ((matchedGame = games.FirstOrDefault(game => Fuzzy.Match(game.TableFile, fuzzyFileNameDetails).success || Fuzzy.Match(game.Description, fuzzyFileNameDetails).success)) != null)
+                // fuzzy matching
+                //else if ((matchedGames = games.Where(game => Fuzzy.Match(game.TableFile, fuzzyFileNameDetails).success || Fuzzy.Match(game.Description, fuzzyFileNameDetails).success).ToList()).Any())
+                else if ((matchedGame = games.Match(fuzzyFileNameDetails)) != null)
                 {
-                    getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, matchedFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, supportedFile);
                 }
                 else
                 {
                     // possible for..
-                    // - pinball --> new table files added AND the database not updated yet
-                    // - media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
-                    unknownMediaFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, matchedFile, new FileInfo(matchedFile).Length));
+                    // - table --> new table files added AND the database not updated yet
+                    // - table support and media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
+                    unknownSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, supportedFile, new FileInfo(supportedFile).Length));
                 }
             }
 
-            return unknownMediaFiles;
+            return unknownSupportedFiles;
         }
         
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
