@@ -2,10 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using ClrVpin.Controls;
 using ClrVpin.Models;
 using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
-using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
 
@@ -22,7 +22,7 @@ namespace ClrVpin.Scanner
 
         public void Show(Window parentWindow, double left, double top)
         {
-            Window = new MaterialWindow
+            Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
                 Title = "Results (Issues and Fixes)",

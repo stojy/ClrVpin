@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using ClrVpin.Controls;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
 using MaterialDesignExtensions.Controls;
@@ -45,14 +46,12 @@ namespace ClrVpin.Settings
 
         public void Show(Window parent)
         {
-            _window = new MaterialWindow
+            _window = new MaterialWindowEx
             {
                 Owner = parent,
                 Content = this,
-                //SizeToContent = SizeToContent.WidthAndHeight,
-                Width = 820,
-                Height = 1365,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("SettingsTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,
@@ -136,6 +135,6 @@ namespace ClrVpin.Settings
             Close();
         }
 
-        private MaterialWindow _window;
+        private Window _window;
     }
 }

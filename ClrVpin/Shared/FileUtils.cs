@@ -141,7 +141,10 @@ namespace ClrVpin.Shared
             // optionally reset date modified if preservation isn't selected
             // - by default windows behaviour when copying file.. last access & creation timestamps are DateTime.Now, but last modified is unchanged!
             if (!preserveDateModified)
-                File.SetLastWriteTime(destinationFile, DateTime.Now);
+            {
+                if (File.Exists(destinationFile))
+                    File.SetLastWriteTime(destinationFile, DateTime.Now);
+            }
         }
 
         private static void ExecuteForKindred(IEnumerable<string> kindredExtensions, string sourceFile, string destinationFile, Action<string, string> action)

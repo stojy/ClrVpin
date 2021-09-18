@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using ClrVpin.Controls;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
@@ -29,14 +30,12 @@ namespace ClrVpin.About
 
         public void Show(Window parent)
         {
-            var window = new MaterialWindow
+            var window = new MaterialWindowEx
             {
                 Owner = parent,
                 Content = this,
-                //SizeToContent = SizeToContent.WidthAndHeight,
-                Width = 500,
-                Height = 630,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("AboutTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,

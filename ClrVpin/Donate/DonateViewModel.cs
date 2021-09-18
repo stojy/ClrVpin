@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using ClrVpin.Controls;
 using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
@@ -21,14 +22,12 @@ namespace ClrVpin.Donate
 
         public void Show(Window parent)
         {
-            var window = new MaterialWindow
+            var window = new MaterialWindowEx
             {
                 Owner = parent,
                 Content = this,
-                //SizeToContent = SizeToContent.WidthAndHeight,
-                Width = 620,
-                Height = 570,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("DonateTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,

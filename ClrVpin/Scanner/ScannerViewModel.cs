@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using ClrVpin.Controls;
 using ClrVpin.Logging;
 using ClrVpin.Models;
 using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
-using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
 
@@ -55,12 +55,11 @@ namespace ClrVpin.Scanner
 
         public void Show(Window parent)
         {
-            _scannerWindow = new MaterialWindow
+            _scannerWindow = new MaterialWindowEx
             {
                 Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                SizeToContent = SizeToContent.Width,
-                Height = 770,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate,

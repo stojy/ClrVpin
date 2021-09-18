@@ -33,7 +33,7 @@ namespace ClrVpin.Scanner
 
         public void Show(Window parentWindow, double left, double top)
         {
-            Window = new MaterialWindow
+            Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
                 Title = "Explorer (Tables)",

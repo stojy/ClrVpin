@@ -5,6 +5,7 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:models="clr-namespace:ClrVpin.Models"
+                    xmlns:controls="clr-namespace:ClrVpin.Controls"
                     mc:Ignorable="d">
 
   <ResourceDictionary.MergedDictionaries>
@@ -24,12 +25,12 @@
   <Style TargetType="Window" BasedOn="{StaticResource MaterialWindowBase}" />
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml crates MainWindow.xaml -->
-  <Style x:Key="MaterialWindow" TargetType="mde:MaterialWindow" BasedOn="{StaticResource MaterialWindowBase}">
+  <Style x:Key="MaterialWindow" TargetType="controls:MaterialWindowEx" BasedOn="{StaticResource MaterialWindowBase}">
     <Setter Property="BorderBackgroundBrush" Value="{DynamicResource MaterialDesignPaper}" />
   </Style>
 
   <!--un-keyed style required by windows created in code, e.g. XxxWindow.Show()-->
-  <Style TargetType="mde:MaterialWindow" BasedOn="{StaticResource MaterialWindow}" />
+  <Style TargetType="controls:MaterialWindowEx" BasedOn="{StaticResource MaterialWindow}" />
 
   <Style x:Key="RaisedDarkButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
     <Setter Property="Margin" Value="5,0" />

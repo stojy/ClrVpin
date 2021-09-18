@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using ClrVpin.Controls;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Logging;
 using ClrVpin.Models;
@@ -70,13 +71,11 @@ namespace ClrVpin.Rebuilder
 
         public void Show(Window parent)
         {
-            _rebuilderWindow = new MaterialWindow
+            _rebuilderWindow = new MaterialWindowEx
             {
                 Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                //SizeToContent = SizeToContent.WidthAndHeight,
-                Width = 680,
-                Height = 625,
+                SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,
