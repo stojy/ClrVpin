@@ -15,21 +15,23 @@ namespace ClrVpin.Scanner
     {
         private static readonly Models.Settings.Settings _settings = Model.Settings;
 
-        public static async Task<List<FileDetail>> CheckAsync(List<Game> games)
+        public static async Task<List<FileDetail>> CheckAsync(List<Game> games, Action<string, int> updateProgress)
         {
-            var unmatchedFiles = await Task.Run(() => Check(games));
+            var unmatchedFiles = await Task.Run(() => Check(games, updateProgress));
             return unmatchedFiles;
         }
 
-        private static List<FileDetail> Check(List<Game> games)
+        private static List<FileDetail> Check(List<Game> games, Action<string, int> updateProgress)
         {
             var unmatchedFiles = new List<FileDetail>();
 
             // for each selected check content types
             var checkContentTypes = _settings.GetSelectedCheckContentTypes();
 
-            foreach (var contentType in checkContentTypes)
+            checkContentTypes.ForEach((contentType, i) =>
             {
+                updateProgress(contentType.Description, 100 * (i +1) / checkContentTypes.Length);
+
                 // for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
                 var supportedFiles = TableUtils.GetContentFileNames(contentType, contentType.Folder);
                 var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum));
@@ -45,7 +47,7 @@ namespace ClrVpin.Scanner
                     if (contentType.Category == ContentTypeCategoryEnum.Media)
                         unmatchedFiles.AddRange(unsupportedFiles);
                 }
-            }
+            });
 
             // update each table status as missing if their were no matches
             AddMissingStatus(games);
@@ -73,9 +75,12 @@ namespace ClrVpin.Scanner
 
             var gamesWithContentCount = 0;
             var gamesWithContentMaxCount = 0;
+            
+            static bool GamesWithContentPredicate(Game game, ContentType contentType) => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing));
+
             selectedContentTypes.ForEach(contentType =>
             {
-                gamesWithContentMaxCount += games.Count(game => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing)));
+                gamesWithContentMaxCount += games.Count(game => GamesWithContentPredicate(game, contentType));
             });
 
             // iterate through each selected content type
@@ -87,8 +92,7 @@ namespace ClrVpin.Scanner
                 //   - if no other matches exist, then the content can't be fixed as the content needs to be downloaded
                 // - unknown - not associated with a game (i.e. no need to check here).. handled elsewhere
                 // - unsupported - not associated with any known content type, e.g. Magic.ini
-                var fixableContentGames = games.Where(game =>
-                    game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing))).ToList();
+                var fixableContentGames = games.Where(game => GamesWithContentPredicate(game, contentType)).ToList();
 
                 // fix files associated with games, if they satisfy the fix criteria
                 fixableContentGames.ForEach(game =>
@@ -198,7 +202,7 @@ namespace ClrVpin.Scanner
 
             unmatchedFilesToDelete.ForEach((fileDetail, i) =>
             {
-                updateProgress(Path.GetFileName(fileDetail.Path), 100 * i / unmatchedFilesToDelete.Count);
+                updateProgress(Path.GetFileName(fileDetail.Path), 100 * (i+1) / unmatchedFilesToDelete.Count);
 
                 Logger.Info($"Fixing.. unknown/unsupported file, table: n/a, type: {fileDetail.HitType.GetDescription()}, content: n/a");
                 FileUtils.Delete(fileDetail.Path, fileDetail.HitType, null);

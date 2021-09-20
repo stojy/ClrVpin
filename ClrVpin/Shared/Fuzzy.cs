@@ -44,10 +44,10 @@ namespace ClrVpin.Shared
         }
 
         // fuzzy match against all games
-        public static Game Match(this IReadOnlyCollection<Game> games, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fuzzyFileDetails)
+        public static Game Match(this IList<Game> games, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fuzzyFileDetails)
         {
             // Check EVERY game so that the most appropriate game is selected
-            //   e.g. the 2nd DB entry (i.e. the sequel) should be matche..
+            //   e.g. the 2nd DB entry (i.e. the sequel) should be matched..
             //        - fuzzy file="Cowboy Eight Ball 2"
             //        - DB entries (in order)="Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"
             // Match table name (non-media) OR description (media)

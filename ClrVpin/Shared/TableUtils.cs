@@ -66,7 +66,7 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        public static IEnumerable<FileDetail> AssociateContentFilesWithGames(IReadOnlyCollection<Game> games, IEnumerable<string> supportedFiles, ContentType contentType,
+        public static IEnumerable<FileDetail> AssociateContentFilesWithGames(IList<Game> games, IEnumerable<string> supportedFiles, ContentType contentType,
             Func<Game, ContentHits> getContentHits)
         {
             var unknownSupportedFiles = new List<FileDetail>();
@@ -98,7 +98,6 @@ namespace ClrVpin.Shared
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, supportedFile);
                 }
                 // fuzzy matching
-                //else if ((matchedGames = games.Where(game => Fuzzy.Match(game.TableFile, fuzzyFileNameDetails).success || Fuzzy.Match(game.Description, fuzzyFileNameDetails).success).ToList()).Any())
                 else if ((matchedGame = games.Match(fuzzyFileNameDetails)) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, supportedFile);

@@ -36,7 +36,7 @@ namespace ClrVpin.Rebuilder
             await Task.Run(() => Remove(unmatchedFiles, updateProgress));
         }
 
-        private static List<FileDetail> Check(IReadOnlyCollection<Game> games)
+        private static List<FileDetail> Check(IList<Game> games)
         {
             // determine the destination type
             var contentType = _settings.GetSelectedDestinationContentType();
@@ -67,7 +67,7 @@ namespace ClrVpin.Rebuilder
             var gameFiles = new List<FileDetail>();
             gamesWithContent.ForEach((game, i) =>
             {
-                updateProgress(game.Description, 100 * i / gamesWithContent.Count);
+                updateProgress(game.Description, 100 * (i+1) / gamesWithContent.Count);
 
                 // retrieve the relevant content hit collection
                 var contentHitCollection = game.Content.ContentHitsCollection.First(x => x.Hits.Any());
@@ -185,9 +185,9 @@ namespace ClrVpin.Rebuilder
 
             unmatchedFilesToDelete.ForEach((fileDetail, i) =>
             {
-                updateProgress(Path.GetFileName(fileDetail.Path), 100 * i / unmatchedFilesToDelete.Count);
+                updateProgress(Path.GetFileName(fileDetail.Path), 100 * (i+1) / unmatchedFilesToDelete.Count);
 
-                ProcessIgnore(null, IgnoreOptionEnum.IgnoreIfContainsWords.GetDescription(), fileDetail.HitType, fileDetail.ContentType, null, new FileInfo(fileDetail.Path), null);
+                ProcessIgnore(null, IgnoreOptionEnum.IgnoreIfContainsWords.GetDescription(), fileDetail.HitType, fileDetail.ContentType, null, new FileInfo(fileDetail.Path!), null);
 
                 fileDetail.Deleted = true;
             });
