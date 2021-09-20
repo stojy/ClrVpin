@@ -43,7 +43,7 @@ namespace ClrVpin.Shared
             return games;
         }
 
-        public static IEnumerable<string> GetContentFileNames(ContentType contentType, string folder)
+        public static IList<string> GetContentFileNames(ContentType contentType, string folder)
         {
             var supportedFiles = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(folder, ext));
 
@@ -66,15 +66,17 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        public static IEnumerable<FileDetail> AssociateContentFilesWithGames(IList<Game> games, IEnumerable<string> supportedFiles, ContentType contentType,
-            Func<Game, ContentHits> getContentHits)
+        public static IEnumerable<FileDetail> AssociateContentFilesWithGames(IList<Game> games, IList<string> supportedFiles, ContentType contentType,
+            Func<Game, ContentHits> getContentHits, Action<string, int> updateProgress)
         {
             var unknownSupportedFiles = new List<FileDetail>();
 
             // for each file, associate it with a game or if one can't be found, then mark it as unknown
             // - ASSOCIATION IS DONE IRRESPECTIVE OF THE USER'S SELECTED PREFERENCE, I.E. THE USE SELECTIONS ARE CHECKED ELSEWHERE
-            foreach (var supportedFile in supportedFiles)
+            supportedFiles.ForEach((supportedFile, i) =>
             {
+                updateProgress(Path.GetFileName(supportedFile), i+1);
+
                 Game matchedGame;
                 var fuzzyFileNameDetails = Fuzzy.GetFileDetails(supportedFile);
 
@@ -109,7 +111,7 @@ namespace ClrVpin.Shared
                     // - table support and media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
                     unknownSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, supportedFile, new FileInfo(supportedFile).Length));
                 }
-            }
+            });
 
             return unknownSupportedFiles;
         }

@@ -19,9 +19,9 @@ namespace ClrVpin.Rebuilder
             _settings = Model.Settings;
         }
 
-        public static async Task<List<FileDetail>> CheckAsync(List<Game> games)
+        public static async Task<List<FileDetail>> CheckAsync(List<Game> games, Action<string, int> updateProgress)
         {
-            var unmatchedFiles = await Task.Run(() => Check(games));
+            var unmatchedFiles = await Task.Run(() => Check(games, updateProgress));
             return unmatchedFiles;
         }
 
@@ -36,15 +36,15 @@ namespace ClrVpin.Rebuilder
             await Task.Run(() => Remove(unmatchedFiles, updateProgress));
         }
 
-        private static List<FileDetail> Check(IList<Game> games)
+        private static List<FileDetail> Check(IList<Game> games, Action<string, int> updateProgress)
         {
             // determine the destination type
             var contentType = _settings.GetSelectedDestinationContentType();
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
             var supportedFiles = TableUtils.GetContentFileNames(contentType, _settings.Rebuilder.SourceFolder);
-            var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, supportedFiles, contentType,
-                game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum));
+            var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
+                (fileName, fileCount) => updateProgress(fileName, 100 * fileCount / supportedFiles.Count));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
             var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, _settings.Rebuilder.SourceFolder);

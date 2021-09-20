@@ -28,13 +28,23 @@ namespace ClrVpin.Scanner
             // for each selected check content types
             var checkContentTypes = _settings.GetSelectedCheckContentTypes();
 
-            checkContentTypes.ForEach((contentType, i) =>
+            // retrieve all supported files
+            // - for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
+            var contentTypeSupportedFiles = checkContentTypes.Select(contentType => new
             {
-                updateProgress(contentType.Description, 100 * (i +1) / checkContentTypes.Length);
+                contentType,
+                supportedFiles = TableUtils.GetContentFileNames(contentType, contentType.Folder).ToList()
+            }).ToList();
 
-                // for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
-                var supportedFiles = TableUtils.GetContentFileNames(contentType, contentType.Folder);
-                var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum));
+            var totalFilesCount = contentTypeSupportedFiles.Sum(details => details.supportedFiles.Count);
+            var fileCount = 0;
+            contentTypeSupportedFiles.ForEach(details =>
+            {
+                var supportedFiles = details.supportedFiles;
+                var contentType = details.contentType;
+
+                var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
+                    (fileName, _) => updateProgress($"{contentType.Description}: {fileName}", 100 * ++fileCount / totalFilesCount));
                 unmatchedFiles.AddRange(unknownFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
