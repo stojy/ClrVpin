@@ -26,7 +26,7 @@
         <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding SourceFolderModel}" />
 
         <ComboBox materialDesign:HintAssist.Hint="Destination Type" ItemsSource="{Binding DestinationContentTypes}"
-                  Width="170" VerticalAlignment="Top" Margin="20,0,0,0"
+                  Width="170" VerticalAlignment="Top" Margin="10,0"
                   Style="{StaticResource MaterialDesignFloatingHintComboBox}" materialDesign:TextFieldAssist.HasClearButton="True">
           <ComboBox.SelectedItem>
             <Binding Path="Settings.Rebuilder.DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
@@ -44,12 +44,12 @@
       </WrapPanel>
 
       <TextBlock Style="{StaticResource Title}">Match</TextBlock>
-      <GroupBox Margin="5,0,0,5" Padding="2" Header="Criteria" Width="560" HorizontalAlignment="Left">
+      <GroupBox Margin="5,0,0,5" Padding="2" Header="Criteria" Width="650" HorizontalAlignment="Left">
         <ItemsControl ItemsSource="{Binding MatchCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="models:FeatureType">
               <!-- fixed width to have items align nicely -->
-              <WrapPanel Width="250">
+              <WrapPanel Width="300">
                 <CheckBox Margin="0,0,10,2" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
                           Command="{Binding SelectedCommand}" />
                 <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
@@ -70,13 +70,13 @@
       </GroupBox>
 
       <TextBlock Style="{StaticResource Title}" Text="Ignore" ToolTip="Multiple criteria whereby source files will not be considered for merging" />
-      <GroupBox Margin="5" Padding="2" Header="Options" Width="560" HorizontalAlignment="Left">
+      <GroupBox Margin="5" Padding="2" Header="Options" Width="650" HorizontalAlignment="Left">
         <StackPanel Margin="5,0,0,0">
           <!-- not using an ItemsControl in order to accommodate the associated controls (without mucking about with template triggers) -->
           <WrapPanel>
             <ContentControl Content="{Binding IgnoreIfContainsWordsFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
 
-            <TextBox Margin="5,5,0,0" Width="250" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
+            <TextBox Margin="5,5,0,0" Width="390" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
                      IsEnabled="{Binding IgnoreIfContainsWordsFeature.IsActive}"
                      ToolTip="Ignore if file contain the following words (case insensitive, comma delimited)"
                      Text="{Binding IgnoreWordsString, UpdateSourceTrigger=PropertyChanged}">
@@ -90,24 +90,24 @@
 
           <WrapPanel Margin="0,5,0,0">
             <ContentControl Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
-            <Slider Margin="5,0" Width="250" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}"
+            <Slider Margin="5,0" Width="390" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}"
                     IsEnabled="{Binding IgnoreIfSmallerFeature.IsActive}"
                     ToolTip="Ignore if file is smaller than the specified percentage" />
           </WrapPanel>
 
           <ContentControl Margin="0,5,0,0" Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" />
 
-          <CheckBox Margin="0,5,0,5" IsChecked="{Binding Settings.Rebuilder.DeleteIgnoredFiles}" Content="Delete Ignored Files"
+          <CheckBox Margin="0,0,0,5" IsChecked="{Binding Settings.Rebuilder.DeleteIgnoredFiles}" Content="Delete Ignored Files"
                     ToolTip="When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled)." />
         </StackPanel>
       </GroupBox>
 
       <TextBlock Style="{StaticResource Title}">Merge</TextBlock>
-      <GroupBox Margin="5,0,0,5" Padding="2" Header="Options" Width="560" HorizontalAlignment="Left">
+      <GroupBox Margin="5,0,0,5" Padding="2" Header="Options" Width="650" HorizontalAlignment="Left">
         <ItemsControl ItemsSource="{Binding MergeOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="models:FeatureType">
-              <CheckBox Margin="0,0,20,2" Width="250" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+              <CheckBox Margin="0,0,20,2" Width="300" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
                         Command="{Binding SelectedCommand}" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>
@@ -119,7 +119,7 @@
         </ItemsControl>
       </GroupBox>
 
-      <CheckBox Margin="3,15,0,0" IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels"
+      <CheckBox Margin="3,10,0,0" IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels"
                 ToolTip="When enabled, rebuilder will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." />
 
       <Button Margin="0,10,0,0" Width="50" Command="{Binding StartCommand}" Style="{StaticResource AlternateButton}" IsEnabled="{Binding IsValid}">Start</Button>
