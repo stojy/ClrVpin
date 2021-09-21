@@ -68,12 +68,12 @@
 
       <TextBlock Style="{StaticResource Title}" Text="Ignore" ToolTip="Multiple criteria whereby source files will not be considered for merging" />
       <GroupBox Margin="5" Padding="2" Header="Options" Width="650" HorizontalAlignment="Left">
-        <StackPanel Margin="5,0,0,0">
+        <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
           <!-- not using an ItemsControl in order to accommodate the associated controls (without mucking about with template triggers) -->
           <WrapPanel>
             <ContentControl Content="{Binding IgnoreIfContainsWordsFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" Width="230" />
 
-            <TextBox Margin="5,5,0,0" Width="390" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
+            <TextBox Margin="5,0,0,0" Width="390" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
                      IsEnabled="{Binding IgnoreIfContainsWordsFeature.IsActive}"
                      ToolTip="Ignore if file contain the following words (case insensitive, comma delimited)"
                      Text="{Binding IgnoreWordsString, UpdateSourceTrigger=PropertyChanged}">
@@ -92,9 +92,11 @@
                     ToolTip="Ignore if file is smaller than the specified percentage" />
           </WrapPanel>
 
-          <ContentControl Margin="0,5,0,0" Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" Width="230"/>
+          <ContentControl Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" Width="230"/>
 
-          <ContentControl Margin="0,5" Content="{Binding DeleteIgnoredFilesOptionFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" Width="230"/>
+          <ContentControl Content="{Binding DeleteIgnoredFilesOptionFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+
+          <ContentControl Content="{Binding IgnoreSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
         </StackPanel>
       </GroupBox>
 

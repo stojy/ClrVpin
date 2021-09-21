@@ -31,7 +31,6 @@ namespace ClrVpin.Rebuilder
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
             
             IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
-            DeleteIgnoredFilesOptionFeature = CreateDeleteIgnoredFilesOption();
 
             MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
 
@@ -71,6 +70,7 @@ namespace ClrVpin.Rebuilder
         public FeatureType IgnoreIfSmallerFeature { get; set; }
         public FeatureType IgnoreIfContainsWordsFeature { get; set; }
         public FeatureType DeleteIgnoredFilesOptionFeature { get; set; }
+        public FeatureType IgnoreSelectClearAllFeature { get; set; }
 
         public void Show(Window parent)
         {
@@ -156,8 +156,14 @@ namespace ClrVpin.Rebuilder
             IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfContainsWords);
             IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfSmaller);
             IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfNotNewer);
+            
+            // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
+            DeleteIgnoredFilesOptionFeature = CreateDeleteIgnoredFilesOption();
+            featureTypes.Add(DeleteIgnoredFilesOptionFeature);
 
-            return featureTypes.ToList();
+            IgnoreSelectClearAllFeature = FeatureType.CreateSelectAll(featureTypes);
+
+            return featureTypes;
         }
 
         public FeatureType CreateDeleteIgnoredFilesOption()
