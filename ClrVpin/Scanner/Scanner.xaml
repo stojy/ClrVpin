@@ -14,14 +14,17 @@
 
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
   <converters:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
+  <converters:BoolToStringConverter x:Key="BoolToFontStyleConverter" True="Italic" False="Normal" />
+  <converters:BoolToStringConverter x:Key="BoolToMarginConverter" True="0,10,0,0" False="0" />
 
-  <DataTemplate x:Key="ContentTypeTemplate" DataType="models:FeatureType">
-    <CheckBox Width="180" Margin="0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-              Command="{Binding SelectedCommand}" />
+  <DataTemplate x:Key="FeatureTypeTemplate" DataType="models:FeatureType">
+    <CheckBox Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+              Margin="{Binding IsSpecial, Converter={StaticResource BoolToMarginConverter}}" 
+              Command="{Binding SelectedCommand}" FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"/>
   </DataTemplate>
 
   <ItemsPanelTemplate x:Key="ContentTypeItemsTemplate">
-    <WrapPanel Orientation="Vertical" />
+    <WrapPanel Orientation="Vertical" ItemWidth="180" />
   </ItemsPanelTemplate>
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:ScannerViewModel}">
@@ -31,12 +34,12 @@
       <TextBlock Style="{StaticResource Title}">Content</TextBlock>
       <WrapPanel>
         <GroupBox Margin="5" Padding="2" Header="Pinball">
-          <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource ContentTypeTemplate}"
+          <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeTemplate}"
                         ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
 
         <GroupBox Margin="5" Padding="2" Header="Media">
-          <ItemsControl Height="165" ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource ContentTypeTemplate}"
+          <ItemsControl Height="185" ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeTemplate}"
                         ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
       </WrapPanel>
@@ -51,10 +54,10 @@
               <DataTemplate DataType="models:FeatureType">
                 <!-- fixed width to have items align nicely -->
                 <WrapPanel Width="180">
-                  <CheckBox Margin="0,0,10,0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                            Command="{Binding SelectedCommand}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
+                  
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
-                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN">
+                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                     <materialDesign:PackIcon Kind="InformationOutline" />
                   </Button>
                 </WrapPanel>
@@ -69,10 +72,10 @@
               <DataTemplate DataType="models:FeatureType">
                 <!-- fixed width to have items align nicely -->
                 <WrapPanel Width="180">
-                  <CheckBox Margin="0,0,10,0" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                            Command="{Binding SelectedCommand}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
+                  
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
-                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN">
+                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                     <materialDesign:PackIcon Kind="InformationOutline" />
                   </Button>
                 </WrapPanel>

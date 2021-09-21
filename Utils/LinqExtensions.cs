@@ -29,7 +29,7 @@ namespace Utils
 
         public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item)
         {
-            return System.Linq.Enumerable.Except(source, new List<T> {item});
+            return source.Except(new List<T> {item});
         }
 
         public static void Toggle<T>(this ICollection<T> source, T item)
@@ -39,11 +39,25 @@ namespace Utils
             else
                 source.Add(item);
         }
-
-        public static void ToggleOff<T>(this ICollection<T> source, T item)
+        
+        public static void Remove<T>(this ICollection<T> source, T item)
         {
             if (source.Contains(item))
                 source.Remove(item);
+        }
+
+        public static void Add<T>(this ICollection<T> source, T item)
+        {
+            if (!source.Contains(item))
+                source.Add(item);
+        }
+
+        public static void AddOrRemove<T>(this ICollection<T> source, T item, bool add)
+        {
+            if (add)
+                Add(source, item);
+            else
+                Remove(source, item);
         }
 
         public static bool In<T>(this T item, IEnumerable<T> source)

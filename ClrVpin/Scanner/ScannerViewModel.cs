@@ -25,8 +25,8 @@ namespace ClrVpin.Scanner
         public ScannerViewModel()
         {
             StartCommand = new ActionCommand(Start);
-            CheckPinballContentTypesView = new ListCollectionView(CreateCheckMediaContentTypes(Settings.GetPinballContentTypes()).ToList());
-            CheckMediaContentTypesView = new ListCollectionView(CreateCheckMediaContentTypes(Settings.GetMediaContentTypes()).ToList());
+            CheckPinballContentTypesView = new ListCollectionView(CreateCheckContentTypes(Settings.GetPinballContentTypes()).ToList());
+            CheckMediaContentTypesView = new ListCollectionView(CreateCheckContentTypes(Settings.GetMediaContentTypes()).ToList());
 
             CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
 
@@ -79,7 +79,7 @@ namespace ClrVpin.Scanner
 
         private void UpdateIsValid() => IsValid = Settings.Scanner.SelectedCheckContentTypes.Any();
 
-        private IEnumerable<FeatureType> CreateCheckMediaContentTypes(IEnumerable<ContentType> contentTypes)
+        private IEnumerable<FeatureType> CreateCheckContentTypes(IEnumerable<ContentType> contentTypes)
         {
             // show all hit types
             var featureTypes = contentTypes.Select(contentType =>
@@ -98,9 +98,9 @@ namespace ClrVpin.Scanner
                 };
 
                 return featureType;
-            });
+            }).ToList();
 
-            return featureTypes.ToList();
+            return featureTypes.Concat(new [] {FeatureType.CreateSelectAll(featureTypes)});
         }
 
         private IEnumerable<FeatureType> CreateCheckHitTypes()
@@ -126,23 +126,23 @@ namespace ClrVpin.Scanner
                     // toggle the fix hit type checked & enabled
                     var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
                     fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
-                    if (!featureType.IsActive)
+                    if (featureType.IsActive == false)
                     {
                         fixHitType.IsActive = false;
-                        Settings.Scanner.SelectedFixHitTypes.ToggleOff(hitType.Enum);
+                        Settings.Scanner.SelectedFixHitTypes.Remove(hitType.Enum);
                     }
                 });
 
                 return featureType;
-            });
+            }).ToList();
 
-            return featureTypes.ToList();
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
         }
 
         private IEnumerable<FeatureType> CreateFixHitTypes()
         {
             // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
-            var contentTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int) hitType.Enum)
+            var featureTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int) hitType.Enum)
             {
                 Description = hitType.Description,
                 Tip = hitType.Tip,
@@ -153,9 +153,9 @@ namespace ClrVpin.Scanner
                 IsHighlighted = hitType.IsHighlighted,
                 IsHelpSupported = hitType.HelpUrl != null,
                 HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
-            });
+            }).ToList();
 
-            return contentTypes.ToList();
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
         }
 
         private IEnumerable<FeatureType> CreateMultipleMatchOptionTypes()
