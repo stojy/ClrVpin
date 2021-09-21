@@ -9,8 +9,8 @@
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="\Controls\Styles.xaml" />
-    <ResourceDictionary Source="\Controls\Templates.xaml" />
+    <ResourceDictionary Source="/Controls/Styles.xaml" />
+    <ResourceDictionary Source="/Controls/Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />

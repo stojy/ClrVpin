@@ -9,15 +9,12 @@
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="\Controls\Styles.xaml" />
+    <ResourceDictionary Source="/Controls/Styles.xaml" />
+    <ResourceDictionary Source="/Controls/Templates.xaml" />
     <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <converters:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
-
-  <DataTemplate x:Key="FeatureTypeTemplate" DataType="models:FeatureType">
-    <CheckBox Margin="0,0,0,2" Width="230" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
-  </DataTemplate>
 
   <DataTemplate x:Key="RebuilderTemplate" DataType="{x:Type rebuilder:RebuilderViewModel}">
     <StackPanel Margin="5">
@@ -50,10 +47,10 @@
             <DataTemplate DataType="models:FeatureType">
               <!-- fixed width to have items align nicely -->
               <WrapPanel Width="300">
-                <CheckBox Margin="0,0,10,2" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                          Command="{Binding SelectedCommand}" />
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
+                
                 <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
-                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN">
+                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                   <materialDesign:PackIcon Kind="InformationOutline" />
                 </Button>
               </WrapPanel>
@@ -74,7 +71,7 @@
         <StackPanel Margin="5,0,0,0">
           <!-- not using an ItemsControl in order to accommodate the associated controls (without mucking about with template triggers) -->
           <WrapPanel>
-            <ContentControl Content="{Binding IgnoreIfContainsWordsFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+            <ContentControl Content="{Binding IgnoreIfContainsWordsFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" Width="230" />
 
             <TextBox Margin="5,5,0,0" Width="390" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
                      IsEnabled="{Binding IgnoreIfContainsWordsFeature.IsActive}"
@@ -89,16 +86,15 @@
           </WrapPanel>
 
           <WrapPanel Margin="0,5,0,0">
-            <ContentControl Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+            <ContentControl Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" Width="230"/>
             <Slider Margin="5,0" Width="390" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}"
                     IsEnabled="{Binding IgnoreIfSmallerFeature.IsActive}"
                     ToolTip="Ignore if file is smaller than the specified percentage" />
           </WrapPanel>
 
-          <ContentControl Margin="0,5,0,0" Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" />
+          <ContentControl Margin="0,5,0,0" Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" Width="230"/>
 
-          <CheckBox Margin="0,0,0,5" IsChecked="{Binding Settings.Rebuilder.DeleteIgnoredFiles}" Content="Delete Ignored Files"
-                    ToolTip="When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled)." />
+          <ContentControl Margin="0,5" Content="{Binding DeleteIgnoredFilesOptionFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" Width="230"/>
         </StackPanel>
       </GroupBox>
 
@@ -107,13 +103,12 @@
         <ItemsControl ItemsSource="{Binding MergeOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="models:FeatureType">
-              <CheckBox Margin="0,0,20,2" Width="300" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-                        Command="{Binding SelectedCommand}" />
+              <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-              <WrapPanel />
+              <WrapPanel ItemWidth="300" />
             </ItemsPanelTemplate>
           </ItemsControl.ItemsPanel>
         </ItemsControl>

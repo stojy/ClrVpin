@@ -63,6 +63,8 @@ namespace ClrVpin.Models.Settings
             new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"}
         };
 
+        public static Option DeleteIgnoredFilesOption = new Option {Tip = "When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled).", Description = "Delete Ignored Files"};
+
         // all possible file merge options - to be used elsewhere (rebuilder)
         public static MergeOption[] MergeOptions =
         {

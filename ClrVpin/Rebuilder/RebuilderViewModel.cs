@@ -29,7 +29,10 @@ namespace ClrVpin.Rebuilder
             DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
 
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
+            
             IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
+            DeleteIgnoredFilesOptionFeature = CreateDeleteIgnoredFilesOption();
+
             MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
 
             SourceFolderModel = new FolderTypeModel("Source", Settings.Rebuilder.SourceFolder, folder =>
@@ -67,6 +70,7 @@ namespace ClrVpin.Rebuilder
         public FeatureType IgnoreIfNotNewerFeature { get; set; }
         public FeatureType IgnoreIfSmallerFeature { get; set; }
         public FeatureType IgnoreIfContainsWordsFeature { get; set; }
+        public FeatureType DeleteIgnoredFilesOptionFeature { get; set; }
 
         public void Show(Window parent)
         {
@@ -112,7 +116,7 @@ namespace ClrVpin.Rebuilder
         {
             // show all match criteria types
             // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
-            var matchTypes = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
+            var featureTypes = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
             {
                 var featureType = new FeatureType((int) matchType.Enum)
                 {
@@ -127,9 +131,9 @@ namespace ClrVpin.Rebuilder
                 };
 
                 return featureType;
-            });
+            }).ToList();
 
-            return matchTypes.ToList();
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
         }
 
         private IEnumerable<FeatureType> CreateIgnoreOptions()
@@ -153,8 +157,21 @@ namespace ClrVpin.Rebuilder
             IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfSmaller);
             IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfNotNewer);
 
-
             return featureTypes.ToList();
+        }
+
+        public FeatureType CreateDeleteIgnoredFilesOption()
+        {
+            var feature = new FeatureType(-1)
+            {
+                Description = StaticSettings.DeleteIgnoredFilesOption.Description,
+                Tip = StaticSettings.DeleteIgnoredFilesOption.Tip,
+                IsSupported = true,
+                IsActive = Settings.Rebuilder.DeleteIgnoredFiles,
+                SelectedCommand = new ActionCommand(() => Settings.Rebuilder.DeleteIgnoredFiles = !Settings.Rebuilder.DeleteIgnoredFiles)
+            };
+
+            return feature;
         }
 
         private IEnumerable<FeatureType> CreateMergeOptions()
@@ -172,9 +189,9 @@ namespace ClrVpin.Rebuilder
                 };
 
                 return featureType;
-            });
+            }).ToList();
 
-            return featureTypes.ToList();
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
         }
 
         private async void Start()
