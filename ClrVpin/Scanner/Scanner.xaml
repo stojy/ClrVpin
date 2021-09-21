@@ -9,19 +9,12 @@
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="..\Styles.xaml" />
+    <ResourceDictionary Source="\Controls\Styles.xaml" />
+    <ResourceDictionary Source="\Controls\Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
   <converters:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
-  <converters:BoolToStringConverter x:Key="BoolToFontStyleConverter" True="Italic" False="Normal" />
-  <converters:BoolToStringConverter x:Key="BoolToMarginConverter" True="0,10,0,0" False="0" />
-
-  <DataTemplate x:Key="FeatureTypeTemplate" DataType="models:FeatureType">
-    <CheckBox Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-              Margin="{Binding IsSpecial, Converter={StaticResource BoolToMarginConverter}}" 
-              Command="{Binding SelectedCommand}" FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"/>
-  </DataTemplate>
 
   <ItemsPanelTemplate x:Key="ContentTypeItemsTemplate">
     <WrapPanel Orientation="Vertical" ItemWidth="180" />

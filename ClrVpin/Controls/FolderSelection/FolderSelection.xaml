@@ -7,7 +7,7 @@
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="\Styles.xaml" />
+    <ResourceDictionary Source="\Controls\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">

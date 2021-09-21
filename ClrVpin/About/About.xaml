@@ -3,7 +3,7 @@
                     xmlns:about="clr-namespace:ClrVpin.About">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="..\Styles.xaml" />
+    <ResourceDictionary Source="\Controls\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <DataTemplate x:Key="AboutTemplate" DataType="{x:Type about:AboutViewModel}">

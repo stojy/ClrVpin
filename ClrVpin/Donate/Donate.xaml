@@ -3,7 +3,7 @@
                     xmlns:donate="clr-namespace:ClrVpin.Donate">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="..\Styles.xaml" />
+    <ResourceDictionary Source="\Controls\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <DataTemplate x:Key="DonateTemplate" DataType="{x:Type donate:DonateViewModel}">
