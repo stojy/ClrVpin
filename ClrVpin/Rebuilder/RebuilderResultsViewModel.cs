@@ -42,31 +42,31 @@ namespace ClrVpin.Rebuilder
         {
             // show all content types, but assign enabled and active based on the rebuilder configuration
             // - rebuilder only supports one destination content type, but display them all as a list for consistency with ScannerResultsViewModel
-            var filteredContentTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
+            var featureTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,
                 IsSupported = false, // don't allow user to deselect the destination type
                 IsActive = Settings.GetSelectedDestinationContentType().Enum == contentType.Enum,
                 SelectedCommand = new ActionCommand(UpdateHitsView)
-            });
+            }).ToList();
 
-            return filteredContentTypes.ToList();
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) }).ToList();
         }
 
         protected override IList<FeatureType> CreateAllHitFeatureTypes()
         {
             // show all hit types, but assign enabled and active based on the rebuilder configuration
             // - valid hits are also visible, enabled by default since these files are copied across without any file name fixing
-            var filteredContentTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
+            var featureTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
                 IsSupported = Settings.Rebuilder.SelectedMatchTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.CorrectName,
                 IsActive = Settings.Rebuilder.SelectedMatchTypes.Contains(hitType.Enum),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
-            });
+            }).ToList();
 
-            return filteredContentTypes.ToList();
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) }).ToList();
         }
     }
 }

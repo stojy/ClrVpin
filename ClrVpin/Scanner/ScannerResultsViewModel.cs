@@ -40,7 +40,7 @@ namespace ClrVpin.Scanner
         protected override IList<FeatureType> CreateAllContentFeatureTypes()
         {
             // show all content types, but assign enabled and active based on the scanner configuration
-            var filteredContentTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
+            var featureTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,
@@ -49,24 +49,24 @@ namespace ClrVpin.Scanner
                 IsSupported = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
                 IsActive = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
-            });
+            }).ToList();
 
-            return filteredContentTypes.ToList();
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) }).ToList();
         }
 
         protected override IList<FeatureType> CreateAllHitFeatureTypes()
         {
             // show all hit types, but assign enabled and active based on the scanner configuration
             // - for completeness the valid hits are also visible, but disabled by default since no fixes were required
-            var filteredContentTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
+            var featureTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
                 IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.CorrectName,
                 IsActive = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
-            });
+            }).ToList();
 
-            return filteredContentTypes.ToList();
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) }).ToList();
         }
     }
 }

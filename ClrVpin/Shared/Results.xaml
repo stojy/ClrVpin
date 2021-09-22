@@ -10,7 +10,8 @@
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="\Controls\Styles.xaml" />
+    <ResourceDictionary Source="/Controls/Styles.xaml" />
+    <ResourceDictionary Source="/Controls/Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <ContextMenu x:Key="HitGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
@@ -65,15 +66,14 @@
             <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">
-                  <!-- fixed width so they align nicely -->
-                  <CheckBox Margin="0" Width="170" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
 
               <!-- scroll vertically then horizontally -->
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Vertical" />
+                  <WrapPanel Orientation="Vertical" ItemWidth="170"/>
                 </ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
             </ItemsControl>
@@ -83,15 +83,14 @@
             <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">
-                  <!-- fixed width so they align nicely -->
-                  <CheckBox Margin="0" Width="170" Content="{Binding Description}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}" Command="{Binding SelectedCommand}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             
               <!-- scroll vertically then horizontally -->
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Vertical" />
+                  <WrapPanel Orientation="Vertical" ItemWidth="170" />
                 </ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
             </ItemsControl>
