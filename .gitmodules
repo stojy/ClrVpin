@@ -1,0 +1,4 @@
+[submodule "ClrVpin.wiki"]
+	path = ClrVpin.wiki
+	url = https://github.com/stojy/ClrVpin.wiki.git
+	branch = master

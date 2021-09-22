@@ -28,13 +28,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "screenshots", "screenshots"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wiki", "wiki", "{7ACAABF4-86F5-4DEB-A6D8-0B0DC0801498}"
 	ProjectSection(SolutionItems) = preProject
-		..\ClrVpin.wiki\_Sidebar.md = ..\ClrVpin.wiki\_Sidebar.md
-		..\ClrVpin.wiki\Home.md = ..\ClrVpin.wiki\Home.md
-		..\ClrVpin.wiki\How-To-Use.md = ..\ClrVpin.wiki\How-To-Use.md
-		..\ClrVpin.wiki\Inner-Workings.md = ..\ClrVpin.wiki\Inner-Workings.md
-		..\ClrVpin.wiki\Overview.md = ..\ClrVpin.wiki\Overview.md
-		..\ClrVpin.wiki\Roadmap.md = ..\ClrVpin.wiki\Roadmap.md
-		..\ClrVpin.wiki\Screenshots.md = ..\ClrVpin.wiki\Screenshots.md
+		ClrVpin.wiki\_Sidebar.md = ClrVpin.wiki\_Sidebar.md
+		ClrVpin.wiki\Common-Use-Cases.md = ClrVpin.wiki\Common-Use-Cases.md
+		ClrVpin.wiki\Fuzzy-Logic.md = ClrVpin.wiki\Fuzzy-Logic.md
+		ClrVpin.wiki\Home.md = ClrVpin.wiki\Home.md
+		ClrVpin.wiki\How-To-Use.md = ClrVpin.wiki\How-To-Use.md
+		ClrVpin.wiki\Inner-Workings.md = ClrVpin.wiki\Inner-Workings.md
+		ClrVpin.wiki\Misc.md = ClrVpin.wiki\Misc.md
+		ClrVpin.wiki\Overview.md = ClrVpin.wiki\Overview.md
+		ClrVpin.wiki\Roadmap.md = ClrVpin.wiki\Roadmap.md
+		ClrVpin.wiki\Screenshots.md = ClrVpin.wiki\Screenshots.md
+		ClrVpin.wiki\Step-By-Step.md = ClrVpin.wiki\Step-By-Step.md
+		ClrVpin.wiki\Step-by-Step1.md = ClrVpin.wiki\Step-by-Step1.md
+		ClrVpin.wiki\TL&DR.md = ClrVpin.wiki\TL&DR.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scanner", "scanner", "{B2EA9621-BFC7-4C92-941E-62F8ABFBAA2E}"
@@ -56,7 +62,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rebuilder", "rebuilder", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.Tests", "Utils.Tests\Utils.Tests.csproj", "{B633F615-5BFF-4760-BF7A-B705655CE8F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClrVpin.Tests", "ClrVpin.Tests\ClrVpin.Tests.csproj", "{CB9CE454-2994-4F14-B781-8BB78F3B2414}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClrVpin.Tests", "ClrVpin.Tests\ClrVpin.Tests.csproj", "{CB9CE454-2994-4F14-B781-8BB78F3B2414}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
