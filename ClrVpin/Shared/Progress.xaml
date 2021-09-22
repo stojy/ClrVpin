@@ -8,7 +8,7 @@
   <logging:LogLevelConverter x:Key="LogLevelConverter" />
 
   <DataTemplate x:Key="ProgressTemplate" DataType="{x:Type shared:ProgressViewModel}">
-    <StackPanel Margin="10" Width="400" >
+    <StackPanel Margin="10" Width="600" >
       <ProgressBar Value="{Binding Percentage}"  Height="20" />
       <DockPanel Margin="0, 10, 0, 0" LastChildFill="True">
         <TextBlock DockPanel.Dock="Right" Text="{Binding Duration.TotalSeconds, StringFormat={}{0:f0}s}"/>

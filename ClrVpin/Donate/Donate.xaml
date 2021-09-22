@@ -13,8 +13,8 @@
       </Style>
     </DataTemplate.Resources>
 
-    <StackPanel Margin="5">
-      <TextBlock Margin="0,10,0,0" FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Center" Text="Enjoying the app?  Then why not make a donation.." />
+    <StackPanel Margin="5,10">
+      <TextBlock FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Center" Text="Enjoying the app?  Then why not make a donation.." />
 
       <TextBlock Margin="0,0,0,0">
         <Hyperlink Command="{Binding NavigateToPayPalCommand}">
