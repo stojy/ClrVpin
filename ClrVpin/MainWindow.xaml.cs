@@ -21,10 +21,10 @@ namespace ClrVpin
 
             InitializeComponent();
 
-            Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
-
             Activated += (_, _) =>
             {
+                Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
+
                 if (Model.SettingsManager.WasReset && !_configWasResetHandled)
                 {
                     _configWasResetHandled = true;

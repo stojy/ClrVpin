@@ -5,7 +5,6 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
-using MaterialDesignExtensions.Controls;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
 
@@ -55,7 +54,10 @@ namespace ClrVpin.Settings
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("SettingsTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,
-                Title = "Settings"
+                Title = "Settings",
+                
+                // limit height to activate the scroll bar, e.g. for use on lower resolution screens (aka full hd 1080px height)
+                MaxHeight = Model.ScreenWorkArea.Height
             };
             _window.Show();
             parent.Hide();

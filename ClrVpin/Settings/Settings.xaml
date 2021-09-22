@@ -45,42 +45,44 @@
   </DataTemplate>
 
   <DataTemplate x:Key="SettingsTemplate" DataType="{x:Type settings:SettingsViewModel}">
-    <StackPanel Margin="0">
-      <!-- pinball (vpx) folders -->
-      <GroupBox Margin="5" Padding="5,2" Header="Visual Pinball">
-        <StackPanel>
-          <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding PinballFolderModel}" />
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="0">
+        <!-- pinball (vpx) folders -->
+          <GroupBox Margin="5" Padding="5,2" Header="Visual Pinball">
+            <StackPanel>
+              <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding PinballFolderModel}" />
 
-          <Button ToolTip="Auto assign pinball folders" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" Command="{Binding AutoAssignPinballFoldersCommand}">Auto Assign</Button>
-          <ItemsControl ItemsSource="{Binding PinballContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}" />
-        </StackPanel>
-      </GroupBox>
+              <Button ToolTip="Auto assign pinball folders" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" Command="{Binding AutoAssignPinballFoldersCommand}">Auto Assign</Button>
+              <ItemsControl ItemsSource="{Binding PinballContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}" />
+            </StackPanel>
+          </GroupBox>
 
-      <!-- front end folders -->
-      <GroupBox Margin="5" Padding="5,2" Header="Frontend">
-        <StackPanel>
-          <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding FrontendFolderModel}" />
+          <!-- front end folders -->
+          <GroupBox Margin="5" Padding="5,2" Header="Frontend">
+            <StackPanel>
+              <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding FrontendFolderModel}" />
 
-          <Button ToolTip="Auto assign frontend folders (for 'Visual Pinball')" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" Command="{Binding AutoAssignFrontendFoldersCommand}">Auto Assign</Button>
-          <ItemsControl ItemsSource="{Binding FrontendContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}" />
-        </StackPanel>
-      </GroupBox>
+              <Button ToolTip="Auto assign frontend folders (for 'Visual Pinball')" Width="90" Margin="5,0,0,0" HorizontalAlignment="Left" Command="{Binding AutoAssignFrontendFoldersCommand}">Auto Assign</Button>
+              <ItemsControl ItemsSource="{Binding FrontendContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}" />
+            </StackPanel>
+          </GroupBox>
 
-      <!-- general -->
-      <GroupBox Margin="5" Padding="5,2" Header="General">
-        <StackPanel>
-          <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
+          <!-- general -->
+          <GroupBox Margin="5" Padding="5,2" Header="General">
+            <StackPanel>
+              <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
 
-          <WrapPanel Margin="5,0">
-            <ToggleButton ToolTip="When enabled, all file operations are ignored. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
-            <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
-          </WrapPanel>
+              <WrapPanel Margin="5,0">
+                <ToggleButton ToolTip="When enabled, all file operations are ignored. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
+                <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
+              </WrapPanel>
 
-          <Button ToolTip="Reset the entire config to their installation values" Width="90" Margin="5,10,0,5" HorizontalAlignment="Left" Command="{Binding ResetCommand}">Reset</Button>
-        </StackPanel>
-      </GroupBox>
+              <Button ToolTip="Reset the entire config to their installation values" Width="90" Margin="5,10,0,5" HorizontalAlignment="Left" Command="{Binding ResetCommand}">Reset</Button>
+            </StackPanel>
+          </GroupBox>
 
-    </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
   </DataTemplate>
 
 </ResourceDictionary>
