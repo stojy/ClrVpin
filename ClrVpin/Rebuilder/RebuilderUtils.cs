@@ -31,9 +31,9 @@ namespace ClrVpin.Rebuilder
             return mergedFileDetails;
         }
 
-        public static async Task RemoveAsync(List<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
+        public static async Task RemoveUnmatchedIgnoredAsync(List<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
         {
-            await Task.Run(() => Remove(unmatchedFiles, updateProgress));
+            await Task.Run(() => RemoveUnmatchedIgnored(unmatchedFiles, updateProgress));
         }
 
         private static List<FileDetail> Check(IList<Game> games, Action<string, int> updateProgress)
@@ -174,11 +174,14 @@ namespace ClrVpin.Rebuilder
             return true;
         }
 
-        private static void Remove(IEnumerable<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
+        private static void RemoveUnmatchedIgnored(IList<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
         {
-            // delete files NOT associated with games, i.e. unknown files
-            // - only applicable for 'ignore if contains words' AND 'delete ignored files' is enabled
-            //   i.e. others are n/a as they require a table match (e.g. if smaller and if newer)
+            // delete files NOT associated with games (aka unknown files)
+            // - n/a for any files that are matched as this is already considered (aka removed) during Merge()..
+            //   - IgnoreIfSmaller
+            //   - IgnoreIfNotNewer
+            //   - IgnoreIfContainsWords
+            // - only applicable for IgnoreIfContainsWords IF the table was unmatched, since IgnoreIfContainsWords doesn't mandate a table match
             var unmatchedFilesToDelete = unmatchedFiles
                 .Where(unmatchedFile => _settings.Rebuilder.SelectedIgnoreOptions.Contains(IgnoreOptionEnum.IgnoreIfContainsWords) && _settings.Rebuilder.IgnoreIWords.Any(x => unmatchedFile.Path.ToLower().Contains(x)))
                 .ToList();
@@ -190,6 +193,14 @@ namespace ClrVpin.Rebuilder
                 ProcessIgnore(null, IgnoreOptionEnum.IgnoreIfContainsWords.GetDescription(), fileDetail.HitType, fileDetail.ContentType, null, new FileInfo(fileDetail.Path!), null);
 
                 fileDetail.Deleted = true;
+            });
+
+            // log unmatched files that weren't considered for deletion - e.g. new table files, random files, etc
+            var unmatchedFilesNotDeleted = unmatchedFiles.Except(unmatchedFilesToDelete);
+            unmatchedFilesNotDeleted.ForEach(fileDetail =>
+            {
+                Logger.Info($"Skipping (unmatched file, doesn't satisfy ignore criteria).. table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {fileDetail.ContentType.GetDescription()}");
+                Logger.Debug($"- ignored..\n  src: {FileUtils.GetFileInfoStatistics(fileDetail.Path)}\n  dst: {FileUtils.GetFileInfoStatistics(null)}");
             });
         }
 

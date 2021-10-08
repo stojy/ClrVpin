@@ -219,8 +219,8 @@ namespace ClrVpin.Rebuilder
             progress.Update("Merging Files");
             var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, UpdateProgress);
 
-            progress.Update("Removing Unmatched Files");
-            await RebuilderUtils.RemoveAsync(unmatchedFiles, UpdateProgress);
+            progress.Update("Removing Unmatched Ignored Files");
+            await RebuilderUtils.RemoveUnmatchedIgnoredAsync(unmatchedFiles, UpdateProgress);
 
             progress.Update("Preparing Results");
             await Task.Delay(1);

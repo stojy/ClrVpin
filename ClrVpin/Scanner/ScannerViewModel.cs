@@ -204,7 +204,7 @@ namespace ClrVpin.Scanner
             var gameFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
 
             progress.Update("Removing Unmatched Files");
-            await ScannerUtils.RemoveAsync(unmatchedFiles, UpdateProgress);
+            await ScannerUtils.RemoveUnmatchedAsync(unmatchedFiles, UpdateProgress);
 
             progress.Update("Preparing Results");
             await Task.Delay(1);

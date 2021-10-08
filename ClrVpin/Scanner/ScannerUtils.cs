@@ -198,12 +198,12 @@ namespace ClrVpin.Scanner
                 gameFiles.Add(FileUtils.Rename(preferredHit, game, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
         }
 
-        public static async Task RemoveAsync(List<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
+        public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
         {
-            await Task.Run(() => Remove(unmatchedFiles, updateProgress));
+            await Task.Run(() => RemoveUnmatched(unmatchedFiles, updateProgress));
         }
 
-        private static void Remove(IEnumerable<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
+        private static void RemoveUnmatched(IEnumerable<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
         {
             // delete files NOT associated with games, aka unmatched files
             var unmatchedFilesToDelete = unmatchedFiles.Where(unmatchedFile =>
