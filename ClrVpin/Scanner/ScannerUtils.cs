@@ -172,7 +172,7 @@ namespace ClrVpin.Scanner
             // - e.g. preferred = wrong case, other=correct name (not selected)
             if (preferredHit.Type == HitTypeEnum.CorrectName && !nonPreferredHits.Any(hit => hit.Type.In(_settings.Scanner.SelectedFixHitTypes)))
             {
-                Logger.Info($"Skipping (fix criteria not selected).. table: {game.GetContentName(_settings.GetContentType(preferredHit.ContentTypeEnum).Category)}, " +
+                Logger.Info($"Skipping (fix criteria not selected).. table: {game.TableFile}, description: {game.Description}, " +
                             $"preferred type: {preferredHit.Type.GetDescription()}, required fix types (unselected): {string.Join('|', nonPreferredHits.Select(x => x.Type.GetDescription()).Distinct())}, " +
                             $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
@@ -182,7 +182,7 @@ namespace ClrVpin.Scanner
             // - e.g. correct name not selected
             if (preferredHit.Type != HitTypeEnum.CorrectName && !preferredHit.Type.In(_settings.Scanner.SelectedFixHitTypes))
             {
-                Logger.Info($"Skipping (fix criteria not selected).. table: {game.GetContentName(_settings.GetContentType(preferredHit.ContentTypeEnum).Category)}, " +
+                Logger.Info($"Skipping (fix criteria not selected).. table: {game.TableFile}, description: {game.Description}, " +
                             $"preferred type (unselected): {preferredHit.Type.GetDescription()}, " +
                             $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
@@ -214,7 +214,7 @@ namespace ClrVpin.Scanner
             {
                 updateProgress(Path.GetFileName(fileDetail.Path), 100 * (i+1) / unmatchedFilesToDelete.Count);
 
-                Logger.Info($"Fixing.. unknown/unsupported file, table: n/a, type: {fileDetail.HitType.GetDescription()}, content: n/a");
+                Logger.Info($"Fixing.. unknown/unsupported file, table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {fileDetail.ContentType.GetDescription()}");
                 FileUtils.Delete(fileDetail.Path, fileDetail.HitType, null);
 
                 fileDetail.Deleted = true;

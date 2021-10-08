@@ -152,7 +152,7 @@ namespace ClrVpin.Rebuilder
             FileSystemInfo destinationFileInfo)
         {
             var prefix = _settings.Rebuilder.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
-            Logger.Info($"{prefix}.. table: {game?.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category) ?? "n/a"}, type: {hitTypeEnum.GetDescription()}, " +
+            Logger.Info($"{prefix}.. table: {game.TableFile}, description: {game.Description}, type: {hitTypeEnum.GetDescription()}, " +
                         $"content: {contentTypeEnum.GetDescription()}, ignore option: {ignoreOptionDescription}, delete ignored: {_settings.Rebuilder.DeleteIgnoredFiles}");
 
             if (_settings.Rebuilder.DeleteIgnoredFiles)
