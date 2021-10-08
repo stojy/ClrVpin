@@ -214,7 +214,7 @@ namespace ClrVpin.Scanner
             {
                 updateProgress(Path.GetFileName(fileDetail.Path), 100 * (i+1) / unmatchedFilesToDelete.Count);
 
-                Logger.Info($"Fixing.. unknown/unsupported file, table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {fileDetail.ContentType.GetDescription()}");
+                Logger.Info($"Fixing (unmatched).. table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {fileDetail.ContentType.GetDescription()}");
                 FileUtils.Delete(fileDetail.Path, fileDetail.HitType, null);
 
                 fileDetail.Deleted = true;
