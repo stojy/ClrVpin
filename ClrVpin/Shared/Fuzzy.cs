@@ -14,7 +14,7 @@ namespace ClrVpin.Shared
             // compile and store regex to improve performance
 
             // chars
-            string[] specialChars = {"&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", " - "}; // special regex chars escaped, e.g. "?"
+            string[] specialChars = {"&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", " - ", @"\.$"};
             var pattern = string.Join('|', specialChars);
             _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
@@ -30,15 +30,59 @@ namespace ClrVpin.Shared
             pattern = string.Join('|', spacings);
             _addSpacingRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
+            // version
+            // - number must be at end of string, i.e. thus assumes the file extensions has already been removed
+            // - 2 options..
+            //   a. number without decimal - requires v/V prefix
+            //   b. number with decimal - optional v/V prefix
+            _versionRegex = new Regex(@"([vV]\d+$|[vV]?\d+\.+\d*\.*\d*$)", RegexOptions.Compiled);
+
             // multiple whitespace
             _multipleWhitespaceRegex = new Regex(@"(\s{2,})", RegexOptions.Compiled);
-
-            
 
             // file name info parsing
             // - faster: name via looking for the first opening parenthesis.. https://regex101.com/r/tRqeOH/1
             // - slower: name is greedy search using the last opening parenthesis.. https://regex101.com/r/xiXsML/1.. @"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*"
             _fileNameInfoRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)(?<year>\d*)\D*\)", RegexOptions.Compiled);
+        }
+
+        public static string Clean(string name, bool removeAllWhiteSpace)
+        {
+            if (name == null)
+                return null;
+
+            // clean the string to make it a little cleaner for subsequent matching
+            // - order is important!
+            var cleanName = name.ToLower();
+
+            // trim (whole) words
+            cleanName = _trimWordRegex.Replace(cleanName, "");
+
+            // trim chars - must trim extension period for version to work correctly!
+            cleanName = _trimCharRegex.Replace(cleanName, "");
+
+            // trim version
+            cleanName = _versionRegex.Replace(cleanName, "");
+
+            // add whitespace
+            cleanName = _addSpacingRegex.Replace(cleanName, " ");
+
+            // remove multiple white space
+            cleanName = _multipleWhitespaceRegex.Replace(cleanName, " ");
+
+            // substitutions
+            cleanName = cleanName
+                .Replace("&", " and ")
+                .Replace(" iv", " 4")
+                .Replace(" iii", " 3")
+                .Replace(" ii", " 2");
+
+            // final white space trimming
+            cleanName = cleanName.Trim();
+            if (removeAllWhiteSpace)
+                cleanName = cleanName.Replace(" ", "");
+
+            return cleanName;
         }
 
         public static (string name, string nameNoWhiteSpace, string manufacturer, int? year) GetFileDetails(string fileName)
@@ -83,8 +127,8 @@ namespace ClrVpin.Shared
             //        - fuzzy file="Cowboy Eight Ball 2"
             //        - DB entries (in order)="Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"
             // Match table name (non-media) OR description (media)
-            var tableMatches = games.Select(game => new { game, match = Match(game.TableFile, fuzzyFileDetails) }).Where(x => x.match.success);
-            var descriptionMatches = games.Select(game => new { game, match = Match(game.Description, fuzzyFileDetails) }).Where(x => x.match.success);
+            var tableMatches = games.Select(game => new {game, match = Match(game.TableFile, fuzzyFileDetails)}).Where(x => x.match.success);
+            var descriptionMatches = games.Select(game => new {game, match = Match(game.Description, fuzzyFileDetails)}).Where(x => x.match.success);
 
             var preferredMatch = tableMatches.Concat(descriptionMatches)
                 .OrderByDescending(x => x.match.score)
@@ -143,9 +187,9 @@ namespace ClrVpin.Shared
         private static int GetNameMatchScore(string firstName, string firstNameNoWhiteSpace, string secondName, string secondNameNoWhiteSpace)
         {
             var score = IsExactMatch(firstName, secondName) || IsExactMatch(firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 150 : 0;
-            
+
             if (score == 0)
-                score = IsStartsMatch(14, firstName, secondName) || IsStartsMatch(14, secondNameNoWhiteSpace, firstNameNoWhiteSpace)  ? 100 : 0;
+                score = IsStartsMatch(14, firstName, secondName) || IsStartsMatch(14, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 100 : 0;
             if (score == 0)
                 score = IsStartsMatch(10, firstName, secondName) || IsStartsMatch(10, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
             if (score == 0)
@@ -155,7 +199,7 @@ namespace ClrVpin.Shared
                 score = IsContainsMatch(17, firstName, secondName) || IsContainsMatch(17, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 100 : 0;
             if (score == 0)
                 score = IsContainsMatch(13, firstName, secondName) || IsContainsMatch(13, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
-            
+
             return score;
         }
 
@@ -169,47 +213,12 @@ namespace ClrVpin.Shared
         private static bool IsStartsMatch(int numCharsToMatch, string firstFuzzyName, string secondFuzzyName) =>
             firstFuzzyName.Length >= numCharsToMatch && secondFuzzyName.Length >= numCharsToMatch && (firstFuzzyName.StartsWith(secondFuzzyName) || secondFuzzyName.StartsWith(firstFuzzyName));
 
-        public static string Clean(string name, bool removeAllWhiteSpace)
-        {
-            if (name == null)
-                return null;
-
-            // clean the string to make it a little cleaner for subsequent matching
-            // - order is important!
-            var cleanName = name.ToLower();
-
-            // trim (whole) words
-            cleanName = _trimWordRegex.Replace(cleanName, "");
-
-            // trim chars
-            cleanName = _trimCharRegex.Replace(cleanName, "");
-
-            // add word spacings
-            cleanName = _addSpacingRegex.Replace(cleanName, " ");
-
-            // remove multiple white space
-            cleanName = _multipleWhitespaceRegex.Replace(cleanName, " ");
-
-            // substitutions
-            cleanName = cleanName
-                    .Replace("&", " and ")
-                    .Replace(" iv", " 4")
-                    .Replace(" iii", " 3")
-                    .Replace(" ii", " 2");
-                
-            // final white space trimming
-            cleanName = cleanName.Trim();
-            if (removeAllWhiteSpace)
-                cleanName = cleanName.Replace(" ", "");
-
-            return cleanName;
-        }
-
 
         private static readonly Regex _fileNameInfoRegex;
         private static readonly Regex _trimCharRegex;
         private static readonly Regex _trimWordRegex;
         private static readonly Regex _addSpacingRegex;
+        private static readonly Regex _versionRegex;
         private static readonly Regex _multipleWhitespaceRegex;
     }
 }

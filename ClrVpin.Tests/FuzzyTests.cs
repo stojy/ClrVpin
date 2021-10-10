@@ -38,8 +38,13 @@ namespace ClrVpin.Tests
         [TestCase("Twilight Zone Mod .vpx", true, "twilightzone", TestName = "remove mod")]
         [TestCase("Twilight Zone Mod.vpx", true, "twilightzone", TestName = "remove mod without trailing space")]
         [TestCase("Twilight Zone SG1bsoN.vpx", true, "twilightzone", TestName = "remove author")]
-        //[TestCase("Twilight Zone V3.vpx", true, "twilightzone", TestName = "remove version")]
         [TestCase("Twilight     Zone  baby.vpx", false, "twilight zone baby", TestName = "remove multiple spaces")]
+        [TestCase("Twilight Zone V3.vpx", true, "twilightzone", TestName = "remove version - single digit")]
+        [TestCase("Twilight Zone 3.vpx", true, "twilightzone3", TestName = "remove version - single digit without prefix prefix - number to remain")]
+        [TestCase("Twilight Zone 3.0.vpx", true, "twilightzone", TestName = "remove version - double digit")]
+        [TestCase("Twilight Zone 30.00.10.vpx", true, "twilightzone", TestName = "remove version - triple digit")]
+        [TestCase("Twilight Zone v1.2.vpx", true, "twilightzone", TestName = "remove version - double digit with prefix")]
+        [TestCase("Twilight Zone v1.2 blah.vpx", true, "twilightzonev12blah", TestName = "remove version - version not at the end - number ot remain")]
         public void CleanTest(string fileName, bool removeAllWhiteSpace, string expectedName)
         {
             var cleanName = Fuzzy.Clean(fileName, removeAllWhiteSpace);
@@ -140,7 +145,7 @@ namespace ClrVpin.Tests
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 115, TestName = "contains name 13char and exact year")]
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 105, TestName = "contains name 13char and +/-1 year")]
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 15, TestName = "contains name 13char and +/-2 year")]
-        [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 114, TestName = "contains name 13char and +/-2 year")]
+        [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 112, TestName = "contains name 13char and +/-2 year")]
         [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 207, TestName = "after chars removed - perfect match")]
         [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 157, TestName = "after chars removed - partial match")]
         public void MatchScoreTest(string gameDetail, string fileDetail, bool expectedSuccess, int expectedScore)
