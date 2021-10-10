@@ -19,7 +19,7 @@ namespace ClrVpin.Shared
             _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
             // words
-            string[] authors = {"jps", "jp's", "sg1bson"};
+            string[] authors = {"jps", "jp's", "sg1bson", "vpw"};
             string[] language = {"a", "and", "the", "premium"};
             string[] vpx = {"vpx", "mod"};
             pattern = string.Join('|', authors.Concat(language).Concat(vpx));
@@ -36,6 +36,10 @@ namespace ClrVpin.Shared
             //   a. number without decimal (or underscore) - requires v/V prefix
             //   b. number with decimal (or underscore) - optional v/V prefix
             _versionRegex = new Regex(@"([vV]\d+$|[vV]?\d+\.+\d*\.*\d*$|[vV]?\d+_+\d*_*\d*$)", RegexOptions.Compiled);
+
+            // preamble
+            // - number.. aka file id (assumed 5 digits or more)
+            _preambleRegex = new Regex(@"^(\d{5,})", RegexOptions.Compiled);
 
             // multiple whitespace
             _multipleWhitespaceRegex = new Regex(@"(\s{2,})", RegexOptions.Compiled);
@@ -63,6 +67,9 @@ namespace ClrVpin.Shared
 
             // trim version
             cleanName = _versionRegex.Replace(cleanName, "");
+
+            // trim preamble
+            cleanName = _preambleRegex.Replace(cleanName, "");
 
             // add whitespace
             cleanName = _addSpacingRegex.Replace(cleanName, " ");
@@ -222,6 +229,7 @@ namespace ClrVpin.Shared
         private static readonly Regex _trimWordRegex;
         private static readonly Regex _addSpacingRegex;
         private static readonly Regex _versionRegex;
+        private static readonly Regex _preambleRegex;
         private static readonly Regex _multipleWhitespaceRegex;
     }
 }

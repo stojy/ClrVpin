@@ -77,6 +77,8 @@ namespace ClrVpin.Tests
         [TestCase("1-2-3-(Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#2 white space - removed")]
         [TestCase("1 2   3 (Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#3 white space - removed")]
         [TestCase("1 2 3 (Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#4 white space - kept")]
+        [TestCase("1234 blah", false, "1234 blah", TestName = "trim number preamble")]
+        [TestCase("12345 blah", false, "blah", TestName = "trim number preamble")]
         public void CleanTest(string fileName, bool removeAllWhiteSpace, string expectedName)
         {
             // confirm Clean provides exact results
@@ -112,6 +114,7 @@ namespace ClrVpin.Tests
         [TestCase("Twilight Zone (Bally 1993)", "Twilight Zone SG1bsoN Mod V3.vpx", true, TestName = "13 character starts with match")]
         [TestCase("Mr. and Mrs. Pac-Man (Bally 1982)", "Mr. and Mrs. Pac-Man (Bally 1982) 1.0.vpx", true, TestName = "game name with period - confirm not mistaken as a file extension")]
         [TestCase("Lortium (Juegos Populares 1987)", "Lortium_VPX_1_1.vpx", true, TestName = "game name with period - confirm not mistaken as a file extension")]
+        [TestCase("Cactus Canyon (Bally 1998)", "659655879_CactusCanyon(Bally1998)VPW1.0.2.vpx", true, TestName = "number preamble")]
         public void MatchTest(string gameName, string fileName, bool expectedSuccess)
         {
             // confirm match is successful, i.e. does NOT require an exact clean match
