@@ -47,6 +47,7 @@ namespace ClrVpin.Tests
         [TestCase("Twilight Zone V3.vpx", true, "twilightzone", TestName = "remove version - single digit")]
         [TestCase("Twilight Zone 3.vpx", true, "twilightzone3", TestName = "remove version - single digit without prefix prefix - number to remain")]
         [TestCase("Twilight Zone 3.0.vpx", true, "twilightzone", TestName = "remove version - double digit")]
+        [TestCase("Twilight Zone 3_0.vpx", true, "twilightzone", TestName = "remove version - double digit with underscore")]
         [TestCase("Twilight Zone 30.00.10.vpx", true, "twilightzone", TestName = "remove version - triple digit")]
         [TestCase("Twilight Zone v1.2.vpx", true, "twilightzone", TestName = "remove version - double digit with prefix")]
         [TestCase("Twilight Zone v1.2 blah.vpx", true, "twilightzonev12blah", TestName = "remove version - version not at the end - number ot remain")]
@@ -110,6 +111,7 @@ namespace ClrVpin.Tests
         [TestCase("Amazon Hunt baby baby VPX 1.6.directb2s", "Amazon Hunt baby baby (1983).directb2s", true, TestName = "remove 'vpx'")]
         [TestCase("Twilight Zone (Bally 1993)", "Twilight Zone SG1bsoN Mod V3.vpx", true, TestName = "13 character starts with match")]
         [TestCase("Mr. and Mrs. Pac-Man (Bally 1982)", "Mr. and Mrs. Pac-Man (Bally 1982) 1.0.vpx", true, TestName = "game name with period - confirm not mistaken as a file extension")]
+        [TestCase("Lortium (Juegos Populares 1987)", "Lortium_VPX_1_1.vpx", true, TestName = "game name with period - confirm not mistaken as a file extension")]
         public void MatchTest(string gameName, string fileName, bool expectedSuccess)
         {
             // confirm match is successful, i.e. does NOT require an exact clean match

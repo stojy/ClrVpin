@@ -33,9 +33,9 @@ namespace ClrVpin.Shared
             // version
             // - number must be at end of string, i.e. thus assumes the file extensions has already been removed
             // - 2 options..
-            //   a. number without decimal - requires v/V prefix
-            //   b. number with decimal - optional v/V prefix
-            _versionRegex = new Regex(@"([vV]\d+$|[vV]?\d+\.+\d*\.*\d*$)", RegexOptions.Compiled);
+            //   a. number without decimal (or underscore) - requires v/V prefix
+            //   b. number with decimal (or underscore) - optional v/V prefix
+            _versionRegex = new Regex(@"([vV]\d+$|[vV]?\d+\.+\d*\.*\d*$|[vV]?\d+_+\d*_*\d*$)", RegexOptions.Compiled);
 
             // multiple whitespace
             _multipleWhitespaceRegex = new Regex(@"(\s{2,})", RegexOptions.Compiled);
