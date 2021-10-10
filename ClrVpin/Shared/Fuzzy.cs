@@ -9,6 +9,38 @@ namespace ClrVpin.Shared
 {
     public static class Fuzzy
     {
+        static Fuzzy()
+        {
+            // compile and store regex to improve performance
+
+            // chars
+            string[] specialChars = {"&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", " - "}; // special regex chars escaped, e.g. "?"
+            var pattern = string.Join('|', specialChars);
+            _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
+
+            // words
+            string[] authors = {"jps", "sg1bson"};
+            string[] language = {"a", "and", "the", "premium"};
+            string[] vpx = {"vpx", "mod"};
+            pattern = string.Join('|', authors.Concat(language).Concat(vpx));
+            _trimWordRegex = new Regex($@"\b({pattern})\b", RegexOptions.Compiled);
+
+            // single whitespace
+            string[] spacings = {"-", "_", @"\."};
+            pattern = string.Join('|', spacings);
+            _addSpacingRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
+
+            // multiple whitespace
+            _multipleWhitespaceRegex = new Regex(@"(\s{2,})", RegexOptions.Compiled);
+
+            
+
+            // file name info parsing
+            // - faster: name via looking for the first opening parenthesis.. https://regex101.com/r/tRqeOH/1
+            // - slower: name is greedy search using the last opening parenthesis.. https://regex101.com/r/xiXsML/1.. @"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*"
+            _fileNameInfoRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)(?<year>\d*)\D*\)", RegexOptions.Compiled);
+        }
+
         public static (string name, string nameNoWhiteSpace, string manufacturer, int? year) GetFileDetails(string fileName)
         {
             // return the fuzzy portion of the filename..
@@ -21,7 +53,7 @@ namespace ClrVpin.Shared
             int? year = null;
 
             fileName = Path.GetFileNameWithoutExtension(fileName ?? "");
-            var result = _fuzzyFileNameRegex.Match(fileName);
+            var result = _fileNameInfoRegex.Match(fileName);
 
             if (result.Success)
             {
@@ -137,57 +169,47 @@ namespace ClrVpin.Shared
         private static bool IsStartsMatch(int numCharsToMatch, string firstFuzzyName, string secondFuzzyName) =>
             firstFuzzyName.Length >= numCharsToMatch && secondFuzzyName.Length >= numCharsToMatch && (firstFuzzyName.StartsWith(secondFuzzyName) || secondFuzzyName.StartsWith(firstFuzzyName));
 
-        private static string Clean(string name, bool removeAllWhiteSpace)
+        public static string Clean(string name, bool removeAllWhiteSpace)
         {
-            var fuzzyClean = name;
-
-            // trim starting characters
-            if (fuzzyClean?.StartsWith("a ") == true)
-                fuzzyClean = fuzzyClean.TrimStart('a');
+            if (name == null)
+                return null;
 
             // clean the string to make it a little cleaner for subsequent matching
             // - order is important!
-            fuzzyClean = fuzzyClean?.ToLower()
-                    .Replace(" a ", "")
-                    .Replace("and", "")
-                    .Replace("the", "")
-                    .Replace("premium", "")
-                    .Replace("vpx", "")
-                    .Replace("&apos;", "")
-                    .Replace("jp's", "")
-                    .Replace("jps", "")
-                    .Replace("ï¿½", "")
-                    .Replace("'", "")
-                    .Replace("`", "")
-                    .Replace("’", "")
-                    .Replace(",", "")
-                    .Replace(";", "")
-                    .Replace("!", "")
-                    .Replace("?", "")
-                    .Replace("-", " ")
-                    .Replace(" - ", "")
-                    .Replace("_", " ")
-                    .Replace(".", " ")
+            var cleanName = name.ToLower();
+
+            // trim (whole) words
+            cleanName = _trimWordRegex.Replace(cleanName, "");
+
+            // trim chars
+            cleanName = _trimCharRegex.Replace(cleanName, "");
+
+            // add word spacings
+            cleanName = _addSpacingRegex.Replace(cleanName, " ");
+
+            // remove multiple white space
+            cleanName = _multipleWhitespaceRegex.Replace(cleanName, " ");
+
+            // substitutions
+            cleanName = cleanName
                     .Replace("&", " and ")
                     .Replace(" iv", " 4")
                     .Replace(" iii", " 3")
-                    .Replace(" ii", " 2")
-                    .Replace("    ", " ")
-                    .Replace("   ", " ")
-                    .Replace("  ", " ")
-                    .TrimStart()
-                    .Trim()
-                ;
-
+                    .Replace(" ii", " 2");
+                
+            // final white space trimming
+            cleanName = cleanName.Trim();
             if (removeAllWhiteSpace)
-                fuzzyClean = fuzzyClean?.Replace(" ", "");
+                cleanName = cleanName.Replace(" ", "");
 
-            return fuzzyClean;
+            return cleanName;
         }
 
-        // regex
-        // - faster: name via looking for the first opening parenthesis.. https://regex101.com/r/tRqeOH/1
-        // - slower: name is greedy search using the last opening parenthesis.. https://regex101.com/r/xiXsML/1.. @"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*"
-        private static readonly Regex _fuzzyFileNameRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)(?<year>\d*)\D*\)", RegexOptions.Compiled);
+
+        private static readonly Regex _fileNameInfoRegex;
+        private static readonly Regex _trimCharRegex;
+        private static readonly Regex _trimWordRegex;
+        private static readonly Regex _addSpacingRegex;
+        private static readonly Regex _multipleWhitespaceRegex;
     }
 }

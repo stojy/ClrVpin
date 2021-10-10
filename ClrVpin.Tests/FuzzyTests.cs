@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using ClrVpin.Models;
 using ClrVpin.Shared;
 using NUnit.Framework;
+// ReSharper disable StringLiteralTypo
 
 namespace ClrVpin.Tests
 {
     public class FuzzyTests
     {
-        [SuppressMessage("ReSharper", "StringLiteralTypo")]
         [Test]
         [TestCase("Indiana Jones (Williams 1993) blah.directb2s", "indiana jones", "indianajones", "williams", 1993)]
         [TestCase("Indiana Jones (Williams 1993 blah) blah.directb2s", "indiana jones", "indianajones", "williams", 1993, TestName = "year doesn't need to be at the end of the parenthesis")]
@@ -25,7 +24,7 @@ namespace ClrVpin.Tests
         [TestCase("123 blah (Williams 1993)", "123 blah", "123blah", "williams", 1993, TestName = "number and word title with manufacturer and year")]
         [TestCase("123 blah (1993)", "123 blah", "123blah", null, 1993, TestName = "number title with word and year only")]
         [TestCase("1-2-3 (1971)", "1 2 3", "123", null, 1971, TestName = "dashes removed.. white space and no white space")]
-        public void GetFileNameDetailsTest(string fileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, int? expectedYear)
+        public void GetFileDetailsTest(string fileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, int? expectedYear)
         {
             var (name, nameNoWhiteSpace, manufacturer, year) = Fuzzy.GetFileDetails(fileName);
 
@@ -35,7 +34,19 @@ namespace ClrVpin.Tests
             Assert.That(year, Is.EqualTo(expectedYear));
         }
 
-        [SuppressMessage("ReSharper", "StringLiteralTypo")]
+        [Test]
+        [TestCase("Twilight Zone Mod .vpx", true, "twilightzone", TestName = "remove mod")]
+        [TestCase("Twilight Zone Mod.vpx", true, "twilightzone", TestName = "remove mod without trailing space")]
+        [TestCase("Twilight Zone SG1bsoN.vpx", true, "twilightzone", TestName = "remove author")]
+        //[TestCase("Twilight Zone V3.vpx", true, "twilightzone", TestName = "remove version")]
+        [TestCase("Twilight     Zone  baby.vpx", false, "twilight zone baby", TestName = "remove multiple spaces")]
+        public void CleanTest(string fileName, bool removeAllWhiteSpace, string expectedName)
+        {
+            var cleanName = Fuzzy.Clean(fileName, removeAllWhiteSpace);
+
+            Assert.That(cleanName, Is.EqualTo(expectedName));
+        }
+
         [Test]
         [TestCase("medieval madness", "medieval madness", true)]
         [TestCase("medieval madness.vpx", "medieval madness", true, TestName = "remove extension")]
@@ -96,9 +107,11 @@ namespace ClrVpin.Tests
         [TestCase("1-2-3 (Premier 1989)", "1 2 3 (Premier1989)", true, TestName = "#1 white space - kept")]
         [TestCase("AC-DC LUCI Premium (Stern 2013).directb2s", "AC-DC LUCI (Stern 2013).directb2s", true, TestName = "remove 'premium'")]
         [TestCase("Amazon Hunt baby baby VPX 1.6.directb2s", "Amazon Hunt baby baby (1983).directb2s", true, TestName = "remove 'vpx'")]
-        public void MatchTest(string first, string second, bool expectedSuccess)
+       // [TestCase("Twilight Zone (Bally 1993)", "Twilight Zone SG1bsoN Mod V3.vpx", true, TestName = "13 character starts with match")]
+        public void MatchTest(string gameName, string fileName, bool expectedSuccess)
         {
-            var isMatch = Fuzzy.Match(first, Fuzzy.GetFileDetails(second)).success;
+            // todo; move the regex explicit tests into CleanTest, i.e. a more specific test
+            var isMatch = Fuzzy.Match(gameName, Fuzzy.GetFileDetails(fileName)).success;
 
             Assert.That(isMatch, Is.EqualTo(expectedSuccess));
         }
@@ -127,7 +140,7 @@ namespace ClrVpin.Tests
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 115, TestName = "contains name 13char and exact year")]
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 105, TestName = "contains name 13char and +/-1 year")]
         [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 15, TestName = "contains name 13char and +/-2 year")]
-        [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 115, TestName = "contains name 13char and +/-2 year")]
+        [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 114, TestName = "contains name 13char and +/-2 year")]
         [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 207, TestName = "after chars removed - perfect match")]
         [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 157, TestName = "after chars removed - partial match")]
         public void MatchScoreTest(string gameDetail, string fileDetail, bool expectedSuccess, int expectedScore)
@@ -153,9 +166,9 @@ namespace ClrVpin.Tests
         }
 
         [Test]
-        public void GameMatchTest()
+        public void DatabaseGamesMatchTest()
         {
-            var games = new List<Game>()
+            var games = new List<Game>
             {
                 new Game {Ipdb = "1", TableFile = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
                 new Game {Ipdb = "2", TableFile = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
