@@ -78,7 +78,7 @@ namespace ClrVpin.Shared
                 updateProgress(Path.GetFileName(supportedFile), i+1);
 
                 Game matchedGame;
-                var fuzzyFileNameDetails = Fuzzy.GetFileDetails(supportedFile);
+                var fuzzyFileNameDetails = Fuzzy.GetNameDetails(supportedFile, true);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit

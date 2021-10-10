@@ -85,7 +85,7 @@ namespace ClrVpin.Shared
             return cleanName;
         }
 
-        public static (string name, string nameNoWhiteSpace, string manufacturer, int? year) GetFileDetails(string fileName)
+        public static (string name, string nameNoWhiteSpace, string manufacturer, int? year) GetNameDetails(string sourceName, bool isFileName)
         {
             // return the fuzzy portion of the filename..
             // - no file extensions
@@ -96,8 +96,11 @@ namespace ClrVpin.Shared
             string manufacturer = null;
             int? year = null;
 
-            fileName = Path.GetFileNameWithoutExtension(fileName ?? "");
-            var result = _fileNameInfoRegex.Match(fileName);
+            // only strip the extension if it exists, i.e. a real file and not a DB entry
+            if (isFileName)
+                sourceName = Path.GetFileNameWithoutExtension(sourceName ?? "");
+
+            var result = _fileNameInfoRegex.Match(sourceName);
 
             if (result.Success)
             {
@@ -110,7 +113,7 @@ namespace ClrVpin.Shared
                     year = parsedYear;
             }
             else
-                name = fileName.ToNull();
+                name = sourceName.ToNull();
 
             // fuzzy clean the name field
             name = Clean(name, false);
@@ -140,7 +143,7 @@ namespace ClrVpin.Shared
 
         public static (bool success, int score) Match(string gameDetail, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fileFuzzyDetails)
         {
-            var gameDetailFuzzyDetails = GetFileDetails(gameDetail);
+            var gameDetailFuzzyDetails = GetNameDetails(gameDetail, false);
 
             var nameMatchScore = GetNameMatchScore(gameDetailFuzzyDetails.name, gameDetailFuzzyDetails.nameNoWhiteSpace, fileFuzzyDetails.name, fileFuzzyDetails.nameNoWhiteSpace);
             var yearMatchScore = GetYearMatchScore(gameDetailFuzzyDetails.year, fileFuzzyDetails.year);
