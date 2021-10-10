@@ -14,19 +14,19 @@ namespace ClrVpin.Shared
             // compile and store regex to improve performance
 
             // chars
-            string[] specialChars = {"&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", " - ", @"\.$"};
+            string[] specialChars = {"&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"\.$"};
             var pattern = string.Join('|', specialChars);
             _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
             // words
-            string[] authors = {"jps", "sg1bson"};
+            string[] authors = {"jps", "jp's", "sg1bson"};
             string[] language = {"a", "and", "the", "premium"};
             string[] vpx = {"vpx", "mod"};
             pattern = string.Join('|', authors.Concat(language).Concat(vpx));
             _trimWordRegex = new Regex($@"\b({pattern})\b", RegexOptions.Compiled);
 
             // single whitespace
-            string[] spacings = {"-", "_", @"\."};
+            string[] spacings = {"-", " - ", "_", @"\."};
             pattern = string.Join('|', spacings);
             _addSpacingRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
@@ -67,15 +67,15 @@ namespace ClrVpin.Shared
             // add whitespace
             cleanName = _addSpacingRegex.Replace(cleanName, " ");
 
-            // remove multiple white space
-            cleanName = _multipleWhitespaceRegex.Replace(cleanName, " ");
-
             // substitutions
             cleanName = cleanName
                 .Replace("&", " and ")
                 .Replace(" iv", " 4")
                 .Replace(" iii", " 3")
                 .Replace(" ii", " 2");
+
+            // remove multiple white space
+            cleanName = _multipleWhitespaceRegex.Replace(cleanName, " ");
 
             // final white space trimming
             cleanName = cleanName.Trim();

@@ -2,6 +2,8 @@
 using ClrVpin.Models;
 using ClrVpin.Shared;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
+
 // ReSharper disable StringLiteralTypo
 
 namespace ClrVpin.Tests
@@ -35,66 +37,64 @@ namespace ClrVpin.Tests
         }
 
         [Test]
+        [TestCase("medieval madness", false, "medieval madness", TestName = "nothing to do")]
+        [TestCase("medieval madness.vpx", false, "medieval madness", TestName = "remove extension")]
         [TestCase("Twilight Zone Mod .vpx", true, "twilightzone", TestName = "remove mod")]
         [TestCase("Twilight Zone Mod.vpx", true, "twilightzone", TestName = "remove mod without trailing space")]
         [TestCase("Twilight Zone SG1bsoN.vpx", true, "twilightzone", TestName = "remove author")]
-        [TestCase("Twilight     Zone  baby.vpx", false, "twilight zone baby", TestName = "remove multiple spaces")]
+        [TestCase("Twilight            Zone  baby.vpx", false, "twilight zone baby", TestName = "remove multiple spaces")]
         [TestCase("Twilight Zone V3.vpx", true, "twilightzone", TestName = "remove version - single digit")]
         [TestCase("Twilight Zone 3.vpx", true, "twilightzone3", TestName = "remove version - single digit without prefix prefix - number to remain")]
         [TestCase("Twilight Zone 3.0.vpx", true, "twilightzone", TestName = "remove version - double digit")]
         [TestCase("Twilight Zone 30.00.10.vpx", true, "twilightzone", TestName = "remove version - triple digit")]
         [TestCase("Twilight Zone v1.2.vpx", true, "twilightzone", TestName = "remove version - double digit with prefix")]
         [TestCase("Twilight Zone v1.2 blah.vpx", true, "twilightzonev12blah", TestName = "remove version - version not at the end - number ot remain")]
+        [TestCase("._Twilight Zone SG1bsoN Mod V3.vpx", true, "twilightzone", TestName = "remove multple.. author, version, mod, etc")]
+        [TestCase("the black knight", false, "black knight", TestName = "remove 'the'")]
+        [TestCase("black&apos; knight", false, "black knight", TestName = "remove '&apos;'")]
+        [TestCase("black' knight", false, "black knight", TestName = "remove '''")]
+        [TestCase("blackï¿½ knight", false, "black knight", TestName = "remove 'ï¿½'")]
+        [TestCase("black` knight", false, "black knight", TestName = "remove '`'")]
+        [TestCase("black’ knight", false, "black knight", TestName = "remove '’'")]
+        [TestCase("black, knight", false, "black knight", TestName = "remove ','")]
+        [TestCase("black; knight", false, "black knight", TestName = "remove ';'")]
+        [TestCase("black knight!", false, "black knight", TestName = "remove '!'")]
+        [TestCase("black? knight", false, "black knight", TestName = "remove '?'")]
+        [TestCase("JP's black knight", false, "black knight", TestName = "remove 'JP's")]
+        [TestCase("JPs black knight", false, "black knight", TestName = "remove 'JPs")]
+        [TestCase("black and knight", false, "black knight", TestName = "remove 'and'")]
+        [TestCase("black a knight", false, "black knight", TestName = "remove ' a '")]
+        [TestCase("a black knight", false, "black knight", TestName = "remove starting 'a '")]
+        [TestCase("black.knight.blah", false, "black knight blah", TestName = "replace '.'")]
+        [TestCase("black-knight", false, "black knight", TestName = "remove '-'")]
+        [TestCase("black - knight", false, "black knight", TestName = "remove ' - '")]
+        [TestCase("black_knight", false, "black knight", TestName = "remove '_'")]
+        [TestCase("black&knight", false, "black and knight", TestName = "replace '&'")]
+        [TestCase("black & knight", false, "black and knight", TestName = "replace ' & '")]
+        [TestCase("1 2 3 (Premier 1989)", true, "123(premier1989)", TestName = "#1 white space - removed")]
+        [TestCase("1-2-3-(Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#2 white space - removed")]
+        [TestCase("1 2   3 (Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#3 white space - removed")]
+        [TestCase("1 2 3 (Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#4 white space - kept")]
         public void CleanTest(string fileName, bool removeAllWhiteSpace, string expectedName)
         {
+            // confirm Clean provides exact results
             var cleanName = Fuzzy.Clean(fileName, removeAllWhiteSpace);
 
             Assert.That(cleanName, Is.EqualTo(expectedName));
         }
 
         [Test]
-        [TestCase("medieval madness", "medieval madness", true)]
-        [TestCase("medieval madness.vpx", "medieval madness", true, TestName = "remove extension")]
-        [TestCase("medieval madness.vpx", "medieval madness", true)]
-        [TestCase("medieval madness", "medieval madness.vpx", true)]
-        [TestCase("medieval madness", "medieval madness.vpx", true)]
-        [TestCase("medieval madness", "medieval madness (Williams 2006)", true)]
-        [TestCase("medieval madness (Williams 2006)", "medieval madness", true)]
+        [TestCase("medieval madness", "medieval madness (Williams 2006)", true, TestName = "#1 match without manufacturer and year")]
+        [TestCase("medieval madness (Williams 2006)", "medieval madness", true, TestName = "#2 match without manufacturer and year")]
         [TestCase("medieval madnes (Williams 2006)", "medieval madness", true, TestName="15 char minimum")]
         [TestCase("medieval madness (Williams 2006)", "medieval madness (blah 2006)", true)]
         [TestCase("medieval madness (  Williams 2006)", "medieval madness (blah 2006)", true)]
-        [TestCase(" medieval madness (Williams 2006)", "medieval madness (blah 2006)", true, TestName = "trim whitespace")]
-        [TestCase("medieval   madness (Williams 2006)", "medieval madness (blah 2006)", true, TestName = "remove x2 whitespace")]
-        [TestCase("medieval    madness (Williams 2006)", "medieval madness (blah 2006)", true, TestName = "remove x4 whitespace")]
-        [TestCase("medieval     madness (Williams 2006)", "medieval madness (blah 2006)", true, TestName = "remove x5 whitespace")]
-        [TestCase("medieval              madness (Williams 2006)", "medieval madness (blah 2000)", false, TestName = "remove lots of whitespace")]
         [TestCase("medieval madnesas (Williams 2006)", "medieval madness", false, TestName = "typo")]
         [TestCase("ali (Stern 1980)", "ali", true, TestName = "short name exact match")]
         [TestCase("ali (Williams 2006)", "alien (blah)", false, TestName = "#1 - minimum 15 characters required for partial match")]
         [TestCase("black knight 2000", "black knight", false, TestName = "#2 - minimum 15 characters required for partial match")]
         [TestCase("black knight returns 2000", "black knight", false, TestName = "#3 - minimum 15 characters required for partial match")]
         [TestCase("black knight returns 2000", "black knight retur", true, TestName = "#4 - minimum 15 characters required for partial match")]
-        [TestCase("the black knight", "black knight", true, TestName = "remove 'the'")]
-        [TestCase("black&apos; knight", "black knight", true, TestName = "remove '&apos;'")]
-        [TestCase("black' knight", "black knight", true, TestName = "remove '''")]
-        [TestCase("blackï¿½ knight", "black knight", true, TestName = "remove 'ï¿½'")]
-        [TestCase("black` knight", "black knight", true, TestName = "remove '`'")]
-        [TestCase("black’ knight", "black knight", true, TestName = "remove '’'")]
-        [TestCase("black, knight", "black knight", true, TestName = "remove ','")]
-        [TestCase("black; knight", "black knight", true, TestName = "remove ';'")]
-        [TestCase("black knight!", "black knight", true, TestName = "remove '!'")]
-        [TestCase("black? knight", "black knight", true, TestName = "remove '?'")]
-        [TestCase("JP's black knight", "black knight", true, TestName = "remove 'JP's")]
-        [TestCase("JPs black knight", "black knight", true, TestName = "remove 'JPs")]
-        [TestCase("black and knight", "black knight", true, TestName = "remove 'and'")]
-        [TestCase("black a knight", "black knight", true, TestName = "remove ' a '")]
-        [TestCase("a black knight", "black knight", true, TestName = "remove starting 'a '")]
-        [TestCase("black.knight.blah", "black knight", true, TestName = "replace '.'")]
-        [TestCase("black-knight", "black knight", true, TestName = "remove '-'")]
-        [TestCase("black - knight", "black knight", true, TestName = "remove ' - '")]
-        [TestCase("black_knight", "black knight", true, TestName = "remove '_'")]
-        [TestCase("black&knight", "black and knight", true, TestName = "replace '&'")]
-        [TestCase("black & knight", "black and knight", true, TestName = "replace ' & '")]
         [TestCase("Rocky and Bullwinkle And Friends (Data East 1993)", "Adventures of Rocky and Bullwinkle and Friends (1993).directb2s", true, TestName = "#1 contains - 20 characters satisified")]
         [TestCase("Rocky and Bull", "Adventures of Rocky and Bullwinkle and Friends (1993).directb2s", false, TestName = "#1 contains - characters not satisified")]
         [TestCase("Indiana Jones (Stern 2008)", @"C:\temp\_download\vp\Backglasses\Indiana Jones (Stern 2008) by Starlion.directb2s", true, TestName = "full path")]
@@ -105,17 +105,13 @@ namespace ClrVpin.Tests
         [TestCase("The Getaway High Speed 4 (Williams 1992)", @"C:\temp\_MegaSync\b2s\Getaway, The - High Speed IV v1.04.directb2s", true, TestName = "roman numeral conversion - IV")]
         [TestCase("Lights...Camera...Action! (Premier 1989).blah", @"Lights Camera Action (1989).directb2s", true, TestName = "ellipsis")]
         [TestCase("Lights...Camera...Action! (Premier 1989)", @"Lights Camera Action (1989).directb2s", false, TestName = "ellipsis - without file extension not supported :(")]
-        [TestCase("1-2-3 (Premier 1989)", "123 (Premier1989)", true, TestName = "#1 white space - removed")]
-        [TestCase("123 (Premier 1989)", "1 2 3 (Premier1989)", true, TestName = "#1 white space - removed 2")]
-        [TestCase("1 2 3 (Premier 1989)", "1-2-3-(Premier1989)", true, TestName = "#1 white space - removed 3")]
-        [TestCase("1 2   3 (Premier 1989)", "1-2-3-(Premier1989)", true, TestName = "#1 white space - removed 4")]
-        [TestCase("1-2-3 (Premier 1989)", "1 2 3 (Premier1989)", true, TestName = "#1 white space - kept")]
         [TestCase("AC-DC LUCI Premium (Stern 2013).directb2s", "AC-DC LUCI (Stern 2013).directb2s", true, TestName = "remove 'premium'")]
         [TestCase("Amazon Hunt baby baby VPX 1.6.directb2s", "Amazon Hunt baby baby (1983).directb2s", true, TestName = "remove 'vpx'")]
-       // [TestCase("Twilight Zone (Bally 1993)", "Twilight Zone SG1bsoN Mod V3.vpx", true, TestName = "13 character starts with match")]
+        [TestCase("Twilight Zone (Bally 1993)", "Twilight Zone SG1bsoN Mod V3.vpx", true, TestName = "13 character starts with match")]
+        //[TestCase("Mr. and Mrs. Pac-Man (Bally 1982) 1.0.vpx", "Mr. and Mrs. Pac-Man (Bally 1982)", true, TestName = "rc8")]
         public void MatchTest(string gameName, string fileName, bool expectedSuccess)
         {
-            // todo; move the regex explicit tests into CleanTest, i.e. a more specific test
+            // confirm match is successful, i.e. does NOT require an exact clean match
             var isMatch = Fuzzy.Match(gameName, Fuzzy.GetFileDetails(fileName)).success;
 
             Assert.That(isMatch, Is.EqualTo(expectedSuccess));
