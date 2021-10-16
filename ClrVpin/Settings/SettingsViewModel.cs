@@ -17,7 +17,7 @@ namespace ClrVpin.Settings
         {
             PinballFolderModel = new FolderTypeModel("Visual Pinball Executable", Settings.PinballFolder, folder => Settings.PinballFolder = folder);
 
-            PinballContentTypeModels = Model.Settings.GetPinballContentTypes().Select(contentType => new ContentTypeModel(contentType, () => PinballContentUpdated(contentType))).ToList();
+            PinballContentTypeModels = Model.Settings.GetPinballContentTypes().Select(contentType => new ContentTypeModel(contentType)).ToList();
 
             FrontendFolderModel = new FolderTypeModel("Frontend Executable", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
             FrontendContentTypeModels = Model.Settings.GetFrontendContentTypes().Select(contentType => new ContentTypeModel(contentType)).ToList();
@@ -69,13 +69,6 @@ namespace ClrVpin.Settings
             };
         }
 
-        private void PinballContentUpdated(ContentType contentType)
-        {
-            // special handling for table as we want to update the DefaultSetting.PinballTablesFolder setting, so it can be remembered after a reset!
-            if (contentType.Enum == ContentTypeEnum.Tables)
-                Settings.PinballTablesFolder = contentType.Folder;
-        }
-
         private void Close()
         {
             _window.Close();
@@ -87,7 +80,7 @@ namespace ClrVpin.Settings
             PinballContentTypeModels.ForEach(x =>
             {
                 // for storage
-                x.ContentType.Folder = $@"{Settings.PinballTablesFolder}";
+                x.ContentType.Folder = $@"{Settings.PinballFolder}";
 
                 // for display
                 x.Folder = x.ContentType.Folder;

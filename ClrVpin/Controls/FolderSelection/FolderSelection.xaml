@@ -43,7 +43,9 @@
         </b:Interaction.Triggers>
       </TextBox>
 
-      <Button Command="{Binding FolderExplorerCommand}" Height="27">Change</Button>
+      <Button Command="{Binding FolderExplorerCommand}" Style="{StaticResource MaterialDesignIconButton}" ToolTip="Change folder">
+        <materialDesign:PackIcon Kind="FolderOpenOutline" />
+      </Button>
     </WrapPanel>
   </DataTemplate>
 
