@@ -24,15 +24,13 @@
       <TextBlock Margin="5,0,0,0" FontSize="16">• VPX tables and backglasses</TextBlock>
       <TextBlock Margin="5,0,0,0" FontSize="16">• Front end media (launch audio, table video, wheels, etc)</TextBlock>
 
-      <TextBlock Margin="5,20,0,0">If you've got any questions, please reach out via github..</TextBlock>
-      <TextBlock Margin="5,0,0,0">
+      <TextBlock Margin="5,20,0,0" FontSize="16">Please reach out via github if you've got any questions/issues..</TextBlock>
+      <TextBlock Margin="5,5,0,0">
         <Hyperlink NavigateUri="{Binding GitHubRepoUrl}" Command="{Binding NavigateToGitHubRepoCommand}">
-          <TextBlock Text="{Binding GitHubRepoUrl}" FontSize="18" />
+          <TextBlock Text="{Binding GitHubRepoUrl}" FontSize="16" />
         </Hyperlink>
       </TextBlock>
-
-      <TextBlock Margin="5,20,0,0">Author..</TextBlock>
-      <TextBlock Margin="5,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontSize="18">
+      <TextBlock Margin="5,5,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontSize="16">
         <Hyperlink NavigateUri="{Binding GitHubAuthorUrl}" Command="{Binding NavigateToGitHubAuthorCommand}">
           <TextBlock Text="{Binding GitHubAuthorUrl}" FontSize="18" />
         </Hyperlink>
