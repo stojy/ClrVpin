@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Windows.Controls;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
-using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
+using Utils;
 
 namespace ClrVpin.Settings
 {
@@ -23,8 +24,17 @@ namespace ClrVpin.Settings
             Extensions = string.Join(", ", contentType.Extensions);
             KindredExtensions = string.Join(", ", contentType.KindredExtensions);
 
-            TextChangedCommand = new ActionCommand(() =>
+            TextChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
             {
+                // workaround (aka hack) to cater for when a ValidationRule fires..
+                // - UI is updated nicely with a warning (e.g. folder must be specified), but alas the underlying binding source is not updated.. i.e. user's interaction is ignored :(
+                // - e.g. using clear button on Material styled TextBox firs the validation
+                // - sequence..
+                //   a. ValidationRule fires (refer xaml) - which potentially rejecting the change
+                //   b. TextChanged bubbled event caught here - fortunately, this occurs irrespective of whether the ValidationRule rules
+                if (e.Source is TextBox textBox)
+                    Folder = textBox.Text;
+
                 // for storage
                 contentType.Folder = Folder;
                 contentType.Extensions = Extensions;

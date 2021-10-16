@@ -1,6 +1,7 @@
 ﻿using System;
-using Microsoft.Xaml.Behaviors.Core;
+using System.Windows.Controls;
 using PropertyChanged;
+using Utils;
 
 namespace ClrVpin.Controls.FolderSelection
 {
@@ -12,8 +13,13 @@ namespace ClrVpin.Controls.FolderSelection
             Folder = folder;
             Description = description;
 
-            TextChangedCommand = new ActionCommand(() =>
+            TextChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
             {
+                // workaround for validation error not updating binding
+                // - refer ContentTypeModel comments
+                if (e.Source is TextBox textBox)
+                    Folder = textBox.Text;
+
                 // for storage
                 setFolder(Folder);
             });

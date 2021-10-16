@@ -9,9 +9,11 @@ namespace ClrVpin.Validation_Rules
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             var path = value as string;
-            //if (string.IsNullOrEmpty(path))
-            //    return new ValidationResult(false, "Folder is required");
-            
+
+            // return ValidationResult false update the UI with 'red warning text' AND doesn't update the binding
+            if (string.IsNullOrEmpty(path))
+                return new ValidationResult(false, "Folder is required");
+
             if (!Directory.Exists(path) && !File.Exists(path))
                 return new ValidationResult(false, "Folder does not exist");
             

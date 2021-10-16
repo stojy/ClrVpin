@@ -1,5 +1,6 @@
-﻿using Microsoft.Xaml.Behaviors.Core;
+﻿using System.Windows.Controls;
 using PropertyChanged;
+using Utils;
 
 namespace ClrVpin.Controls.FolderSelection
 {
@@ -14,6 +15,6 @@ namespace ClrVpin.Controls.FolderSelection
         public string PatternValidation { get; set; }
 
         public ActionCommand FolderExplorerCommand { get; set; }
-        public ActionCommand TextChangedCommand { get; set; }
+        public ActionCommand<TextChangedEventArgs> TextChangedCommandWithParam { get; set; }
     }
 }
