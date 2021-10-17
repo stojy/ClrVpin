@@ -61,25 +61,31 @@
                   <materialDesign:PackIcon Kind="Magnify" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding RebuilderCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateButton}" ToolTip="Import content from another source (not yet supported)">
+              <Button Command="{Binding RebuilderCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateButton}" ToolTip="Import and merge content from another folder">
                 <StackPanel>
                   <TextBlock Text="Rebuilder" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Import" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding SettingsCommand}" Width="70" ToolTip="Specify folder locations and other interesting stuff">
+              <Button Command="{Binding SettingsCommand}" Width="70" ToolTip="Common setting used by Scanner and Rebuilder">
                 <StackPanel>
                   <TextBlock Text="Settings" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Cog" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding AboutCommand}" Width="70" ToolTip="Some background info">
+              <Button Command="{Binding HelpCommand}" Width="70" ToolTip="Show online help">
+                <StackPanel>
+                  <TextBlock Text="Help" HorizontalAlignment="Center" />
+                  <materialDesign:PackIcon Kind="HelpCircleOutline" Height="40" Width="40" />
+                </StackPanel>
+              </Button>
+              <Button Command="{Binding AboutCommand}" Width="70" ToolTip="Some overview information">
                 <StackPanel>
                   <TextBlock Text="About" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="AboutOutline" Height="40" Width="40" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding DonateCommand}" Width="70" ToolTip="Like the app? Then please donate a few $$$ to show your support.">
+              <Button Command="{Binding DonateCommand}" Width="70" ToolTip="Make a donation">
                 <StackPanel>
                   <TextBlock Text="Donate" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="GiftOutline" Height="40" Width="40" />

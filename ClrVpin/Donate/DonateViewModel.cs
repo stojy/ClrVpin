@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
 

@@ -15,7 +15,9 @@ namespace ClrVpin
 
             ScannerCommand = new ActionCommand(() => new Scanner.ScannerViewModel().Show(mainWindow));
             RebuilderCommand = new ActionCommand(() => new Rebuilder.RebuilderViewModel().Show(mainWindow));
+            
             SettingsCommand = new ActionCommand(() => new Settings.SettingsViewModel().Show(mainWindow));
+            HelpCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(@"https://github.com/stojy/ClrVpin/wiki/How-To-Use") { UseShellExecute = true }));
             AboutCommand = new ActionCommand(() => new About.AboutViewModel().Show(mainWindow));
             DonateCommand = new ActionCommand(() => new Donate.DonateViewModel().Show(mainWindow));
         }
@@ -23,8 +25,10 @@ namespace ClrVpin
         public ActionCommand ScannerCommand { get; set; }
         public ActionCommand RebuilderCommand { get; set; }
         public ActionCommand SettingsCommand { get; set; }
+        public ActionCommand HelpCommand { get; set; }
         public ActionCommand AboutCommand { get; set; }
         public ActionCommand DonateCommand { get; set; }
+
 
         public static SettingsManager SettingsManager { get; set; }
         public static Models.Settings.Settings Settings { get; set; }
