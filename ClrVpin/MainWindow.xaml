@@ -52,7 +52,7 @@
 
           <StackPanel>
             <!--<TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />-->
-            <Image Source="/Resources/ClrVpin.png" Height="200" Margin="10" />
+            <Image Source="/Resources/ClrVpin.png" Height="300" Margin="10" />
 
             <WrapPanel Margin="5,5,5,10">
               <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateButton}" ToolTip="Scan and fix content">
