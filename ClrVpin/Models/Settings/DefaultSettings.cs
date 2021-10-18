@@ -14,7 +14,7 @@ namespace ClrVpin.Models.Settings
             // - these settings are used to override the default Settings in the event of a reset
             Version = MinVersion;
 
-            PinballFolder = @"C:\vp\apps\vpx";
+            PinballFolder = @"C:\vp\tables\vpx";
             PinballTablesFolder = @"C:\vp\tables\vpx";
             FrontendFolder = @"C:\vp\apps\PinballX";
         }

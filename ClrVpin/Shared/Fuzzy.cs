@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,6 +8,7 @@ using ClrVpin.Models;
 
 namespace ClrVpin.Shared
 {
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static class Fuzzy
     {
         static Fuzzy()
@@ -19,7 +21,7 @@ namespace ClrVpin.Shared
             _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
             // words
-            string[] authors = {"jps", "jp's", "sg1bson", "vpw"};
+            string[] authors = {"jps", "jp's", "sg1bson", "vpw", "starlion"};
             string[] language = {"a", "and", "the", "premium"};
             string[] vpx = {"vpx", "mod"};
             pattern = string.Join('|', authors.Concat(language).Concat(vpx));
@@ -47,7 +49,7 @@ namespace ClrVpin.Shared
             // file name info parsing
             // - faster: name via looking for the first opening parenthesis.. https://regex101.com/r/tRqeOH/1
             // - slower: name is greedy search using the last opening parenthesis.. https://regex101.com/r/xiXsML/1.. @"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*"
-            _fileNameInfoRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)(?<year>\d*)\D*\)", RegexOptions.Compiled);
+            _fileNameInfoRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*\)", RegexOptions.Compiled);
         }
 
         public static string Clean(string name, bool removeAllWhiteSpace)

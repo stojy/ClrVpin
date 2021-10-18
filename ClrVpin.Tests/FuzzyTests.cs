@@ -4,7 +4,6 @@ using ClrVpin.Shared;
 using NUnit.Framework;
 
 // ReSharper disable StringLiteralTypo
-
 namespace ClrVpin.Tests
 {
     public class FuzzyTests
@@ -42,7 +41,8 @@ namespace ClrVpin.Tests
         [TestCase("medieval madness.vpx", false, "medieval madness", TestName = "remove extension")]
         [TestCase("Twilight Zone Mod .vpx", true, "twilightzone", TestName = "remove mod")]
         [TestCase("Twilight Zone Mod.vpx", true, "twilightzone", TestName = "remove mod without trailing space")]
-        [TestCase("Twilight Zone SG1bsoN.vpx", true, "twilightzone", TestName = "remove author")]
+        [TestCase("Twilight Zone SG1bsoN.vpx", true, "twilightzone", TestName = "remove author 1")]
+        [TestCase("Baywatch Starlion MoD", true, "baywatch", TestName = "remove author 1")]
         [TestCase("Twilight            Zone  baby.vpx", false, "twilight zone baby", TestName = "remove multiple spaces")]
         [TestCase("Twilight Zone V3.vpx", true, "twilightzone", TestName = "remove version - single digit")]
         [TestCase("Twilight Zone 3.vpx", true, "twilightzone3", TestName = "remove version - single digit without prefix prefix - number to remain")]
@@ -150,6 +150,7 @@ namespace ClrVpin.Tests
         [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 115, TestName = "contains name 13char and +/-2 year")]
         [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 207, TestName = "after chars removed - perfect match")]
         [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 157, TestName = "after chars removed - partial match")]
+        [TestCase("Junkyard Cats (Bailey 2012)", "Junkyard Cats_1.07 (3 Screen).directB2S", true, 154, TestName = "single digit in parethensis - don't mistake for year")]
         public void MatchScoreTest(string gameDetail, string fileDetail, bool expectedSuccess, int expectedScore)
         {
             var (success, score) = Fuzzy.Match(gameDetail, Fuzzy.GetNameDetails(fileDetail, true));
