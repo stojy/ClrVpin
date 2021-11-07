@@ -14,7 +14,7 @@
     </DataTemplate.Resources>
 
     <StackPanel Margin="5,10">
-      <TextBlock FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Center" Text="I hope you're enjoying the app?  If you find it really useful, then why not show your appreciation.." />
+      <TextBlock FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Center" Text="I hope you're enjoying the app.  If you find it useful and you'd like to donate, then here's the link.." />
 
       <TextBlock Margin="0,0,0,0">
         <Hyperlink Command="{Binding NavigateToPayPalCommand}">
