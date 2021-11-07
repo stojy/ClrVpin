@@ -7,9 +7,9 @@
     <Authors>Stojy</Authors>
     <Company>Stoj</Company>
     <ApplicationIcon>ClrVpin.ico</ApplicationIcon>
-    <AssemblyVersion>1.0.0.9</AssemblyVersion>
-    <FileVersion>1.0.0.9</FileVersion>
-    <Version>1.0.0-rc9</Version>
+    <AssemblyVersion>1.0.0.10</AssemblyVersion>
+    <FileVersion>1.0.0.10</FileVersion>
+    <Version>1.0.0-rc10</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
