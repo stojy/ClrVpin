@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using ClrVpin.Models;
 using Utils;
@@ -22,7 +24,17 @@ namespace ClrVpin.Shared
 
             files.ForEach(file =>
             {
-                var doc = XDocument.Load(file);
+                // explicitly open file as a stream so that the encoding can be specified to allow the non-standard characters to be read
+                // - PinballY (and presumably PinballX) write the DB file as extended ASCII 'code page 1252', i.e. not utf-8 or utf-16
+                // - despite 1252 being the default code page for windows, using .net5 it appears to 'code page 437'
+                // - e.g. 153 (0x99)
+                //   - code page 437 = Ö
+                //   - code page 1252 = ™
+                //   - utf-8 = �
+                // - further reading.. https://en.wikipedia.org/wiki/Extended_ASCII, https://codepoints.net/U+2122?lang=en
+                using var reader = new StreamReader(file, Encoding.GetEncoding("Windows-1252"));
+                
+                var doc = XDocument.Load(reader);
                 if (doc.Root == null)
                     throw new Exception($"Failed to load database: '{file}'");
 
