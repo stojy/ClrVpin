@@ -80,6 +80,7 @@ namespace ClrVpin.Tests
         [TestCase("1234 blah", false, "1234 blah", TestName = "trim number preamble")]
         [TestCase("12345 blah", false, "blah", TestName = "trim number preamble")]
         [TestCase("Vp10-The Walking Dead 1.1.vpx", false, "walking dead", TestName = "remove vp10")]
+        [TestCase("24™ Pin·bot Motörhead (Electromecánica)", false, "24 pinbot motrhead (electromecnica)", TestName = "remove non-ascii characters")]
         public void CleanTest(string fileName, bool removeAllWhiteSpace, string expectedName)
         {
             // confirm Clean provides exact results - i.e. ignore scoring

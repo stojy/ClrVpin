@@ -16,7 +16,8 @@ namespace ClrVpin.Shared
             // compile and store regex to improve performance
 
             // chars
-            string[] specialChars = {"&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"\.$"};
+            // - special consideration for non-ascii characters (i.e. 8 bit chars) as handling of these between IPDB, XML DB, and file names is often inconsistent
+            string[] specialChars = {"&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"\.$", @"[^\x00-\x7F]" };
             var pattern = string.Join('|', specialChars);
             _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
