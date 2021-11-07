@@ -23,9 +23,9 @@ namespace ClrVpin.Shared
             // words
             string[] authors = {"jps", "jp's", "sg1bson", "vpw", "starlion"};
             string[] language = {"a", "and", "the", "premium"};
-            string[] vpx = {"vpx", "mod"};
+            string[] vpx = {"vpx", "mod", "vp10"};
             pattern = string.Join('|', authors.Concat(language).Concat(vpx));
-            _trimWordRegex = new Regex($@"\b({pattern})\b", RegexOptions.Compiled);
+            _trimWordRegex = new Regex($@"\b({pattern})\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             // single whitespace
             string[] spacings = {"-", " - ", "_", @"\."};

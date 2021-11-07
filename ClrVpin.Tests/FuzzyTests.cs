@@ -79,9 +79,10 @@ namespace ClrVpin.Tests
         [TestCase("1 2 3 (Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#4 white space - kept")]
         [TestCase("1234 blah", false, "1234 blah", TestName = "trim number preamble")]
         [TestCase("12345 blah", false, "blah", TestName = "trim number preamble")]
+        [TestCase("Vp10-The Walking Dead 1.1.vpx", false, "walking dead", TestName = "remove vp10")]
         public void CleanTest(string fileName, bool removeAllWhiteSpace, string expectedName)
         {
-            // confirm Clean provides exact results
+            // confirm Clean provides exact results - i.e. ignore scoring
             var cleanName = Fuzzy.Clean(fileName, removeAllWhiteSpace);
 
             Assert.That(cleanName, Is.EqualTo(expectedName));
