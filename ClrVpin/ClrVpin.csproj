@@ -2,14 +2,19 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Authors>Stojy</Authors>
     <Company>Stoj</Company>
     <ApplicationIcon>ClrVpin.ico</ApplicationIcon>
-    <AssemblyVersion>1.0.0.10</AssemblyVersion>
-    <FileVersion>1.0.0.10</FileVersion>
-    <Version>1.0.0-rc10</Version>
+    <AssemblyVersion>2.0.0.1</AssemblyVersion>
+    <FileVersion>2.0.0.1</FileVersion>
+    <Version>2.0.0-rc1</Version>
+    <Copyright>Stoj</Copyright>
+    <PackageProjectUrl>https://github.com/stojy/ClrVpin</PackageProjectUrl>
+    <PackageIcon>ClrVpin.png</PackageIcon>
+    <RepositoryUrl>https://github.com/stojy/ClrVpin</RepositoryUrl>
+    <RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -106,6 +111,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\docs\ClrVpin.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\docs\license.rtf" Link="Resources\license.rtf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
