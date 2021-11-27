@@ -55,40 +55,34 @@
             <Image Source="/Resources/ClrVpin.png" Height="300" Margin="10" />
 
             <WrapPanel Margin="5,5,5,10">
-              <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateButton}" ToolTip="Scan and fix content">
-                <StackPanel materialDesign:HintAssist.Hint="Scan existing content for errors.">
+              <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateButton}" ToolTip="Scan existing content and optionally fix">
+                <StackPanel>
                   <TextBlock Text="Scanner" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Magnify" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding RebuilderCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateButton}" ToolTip="Import and merge content from another folder">
+              <Button Command="{Binding RebuilderCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateButton}" ToolTip="Rebuild existing library by merging new content from alternate folders">
                 <StackPanel>
                   <TextBlock Text="Rebuilder" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Import" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding SettingsCommand}" Width="70" ToolTip="Common setting used by Scanner and Rebuilder">
+              <Button Command="{Binding ImporterCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateButton}" ToolTip="Import new database and content from online sources">
+                <StackPanel>
+                  <TextBlock Text="Importer" HorizontalAlignment="Center" />
+                  <materialDesign:PackIcon Kind="Web" Height="40" Width="40" HorizontalAlignment="Center" />
+                </StackPanel>
+              </Button>
+              <Button Command="{Binding SettingsCommand}" Width="70" ToolTip="Common setting used by scanner, rebuilder, and importer">
                 <StackPanel>
                   <TextBlock Text="Settings" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Cog" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding HelpCommand}" Width="70" ToolTip="Show online help">
-                <StackPanel>
-                  <TextBlock Text="Help" HorizontalAlignment="Center" />
-                  <materialDesign:PackIcon Kind="HelpCircleOutline" Height="40" Width="40" />
-                </StackPanel>
-              </Button>
-              <Button Command="{Binding AboutCommand}" Width="70" ToolTip="Some overview information">
+              <Button Command="{Binding AboutCommand}" Width="70" ToolTip="General application information and links">
                 <StackPanel>
                   <TextBlock Text="About" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="AboutOutline" Height="40" Width="40" />
-                </StackPanel>
-              </Button>
-              <Button Command="{Binding DonateCommand}" Width="70" ToolTip="Make a donation">
-                <StackPanel>
-                  <TextBlock Text="Donate" HorizontalAlignment="Center" />
-                  <materialDesign:PackIcon Kind="GiftOutline" Height="40" Width="40" />
                 </StackPanel>
               </Button>
             </WrapPanel>

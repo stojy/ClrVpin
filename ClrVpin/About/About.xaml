@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:about="clr-namespace:ClrVpin.About">
+                    xmlns:about="clr-namespace:ClrVpin.About"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
@@ -20,22 +21,39 @@
       </WrapPanel>
       <Image Source="/Resources/ClrVpin.png" Height="250" Margin="10" />
 
-      <TextBlock Margin="5,10,0,0" FontSize="16">A tool for managing your Visual Pinball collection..</TextBlock>
+      <TextBlock Margin="5,10,0,0" FontSize="16">Visual Pinball content library management tool..</TextBlock>
       <TextBlock Margin="5,0,0,0" FontSize="16">• VPX tables and backglasses</TextBlock>
       <TextBlock Margin="5,0,0,0" FontSize="16">• Front end media (launch audio, table video, wheels, etc)</TextBlock>
 
-      <TextBlock Margin="5,20,0,0" FontSize="16">Please reach out via github if you've got any questions/issues..</TextBlock>
-      <TextBlock Margin="5,5,0,0">
-        <Hyperlink NavigateUri="{Binding GitHubRepoUrl}" Command="{Binding NavigateToGitHubRepoCommand}">
-          <TextBlock Text="{Binding GitHubRepoUrl}" FontSize="16" />
-        </Hyperlink>
-      </TextBlock>
-      <TextBlock Margin="5,5,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontSize="16">
-        <Hyperlink NavigateUri="{Binding GitHubAuthorUrl}" Command="{Binding NavigateToGitHubAuthorCommand}">
-          <TextBlock Text="{Binding GitHubAuthorUrl}" FontSize="18" />
-        </Hyperlink>
-      </TextBlock>
+      <WrapPanel Margin="0,20,0,0" HorizontalAlignment="Center">
+        <Button Command="{Binding SourceCommand}" Width="70" ToolTip="View the source code on GitHub">
+          <StackPanel>
+            <TextBlock Text="Source" HorizontalAlignment="Center" />
+            <materialDesign:PackIcon Kind="Github" Height="40" Width="40" />
+          </StackPanel>
+        </Button>
+
+        <Button Command="{Binding HelpCommand}" Width="70" ToolTip="Show online help">
+          <StackPanel>
+            <TextBlock Text="Help" HorizontalAlignment="Center" />
+            <materialDesign:PackIcon Kind="HelpCircleOutline" Height="40" Width="40" />
+          </StackPanel>
+        </Button>
+
+        <Button Command="{Binding AuthorCommand}" Width="70" ToolTip="Contact the Author">
+          <StackPanel>
+            <TextBlock Text="Author" HorizontalAlignment="Center" />
+            <materialDesign:PackIcon Kind="Account" Height="40" Width="40" />
+          </StackPanel>
+        </Button>
+        
+        <Button Command="{Binding DonateCommand}" Style="{StaticResource AlternateButton}" Width="70" ToolTip="Make a donation">
+          <StackPanel>
+            <TextBlock Text="Donate" HorizontalAlignment="Center" />
+            <materialDesign:PackIcon Kind="GiftOutline" Height="40" Width="40" />
+          </StackPanel>
+        </Button>
+      </WrapPanel>
     </StackPanel>
   </DataTemplate>
-
 </ResourceDictionary>

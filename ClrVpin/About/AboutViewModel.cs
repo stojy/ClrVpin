@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using MaterialDesignExtensions.Controls;
+using ClrVpin.Donate;
 using PropertyChanged;
 using Utils;
 
@@ -14,22 +14,30 @@ namespace ClrVpin.About
     {
         public AboutViewModel()
         {
-            NavigateToGitHubRepoCommand = new ActionCommand(NavigateToGitHubRepo);
-            NavigateToGitHubAuthorCommand = new ActionCommand(NavigateToGitHubAuthor);
+            SourceCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(GitHubRepoUrl) { UseShellExecute = true }));
+            AuthorCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(GitHubAuthorUrl) { UseShellExecute = true }));
+            HelpCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(GitHubHelpUrl) { UseShellExecute = true }));
+            DonateCommand = new ActionCommand(() => new DonateViewModel().Show(_mainWindow));
 
             var version = Assembly.GetEntryAssembly()?.GetName().Version!;
             AssemblyVersion = $"v{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
         }
 
         public string GitHubRepoUrl { get; set; } = @"https://github.com/stojy/ClrVpin";
-        public string GitHubAuthorUrl { get; set; } = @"https://github.com/stojy";
+        public string GitHubAuthorUrl { get; set; } = @"https://github.com/stojy/ClrVpin/issues/new/choose";
+        public string GitHubHelpUrl { get; set; } = @"https://github.com/stojy/ClrVpin/wiki/How-To-Use";
+
         public string AssemblyVersion { get; set; }
 
-        public ICommand NavigateToGitHubRepoCommand { get; set; }
-        public ICommand NavigateToGitHubAuthorCommand { get; set; }
+        public ICommand SourceCommand { get; set; }
+        public ICommand AuthorCommand { get; set; }
+        public ICommand HelpCommand { get; set; }
+        public ICommand DonateCommand { get; set; }
 
         public void Show(Window parent)
         {
+            _mainWindow = parent;
+
             var window = new MaterialWindowEx
             {
                 Owner = parent,
@@ -47,7 +55,6 @@ namespace ClrVpin.About
             window.Closed += (_, _) => parent.Show();
         }
 
-        private void NavigateToGitHubRepo() => Process.Start(new ProcessStartInfo(GitHubRepoUrl) {UseShellExecute = true});
-        private void NavigateToGitHubAuthor() => Process.Start(new ProcessStartInfo(GitHubAuthorUrl) {UseShellExecute = true});
+        private Window _mainWindow;
     }
 }
