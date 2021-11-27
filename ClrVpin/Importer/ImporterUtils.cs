@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
@@ -7,33 +8,32 @@ using Google.Apis.Sheets.v4.Data;
 
 namespace ClrVpin.Importer
 {
-    internal class Importer
+    internal static class ImporterUtils
     {
-        public void Get()
+        public static async Task Get()
         {
             GoogleCredential credential;
-            string spreadSheetId = "18edFWq2--Yw8iRX_ou3cGeQ3pAJ6zM0kWHYFWZW1fWg"; //https://docs.google.com/spreadsheets/d/1k8_maP610F5BZFrlJq-9il0CGRi7R3nJnYf8T7qMbe8/
-            using (var stream = new FileStream(@"c:\code\hopeful-theorem-258912-740bd1225dad.json", FileMode.Open, FileAccess.Read))
+            var spreadSheetId = "18edFWq2--Yw8iRX_ou3cGeQ3pAJ6zM0kWHYFWZW1fWg"; //https://docs.google.com/spreadsheets/d/1k8_maP610F5BZFrlJq-9il0CGRi7R3nJnYf8T7qMbe8/
+            await using var stream = new FileStream(@"c:\code\hopeful-theorem-258912-740bd1225dad.json", FileMode.Open, FileAccess.Read);
+
+            credential = GoogleCredential.FromStream(stream).CreateScoped(SheetsService.Scope.SpreadsheetsReadonly);
+
+            var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                credential = GoogleCredential.FromStream(stream).CreateScoped(SheetsService.Scope.SpreadsheetsReadonly);
+                //HttpClientInitializer = credential,
+                ApiKey = "AIzaSyDtjpBqrYqhWhgpgmrGjBbXWio94AnNGCA",
+                ApplicationName = "You application name",
+            });
+            sheetsService.HttpClient.DefaultRequestHeaders.Referrer = new Uri("https://stoj.net");
 
-                var sheetsService = new SheetsService(new BaseClientService.Initializer()
-                {
-                    //HttpClientInitializer = credential,
-                    ApiKey = "AIzaSyDtjpBqrYqhWhgpgmrGjBbXWio94AnNGCA",
-                    ApplicationName = "You application name",
-                });
-                sheetsService.HttpClient.DefaultRequestHeaders.Referrer = new Uri("https://stoj.net");
+            var range = "A:Z";
 
-                var range = "A:Z";
+            var request = sheetsService.Spreadsheets.Values.Get(spreadSheetId, range);
 
-                var request = sheetsService.Spreadsheets.Values.Get(spreadSheetId, range);
-
-                var response = request.Execute();
-            }
+            var response = await request.ExecuteAsync();
         }
         
-        public void Get2()
+        public static void Get2()
         {
             GoogleCredential credential;
             string spreadSheetId = "18edFWq2--Yw8iRX_ou3cGeQ3pAJ6zM0kWHYFWZW1fWg"; //https://docs.google.com/spreadsheets/d/1k8_maP610F5BZFrlJq-9il0CGRi7R3nJnYf8T7qMbe8/

@@ -13,9 +13,6 @@ namespace ClrVpin
     {
         public MainWindow()
         {
-            var profiler = new Importer.Importer();
-            profiler.Get();
-
             // initialise encoding to workaround the error "Windows -1252 is not supported encoding name"
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 

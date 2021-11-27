@@ -1,20 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Logging;
-using ClrVpin.Models;
-using ClrVpin.Models.Rebuilder;
-using ClrVpin.Models.Settings;
-using ClrVpin.Rebuilder;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
@@ -27,236 +16,237 @@ namespace ClrVpin.Importer
         public ImporterViewModel()
         {
             StartCommand = new ActionCommand(Start);
-            DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
 
-            MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
+            //DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
+
+            //MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
             
-            IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
+            //IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
 
-            MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
+            //MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
 
-            SourceFolderModel = new FolderTypeModel("Source", Settings.Rebuilder.SourceFolder, folder =>
-            {
-                Settings.Rebuilder.SourceFolder = folder;
-                TryUpdateDestinationFolder(folder);
-            });
+            //SourceFolderModel = new FolderTypeModel("Source", Settings.Rebuilder.SourceFolder, folder =>
+            //{
+            //    Settings.Rebuilder.SourceFolder = folder;
+            //    TryUpdateDestinationFolder(folder);
+            //});
 
-            _destinationContentTypes = Model.Settings.GetFixableContentTypes().Select(x => x.Description);
-            DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
+            //_destinationContentTypes = Model.Settings.GetFixableContentTypes().Select(x => x.Description);
+            //DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
 
-            IgnoreWordsString = string.Join(", ", Settings.Rebuilder.IgnoreIWords);
-            IgnoreWordsChangedCommand = new ActionCommand(IgnoreWordsChanged);
+            //IgnoreWordsString = string.Join(", ", Settings.Rebuilder.IgnoreIWords);
+            //IgnoreWordsChangedCommand = new ActionCommand(IgnoreWordsChanged);
 
             UpdateIsValid();
         }
 
         public bool IsValid { get; set; }
 
-        public ListCollectionView MatchCriteriaTypesView { get; set; }
-        public ListCollectionView IgnoreOptionsTypesView { get; set; }
-        public ListCollectionView MergeOptionsTypesView { get; set; }
+        //public ListCollectionView MatchCriteriaTypesView { get; set; }
+        //public ListCollectionView IgnoreOptionsTypesView { get; set; }
+        //public ListCollectionView MergeOptionsTypesView { get; set; }
 
-        public FolderTypeModel SourceFolderModel { get; set; }
-        public ObservableCollection<string> DestinationContentTypes { get; set; }
+        //public FolderTypeModel SourceFolderModel { get; set; }
+        //public ObservableCollection<string> DestinationContentTypes { get; set; }
 
-        public ICommand DestinationContentTypeSelectedCommand { get; set; }
-        public ObservableCollection<Game> Games { get; set; }
+        //public ICommand DestinationContentTypeSelectedCommand { get; set; }
+        //public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; set; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
-        public string IgnoreWordsString { get; set; }
-        public ICommand IgnoreWordsChangedCommand { get; set; }
+        //public string IgnoreWordsString { get; set; }
+        //public ICommand IgnoreWordsChangedCommand { get; set; }
 
-        public FeatureType IgnoreIfNotNewerFeature { get; set; }
-        public FeatureType IgnoreIfSmallerFeature { get; set; }
-        public FeatureType IgnoreIfContainsWordsFeature { get; set; }
-        public FeatureType DeleteIgnoredFilesOptionFeature { get; set; }
-        public FeatureType IgnoreSelectClearAllFeature { get; set; }
+        //public FeatureType IgnoreIfNotNewerFeature { get; set; }
+        //public FeatureType IgnoreIfSmallerFeature { get; set; }
+        //public FeatureType IgnoreIfContainsWordsFeature { get; set; }
+        //public FeatureType DeleteIgnoredFilesOptionFeature { get; set; }
+        //public FeatureType IgnoreSelectClearAllFeature { get; set; }
 
         public void Show(Window parent)
         {
-            _rebuilderWindow = new MaterialWindowEx
+            _window = new MaterialWindowEx
             {
                 Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parent.Resources,
-                ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,
+                ContentTemplate = parent.FindResource("ImporterTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,
-                Title = "Rebuilder"
+                Title = "Importer"
             };
 
-            _rebuilderWindow.Show();
+            _window.Show();
             parent.Hide();
 
-            _rebuilderWindow.Closed += (_, _) =>
+            _window.Closed += (_, _) =>
             {
                 Model.SettingsManager.Write();
                 parent.Show();
             };
         }
 
-        private void IgnoreWordsChanged()
-        {
-            Settings.Rebuilder.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
-        }
+        //private void IgnoreWordsChanged()
+        //{
+        //    Settings.Rebuilder.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
+        //}
 
         private void UpdateIsValid() => IsValid = !string.IsNullOrEmpty(Settings.Rebuilder.DestinationContentType);
 
-        private void TryUpdateDestinationFolder(string folder)
-        {
-            // attempt to assign destination folder automatically based on the specified folder
-            var contentType = _destinationContentTypes.FirstOrDefault(c => folder.ToLower().EndsWith(c.ToLower()));
-            Settings.Rebuilder.DestinationContentType = contentType;
+        //private void TryUpdateDestinationFolder(string folder)
+        //{
+        //    // attempt to assign destination folder automatically based on the specified folder
+        //    var contentType = _destinationContentTypes.FirstOrDefault(c => folder.ToLower().EndsWith(c.ToLower()));
+        //    Settings.Rebuilder.DestinationContentType = contentType;
 
-            UpdateIsValid();
-        }
+        //    UpdateIsValid();
+        //}
 
-        private IEnumerable<FeatureType> CreateMatchCriteriaTypes()
-        {
-            // show all match criteria types
-            // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
-            var featureTypes = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
-            {
-                var featureType = new FeatureType((int) matchType.Enum)
-                {
-                    Description = matchType.Description,
-                    Tip = matchType.Tip,
-                    IsSupported = true,
-                    IsActive = Settings.Rebuilder.SelectedMatchTypes.Contains(matchType.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMatchTypes.Toggle(matchType.Enum)),
-                    IsHighlighted = matchType.IsHighlighted,
-                    IsHelpSupported = matchType.HelpUrl != null,
-                    HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) {UseShellExecute = true}))
-                };
+        //private IEnumerable<FeatureType> CreateMatchCriteriaTypes()
+        //{
+        //    // show all match criteria types
+        //    // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
+        //    var featureTypes = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
+        //    {
+        //        var featureType = new FeatureType((int) matchType.Enum)
+        //        {
+        //            Description = matchType.Description,
+        //            Tip = matchType.Tip,
+        //            IsSupported = true,
+        //            IsActive = Settings.Rebuilder.SelectedMatchTypes.Contains(matchType.Enum),
+        //            SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMatchTypes.Toggle(matchType.Enum)),
+        //            IsHighlighted = matchType.IsHighlighted,
+        //            IsHelpSupported = matchType.HelpUrl != null,
+        //            HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) {UseShellExecute = true}))
+        //        };
 
-                return featureType;
-            }).ToList();
+        //        return featureType;
+        //    }).ToList();
 
-            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
-        }
+        //    return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
+        //}
 
-        private IEnumerable<FeatureType> CreateIgnoreOptions()
-        {
-            // show all merge options
-            var featureTypes = StaticSettings.IgnoreOptions.Select(ignoreOption =>
-            {
-                var featureType = new FeatureType((int) ignoreOption.Enum)
-                {
-                    Description = ignoreOption.Description,
-                    Tip = ignoreOption.Tip,
-                    IsSupported = true,
-                    IsActive = Settings.Rebuilder.SelectedIgnoreOptions.Contains(ignoreOption.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedIgnoreOptions.Toggle(ignoreOption.Enum))
-                };
+        //private IEnumerable<FeatureType> CreateIgnoreOptions()
+        //{
+        //    // show all merge options
+        //    var featureTypes = StaticSettings.IgnoreOptions.Select(ignoreOption =>
+        //    {
+        //        var featureType = new FeatureType((int) ignoreOption.Enum)
+        //        {
+        //            Description = ignoreOption.Description,
+        //            Tip = ignoreOption.Tip,
+        //            IsSupported = true,
+        //            IsActive = Settings.Rebuilder.SelectedIgnoreOptions.Contains(ignoreOption.Enum),
+        //            SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedIgnoreOptions.Toggle(ignoreOption.Enum))
+        //        };
 
-                return featureType;
-            }).ToList();
+        //        return featureType;
+        //    }).ToList();
 
-            IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfContainsWords);
-            IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfSmaller);
-            IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfNotNewer);
+        //    IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfContainsWords);
+        //    IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfSmaller);
+        //    IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfNotNewer);
             
-            // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
-            DeleteIgnoredFilesOptionFeature = CreateDeleteIgnoredFilesOption();
-            featureTypes.Add(DeleteIgnoredFilesOptionFeature);
+        //    // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
+        //    DeleteIgnoredFilesOptionFeature = CreateDeleteIgnoredFilesOption();
+        //    featureTypes.Add(DeleteIgnoredFilesOptionFeature);
 
-            IgnoreSelectClearAllFeature = FeatureType.CreateSelectAll(featureTypes);
+        //    IgnoreSelectClearAllFeature = FeatureType.CreateSelectAll(featureTypes);
 
-            return featureTypes;
-        }
+        //    return featureTypes;
+        //}
 
-        public FeatureType CreateDeleteIgnoredFilesOption()
-        {
-            var feature = new FeatureType(-1)
-            {
-                Description = StaticSettings.DeleteIgnoredFilesOption.Description,
-                Tip = StaticSettings.DeleteIgnoredFilesOption.Tip,
-                IsSupported = true,
-                IsActive = Settings.Rebuilder.DeleteIgnoredFiles,
-                SelectedCommand = new ActionCommand(() => Settings.Rebuilder.DeleteIgnoredFiles = !Settings.Rebuilder.DeleteIgnoredFiles)
-            };
+        //public FeatureType CreateDeleteIgnoredFilesOption()
+        //{
+        //    var feature = new FeatureType(-1)
+        //    {
+        //        Description = StaticSettings.DeleteIgnoredFilesOption.Description,
+        //        Tip = StaticSettings.DeleteIgnoredFilesOption.Tip,
+        //        IsSupported = true,
+        //        IsActive = Settings.Rebuilder.DeleteIgnoredFiles,
+        //        SelectedCommand = new ActionCommand(() => Settings.Rebuilder.DeleteIgnoredFiles = !Settings.Rebuilder.DeleteIgnoredFiles)
+        //    };
 
-            return feature;
-        }
+        //    return feature;
+        //}
 
-        private IEnumerable<FeatureType> CreateMergeOptions()
-        {
-            // show all merge options
-            var featureTypes = StaticSettings.MergeOptions.Select(mergeOption =>
-            {
-                var featureType = new FeatureType((int) mergeOption.Enum)
-                {
-                    Description = mergeOption.Description,
-                    Tip = mergeOption.Tip,
-                    IsSupported = true,
-                    IsActive = Settings.Rebuilder.SelectedMergeOptions.Contains(mergeOption.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMergeOptions.Toggle(mergeOption.Enum))
-                };
+        //private IEnumerable<FeatureType> CreateMergeOptions()
+        //{
+        //    // show all merge options
+        //    var featureTypes = StaticSettings.MergeOptions.Select(mergeOption =>
+        //    {
+        //        var featureType = new FeatureType((int) mergeOption.Enum)
+        //        {
+        //            Description = mergeOption.Description,
+        //            Tip = mergeOption.Tip,
+        //            IsSupported = true,
+        //            IsActive = Settings.Rebuilder.SelectedMergeOptions.Contains(mergeOption.Enum),
+        //            SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMergeOptions.Toggle(mergeOption.Enum))
+        //        };
 
-                return featureType;
-            }).ToList();
+        //        return featureType;
+        //    }).ToList();
 
-            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
-        }
+        //    return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
+        //}
 
         private async void Start()
         {
-            Logger.Info($"\nRebuilder started, settings={JsonSerializer.Serialize(Settings)}");
+            Logger.Info($"Importer started, settings={JsonSerializer.Serialize(Settings)}");
 
-            _rebuilderWindow.Hide();
+            _window.Hide();
             Logger.Clear();
 
             var progress = new ProgressViewModel();
-            progress.Show(_rebuilderWindow);
+            progress.Show(_window);
 
-            progress.Update("Loading Database");
-            var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
+            //progress.Update("Loading Database");
+            //var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
 
-            progress.Update("Checking Files");
-            var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
+            progress.Update("Loading latest online DB");
+            await ImporterUtils.Get();
+            //var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
 
-            progress.Update("Merging Files");
-            var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, UpdateProgress);
+            //progress.Update("Merging Files");
+            //var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, UpdateProgress);
 
-            progress.Update("Removing Unmatched Ignored Files");
-            await RebuilderUtils.RemoveUnmatchedIgnoredAsync(unmatchedFiles, UpdateProgress);
+            //progress.Update("Removing Unmatched Ignored Files");
+            //await RebuilderUtils.RemoveUnmatchedIgnoredAsync(unmatchedFiles, UpdateProgress);
 
-            progress.Update("Preparing Results");
-            await Task.Delay(1);
-            Games = new ObservableCollection<Game>(games);
+            //progress.Update("Preparing Results");
+            //await Task.Delay(1);
+            //Games = new ObservableCollection<Game>(games);
 
-            ShowResults(gameFiles, unmatchedFiles, progress.Duration);
+            ShowResults(progress.Duration);
 
             progress.Close();
 
-            void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
+            //void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
         }
 
-        private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
+        private void ShowResults(TimeSpan duration)
         {
-            var rebuilderStatistics = new RebuilderStatisticsViewModel(Games, duration, gameFiles, unmatchedFiles);
-            rebuilderStatistics.Show(_rebuilderWindow, WindowMargin, WindowMargin);
+            var statistics = new ImporterStatisticsViewModel(duration);
+            statistics.Show(_window, WindowMargin, WindowMargin);
 
-            var rebuilderResults = new RebuilderResultsViewModel(Games);
-            rebuilderResults.Show(_rebuilderWindow, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
+            var results = new ImporterResultsViewModel();
+            results.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, WindowMargin);
 
             _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_rebuilderWindow, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
+            _loggingWindow.Show(_window, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin);
 
-            rebuilderStatistics.Window.Closed += (_, _) =>
+            statistics.Window.Closed += (_, _) =>
             {
-                rebuilderResults.Close();
+                results.Close();
                 _loggingWindow.Close();
-                _rebuilderWindow.Show();
+                _window.Show();
             };
         }
 
-        private readonly IEnumerable<string> _destinationContentTypes;
-        private Window _rebuilderWindow;
+        //private readonly IEnumerable<string> _destinationContentTypes;
+        private Window _window;
         private Logging.Logging _loggingWindow;
-
         private const int WindowMargin = 5;
     }
 }

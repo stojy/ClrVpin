@@ -27,6 +27,10 @@
         <ResourceDictionary Source="Rebuilder/Rebuilder.xaml" />
         <ResourceDictionary Source="Rebuilder/RebuilderStatistics.xaml" />
 
+        <ResourceDictionary Source="Importer/Importer.xaml" />
+        <ResourceDictionary Source="Importer/ImporterResults.xaml" />
+        <ResourceDictionary Source="Importer/ImporterStatistics.xaml" />
+
         <ResourceDictionary Source="Shared/Results.xaml" />
         <ResourceDictionary Source="Shared/Progress.xaml" />
 
@@ -51,7 +55,6 @@
           </materialDesign:DialogHost.DialogContentTemplate>
 
           <StackPanel>
-            <!--<TextBlock DockPanel.Dock="Top" Margin="10,0,0,10" Text="ClrVpin" VerticalAlignment="Center" FontSize="32" />-->
             <Image Source="/Resources/ClrVpin.png" Height="300" Margin="10" />
 
             <WrapPanel Margin="5,5,5,10">

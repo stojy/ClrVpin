@@ -1,0 +1,131 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:models="clr-namespace:ClrVpin.Models"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:converters="clr-namespace:ClrVpin.Converters"
+                    xmlns:importer="clr-namespace:ClrVpin.Importer">
+
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <ResourceDictionary Source="/Controls/Styles.xaml" />
+    <ResourceDictionary Source="/Controls/Templates.xaml" />
+    <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
+  </ResourceDictionary.MergedDictionaries>
+
+  <converters:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
+
+  <DataTemplate x:Key="ImporterTemplate" DataType="{x:Type importer:ImporterViewModel}">
+    <StackPanel Margin="5">
+      <TextBlock Style="{StaticResource Title}">Content</TextBlock>
+
+      <TextBlock Text="TBD" />
+
+
+      <!--<WrapPanel>
+        <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding SourceFolderModel}" />
+
+        <ComboBox materialDesign:HintAssist.Hint="Destination Type" ItemsSource="{Binding DestinationContentTypes}"
+                  Width="170" VerticalAlignment="Top" Margin="10,0"
+                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" materialDesign:TextFieldAssist.HasClearButton="True">
+          <ComboBox.SelectedItem>
+            <Binding Path="Settings.Rebuilder.DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+              <Binding.ValidationRules>
+                <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" Description="Content type" />
+              </Binding.ValidationRules>
+            </Binding>
+          </ComboBox.SelectedItem>
+          <b:Interaction.Triggers>
+            <b:EventTrigger EventName="SelectionChanged">
+              <b:InvokeCommandAction Command="{Binding DestinationContentTypeSelectedCommand}" />
+            </b:EventTrigger>
+          </b:Interaction.Triggers>
+        </ComboBox>
+      </WrapPanel>
+
+      <TextBlock Style="{StaticResource Title}">Match</TextBlock>
+      <GroupBox Margin="5,0,0,5" Padding="2" Header="Criteria" Width="650" HorizontalAlignment="Left">
+        <ItemsControl ItemsSource="{Binding MatchCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="models:FeatureType">
+              --><!-- fixed width to have items align nicely --><!--
+              <WrapPanel Width="300">
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
+                
+                <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
+                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
+                  <materialDesign:PackIcon Kind="InformationOutline" />
+                </Button>
+              </WrapPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+
+          --><!-- placed in a wrap panel to scroll horizontally --><!--
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+        </ItemsControl>
+      </GroupBox>
+
+      <TextBlock Style="{StaticResource Title}" Text="Ignore" ToolTip="Multiple criteria whereby source files will not be considered for merging" />
+      <GroupBox Margin="5" Padding="2" Header="Options" Width="650" HorizontalAlignment="Left">
+        <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
+          --><!-- not using an ItemsControl in order to accommodate the associated controls (without mucking about with template triggers) --><!--
+          <WrapPanel>
+            <ContentControl Content="{Binding IgnoreIfContainsWordsFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" Width="230" />
+
+            <TextBox Margin="5,0,0,0" Width="390" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
+                     IsEnabled="{Binding IgnoreIfContainsWordsFeature.IsActive}"
+                     ToolTip="Ignore if file contain the following words (case insensitive, comma delimited)"
+                     Text="{Binding IgnoreWordsString, UpdateSourceTrigger=PropertyChanged}">
+              <b:Interaction.Triggers>
+                <b:EventTrigger EventName="TextChanged">
+                  <b:InvokeCommandAction Command="{Binding IgnoreWordsChangedCommand}" />
+                </b:EventTrigger>
+              </b:Interaction.Triggers>
+            </TextBox>
+          </WrapPanel>
+
+          <WrapPanel Margin="0,5,0,0">
+            <ContentControl Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" Width="230"/>
+            <Slider Margin="5,0" Width="390" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}"
+                    IsEnabled="{Binding IgnoreIfSmallerFeature.IsActive}"
+                    ToolTip="Ignore if file is smaller than the specified percentage" />
+          </WrapPanel>
+
+          <ContentControl Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" Width="230"/>
+
+          <ContentControl Content="{Binding DeleteIgnoredFilesOptionFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+
+          <ContentControl Content="{Binding IgnoreSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+        </StackPanel>
+      </GroupBox>
+
+      <TextBlock Style="{StaticResource Title}">Merge</TextBlock>
+      <GroupBox Margin="5,0,0,5" Padding="2" Header="Options" Width="650" HorizontalAlignment="Left">
+        <ItemsControl ItemsSource="{Binding MergeOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="models:FeatureType">
+              <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel ItemWidth="300" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+        </ItemsControl>
+      </GroupBox>
+
+      <CheckBox Margin="3,10,0,0" IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels"
+                ToolTip="When enabled, rebuilder will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." />-->
+
+      <Button Margin="0,10,0,0" Width="50" Command="{Binding StartCommand}" Style="{StaticResource AlternateButton}" IsEnabled="{Binding IsValid}">Start</Button>
+
+    </StackPanel>
+  </DataTemplate>
+
+</ResourceDictionary>
