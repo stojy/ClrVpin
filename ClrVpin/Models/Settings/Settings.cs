@@ -50,6 +50,7 @@ namespace ClrVpin.Models.Settings
 
             Rebuilder = new RebuilderSettings();
             Scanner = new ScannerSettings();
+            Importer = new ImporterSettings();
         }
 
         // default settings are assigned to the underlying DefaultSettings class so that they are maintained when the config is reset, e.g. via the settings-reset ui
@@ -71,6 +72,8 @@ namespace ClrVpin.Models.Settings
             set => _defaultSettings.FrontendFolder = value;
         }
 
+        public string EncryptedSpreadsheetKey => _defaultSettings.EncryptedSpreadsheeetKey;
+
         public List<ContentType> AllContentTypes { get; set; }
 
         public string BackupFolder { get; set; }
@@ -78,9 +81,10 @@ namespace ClrVpin.Models.Settings
 
         public ScannerSettings Scanner { get; set; }
         public RebuilderSettings Rebuilder { get; set; }
+        public ImporterSettings Importer { get; set; }
 
         public int Version { get; set; }
-        
+
         [JsonIgnore]
         public int MinVersion { get; set; } = 2;
 

@@ -17,11 +17,14 @@ namespace ClrVpin.Models.Settings
             PinballFolder = @"C:\vp\tables\vpx";
             PinballTablesFolder = @"C:\vp\tables\vpx";
             FrontendFolder = @"C:\vp\apps\PinballX";
+            
+            EncryptedSpreadsheeetKey = "uvcGOLbr8gUniuPdRENAvDl5lYbj2jXeVqXhjEIRm1piYwh8HKHphnsqhwmi5D+XeB17hLyzZbOiljWIqv7HOjutMzM1MqgixwMpYqr/tM898OqyAQDRcTzDZOaFShGi";
         }
 
         public string PinballFolder { get; set; }
         public string PinballTablesFolder { get; set; }
         public string FrontendFolder { get; set; }
+        public string EncryptedSpreadsheeetKey { get; set; }
 
         public int Version { get; set; }
         

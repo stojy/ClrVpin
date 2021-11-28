@@ -18,7 +18,7 @@
 
   <DataTemplate x:Key="ImporterTemplate" DataType="{x:Type importer:ImporterViewModel}">
     <StackPanel Margin="5">
-      <TextBlock Style="{StaticResource Title}">Content</TextBlock>
+      <!--<TextBlock Style="{StaticResource Title}">Content</TextBlock>-->
 
       <TextBlock Text="TBD" />
 

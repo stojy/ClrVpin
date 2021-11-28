@@ -1,10 +1,10 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
-using Google.Apis.Auth.OAuth2;
+using ClrVpin.Logging;
+using Google;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
-using Google.Apis.Sheets.v4.Data;
+using Utils;
 
 namespace ClrVpin.Importer
 {
@@ -12,48 +12,27 @@ namespace ClrVpin.Importer
     {
         public static async Task Get()
         {
-            GoogleCredential credential;
-            var spreadSheetId = "18edFWq2--Yw8iRX_ou3cGeQ3pAJ6zM0kWHYFWZW1fWg"; //https://docs.google.com/spreadsheets/d/1k8_maP610F5BZFrlJq-9il0CGRi7R3nJnYf8T7qMbe8/
-            await using var stream = new FileStream(@"c:\code\hopeful-theorem-258912-740bd1225dad.json", FileMode.Open, FileAccess.Read);
-
-            credential = GoogleCredential.FromStream(stream).CreateScoped(SheetsService.Scope.SpreadsheetsReadonly);
-
-            var sheetsService = new SheetsService(new BaseClientService.Initializer()
+            try
             {
-                //HttpClientInitializer = credential,
-                ApiKey = "AIzaSyDtjpBqrYqhWhgpgmrGjBbXWio94AnNGCA",
-                ApplicationName = "You application name",
-            });
-            sheetsService.HttpClient.DefaultRequestHeaders.Referrer = new Uri("https://stoj.net");
-
-            var range = "A:Z";
-
-            var request = sheetsService.Spreadsheets.Values.Get(spreadSheetId, range);
-
-            var response = await request.ExecuteAsync();
-        }
-        
-        public static void Get2()
-        {
-            GoogleCredential credential;
-            string spreadSheetId = "18edFWq2--Yw8iRX_ou3cGeQ3pAJ6zM0kWHYFWZW1fWg"; //https://docs.google.com/spreadsheets/d/1k8_maP610F5BZFrlJq-9il0CGRi7R3nJnYf8T7qMbe8/
-            using (var stream = new FileStream(@"c:\code\hopeful-theorem-258912-740bd1225dad.json", FileMode.Open, FileAccess.Read))
-            {
-                credential = GoogleCredential.FromStream(stream).CreateScoped(SheetsService.Scope.SpreadsheetsReadonly);
-
-                var sheetsService = new SheetsService(new BaseClientService.Initializer()
+                var sheetsService = new SheetsService(new BaseClientService.Initializer
                 {
-                    HttpClientInitializer = credential,
-                    ApplicationName = "You application name",
+                    ApiKey = Cipher.Decrypt(Model.Settings.EncryptedSpreadsheetKey, "+KZeasX7C+X^!!Lk>x*Y=aJ+G*yjP@Xgy9vu+'7>/A:4C7z?PQ3e$=aAXyVr\aq/"),
+                    ApplicationName = "ClrVpin" // actual name doesn't need to match google app or key name
                 });
+                sheetsService.HttpClient.DefaultRequestHeaders.Referrer = new Uri(_referrer);
 
-                var range = "A:";
+                var request = sheetsService.Spreadsheets.Values.Get(_visualPinballSpreadsheet36, "A:Z");
 
-                var request = sheetsService.Spreadsheets.Values.Get(spreadSheetId, range);
-
-                ValueRange response = request.Execute();
+                var response = await request.ExecuteAsync();
             }
-
+            catch (GoogleApiException e)
+            {
+                Logger.Error(e, "Failed to retrieve online database");
+                throw;
+            }
         }
+
+        private static readonly string _visualPinballSpreadsheet36 = "18edFWq2--Yw8iRX_ou3cGeQ3pAJ6zM0kWHYFWZW1fWg"; // https://docs.google.com/spreadsheets/d/1k8_maP610F5BZFrlJq-9il0CGRi7R3nJnYf8T7qMbe8/
+        private static readonly string _referrer = "https://stoj.net";
     }
 }

@@ -85,6 +85,8 @@ namespace ClrVpin.Importer
                 Model.SettingsManager.Write();
                 parent.Show();
             };
+
+            Start();
         }
 
         //private void IgnoreWordsChanged()
