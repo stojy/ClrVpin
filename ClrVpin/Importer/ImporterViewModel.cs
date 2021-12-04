@@ -207,7 +207,7 @@ namespace ClrVpin.Importer
             //var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
 
             progress.Update("Loading latest online DB");
-            await ImporterUtils.Get();
+            //await ImporterUtils.GetOnlineDatabase();
             //var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
 
             //progress.Update("Merging Files");

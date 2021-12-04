@@ -18,15 +18,11 @@ namespace Utils.Tests
                 Nutrition = Nutrition.Herbivore,
                 Names = new [] { "a", "b"}
             };
-            var xdoc = sheep.SerializeToXDoc();
-            var ser = "<Animal " +
-                      "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
-                      "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  " +
-                      "<Name>Sheep</Name>\r\n  <Legs>4</Legs>\r\n  " +
-                      "<Nutrition>Herbivore</Nutrition>\r\n</Animal>";
+            var xDoc = sheep.SerializeToXDoc();
+            const string ser = "<Animal xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <Name>Sheep</Name>\r\n  <Legs>4</Legs>\r\n  <Nutrition>Herbivore</Nutrition>\r\n  <names>a</names>\r\n  <names>b</names>\r\n</Animal>";
 
-//            Assert.AreEqual(xdoc.ToString(), ser);
-            Assert.IsInstanceOfType(xdoc, typeof(XDocument));
+            Assert.AreEqual(xDoc.ToString(), ser);
+            Assert.IsInstanceOfType(xDoc, typeof(XDocument));
         }
 
         [TestMethod]
