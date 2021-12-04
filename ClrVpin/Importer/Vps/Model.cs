@@ -3,19 +3,16 @@ using System.Text.Json.Serialization;
 
 namespace ClrVpin.Importer.Vps;
 
-public class TimeStamps
-{
-    public DateTime? UpdatedAt { get; set; }
-    public DateTime? LastCreatedAt { get; set; }
-}
-
-public class Game : TimeStamps
+public class Game
 {
     public string Id { get; set; }
     public string Name { get; set; }
     public string Manufacturer { get; set; }
     public int Year { get; set; }
     public string Type { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? LastCreatedAt { get; set; }
 
     public string IpdbUrl { get; set; }
     public bool Broken { get; set; }
