@@ -20,7 +20,7 @@ namespace ClrVpin.Importer
             _jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
-                Converters = { new UnixToNullableDateTimeConverter() }
+                Converters = { new UnixToNullableDateTimeConverter {IsFormatInSeconds = false} }
             };
         }
 

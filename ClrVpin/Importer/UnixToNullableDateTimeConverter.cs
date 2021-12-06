@@ -7,17 +7,23 @@ namespace ClrVpin.Importer;
 public class UnixToNullableDateTimeConverter : JsonConverter<DateTime?>
 {
     public override bool HandleNull => true;
+    public bool? IsFormatInSeconds { get; set; } = null;
 
     public override DateTime? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        // conversions above UnixMaxSeconds are assumed to be in milliseconds (conversions beyond this range in .net6 are rejected)
         if (reader.TryGetInt64(out var time))
-            return time is < UnixMaxSeconds and > UnixMinSeconds ? DateTimeOffset.FromUnixTimeSeconds(time).LocalDateTime : DateTimeOffset.FromUnixTimeMilliseconds(time).LocalDateTime;
+        {
+            // if 'IsFormatInSeconds' is unspecified, then deduce the correct type based on whether it can be represented in the allowed .net DateTime range
+            if (IsFormatInSeconds == true || IsFormatInSeconds == null && time > _unixMinSeconds && time < _unixMaxSeconds)
+                return DateTimeOffset.FromUnixTimeSeconds(time).LocalDateTime;
+            return DateTimeOffset.FromUnixTimeMilliseconds(time).LocalDateTime;
+        }
+
         return null;
     }
 
     public override void Write(Utf8JsonWriter writer, DateTime? value, JsonSerializerOptions options) => throw new NotSupportedException();
 
-    private const long UnixMaxSeconds = 253_402_300_799; // 31/12/9999 = DateTime.MaxTicks / TimeSpan.TicksPerSecond - UnixEpochSeconds;
-    private const long UnixMinSeconds = -62_135_596_800; // 1/1/0001
+    private static readonly long _unixMinSeconds = DateTimeOffset.MinValue.ToUnixTimeSeconds() - DateTimeOffset.UnixEpoch.ToUnixTimeSeconds(); // -62_135_596_800
+    private static readonly long _unixMaxSeconds = DateTimeOffset.MaxValue.ToUnixTimeSeconds() - DateTimeOffset.UnixEpoch.ToUnixTimeSeconds(); // 253_402_300_799
 }
