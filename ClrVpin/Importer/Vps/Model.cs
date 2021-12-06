@@ -5,6 +5,7 @@ namespace ClrVpin.Importer.Vps;
 
 public class Game
 {
+    public int Index { get; set; }
     public string Id { get; set; }
     public string Name { get; set; }
     public string Manufacturer { get; set; }

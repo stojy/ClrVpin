@@ -6,7 +6,6 @@ using ClrVpin.Controls;
 using ClrVpin.Models;
 using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
-using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
 

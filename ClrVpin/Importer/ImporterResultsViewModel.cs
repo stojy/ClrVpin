@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using ClrVpin.Controls;
-using ClrVpin.Models;
+using ClrVpin.Importer.Vps;
 using PropertyChanged;
 
 namespace ClrVpin.Importer
@@ -9,6 +9,15 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel
     {
+        public ImporterResultsViewModel(Game[] games)
+        {
+            Games = new ObservableCollection<Game>(games);
+            GamesView = new ListCollectionView<Game>(Games);
+        }
+
+        public ObservableCollection<Game> Games { get; set; }
+        public ListCollectionView<Game> GamesView { get; set; }
+
         public Window Window { get; set; }
 
         public void Show(Window parentWindow, double left, double top)

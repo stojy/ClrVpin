@@ -4,7 +4,9 @@
                     xmlns:scanner="clr-namespace:ClrVpin.Scanner"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:converters="clr-namespace:ClrVpin.Converters">
+                    xmlns:converters="clr-namespace:ClrVpin.Converters"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -34,7 +36,7 @@
       </ListBox.ItemsPanel>
 
       <ListBox.ItemContainerStyle>
-        <Style TargetType="ListBoxItem">
+        <Style TargetType="ListBoxItem" d:DataContext="{d:DesignInstance Type=models:Hit}">
           <!-- assign smaller padding to maximize the content size (template bound to material's Ripple) -->
           <Setter Property="Padding" Value="2" />
           <Setter Property="IsEnabled" Value="{Binding IsPresent}" />
@@ -104,16 +106,16 @@
                 materialDesign:DataGridAssist.CellPadding="15 5 5 8"
                 materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8">
         <DataGrid.Columns>
-          <DataGridTextColumn Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTemplateColumn Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True" />
-          <DataGridTemplateColumn Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
-          <DataGridTextColumn Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn Header="Year" Binding="{Binding Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True" />
+          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Year" Binding="{Binding Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
-          <DataGridTextColumn Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />
         </DataGrid.Columns>
@@ -121,7 +123,7 @@
         <DataGrid.RowStyle>
           <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
             <Style.Triggers>
-              <DataTrigger Binding="{Binding Content.IsSmelly}" Value="True">
+              <DataTrigger d:DataContext="{d:DesignInstance Type=models:Game}" Binding="{Binding Content.IsSmelly}" Value="True">
                 <Setter Property="Background" Value="#FF222222" />
               </DataTrigger>
             </Style.Triggers>

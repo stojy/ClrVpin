@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using MaterialDesignExtensions.Controls;
 using Microsoft.Xaml.Behaviors.Core;
 
 namespace ClrVpin.Logging

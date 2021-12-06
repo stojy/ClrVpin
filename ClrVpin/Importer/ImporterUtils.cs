@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ClrVpin.Importer.Vps;
+using Utils;
 
 namespace ClrVpin.Importer
 {
@@ -24,9 +25,12 @@ namespace ClrVpin.Importer
             };
         }
 
-        public static async Task GetOnlineDatabase()
+        public static async Task<Game[]> GetOnlineDatabase()
         {
-            var response = await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
+            var games =  await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
+            games.ForEach((game, index) => game.Index = index);
+
+            return games;
         }
 
         // refer https://github.com/Fraesh/vps-db, https://virtual-pinball-spreadsheet.web.app/

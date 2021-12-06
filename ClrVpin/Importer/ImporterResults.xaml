@@ -2,13 +2,16 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:importer="clr-namespace:ClrVpin.Importer">
+                    xmlns:importer="clr-namespace:ClrVpin.Importer"
+                    xmlns:vps="clr-namespace:ClrVpin.Importer.Vps"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="/Controls/Styles.xaml" />
     <ResourceDictionary Source="/Controls/Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
+
 
   <!--<ContextMenu x:Key="HitGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
     <MenuItem Header="Open File" Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsPresent}" />
@@ -40,10 +43,71 @@
 
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />-->
 
+  <!--<HierarchicalDataTemplate x:Key="HitGamesItemTemplate" DataType="models:Game"
+                            ItemsSource="{Binding Content.HitsView}"
+                            ItemTemplate="{StaticResource HitResultTemplate}"
+                            ItemContainerStyle="{StaticResource HitGameContentStyle}">
+    <TextBlock Text="{Binding Description}" />
+  </HierarchicalDataTemplate>-->
+
+
   <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
-    <TextBlock Text="TBD"/>
-    
-    <!--dock panel to provide a scrollbar for the tree view--><!--
+    <!--<TextBlock Text="TBD"/>-->
+
+    <!--dock panel to provide a scrollbar for the tree view -->
+    <DockPanel Margin="5">
+
+      <!--<ItemsControl DockPanel.Dock="Left" ItemsSource="{Binding TopLevelGamesView}"
+                ItemTemplate="{StaticResource GameTemplate}"
+                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" />-->
+
+
+      <DataGrid DockPanel.Dock="Bottom" Name="ImporterResults" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" 
+                materialDesign:DataGridAssist.CellPadding="15 5 5 8"
+                materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8">
+        <DataGrid.Columns >
+          <!--<DataGridTextColumn Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />-->
+                          <!--<DataGridTemplateColumn Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True" />-->
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="#" Binding="{Binding Index}"  IsReadOnly="True" CanUserSort="True"/>
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Table" Binding="{Binding Name}" Width="280" IsReadOnly="True" CanUserSort="True" />
+        </DataGrid.Columns>
+
+        <!--move to style-->
+        <DataGrid.CellStyle>
+          <Style TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
+            <Setter Property="BorderThickness" Value="0"/>
+          </Style>
+        </DataGrid.CellStyle>
+        <!--<DataGrid.RowStyle>
+          <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+            --><!--<Style.Triggers>
+              <DataTrigger Binding="{Binding Content.IsSmelly}" Value="True">
+                <Setter Property="Background" Value="#FF222222" />
+              </DataTrigger>
+            </Style.Triggers>--><!--
+          </Style>
+        </DataGrid.RowStyle>-->
+      </DataGrid>
+
+
+
+
+    </DockPanel>
+
+    <!--<ItemsControl ItemsSource="{Binding GamesView}" BorderThickness="5">-->
+    <!--<ItemsControl.ItemTemplate>
+        <DataTemplate DataType="vps:Game">
+          <ContentControl ContentTemplate="{StaticResource GameTemplate}" Content="{Binding}" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>-->
+    <!--<ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Vertical" ItemWidth="170" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>-->
+    <!--</ItemsControl>-->
+
+    <!--dock panel to provide a scrollbar for the tree view
     <DockPanel Margin="5">
       <StackPanel DockPanel.Dock="Top">
         <TextBlock Style="{StaticResource Title}">Filter Options</TextBlock>

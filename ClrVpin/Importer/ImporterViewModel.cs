@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Importer.Vps;
 using ClrVpin.Logging;
 using ClrVpin.Shared;
 using PropertyChanged;
@@ -203,11 +204,9 @@ namespace ClrVpin.Importer
             var progress = new ProgressViewModel();
             progress.Show(_window);
 
-            //progress.Update("Loading Database");
-            //var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
+            progress.Update("Loading online DB");
+            var games = await ImporterUtils.GetOnlineDatabase();
 
-            progress.Update("Loading latest online DB");
-            await ImporterUtils.GetOnlineDatabase();
 
 
             //var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
@@ -222,19 +221,19 @@ namespace ClrVpin.Importer
             //await Task.Delay(1);
             //Games = new ObservableCollection<Game>(games);
 
-            ShowResults(progress.Duration);
+            ShowResults(progress.Duration, games);
 
             progress.Close();
 
             //void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
         }
 
-        private void ShowResults(TimeSpan duration)
+        private void ShowResults(TimeSpan duration, Game[] games)
         {
             var statistics = new ImporterStatisticsViewModel(duration);
             statistics.Show(_window, WindowMargin, WindowMargin);
 
-            var results = new ImporterResultsViewModel();
+            var results = new ImporterResultsViewModel(games);
             results.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, WindowMargin);
 
             _loggingWindow = new Logging.Logging();
