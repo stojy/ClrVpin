@@ -228,21 +228,21 @@ namespace ClrVpin.Scanner
             var scannerExplorer = new ScannerExplorerViewModel(Games);
             scannerExplorer.Show(_scannerWindow, scannerResults.Window.Left, scannerResults.Window.Top + scannerResults.Window.Height + WindowMargin);
 
-            _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_scannerWindow, scannerExplorer.Window.Left, scannerExplorer.Window.Top + scannerExplorer.Window.Height + WindowMargin);
+            _loggingViewModelWindow = new Logging.LoggingViewModel();
+            _loggingViewModelWindow.Show(_scannerWindow, scannerExplorer.Window.Left, scannerExplorer.Window.Top + scannerExplorer.Window.Height + WindowMargin);
 
             scannerStatistics.Window.Closed += (_, _) =>
             {
                 scannerResults.Close();
                 scannerExplorer.Close();
-                _loggingWindow.Close();
+                _loggingViewModelWindow.Close();
                 _scannerWindow.Show();
             };
         }
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;
         private Window _scannerWindow;
-        private Logging.Logging _loggingWindow;
+        private Logging.LoggingViewModel _loggingViewModelWindow;
         private const int WindowMargin = 5;
     }
 }

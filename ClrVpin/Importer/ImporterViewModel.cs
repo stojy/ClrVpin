@@ -230,26 +230,31 @@ namespace ClrVpin.Importer
 
         private void ShowResults(TimeSpan duration, Game[] games)
         {
-            var statistics = new ImporterStatisticsViewModel(duration);
-            statistics.Show(_window, WindowMargin, WindowMargin);
-
             var results = new ImporterResultsViewModel(games);
-            results.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, WindowMargin);
+            results.Show(_window, WindowMargin, WindowMargin);
 
-            _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_window, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin);
+            var statistics = new ImporterStatisticsViewModel(duration);
+            statistics.Show(_window, WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
+            var loggingWindow = new LoggingViewModel();
+            loggingWindow.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
+
+            results.Window.Closed += (_, _) =>
+            {
+                statistics.Close();
+                loggingWindow.Close();
+                _window.Show();
+            };
             statistics.Window.Closed += (_, _) =>
             {
                 results.Close();
-                _loggingWindow.Close();
+                loggingWindow.Close();
                 _window.Show();
             };
         }
 
         //private readonly IEnumerable<string> _destinationContentTypes;
         private Window _window;
-        private Logging.Logging _loggingWindow;
         private const int WindowMargin = 5;
     }
 }

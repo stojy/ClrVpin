@@ -241,20 +241,20 @@ namespace ClrVpin.Rebuilder
             var rebuilderResults = new RebuilderResultsViewModel(Games);
             rebuilderResults.Show(_rebuilderWindow, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
 
-            _loggingWindow = new Logging.Logging();
-            _loggingWindow.Show(_rebuilderWindow, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
+            _loggingViewModelWindow = new Logging.LoggingViewModel();
+            _loggingViewModelWindow.Show(_rebuilderWindow, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
 
             rebuilderStatistics.Window.Closed += (_, _) =>
             {
                 rebuilderResults.Close();
-                _loggingWindow.Close();
+                _loggingViewModelWindow.Close();
                 _rebuilderWindow.Show();
             };
         }
 
         private readonly IEnumerable<string> _destinationContentTypes;
         private Window _rebuilderWindow;
-        private Logging.Logging _loggingWindow;
+        private Logging.LoggingViewModel _loggingViewModelWindow;
 
         private const int WindowMargin = 5;
     }

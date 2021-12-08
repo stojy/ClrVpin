@@ -7,9 +7,9 @@ using Microsoft.Xaml.Behaviors.Core;
 
 namespace ClrVpin.Logging
 {
-    public class Logging
+    public class LoggingViewModel
     {
-        public Logging()
+        public LoggingViewModel()
         {
             LogsView = new ListCollectionView(Logger.Logs);
             File = Logger.File;

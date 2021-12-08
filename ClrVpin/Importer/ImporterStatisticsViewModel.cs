@@ -23,7 +23,7 @@ namespace ClrVpin.Importer
                 Left = left,
                 Top = top,
                 Width = 750,
-                Height = Model.ScreenWorkArea.Height - 10,
+                Height = Model.ScreenWorkArea.Height - top - 5,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ImporterStatisticsTemplate") as DataTemplate
@@ -32,6 +32,9 @@ namespace ClrVpin.Importer
 
             //CreateStatistics();
         }
+
+        public void Close() => Window.Close();
+
 
         //protected override string CreateTotalStatistics()
         //{

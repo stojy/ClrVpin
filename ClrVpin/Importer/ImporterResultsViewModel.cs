@@ -29,7 +29,7 @@ namespace ClrVpin.Importer
                 Left = left,
                 Top = top,
                 Width = Model.ScreenWorkArea.Width - left - 5,
-                Height = (Model.ScreenWorkArea.Height - 10) / 2,
+                Height = (Model.ScreenWorkArea.Height - 10) * 0.7,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ImporterResultsTemplate") as DataTemplate
@@ -37,9 +37,6 @@ namespace ClrVpin.Importer
             Window.Show();
         }
 
-        public void Close()
-        {
-            Window.Close();
-        }
+        public void Close() => Window.Close();
     }
 }
