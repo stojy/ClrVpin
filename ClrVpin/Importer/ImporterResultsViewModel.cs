@@ -20,6 +20,8 @@ namespace ClrVpin.Importer
 
         public Window Window { get; set; }
 
+        public Game SelectedGame { get; set; }
+
         public void Show(Window parentWindow, double left, double top)
         {
             Window = new MaterialWindowEx
