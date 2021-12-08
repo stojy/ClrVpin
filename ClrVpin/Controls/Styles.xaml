@@ -73,4 +73,10 @@
   <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}" />
   <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" />
 
+
+  <!-- remove the border outline in the cell when selected, i.e. to give a more 'list box' feel --> 
+  <Style x:Key="NoBorderDataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
 </ResourceDictionary>

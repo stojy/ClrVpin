@@ -12,184 +12,29 @@
     <ResourceDictionary Source="/Controls/Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-
-  <!--<ContextMenu x:Key="HitGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
-    <MenuItem Header="Open File" Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsPresent}" />
-    <MenuItem Header="Show in Explorer" Command="{Binding ExplorerCommand}" IsEnabled="{Binding IsPresent}" />
-    <MenuItem Header="Copy Path" Command="{Binding CopyPathCommand}" />
-  </ContextMenu>
-
-  <Style x:Key="HitGameContentStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
-    <Setter Property="FontWeight" Value="Normal" />
-    <Setter Property="ContextMenu" Value="{StaticResource HitGameContentContextMenu}" />
-    <Setter Property="controls:MouseDoubleClick.Command" Value="{Binding OpenFileCommand}" />
-  </Style>
-
-  <Style x:Key="HitGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
-    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-  </Style>
-
-  <HierarchicalDataTemplate x:Key="HitResultTemplate" DataType="models:Hit">
-    <TextBlock Text="{Binding Description}" />
-  </HierarchicalDataTemplate>
-
-  <HierarchicalDataTemplate x:Key="HitGamesItemTemplate" DataType="models:Game"
-                            ItemsSource="{Binding Content.HitsView}"
-                            ItemTemplate="{StaticResource HitResultTemplate}"
-                            ItemContainerStyle="{StaticResource HitGameContentStyle}">
-    <TextBlock Text="{Binding Description}" />
-  </HierarchicalDataTemplate>
-
-  <models:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />-->
-
-  <!--<HierarchicalDataTemplate x:Key="HitGamesItemTemplate" DataType="models:Game"
-                            ItemsSource="{Binding Content.HitsView}"
-                            ItemTemplate="{StaticResource HitResultTemplate}"
-                            ItemContainerStyle="{StaticResource HitGameContentStyle}">
-    <TextBlock Text="{Binding Description}" />
-  </HierarchicalDataTemplate>-->
-
-
   <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
-    <!--<TextBlock Text="TBD"/>-->
-
-    <!--dock panel to provide a scrollbar for the tree view -->
+    <!-- dock panel to provide a scrollbar (if required) for the child controls -->
     <DockPanel Margin="5">
+      <DockPanel DockPanel.Dock="Left">
 
-      <!--<ItemsControl DockPanel.Dock="Left" ItemsSource="{Binding TopLevelGamesView}"
-                ItemTemplate="{StaticResource GameTemplate}"
-                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" />-->
+        <TextBlock DockPanel.Dock="Top" Text="TBD.. filtering options" Margin="0,10"/>
 
-
-      <DataGrid DockPanel.Dock="Bottom" Name="ImporterResults" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" 
-                materialDesign:DataGridAssist.CellPadding="15 5 5 8"
-                materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8">
-        <DataGrid.Columns >
-          <!--<DataGridTextColumn Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />-->
-                          <!--<DataGridTemplateColumn Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True" />-->
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="#" Binding="{Binding Index}"  IsReadOnly="True" CanUserSort="True"/>
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Table" Binding="{Binding Name}" Width="280" IsReadOnly="True" CanUserSort="True" />
-        </DataGrid.Columns>
-
-        <!--move to style-->
-        <DataGrid.CellStyle>
-          <Style TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
-            <Setter Property="BorderThickness" Value="0"/>
-          </Style>
-        </DataGrid.CellStyle>
-        <!--<DataGrid.RowStyle>
-          <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
-            --><!--<Style.Triggers>
-              <DataTrigger Binding="{Binding Content.IsSmelly}" Value="True">
-                <Setter Property="Background" Value="#FF222222" />
-              </DataTrigger>
-            </Style.Triggers>--><!--
-          </Style>
-        </DataGrid.RowStyle>-->
-      </DataGrid>
+        <DataGrid DockPanel.Dock="Bottom" Name="ImporterResults" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" 
+                  materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
+                  CellStyle="{StaticResource NoBorderDataGridCellStyle}">
+          <DataGrid.Columns >
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="#" Binding="{Binding Index}" Width="55" IsReadOnly="True" CanUserSort="True"/>
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Table" Binding="{Binding Name}" Width="250" IsReadOnly="True" CanUserSort="True" />
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True" CanUserSort="True" />
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Year" Binding="{Binding Year}" Width="55" IsReadOnly="True" CanUserSort="True" />
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Updated" Binding="{Binding UpdatedAt}" Width="165" IsReadOnly="True" CanUserSort="True" />
+          </DataGrid.Columns>
+        </DataGrid>
 
 
-
-
+      </DockPanel>
+      <TextBlock DockPanel.Dock="Right" Text="TBD.. game details" Margin="0,10"/>
     </DockPanel>
 
-    <!--<ItemsControl ItemsSource="{Binding GamesView}" BorderThickness="5">-->
-    <!--<ItemsControl.ItemTemplate>
-        <DataTemplate DataType="vps:Game">
-          <ContentControl ContentTemplate="{StaticResource GameTemplate}" Content="{Binding}" />
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>-->
-    <!--<ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-          <WrapPanel Orientation="Vertical" ItemWidth="170" />
-        </ItemsPanelTemplate>
-      </ItemsControl.ItemsPanel>-->
-    <!--</ItemsControl>-->
-
-    <!--dock panel to provide a scrollbar for the tree view
-    <DockPanel Margin="5">
-      <StackPanel DockPanel.Dock="Top">
-        <TextBlock Style="{StaticResource Title}">Filter Options</TextBlock>
-        <WrapPanel Margin="5,0,0,0">
-          <TextBox Width="150" VerticalAlignment="Center" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic"
-                   Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                   Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                   materialDesign:TextFieldAssist.HasClearButton="True">
-            <b:Interaction.Triggers>
-              <b:EventTrigger EventName="TextChanged">
-                <b:InvokeCommandAction Command="{Binding SearchTextCommand}" />
-              </b:EventTrigger>
-            </b:Interaction.Triggers>
-          </TextBox>
-
-          <GroupBox Margin="5" Padding="2" Header="Content">
-            --><!-- fixed height control to get items in to columns --><!--
-            <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="models:FeatureType">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-
-              --><!-- scroll vertically then horizontally --><!--
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Vertical" ItemWidth="170"/>
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-            </ItemsControl>
-          </GroupBox>
-
-          <GroupBox Margin="5" Padding="2" Header="Criteria">
-            <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="models:FeatureType">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            
-              --><!-- scroll vertically then horizontally --><!--
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Vertical" ItemWidth="170" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-            </ItemsControl>
-          </GroupBox>
-        </WrapPanel>
-
-        <WrapPanel Margin="5,0,0,10">
-          <TextBlock Text="Backup Folder: " />
-          <TextBlock DockPanel.Dock="Top" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}">
-            <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}">
-              <TextBlock Text="{Binding BackupFolder}" />
-            </Hyperlink>
-          </TextBlock>
-
-        </WrapPanel>
-
-        <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,5,0">
-          <CheckBox DockPanel.Dock="Left" Margin="5,5" Command="{Binding ExpandGamesCommand}"
-                    CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
-            Expand All
-          </CheckBox>
-
-          <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right">
-            <TextBlock Text="Total: " />
-            <TextBlock Text="{Binding HitGamesView.Count}" />
-            <TextBlock Text=" / " />
-            <TextBlock Text="{Binding Games.Count}" />
-          </WrapPanel>
-        </DockPanel>
-      </StackPanel>
-
-      <TreeView DockPanel.Dock="Bottom" ItemsSource="{Binding HitGamesView}"
-                ItemTemplate="{StaticResource HitGamesItemTemplate}" 
-                ItemContainerStyle="{StaticResource HitGameStyle}" 
-                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
-    </DockPanel>-->
-
   </DataTemplate>
-
 </ResourceDictionary>

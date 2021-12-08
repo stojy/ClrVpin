@@ -10,6 +10,7 @@
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <ResourceDictionary Source="/Controls/Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <converters:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />
@@ -103,8 +104,8 @@
       </WrapPanel>
 
       <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False"
-                materialDesign:DataGridAssist.CellPadding="15 5 5 8"
-                materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8">
+                materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
+                CellStyle="{StaticResource NoBorderDataGridCellStyle}">
         <DataGrid.Columns>
           <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True" />
@@ -119,16 +120,6 @@
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />
         </DataGrid.Columns>
-
-        <DataGrid.RowStyle>
-          <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
-            <Style.Triggers>
-              <DataTrigger d:DataContext="{d:DesignInstance Type=models:Game}" Binding="{Binding Content.IsSmelly}" Value="True">
-                <Setter Property="Background" Value="#FF222222" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </DataGrid.RowStyle>
       </DataGrid>
     </DockPanel>
 
