@@ -12,10 +12,10 @@ namespace ClrVpin.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (targetType != typeof(string) || !(value is IEnumerable<string>))
+            if (targetType != typeof(string) || value is not IEnumerable<string> strings)
                 return DependencyProperty.UnsetValue;
 
-            return string.Join(", ", ((IEnumerable<string>) value).ToArray());
+            return string.Join(", ", strings.ToArray());
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

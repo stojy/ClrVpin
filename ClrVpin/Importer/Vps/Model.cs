@@ -22,7 +22,7 @@ public class Game
     [JsonPropertyName("theme")]
     public string[] Themes { get; set; }
 
-    public int Players { get; set; }
+    public int? Players { get; set; }
     public string[] Features { get; set; }
     public string Mpu { get; set; }
     public string ImgUrl { get; set; }

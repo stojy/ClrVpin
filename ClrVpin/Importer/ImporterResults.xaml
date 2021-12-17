@@ -5,7 +5,9 @@
                     xmlns:importer="clr-namespace:ClrVpin.Importer"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:vps="clr-namespace:ClrVpin.Importer.Vps"
-                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
+                    xmlns:controls="clr-namespace:ClrVpin.Controls"
+                    xmlns:converters="clr-namespace:ClrVpin.Converters"
+                    >
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -13,31 +15,89 @@
     <ResourceDictionary Source="/Controls/Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
+
+  <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+    <!--<Setter Property="Background" Value="Gray"/>-->
+  </Style>
+
+  <Style x:Key="KeyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="Margin" Value="10 0" />
+    <Setter Property="Opacity" Value="0.56" />
+    <Setter Property="Width" Value="80" />
+  </Style>
+  
+  <Style x:Key="ValueTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
+    <Setter Property="FontSize" Value="16"/>
+  </Style>
+
+  <!--<ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
+    <WrapPanel>
+      <TextBlock Margin="0,0,5,0" Text="{TemplateBinding controls:ExtensionData.ExtensionDetails}" FontSize="14"/>
+      <TextBlock Margin="0,0,30,0" Text="{TemplateBinding controls:ExtensionData.ExtensionValue, Converter={StaticResource NullToDashConverter}}" FontSize="14" FontWeight="Bold"/>
+    </WrapPanel>
+  </ControlTemplate>-->
+
+  <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
+    <WrapPanel Margin="0,2">
+      <TextBlock Text="{TemplateBinding controls:Attached.String}" MinWidth="{TemplateBinding controls:Attached.Double}" Style="{StaticResource KeyTextBlockStyle}"/>
+      <ContentPresenter Content="{TemplateBinding Content}" />
+    </WrapPanel>
+  </ControlTemplate>
+
+  <ControlTemplate x:Key="KeyValueStringPair" TargetType="ContentControl">
+    <WrapPanel Margin="0,2">
+      <TextBlock Text="{TemplateBinding controls:Attached.String}" MinWidth="{TemplateBinding controls:Attached.Double}" Style="{StaticResource KeyTextBlockStyle}"/>
+      <TextBlock Text="{TemplateBinding controls:Attached.String2}" Style="{StaticResource ValueTextBlockStyle}"/>
+    </WrapPanel>
+  </ControlTemplate>
+
+
+  <converters:ListToStringConverter x:Key="ListToStringConverter" />
+
   <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
     <!-- dock panel to provide a scrollbar (if required) for the child controls -->
     <DockPanel Margin="5">
       <DockPanel DockPanel.Dock="Left">
 
-        <TextBlock DockPanel.Dock="Top" Text="TBD.. filtering options" Margin="0,10"/>
+        <TextBlock DockPanel.Dock="Top" Text="TBD.. filtering options" Margin="0,10" />
 
-        <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single" 
+        <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single"
                   materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
                   CellStyle="{StaticResource NoBorderDataGridCellStyle}"
+                  ColumnHeaderStyle="{StaticResource HeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
                   SelectedItem="{Binding SelectedGame}">
-          <DataGrid.Columns >
-            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="#" Binding="{Binding Index}" Width="55" IsReadOnly="True" CanUserSort="True"/>
-            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Table" Binding="{Binding Name}" Width="250" IsReadOnly="True" CanUserSort="True" />
-            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True" CanUserSort="True" />
-            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Year" Binding="{Binding Year}" Width="55" IsReadOnly="True" CanUserSort="True" />
-            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Updated" Binding="{Binding UpdatedAt}" Width="165" IsReadOnly="True" CanUserSort="True" />
+          <DataGrid.Columns>
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="#" Binding="{Binding Index}" Width="54" />
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Table" Binding="{Binding Name}" Width="250" />
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" />
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Year" Binding="{Binding Year}" Width="53" />
+            <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Updated" Binding="{Binding UpdatedAt}" Width="165" />
           </DataGrid.Columns>
         </DataGrid>
 
       </DockPanel>
       <DockPanel DockPanel.Dock="Right" Margin="20,0,0,0">
         <StackPanel>
-          <TextBlock Text="TBD.. game details" Margin="0,10"/>
-          <TextBlock Text="{Binding SelectedGame.Id}" Margin="0,10"/>
+          <GroupBox Margin="5" Padding="2" Header="Content">
+            <StackPanel>
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Name" controls:Attached.String2="{Binding SelectedGame.Name}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Manufacturer" controls:Attached.String2="{Binding SelectedGame.Manufacturer}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Year" controls:Attached.String2="{Binding SelectedGame.Year}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Type" controls:Attached.String2="{Binding SelectedGame.Type}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Broken" controls:Attached.String2="{Binding SelectedGame.Broken}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Designers" controls:Attached.String2="{Binding SelectedGame.Designers, Converter={StaticResource ListToStringConverter}}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Features" controls:Attached.String2="{Binding SelectedGame.Features, Converter={StaticResource ListToStringConverter}}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Image Url" controls:Attached.String2="{Binding SelectedGame.ImgUrl}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Updated" controls:Attached.String2="{Binding SelectedGame.UpdatedAt}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Created" controls:Attached.String2="{Binding SelectedGame.LastCreatedAt}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Themes" controls:Attached.String2="{Binding SelectedGame.Themes, Converter={StaticResource ListToStringConverter}}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Players" controls:Attached.String2="{Binding SelectedGame.Players}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="MPU" controls:Attached.String2="{Binding SelectedGame.Mpu}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="IPDB" controls:Attached.String2="{Binding SelectedGame.IpdbUrl}" />
+            </StackPanel>
+          </GroupBox>
         </StackPanel>
       </DockPanel>
     </DockPanel>
