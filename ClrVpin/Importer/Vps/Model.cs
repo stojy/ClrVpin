@@ -1,8 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using Utils;
 
 namespace ClrVpin.Importer.Vps;
 
+// ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
 public class Game
 {
     public int Index { get; set; }
@@ -27,7 +34,7 @@ public class Game
     public string Mpu { get; set; }
     public string ImgUrl { get; set; }
 
-    public TableFile[] TableFiles { get; set; }
+    public TableFiles TableFiles { get; set; }
     public ImageFile[] B2SFiles { get; set; }
     public File[] WheelArtFiles { get; set; }
     public File[] RomFiles { get; set; }
@@ -41,6 +48,8 @@ public class Game
     public File[] AltSoundFiles { get; set; }
     public File[] RuleFiles { get; set; }
 }
+
+public class TableFiles : List<TableFile> { }
 
 public class UrlDetail
 {

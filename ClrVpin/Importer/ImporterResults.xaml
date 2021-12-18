@@ -6,7 +6,8 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
-                    xmlns:vps="clr-namespace:ClrVpin.Importer.Vps">
+                    xmlns:vps="clr-namespace:ClrVpin.Importer.Vps"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
@@ -30,13 +31,6 @@
     <Setter Property="FontSize" Value="16" />
   </Style>
 
-  <!--<ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
-    <WrapPanel>
-      <TextBlock Margin="0,0,5,0" Text="{TemplateBinding controls:ExtensionData.ExtensionDetails}" FontSize="14"/>
-      <TextBlock Margin="0,0,30,0" Text="{TemplateBinding controls:ExtensionData.ExtensionValue, Converter={StaticResource NullToDashConverter}}" FontSize="14" FontWeight="Bold"/>
-    </WrapPanel>
-  </ControlTemplate>-->
-
   <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
     <WrapPanel Margin="0,2">
       <TextBlock Text="{TemplateBinding controls:Attached.String}" MinWidth="{TemplateBinding controls:Attached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
@@ -51,8 +45,112 @@
     </WrapPanel>
   </ControlTemplate>
 
-
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
+
+  <!--<materialDesign:Card
+    Width="200">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition
+          Height="140" />
+        <RowDefinition
+          Height="*" />
+        <RowDefinition
+          Height="Auto" />
+      </Grid.RowDefinitions>
+      <Image
+        Source="Resources/Chartridge046_small.jpg"
+        Height="140"
+        Width="196"
+        Stretch="UniformToFill" />
+      <Button
+        Grid.Row="0"
+        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom"
+        Margin="0 0 16 -20">
+        <materialDesign:PackIcon
+          Kind="Bike" />
+      </Button>
+      <StackPanel
+        Grid.Row="1"
+        Margin="8 24 8 0">
+        <TextBlock
+          FontWeight="Bold">
+          Cycling
+        </TextBlock>
+        <TextBlock
+          TextWrapping="Wrap"
+          VerticalAlignment="Center"
+          Text="A great way to keep fit and forget about the constant grind of IT." />
+      </StackPanel>
+      <StackPanel
+        HorizontalAlignment="Right"
+        Grid.Row="2"
+        Orientation="Horizontal"
+        Margin="8">
+        <Button
+          Style="{StaticResource MaterialDesignToolButton}"
+          Width="30"
+          Padding="2 0 2 0"
+          materialDesign:RippleAssist.IsCentered="True">
+          <materialDesign:PackIcon
+            Kind="ShareVariant" />
+        </Button>
+        <Button
+          Style="{StaticResource MaterialDesignToolButton}"
+          Width="30"
+          Padding="2 0 2 0"
+          materialDesign:RippleAssist.IsCentered="True">
+          <materialDesign:PackIcon
+            Kind="Heart" />
+        </Button>
+        <materialDesign:PopupBox
+          Style="{StaticResource MaterialDesignToolPopupBox}"
+          Padding="2 0 2 0">
+          <StackPanel>
+            <Button
+              Content="More" />
+            <Button
+              Content="Options" />
+          </StackPanel>
+        </materialDesign:PopupBox>
+      </StackPanel>
+    </Grid>
+  </materialDesign:Card>-->
+
+  <DataTemplate x:Key="TableFileTemplate" DataType="vps:TableFile">
+    <materialDesign:Card Margin="10,0" Width="500">
+      <StackPanel>
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Version" controls:Attached.String2="{Binding Version}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Updated" controls:Attached.String2="{Binding UpdatedAt}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Name" controls:Attached.String2="{Binding Name}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Image Url" controls:Attached.String2="{Binding ImgUrl}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Features"
+                        controls:Attached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Authors"
+                        controls:Attached.String2="{Binding Authors, Converter={StaticResource ListToStringConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Comment" controls:Attached.String2="{Binding Comment}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Created" controls:Attached.String2="{Binding CreatedAt}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Format" controls:Attached.String2="{Binding TableFormat}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Urls" controls:Attached.String2="{Binding Urls, Converter={StaticResource ListToStringConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Themes" controls:Attached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
+      </StackPanel>
+    </materialDesign:Card>
+  </DataTemplate>
+
+  <DataTemplate x:Key="TableFilesTemplate" DataType="vps:TableFiles">
+    <controls:HorizontalWheelScrollViewer>
+      <ListBox ItemTemplate="{StaticResource TableFileTemplate}" ItemsSource="{Binding}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <!-- drawn horizontally to get a horizontal scrollbar -->
+            <WrapPanel />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+      </ListBox>
+    </controls:HorizontalWheelScrollViewer>
+  </DataTemplate>
 
   <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
     <!-- dock panel to provide a scrollbar (if required) for the child controls -->
@@ -102,7 +200,10 @@
 
           <GroupBox Margin="0,10,0,0" Header="Files">
             <TabControl Style="{StaticResource MaterialDesignTabControl}">
-              <TabItem Header="Tables" />
+              <TabItem Header="Tables">
+                <ContentControl Content="{Binding SelectedGame.TableFiles}" ContentTemplate="{StaticResource TableFilesTemplate}" />
+              </TabItem>
+
               <TabItem Header="Backglasses" />
               <TabItem Header="Wheels" />
               <TabItem Header="ROMs" />
