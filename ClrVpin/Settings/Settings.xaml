@@ -6,10 +6,8 @@
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="\Controls\Styles.xaml
-                        " />
-    <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
+    <ResourceDictionary Source="\Controls\Styles.xaml" />
+    <ResourceDictionary Source="\Controls\FolderSelection\FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <DataTemplate x:Key="ContentTypeModelTemplate" DataType="settings:ContentTypeModel">
@@ -48,11 +46,12 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
       <StackPanel Margin="0">
         <!-- pinball (vpx) folders -->
-        <GroupBox Margin="5" Padding="5,2,5,7" Header="Visual Pinball">
+        <GroupBox Header="Visual Pinball">
           <StackPanel>
             <WrapPanel>
               <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding PinballFolderModel}" />
-              <Button ToolTip="Auto assign 'visual pinball' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="Coral" HorizontalAlignment="Left"
+              <Button ToolTip="Auto assign 'visual pinball' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="Coral"
+                      HorizontalAlignment="Left"
                       Command="{Binding AutoAssignPinballFoldersCommand}">
                 <materialDesign:PackIcon Kind="MagicWand" />
               </Button>
@@ -62,11 +61,12 @@
         </GroupBox>
 
         <!-- front end folders -->
-        <GroupBox Margin="5" Padding="5,2,5,7" Header="Frontend">
+        <GroupBox Header="Frontend">
           <StackPanel>
             <WrapPanel>
               <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding FrontendFolderModel}" />
-              <Button ToolTip="Auto assign 'frontend' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="Coral" HorizontalAlignment="Left"
+              <Button ToolTip="Auto assign 'frontend' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="Coral"
+                      HorizontalAlignment="Left"
                       Command="{Binding AutoAssignFrontendFoldersCommand}">
                 <materialDesign:PackIcon Kind="MagicWand" />
               </Button>
@@ -76,7 +76,7 @@
         </GroupBox>
 
         <!-- general -->
-        <GroupBox Margin="5" Padding="5,2" Header="General">
+        <GroupBox Header="General">
           <StackPanel>
             <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
 

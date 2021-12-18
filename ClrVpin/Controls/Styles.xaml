@@ -10,6 +10,7 @@
   <ResourceDictionary.MergedDictionaries>
     <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Blue" SecondaryColor="Green" />
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/generic.xaml" /> <!-- e.g. TabControlTemplates -->
   </ResourceDictionary.MergedDictionaries>
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml crates MainWindow.xaml -->
@@ -77,6 +78,12 @@
   <!-- remove the border outline in the cell when selected, i.e. to give a more 'list box' feel --> 
   <Style x:Key="NoBorderDataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
     <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
+  <Style TargetType="GroupBox" BasedOn="{StaticResource MaterialDesignGroupBox}">
+    <Setter Property="Padding" Value="5,3"/>
+    <Setter Property="Margin" Value="0"/>
+    <!--<Setter Property="FontSize" Value="14"/>-->
   </Style>
 
 </ResourceDictionary>

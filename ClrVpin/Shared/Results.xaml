@@ -61,7 +61,7 @@
             </b:Interaction.Triggers>
           </TextBox>
 
-          <GroupBox Margin="5" Padding="2" Header="Content">
+          <GroupBox Header="Content">
             <!-- fixed height control to get items in to columns -->
             <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
@@ -79,7 +79,7 @@
             </ItemsControl>
           </GroupBox>
 
-          <GroupBox Margin="5" Padding="2" Header="Criteria">
+          <GroupBox Margin="10,0,0,0" Header="Criteria">
             <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">

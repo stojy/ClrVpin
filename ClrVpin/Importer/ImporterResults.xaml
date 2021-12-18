@@ -4,15 +4,13 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:importer="clr-namespace:ClrVpin.Importer"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:vps="clr-namespace:ClrVpin.Importer.Vps"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
-                    >
+                    xmlns:vps="clr-namespace:ClrVpin.Importer.Vps">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="/Controls/Styles.xaml" />
-    <ResourceDictionary Source="/Controls/Templates.xaml" />
+    <ResourceDictionary Source="\Controls\Styles.xaml" />
+    <ResourceDictionary Source="\Controls\Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
 
@@ -27,9 +25,9 @@
     <Setter Property="Opacity" Value="0.56" />
     <Setter Property="Width" Value="80" />
   </Style>
-  
+
   <Style x:Key="ValueTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
-    <Setter Property="FontSize" Value="16"/>
+    <Setter Property="FontSize" Value="16" />
   </Style>
 
   <!--<ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
@@ -41,15 +39,15 @@
 
   <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
     <WrapPanel Margin="0,2">
-      <TextBlock Text="{TemplateBinding controls:Attached.String}" MinWidth="{TemplateBinding controls:Attached.Double}" Style="{StaticResource KeyTextBlockStyle}"/>
+      <TextBlock Text="{TemplateBinding controls:Attached.String}" MinWidth="{TemplateBinding controls:Attached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
       <ContentPresenter Content="{TemplateBinding Content}" />
     </WrapPanel>
   </ControlTemplate>
 
   <ControlTemplate x:Key="KeyValueStringPair" TargetType="ContentControl">
     <WrapPanel Margin="0,2">
-      <TextBlock Text="{TemplateBinding controls:Attached.String}" MinWidth="{TemplateBinding controls:Attached.Double}" Style="{StaticResource KeyTextBlockStyle}"/>
-      <TextBlock Text="{TemplateBinding controls:Attached.String2}" Style="{StaticResource ValueTextBlockStyle}"/>
+      <TextBlock Text="{TemplateBinding controls:Attached.String}" MinWidth="{TemplateBinding controls:Attached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
+      <TextBlock Text="{TemplateBinding controls:Attached.String2}" Style="{StaticResource ValueTextBlockStyle}" />
     </WrapPanel>
   </ControlTemplate>
 
@@ -80,23 +78,43 @@
       </DockPanel>
       <DockPanel DockPanel.Dock="Right" Margin="20,0,0,0">
         <StackPanel>
-          <GroupBox Margin="5" Padding="2" Header="Content">
+          <GroupBox Header="General Info">
             <StackPanel>
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Name" controls:Attached.String2="{Binding SelectedGame.Name}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Manufacturer" controls:Attached.String2="{Binding SelectedGame.Manufacturer}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Year" controls:Attached.String2="{Binding SelectedGame.Year}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Type" controls:Attached.String2="{Binding SelectedGame.Type}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Broken" controls:Attached.String2="{Binding SelectedGame.Broken}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Designers" controls:Attached.String2="{Binding SelectedGame.Designers, Converter={StaticResource ListToStringConverter}}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Features" controls:Attached.String2="{Binding SelectedGame.Features, Converter={StaticResource ListToStringConverter}}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Designers"
+                              controls:Attached.String2="{Binding SelectedGame.Designers, Converter={StaticResource ListToStringConverter}}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Features"
+                              controls:Attached.String2="{Binding SelectedGame.Features, Converter={StaticResource ListToStringConverter}}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Image Url" controls:Attached.String2="{Binding SelectedGame.ImgUrl}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Updated" controls:Attached.String2="{Binding SelectedGame.UpdatedAt}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Created" controls:Attached.String2="{Binding SelectedGame.LastCreatedAt}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Themes" controls:Attached.String2="{Binding SelectedGame.Themes, Converter={StaticResource ListToStringConverter}}" />
+              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Themes"
+                              controls:Attached.String2="{Binding SelectedGame.Themes, Converter={StaticResource ListToStringConverter}}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="Players" controls:Attached.String2="{Binding SelectedGame.Players}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="MPU" controls:Attached.String2="{Binding SelectedGame.Mpu}" />
               <ContentControl Template="{StaticResource KeyValueStringPair}" controls:Attached.String="IPDB" controls:Attached.String2="{Binding SelectedGame.IpdbUrl}" />
             </StackPanel>
+          </GroupBox>
+
+          <GroupBox Margin="0,10,0,0" Header="Files">
+            <TabControl Style="{StaticResource MaterialDesignTabControl}">
+              <TabItem Header="Tables" />
+              <TabItem Header="Backglasses" />
+              <TabItem Header="Wheels" />
+              <TabItem Header="ROMs" />
+              <TabItem Header="Media Packs" />
+              <TabItem Header="DMDs" />
+              <TabItem Header="Sounds" />
+              <TabItem Header="Toppers" />
+              <TabItem Header="PuP Packs" />
+              <TabItem Header="POVs" />
+              <TabItem Header="Alternate Sounds" />
+              <TabItem Header="Rules" />
+            </TabControl>
           </GroupBox>
         </StackPanel>
       </DockPanel>

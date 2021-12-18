@@ -21,17 +21,17 @@
   </ItemsPanelTemplate>
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:ScannerViewModel}">
-    <StackPanel Margin="5,5,5,0">
+    <StackPanel Margin="5">
 
       <!-- content -->
       <TextBlock Style="{StaticResource Title}">Content</TextBlock>
       <WrapPanel>
-        <GroupBox Margin="5" Padding="2" Header="Pinball">
+        <GroupBox Header="Pinball">
           <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeTemplate}"
                         ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
 
-        <GroupBox Margin="5" Padding="2" Header="Media">
+        <GroupBox Margin="10,0,0,0" Header="Media">
           <ItemsControl Height="185" ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeTemplate}"
                         ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
@@ -41,7 +41,7 @@
       <TextBlock Style="{StaticResource Title}">Criteria</TextBlock>
 
       <WrapPanel>
-        <GroupBox Margin="5" Padding="2" Header="Match">
+        <GroupBox Header="Match">
           <ItemsControl ItemsSource="{Binding CheckHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="models:FeatureType">
@@ -59,7 +59,7 @@
           </ItemsControl>
         </GroupBox>
 
-        <GroupBox Margin="5" Padding="2" Header="Fix">
+        <GroupBox Margin="10,0,0,0" Header="Fix">
           <ItemsControl ItemsSource="{Binding FixHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="models:FeatureType">
@@ -81,7 +81,7 @@
       <!-- fix options -->
       <TextBlock Style="{StaticResource Title}">Options</TextBlock>
       <WrapPanel>
-        <GroupBox Margin="5" Padding="2" Header="Multiple Match Preference">
+        <GroupBox Header="Multiple Match Preference">
           <StackPanel>
             <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
@@ -98,12 +98,10 @@
       </WrapPanel>
 
       <!-- trainer wheels -->
-      <WrapPanel Margin="5">
-        <CheckBox ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
-                  IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels" />
-      </WrapPanel>
+      <CheckBox Margin="0,10" ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
+                IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels" />
 
-      <Button Margin="5" Width="50" Command="{Binding StartCommand}" IsEnabled="{Binding IsValid}" Style="{StaticResource AlternateButton}">Start</Button>
+      <Button Width="50" Command="{Binding StartCommand}" IsEnabled="{Binding IsValid}" Style="{StaticResource AlternateButton}">Start</Button>
     </StackPanel>
   </DataTemplate>
 

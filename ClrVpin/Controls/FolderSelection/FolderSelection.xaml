@@ -17,7 +17,7 @@
 
   <!-- present folder name (with optional folder suffix matching) and open folder button -->
   <DataTemplate x:Key="FolderSelection" DataType="folderSelection:FolderTypeDetail">
-    <WrapPanel Margin="5,0,0,5" Height="50">
+    <WrapPanel Height="50">
       <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}">
         <TextBox.Resources>
           <validationRules:BindingProxy x:Key="Proxy" Data="{Binding}"/>
