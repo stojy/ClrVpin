@@ -15,7 +15,9 @@ namespace ClrVpin.Converters
             if (targetType != typeof(string) || value is not IEnumerable<string> strings)
                 return DependencyProperty.UnsetValue;
 
-            return string.Join(", ", strings.ToArray());
+            var stringList = strings.ToList();
+
+            return stringList.Any() ? string.Join(", ", stringList.ToArray()) : null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
