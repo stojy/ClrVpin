@@ -6,14 +6,15 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
-                    xmlns:vps="clr-namespace:ClrVpin.Importer.Vps"
-                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
+                    xmlns:vps="clr-namespace:ClrVpin.Importer.Vps">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
     <ResourceDictionary Source="\Controls\Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
+  <converters:ListToStringConverter x:Key="ListToStringConverter" />
+  <converters:BoolToStringConverter x:Key="UrlToIconConverter" True="WebCancel" False="WebSync" />
 
   <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
     <!--<Setter Property="Background" Value="Gray"/>-->
@@ -42,109 +43,54 @@
 
   <ControlTemplate x:Key="KeyValueStringPair" TargetType="ContentControl">
     <!--using a DockPanel instead of WrapPanel so the children width are constrained.. and thus text trimming will work-->
-    <DockPanel Margin="0,2" Visibility="{TemplateBinding controls:GenericAttached.String2, Converter={StaticResource NullableToVisibilityConverter} }">
+    <DockPanel Margin="0,2">
       <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
       <TextBlock Text="{TemplateBinding controls:GenericAttached.String2}" Style="{StaticResource ValueTextBlockStyle}" />
     </DockPanel>
   </ControlTemplate>
 
-  <converters:ListToStringConverter x:Key="ListToStringConverter" />
-
-  <!--<materialDesign:Card
-    Width="200">
-    <Grid>
-      <Grid.RowDefinitions>
-        <RowDefinition
-          Height="140" />
-        <RowDefinition
-          Height="*" />
-        <RowDefinition
-          Height="Auto" />
-      </Grid.RowDefinitions>
-      <Image
-        Source="Resources/Chartridge046_small.jpg"
-        Height="140"
-        Width="196"
-        Stretch="UniformToFill" />
-      <Button
-        Grid.Row="0"
-        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Bottom"
-        Margin="0 0 16 -20">
-        <materialDesign:PackIcon
-          Kind="Bike" />
-      </Button>
-      <StackPanel
-        Grid.Row="1"
-        Margin="8 24 8 0">
-        <TextBlock
-          FontWeight="Bold">
-          Cycling
-        </TextBlock>
-        <TextBlock
-          TextWrapping="Wrap"
-          VerticalAlignment="Center"
-          Text="A great way to keep fit and forget about the constant grind of IT." />
-      </StackPanel>
-      <StackPanel
-        HorizontalAlignment="Right"
-        Grid.Row="2"
-        Orientation="Horizontal"
-        Margin="8">
-        <Button
-          Style="{StaticResource MaterialDesignToolButton}"
-          Width="30"
-          Padding="2 0 2 0"
-          materialDesign:RippleAssist.IsCentered="True">
-          <materialDesign:PackIcon
-            Kind="ShareVariant" />
-        </Button>
-        <Button
-          Style="{StaticResource MaterialDesignToolButton}"
-          Width="30"
-          Padding="2 0 2 0"
-          materialDesign:RippleAssist.IsCentered="True">
-          <materialDesign:PackIcon
-            Kind="Heart" />
-        </Button>
-        <materialDesign:PopupBox
-          Style="{StaticResource MaterialDesignToolPopupBox}"
-          Padding="2 0 2 0">
-          <StackPanel>
-            <Button
-              Content="More" />
-            <Button
-              Content="Options" />
-          </StackPanel>
-        </materialDesign:PopupBox>
-      </StackPanel>
-    </Grid>
-  </materialDesign:Card>-->
+  <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
+    <Button Style="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}" ToolTip="{Binding Url}" IsEnabled="{Binding Broken, Converter={StaticResource InvertBooleanConverter}}">
+      <materialDesign:PackIcon Kind="{Binding Broken, Converter={StaticResource UrlToIconConverter}}" Height="40" Width="40" Foreground="{DynamicResource MaterialDesignBody}" />
+    </Button>
+  </DataTemplate>
 
   <DataTemplate x:Key="TableFileTemplate" DataType="vps:TableFile">
-    <materialDesign:Card Margin="10,0" Width="500">
+    <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
-        <Image Source="{Binding ImgUrl}" Stretch="Uniform" MaxHeight="300" ToolTip="{Binding ImgUrl}" />
+        <Image Source="{Binding ImgUrl}" Stretch="UniformToFill" Height="300" ToolTip="{Binding ImgUrl}" />
+        
+        <!--version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation-->
+        <DockPanel>
+          <ListBox DockPanel.Dock="Right" ItemsSource="{Binding Urls}" ItemTemplate="{StaticResource UrlDetailTemplate}" Margin="0,-40,0,0"
+                   materialDesign:ListBoxItemAssist.ShowSelection="False">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel HorizontalAlignment="Right" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+          </ListBox>
+          <ContentControl Margin="0,4,0,0" Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+        </DockPanel>
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Comment" controls:GenericAttached.String2="{Binding Comment}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
                         controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}" 
+                        Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}"/>
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors"
                         controls:GenericAttached.String2="{Binding Authors, Converter={StaticResource ListToStringConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Comment" controls:GenericAttached.String2="{Binding Comment}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Format" controls:GenericAttached.String2="{Binding TableFormat}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Urls" controls:GenericAttached.String2="{Binding Urls, Converter={StaticResource ListToStringConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes" controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
+                        controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
       </StackPanel>
     </materialDesign:Card>
   </DataTemplate>
 
   <DataTemplate x:Key="TableFilesTemplate" DataType="vps:TableFiles">
     <controls:HorizontalWheelScrollViewer>
-      <ListBox ItemTemplate="{StaticResource TableFileTemplate}" ItemsSource="{Binding}">
+      <ListBox ItemTemplate="{StaticResource TableFileTemplate}" ItemsSource="{Binding}" materialDesign:ListBoxItemAssist.ShowSelection="False" VerticalContentAlignment="Top">
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
             <!-- drawn horizontally to get a horizontal scrollbar -->
