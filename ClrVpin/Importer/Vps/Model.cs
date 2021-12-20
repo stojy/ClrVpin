@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using System.Windows.Media;
 using Utils;
@@ -12,7 +13,8 @@ namespace ClrVpin.Importer.Vps;
 // ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
 public class Game
 {
-    public int Index { get; set; }
+    public Game()
+    { }
     public string Id { get; set; }
     public string Name { get; set; }
     public string Manufacturer { get; set; }
@@ -34,19 +36,22 @@ public class Game
     public string Mpu { get; set; }
     public string ImgUrl { get; set; }
 
-    public TableFiles TableFiles { get; set; }
-    public ImageFile[] B2SFiles { get; set; }
-    public File[] WheelArtFiles { get; set; }
-    public File[] RomFiles { get; set; }
+    public TableFiles TableFiles { get; set; } = new TableFiles();
+    public ImageFile[] B2SFiles { get; set; } = Array.Empty<ImageFile>();
+    public File[] WheelArtFiles { get; set; } = Array.Empty<File>();
+    public File[] RomFiles { get; set; } = Array.Empty<File>();
 
-    public File[] PovFiles { get; set; }
-    public File[] MediaPackFiles { get; set; }
-    public File[] SoundFiles { get; set; }
-    public File[] TopperFiles { get; set; }
-    public File[] PupPackFiles { get; set; }
-    public File[] AltColorFiles { get; set; }
-    public File[] AltSoundFiles { get; set; }
-    public File[] RuleFiles { get; set; }
+    public File[] MediaPackFiles { get; set; } = Array.Empty<File>();
+    public File[] AltColorFiles { get; set; } = Array.Empty<File>();
+    public File[] SoundFiles { get; set; } = Array.Empty<File>();
+    public File[] TopperFiles { get; set; } = Array.Empty<File>();
+    public File[] PupPackFiles { get; set; } = Array.Empty<File>();
+    public File[] PovFiles { get; set; } = Array.Empty<File>();
+    public File[] AltSoundFiles { get; set; } = Array.Empty<File>();
+    public File[] RuleFiles { get; set; } = Array.Empty<File>();
+
+    // view model properties
+    public int Index { get; set; }
 }
 
 public class TableFiles : List<TableFile> { }

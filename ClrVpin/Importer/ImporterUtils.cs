@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -28,7 +29,15 @@ namespace ClrVpin.Importer
         public static async Task<Game[]> GetOnlineDatabase()
         {
             var games =  await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
-            games.ForEach((game, index) => game.Index = index);
+
+            // patch db.. todo; move this into a VM?
+            games.ForEach((game, index) =>
+            {
+                game.Index = index;
+
+                // assign a top level image url if one doesn't already exist
+                game.ImgUrl ??= game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
+            });
 
             return games;
         }

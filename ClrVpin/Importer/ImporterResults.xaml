@@ -59,7 +59,7 @@
     <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
         <Image Source="{Binding ImgUrl}" Stretch="UniformToFill" Height="300" ToolTip="{Binding ImgUrl}" />
-        
+
         <!--version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation-->
         <DockPanel>
           <ListBox DockPanel.Dock="Right" ItemsSource="{Binding Urls}" ItemTemplate="{StaticResource UrlDetailTemplate}" Margin="0,-40,0,0"
@@ -76,8 +76,8 @@
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Comment" controls:GenericAttached.String2="{Binding Comment}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
                         controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}" 
-                        Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}"/>
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
+                        Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors"
                         controls:GenericAttached.String2="{Binding Authors, Converter={StaticResource ListToStringConverter}}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Format" controls:GenericAttached.String2="{Binding TableFormat}" />
@@ -104,7 +104,7 @@
   <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
     <!-- dock panel to provide a scrollbar (if required) for the child controls -->
     <DockPanel Margin="5">
-      <DockPanel DockPanel.Dock="Left">
+      <DockPanel DockPanel.Dock="Left" Width="700">
 
         <TextBlock DockPanel.Dock="Top" Text="TBD.. filtering options" Margin="0,10" />
 
@@ -123,29 +123,39 @@
         </DataGrid>
 
       </DockPanel>
-      <DockPanel DockPanel.Dock="Right" Margin="20,0,0,0">
+      <DockPanel DockPanel.Dock="Right" Margin="0">
         <StackPanel>
-          <GroupBox Header="General Info">
-            <StackPanel>
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedGame.Name}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Manufacturer" controls:GenericAttached.String2="{Binding SelectedGame.Manufacturer}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Year" controls:GenericAttached.String2="{Binding SelectedGame.Year}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Type" controls:GenericAttached.String2="{Binding SelectedGame.Type}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedGame.Broken}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Designers"
-                              controls:GenericAttached.String2="{Binding SelectedGame.Designers, Converter={StaticResource ListToStringConverter}}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                              controls:GenericAttached.String2="{Binding SelectedGame.Features, Converter={StaticResource ListToStringConverter}}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Image Url" controls:GenericAttached.String2="{Binding SelectedGame.ImgUrl}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding SelectedGame.LastCreatedAt}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
-                              controls:GenericAttached.String2="{Binding SelectedGame.Themes, Converter={StaticResource ListToStringConverter}}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Players" controls:GenericAttached.String2="{Binding SelectedGame.Players}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="MPU" controls:GenericAttached.String2="{Binding SelectedGame.Mpu}" />
-              <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="IPDB" controls:GenericAttached.String2="{Binding SelectedGame.IpdbUrl}" />
-            </StackPanel>
-          </GroupBox>
+          <UniformGrid Columns="3">
+            <Image Source="{Binding SelectedGame.ImgUrl}" Height="300" Stretch="UniformToFill"/>
+            <GroupBox Header="Table Info (HW)" Margin="5,0">
+              <StackPanel>
+                <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedGame.Name}" />
+                <UniformGrid Columns="2">
+                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Manufacturer" controls:GenericAttached.String2="{Binding SelectedGame.Manufacturer}" />
+                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Year" controls:GenericAttached.String2="{Binding SelectedGame.Year}" />
+                </UniformGrid>
+                <UniformGrid Columns="2">
+                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Type" controls:GenericAttached.String2="{Binding SelectedGame.Type}" />
+                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Players" controls:GenericAttached.String2="{Binding SelectedGame.Players}" />
+                </UniformGrid>
+                <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="MPU" controls:GenericAttached.String2="{Binding SelectedGame.Mpu}" />
+                <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
+                                controls:GenericAttached.String2="{Binding SelectedGame.Themes, Converter={StaticResource ListToStringConverter}}" />
+                <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="IPDB" controls:GenericAttached.String2="{Binding SelectedGame.IpdbUrl}" />
+              </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Virtualized Info (SW)">
+              <StackPanel>
+                <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
+                <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
+                                controls:GenericAttached.String2="{Binding SelectedGame.Features, Converter={StaticResource ListToStringConverter}}" />
+                <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Designers"
+                                controls:GenericAttached.String2="{Binding SelectedGame.Designers, Converter={StaticResource ListToStringConverter}}" />
+                <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding SelectedGame.LastCreatedAt}" />
+                <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedGame.Broken}" />
+              </StackPanel>
+            </GroupBox>
+          </UniformGrid>
 
           <GroupBox Margin="0,10,0,0" Header="Files">
             <TabControl Style="{StaticResource MaterialDesignTabControl}">
