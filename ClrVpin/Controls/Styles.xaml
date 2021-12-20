@@ -8,6 +8,13 @@
                     xmlns:models="clr-namespace:ClrVpin.Models">
 
   <ResourceDictionary.MergedDictionaries>
+    <!-- generated brush names (reference as DynamicResource, not StaticResource)
+         - https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Brush-Name
+         - e.g. PrimaryHueLightBrush, PrimaryHueMidBrush, PrimaryDarkMidBrush = blue shades
+                MaterialDesignPaper = light grey
+                MaterialDesignBody = white
+    -->
+
     <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Blue" SecondaryColor="Green" />
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/generic.xaml" /> <!-- e.g. TabControlTemplates -->

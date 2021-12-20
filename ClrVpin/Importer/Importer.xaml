@@ -14,7 +14,7 @@
     <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <converters:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
+  <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter" />
 
   <DataTemplate x:Key="ImporterTemplate" DataType="{x:Type importer:ImporterViewModel}">
     <StackPanel Margin="5">

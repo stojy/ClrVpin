@@ -14,7 +14,7 @@
   </ResourceDictionary.MergedDictionaries>
 
   <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
-  <converters:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
+  <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter" />
 
   <ItemsPanelTemplate x:Key="ContentTypeItemsTemplate">
     <WrapPanel Orientation="Vertical" ItemWidth="180" />

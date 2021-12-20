@@ -6,7 +6,8 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
-                    xmlns:vps="clr-namespace:ClrVpin.Importer.Vps">
+                    xmlns:vps="clr-namespace:ClrVpin.Importer.Vps"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
@@ -15,6 +16,8 @@
 
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
   <converters:BoolToStringConverter x:Key="UrlToIconConverter" True="WebCancel" False="WebSync" />
+  <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" True="Visible" False="Collapsed" />
+  <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
 
   <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
     <!--<Setter Property="Background" Value="Gray"/>-->
@@ -55,10 +58,22 @@
     </Button>
   </DataTemplate>
 
+  <!-- if valid url then show progress and ultimate image, else show broken image -->
+  <DataTemplate x:Key="ImageTemplate" DataType="{x:Type system:String}">
+    <Grid Height="300" ToolTip="{Binding}">
+      <materialDesign:PackIcon Kind="ImageOffOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="{Binding Converter={StaticResource NullToVisibilityConverter}}"/>
+      <Grid Visibility="{Binding Converter={StaticResource ReverseNullToVisibilityConverter}}">
+        <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
+        <Image Source="{Binding}" Stretch="UniformToFill" />
+      </Grid>
+    </Grid>
+  </DataTemplate>
+
   <DataTemplate x:Key="TableFileTemplate" DataType="vps:TableFile">
     <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
-        <Image Source="{Binding ImgUrl}" Stretch="UniformToFill" Height="300" ToolTip="{Binding ImgUrl}" />
+        <ContentControl Content="{Binding ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}"/> 
 
         <!--version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation-->
         <DockPanel>
@@ -126,7 +141,8 @@
       <DockPanel DockPanel.Dock="Right" Margin="0">
         <StackPanel>
           <UniformGrid Columns="3">
-            <Image Source="{Binding SelectedGame.ImgUrl}" Height="300" Stretch="UniformToFill"/>
+            <ContentControl Content="{Binding SelectedGame.ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}"/> 
+
             <GroupBox Header="Table Info (HW)" Margin="5,0">
               <StackPanel>
                 <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedGame.Name}" />
@@ -144,6 +160,7 @@
                 <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="IPDB" controls:GenericAttached.String2="{Binding SelectedGame.IpdbUrl}" />
               </StackPanel>
             </GroupBox>
+            
             <GroupBox Header="Virtualized Info (SW)">
               <StackPanel>
                 <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
