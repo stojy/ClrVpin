@@ -243,13 +243,15 @@ namespace ClrVpin.Importer
             {
                 statistics.Close();
                 loggingWindow.Close();
-                _window.Show();
+                //_window.Show();
+                _window.Close();
             };
             statistics.Window.Closed += (_, _) =>
             {
                 results.Close();
                 loggingWindow.Close();
-                _window.Show();
+                //_window.Show();
+                _window.Close();
             };
         }
 

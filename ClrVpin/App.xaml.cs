@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Markup;
 using ClrVpin.Models.Settings;
 
 namespace ClrVpin
@@ -11,6 +13,10 @@ namespace ClrVpin
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            // Ensure the current culture passed into bindings is the OS culture.  By default, WPF uses en-US as the culture, regardless of the system settings.
+            // - https://stackoverflow.com/questions/520115/stringformat-localization-issues-in-wpf
+            FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+            
             base.OnStartup(e);
 
             Logging.Logger.Info($"App started, settings={JsonSerializer.Serialize(SettingsManager.Create().Settings)}");
@@ -18,7 +24,7 @@ namespace ClrVpin
             SetupExceptionHandling();
         }
 
-        public static void SetupExceptionHandling()
+        private static void SetupExceptionHandling()
         {
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
                 HandleError(s, (Exception) e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
