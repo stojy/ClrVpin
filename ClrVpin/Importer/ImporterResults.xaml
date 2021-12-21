@@ -23,35 +23,6 @@
     <!--<Setter Property="Background" Value="Gray"/>-->
   </Style>
 
-  <Style x:Key="KeyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
-    <Setter Property="VerticalAlignment" Value="Center" />
-    <Setter Property="HorizontalAlignment" Value="Left" />
-    <Setter Property="Margin" Value="10 0" />
-    <Setter Property="Opacity" Value="0.56" />
-    <Setter Property="Width" Value="80" />
-  </Style>
-
-  <Style x:Key="ValueTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
-    <Setter Property="FontSize" Value="16" />
-    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-    <Setter Property="TextWrapping" Value="NoWrap" />
-  </Style>
-
-  <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
-    <WrapPanel Margin="0,2">
-      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
-      <ContentPresenter Content="{TemplateBinding Content}" />
-    </WrapPanel>
-  </ControlTemplate>
-
-  <ControlTemplate x:Key="KeyValueStringPair" TargetType="ContentControl">
-    <!--using a DockPanel instead of WrapPanel so the children width are constrained.. and thus text trimming will work-->
-    <DockPanel Margin="0,2">
-      <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
-      <TextBlock Text="{TemplateBinding controls:GenericAttached.String2}" Style="{StaticResource ValueTextBlockStyle}" />
-    </DockPanel>
-  </ControlTemplate>
-
   <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
     <Button Style="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}" ToolTip="{Binding Url}" IsEnabled="{Binding Broken, Converter={StaticResource InvertBooleanConverter}}">
       <materialDesign:PackIcon Kind="{Binding Broken, Converter={StaticResource UrlToIconConverter}}" Height="40" Width="40" Foreground="{DynamicResource MaterialDesignBody}" />
@@ -62,7 +33,7 @@
   <DataTemplate x:Key="ImageTemplate" DataType="{x:Type system:String}">
     <Grid Height="300" ToolTip="{Binding}">
       <materialDesign:PackIcon Kind="ImageOffOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Visibility="{Binding Converter={StaticResource NullToVisibilityConverter}}"/>
+                               Visibility="{Binding Converter={StaticResource NullToVisibilityConverter}}" />
       <Grid Visibility="{Binding Converter={StaticResource ReverseNullToVisibilityConverter}}">
         <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
         <Image Source="{Binding}" Stretch="UniformToFill" />
@@ -73,20 +44,15 @@
   <DataTemplate x:Key="TableFileTemplate" DataType="vps:TableFile">
     <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
-        <ContentControl Content="{Binding ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}"/> 
+        <ContentControl Content="{Binding ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}" />
 
-        <!--version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation-->
+        <!-- version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation -->
         <DockPanel>
           <ListBox DockPanel.Dock="Right" ItemsSource="{Binding Urls}" ItemTemplate="{StaticResource UrlDetailTemplate}" Margin="0,-40,0,0"
-                   materialDesign:ListBoxItemAssist.ShowSelection="False">
-            <ItemsControl.ItemsPanel>
-              <ItemsPanelTemplate>
-                <WrapPanel HorizontalAlignment="Right" />
-              </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-          </ListBox>
+                   materialDesign:ListBoxItemAssist.ShowSelection="False" Style="{StaticResource RightAlignedHorizontalListBoxStyle}" />
           <ContentControl Margin="0,4,0,0" Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
         </DockPanel>
+
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Comment" controls:GenericAttached.String2="{Binding Comment}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
@@ -105,13 +71,8 @@
 
   <DataTemplate x:Key="TableFilesTemplate" DataType="vps:TableFiles">
     <controls:HorizontalWheelScrollViewer>
-      <ListBox ItemTemplate="{StaticResource TableFileTemplate}" ItemsSource="{Binding}" materialDesign:ListBoxItemAssist.ShowSelection="False" VerticalContentAlignment="Top">
-        <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate>
-            <!-- drawn horizontally to get a horizontal scrollbar -->
-            <WrapPanel />
-          </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
+      <ListBox ItemTemplate="{StaticResource TableFileTemplate}" ItemsSource="{Binding}" materialDesign:ListBoxItemAssist.ShowSelection="False" VerticalContentAlignment="Top"
+               ItemContainerStyle="{StaticResource HighlightedListBoxItemStyle}" Style="{StaticResource HorizontalListBoxStyle}">
       </ListBox>
     </controls:HorizontalWheelScrollViewer>
   </DataTemplate>
@@ -141,7 +102,7 @@
       <DockPanel DockPanel.Dock="Right" Margin="0">
         <StackPanel>
           <UniformGrid Columns="3">
-            <ContentControl Content="{Binding SelectedGame.ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}"/> 
+            <ContentControl Content="{Binding SelectedGame.ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}" />
 
             <GroupBox Header="Table Info (HW)" Margin="5,0">
               <StackPanel>
@@ -160,7 +121,7 @@
                 <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="IPDB" controls:GenericAttached.String2="{Binding SelectedGame.IpdbUrl}" />
               </StackPanel>
             </GroupBox>
-            
+
             <GroupBox Header="Virtualized Info (SW)">
               <StackPanel>
                 <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />

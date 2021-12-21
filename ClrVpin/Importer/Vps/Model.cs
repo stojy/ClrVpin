@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms.VisualStyles;
-using System.Windows.Input;
-using System.Windows.Media;
-using Utils;
 
 namespace ClrVpin.Importer.Vps;
 
 // ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
+// ReSharper disable UnusedMember.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 public class Game
 {
-    public Game()
-    { }
     public string Id { get; set; }
     public string Name { get; set; }
     public string Manufacturer { get; set; }
@@ -52,6 +46,7 @@ public class Game
 
     // view model properties
     public int Index { get; set; }
+    public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Count}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
 }
 
 public class TableFiles : List<TableFile> { }

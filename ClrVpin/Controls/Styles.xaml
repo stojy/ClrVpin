@@ -93,4 +93,67 @@
     <!--<Setter Property="FontSize" Value="14"/>-->
   </Style>
 
+  <!-- listbox with WrapPanel to draw horizontally (with scrollbar if required) -->
+  <Style x:Key="HorizontalListBoxStyle" TargetType="ListBox" BasedOn="{StaticResource MaterialDesignListBox}">
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <WrapPanel />
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- listbox with WrapPanel to draw horizontally (with scrollbar if required) -->
+  <Style x:Key="RightAlignedHorizontalListBoxStyle" TargetType="ListBox" BasedOn="{StaticResource MaterialDesignListBox}">
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <WrapPanel HorizontalAlignment="Right"/>
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- highlight mouse over item -->
+  <Style x:Key="HighlightedListBoxItemStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="False">
+        <Trigger.Setters>
+          <Setter Property="Opacity" Value="0.75"/>
+        </Trigger.Setters>
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <!-- generic key-value control and styling -->
+  <Style x:Key="KeyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="Margin" Value="10 0" />
+    <Setter Property="Opacity" Value="0.56" />
+    <Setter Property="Width" Value="80" />
+  </Style>
+
+  <Style x:Key="ValueTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    <Setter Property="TextWrapping" Value="NoWrap" />
+  </Style>
+
+  <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
+    <WrapPanel Margin="0,2">
+      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
+      <ContentPresenter Content="{TemplateBinding Content}" />
+    </WrapPanel>
+  </ControlTemplate>
+
+  <ControlTemplate x:Key="KeyValueStringPair" TargetType="ContentControl">
+    <!--using a DockPanel instead of WrapPanel so the children width are constrained.. and thus text trimming will work-->
+    <DockPanel Margin="0,2">
+      <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
+      <TextBlock Text="{TemplateBinding controls:GenericAttached.String2}" Style="{StaticResource ValueTextBlockStyle}" />
+    </DockPanel>
+  </ControlTemplate>
+
 </ResourceDictionary>
