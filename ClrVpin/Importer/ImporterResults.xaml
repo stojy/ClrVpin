@@ -41,7 +41,7 @@
     </Grid>
   </DataTemplate>
 
-  <DataTemplate x:Key="TableFileTemplate" DataType="vps:TableFile">
+  <DataTemplate DataType="{x:Type vps:TableFile}">
     <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
         <ContentControl Content="{Binding ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}" />
@@ -59,8 +59,7 @@
                         controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
                         Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors"
-                        controls:GenericAttached.String2="{Binding Authors, Converter={StaticResource ListToStringConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Format" controls:GenericAttached.String2="{Binding TableFormat}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
                         controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
@@ -69,11 +68,56 @@
     </materialDesign:Card>
   </DataTemplate>
 
-  <DataTemplate x:Key="TableFilesTemplate" DataType="vps:TableFiles">
+  <DataTemplate DataType="{x:Type vps:ImageFile}">
+    <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
+      <StackPanel>
+        <ContentControl Content="{Binding ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}" />
+
+        <!-- version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation -->
+        <DockPanel>
+          <ListBox DockPanel.Dock="Right" ItemsSource="{Binding Urls}" ItemTemplate="{StaticResource UrlDetailTemplate}" Margin="0,-40,0,0"
+                   materialDesign:ListBoxItemAssist.ShowSelection="False" Style="{StaticResource RightAlignedHorizontalListBoxStyle}" />
+          <ContentControl Margin="0,4,0,0" Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+        </DockPanel>
+
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
+                        controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
+                        Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+      </StackPanel>
+    </materialDesign:Card>
+  </DataTemplate>
+
+  <DataTemplate DataType="{x:Type vps:File}">
+    <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
+      <StackPanel>
+        <Grid Height="300">
+          <materialDesign:PackIcon Kind="EmoticonHappyOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+
+        <!-- version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation -->
+        <DockPanel>
+          <ListBox DockPanel.Dock="Right" ItemsSource="{Binding Urls}" ItemTemplate="{StaticResource UrlDetailTemplate}" Margin="0,-40,0,0"
+                   materialDesign:ListBoxItemAssist.ShowSelection="False" Style="{StaticResource RightAlignedHorizontalListBoxStyle}" />
+          <ContentControl Margin="0,4,0,0" Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+        </DockPanel>
+
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
+                        Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+      </StackPanel>
+    </materialDesign:Card>
+  </DataTemplate>
+
+  <DataTemplate x:Key="FilesTemplate">
     <controls:HorizontalWheelScrollViewer>
-      <ListBox ItemTemplate="{StaticResource TableFileTemplate}" ItemsSource="{Binding}" materialDesign:ListBoxItemAssist.ShowSelection="False" VerticalContentAlignment="Top"
-               ItemContainerStyle="{StaticResource HighlightedListBoxItemStyle}" Style="{StaticResource HorizontalListBoxStyle}">
-      </ListBox>
+      <ListBox ItemsSource="{Binding}" materialDesign:ListBoxItemAssist.ShowSelection="False" VerticalContentAlignment="Top"
+               ItemContainerStyle="{StaticResource HighlightedListBoxItemStyle}" Style="{StaticResource HorizontalListBoxStyle}" />
     </controls:HorizontalWheelScrollViewer>
   </DataTemplate>
 
@@ -138,20 +182,52 @@
           <GroupBox Margin="0,10,0,0" Header="Files">
             <TabControl Style="{StaticResource MaterialDesignTabControl}">
               <TabItem Header="Tables">
-                <ContentControl Content="{Binding SelectedGame.TableFiles}" ContentTemplate="{StaticResource TableFilesTemplate}" />
+                <ContentControl Content="{Binding SelectedGame.TableFiles}" IsEnabled="{Binding SelectedGame.TableFiles.Count}" ContentTemplate="{StaticResource FilesTemplate}" />
               </TabItem>
 
-              <TabItem Header="Backglasses" />
-              <TabItem Header="Wheels" />
-              <TabItem Header="ROMs" />
-              <TabItem Header="Media Packs" />
-              <TabItem Header="DMDs" />
-              <TabItem Header="Sounds" />
-              <TabItem Header="Toppers" />
-              <TabItem Header="PuP Packs" />
-              <TabItem Header="POVs" />
-              <TabItem Header="Alternate Sounds" />
-              <TabItem Header="Rules" />
+              <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.B2SFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.B2SFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+              </TabItem>
+
+              <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.WheelArtFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.WheelArtFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+              </TabItem>
+
+              <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.RomFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.RomFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+
+              </TabItem>
+              <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.MediaPackFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.MediaPackFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+
+              </TabItem>
+              <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AltColorFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.AltColorFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+
+              </TabItem>
+              <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.SoundFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.SoundFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+              </TabItem>
+
+              <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.TopperFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.TopperFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+              </TabItem>
+
+              <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.PupPackFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.PupPackFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+              </TabItem>
+
+              <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.PovFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.PovFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+              </TabItem>
+
+              <TabItem Header="Alternate Sounds" IsEnabled="{Binding SelectedGame.AltSoundFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.AltSoundFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+              </TabItem>
+
+              <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.RuleFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.RuleFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+              </TabItem>
             </TabControl>
           </GroupBox>
         </StackPanel>
@@ -160,3 +236,4 @@
 
   </DataTemplate>
 </ResourceDictionary>
+  
