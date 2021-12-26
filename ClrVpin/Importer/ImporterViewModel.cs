@@ -206,6 +206,11 @@ namespace ClrVpin.Importer
 
             progress.Update("Loading online DB");
             var games = await ImporterUtils.GetOnlineDatabase();
+            games.ForEach((game, index) =>
+            {
+                // add index - for display
+                game.Index = index;
+            });
 
 
 

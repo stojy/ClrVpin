@@ -65,7 +65,7 @@ namespace ClrVpin.Models
         [XmlElement("datemodified", IsNullable = true)]
         public string DateModified { get; set; }
 
-        // calculated properties..
+        // view model info..
 
         // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
         [XmlIgnore]

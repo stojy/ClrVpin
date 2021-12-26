@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace ClrVpin.Importer.Vps;
@@ -30,7 +29,7 @@ public class Game
     public string Mpu { get; set; }
     public string ImgUrl { get; set; }
 
-    public TableFiles TableFiles { get; set; } = new TableFiles();
+    public ImageFile[] TableFiles { get; set; } = Array.Empty<ImageFile>();
     public ImageFile[] B2SFiles { get; set; } = Array.Empty<ImageFile>();
     public File[] WheelArtFiles { get; set; } = Array.Empty<File>();
     public File[] RomFiles { get; set; } = Array.Empty<File>();
@@ -46,10 +45,8 @@ public class Game
 
     // view model properties
     public int Index { get; set; }
-    public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Count}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
+    public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
 }
-
-public class TableFiles : List<TableFile> { }
 
 public class UrlDetail
 {

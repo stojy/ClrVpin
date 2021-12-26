@@ -41,6 +41,7 @@
     </Grid>
   </DataTemplate>
 
+  <!--each of the x3 types (TableFile, ImageFile and File) are subtly different enough to warrant separate templtes-->
   <DataTemplate DataType="{x:Type vps:TableFile}">
     <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
@@ -95,7 +96,7 @@
     <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
         <Grid Height="300">
-          <materialDesign:PackIcon Kind="EmoticonHappyOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <materialDesign:PackIcon Kind="EmoticonHappyOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
 
         <!-- version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation -->
@@ -116,6 +117,7 @@
 
   <DataTemplate x:Key="FilesTemplate">
     <controls:HorizontalWheelScrollViewer>
+      <!--item template is deliberately not specified so that the correct DataTemplate is automatically selected at run time-->
       <ListBox ItemsSource="{Binding}" materialDesign:ListBoxItemAssist.ShowSelection="False" VerticalContentAlignment="Top"
                ItemContainerStyle="{StaticResource HighlightedListBoxItemStyle}" Style="{StaticResource HorizontalListBoxStyle}" />
     </controls:HorizontalWheelScrollViewer>
@@ -180,9 +182,15 @@
           </UniformGrid>
 
           <GroupBox Margin="0,10,0,0" Header="Files">
+            <!-- explicitly defining each tab item separately because TabControl.ItemSource is unusable..
+                 1. TabControl.ContentTemplate  - data context is assigned as ItemSource, but DataContext is missing.. can be worked around using markup extensions
+                 2. TabControl.ItemContainerStyle - required to be overridden to enable/disable tabs, but MaterialDesignExtensions TabControl doesn't define a key'd style template to use for BasedOn            
+                 3. Not dictionary friendly - TabControl.ItemTemplate receives key (good), but TabControl.ItemTemplate receives KeyValuePair instead of just Value (bad).. impossible to bind (easily) in xaml due to generics
+                 4. Not much point - simpler to duplicate the xaml than create a separate collection of the x3 types
+            -->
             <TabControl Style="{StaticResource MaterialDesignTabControl}">
-              <TabItem Header="Tables">
-                <ContentControl Content="{Binding SelectedGame.TableFiles}" IsEnabled="{Binding SelectedGame.TableFiles.Count}" ContentTemplate="{StaticResource FilesTemplate}" />
+              <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.TableFiles.Length}">
+                <ContentControl Content="{Binding SelectedGame.TableFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
               </TabItem>
 
               <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.B2SFiles.Length}">
@@ -236,4 +244,3 @@
 
   </DataTemplate>
 </ResourceDictionary>
-  
