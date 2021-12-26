@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using System.Windows.Input;
 
 namespace ClrVpin.Importer.Vps;
 
@@ -27,9 +28,10 @@ public class Game
     public int? Players { get; set; }
     public string[] Features { get; set; }
     public string Mpu { get; set; }
+
     public string ImgUrl { get; set; }
 
-    public ImageFile[] TableFiles { get; set; } = Array.Empty<ImageFile>();
+    public TableFile[] TableFiles { get; set; } = Array.Empty<TableFile>();
     public ImageFile[] B2SFiles { get; set; } = Array.Empty<ImageFile>();
     public File[] WheelArtFiles { get; set; } = Array.Empty<File>();
     public File[] RomFiles { get; set; } = Array.Empty<File>();
@@ -46,6 +48,14 @@ public class Game
     // view model properties
     public int Index { get; set; }
     public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
+    public UrlSelection ImageUrlSelection { get; set; }
+}
+
+// view model
+public class UrlSelection 
+{
+    public string Url { get; set; }
+    public ICommand SelectedCommand { get; set; }
 }
 
 public class UrlDetail
@@ -70,6 +80,9 @@ public class ImageFile : File
 {
     public string ImgUrl { get; set; }
     public string[] Features { get; set; }
+
+    // view model properties
+    public UrlSelection ImageUrlSelection { get; set; }
 }
 
 public class TableFile : ImageFile

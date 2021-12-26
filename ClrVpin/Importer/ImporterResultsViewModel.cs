@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Importer.Vps;
 using PropertyChanged;
+using Utils;
 
 namespace ClrVpin.Importer
 {
@@ -11,8 +13,34 @@ namespace ClrVpin.Importer
     {
         public ImporterResultsViewModel(Game[] games)
         {
+            // assign VM properties
+            games.ForEach((game, index) =>
+            {
+                // index - for display
+                game.Index = index;
+                game.ImageUrlSelection = new UrlSelection()
+                {
+                    Url = game.ImgUrl,
+                    SelectedCommand = new ActionCommand(() => ShowImage(game.ImgUrl))
+                };
+
+                game.TableFiles.Concat(game.B2SFiles).ForEach(imageFile =>
+                {
+                    imageFile.ImageUrlSelection = new UrlSelection()
+                    {
+                        Url = imageFile.ImgUrl,
+                        SelectedCommand = new ActionCommand(() => ShowImage(imageFile.ImgUrl))
+                    };
+                });
+            });
+
             Games = new ObservableCollection<Game>(games);
             GamesView = new ListCollectionView<Game>(Games);
+        }
+        
+        private static void ShowImage(string tableImgUrl)
+        {
+
         }
 
         public ObservableCollection<Game> Games { get; set; }

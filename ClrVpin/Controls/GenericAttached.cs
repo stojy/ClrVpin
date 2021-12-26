@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
+﻿using System.Collections;
 using System.Windows;
+using System.Windows.Input;
 
 namespace ClrVpin.Controls;
 
+// attached properties
+// - property that has access to everything in the control that it's attached too.
+// - setup: create dependency property (to allow binding) and create Get/Set to allow it to bind to a control
 public class GenericAttached
 {
     // String
@@ -36,4 +38,8 @@ public class GenericAttached
     public static void SetEnumerable(UIElement element, IEnumerable value) => element.SetValue(EnumerableProperty, value);
     public static IEnumerable GetEnumerable(UIElement element) => (IEnumerable) element.GetValue(EnumerableProperty);
 
+    // Command - not working inside a control template?
+    public static readonly DependencyProperty CommandProperty = DependencyProperty.RegisterAttached("Command", typeof(ICommand), typeof(GenericAttached), new PropertyMetadata(null));
+    public static void SetCommand(UIElement element, ICommand value) => element.SetValue(CommandProperty, value);
+    public static ICommand GetCommand(UIElement element) => (ICommand) element.GetValue(CommandProperty);
 }

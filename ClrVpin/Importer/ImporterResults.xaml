@@ -7,7 +7,7 @@
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:vps="clr-namespace:ClrVpin.Importer.Vps"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
@@ -29,23 +29,59 @@
     </Button>
   </DataTemplate>
 
-  <!-- if valid url then show progress and ultimate image, else show broken image -->
-  <DataTemplate x:Key="ImageTemplate" DataType="{x:Type system:String}">
-    <Grid Height="300" ToolTip="{Binding}">
+
+  <!--an insane attempt to use a control template.. failed because Command won't fire (for some reason) on the behaviour
+          <ContentControl Template="{StaticResource ImageTemplate}"
+                        controls:GenericAttached.String="{Binding ImgUrl}" controls:GenericAttached.Command="{Binding ImageSelectedCommand}" />
+  -->
+  <!-- if valid url then show progress and ultimate image, else show broken image
+       - written as a control template (vs a DataTemplate with string binding so that it's usable by top level Game and also ImageFile --><!--
+  <ControlTemplate x:Key="ImageTemplate" TargetType="ContentControl">
+    <Grid Height="300" ToolTip="{TemplateBinding controls:GenericAttached.String}">
       <materialDesign:PackIcon Kind="ImageOffOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Visibility="{Binding Converter={StaticResource NullToVisibilityConverter}}" />
-      <Grid Visibility="{Binding Converter={StaticResource ReverseNullToVisibilityConverter}}">
+                               Visibility="{TemplateBinding controls:GenericAttached.String, Converter={StaticResource NullToVisibilityConverter}}" />
+      <Grid Visibility="{TemplateBinding controls:GenericAttached.String, Converter={StaticResource ReverseNullToVisibilityConverter}}">
+
         <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
-        <Image Source="{Binding}" Stretch="UniformToFill" />
+         --><!-- converter required because template binding doesn't convert to Uri automatically.. second class binding!! 
+              - refer https://stackoverflow.com/questions/1935919/wpf-custom-control-templatebinding-to-image--><!-- 
+        <Image Source="{TemplateBinding controls:GenericAttached.String, Converter={StaticResource ImageSourceConverter}}" Stretch="UniformToFill" Cursor="Hand">
+          <b:Interaction.Triggers>
+            <b:EventTrigger EventName="MouseUp">
+              <b:InvokeCommandAction Command="{TemplateBinding controls:GenericAttached.Command}" />
+            </b:EventTrigger>
+          </b:Interaction.Triggers>
+        </Image>
+      </Grid>
+    </Grid>
+  </ControlTemplate>-->
+
+  <DataTemplate x:Key="ImageTemplate" DataType="vps:UrlSelection">
+    <Grid Height="300" ToolTip="{Binding Url}">
+      <materialDesign:PackIcon Kind="ImageOffOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="{Binding Url, Converter={StaticResource NullToVisibilityConverter}}" />
+      <Grid Visibility="{Binding Url, Converter={StaticResource ReverseNullToVisibilityConverter}}">
+
+        <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
+        <!-- converter required because template binding doesn't convert to Uri automatically.. second class binding!! 
+              - refer https://stackoverflow.com/questions/1935919/wpf-custom-control-templatebinding-to-image-->
+        <Image Source="{Binding Url}" Stretch="UniformToFill" Cursor="Hand">
+          <b:Interaction.Triggers>
+            <b:EventTrigger EventName="MouseUp">
+              <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
+            </b:EventTrigger>
+          </b:Interaction.Triggers>
+        </Image>
       </Grid>
     </Grid>
   </DataTemplate>
 
-  <!--each of the x3 types (TableFile, ImageFile and File) are subtly different enough to warrant separate templtes-->
+  <!--each of the x3 types (TableFile, ImageFile and File) are subtly different enough to warrant separate templates-->
   <DataTemplate DataType="{x:Type vps:TableFile}">
     <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
-        <ContentControl Content="{Binding ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}" />
+        <!--<Button Command="{Binding ImageSelectedCommand}" Background="Transparent">-->
+        <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
 
         <!-- version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation -->
         <DockPanel>
@@ -72,7 +108,7 @@
   <DataTemplate DataType="{x:Type vps:ImageFile}">
     <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
-        <ContentControl Content="{Binding ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}" />
+        <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
 
         <!-- version and urls drawn in the same visual 'row' and using DockPanel to ensure truncation -->
         <DockPanel>
@@ -148,7 +184,7 @@
       <DockPanel DockPanel.Dock="Right" Margin="0">
         <StackPanel>
           <UniformGrid Columns="3">
-            <ContentControl Content="{Binding SelectedGame.ImgUrl}" ContentTemplate="{StaticResource ImageTemplate}" />
+            <ContentControl Content="{Binding SelectedGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
 
             <GroupBox Header="Table Info (HW)" Margin="5,0">
               <StackPanel>
@@ -184,7 +220,7 @@
           <GroupBox Margin="0,10,0,0" Header="Files">
             <!-- explicitly defining each tab item separately because TabControl.ItemSource is unusable..
                  1. TabControl.ContentTemplate  - data context is assigned as ItemSource, but DataContext is missing.. can be worked around using markup extensions
-                 2. TabControl.ItemContainerStyle - required to be overridden to enable/disable tabs, but MaterialDesignExtensions TabControl doesn't define a key'd style template to use for BasedOn            
+                 2. TabControl.ItemContainerStyle - required to be overridden to enable/disable tabs, but MaterialDesignExtensions TabControl doesn't define a keyed style template to use for BasedOn            
                  3. Not dictionary friendly - TabControl.ItemTemplate receives key (good), but TabControl.ItemTemplate receives KeyValuePair instead of just Value (bad).. impossible to bind (easily) in xaml due to generics
                  4. Not much point - simpler to duplicate the xaml than create a separate collection of the x3 types
             -->
