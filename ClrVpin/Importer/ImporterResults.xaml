@@ -7,7 +7,8 @@
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:vps="clr-namespace:ClrVpin.Importer.Vps"
-                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:clrVpin="clr-namespace:ClrVpin">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
@@ -160,6 +161,21 @@
   </DataTemplate>
 
   <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
+    <materialDesign:DialogHost Identifier="ImageDialog" CloseOnClickAway="True" VerticalAlignment="Center" DialogMargin="0">
+      <materialDesign:DialogHost.DialogContentTemplate>
+        <DataTemplate DataType="vps:UrlSelection">
+          <Border BorderThickness="2"  BorderBrush="{DynamicResource PrimaryHueMidBrush}">
+            <Image Source="{Binding Url}" Stretch="Uniform">
+              <b:Interaction.Triggers>
+                <b:EventTrigger EventName="MouseUp">
+                  <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
+                </b:EventTrigger>
+              </b:Interaction.Triggers>
+            </Image>
+          </Border>  
+        </DataTemplate>
+      </materialDesign:DialogHost.DialogContentTemplate>
+
     <!-- dock panel to provide a scrollbar (if required) for the child controls -->
     <DockPanel Margin="5">
       <DockPanel DockPanel.Dock="Left" Width="700">
@@ -179,8 +195,8 @@
             <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Updated" Binding="{Binding UpdatedAt}" Width="165" />
           </DataGrid.Columns>
         </DataGrid>
-
       </DockPanel>
+
       <DockPanel DockPanel.Dock="Right" Margin="0">
         <StackPanel>
           <UniformGrid Columns="3">
@@ -277,6 +293,7 @@
         </StackPanel>
       </DockPanel>
     </DockPanel>
+    </materialDesign:DialogHost>
 
   </DataTemplate>
 </ResourceDictionary>

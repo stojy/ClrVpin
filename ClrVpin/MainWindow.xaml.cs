@@ -32,7 +32,7 @@ namespace ClrVpin
                     {
                         Title = "Your settings have been reset",
                         Detail = "ClrVpin will now be restarted."
-                    }).ContinueWith(_ => Dispatcher.Invoke(Restart));
+                    }, "MainDialog").ContinueWith(_ => Dispatcher.Invoke(Restart));
                 }
             };
         }

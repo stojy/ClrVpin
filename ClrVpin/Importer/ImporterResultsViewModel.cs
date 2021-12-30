@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Importer.Vps;
+using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;
 
@@ -40,7 +41,13 @@ namespace ClrVpin.Importer
         
         private static void ShowImage(string tableImgUrl)
         {
+            var imageUrlSelection = new UrlSelection
+            {
+                Url = tableImgUrl,
+                SelectedCommand = new ActionCommand(() => DialogHost.Close("ImageDialog"))
+            };
 
+            DialogHost.Show(imageUrlSelection, "ImageDialog");
         }
 
         public ObservableCollection<Game> Games { get; set; }
