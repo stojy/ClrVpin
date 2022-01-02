@@ -116,11 +116,26 @@
   </Style>
 
   <!-- highlight mouse over item -->
-  <Style x:Key="HighlightedListBoxItemStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+  <Style x:Key="HighlightedListBoxItemOpacityStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
     <Style.Triggers>
       <Trigger Property="IsMouseOver" Value="False">
         <Trigger.Setters>
           <Setter Property="Opacity" Value="0.75"/>
+        </Trigger.Setters>
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <!-- highlight mouse over item -->
+  <Style x:Key="HighlightedListBoxItemEffectStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Trigger.Setters>
+          <Setter Property="Effect">
+            <Setter.Value>
+              <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance"/>
+            </Setter.Value>
+          </Setter>
         </Trigger.Setters>
       </Trigger>
     </Style.Triggers>
