@@ -129,7 +129,20 @@
   <!-- highlight mouse over item -->
   <Style x:Key="HighlightedListBoxItemEffectStyle" TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
     <Style.Triggers>
-      <Trigger Property="IsMouseOver" Value="True">
+      <MultiTrigger>
+        <MultiTrigger.Conditions>
+          <Condition Property="IsMouseOver" Value="True" />
+          <Condition Property="IsEnabled" Value="True" />
+        </MultiTrigger.Conditions>
+        <MultiTrigger.Setters>
+          <Setter Property="Effect">
+            <Setter.Value>
+              <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance"/>
+            </Setter.Value>
+          </Setter>
+        </MultiTrigger.Setters>
+      </MultiTrigger>
+      <!--<Trigger Property="IsMouseOver" Value="True">
         <Trigger.Setters>
           <Setter Property="Effect">
             <Setter.Value>
@@ -137,7 +150,7 @@
             </Setter.Value>
           </Setter>
         </Trigger.Setters>
-      </Trigger>
+      </Trigger>-->
     </Style.Triggers>
   </Style>
 

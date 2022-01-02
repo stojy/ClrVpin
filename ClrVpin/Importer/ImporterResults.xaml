@@ -19,24 +19,27 @@
   <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" True="Visible" False="Collapsed" />
   <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
 
-  <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
-    <!--<Setter Property="Background" Value="Gray"/>-->
-  </Style>
+  <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}" />
 
   <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
     <Button Style="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}"
             ToolTip="{Binding Url}" ToolTipService.InitialShowDelay="0" ToolTipService.ShowOnDisabled="True"
-            IsEnabled="{Binding Broken, Converter={StaticResource InvertBooleanConverter}}">
+            Command="{Binding SelectedCommand}">
       <materialDesign:PackIcon Kind="{Binding Broken, Converter={StaticResource UrlToIconConverter}}" Height="40" Width="40" Foreground="{DynamicResource MaterialDesignBody}" />
     </Button>
   </DataTemplate>
 
-  <!-- urls.. drawn with negative vertical so they appear in the same visual 'row' as the image -->
+  <!-- urls.. drawn with negative top margin so they appear in the same visual 'row' as the image -->
   <DataTemplate x:Key="UrlsTemplate">
     <ListBox DockPanel.Dock="Right" ItemsSource="{Binding}" ItemTemplate="{StaticResource UrlDetailTemplate}" Margin="0,-40,0,0"
-             materialDesign:ListBoxItemAssist.ShowSelection="False" ItemContainerStyle="{StaticResource HighlightedListBoxItemEffectStyle}"
-             Style="{StaticResource RightAlignedHorizontalListBoxStyle}"
-             />
+             materialDesign:ListBoxItemAssist.ShowSelection="False"
+             Style="{StaticResource RightAlignedHorizontalListBoxStyle}">
+      <ListBox.ItemContainerStyle>
+        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource HighlightedListBoxItemEffectStyle}" d:DataContext="{d:DesignInstance vps:UrlDetail}">
+          <Setter Property="IsEnabled" Value="{Binding Broken, Converter={StaticResource InvertBooleanConverter}}" />
+        </Style>
+      </ListBox.ItemContainerStyle>
+    </ListBox>
   </DataTemplate>
 
   <!--an insane attempt to use a control template..
@@ -159,16 +162,16 @@
     <materialDesign:DialogHost Identifier="ImageDialog" CloseOnClickAway="True" VerticalAlignment="Center" DialogMargin="0" DialogBackground="Transparent">
       <materialDesign:DialogHost.DialogContentTemplate>
         <DataTemplate DataType="vps:UrlSelection">
-            <Image Margin="15" Source="{Binding Url}" Stretch="Uniform">
-              <Image.Effect>
-                <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance"/>
-              </Image.Effect>
-              <b:Interaction.Triggers>
-                <b:EventTrigger EventName="MouseUp">
-                  <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
-                </b:EventTrigger>
-              </b:Interaction.Triggers>
-            </Image>
+          <Image Margin="15" Source="{Binding Url}" Stretch="Uniform">
+            <Image.Effect>
+              <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance" />
+            </Image.Effect>
+            <b:Interaction.Triggers>
+              <b:EventTrigger EventName="MouseUp">
+                <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
+              </b:EventTrigger>
+            </b:Interaction.Triggers>
+          </Image>
         </DataTemplate>
       </materialDesign:DialogHost.DialogContentTemplate>
 

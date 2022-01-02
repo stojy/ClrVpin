@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
@@ -19,41 +20,47 @@ namespace ClrVpin.Importer
             {
                 // index - for display
                 game.Index = index;
-                game.ImageUrlSelection = new UrlSelection()
+                game.ImageUrlSelection = new UrlSelection
                 {
                     Url = game.ImgUrl,
                     SelectedCommand = new ActionCommand(() => ShowImage(game.ImgUrl))
                 };
 
-                game.TableFiles.Concat(game.B2SFiles).ForEach(imageFile =>
+                // show large image popup
+                var imageFiles = game.TableFiles.Concat(game.B2SFiles).ToList();
+                imageFiles.ForEach(imageFile =>
                 {
-                    imageFile.ImageUrlSelection = new UrlSelection()
+                    imageFile.ImageUrlSelection = new UrlSelection
                     {
                         Url = imageFile.ImgUrl,
                         SelectedCommand = new ActionCommand(() => ShowImage(imageFile.ImgUrl))
                     };
                 });
+
+                // navigate to url
+                var allFiles = imageFiles
+                    .Concat(game.RuleFiles)
+                    .Concat(game.AltColorFiles)
+                    .Concat(game.AltSoundFiles)
+                    .Concat(game.MediaPackFiles)
+                    .Concat(game.PovFiles)
+                    .Concat(game.PupPackFiles)
+                    .Concat(game.RomFiles)
+                    .Concat(game.SoundFiles)
+                    .Concat(game.TableFiles)
+                    .Concat(game.TopperFiles)
+                    .Concat(game.WheelArtFiles);
+                allFiles.ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
             });
 
             Games = new ObservableCollection<Game>(games);
             GamesView = new ListCollectionView<Game>(Games);
         }
-        
-        private static void ShowImage(string tableImgUrl)
-        {
-            var imageUrlSelection = new UrlSelection
-            {
-                Url = tableImgUrl,
-                SelectedCommand = new ActionCommand(() => DialogHost.Close("ImageDialog"))
-            };
-
-            DialogHost.Show(imageUrlSelection, "ImageDialog");
-        }
 
         public ObservableCollection<Game> Games { get; set; }
         public ListCollectionView<Game> GamesView { get; set; }
 
-        public Window Window { get; set; }
+        public Window Window { get; private set; }
 
         public Game SelectedGame { get; set; }
 
@@ -75,5 +82,18 @@ namespace ClrVpin.Importer
         }
 
         public void Close() => Window.Close();
+
+        private void NavigateToUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+
+        private static void ShowImage(string tableImgUrl)
+        {
+            var imageUrlSelection = new UrlSelection
+            {
+                Url = tableImgUrl,
+                SelectedCommand = new ActionCommand(() => DialogHost.Close("ImageDialog"))
+            };
+
+            DialogHost.Show(imageUrlSelection, "ImageDialog");
+        }
     }
 }

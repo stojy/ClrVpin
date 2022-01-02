@@ -62,6 +62,9 @@ public class UrlDetail
 {
     public bool Broken { get; set; }
     public string Url { get; set; }
+
+    // view model
+    public ICommand SelectedCommand { get; set; }
 }
 
 public class File

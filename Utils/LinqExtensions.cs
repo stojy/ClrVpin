@@ -17,6 +17,7 @@ namespace Utils
                 action(item);
         }
 
+        [DebuggerStepThrough]
         public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
         {
             if (source == null)
