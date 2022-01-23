@@ -75,13 +75,13 @@ namespace ClrVpin.Importer
                 Filter = table => GamesView.Any(x => x.Name == table)
             };
 
-            ManufacturersFilterView = new ListCollectionView<string>(games.Select(x => x.Manufacturer).ToList())
+            ManufacturersFilterView = new ListCollectionView<string>(games.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = manufacturer => GamesView.Any(x => x.Manufacturer == manufacturer)
             };
 
-            YearsView = new ListCollectionView<string>(games.Select(x => x.YearString).ToList())
+            YearsView = new ListCollectionView<string>(games.Select(x => x.YearString).Distinct().OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = yearString => GamesView.Any(x => x.YearString.StartsWith(yearString))
