@@ -159,7 +159,7 @@
   </DataTemplate>
 
   <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
-    <materialDesign:DialogHost Identifier="ImageDialog" CloseOnClickAway="True" VerticalAlignment="Center" DialogMargin="0" DialogBackground="Transparent">
+    <materialDesign:DialogHost Identifier="ImageDialog" CloseOnClickAway="True" VerticalAlignment="Top" DialogMargin="0" DialogBackground="Transparent">
       <materialDesign:DialogHost.DialogContentTemplate>
         <DataTemplate DataType="vps:UrlSelection">
           <Image Margin="15" Source="{Binding Url}" Stretch="Uniform">
@@ -176,57 +176,73 @@
       </materialDesign:DialogHost.DialogContentTemplate>
 
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
-      <DockPanel Margin="5">
+      <DockPanel Margin="5" VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Left" Width="700">
-          <GroupBox DockPanel.Dock="Top" Header="Filter Options" Margin="0,0,0,20">
-            <UniformGrid Columns="3">
-              <ContentControl Template="{StaticResource KeyValuePair}" controls:GenericAttached.String="Table">
-                <StackPanel>
-                  <ComboBox Name="MyCombo" ItemsSource="{Binding TablesFilterView}" IsEditable="True" IsTextSearchEnabled="False"
-                            materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HintOpacity=".26"
-                            Text="{Binding Path=TableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <ComboBox.ItemsPanel>
-                      <ItemsPanelTemplate>
-                        <VirtualizingStackPanel />
-                      </ItemsPanelTemplate>
-                    </ComboBox.ItemsPanel>
-                    <b:Interaction.Triggers>
-                      <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
-                        <b:InvokeCommandAction Command="{Binding FilterChanged}" />
-                      </controls:RoutedEventTrigger>
-                    </b:Interaction.Triggers>
-                  </ComboBox>
-                </StackPanel>
+          <GroupBox DockPanel.Dock="Top" Header="Filter Options" Margin="0,0,5,20">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+              </Grid.ColumnDefinitions>
 
-              </ContentControl>
-
-              <ContentControl Template="{StaticResource KeyValuePair}" controls:GenericAttached.String="Manufacturer">
-                <ComboBox ItemsSource="{Binding ManufacturersFilterView}" IsEditable="True"
-                          materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HintOpacity=".26">
+              <ContentControl Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Table">
+                <ComboBox ItemsSource="{Binding TablesFilterView}" IsEditable="True" IsTextSearchEnabled="False" Width="250"
+                          materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HintOpacity=".26"
+                          Text="{Binding Path=TableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          IsDropDownOpen="{Binding Path=IsKeyboardFocusWithin, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                   <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
                       <VirtualizingStackPanel />
                     </ItemsPanelTemplate>
                   </ComboBox.ItemsPanel>
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
                 </ComboBox>
               </ContentControl>
 
-              <ContentControl Template="{StaticResource KeyValuePair}" controls:GenericAttached.String="Years">
-                <ComboBox ItemsSource="{Binding YearsFilterView}" IsEditable="True"
-                          materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HintOpacity=".26">
+              <ContentControl Grid.Column="1" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Manufacturer">
+                <ComboBox ItemsSource="{Binding ManufacturersFilterView}" IsEditable="True" IsTextSearchEnabled="False" Width="180"
+                          materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HintOpacity=".26"
+                          Text="{Binding Path=ManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          IsDropDownOpen="{Binding Path=IsKeyboardFocusWithin, Mode=OneWay, RelativeSource={RelativeSource Self}}">
                   <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
                       <VirtualizingStackPanel />
                     </ItemsPanelTemplate>
                   </ComboBox.ItemsPanel>
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
                 </ComboBox>
               </ContentControl>
-            </UniformGrid>
 
+              <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Years">
+                <ComboBox ItemsSource="{Binding YearsView}" IsEditable="True" IsTextSearchEnabled="False"
+                          materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HintOpacity=".26"
+                          Text="{Binding Path=YearFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          IsDropDownOpen="{Binding Path=IsKeyboardFocusWithin, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+                  <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                  </ComboBox.ItemsPanel>
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </ComboBox>
+              </ContentControl>
+            </Grid>
           </GroupBox>
 
           <!--<TextBlock DockPanel.Dock="Top" Text="TBD.. filtering options" Margin="0,10" />-->
-
 
           <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                     SelectionMode="Single"

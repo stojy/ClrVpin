@@ -2,7 +2,7 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:models="clr-namespace:ClrVpin.Models">
@@ -82,14 +82,14 @@
   <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" />
 
 
-  <!-- remove the border outline in the cell when selected, i.e. to give a more 'list box' feel --> 
+  <!-- remove the border outline in the cell when selected, i.e. to give a more 'list box' feel -->
   <Style x:Key="NoBorderDataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
     <Setter Property="BorderThickness" Value="0" />
   </Style>
 
   <Style TargetType="GroupBox" BasedOn="{StaticResource MaterialDesignGroupBox}">
-    <Setter Property="Padding" Value="5,3"/>
-    <Setter Property="Margin" Value="0"/>
+    <Setter Property="Padding" Value="5,3" />
+    <Setter Property="Margin" Value="0" />
     <!--<Setter Property="FontSize" Value="14"/>-->
   </Style>
 
@@ -109,7 +109,7 @@
     <Setter Property="ItemsPanel">
       <Setter.Value>
         <ItemsPanelTemplate>
-          <WrapPanel HorizontalAlignment="Right"/>
+          <WrapPanel HorizontalAlignment="Right" />
         </ItemsPanelTemplate>
       </Setter.Value>
     </Setter>
@@ -120,7 +120,7 @@
     <Style.Triggers>
       <Trigger Property="IsMouseOver" Value="False">
         <Trigger.Setters>
-          <Setter Property="Opacity" Value="0.75"/>
+          <Setter Property="Opacity" Value="0.75" />
         </Trigger.Setters>
       </Trigger>
     </Style.Triggers>
@@ -137,7 +137,7 @@
         <MultiTrigger.Setters>
           <Setter Property="Effect">
             <Setter.Value>
-              <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance"/>
+              <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance" />
             </Setter.Value>
           </Setter>
         </MultiTrigger.Setters>
@@ -155,13 +155,18 @@
   </Style>
 
   <!-- generic key-value control and styling -->
-  <Style x:Key="KeyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
+  <Style x:Key="KeyTextBlockStyleBase" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
     <Setter Property="VerticalAlignment" Value="Center" />
     <Setter Property="HorizontalAlignment" Value="Left" />
     <Setter Property="Margin" Value="10 0" />
     <Setter Property="Opacity" Value="0.56" />
+  </Style>
+
+  <Style x:Key="KeyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource KeyTextBlockStyleBase}">
     <Setter Property="Width" Value="80" />
   </Style>
+  
+  <Style x:Key="KeyTextBlockAutoStyle" TargetType="TextBlock" BasedOn="{StaticResource KeyTextBlockStyleBase}" />
 
   <Style x:Key="ValueTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
     <Setter Property="FontSize" Value="16" />
@@ -172,6 +177,13 @@
   <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
     <WrapPanel Margin="0,2">
       <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
+      <ContentPresenter Content="{TemplateBinding Content}" />
+    </WrapPanel>
+  </ControlTemplate>
+
+  <ControlTemplate x:Key="KeyValueAutoPair" TargetType="ContentControl">
+    <WrapPanel Margin="0,2">
+      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockAutoStyle}" />
       <ContentPresenter Content="{TemplateBinding Content}" />
     </WrapPanel>
   </ControlTemplate>

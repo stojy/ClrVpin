@@ -49,6 +49,7 @@ public class Game
     public int Index { get; set; }
     public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
     public UrlSelection ImageUrlSelection { get; set; }
+    public string YearString { get; set; }
 }
 
 // view model
