@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -29,16 +28,7 @@ namespace ClrVpin.Importer
 
         public static async Task<Game[]> GetOnlineDatabase()
         {
-            var games =  await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
-
-            // add VM properties.. todo; move elsewhere
-            games.ForEach(game =>
-            {
-                // patch the data.. assign a top level image url if one doesn't already exist
-                game.ImgUrl ??= game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
-            });
-
-            return games;
+            return await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
         }
 
         // refer https://github.com/Fraesh/vps-db, https://virtual-pinball-spreadsheet.web.app/

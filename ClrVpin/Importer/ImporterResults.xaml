@@ -285,9 +285,7 @@
         <DockPanel DockPanel.Dock="Right" Margin="20,0,0,0">
           <StackPanel>
             <UniformGrid Columns="3">
-              <ContentControl Content="{Binding SelectedGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
-
-              <GroupBox Header="Hardware: Table Info" Margin="5,0">
+              <GroupBox Header="Hardware: Table Info">
                 <StackPanel>
                   <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedGame.Name}" />
                   <UniformGrid Columns="2">
@@ -305,6 +303,8 @@
                   <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="IPDB" controls:GenericAttached.String2="{Binding SelectedGame.IpdbUrl}" />
                 </StackPanel>
               </GroupBox>
+
+              <ContentControl Content="{Binding SelectedGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" Margin="5,0"/>
 
               <GroupBox Header="Software: Virtualized Info">
                 <StackPanel>
