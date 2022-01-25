@@ -21,7 +21,7 @@ namespace ClrVpin.Importer
             games.ForEach((game, index) =>
             {
                 // index - for display
-                game.Index = index;
+                game.Index = index + 1;
                 game.ImageUrlSelection = new UrlSelection
                 {
                     Url = game.ImgUrl,

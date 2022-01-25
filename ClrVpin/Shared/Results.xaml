@@ -73,7 +73,7 @@
               <!-- scroll vertically then horizontally -->
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Vertical" ItemWidth="170"/>
+                  <WrapPanel Orientation="Vertical" ItemWidth="170" />
                 </ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
             </ItemsControl>
@@ -86,7 +86,7 @@
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
-            
+
               <!-- scroll vertically then horizontally -->
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -108,13 +108,12 @@
         </WrapPanel>
 
         <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,5,0">
-          <CheckBox DockPanel.Dock="Left" Margin="5,5" 
+          <CheckBox DockPanel.Dock="Left" Margin="5,5"
                     Command="{Binding ExpandGamesCommand}" CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
             Expand All
           </CheckBox>
 
-          <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right">
-            <TextBlock Text="Total: " />
+          <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
             <TextBlock Text="{Binding HitGamesView.Count}" />
             <TextBlock Text=" / " />
             <TextBlock Text="{Binding Games.Count}" />
@@ -123,9 +122,9 @@
       </StackPanel>
 
       <TreeView DockPanel.Dock="Bottom" ItemsSource="{Binding HitGamesView}"
-                ItemTemplate="{StaticResource HitGamesItemTemplate}" 
-                ItemContainerStyle="{StaticResource HitGameStyle}" 
-                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
+                ItemTemplate="{StaticResource HitGamesItemTemplate}"
+                ItemContainerStyle="{StaticResource HitGameStyle}"
+                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" />
     </DockPanel>
 
   </DataTemplate>

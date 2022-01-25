@@ -85,8 +85,9 @@
   <DataTemplate x:Key="ScannerExplorerTemplate" DataType="{x:Type scanner:ScannerExplorerViewModel}">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top" Margin="10,0,0,20">
-        <TextBox Width="150" HorizontalAlignment="Left" 
-                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic" materialDesign:TextFieldAssist.HasClearButton="True" 
+        <TextBox Width="150" HorizontalAlignment="Left"
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic"
+                 materialDesign:TextFieldAssist.HasClearButton="True"
                  Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
           <b:Interaction.Triggers>
             <b:EventTrigger EventName="TextChanged">
@@ -95,8 +96,7 @@
           </b:Interaction.Triggers>
         </TextBox>
 
-        <WrapPanel Margin="30,0,0,0" VerticalAlignment="Bottom">
-          <TextBlock Text="Total: " />
+        <WrapPanel Margin="30,0,0,0" VerticalAlignment="Bottom" TextBlock.FontStyle="Italic" Opacity="0.6">
           <TextBlock Text="{Binding GamesView.Count}" />
           <TextBlock Text=" / " />
           <TextBlock Text="{Binding Games.Count}" />
@@ -108,15 +108,20 @@
                 CellStyle="{StaticResource NoBorderDataGridCellStyle}">
         <DataGrid.Columns>
           <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly" CanUserSort="True" />
+          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly"
+                                  CanUserSort="True" />
           <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True"
+                              ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True"
+                              ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True"
+                              ElementStyle="{StaticResource TextCellStyle}" />
           <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Year" Binding="{Binding Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True"
+                              ElementStyle="{StaticResource TextCellStyle}" />
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />
         </DataGrid.Columns>

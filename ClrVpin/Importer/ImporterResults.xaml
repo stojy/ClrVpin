@@ -241,7 +241,7 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated Begin" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding UpdatedDateBegin}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated Begin" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding UpdatedDateBegin}" DisplayDateEnd="{Binding UpdatedDateEnd}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -249,7 +249,7 @@
                   </b:Interaction.Triggers>
                 </DatePicker>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated Begin" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding UpdatedDateEnd}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated Begin" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding UpdatedDateEnd}" DisplayDateStart="{Binding UpdatedDateBegin}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -260,7 +260,11 @@
             </StackPanel>
           </GroupBox>
 
-          <!--<TextBlock DockPanel.Dock="Top" Text="TBD.. filtering options" Margin="0,10" />-->
+          <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
+            <TextBlock Text="{Binding GamesView.Count}" />
+            <TextBlock Text=" / " />
+            <TextBlock Text="{Binding Games.Count}" />
+          </WrapPanel>
 
           <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                     SelectionMode="Single"
@@ -278,7 +282,7 @@
           </DataGrid>
         </DockPanel>
 
-        <DockPanel DockPanel.Dock="Right" Margin="0">
+        <DockPanel DockPanel.Dock="Right" Margin="20,0,0,0">
           <StackPanel>
             <UniformGrid Columns="3">
               <ContentControl Content="{Binding SelectedGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
