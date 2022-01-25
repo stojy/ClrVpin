@@ -66,7 +66,9 @@ namespace ClrVpin.Importer
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (IncludeOriginals || !game.Manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase)) &&
-                    (YearFilter == null || game.YearString.StartsWith(YearFilter, StringComparison.OrdinalIgnoreCase))
+                    (YearFilter == null || game.YearString.StartsWith(YearFilter, StringComparison.OrdinalIgnoreCase)) &&
+                    (UpdatedDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= UpdatedDateBegin) &&
+                    (UpdatedDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < UpdatedDateEnd.Value.AddDays(1))
             };
 
             // filters views (drop down combo boxes)
@@ -118,6 +120,9 @@ namespace ClrVpin.Importer
         public ICommand FilterChanged { get; set; }
 
         public bool IncludeOriginals { get; set; }
+
+        public DateTime? UpdatedDateBegin { get; set; }
+        public DateTime? UpdatedDateEnd { get; set; }
 
         public void Show(Window parentWindow, double left, double top)
         {

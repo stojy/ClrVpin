@@ -166,7 +166,6 @@
     <Setter Property="Width" Value="400" />
     <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
     <Setter Property="HorizontalAlignment" Value="Left" />
-    <Setter Property="Margin" Value="10,0" />
     <Setter Property="ItemsPanel">
       <Setter.Value>
         <ItemsPanelTemplate>
@@ -196,8 +195,8 @@
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Left" Width="700">
-          <GroupBox DockPanel.Dock="Top" Header="Filter Options" Margin="0,0,5,20">
-            <StackPanel>
+          <GroupBox DockPanel.Dock="Top" Header="Criteria" Margin="0,0,5,10">
+            <StackPanel Margin="10,0,0,10">
               <ComboBox ItemsSource="{Binding TablesFilterView}"
                         Text="{Binding Path=TableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         materialDesign:HintAssist.Hint="Table Name"
@@ -225,6 +224,12 @@
               </WrapPanel>
 
               <WrapPanel>
+                <WrapPanel.Resources>
+                  <Style x:Key="DatePickerStyle" TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignFloatingHintDatePicker}">
+                    <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
+                    <Setter Property="Margin" Value="10,0,0,0" />
+                  </Style>
+                </WrapPanel.Resources>
                 <ComboBox ItemsSource="{Binding YearsView}"
                           Text="{Binding Path=YearFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Year"
@@ -236,9 +241,21 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
-                <ContentControl Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Updated Begin" />
-                
-                <ContentControl Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Updated End" />
+                <DatePicker materialDesign:HintAssist.Hint="Updated Begin" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding UpdatedDateBegin}">
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </DatePicker>
+
+                <DatePicker materialDesign:HintAssist.Hint="Updated Begin" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding UpdatedDateEnd}">
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </DatePicker>
               </WrapPanel>
             </StackPanel>
           </GroupBox>
