@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows.Input;
 
@@ -46,6 +47,9 @@ public class Game
     public File[] RuleFiles { get; set; } = Array.Empty<File>();
 
     // view model properties
+    public Dictionary<string, File[]> AllFiles { get; } = new Dictionary<string, File[]>();
+    public List<ImageFile> ImageFiles { get; set; }
+
     public int Index { get; set; }
     public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
     public UrlSelection ImageUrlSelection { get; set; }

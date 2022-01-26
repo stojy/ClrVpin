@@ -331,52 +331,52 @@
                  4. Not much point - simpler to duplicate the xaml than create a separate collection of the x3 types
             -->
               <TabControl Style="{StaticResource MaterialDesignTabControl}">
-                <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.TableFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.TableFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.AllFiles[TableFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[TableFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                 </TabItem>
 
-                <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.B2SFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.B2SFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.AllFiles[B2SFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[B2SFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                 </TabItem>
 
-                <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.WheelArtFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.WheelArtFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.AllFiles[WheelArtFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[WheelArtFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                 </TabItem>
 
-                <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.RomFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.RomFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.AllFiles[RomFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[RomFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                 </TabItem>
-                <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.MediaPackFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.MediaPackFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.AllFiles[MediaPackFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[MediaPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                 </TabItem>
-                <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AltColorFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.AltColorFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AllFiles[AltColorFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[AltColorFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                 </TabItem>
-                <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.SoundFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.SoundFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.AllFiles[SoundFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[SoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                 </TabItem>
 
-                <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.TopperFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.TopperFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.AllFiles[TopperFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[TopperFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                 </TabItem>
 
-                <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.PupPackFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.PupPackFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.AllFiles[PupPackFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[PupPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                 </TabItem>
 
-                <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.PovFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.PovFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.AllFiles[PovFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[PovFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                 </TabItem>
 
-                <TabItem Header="Alternate Sounds" IsEnabled="{Binding SelectedGame.AltSoundFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.AltSoundFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="Alternate Sounds" IsEnabled="{Binding SelectedGame.AllFiles[AltSoundFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[AltSoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                 </TabItem>
 
-                <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.RuleFiles.Length}">
-                  <ContentControl Content="{Binding SelectedGame.RuleFiles}" ContentTemplate="{StaticResource FilesTemplate}" />
+                <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.AllFiles[RuleFiles].Length}">
+                  <ContentControl Content="{Binding SelectedGame.AllFiles[RuleFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                 </TabItem>
               </TabControl>
             </GroupBox>

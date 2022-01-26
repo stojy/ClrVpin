@@ -21,24 +21,6 @@ namespace ClrVpin.Importer
             // assign VM properties
             games.ForEach((game, index) =>
             {
-                // patch the data.. assign a top level image url if one doesn't already exist
-                game.ImgUrl ??= game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
-
-                // enforce sorted file ordering
-                // - required for some tables, e.g. 300
-                game.TableFiles = game.TableFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.B2SFiles = game.B2SFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.WheelArtFiles = game.WheelArtFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.RomFiles = game.RomFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.MediaPackFiles = game.MediaPackFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.AltColorFiles = game.AltColorFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.SoundFiles = game.SoundFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.TopperFiles = game.TopperFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.PupPackFiles = game.PupPackFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.PovFiles = game.PovFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.AltSoundFiles = game.AltSoundFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-
                 // index - for display
                 game.Index = index + 1;
                 game.ImageUrlSelection = new UrlSelection
@@ -48,8 +30,7 @@ namespace ClrVpin.Importer
                 };
 
                 // show large image popup
-                var imageFiles = game.TableFiles.Concat(game.B2SFiles).ToList();
-                imageFiles.ForEach(imageFile =>
+                game.ImageFiles.ForEach(imageFile =>
                 {
                     imageFile.ImageUrlSelection = new UrlSelection
                     {
@@ -61,19 +42,7 @@ namespace ClrVpin.Importer
                 game.YearString = game.Year.ToString();
 
                 // navigate to url
-                var allFiles = imageFiles
-                    .Concat(game.RuleFiles)
-                    .Concat(game.AltColorFiles)
-                    .Concat(game.AltSoundFiles)
-                    .Concat(game.MediaPackFiles)
-                    .Concat(game.PovFiles)
-                    .Concat(game.PupPackFiles)
-                    .Concat(game.RomFiles)
-                    .Concat(game.SoundFiles)
-                    .Concat(game.TableFiles)
-                    .Concat(game.TopperFiles)
-                    .Concat(game.WheelArtFiles);
-                allFiles.ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
+                game.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
             });
 
             // main games view (data grid)
