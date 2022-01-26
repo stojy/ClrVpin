@@ -110,6 +110,7 @@
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
                         controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
       </StackPanel>
     </materialDesign:Card>
   </DataTemplate>
@@ -128,6 +129,7 @@
                         Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
       </StackPanel>
     </materialDesign:Card>
   </DataTemplate>
@@ -146,6 +148,7 @@
                         Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
         <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
       </StackPanel>
     </materialDesign:Card>
   </DataTemplate>
@@ -195,7 +198,7 @@
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Left" Width="700">
-          <GroupBox DockPanel.Dock="Top" Header="Criteria" Margin="0,0,5,10">
+          <GroupBox DockPanel.Dock="Top" Header="Criteria" Margin="0,0,0,10">
             <StackPanel Margin="10,0,0,10">
               <ComboBox ItemsSource="{Binding TablesFilterView}"
                         Text="{Binding Path=TableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -220,7 +223,7 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
-                <CheckBox Margin="10,0" Content="Include 'Original'" IsChecked="{Binding IncludeOriginals}" Command="{Binding FilterChanged}" />
+                <CheckBox Margin="10,0" Content="Include 'Original'" IsChecked="{Binding Settings.IncludeOriginalTables}" Command="{Binding FilterChanged}" />
               </WrapPanel>
 
               <WrapPanel>
@@ -241,7 +244,7 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated Begin" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding UpdatedDateBegin}" DisplayDateEnd="{Binding UpdatedDateEnd}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated from" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateBegin}" DisplayDateEnd="{Binding Settings.UpdatedDateEnd}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -249,7 +252,7 @@
                   </b:Interaction.Triggers>
                 </DatePicker>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated Begin" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding UpdatedDateEnd}" DisplayDateStart="{Binding UpdatedDateBegin}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated to" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateEnd}" DisplayDateStart="{Binding Settings.UpdatedDateBegin}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -282,7 +285,7 @@
           </DataGrid>
         </DockPanel>
 
-        <DockPanel DockPanel.Dock="Right" Margin="20,0,0,0">
+        <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
           <StackPanel>
             <UniformGrid Columns="3">
               <GroupBox Header="Hardware: Table Info">
@@ -314,6 +317,7 @@
                   <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Designers"
                                   controls:GenericAttached.String2="{Binding SelectedGame.Designers, Converter={StaticResource ListToStringConverter}}" />
                   <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding SelectedGame.LastCreatedAt}" />
+                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
                   <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedGame.Broken}" />
                 </StackPanel>
               </GroupBox>

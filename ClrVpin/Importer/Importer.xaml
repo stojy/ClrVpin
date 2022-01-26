@@ -14,11 +14,8 @@
 
   <DataTemplate x:Key="ImporterTemplate" DataType="{x:Type importer:ImporterViewModel}">
     <StackPanel Margin="5">
-      <!--<TextBlock Style="{StaticResource Title}">Content</TextBlock>-->
-
       <TextBlock Text="TBD" />
-
-
+      <!--<TextBlock Style="{StaticResource Title}">Content</TextBlock>-->
       <!--<WrapPanel>
         <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding SourceFolderModel}" />
 

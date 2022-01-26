@@ -21,7 +21,7 @@ namespace ClrVpin.Models.Settings
 
         public bool WasReset { get; private set; }
         public bool IsValid { get; private set; }
-        public Settings Settings { get; set; }
+        public Settings Settings { get; private set; }
 
         public static SettingsManager Create()
         {

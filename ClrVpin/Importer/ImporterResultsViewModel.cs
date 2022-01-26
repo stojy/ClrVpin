@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Importer.Vps;
+using ClrVpin.Models.Settings;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;
@@ -83,10 +84,10 @@ namespace ClrVpin.Importer
                 Filter = game => 
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
-                    (IncludeOriginals || !game.Manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase)) &&
+                    (Settings.IncludeOriginalTables || !game.Manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase)) &&
                     (YearFilter == null || game.YearString.StartsWith(YearFilter, StringComparison.OrdinalIgnoreCase)) &&
-                    (UpdatedDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= UpdatedDateBegin) &&
-                    (UpdatedDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < UpdatedDateEnd.Value.AddDays(1))
+                    (Settings.UpdatedDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedDateBegin) &&
+                    (Settings.UpdatedDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedDateEnd.Value.AddDays(1))
             };
 
             // filters views (drop down combo boxes)
@@ -119,6 +120,8 @@ namespace ClrVpin.Importer
             });
         }
 
+        public ImporterSettings Settings { get; } = Model.Settings.Importer;
+
         // todo; move filters into a separate class
         public ListCollectionView<string> TablesFilterView { get; set; }
         public ListCollectionView<string> ManufacturersFilterView { get; set; }
@@ -137,11 +140,6 @@ namespace ClrVpin.Importer
 
         public ICommand FilterChanged { get; set; }
 
-        public bool IncludeOriginals { get; set; }
-
-        public DateTime? UpdatedDateBegin { get; set; }
-        public DateTime? UpdatedDateEnd { get; set; }
-
         public void Show(Window parentWindow, double left, double top)
         {
             Window = new MaterialWindowEx
@@ -151,7 +149,7 @@ namespace ClrVpin.Importer
                 Left = left,
                 Top = top,
                 Width = Model.ScreenWorkArea.Width - left - 5,
-                Height = (Model.ScreenWorkArea.Height - 10) * 0.7,
+                Height = (Model.ScreenWorkArea.Height - 10) * 0.73,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ImporterResultsTemplate") as DataTemplate
