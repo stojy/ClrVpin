@@ -92,9 +92,22 @@ namespace ClrVpin.Importer
             // ensure top level image url is assigned if it's not been assigned
             game.ImgUrl ??= game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
 
-            // ensure updated timestamp isn't lower than the created timestamp
+            // trim strings
+            if (game.Name != game.Name.Trim())
+            {
+                Logger.Warn($"Fixed GAME WHITESPACE: index={game.Index:####} name='{game.Name}'");
+                game.Name = game.Name.Trim();
+            }
+            
+            if (game.Manufacturer != game.Manufacturer.Trim())
+            {
+                Logger.Warn($"Fixed MANUFACTURER WHITESPACE: index={game.Index:####} manufacturer='{game.Manufacturer}'");
+                game.Manufacturer = game.Manufacturer.Trim();
+            }
+
             game.AllFiles.ForEach(kv =>
             {
+                // ensure updated timestamp isn't lower than the created timestamp
                 kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
                 {
                     LogFixedTimestamp(game, "FILE UPDATED", "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
