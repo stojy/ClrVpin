@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ClrVpin.Importer.Vps;
+using ClrVpin.Logging;
 using Utils;
 
 namespace ClrVpin.Importer
@@ -39,29 +40,30 @@ namespace ClrVpin.Importer
         private static void Update(Game[] games)
         {
             // various updates and/or fixes to the feed
-            games.ForEach(game =>
+            games.ForEach((game, index) =>
             {
-                // group all files into a single collection so they can be treated generically
-                // ReSharper disable once CoVariantArrayConversion
-                game.AllFiles.Add(nameof(game.TableFiles), game.TableFiles);
-                // ReSharper disable once CoVariantArrayConversion
-                game.AllFiles.Add(nameof(game.B2SFiles), game.B2SFiles);
-                game.AllFiles.Add(nameof(game.RuleFiles), game.RuleFiles);
-                game.AllFiles.Add(nameof(game.AltColorFiles), game.AltColorFiles);
-                game.AllFiles.Add(nameof(game.AltSoundFiles), game.AltSoundFiles);
-                game.AllFiles.Add(nameof(game.MediaPackFiles), game.MediaPackFiles);
-                game.AllFiles.Add(nameof(game.PovFiles), game.PovFiles);
-                game.AllFiles.Add(nameof(game.PupPackFiles), game.PupPackFiles);
-                game.AllFiles.Add(nameof(game.RomFiles), game.RomFiles);
-                game.AllFiles.Add(nameof(game.SoundFiles), game.SoundFiles);
-                game.AllFiles.Add(nameof(game.TopperFiles), game.TopperFiles);
-                game.AllFiles.Add(nameof(game.WheelArtFiles), game.WheelArtFiles);
+                game.Index = index + 1;
 
+                // group files into collections so they can be treated generically
+                game.AllFiles = new Dictionary<string, File[]>
+                {
+                    // ReSharper disable once CoVariantArrayConversion
+                    { nameof(game.TableFiles), game.TableFiles },
+                    // ReSharper disable once CoVariantArrayConversion
+                    { nameof(game.B2SFiles), game.B2SFiles },
+                    { nameof(game.RuleFiles), game.RuleFiles },
+                    { nameof(game.AltColorFiles), game.AltColorFiles },
+                    { nameof(game.AltSoundFiles), game.AltSoundFiles },
+                    { nameof(game.MediaPackFiles), game.MediaPackFiles },
+                    { nameof(game.PovFiles), game.PovFiles },
+                    { nameof(game.PupPackFiles), game.PupPackFiles },
+                    { nameof(game.RomFiles), game.RomFiles },
+                    { nameof(game.SoundFiles), game.SoundFiles },
+                    { nameof(game.TopperFiles), game.TopperFiles },
+                    { nameof(game.WheelArtFiles), game.WheelArtFiles }
+                };
+                game.AllFilesList = game.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
                 game.ImageFiles = game.TableFiles.Concat(game.B2SFiles).ToList();
-
-                // enforce sorted file ordering
-                // - required for some tables, e.g. 300
-                game.AllFiles.ForEach(kv => game.AllFiles[kv.Key] = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray());
 
                 Fix(game);
 
@@ -83,8 +85,43 @@ namespace ClrVpin.Importer
 
         private static void Fix(Game game)
         {
+            // enforce sorted file ordering to ensure a game's most recent files are shown first
+            // - arguably not a 'bug', but just a feature that the game files aren't ordered by default?
+            game.AllFiles.ForEach(kv => game.AllFiles[kv.Key] = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray());
+
             // ensure top level image url is assigned if it's not been assigned
             game.ImgUrl ??= game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
+
+            // ensure updated timestamp isn't lower than the created timestamp
+            game.AllFiles.ForEach(kv =>
+            {
+                kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
+                {
+                    LogFixedTimestamp(game, "FILE UPDATED", "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
+                    f.UpdatedAt = f.CreatedAt;
+                });
+            });
+
+            // fix game created timestamp - must not be less than any file timestamps
+            var maxCreatedAt = game.AllFilesList.Max(x => x.CreatedAt);
+            if (game.LastCreatedAt < maxCreatedAt)
+            {
+                LogFixedTimestamp(game, "GAME CREATED", "createdAt", game.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
+                game.LastCreatedAt = maxCreatedAt;
+            }
+
+            // fix game updated timestamp - must not be less than any file timestamps
+            var maxUpdatedAt = game.AllFilesList.Max(x => x.UpdatedAt);
+            if (game.UpdatedAt < maxUpdatedAt)
+            {
+                LogFixedTimestamp(game, "GAME UPDATED", "updatedAt", game.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
+                game.UpdatedAt = maxUpdatedAt;
+            }
+        }
+
+        private static void LogFixedTimestamp(Game game, string type, string dateTimeName1, DateTime? dateTimeValue1, string dateTimeName2, DateTime? dateTimeValue2)
+        {
+            Logger.Warn($"Fixed {type} timestamp: {dateTimeName1}='{dateTimeValue1:dd/MM/yy HH:mm:ss}' < {dateTimeName2}='{dateTimeValue2:dd/MM/yy HH:mm:ss}' index={game.Index:####} game='{game.Name}'");
         }
 
         // refer https://github.com/Fraesh/vps-db, https://virtual-pinball-spreadsheet.web.app/

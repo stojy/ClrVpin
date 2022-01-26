@@ -19,10 +19,9 @@ namespace ClrVpin.Importer
         public ImporterResultsViewModel(Game[] games)
         {
             // assign VM properties
-            games.ForEach((game, index) =>
+            games.ForEach(game =>
             {
                 // index - for display
-                game.Index = index + 1;
                 game.ImageUrlSelection = new UrlSelection
                 {
                     Url = game.ImgUrl,

@@ -47,7 +47,8 @@ public class Game
     public File[] RuleFiles { get; set; } = Array.Empty<File>();
 
     // view model properties
-    public Dictionary<string, File[]> AllFiles { get; } = new Dictionary<string, File[]>();
+    public Dictionary<string, File[]> AllFiles { get; set; }
+    public IEnumerable<File> AllFilesList { get; set; }
     public List<ImageFile> ImageFiles { get; set; }
 
     public int Index { get; set; }
