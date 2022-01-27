@@ -54,6 +54,7 @@ namespace ClrVpin.Importer
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (Settings.IncludeOriginalTables || !game.Manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase)) &&
                     (YearFilter == null || game.YearString.StartsWith(YearFilter, StringComparison.OrdinalIgnoreCase)) &&
+                    (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
                     (Settings.UpdatedDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedDateBegin) &&
                     (Settings.UpdatedDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedDateEnd.Value.AddDays(1))
             };
@@ -71,11 +72,13 @@ namespace ClrVpin.Importer
                 Filter = manufacturer => GamesView.Any(x => x.Manufacturer == manufacturer)
             };
 
-            YearsView = new ListCollectionView<string>(games.Select(x => x.YearString).Distinct().OrderBy(x => x).ToList())
+            YearsFilterView = new ListCollectionView<string>(games.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = yearString => GamesView.Any(x => x.YearString.StartsWith(yearString))
             };
+
+            TypesFilterView = new ListCollectionView<string>(games.Select(x => x.Type).Distinct().Where(x => x != null).OrderBy(x => x).ToList());
 
             // generic handler for all the filter changes.. since all of the combo box values will need to be re-evaluated in sync anyway
             FilterChanged = new ActionCommand(() =>
@@ -84,20 +87,24 @@ namespace ClrVpin.Importer
 
                 TablesFilterView.Refresh();
                 ManufacturersFilterView.Refresh();
-                YearsView.Refresh();
+                YearsFilterView.Refresh();
+                TypesFilterView.Refresh();
             });
         }
+
 
         public ImporterSettings Settings { get; } = Model.Settings.Importer;
 
         // todo; move filters into a separate class
         public ListCollectionView<string> TablesFilterView { get; set; }
         public ListCollectionView<string> ManufacturersFilterView { get; set; }
-        public ListCollectionView<string> YearsView { get; set; }
+        public ListCollectionView<string> YearsFilterView { get; set; }
+        public ListCollectionView<string> TypesFilterView { get; set; }
         
         public string TableFilter { get; set; }
         public string ManufacturerFilter { get; set; }
         public string YearFilter { get; set; }
+        public string TypeFilter { get; set; }
 
         public ObservableCollection<Game> Games { get; set; }
         public ListCollectionView<Game> GamesView { get; set; }

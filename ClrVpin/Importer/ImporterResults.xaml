@@ -233,12 +233,24 @@
                     <Setter Property="Margin" Value="10,0,0,0" />
                   </Style>
                 </WrapPanel.Resources>
-                <ComboBox ItemsSource="{Binding YearsView}"
+                <ComboBox ItemsSource="{Binding YearsFilterView}"
                           Text="{Binding Path=YearFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Year"
                           Style="{StaticResource EditComboBoxStyle}" Width="150">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </ComboBox>
+                
+                <ComboBox ItemsSource="{Binding TypesFilterView}"
+                          SelectedItem="{Binding Path=TypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          materialDesign:HintAssist.Hint="Type"
+                          Style="{StaticResource EditComboBoxStyle}" IsEditable="False" 
+                          Width="80" Margin="10,0,0,0">
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
                     </controls:RoutedEventTrigger>
                   </b:Interaction.Triggers>
