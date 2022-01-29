@@ -161,10 +161,10 @@
     </controls:HorizontalWheelScrollViewer>
   </DataTemplate>
 
-  <Style x:Key="EditComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}">
+  <Style x:Key="ComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}">
     <Setter Property="IsDropDownOpen" Value="{Binding Path=IsKeyboardFocusWithin, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
     <Setter Property="materialDesign:HintAssist.HintOpacity" Value=".5" />
-    <Setter Property="IsEditable" Value="True" />
+    <Setter Property="IsEditable" Value="False" />
     <Setter Property="IsTextSearchEnabled" Value="False" />
     <Setter Property="Width" Value="400" />
     <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
@@ -176,6 +176,10 @@
         </ItemsPanelTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+
+  <Style x:Key="EditComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource ComboBoxStyle}">
+    <Setter Property="IsEditable" Value="True"/>
   </Style>
 
   <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
@@ -233,12 +237,26 @@
                     <Setter Property="Margin" Value="10,0,0,0" />
                   </Style>
                 </WrapPanel.Resources>
-                <ComboBox ItemsSource="{Binding YearsFilterView}"
-                          Text="{Binding Path=YearFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          materialDesign:HintAssist.Hint="Year"
-                          Style="{StaticResource EditComboBoxStyle}" Width="150">
+                
+                <ComboBox ItemsSource="{Binding YearsBeginFilterView}"
+                          SelectedItem="{Binding Path=YearBeginFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          materialDesign:HintAssist.Hint="Year from"
+                          Style="{StaticResource ComboBoxStyle}"
+                          Width="100">
                   <b:Interaction.Triggers>
-                    <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
+                    <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </ComboBox>
+
+                <ComboBox ItemsSource="{Binding YearsEndFilterView}"
+                          SelectedItem="{Binding Path=YearEndFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          materialDesign:HintAssist.Hint="Year to"
+                          Style="{StaticResource ComboBoxStyle}"
+                          Width="100" Margin="10,0,0,0">
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
                     </controls:RoutedEventTrigger>
                   </b:Interaction.Triggers>
@@ -247,7 +265,7 @@
                 <ComboBox ItemsSource="{Binding TypesFilterView}"
                           SelectedItem="{Binding Path=TypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Type"
-                          Style="{StaticResource EditComboBoxStyle}" IsEditable="False" 
+                          Style="{StaticResource ComboBoxStyle}"
                           Width="80" Margin="10,0,0,0">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
