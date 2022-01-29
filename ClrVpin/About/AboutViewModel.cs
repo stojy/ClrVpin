@@ -17,7 +17,7 @@ namespace ClrVpin.About
             SourceCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(GitHubRepoUrl) { UseShellExecute = true }));
             AuthorCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(GitHubAuthorUrl) { UseShellExecute = true }));
             HelpCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(GitHubHelpUrl) { UseShellExecute = true }));
-            DonateCommand = new ActionCommand(() => new DonateViewModel().Show(_mainWindow));
+            DonateCommand = new ActionCommand(() => new DonateViewModel().Show(_window));
 
             var version = Assembly.GetEntryAssembly()?.GetName().Version!;
             AssemblyVersion = $"v{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
@@ -38,7 +38,7 @@ namespace ClrVpin.About
         {
             _mainWindow = parent;
 
-            var window = new MaterialWindowEx
+            _window = new MaterialWindowEx
             {
                 Owner = parent,
                 Content = this,
@@ -50,11 +50,12 @@ namespace ClrVpin.About
                 Title = "About"
             };
 
-            window.Show();
+            _window.Show();
             parent.Hide();
-            window.Closed += (_, _) => parent.Show();
+            _window.Closed += (_, _) => parent.Show();
         }
 
         private Window _mainWindow;
+        private MaterialWindowEx _window;
     }
 }

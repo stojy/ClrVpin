@@ -14,7 +14,7 @@
     </DataTemplate.Resources>
 
     <StackPanel Margin="5,10">
-      <TextBlock FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Center" Text="I hope you're enjoying the app.  If you find it useful and you'd like to donate, then here's the link.." />
+      <TextBlock FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Center" Text="If you're enjoying the app, then please feel free to donate to ensure it remains active.." />
 
       <TextBlock Margin="0,0,0,0">
         <Hyperlink Command="{Binding NavigateToPayPalCommand}">
@@ -25,7 +25,7 @@
         </Hyperlink>
       </TextBlock>
 
-      <TextBlock Margin="0,30,0,10" HorizontalAlignment="Center" Text="Or scan this barcode on your phone.." />
+      <TextBlock Margin="0,30,0,10" HorizontalAlignment="Center" Text="or scan this barcode on your phone.." />
 
       <Image Source="/Resources/PayPalQr.png" HorizontalAlignment="Center" Stretch="None" />
     </StackPanel>
