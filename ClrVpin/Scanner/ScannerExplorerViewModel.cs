@@ -5,7 +5,6 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using ClrVpin.Controls;
 using ClrVpin.Models;
-using MaterialDesignExtensions.Controls;
 using PropertyChanged;
 using Utils;
 
@@ -18,9 +17,9 @@ namespace ClrVpin.Scanner
         {
             Games = games;
             GamesView = new ListCollectionView<Game>(games);
-            
+
             // text filter
-            GamesView.Filter += gameObject => string.IsNullOrEmpty(SearchText) || ((Game)gameObject).Description.ToLower().Contains(SearchText.ToLower());
+            GamesView.Filter += gameObject => string.IsNullOrEmpty(SearchText) || gameObject.Description.ToLower().Contains(SearchText.ToLower());
 
             SearchTextCommand = new ActionCommand(SearchTextChanged);
         }
@@ -30,6 +29,7 @@ namespace ClrVpin.Scanner
         public Window Window { get; private set; }
         public string SearchText { get; set; } = "";
         public ICommand SearchTextCommand { get; set; }
+        public ObservableCollection<Game> Games { get; set; }
 
         public void Show(Window parentWindow, double left, double top)
         {
@@ -39,8 +39,8 @@ namespace ClrVpin.Scanner
                 Title = "Explorer (Tables)",
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - 5,
-                Height = (Model.ScreenWorkArea.Height - 10) / 3,
+                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
+                Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) / 3,
                 MinWidth = 400,
                 Content = this,
                 Resources = parentWindow.Resources,
@@ -57,7 +57,7 @@ namespace ClrVpin.Scanner
             // delay processing text changed
             if (_searchTextChangedDelayTimer == null)
             {
-                _searchTextChangedDelayTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(300)};
+                _searchTextChangedDelayTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
                 _searchTextChangedDelayTimer.Tick += (_, _) =>
                 {
                     _searchTextChangedDelayTimer.Stop();
@@ -70,6 +70,6 @@ namespace ClrVpin.Scanner
         }
 
         private DispatcherTimer _searchTextChangedDelayTimer;
-        public ObservableCollection<Game> Games { get; set; }
+        private const int WindowMargin = 0;
     }
 }

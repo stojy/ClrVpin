@@ -7,7 +7,6 @@ using ClrVpin.Controls;
 using ClrVpin.Models;
 using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
-using MaterialDesignExtensions.Controls;
 
 namespace ClrVpin.Rebuilder
 {
@@ -21,10 +20,10 @@ namespace ClrVpin.Rebuilder
             SupportedHitTypes = StaticSettings.MatchTypes.ToList();
 
             // content type stats for the single content type being rebuilt
-            SupportedContentTypes = new List<ContentType> {Settings.GetSelectedDestinationContentType()};
+            SupportedContentTypes = new List<ContentType> { Settings.GetSelectedDestinationContentType() };
 
             // rebuilder only supports a single selected content type
-            SelectedCheckContentTypes = new List<string> {Settings.Rebuilder.DestinationContentType};
+            SelectedCheckContentTypes = new List<string> { Settings.Rebuilder.DestinationContentType };
 
             // rebuilder doesn't support check and fix separately
             SelectedCheckHitTypes = Settings.Rebuilder.SelectedMatchTypes.ToList();
@@ -43,7 +42,7 @@ namespace ClrVpin.Rebuilder
                 Left = left,
                 Top = top,
                 Width = 750,
-                Height = Model.ScreenWorkArea.Height - 10,
+                Height = Model.ScreenWorkArea.Height - WindowMargin - WindowMargin,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("RebuilderStatisticsTemplate") as DataTemplate
@@ -59,7 +58,7 @@ namespace ClrVpin.Rebuilder
                    $"\n{"Source Files",StatisticsKeyWidth}" +
                    $"\n{"- Total",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Concat(UnmatchedFiles).ToList())}" +
                    $"\n{"- Matched",StatisticsKeyWidth}{CreateFileStatistic(GameFiles)}" +
-                   $"\n{"  - Merged",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x=> x.Merged))}" +
+                   $"\n{"  - Merged",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Merged))}" +
                    $"\n{"  - Ignored",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Ignored))}" +
                    $"\n{"  - Skipped",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Skipped))}" +
                    $"\n{"- Unmatched",StatisticsKeyWidth}{CreateFileStatistic(UnmatchedFiles)}" +
@@ -67,5 +66,7 @@ namespace ClrVpin.Rebuilder
                    "\n" +
                    $"\n{"Time Taken",StatisticsKeyWidth}{ElapsedTime.TotalSeconds:f2}s";
         }
+
+        private const double WindowMargin = 0;
     }
 }

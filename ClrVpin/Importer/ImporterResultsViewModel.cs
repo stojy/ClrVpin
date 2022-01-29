@@ -49,7 +49,7 @@ namespace ClrVpin.Importer
             GamesView = new ListCollectionView<Game>(Games)
             {
                 // filter the table names list to reflect the various criteria options
-                Filter = game => 
+                Filter = game =>
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (Settings.IncludeOriginalTables || !game.Manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase)) &&
@@ -114,7 +114,7 @@ namespace ClrVpin.Importer
         public ListCollectionView<string> YearsBeginFilterView { get; set; }
         public ListCollectionView<string> YearsEndFilterView { get; set; }
         public ListCollectionView<string> TypesFilterView { get; set; }
-        
+
         public string TableFilter { get; set; }
         public string ManufacturerFilter { get; set; }
         public string YearBeginFilter { get; set; }
@@ -140,7 +140,7 @@ namespace ClrVpin.Importer
                 Title = "Results",
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - 5,
+                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
                 Height = (Model.ScreenWorkArea.Height - 10) * 0.73,
                 Content = this,
                 Resources = parentWindow.Resources,
@@ -163,5 +163,7 @@ namespace ClrVpin.Importer
 
             DialogHost.Show(imageUrlSelection, "ImageDialog");
         }
+
+        private const int WindowMargin = 0;
     }
 }

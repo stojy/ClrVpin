@@ -6,13 +6,13 @@ namespace ClrVpin.Importer
 {
     public sealed class ImporterStatisticsViewModel
     {
-        internal TimeSpan ElapsedTime { get; }
-        public Window Window { get; set; }
-
         public ImporterStatisticsViewModel(TimeSpan elapsedTime)
         {
             ElapsedTime = elapsedTime;
         }
+
+        internal TimeSpan ElapsedTime { get; }
+        public Window Window { get; set; }
 
         public void Show(Window parentWindow, double left, double top)
         {
@@ -23,7 +23,7 @@ namespace ClrVpin.Importer
                 Left = left,
                 Top = top,
                 Width = 750,
-                Height = Model.ScreenWorkArea.Height - top - 5,
+                Height = Model.ScreenWorkArea.Height - top - WindowMargin,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ImporterStatisticsTemplate") as DataTemplate
@@ -34,6 +34,7 @@ namespace ClrVpin.Importer
         }
 
         public void Close() => Window.Close();
+        private const int WindowMargin = 0;
 
 
         //protected override string CreateTotalStatistics()

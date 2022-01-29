@@ -28,8 +28,8 @@ namespace ClrVpin.Rebuilder
                 Title = "Results (Matched Files)",
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - 5,
-                Height = (Model.ScreenWorkArea.Height - 10) / 2,
+                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
+                Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) / 2,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ResultsTemplate") as DataTemplate
@@ -67,5 +67,7 @@ namespace ClrVpin.Rebuilder
 
             return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) }).ToList();
         }
+
+        private const int WindowMargin = 0;
     }
 }

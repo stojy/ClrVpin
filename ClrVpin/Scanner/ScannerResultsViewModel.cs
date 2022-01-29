@@ -28,8 +28,8 @@ namespace ClrVpin.Scanner
                 Title = "Results (Issues and Fixes)",
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - 5,
-                Height = (Model.ScreenWorkArea.Height - 10) / 3,
+                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
+                Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) / 3,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ResultsTemplate") as DataTemplate
@@ -44,7 +44,7 @@ namespace ClrVpin.Scanner
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,
-                
+
                 // todo; use id
                 IsSupported = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
                 IsActive = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
@@ -68,5 +68,7 @@ namespace ClrVpin.Scanner
 
             return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) }).ToList();
         }
+
+        private const int WindowMargin = 0;
     }
 }

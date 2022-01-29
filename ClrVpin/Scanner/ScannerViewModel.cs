@@ -219,30 +219,39 @@ namespace ClrVpin.Scanner
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
-            var scannerStatistics = new ScannerStatisticsViewModel(Games, duration, gameFiles, unmatchedFiles);
-            scannerStatistics.Show(_scannerWindow, WindowMargin, WindowMargin);
+            var statistics = new ScannerStatisticsViewModel(Games, duration, gameFiles, unmatchedFiles);
+            statistics.Show(_scannerWindow, WindowMargin, WindowMargin);
 
-            var scannerResults = new ScannerResultsViewModel(Games);
-            scannerResults.Show(_scannerWindow, scannerStatistics.Window.Left + scannerStatistics.Window.Width + WindowMargin, scannerStatistics.Window.Top);
+            var results = new ScannerResultsViewModel(Games);
+            results.Show(_scannerWindow, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top);
 
-            var scannerExplorer = new ScannerExplorerViewModel(Games);
-            scannerExplorer.Show(_scannerWindow, scannerResults.Window.Left, scannerResults.Window.Top + scannerResults.Window.Height + WindowMargin);
+            var explorer = new ScannerExplorerViewModel(Games);
+            explorer.Show(_scannerWindow, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin);
 
-            _loggingViewModelWindow = new Logging.LoggingViewModel();
-            _loggingViewModelWindow.Show(_scannerWindow, scannerExplorer.Window.Left, scannerExplorer.Window.Top + scannerExplorer.Window.Height + WindowMargin);
+            var logging = new LoggingViewModel();
+            logging.Show(_scannerWindow, explorer.Window.Left, explorer.Window.Top + explorer.Window.Height + WindowMargin);
 
-            scannerStatistics.Window.Closed += (_, _) =>
+            statistics.Window.Closed += CloseWindows();
+            results.Window.Closed += CloseWindows();
+            explorer.Window.Closed += CloseWindows();
+            logging.Window.Closed += CloseWindows();
+
+            EventHandler CloseWindows()
             {
-                scannerResults.Close();
-                scannerExplorer.Close();
-                _loggingViewModelWindow.Close();
-                _scannerWindow.Show();
-            };
+                return (_, _) =>
+                {
+                    statistics.Window.Close();
+                    results.Close();
+                    explorer.Close();
+                    logging.Close();
+
+                    _scannerWindow.Show();
+                };
+            }
         }
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;
         private Window _scannerWindow;
-        private Logging.LoggingViewModel _loggingViewModelWindow;
-        private const int WindowMargin = 5;
+        private const int WindowMargin = 0;
     }
 }

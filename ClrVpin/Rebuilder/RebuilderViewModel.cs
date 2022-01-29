@@ -241,21 +241,29 @@ namespace ClrVpin.Rebuilder
             var rebuilderResults = new RebuilderResultsViewModel(Games);
             rebuilderResults.Show(_rebuilderWindow, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
 
-            _loggingViewModelWindow = new Logging.LoggingViewModel();
-            _loggingViewModelWindow.Show(_rebuilderWindow, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
+            var logging = new LoggingViewModel();
+            logging.Show(_rebuilderWindow, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
 
-            rebuilderStatistics.Window.Closed += (_, _) =>
+            logging.Window.Closed += CloseWindows();
+            rebuilderResults.Window.Closed += CloseWindows();
+            rebuilderStatistics.Window.Closed += CloseWindows();
+
+            EventHandler CloseWindows()
             {
-                rebuilderResults.Close();
-                _loggingViewModelWindow.Close();
-                _rebuilderWindow.Show();
-            };
+                return (_, _) =>
+                {
+                    rebuilderResults.Close();
+                    rebuilderStatistics.Window.Close();
+                    logging.Close();
+                    _rebuilderWindow.Show();
+                };
+            }
         }
+
 
         private readonly IEnumerable<string> _destinationContentTypes;
         private Window _rebuilderWindow;
-        private Logging.LoggingViewModel _loggingViewModelWindow;
 
-        private const int WindowMargin = 5;
+        private const int WindowMargin = 0;
     }
 }

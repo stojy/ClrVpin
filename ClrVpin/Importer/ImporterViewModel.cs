@@ -236,27 +236,28 @@ namespace ClrVpin.Importer
             var statistics = new ImporterStatisticsViewModel(duration);
             statistics.Show(_window, WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
-            var loggingWindow = new LoggingViewModel();
-            loggingWindow.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
+            var logging = new LoggingViewModel();
+            logging.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
-            results.Window.Closed += (_, _) =>
+            logging.Window.Closed += CloseWindows();
+            results.Window.Closed += CloseWindows();
+            statistics.Window.Closed += CloseWindows();
+
+            EventHandler CloseWindows()
             {
-                statistics.Close();
-                loggingWindow.Close();
-                //_window.Show();
-                _window.Close();
-            };
-            statistics.Window.Closed += (_, _) =>
-            {
-                results.Close();
-                loggingWindow.Close();
-                //_window.Show();
-                _window.Close();
-            };
+                return (_, _) =>
+                {
+                    results.Close();
+                    statistics.Close();
+                    logging.Close();
+                    //_window.Show();
+                    _window.Close();
+                };
+            }
         }
 
         //private readonly IEnumerable<string> _destinationContentTypes;
         private Window _window;
-        private const int WindowMargin = 5;
+        private const int WindowMargin = 0;
     }
 }

@@ -7,7 +7,6 @@ using ClrVpin.Controls;
 using ClrVpin.Models;
 using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
-using MaterialDesignExtensions.Controls;
 
 namespace ClrVpin.Scanner
 {
@@ -41,7 +40,7 @@ namespace ClrVpin.Scanner
                 Left = left,
                 Top = top,
                 Width = 770,
-                Height = Model.ScreenWorkArea.Height - 10,
+                Height = Model.ScreenWorkArea.Height - WindowMargin - WindowMargin,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ScannerStatisticsTemplate") as DataTemplate
@@ -91,7 +90,7 @@ namespace ClrVpin.Scanner
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"All Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +
                    $"\n\n{"CorrectName Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
-                   $"\n{"- Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal) validHits.Count / eligibleHits:P2})" +
+                   $"\n{"- Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal)validHits.Count / eligibleHits:P2})" +
                    $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Count, GameFiles.Sum(x => x.Size))}" +
                    $"\n{"- renamed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +
                    $"\n{"- removed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeleted.Count, fixFilesDeletedSize)}" +
@@ -100,5 +99,7 @@ namespace ClrVpin.Scanner
                    $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnoredUnknown.Count, fixFilesIgnoredUnknownSize)}" +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{ElapsedTime.TotalSeconds:f2}s";
         }
+
+        private const double WindowMargin = 0;
     }
 }

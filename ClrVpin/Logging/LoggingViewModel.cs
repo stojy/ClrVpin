@@ -23,26 +23,27 @@ namespace ClrVpin.Logging
 
         public void Show(Window parentWindow, double left, double top)
         {
-            _window = new MaterialWindowEx
+            Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
                 Title = "Logs",
                 WindowStartupLocation = WindowStartupLocation.Manual,
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - 5,
-                Height = Model.ScreenWorkArea.Height - top - 5,
+                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
+                Height = Model.ScreenWorkArea.Height - top - WindowMargin,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("LoggingTemplate") as DataTemplate
             };
-            _window.Show();
+            Window.Show();
         }
 
-        public void Close() => _window.Close();
+        public void Close() => Window.Close();
 
-        private void NavigateToFile() => Process.Start(new ProcessStartInfo(File) {UseShellExecute = true});
-        
-        private Window _window;
+        private void NavigateToFile() => Process.Start(new ProcessStartInfo(File) { UseShellExecute = true });
+
+        public Window Window { get; private set; }
+        private const int WindowMargin = 0;
     }
 }
