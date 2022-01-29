@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ClrVpin.Importer;
+namespace ClrVpin.Converters;
 
 public class UnixToNullableDateTimeConverter : JsonConverter<DateTime?>
 {

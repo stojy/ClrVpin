@@ -205,9 +205,9 @@ namespace ClrVpin.Importer
             progress.Show(_window);
 
             progress.Update("Loading online DB");
-            Logger.Info("Loading online DB");
+            
             var games = await ImporterUtils.GetOnlineDatabase();
-            Logger.Info($"Load complete online DB, duration={progress.Duration}");
+            Logger.Info($"Loading online DB complete, duration={progress.Duration}");
 
             //var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
 
@@ -221,8 +221,10 @@ namespace ClrVpin.Importer
             //await Task.Delay(1);
             //Games = new ObservableCollection<Game>(games);
 
+            
             ShowResults(progress.Duration, games);
-
+            Logger.Info($"Importer rendered, duration={progress.Duration}");
+            
             progress.Close();
 
             //void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);

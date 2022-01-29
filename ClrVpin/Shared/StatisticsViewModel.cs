@@ -136,6 +136,6 @@ namespace ClrVpin.Shared
 
         protected readonly ICollection<FileDetail> GameFiles;
         protected readonly ICollection<FileDetail> UnmatchedFiles;
-        protected const int StatisticsKeyWidth = -26;
+        public const int StatisticsKeyWidth = -26;
     }
 }
