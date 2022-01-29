@@ -324,8 +324,8 @@
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
           <Grid>
             <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
-                       VerticalAlignment="Center" HorizontalAlignment="Center">
-              <materialDesign:PackIcon Kind="HelpCircleOutline" Width="400" Height="400" HorizontalAlignment="Center"/>
+                        VerticalAlignment="Center" HorizontalAlignment="Center">
+              <materialDesign:PackIcon Kind="HelpCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
               <TextBlock Text="Select a table from the left hand side" FontSize="24" />
             </StackPanel>
 
@@ -346,7 +346,11 @@
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="MPU" controls:GenericAttached.String2="{Binding SelectedGame.Mpu}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
                                     controls:GenericAttached.String2="{Binding SelectedGame.Themes, Converter={StaticResource ListToStringConverter}}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="IPDB" controls:GenericAttached.String2="{Binding SelectedGame.IpdbUrl}" />
+                    <ContentControl Template="{StaticResource KeyValuePair}" controls:GenericAttached.String="IPDB">
+                      <Hyperlink Command="{Binding NavigateToIpdbCommand}" CommandParameter="{Binding SelectedGame.IpdbUrl}">
+                        <TextBlock Text="{Binding SelectedGame.IpdbUrl}" Style="{StaticResource ValueTextBlockStyle}" />
+                      </Hyperlink>
+                    </ContentControl>
                   </StackPanel>
                 </GroupBox>
 

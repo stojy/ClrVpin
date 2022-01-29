@@ -101,6 +101,8 @@ namespace ClrVpin.Importer
                 YearsEndFilterView.Refresh();
                 TypesFilterView.Refresh();
             });
+
+            NavigateToIpdbCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
         }
 
 
@@ -127,6 +129,8 @@ namespace ClrVpin.Importer
         public Game SelectedGame { get; set; }
 
         public ICommand FilterChanged { get; set; }
+
+        public ICommand NavigateToIpdbCommand { get; set; }
 
         public void Show(Window parentWindow, double left, double top)
         {
