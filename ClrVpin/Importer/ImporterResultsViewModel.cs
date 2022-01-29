@@ -61,7 +61,7 @@ namespace ClrVpin.Importer
             };
 
             // filters views (drop down combo boxes)
-            TablesFilterView = new ListCollectionView<string>(games.Select(x => x.Name).OrderBy(x => x).ToList())
+            TablesFilterView = new ListCollectionView<string>(games.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = table => GamesView.Any(x => x.Name == table)
