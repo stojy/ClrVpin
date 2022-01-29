@@ -74,7 +74,9 @@
 
   <!--with or without this style the appearance doesn't seem to change!-->
   <!--<Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}"/>-->
-  <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+  <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" />
+
+  <Style x:Key="HighlightedCheckBox" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance models:FeatureType}">
         <Setter Property="Foreground" Value="Coral" />

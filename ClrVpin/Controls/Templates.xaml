@@ -14,7 +14,8 @@
   <DataTemplate x:Key="FeatureTypeTemplate" DataType="models:FeatureType">
     <CheckBox Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
               Margin="{Binding IsSpecial, Converter={StaticResource BoolToMarginConverter}}"
-              Command="{Binding SelectedCommand}" FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}" />
+              Command="{Binding SelectedCommand}" FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}" 
+              Style="{StaticResource HighlightedCheckBox}"/>
   </DataTemplate>
 
 </ResourceDictionary>
