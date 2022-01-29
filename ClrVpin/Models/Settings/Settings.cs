@@ -72,8 +72,6 @@ namespace ClrVpin.Models.Settings
             set => _defaultSettings.FrontendFolder = value;
         }
 
-        public string EncryptedSpreadsheetKey => _defaultSettings.EncryptedSpreadsheeetKey;
-
         public List<ContentType> AllContentTypes { get; set; }
 
         public string BackupFolder { get; set; }

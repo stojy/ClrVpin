@@ -205,8 +205,9 @@ namespace ClrVpin.Importer
             progress.Show(_window);
 
             progress.Update("Loading online DB");
+            Logger.Info("Loading online DB");
             var games = await ImporterUtils.GetOnlineDatabase();
-            
+            Logger.Info($"Load complete online DB, duration={progress.Duration}");
 
             //var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
 
