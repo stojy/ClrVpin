@@ -18,6 +18,8 @@
   <converters:BoolToStringConverter x:Key="UrlToIconConverter" True="WebCancel" False="WebSync" />
   <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" True="Visible" False="Collapsed" />
   <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
+  <converters:NegativeToVisibilityConverter x:Key="NegativeToVisibilityConverter" />
+  <converters:NegativeToVisibilityConverter x:Key="PositiveToVisibilityConverter" True="Visible" False="Collapsed" />
 
   <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}" />
 
@@ -178,11 +180,11 @@
   </Style>
 
   <Style x:Key="EditComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource ComboBoxStyle}">
-    <Setter Property="IsEditable" Value="True"/>
+    <Setter Property="IsEditable" Value="True" />
   </Style>
 
   <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
-    <materialDesign:DialogHost Identifier="ImageDialog" CloseOnClickAway="True" VerticalAlignment="Top" DialogMargin="0" DialogBackground="Transparent">
+    <materialDesign:DialogHost Identifier="ImageDialog" CloseOnClickAway="True" VerticalAlignment="Stretch" DialogMargin="0" DialogBackground="Transparent">
       <materialDesign:DialogHost.DialogContentTemplate>
         <DataTemplate DataType="vps:UrlSelection">
           <Image Margin="15" Source="{Binding Url}" Stretch="Uniform">
@@ -216,17 +218,17 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
-                  <ComboBox ItemsSource="{Binding ManufacturersFilterView}"
-                            Text="{Binding Path=ManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            materialDesign:HintAssist.Hint="Manufacturer"
-                            Style="{StaticResource EditComboBoxStyle}"
-                            Width="300" Margin="10,0,0,0">
-                    <b:Interaction.Triggers>
-                      <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
-                        <b:InvokeCommandAction Command="{Binding FilterChanged}" />
-                      </controls:RoutedEventTrigger>
-                    </b:Interaction.Triggers>
-                  </ComboBox>
+                <ComboBox ItemsSource="{Binding ManufacturersFilterView}"
+                          Text="{Binding Path=ManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          materialDesign:HintAssist.Hint="Manufacturer"
+                          Style="{StaticResource EditComboBoxStyle}"
+                          Width="300" Margin="10,0,0,0">
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </ComboBox>
               </WrapPanel>
 
               <WrapPanel>
@@ -275,8 +277,9 @@
                     </controls:RoutedEventTrigger>
                   </b:Interaction.Triggers>
                 </ComboBox>
-                
-                <DatePicker materialDesign:HintAssist.Hint="Updated From" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateBegin}" DisplayDateEnd="{Binding Settings.UpdatedDateEnd}">
+
+                <DatePicker materialDesign:HintAssist.Hint="Updated From" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateBegin}"
+                            DisplayDateEnd="{Binding Settings.UpdatedDateEnd}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -284,7 +287,8 @@
                   </b:Interaction.Triggers>
                 </DatePicker>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated To" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateEnd}" DisplayDateStart="{Binding Settings.UpdatedDateBegin}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated To" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateEnd}"
+                            DisplayDateStart="{Binding Settings.UpdatedDateBegin}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -318,101 +322,109 @@
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
-          <StackPanel>
-            <UniformGrid Columns="3">
-              <GroupBox Header="Hardware: Table Info">
-                <StackPanel>
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedGame.Name}" />
-                  <UniformGrid Columns="2">
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Manufacturer"
-                                    controls:GenericAttached.String2="{Binding SelectedGame.Manufacturer}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Year" controls:GenericAttached.String2="{Binding SelectedGame.Year}" />
-                  </UniformGrid>
-                  <UniformGrid Columns="2">
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Type" controls:GenericAttached.String2="{Binding SelectedGame.Type}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Players" controls:GenericAttached.String2="{Binding SelectedGame.Players}" />
-                  </UniformGrid>
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="MPU" controls:GenericAttached.String2="{Binding SelectedGame.Mpu}" />
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
-                                  controls:GenericAttached.String2="{Binding SelectedGame.Themes, Converter={StaticResource ListToStringConverter}}" />
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="IPDB" controls:GenericAttached.String2="{Binding SelectedGame.IpdbUrl}" />
-                </StackPanel>
-              </GroupBox>
+          <Grid>
+            <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
+                       VerticalAlignment="Center" HorizontalAlignment="Center">
+              <materialDesign:PackIcon Kind="HelpCircleOutline" Width="400" Height="400" HorizontalAlignment="Center"/>
+              <TextBlock Text="Select a table from the left hand side" FontSize="24" />
+            </StackPanel>
 
-              <ContentControl Content="{Binding SelectedGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" Margin="5,0"/>
+            <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource NegativeToVisibilityConverter}}">
+              <UniformGrid Columns="3">
+                <GroupBox Header="Hardware: Table Info">
+                  <StackPanel>
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedGame.Name}" />
+                    <UniformGrid Columns="2">
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Manufacturer"
+                                      controls:GenericAttached.String2="{Binding SelectedGame.Manufacturer}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Year" controls:GenericAttached.String2="{Binding SelectedGame.Year}" />
+                    </UniformGrid>
+                    <UniformGrid Columns="2">
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Type" controls:GenericAttached.String2="{Binding SelectedGame.Type}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Players" controls:GenericAttached.String2="{Binding SelectedGame.Players}" />
+                    </UniformGrid>
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="MPU" controls:GenericAttached.String2="{Binding SelectedGame.Mpu}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
+                                    controls:GenericAttached.String2="{Binding SelectedGame.Themes, Converter={StaticResource ListToStringConverter}}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="IPDB" controls:GenericAttached.String2="{Binding SelectedGame.IpdbUrl}" />
+                  </StackPanel>
+                </GroupBox>
 
-              <GroupBox Header="Software: Virtualized Info">
-                <StackPanel>
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                                  controls:GenericAttached.String2="{Binding SelectedGame.Features, Converter={StaticResource ListToStringConverter}}" />
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Designers"
-                                  controls:GenericAttached.String2="{Binding SelectedGame.Designers, Converter={StaticResource ListToStringConverter}}" />
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding SelectedGame.LastCreatedAt}" />
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
-                  <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedGame.Broken}" />
-                </StackPanel>
-              </GroupBox>
-            </UniformGrid>
+                <ContentControl Content="{Binding SelectedGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" Margin="5,0" />
 
-            <GroupBox Margin="0,10,0,0" Header="Files">
-              <!-- explicitly defining each tab item separately because TabControl.ItemSource is unusable..
+                <GroupBox Header="Software: Virtualized Info">
+                  <StackPanel>
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
+                                    controls:GenericAttached.String2="{Binding SelectedGame.Features, Converter={StaticResource ListToStringConverter}}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Designers"
+                                    controls:GenericAttached.String2="{Binding SelectedGame.Designers, Converter={StaticResource ListToStringConverter}}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding SelectedGame.LastCreatedAt}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedGame.Broken}" />
+                  </StackPanel>
+                </GroupBox>
+              </UniformGrid>
+
+              <GroupBox Margin="0,10,0,0" Header="Files">
+                <!-- explicitly defining each tab item separately because TabControl.ItemSource is unusable..
                  1. TabControl.ContentTemplate  - data context is assigned as ItemSource, but DataContext is missing.. can be worked around using markup extensions
                  2. TabControl.ItemContainerStyle - required to be overridden to enable/disable tabs, but MaterialDesignExtensions TabControl doesn't define a keyed style template to use for BasedOn            
                  3. Not dictionary friendly - TabControl.ItemTemplate receives key (good), but TabControl.ItemTemplate receives KeyValuePair instead of just Value (bad).. impossible to bind (easily) in xaml due to generics
                  4. Not much point - simpler to duplicate the xaml than create a separate collection of the x3 types
             -->
-              <TabControl Style="{StaticResource MaterialDesignTabControl}">
-                <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.AllFiles[TableFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[TableFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                </TabItem>
+                <TabControl Style="{StaticResource MaterialDesignTabControl}">
+                  <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.AllFiles[TableFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[TableFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
 
-                <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.AllFiles[B2SFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[B2SFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                </TabItem>
+                  <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.AllFiles[B2SFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[B2SFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
 
-                <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.AllFiles[WheelArtFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[WheelArtFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                </TabItem>
+                  <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.AllFiles[WheelArtFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[WheelArtFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
 
-                <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.AllFiles[RomFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[RomFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.AllFiles[RomFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[RomFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
-                </TabItem>
-                <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.AllFiles[MediaPackFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[MediaPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
+                  <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.AllFiles[MediaPackFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[MediaPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
-                </TabItem>
-                <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AllFiles[AltColorFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[AltColorFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
+                  <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AllFiles[AltColorFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[AltColorFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
-                </TabItem>
-                <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.AllFiles[SoundFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[SoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                </TabItem>
+                  </TabItem>
+                  <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.AllFiles[SoundFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[SoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
 
-                <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.AllFiles[TopperFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[TopperFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                </TabItem>
+                  <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.AllFiles[TopperFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[TopperFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
 
-                <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.AllFiles[PupPackFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[PupPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                </TabItem>
+                  <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.AllFiles[PupPackFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[PupPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
 
-                <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.AllFiles[PovFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[PovFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                </TabItem>
+                  <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.AllFiles[PovFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[PovFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
 
-                <TabItem Header="Alternate Sounds" IsEnabled="{Binding SelectedGame.AllFiles[AltSoundFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[AltSoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                </TabItem>
+                  <TabItem Header="Alternate Sounds" IsEnabled="{Binding SelectedGame.AllFiles[AltSoundFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[AltSoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
 
-                <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.AllFiles[RuleFiles].Length}">
-                  <ContentControl Content="{Binding SelectedGame.AllFiles[RuleFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                </TabItem>
-              </TabControl>
-            </GroupBox>
-          </StackPanel>
+                  <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.AllFiles[RuleFiles].Length}">
+                    <ContentControl Content="{Binding SelectedGame.AllFiles[RuleFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  </TabItem>
+                </TabControl>
+              </GroupBox>
+            </StackPanel>
+          </Grid>
         </DockPanel>
       </DockPanel>
     </materialDesign:DialogHost>

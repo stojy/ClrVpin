@@ -59,6 +59,7 @@ namespace ClrVpin.Importer
                     (Settings.UpdatedDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedDateBegin) &&
                     (Settings.UpdatedDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedDateEnd.Value.AddDays(1))
             };
+            GamesView.MoveCurrentToFirst();
 
             // filters views (drop down combo boxes)
             TablesFilterView = new ListCollectionView<string>(games.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
