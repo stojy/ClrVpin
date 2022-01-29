@@ -166,7 +166,6 @@
     <Setter Property="materialDesign:HintAssist.HintOpacity" Value=".5" />
     <Setter Property="IsEditable" Value="False" />
     <Setter Property="IsTextSearchEnabled" Value="False" />
-    <Setter Property="Width" Value="400" />
     <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
     <Setter Property="HorizontalAlignment" Value="Left" />
     <Setter Property="ItemsPanel">
@@ -203,23 +202,13 @@
       <DockPanel Margin="5" VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Left" Width="700">
           <GroupBox DockPanel.Dock="Top" Header="Criteria" Margin="0,0,0,10">
-            <StackPanel Margin="10,0,0,10">
-              <ComboBox ItemsSource="{Binding TablesFilterView}"
-                        Text="{Binding Path=TableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        materialDesign:HintAssist.Hint="Table Name"
-                        Style="{StaticResource EditComboBoxStyle}">
-                <b:Interaction.Triggers>
-                  <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
-                    <b:InvokeCommandAction Command="{Binding FilterChanged}" />
-                  </controls:RoutedEventTrigger>
-                </b:Interaction.Triggers>
-              </ComboBox>
-
+            <StackPanel Margin="5,0,0,5">
               <WrapPanel>
-                <ComboBox ItemsSource="{Binding ManufacturersFilterView}"
-                          Text="{Binding Path=ManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          materialDesign:HintAssist.Hint="Manufacturer"
-                          Style="{StaticResource EditComboBoxStyle}">
+                <ComboBox ItemsSource="{Binding TablesFilterView}"
+                          Text="{Binding Path=TableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          materialDesign:HintAssist.Hint="Table"
+                          Style="{StaticResource EditComboBoxStyle}"
+                          Width="370">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -227,7 +216,17 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
-                <CheckBox Margin="10,0" Content="Include 'Original'" IsChecked="{Binding Settings.IncludeOriginalTables}" Command="{Binding FilterChanged}" />
+                  <ComboBox ItemsSource="{Binding ManufacturersFilterView}"
+                            Text="{Binding Path=ManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            materialDesign:HintAssist.Hint="Manufacturer"
+                            Style="{StaticResource EditComboBoxStyle}"
+                            Width="300" Margin="10,0,0,0">
+                    <b:Interaction.Triggers>
+                      <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
+                        <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                      </controls:RoutedEventTrigger>
+                    </b:Interaction.Triggers>
+                  </ComboBox>
               </WrapPanel>
 
               <WrapPanel>
@@ -235,14 +234,29 @@
                   <Style x:Key="DatePickerStyle" TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignFloatingHintDatePicker}">
                     <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
                     <Setter Property="Margin" Value="10,0,0,0" />
+                    <Setter Property="Width" Value="125" />
                   </Style>
                 </WrapPanel.Resources>
-                
+
+                <CheckBox Margin="0,10,0,0" Content="Include 'Original'" IsChecked="{Binding Settings.IncludeOriginalTables}" Command="{Binding FilterChanged}" />
+
+                <ComboBox ItemsSource="{Binding TypesFilterView}"
+                          SelectedItem="{Binding Path=TypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          materialDesign:HintAssist.Hint="Type"
+                          Style="{StaticResource ComboBoxStyle}"
+                          Width="65" Margin="10,0,0,0">
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </ComboBox>
+
                 <ComboBox ItemsSource="{Binding YearsBeginFilterView}"
                           SelectedItem="{Binding Path=YearBeginFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          materialDesign:HintAssist.Hint="Year from"
+                          materialDesign:HintAssist.Hint="Year From"
                           Style="{StaticResource ComboBoxStyle}"
-                          Width="100">
+                          Width="100" Margin="10,0,0,0">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -252,9 +266,9 @@
 
                 <ComboBox ItemsSource="{Binding YearsEndFilterView}"
                           SelectedItem="{Binding Path=YearEndFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          materialDesign:HintAssist.Hint="Year to"
+                          materialDesign:HintAssist.Hint="Year To"
                           Style="{StaticResource ComboBoxStyle}"
-                          Width="100" Margin="10,0,0,0">
+                          Width="90" Margin="10,0,0,0">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -262,19 +276,7 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
                 
-                <ComboBox ItemsSource="{Binding TypesFilterView}"
-                          SelectedItem="{Binding Path=TypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          materialDesign:HintAssist.Hint="Type"
-                          Style="{StaticResource ComboBoxStyle}"
-                          Width="80" Margin="10,0,0,0">
-                  <b:Interaction.Triggers>
-                    <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
-                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
-                    </controls:RoutedEventTrigger>
-                  </b:Interaction.Triggers>
-                </ComboBox>
-
-                <DatePicker materialDesign:HintAssist.Hint="Updated from" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateBegin}" DisplayDateEnd="{Binding Settings.UpdatedDateEnd}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated From" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateBegin}" DisplayDateEnd="{Binding Settings.UpdatedDateEnd}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -282,7 +284,7 @@
                   </b:Interaction.Triggers>
                 </DatePicker>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated to" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateEnd}" DisplayDateStart="{Binding Settings.UpdatedDateBegin}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated To" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateEnd}" DisplayDateStart="{Binding Settings.UpdatedDateBegin}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
