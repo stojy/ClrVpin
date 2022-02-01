@@ -5,7 +5,7 @@ using ClrVpin.Controls;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Donate
+namespace ClrVpin.About
 {
     [AddINotifyPropertyChangedInterface]
     public class DonateViewModel

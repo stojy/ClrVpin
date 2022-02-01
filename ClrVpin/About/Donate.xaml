@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:donate="clr-namespace:ClrVpin.Donate">
+                    xmlns:donate="clr-namespace:ClrVpin.About">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />

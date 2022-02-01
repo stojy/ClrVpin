@@ -68,7 +68,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Donate\Donate.xaml">
+    <Page Update="About\Thanks.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="About\Donate.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

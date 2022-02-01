@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:about="clr-namespace:ClrVpin.About"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="\Controls\Styles.xaml" />
+  </ResourceDictionary.MergedDictionaries>
+
+  <DataTemplate x:Key="ThanksTemplate" DataType="{x:Type about:ThanksViewModel}">
+    <StackPanel Margin="5,10">
+      <TextBlock FontSize="20" TextWrapping="Wrap" HorizontalAlignment="Center" FontWeight="Bold"
+                 Text="This application would not be possible without the awesome contributions from the open source virtual pinball community." />
+
+      <TextBlock FontSize="16" Margin="0,20,0,0" Text="In no particular order, some of the many contributors that have made Visual Pinball and this application possible.." />
+
+      <ItemsControl ItemsSource="{Binding Contributors}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Margin="10,10,0,0" FontSize="16">
+              <Run Text="• " />
+              <Hyperlink Command="{Binding DataContext.NavigateToPage, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Path=Url}"
+                         ToolTip="{Binding Note}" ToolTipService.InitialShowDelay="100">
+                <Run Text="{Binding Path=Url}" />
+              </Hyperlink>
+            </TextBlock>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <TextBlock Margin="0,20,0,0" FontStyle="Italic" HorizontalAlignment="Right"
+                 Text="The list is certainly not complete. If you notice any mistakes or omissions please let me know and i'll be sure to make amends." />
+    </StackPanel>
+  </DataTemplate>
+
+</ResourceDictionary>

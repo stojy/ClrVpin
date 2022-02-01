@@ -36,7 +36,8 @@
 
         <ResourceDictionary Source="Settings/Settings.xaml" />
         <ResourceDictionary Source="About/About.xaml" />
-        <ResourceDictionary Source="Donate/Donate.xaml" />
+        <ResourceDictionary Source="About/Thanks.xaml" />
+        <ResourceDictionary Source="About/Donate.xaml" />
         
         <ResourceDictionary Source="Logging/Logging.xaml" />
       </ResourceDictionary.MergedDictionaries>
@@ -73,7 +74,7 @@
                 </StackPanel>
               </Button>
               <Button Command="{Binding ImporterCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateHighlightButton}" 
-                      ToolTip="Import and navigate online database">
+                      ToolTip="Import and navigate online database to check for updated content">
                 <StackPanel>
                   <TextBlock Text="Importer" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Web" Height="40" Width="40" HorizontalAlignment="Center" />

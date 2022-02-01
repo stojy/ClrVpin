@@ -21,10 +21,11 @@
       </WrapPanel>
       <Image Source="/Resources/ClrVpin.png" Height="250" Margin="10" />
 
-      <TextBlock Margin="5,10,0,0" FontSize="16">Visual Pinball content library management tool..</TextBlock>
-      <TextBlock Margin="5,0,0,0" FontSize="16">• VPX tables and backglasses</TextBlock>
-      <TextBlock Margin="5,0,0,0" FontSize="16">• Front end media (launch audio, table video, wheels, etc)</TextBlock>
-
+      <TextBlock Margin="5,10,0,0" FontSize="16">Open source visual pinball content management tool..</TextBlock>
+      <TextBlock Margin="5,0,0,0" FontSize="16">• Essentials - Tables and backglasses</TextBlock>
+      <TextBlock Margin="5,0,0,0" FontSize="16">• Media - launch audio, table video, wheels, etc</TextBlock>
+      <TextBlock Margin="5,0,0,0" FontSize="16">• Online - VPS database integration to check for content updates</TextBlock>
+      
       <WrapPanel Margin="0,20,0,0" HorizontalAlignment="Center">
         <Button Command="{Binding SourceCommand}" Width="70" ToolTip="View the source code on GitHub">
           <StackPanel>
@@ -47,6 +48,13 @@
           </StackPanel>
         </Button>
         
+        <Button Command="{Binding ThanksCommand}" Width="70" ToolTip="Special community thanks">
+          <StackPanel>
+            <TextBlock Text="Thanks" HorizontalAlignment="Center" />
+            <materialDesign:PackIcon Kind="HandClap" Height="40" Width="40" />
+          </StackPanel>
+        </Button>
+
         <Button Command="{Binding DonateCommand}" Style="{StaticResource AlternateButton}" Width="70" ToolTip="Make a donation">
           <StackPanel>
             <TextBlock Text="Donate" HorizontalAlignment="Center" />
