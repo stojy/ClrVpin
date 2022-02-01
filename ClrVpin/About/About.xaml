@@ -7,6 +7,12 @@
     <ResourceDictionary Source="\Controls\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
+  <Style x:Key="PackIconStyle" TargetType="materialDesign:PackIcon">
+    <Setter Property="Height" Value="40" />
+    <Setter Property="Width" Value="40" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+  </Style>
+
   <DataTemplate x:Key="AboutTemplate" DataType="{x:Type about:AboutViewModel}">
     <DataTemplate.Resources>
       <Style TargetType="TextBlock">
@@ -17,48 +23,48 @@
     <StackPanel Margin="5">
       <WrapPanel>
         <TextBlock Style="{StaticResource MaterialDesignHeadline1TextBlock}" HorizontalAlignment="Center">ClrVpin</TextBlock>
-        <TextBlock VerticalAlignment="Bottom" Margin="10,0,0,20" Text="{Binding AssemblyVersion}"/>
+        <TextBlock VerticalAlignment="Bottom" Margin="10,0,0,20" Text="{Binding AssemblyVersion}" />
       </WrapPanel>
       <Image Source="/Resources/ClrVpin.png" Height="250" Margin="10" />
 
       <TextBlock Margin="5,10,0,0" FontSize="16">Open source visual pinball content management tool..</TextBlock>
-      <TextBlock Margin="5,0,0,0" FontSize="16">• Essentials - Tables and backglasses</TextBlock>
-      <TextBlock Margin="5,0,0,0" FontSize="16">• Media - launch audio, table video, wheels, etc</TextBlock>
-      <TextBlock Margin="5,0,0,0" FontSize="16">• Online - VPS database integration to check for content updates</TextBlock>
-      
+      <TextBlock Margin="5,0,0,0" FontSize="16">• Essentials: Tables and backglasses</TextBlock>
+      <TextBlock Margin="5,0,0,0" FontSize="16">• Media: launch audio, table video, wheels, etc</TextBlock>
+      <TextBlock Margin="5,0,0,0" FontSize="16">• Updates: VPS database integration for content updates</TextBlock>
+
       <WrapPanel Margin="0,20,0,0" HorizontalAlignment="Center">
         <Button Command="{Binding SourceCommand}" Width="70" ToolTip="View the source code on GitHub">
           <StackPanel>
             <TextBlock Text="Source" HorizontalAlignment="Center" />
-            <materialDesign:PackIcon Kind="Github" Height="40" Width="40" />
+            <materialDesign:PackIcon Kind="Github" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
 
         <Button Command="{Binding HelpCommand}" Width="70" ToolTip="Show online help">
           <StackPanel>
             <TextBlock Text="Help" HorizontalAlignment="Center" />
-            <materialDesign:PackIcon Kind="HelpCircleOutline" Height="40" Width="40" />
+            <materialDesign:PackIcon Kind="HelpCircleOutline" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
 
         <Button Command="{Binding AuthorCommand}" Width="70" ToolTip="Contact the Author">
           <StackPanel>
             <TextBlock Text="Author" HorizontalAlignment="Center" />
-            <materialDesign:PackIcon Kind="Account" Height="40" Width="40" />
+            <materialDesign:PackIcon Kind="Account" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
-        
+
         <Button Command="{Binding ThanksCommand}" Width="70" ToolTip="Special community thanks">
           <StackPanel>
             <TextBlock Text="Thanks" HorizontalAlignment="Center" />
-            <materialDesign:PackIcon Kind="HandClap" Height="40" Width="40" />
+            <materialDesign:PackIcon Kind="HandClap" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
 
         <Button Command="{Binding DonateCommand}" Style="{StaticResource AlternateButton}" Width="70" ToolTip="Make a donation">
           <StackPanel>
             <TextBlock Text="Donate" HorizontalAlignment="Center" />
-            <materialDesign:PackIcon Kind="GiftOutline" Height="40" Width="40" />
+            <materialDesign:PackIcon Kind="GiftOutline" Style="{StaticResource PackIconStyle}"/>
           </StackPanel>
         </Button>
       </WrapPanel>
