@@ -12,7 +12,7 @@
       <TextBlock FontSize="20" TextWrapping="Wrap" HorizontalAlignment="Center" FontWeight="Bold"
                  Text="This application would not be possible without the awesome contributions from the open source virtual pinball community." />
 
-      <TextBlock FontSize="16" Margin="0,20,0,0" Text="In no particular order, some of the many contributors that have made Visual Pinball and this application possible.." />
+      <TextBlock FontSize="16" Margin="0,20,0,0" Text="Below are some of the many contributors that have made Visual Pinball and this application possible.." />
 
       <ItemsControl ItemsSource="{Binding Contributors}">
         <ItemsControl.ItemTemplate>
@@ -29,7 +29,7 @@
       </ItemsControl>
 
       <TextBlock Margin="0,20,0,0" FontStyle="Italic" HorizontalAlignment="Right"
-                 Text="The list is certainly not complete. If you notice any mistakes or omissions please let me know and i'll be sure to make amends." />
+                 Text="This list is certainly not complete. If you notice any mistakes or omissions please let me know and i'll be sure to make amends." />
     </StackPanel>
   </DataTemplate>
 
