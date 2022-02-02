@@ -28,7 +28,7 @@
       <Image Source="/Resources/ClrVpin.png" Height="250" Margin="10" />
 
       <TextBlock Margin="5,10,0,0" FontSize="16" TextWrapping="Wrap">An open source virtual pinball content management tool.</TextBlock>
-      <TextBlock Margin="5,20,0,0" FontSize="16" TextWrapping="Wrap">Designed to automate the manual tasks to ensure your pinball collections and databases are..</TextBlock>
+      <TextBlock Margin="5,20,0,0" FontSize="16" TextWrapping="Wrap">Designed to automate the manual tasks of keeping your pinball collections and databases so they are..</TextBlock>
       <TextBlock Margin="15,5,0,0" FontSize="16">• Accurate</TextBlock>
       <TextBlock Margin="15,0,0,0" FontSize="16">• Clean</TextBlock>
       <TextBlock Margin="15,0,0,0" FontSize="16">• Minimal</TextBlock>
