@@ -2,9 +2,10 @@
 ![ClrVpin - 1280x640](https://user-images.githubusercontent.com/11408611/117466530-654d2d80-af85-11eb-8493-c49034aa9315.png)
 
 ## Purpose
-An ___open source___ virtual pinball content management tool built to ___automate___ the manual tasks of keeping your pinball file collections and databases so they are..
+An ___open source___ virtual pinball content management tool.  Designed to ___automate___ the manual tasks of keeping your collections and databases so they are..
 - Accurate
 - Clean
+- Minimal
 - Current
 
 ## Supported Platforms and Content
