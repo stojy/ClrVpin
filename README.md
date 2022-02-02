@@ -4,6 +4,7 @@
 ## Purpose
 An ___open source___ virtual pinball content management tool built to ___automate___ the manual tasks of keeping your pinball file collections and databases so they are..
 - Accurate
+- Clean
 - Current
 
 ## Supported Platforms and Content
