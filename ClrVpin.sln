@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31112.23
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{0F9461D6-B18B-4898-BE0B-C4AC853684C5}"
 EndProject
@@ -20,10 +20,7 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "ClrVpin.Setup", "ClrVpin.Se
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "screenshots", "screenshots", "{0F74A07E-1B35-44D9-88FE-4E331CB19F52}"
 	ProjectSection(SolutionItems) = preProject
-		docs\screenshots\about.png = docs\screenshots\about.png
-		docs\screenshots\donate.png = docs\screenshots\donate.png
 		docs\screenshots\home.png = docs\screenshots\home.png
-		docs\screenshots\settings.png = docs\screenshots\settings.png
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wiki", "wiki", "{7ACAABF4-86F5-4DEB-A6D8-0B0DC0801498}"
@@ -63,6 +60,25 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.Tests", "Utils.Tests\Utils.Tests.csproj", "{B633F615-5BFF-4760-BF7A-B705655CE8F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClrVpin.Tests", "ClrVpin.Tests\ClrVpin.Tests.csproj", "{CB9CE454-2994-4F14-B781-8BB78F3B2414}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "importer", "importer", "{A9565933-F1E0-4F5D-A181-E2BF62C87787}"
+	ProjectSection(SolutionItems) = preProject
+		docs\screenshots\importer\logs.png = docs\screenshots\importer\logs.png
+		docs\screenshots\importer\results.png = docs\screenshots\importer\results.png
+		docs\screenshots\importer\statistics.png = docs\screenshots\importer\statistics.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "about", "about", "{A5DA1FE0-9375-46AE-A586-8119AA14C8C8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\screenshots\about\about.png = docs\screenshots\about\about.png
+		docs\screenshots\about\donate.png = docs\screenshots\about\donate.png
+		docs\screenshots\about\thanks.png = docs\screenshots\about\thanks.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{E26BC194-1205-46D0-8227-3B647DB8D77D}"
+	ProjectSection(SolutionItems) = preProject
+		docs\screenshots\settings\settings.png = docs\screenshots\settings\settings.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +137,9 @@ Global
 		{7ACAABF4-86F5-4DEB-A6D8-0B0DC0801498} = {34B6F8B8-7694-4097-811B-C7B944177E1C}
 		{B2EA9621-BFC7-4C92-941E-62F8ABFBAA2E} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
 		{CFF71167-5612-47C6-A2A2-C7A3BA3AEB95} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
+		{A9565933-F1E0-4F5D-A181-E2BF62C87787} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
+		{A5DA1FE0-9375-46AE-A586-8119AA14C8C8} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
+		{E26BC194-1205-46D0-8227-3B647DB8D77D} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EEFDE1FF-91E7-4C51-8546-5721BAE8910A}
