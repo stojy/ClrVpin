@@ -16,7 +16,7 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
 1. Scanner - clean your existing pinball files
    - Fix files that can be fixed - e.g. rename files to match your DB and remove unsupported/obsolete files
    - Report files that can't be fixed - e.g. missing files
-   - Explorer file content - e.g. open files and view in explorer.
+   - Explore file content - e.g. open files and view in explorer.
 2. Rebuilder - merge new/updated pinball files into your existing collection
    - Fuzzy logic applied to match the different author file  naming conventions/mistakes to those defined in your database
    - Automaticaly backup files that are merged and replaced.
