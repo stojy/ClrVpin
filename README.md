@@ -21,14 +21,14 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
    - Fuzzy logic applied to match the different author file  naming conventions/mistakes to those defined in your database
    - Automaticaly backup files that are merged and replaced.
 3. Importer - verify against online resources to check whether your collection is up to date
-   - Navigate [VPS](https://virtual-pinball-spreadsheet.web.app/) list with variety of user defined filters - e.g. update time, type, manufacturer, etc.
+   - Navigate [VPS](https://virtual-pinball-spreadsheet.web.app/) collections with variety of user defined filters - e.g. update time, type, manufacturer, etc.
    - Open browser from application to the source of the updated file so it can be reviewed and downloaded
 
 ## Screenshots
 Refer [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots).
 
-## How Does It Work?
-Refer [Inner Workings](https://github.com/stojy/ClrVpin/wiki/Inner-Workings).
+## How To Use Overview
+Refer [TL&DR](https://github.com/stojy/ClrVpin/wiki/TL&DR).
 
 ## Roadmap
 Refer [Roadmap](https://github.com/stojy/ClrVpin/wiki/Roadmap).
