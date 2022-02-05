@@ -24,11 +24,11 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
    - Navigate [VPS](https://virtual-pinball-spreadsheet.web.app/) collections with variety of user defined filters - e.g. update time, type, manufacturer, etc.
    - Open browser from application to the source of the updated file so it can be reviewed and downloaded
 
-## Screenshots
-Refer [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots).
-
 ## Quick Start
 Refer [TL&DR](https://github.com/stojy/ClrVpin/wiki/TL&DR).
+
+## Screenshots
+Refer [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots).
 
 ## Roadmap
 Refer [Roadmap](https://github.com/stojy/ClrVpin/wiki/Roadmap).
