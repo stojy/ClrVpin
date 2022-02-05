@@ -73,7 +73,7 @@
                   <materialDesign:PackIcon Kind="Import" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding ImporterCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource AlternateHighlightButton}" 
+              <Button Command="{Binding ImporterCommand}" Width="70" Style="{StaticResource AlternateHighlightButton}" 
                       ToolTip="Import and navigate online database to check for updated content">
                 <StackPanel>
                   <TextBlock Text="Importer" HorizontalAlignment="Center" />
