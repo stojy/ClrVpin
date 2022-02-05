@@ -27,7 +27,7 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
 ## Screenshots
 Refer [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots).
 
-## How To Use Overview
+## Quick Start
 Refer [TL&DR](https://github.com/stojy/ClrVpin/wiki/TL&DR).
 
 ## Roadmap
