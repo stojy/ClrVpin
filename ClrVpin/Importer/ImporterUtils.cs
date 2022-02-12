@@ -27,8 +27,12 @@ namespace ClrVpin.Importer
                 PropertyNameCaseInsensitive = true,
                 Converters = { new UnixToNullableDateTimeConverter { IsFormatInSeconds = false } }
             };
+        }
 
+        public static async Task<Game[]> GetOnlineDatabase()
+        {
             // create dictionary items upfront to ensure the preferred display ordering (for statistics)
+            _feedFixStatistics.Clear();
             _feedFixStatistics.Add(GameNameWhitespace, 0);
             _feedFixStatistics.Add(GameManufacturerWhitespace, 0);
             _feedFixStatistics.Add(GameMissingImage, 0);
@@ -37,9 +41,9 @@ namespace ClrVpin.Importer
             _feedFixStatistics.Add(GameUpdatedTimeTooHigh, 0);
             _feedFixStatistics.Add(FileUpdateTimeOrdering, 0);
             _feedFixStatistics.Add(FileUpdatedTime, 0);
+            
+            return await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
         }
-
-        public static async Task<Game[]> GetOnlineDatabase() => await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
 
         public static Dictionary<string, int> Update(Game[] games)
         {
