@@ -64,7 +64,7 @@ public class FileCollection : List<File>
         AddRange(files);
     }
 
-    public bool IsUpdatedTimestampMatch { get; set; }
+    public bool IsNew { get; set; }
 }
 
 // view model
@@ -95,7 +95,7 @@ public class File
     public UrlDetail[] Urls { get; set; }
     
     // view model properties
-    public bool IsUpdatedTimestampMatch { get; set; }
+    public bool IsNew { get; set; }
 }
 
 public class ImageFile : File

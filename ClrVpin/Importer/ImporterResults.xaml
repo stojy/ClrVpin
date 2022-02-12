@@ -21,6 +21,7 @@
   <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:NegativeToVisibilityConverter x:Key="NegativeToVisibilityConverter" />
   <converters:NegativeToVisibilityConverter x:Key="PositiveToVisibilityConverter" True="Visible" False="Collapsed" />
+  <converters:BoolToStringConverter x:Key="IsNewColorConverter" True="Coral" False="#89FFFFFF" />
 
   <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}" />
 
@@ -387,51 +388,63 @@
 
                 <TabControl Style="{StaticResource TabControlStyle}">
 
-                  <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.AllFiles[TableFiles].Count}">
+                  <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.AllFiles[TableFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[TableFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[TableFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.AllFiles[B2SFiles].Count}" mde:TabControlAssist.TabHeaderForeground="Coral">
+                  <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.AllFiles[B2SFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[B2SFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[B2SFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.AllFiles[WheelArtFiles].Count}">
+                  <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.AllFiles[WheelArtFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[WheelArtFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[WheelArtFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.AllFiles[RomFiles].Count}">
+                  <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.AllFiles[RomFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[RomFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[RomFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
-                  <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.AllFiles[MediaPackFiles].Count}">
+                  <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.AllFiles[MediaPackFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[MediaPackFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[MediaPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
-                  <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AllFiles[AltColorFiles].Count}">
+                  <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AllFiles[AltColorFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[AltColorFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[AltColorFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
-                  <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.AllFiles[SoundFiles].Count}">
+                  <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.AllFiles[SoundFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[SoundFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[SoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.AllFiles[TopperFiles].Count}">
+                  <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.AllFiles[TopperFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[TopperFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[TopperFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.AllFiles[PupPackFiles].Count}">
+                  <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.AllFiles[PupPackFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[PupPackFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[PupPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.AllFiles[PovFiles].Count}">
+                  <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.AllFiles[PovFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[PovFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[PovFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Alt. Sounds" IsEnabled="{Binding SelectedGame.AllFiles[AltSoundFiles].Count}">
+                  <TabItem Header="Alt. Sounds" IsEnabled="{Binding SelectedGame.AllFiles[AltSoundFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[AltSoundFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[AltSoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.AllFiles[RuleFiles].Count}">
+                  <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.AllFiles[RuleFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[RuleFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[RuleFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
                 </TabControl>

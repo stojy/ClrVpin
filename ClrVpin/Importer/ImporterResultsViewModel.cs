@@ -105,21 +105,30 @@ namespace ClrVpin.Importer
 
             UpdatedFilterChanged = new ActionCommand(() =>
             {
-                // flag items that match the update timestamp range
-                Games.ForEach(game => game.AllFilesList.ForEach(file => 
-                        file.IsUpdatedTimestampMatch = file.UpdatedAt >= Settings.UpdatedDateBegin || file.UpdatedAt <= Settings.UpdatedDateEnd));
-
-                //Games.ForEach(game => game.AllFiles.ForEach(kv =>
-                //    kv.
-                    
-                //    ) )
-
+                UpdateIsNew();
                 FilterChanged.Execute(null);
             });
 
             NavigateToIpdbCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
+
+            UpdateIsNew();
         }
 
+        private void UpdateIsNew()
+        {
+            Games.ForEach(game => game.AllFiles.ForEach(kv =>
+            {
+                var (_, files) = kv;
+                files.ForEach(file =>
+                {
+                    // flag file as new if they satisfy the update time range
+                    file.IsNew = file.UpdatedAt >= Settings.UpdatedDateBegin && file.UpdatedAt <= Settings.UpdatedDateEnd?.AddDays(1);
+                });
+
+                // flag file collection (e.g. backglasses) as new if any of the files satisfy the update time range
+                files.IsNew = files.Any(file => file.IsNew);
+            }));
+        }
 
         public ImporterSettings Settings { get; } = Model.Settings.Importer;
 
