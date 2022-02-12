@@ -57,8 +57,8 @@ namespace ClrVpin.Importer
                     (YearBeginFilter == null || string.Compare(game.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
                     (YearEndFilter == null || string.Compare(game.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
                     (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
-                    (Settings.UpdatedDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedDateBegin) &&
-                    (Settings.UpdatedDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedDateEnd.Value.AddDays(1))
+                    (Settings.UpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedAtDateBegin) &&
+                    (Settings.UpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedAtDateEnd.Value.AddDays(1))
             };
             GamesView.MoveCurrentToFirst();
 
@@ -116,16 +116,20 @@ namespace ClrVpin.Importer
 
         private void UpdateIsNew()
         {
+            // flag models if they satisfy the update time range
             Games.ForEach(game => game.AllFiles.ForEach(kv =>
             {
                 var (_, files) = kv;
                 files.ForEach(file =>
                 {
-                    // flag file as new if they satisfy the update time range
-                    file.IsNew = file.UpdatedAt >= Settings.UpdatedDateBegin && file.UpdatedAt <= Settings.UpdatedDateEnd?.AddDays(1);
+                    // flag file - if the update time range is satisfied
+                    file.IsNew = file.UpdatedAt >= (Settings.UpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.UpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
+
+                    // flag each url within the file - required to allow for simpler view binding
+                    file.Urls.ForEach(url => url.IsNew = file.IsNew);
                 });
 
-                // flag file collection (e.g. backglasses) as new if any of the files satisfy the update time range
+                // flag file collection (e.g. backglasses)
                 files.IsNew = files.Any(file => file.IsNew);
             }));
         }

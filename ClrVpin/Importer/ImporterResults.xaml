@@ -15,20 +15,30 @@
     <ResourceDictionary Source="\Controls\Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
+  <Style x:Key="UrlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}">
+    <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
+    <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+  </Style>
+
+  <Style x:Key="IsNewUrlButtonStyle" TargetType="Button" BasedOn="{StaticResource UrlButtonStyle}">
+    <Setter Property="Background" Value="Coral" />
+    <Setter Property="BorderBrush" Value="Coral" />
+  </Style>
+
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
   <converters:BoolToStringConverter x:Key="UrlToIconConverter" True="WebCancel" False="WebSync" />
   <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" True="Visible" False="Collapsed" />
   <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:NegativeToVisibilityConverter x:Key="NegativeToVisibilityConverter" />
   <converters:NegativeToVisibilityConverter x:Key="PositiveToVisibilityConverter" True="Visible" False="Collapsed" />
-  <converters:BoolToStringConverter x:Key="IsNewColorConverter" True="Coral" False="#89FFFFFF" />
+  <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="Coral" False="#89FFFFFF" /> <!--{DynamicResource MaterialDesignBodyLight}-->
+  <converters:BoolToStyleConverter x:Key="IsNewUrlButtonStyleConverter" True="{StaticResource IsNewUrlButtonStyle}" False="{StaticResource UrlButtonStyle}" />
 
   <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}" />
 
   <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
-    <Button Style="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}"
-            ToolTip="{Binding Url}" ToolTipService.InitialShowDelay="0" ToolTipService.ShowOnDisabled="True"
-            Command="{Binding SelectedCommand}">
+    <!--<Button Style="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ContentControl}}, Path=DataContext.IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}"-->
+    <Button Style="{Binding IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}" ToolTip="{Binding Url}" Command="{Binding SelectedCommand}">
       <materialDesign:PackIcon Kind="{Binding Broken, Converter={StaticResource UrlToIconConverter}}" Height="40" Width="40" Foreground="{DynamicResource MaterialDesignBody}" />
     </Button>
   </DataTemplate>
@@ -280,8 +290,8 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated From" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateBegin}"
-                            DisplayDateEnd="{Binding Settings.UpdatedDateEnd}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated From" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedAtDateBegin}"
+                            DisplayDateEnd="{Binding Settings.UpdatedAtDateEnd}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding UpdatedFilterChanged}" />
@@ -289,8 +299,8 @@
                   </b:Interaction.Triggers>
                 </DatePicker>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated To" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedDateEnd}"
-                            DisplayDateStart="{Binding Settings.UpdatedDateBegin}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated To" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedAtDateEnd}"
+                            DisplayDateStart="{Binding Settings.UpdatedAtDateBegin}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding UpdatedFilterChanged}" />
@@ -387,64 +397,63 @@
                 </GroupBox.Resources>
 
                 <TabControl Style="{StaticResource TabControlStyle}">
-
                   <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.AllFiles[TableFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[TableFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[TableFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[TableFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
                   <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.AllFiles[B2SFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[B2SFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[B2SFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[B2SFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
                   <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.AllFiles[WheelArtFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[WheelArtFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[WheelArtFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[WheelArtFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
                   <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.AllFiles[RomFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[RomFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[RomFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[RomFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
                   <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.AllFiles[MediaPackFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[MediaPackFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[MediaPackFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[MediaPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
                   <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AllFiles[AltColorFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[AltColorFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[AltColorFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[AltColorFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
                   <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.AllFiles[SoundFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[SoundFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[SoundFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[SoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
                   <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.AllFiles[TopperFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[TopperFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[TopperFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[TopperFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
                   <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.AllFiles[PupPackFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[PupPackFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[PupPackFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[PupPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
                   <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.AllFiles[PovFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[PovFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[PovFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[PovFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
                   <TabItem Header="Alt. Sounds" IsEnabled="{Binding SelectedGame.AllFiles[AltSoundFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[AltSoundFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[AltSoundFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[AltSoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
                   <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.AllFiles[RuleFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[RuleFiles].IsNew, Converter={StaticResource IsNewColorConverter}}">
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[RuleFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[RuleFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
                 </TabControl>

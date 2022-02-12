@@ -81,6 +81,7 @@ public class UrlDetail
 
     // view model
     public ICommand SelectedCommand { get; set; }
+    public bool IsNew { get; set; }
 }
 
 public class File

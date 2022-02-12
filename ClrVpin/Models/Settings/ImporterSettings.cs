@@ -7,6 +7,6 @@ namespace ClrVpin.Models.Settings;
 public class ImporterSettings
 {
     public bool IncludeOriginalTables { get; set; }
-    public DateTime? UpdatedDateBegin { get; set; }
-    public DateTime? UpdatedDateEnd { get; set; }
+    public DateTime? UpdatedAtDateBegin { get; set; }
+    public DateTime? UpdatedAtDateEnd { get; set; }
 }
