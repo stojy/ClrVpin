@@ -10,6 +10,7 @@ using ClrVpin.Models.Settings;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;
+using Utils.Extensions;
 
 namespace ClrVpin.Importer
 {
@@ -102,6 +103,20 @@ namespace ClrVpin.Importer
                 TypesFilterView.Refresh();
             });
 
+            UpdatedFilterChanged = new ActionCommand(() =>
+            {
+                // flag items that match the update timestamp range
+                Games.ForEach(game => game.AllFilesList.ForEach(file => 
+                        file.IsUpdatedTimestampMatch = file.UpdatedAt >= Settings.UpdatedDateBegin || file.UpdatedAt <= Settings.UpdatedDateEnd));
+
+                //Games.ForEach(game => game.AllFiles.ForEach(kv =>
+                //    kv.
+                    
+                //    ) )
+
+                FilterChanged.Execute(null);
+            });
+
             NavigateToIpdbCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
         }
 
@@ -129,6 +144,7 @@ namespace ClrVpin.Importer
         public Game SelectedGame { get; set; }
 
         public ICommand FilterChanged { get; set; }
+        public ICommand UpdatedFilterChanged { get; set; }
 
         public ICommand NavigateToIpdbCommand { get; set; }
 

@@ -17,6 +17,7 @@ using ClrVpin.Models.Settings;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
+using Utils.Extensions;
 
 namespace ClrVpin.Rebuilder
 {

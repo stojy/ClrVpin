@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using ByteSizeLib;
 using Utils;
+using Utils.Extensions;
 
 namespace ClrVpin.Models
 {

@@ -8,6 +8,7 @@ using ClrVpin.Models;
 using ClrVpin.Models.Scanner;
 using ClrVpin.Shared;
 using Utils;
+using Utils.Extensions;
 
 namespace ClrVpin.Scanner
 {

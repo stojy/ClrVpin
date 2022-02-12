@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace Utils
+namespace Utils.Extensions
 {
     public static class ApplicationSettingsBaseExtensions
     {

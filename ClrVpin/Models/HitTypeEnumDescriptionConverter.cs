@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using Utils;
+using Utils.Extensions;
 
 namespace ClrVpin.Models
 {

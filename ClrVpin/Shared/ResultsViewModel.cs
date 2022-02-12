@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using ClrVpin.Models;
 using Utils;
+using Utils.Extensions;
 
 namespace ClrVpin.Shared
 {

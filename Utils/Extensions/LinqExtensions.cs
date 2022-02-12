@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Utils
+namespace Utils.Extensions
 {
     public static class LinqExtensions
     {
@@ -69,6 +69,11 @@ namespace Utils
         public static bool In<T>(this T item, params T[] source)
         {
             return source.Contains(item);
+        }
+
+        public static string StringJoin<T>(this IEnumerable<T> items, string separator = ",")
+        {
+            return string.Join(separator, items);
         }
     }
 }

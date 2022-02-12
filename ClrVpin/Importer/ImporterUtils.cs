@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using ClrVpin.Converters;
 using ClrVpin.Importer.Vps;
 using ClrVpin.Logging;
-using Utils;
+using LinqExtensions = Utils.Extensions.LinqExtensions;
 
 namespace ClrVpin.Importer
 {
@@ -25,43 +25,44 @@ namespace ClrVpin.Importer
             _jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
-                Converters = { new UnixToNullableDateTimeConverter {IsFormatInSeconds = false} }
+                Converters = { new UnixToNullableDateTimeConverter { IsFormatInSeconds = false } }
             };
+
+            // create dictionary items upfront to ensure the preferred display ordering (for statistics)
+            _feedFixStatistics.Add(GameNameWhitespace, 0);
+            _feedFixStatistics.Add(GameManufacturerWhitespace, 0);
+            _feedFixStatistics.Add(GameMissingImage, 0);
+            _feedFixStatistics.Add(GameCreatedTime, 0);
+            _feedFixStatistics.Add(GameUpdatedTimeTooLow, 0);
+            _feedFixStatistics.Add(GameUpdatedTimeTooHigh, 0);
+            _feedFixStatistics.Add(FileUpdateTimeOrdering, 0);
+            _feedFixStatistics.Add(FileUpdatedTime, 0);
         }
 
-        public static async Task<Game[]> GetOnlineDatabase()
-        {
-            var games = await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
+        public static async Task<Game[]> GetOnlineDatabase() => await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
 
-            Update(games);
-
-            return games;
-        }
-
-        private static void Update(Game[] games)
+        public static Dictionary<string, int> Update(Game[] games)
         {
             // various updates and/or fixes to the feed
-            games.ForEach((game, index) =>
+            LinqExtensions.ForEach(games, (game, index) =>
             {
                 game.Index = index + 1;
 
                 // group files into collections so they can be treated generically
-                game.AllFiles = new Dictionary<string, File[]>
+                game.AllFiles = new Dictionary<string, FileCollection>
                 {
-                    // ReSharper disable once CoVariantArrayConversion
-                    { nameof(game.TableFiles), game.TableFiles },
-                    // ReSharper disable once CoVariantArrayConversion
-                    { nameof(game.B2SFiles), game.B2SFiles },
-                    { nameof(game.RuleFiles), game.RuleFiles },
-                    { nameof(game.AltColorFiles), game.AltColorFiles },
-                    { nameof(game.AltSoundFiles), game.AltSoundFiles },
-                    { nameof(game.MediaPackFiles), game.MediaPackFiles },
-                    { nameof(game.PovFiles), game.PovFiles },
-                    { nameof(game.PupPackFiles), game.PupPackFiles },
-                    { nameof(game.RomFiles), game.RomFiles },
-                    { nameof(game.SoundFiles), game.SoundFiles },
-                    { nameof(game.TopperFiles), game.TopperFiles },
-                    { nameof(game.WheelArtFiles), game.WheelArtFiles }
+                    { nameof(game.TableFiles), new FileCollection(game.TableFiles) },
+                    { nameof(game.B2SFiles), new FileCollection(game.B2SFiles) },
+                    { nameof(game.RuleFiles), new FileCollection(game.RuleFiles) },
+                    { nameof(game.AltColorFiles), new FileCollection(game.AltColorFiles) },
+                    { nameof(game.AltSoundFiles), new FileCollection(game.AltSoundFiles) },
+                    { nameof(game.MediaPackFiles), new FileCollection(game.MediaPackFiles) },
+                    { nameof(game.PovFiles), new FileCollection(game.PovFiles) },
+                    { nameof(game.PupPackFiles), new FileCollection(game.PupPackFiles) },
+                    { nameof(game.RomFiles), new FileCollection(game.RomFiles) },
+                    { nameof(game.SoundFiles), new FileCollection(game.SoundFiles) },
+                    { nameof(game.TopperFiles), new FileCollection(game.TopperFiles) },
+                    { nameof(game.WheelArtFiles), new FileCollection(game.WheelArtFiles) }
                 };
                 game.AllFilesList = game.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
                 game.ImageFiles = game.TableFiles.Concat(game.B2SFiles).ToList();
@@ -82,36 +83,44 @@ namespace ClrVpin.Importer
                 game.AltSoundFiles = game.AltSoundFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
                 game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
             });
+
+            return _feedFixStatistics;
         }
 
         private static void Fix(Game game)
         {
-            // enforce sorted file ordering to ensure a game's most recent files are shown first
-            // - arguably not a 'bug', but just a feature that the game files aren't ordered by default?
-            game.AllFiles.ForEach(kv => game.AllFiles[kv.Key] = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray());
-
             // ensure top level image url is assigned if it's not been assigned
+            if (game.ImgUrl == null)
+            {
+                var imageUrl = game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
+                if (imageUrl != null)
+                {
+                    LogFixed(game, GameMissingImage, $"url='{imageUrl}'");
+                    game.ImgUrl = imageUrl;
+                }
+            }
+
             game.ImgUrl ??= game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
 
             // trim strings
             if (game.Name != game.Name.Trim())
             {
-                Logger.Warn($"Fixed GAME WHITESPACE: index={game.Index:####} name='{game.Name}'");
+                LogFixed(game, GameNameWhitespace);
                 game.Name = game.Name.Trim();
             }
-            
+
             if (game.Manufacturer != game.Manufacturer.Trim())
             {
-                Logger.Warn($"Fixed MANUFACTURER WHITESPACE: index={game.Index:####} manufacturer='{game.Manufacturer}'");
+                LogFixed(game, GameManufacturerWhitespace, $"manufacturer='{game.Manufacturer}'");
                 game.Manufacturer = game.Manufacturer.Trim();
             }
 
-            game.AllFiles.ForEach(kv =>
+            LinqExtensions.ForEach(game.AllFiles, kv =>
             {
                 // ensure updated timestamp isn't lower than the created timestamp
-                kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
+                LinqExtensions.ForEach(kv.Value.Where(f => f.UpdatedAt < f.CreatedAt), f =>
                 {
-                    LogFixedTimestamp(game, "FILE UPDATED", "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
+                    LogFixedTimestamp(game, FileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
                     f.UpdatedAt = f.CreatedAt;
                 });
             });
@@ -120,28 +129,70 @@ namespace ClrVpin.Importer
             var maxCreatedAt = game.AllFilesList.Max(x => x.CreatedAt);
             if (game.LastCreatedAt < maxCreatedAt)
             {
-                LogFixedTimestamp(game, "GAME CREATED", "createdAt", game.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
+                LogFixedTimestamp(game, GameCreatedTime, "createdAt", game.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
                 game.LastCreatedAt = maxCreatedAt;
             }
 
-            // fix game updated timestamp - must not be less than any file timestamps
+            // fix game updated timestamp - must not be equal to the max file timestamp
             var maxUpdatedAt = game.AllFilesList.Max(x => x.UpdatedAt);
             if (game.UpdatedAt < maxUpdatedAt)
             {
-                LogFixedTimestamp(game, "GAME UPDATED", "updatedAt", game.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
+                LogFixedTimestamp(game, GameUpdatedTimeTooLow, "updatedAt", game.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
                 game.UpdatedAt = maxUpdatedAt;
             }
+            else if (game.UpdatedAt > maxUpdatedAt)
+            {
+                LogFixedTimestamp(game, GameUpdatedTimeTooHigh, "updatedAt", game.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
+                game.UpdatedAt = maxUpdatedAt;
+            }
+
+            // enforce sorted file ordering to ensure a game's most recent files are shown first
+            LinqExtensions.ForEach(game.AllFiles, kv =>
+            {
+                var orderByDescending = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray();
+                if (!kv.Value.SequenceEqual(orderByDescending))
+                {
+                    LogFixed(game, FileUpdateTimeOrdering, $"type={kv.Key}");
+                    kv.Value.Clear();
+                    kv.Value.AddRange(orderByDescending);
+                }
+            });
         }
 
-        private static void LogFixedTimestamp(Game game, string type, string dateTimeName1, DateTime? dateTimeValue1, string dateTimeName2, DateTime? dateTimeValue2)
+        private static void LogFixedTimestamp(Game game, string type, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
         {
-            Logger.Warn($"Fixed {type} timestamp: {dateTimeName1}='{dateTimeValue1:dd/MM/yy HH:mm:ss}' < {dateTimeName2}='{dateTimeValue2:dd/MM/yy HH:mm:ss}' index={game.Index:####} game='{game.Name}'");
+            LogFixed(game, type, $"game.{gameTimeName} '{gameTime:dd/MM/yy HH:mm:ss}' {(greaterThan ? ">" : "<")} {maxFileTimeName} '{maxFileTime:dd/MM/yy HH:mm:ss}'");
+        }
+
+        private static void LogFixed(Game game, string type, string details = null)
+        {
+            AddFixStatistic(type);
+
+            var name = $"'{game.Name[..Math.Min(game.Name.Length, 23)].Trim()}'";
+            Logger.Warn($"Fixed {type,-26} index={game.Index:0000} name={name,-25} {details}");
+        }
+
+        private static void AddFixStatistic(string key)
+        {
+            _feedFixStatistics.TryAdd(key, 0);
+            _feedFixStatistics[key]++;
         }
 
         // refer https://github.com/Fraesh/vps-db, https://virtual-pinball-spreadsheet.web.app/
         private const string VisualPinballSpreadsheetDatabaseUrl = "https://raw.githubusercontent.com/Fraesh/vps-db/master/vpsdb.json";
+        
+        private const string GameNameWhitespace = "Game Name Whitespace";
+        private const string GameMissingImage = "Game Missing Image Url";
+        private const string GameManufacturerWhitespace = "Game Manufacturer Whitespace";
+        private const string GameCreatedTime = "Game Created Time";
+        private const string GameUpdatedTimeTooLow = "Game Updated Time Too Low";
+        private const string GameUpdatedTimeTooHigh = "Game Updated Time Too High";
+        private const string FileUpdateTimeOrdering = "File Update Time Ordering";
+        private const string FileUpdatedTime = "File Updated Time";
 
         private static readonly HttpClient _httpClient;
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
+
+        private static readonly Dictionary<string, int> _feedFixStatistics = new Dictionary<string, int>();
     }
 }

@@ -47,7 +47,7 @@ public class Game
     public File[] RuleFiles { get; set; } = Array.Empty<File>();
 
     // view model properties
-    public Dictionary<string, File[]> AllFiles { get; set; }
+    public Dictionary<string, FileCollection> AllFiles { get; set; }
     public IEnumerable<File> AllFilesList { get; set; }
     public List<ImageFile> ImageFiles { get; set; }
 
@@ -55,6 +55,16 @@ public class Game
     public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
     public UrlSelection ImageUrlSelection { get; set; }
     public string YearString { get; set; }
+}
+
+public class FileCollection : List<File>
+{
+    public FileCollection(IEnumerable<File> files)
+    {
+        AddRange(files);
+    }
+
+    public bool IsUpdatedTimestampMatch { get; set; }
 }
 
 // view model
@@ -83,6 +93,9 @@ public class File
     public DateTime? CreatedAt { get; set; }
 
     public UrlDetail[] Urls { get; set; }
+    
+    // view model properties
+    public bool IsUpdatedTimestampMatch { get; set; }
 }
 
 public class ImageFile : File

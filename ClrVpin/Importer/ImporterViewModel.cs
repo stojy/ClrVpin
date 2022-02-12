@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
@@ -204,9 +205,12 @@ namespace ClrVpin.Importer
             var progress = new ProgressViewModel();
             progress.Show(_window);
 
-            progress.Update("Loading online DB");
-            
+            progress.Update("Fetching online DB");
             var games = await ImporterUtils.GetOnlineDatabase();
+
+            progress.Update("Updating online DB");
+            var feedFixStatistics = ImporterUtils.Update(games);
+
             Logger.Info($"Loading online DB complete, duration={progress.Duration}");
 
             //var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
@@ -222,7 +226,7 @@ namespace ClrVpin.Importer
             //Games = new ObservableCollection<Game>(games);
 
             
-            ShowResults(progress.Duration, games);
+            ShowResults(progress.Duration, games, feedFixStatistics);
             Logger.Info($"Importer rendered, duration={progress.Duration}");
             
             progress.Close();
@@ -230,12 +234,12 @@ namespace ClrVpin.Importer
             //void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
         }
 
-        private void ShowResults(TimeSpan duration, Game[] games)
+        private void ShowResults(TimeSpan duration, Game[] games, Dictionary<string, int> feedFixStatistics)
         {
             var results = new ImporterResultsViewModel(games);
             results.Show(_window, WindowMargin, WindowMargin);
 
-            var statistics = new ImporterStatisticsViewModel(duration);
+            var statistics = new ImporterStatisticsViewModel(duration, feedFixStatistics);
             statistics.Show(_window, WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
             var logging = new LoggingViewModel();

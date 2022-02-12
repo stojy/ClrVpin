@@ -7,6 +7,7 @@ using ByteSizeLib;
 using ClrVpin.Models;
 using PropertyChanged;
 using Utils;
+using Utils.Extensions;
 
 namespace ClrVpin.Shared
 {

@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using ClrVpin.Models;
 using Utils;
+using Utils.Extensions;
 
 namespace ClrVpin.Shared
 {

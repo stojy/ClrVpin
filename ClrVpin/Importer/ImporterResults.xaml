@@ -7,7 +7,8 @@
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:vps="clr-namespace:ClrVpin.Importer.Vps"
-                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
@@ -282,7 +283,7 @@
                             DisplayDateEnd="{Binding Settings.UpdatedDateEnd}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
-                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                      <b:InvokeCommandAction Command="{Binding UpdatedFilterChanged}" />
                     </controls:RoutedEventTrigger>
                   </b:Interaction.Triggers>
                 </DatePicker>
@@ -291,7 +292,7 @@
                             DisplayDateStart="{Binding Settings.UpdatedDateBegin}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
-                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                      <b:InvokeCommandAction Command="{Binding UpdatedFilterChanged}" />
                     </controls:RoutedEventTrigger>
                   </b:Interaction.Triggers>
                 </DatePicker>
@@ -377,52 +378,60 @@
                  3. Not dictionary friendly - TabControl.ItemTemplate receives key (good), but TabControl.ItemTemplate receives KeyValuePair instead of just Value (bad).. impossible to bind (easily) in xaml due to generics
                  4. Not much point - simpler to duplicate the xaml than create a separate collection of the x3 types
             -->
-                <TabControl Style="{StaticResource MaterialDesignTabControl}">
-                  <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.AllFiles[TableFiles].Length}">
+                <GroupBox.Resources>
+                  <Style x:Key="TabControlStyle" TargetType="TabControl" BasedOn="{StaticResource MaterialDesignTabControl}">
+                    <Setter Property="mde:TabControlAssist.TabHeaderFontWeight" Value="Bold" />
+                    <Setter Property="mde:TabControlAssist.TabHeaderFontSize" Value="18" />
+                  </Style>
+                </GroupBox.Resources>
+
+                <TabControl Style="{StaticResource TabControlStyle}">
+
+                  <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.AllFiles[TableFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[TableFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.AllFiles[B2SFiles].Length}">
+                  <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.AllFiles[B2SFiles].Count}" mde:TabControlAssist.TabHeaderForeground="Coral">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[B2SFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.AllFiles[WheelArtFiles].Length}">
+                  <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.AllFiles[WheelArtFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[WheelArtFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.AllFiles[RomFiles].Length}">
+                  <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.AllFiles[RomFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[RomFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
-                  <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.AllFiles[MediaPackFiles].Length}">
+                  <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.AllFiles[MediaPackFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[MediaPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
-                  <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AllFiles[AltColorFiles].Length}">
+                  <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AllFiles[AltColorFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[AltColorFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
-                  <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.AllFiles[SoundFiles].Length}">
+                  <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.AllFiles[SoundFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[SoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.AllFiles[TopperFiles].Length}">
+                  <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.AllFiles[TopperFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[TopperFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.AllFiles[PupPackFiles].Length}">
+                  <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.AllFiles[PupPackFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[PupPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.AllFiles[PovFiles].Length}">
+                  <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.AllFiles[PovFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[PovFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Alternate Sounds" IsEnabled="{Binding SelectedGame.AllFiles[AltSoundFiles].Length}">
+                  <TabItem Header="Alt. Sounds" IsEnabled="{Binding SelectedGame.AllFiles[AltSoundFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[AltSoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.AllFiles[RuleFiles].Length}">
+                  <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.AllFiles[RuleFiles].Count}">
                     <ContentControl Content="{Binding SelectedGame.AllFiles[RuleFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
                 </TabControl>

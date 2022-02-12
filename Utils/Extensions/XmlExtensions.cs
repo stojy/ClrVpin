@@ -1,7 +1,7 @@
 ﻿using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace Utils
+namespace Utils.Extensions
 {
     public static class XmlExtensions
     {
