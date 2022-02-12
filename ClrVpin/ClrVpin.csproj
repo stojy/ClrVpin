@@ -7,9 +7,9 @@
     <Authors>Stojy</Authors>
     <Company>Stoj</Company>
     <ApplicationIcon>ClrVpin.ico</ApplicationIcon>
-    <AssemblyVersion>2.0.0.2</AssemblyVersion>
-    <FileVersion>2.0.0.2</FileVersion>
-    <Version>2.0.0-rc2</Version>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <FileVersion>2.1.0.0</FileVersion>
+    <Version>2.1.0.0</Version>
     <Copyright>Stoj</Copyright>
     <PackageProjectUrl>https://github.com/stojy/ClrVpin</PackageProjectUrl>
     <PackageIcon>ClrVpin.png</PackageIcon>
