@@ -152,7 +152,7 @@
     <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
         <Grid Height="300">
-          <materialDesign:PackIcon Kind="EmoticonHappyOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          <materialDesign:PackIcon Kind="GhostOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
 
         <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />

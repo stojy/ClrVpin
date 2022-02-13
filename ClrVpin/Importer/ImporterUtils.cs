@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using ClrVpin.Converters;
 using ClrVpin.Importer.Vps;
 using ClrVpin.Logging;
-using LinqExtensions = Utils.Extensions.LinqExtensions;
+using Utils.Extensions;
 
 namespace ClrVpin.Importer
 {
@@ -41,14 +41,15 @@ namespace ClrVpin.Importer
             _feedFixStatistics.Add(GameUpdatedTimeTooHigh, 0);
             _feedFixStatistics.Add(FileUpdateTimeOrdering, 0);
             _feedFixStatistics.Add(FileUpdatedTime, 0);
-            
+            _feedFixStatistics.Add(InvalidUrl, 0);
+
             return await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
         }
 
         public static Dictionary<string, int> Update(Game[] games)
         {
             // various updates and/or fixes to the feed
-            LinqExtensions.ForEach(games, (game, index) =>
+            games.ForEach((game, index) =>
             {
                 game.Index = index + 1;
 
@@ -93,7 +94,7 @@ namespace ClrVpin.Importer
 
         private static void Fix(Game game)
         {
-            // ensure top level image url is assigned if it's not been assigned
+            // fix image url - assign to the first available image url.. B2S then table
             if (game.ImgUrl == null)
             {
                 var imageUrl = game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
@@ -104,25 +105,24 @@ namespace ClrVpin.Importer
                 }
             }
 
-            game.ImgUrl ??= game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
-
-            // trim strings
+            // fix game name - remove whitespace
             if (game.Name != game.Name.Trim())
             {
                 LogFixed(game, GameNameWhitespace);
                 game.Name = game.Name.Trim();
             }
 
+            // fix manufacturer - remove whitespace
             if (game.Manufacturer != game.Manufacturer.Trim())
             {
                 LogFixed(game, GameManufacturerWhitespace, $"manufacturer='{game.Manufacturer}'");
                 game.Manufacturer = game.Manufacturer.Trim();
             }
 
-            LinqExtensions.ForEach(game.AllFiles, kv =>
+            // fix updated timestamp - must not be lower than the created timestamp
+            game.AllFiles.ForEach(kv =>
             {
-                // ensure updated timestamp isn't lower than the created timestamp
-                LinqExtensions.ForEach(kv.Value.Where(f => f.UpdatedAt < f.CreatedAt), f =>
+                kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
                 {
                     LogFixedTimestamp(game, FileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
                     f.UpdatedAt = f.CreatedAt;
@@ -150,8 +150,8 @@ namespace ClrVpin.Importer
                 game.UpdatedAt = maxUpdatedAt;
             }
 
-            // enforce sorted file ordering to ensure a game's most recent files are shown first
-            LinqExtensions.ForEach(game.AllFiles, kv =>
+            // fix file ordering - ensure a game's most recent files are shown first
+            game.AllFiles.ForEach(kv =>
             {
                 var orderByDescending = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray();
                 if (!kv.Value.SequenceEqual(orderByDescending))
@@ -160,6 +160,21 @@ namespace ClrVpin.Importer
                     kv.Value.Clear();
                     kv.Value.AddRange(orderByDescending);
                 }
+            });
+
+            // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
+            game.AllFiles.ForEach(kv =>
+            {
+                kv.Value.ForEach(f =>
+                    f.Urls.ForEach(urlDetail =>
+                    {
+                        if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
+                        {
+                            LogFixed(game, InvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
+                            urlDetail.Broken = true;
+                        }
+                    })
+                );
             });
         }
 
@@ -184,7 +199,7 @@ namespace ClrVpin.Importer
 
         // refer https://github.com/Fraesh/vps-db, https://virtual-pinball-spreadsheet.web.app/
         private const string VisualPinballSpreadsheetDatabaseUrl = "https://raw.githubusercontent.com/Fraesh/vps-db/master/vpsdb.json";
-        
+
         private const string GameNameWhitespace = "Game Name Whitespace";
         private const string GameMissingImage = "Game Missing Image Url";
         private const string GameManufacturerWhitespace = "Game Manufacturer Whitespace";
@@ -193,6 +208,7 @@ namespace ClrVpin.Importer
         private const string GameUpdatedTimeTooHigh = "Game Updated Time Too High";
         private const string FileUpdateTimeOrdering = "File Update Time Ordering";
         private const string FileUpdatedTime = "File Updated Time";
+        private const string InvalidUrl = "Invalid Url";
 
         private static readonly HttpClient _httpClient;
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
