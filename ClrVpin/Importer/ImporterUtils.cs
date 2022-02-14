@@ -177,10 +177,10 @@ namespace ClrVpin.Importer
                         }
 
                         // fix vpuniverse urls - path
-                        if (urlDetail.Url?.Contains("https://vpuniverse.com/forums") == true)
+                        if (urlDetail.Url?.Contains("//vpuniverse.com/forums") == true)
                         {
                             LogFixed(game, WrongUrl, $"type={kv.Key} url={urlDetail.Url}");
-                            urlDetail.Url = urlDetail.Url.Replace("https://vpuniverse.com/forums", "https://vpuniverse.com");
+                            urlDetail.Url = urlDetail.Url.Replace("//vpuniverse.com/forums", "//vpuniverse.com");
                         }
                     })
                 );
