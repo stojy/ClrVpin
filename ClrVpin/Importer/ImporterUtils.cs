@@ -42,6 +42,7 @@ namespace ClrVpin.Importer
             _feedFixStatistics.Add(FileUpdateTimeOrdering, 0);
             _feedFixStatistics.Add(FileUpdatedTime, 0);
             _feedFixStatistics.Add(InvalidUrl, 0);
+            _feedFixStatistics.Add(WrongUrl, 0);
 
             return await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
         }
@@ -162,16 +163,24 @@ namespace ClrVpin.Importer
                 }
             });
 
-            // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
+            // fix urls
             game.AllFiles.ForEach(kv =>
             {
                 kv.Value.ForEach(f =>
                     f.Urls.ForEach(urlDetail =>
                     {
+                        // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
                         if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
                         {
                             LogFixed(game, InvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
                             urlDetail.Broken = true;
+                        }
+
+                        // fix vpuniverse urls - path
+                        if (urlDetail.Url?.Contains("https://vpuniverse.com/forums") == true)
+                        {
+                            LogFixed(game, WrongUrl, $"type={kv.Key} url={urlDetail.Url}");
+                            urlDetail.Url = urlDetail.Url.Replace("https://vpuniverse.com/forums", "https://vpuniverse.com");
                         }
                     })
                 );
@@ -209,6 +218,7 @@ namespace ClrVpin.Importer
         private const string FileUpdateTimeOrdering = "File Update Time Ordering";
         private const string FileUpdatedTime = "File Updated Time";
         private const string InvalidUrl = "Invalid Url";
+        private const string WrongUrl = "Wrong Url";
 
         private static readonly HttpClient _httpClient;
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
