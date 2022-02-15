@@ -234,7 +234,7 @@ namespace ClrVpin.Importer
             //void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
         }
 
-        private void ShowResults(TimeSpan duration, Game[] games, Dictionary<string, int> feedFixStatistics)
+        private void ShowResults(TimeSpan duration, List<Game> games, Dictionary<string, int> feedFixStatistics)
         {
             var results = new ImporterResultsViewModel(games);
             results.Show(_window, WindowMargin, WindowMargin);

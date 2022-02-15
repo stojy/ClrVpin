@@ -29,7 +29,7 @@ namespace ClrVpin.Importer
             };
         }
 
-        public static async Task<Game[]> GetOnlineDatabase()
+        public static async Task<List<Game>> GetOnlineDatabase()
         {
             // create dictionary items upfront to ensure the preferred display ordering (for statistics)
             _feedFixStatistics.Clear();
@@ -44,11 +44,16 @@ namespace ClrVpin.Importer
             _feedFixStatistics.Add(InvalidUrl, 0);
             _feedFixStatistics.Add(WrongUrl, 0);
 
-            return await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions);
+            return (await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
         }
 
-        public static Dictionary<string, int> Update(Game[] games)
+        public static Dictionary<string, int> Update(List<Game> games)
         {
+            // fix game ordering - alphanumerical
+            var orderedDames = games.OrderBy(game => game.Name).ToArray();
+            games.Clear();
+            games.AddRange(orderedDames);
+
             // various updates and/or fixes to the feed
             games.ForEach((game, index) =>
             {

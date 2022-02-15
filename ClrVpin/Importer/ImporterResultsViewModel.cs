@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel
     {
-        public ImporterResultsViewModel(Game[] games)
+        public ImporterResultsViewModel(List<Game> games)
         {
             // assign VM properties
             games.ForEach(game =>
