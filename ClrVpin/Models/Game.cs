@@ -72,7 +72,7 @@ namespace ClrVpin.Models
         public Content Content { get; set; } = new Content();
 
         [XmlIgnore]
-        public string TableFileWithExtension => TableFile + ".pbx";
+        public string TableFileWithExtension => TableFile + ".vpx";
 
         [XmlIgnore]
         public int Number { get; set; }
