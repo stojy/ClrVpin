@@ -99,6 +99,10 @@ namespace ClrVpin.Rebuilder
             var destinationFileName = Path.Combine(contentType.Folder, hit.File);
             var destinationFileInfo = File.Exists(destinationFileName) ? new FileInfo(destinationFileName) : null;
 
+            // construct the correct destination file name - i.e. the file name that would be used when the scanner is run (typically after the merge)
+            var correctDestinationFileName = FileUtils.GetCorrectFile(game, contentType.Category, contentType.Folder, hit.Extension);
+            var correctDestinationFileInfo = File.Exists(correctDestinationFileName) ? new FileInfo(correctDestinationFileName) : null;
+
             // ignore file from either..
             // - hit type NOT selected OR
             // - ignore option selected
@@ -106,7 +110,7 @@ namespace ClrVpin.Rebuilder
             {
                 fixFileType = FixFileTypeEnum.Ignored;
 
-                if (!ShouldIgnore(game, hit, sourceFileInfo, destinationFileInfo))
+                if (!ShouldIgnore(game, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo))
                 {
                     fixFileType = FixFileTypeEnum.Merged;
 

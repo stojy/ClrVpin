@@ -66,11 +66,7 @@ namespace ClrVpin.Shared
                 renamed = true;
 
                 // determine the correct name - different for media vs pinball
-                var correctName = game.GetContentName(_settings.GetContentType(hit.ContentTypeEnum).Category);
-
-                var extension = Path.GetExtension(hit.Path);
-                var path = Path.GetDirectoryName(hit.Path);
-                var newFile = Path.Combine(path!, $"{correctName}{extension}");
+                var newFile = GetCorrectFile(game, _settings.GetContentType(hit.ContentTypeEnum).Category, hit.Directory, hit.Extension);
 
                 // rename specific file
                 Rename(hit.Path, newFile, hit.Type, hit.ContentType, backupFile => hit.Path = backupFile);
@@ -80,6 +76,15 @@ namespace ClrVpin.Shared
             }
 
             return new FileDetail(hit.ContentTypeEnum, hit.Type, renamed ? FixFileTypeEnum.Renamed : FixFileTypeEnum.Skipped, hit.Path, hit.Size ?? 0);
+        }
+
+        public static string GetCorrectFile(Game game, ContentTypeCategoryEnum category, string path, string extension)
+        {
+            // determine the correct name - which has a different calculation for media vs pinball :(
+            var correctContentName = game.GetContentName(category);
+
+            // use supplied path and extension - i.e. accommodate importing (source path) and scanning (destination path)
+            return Path.Combine(path!, $"{correctContentName}{extension}");
         }
 
         public static void DeleteActiveBackupFolderIfEmpty()
