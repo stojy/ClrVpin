@@ -220,7 +220,7 @@ namespace ClrVpin.Shared
 
         private static void Delete(string sourceFile)
         {
-            Logger.Debug($"- deleting{GetTrainerWheelsDisclosure()}..\n  src: {GetFileInfoStatistics(sourceFile)}");
+            Logger.Debug($"- deleting{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourceFile)}");
 
             if (!_settings.TrainerWheels)
                 File.Delete(sourceFile);
@@ -229,7 +229,7 @@ namespace ClrVpin.Shared
         // same as delete, but also logging the destination file info (for comparison)
         private static void DeleteIgnored(string sourceFile, string destinationFile)
         {
-            Logger.Debug($"- deleting ignored{GetTrainerWheelsDisclosure()}..\n  src: {GetFileInfoStatistics(sourceFile)}\n  dst: {GetFileInfoStatistics(destinationFile)}");
+            Logger.Debug($"- deleting ignored{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourceFile)}\n  destin: {GetFileInfoStatistics(destinationFile)}");
 
             if (!_settings.TrainerWheels)
                 File.Delete(sourceFile);
@@ -237,7 +237,7 @@ namespace ClrVpin.Shared
 
         private static void Rename(string sourceFile, string destinationFile)
         {
-            Logger.Debug($"- renaming{GetTrainerWheelsDisclosure()}..\n  src: {GetFileInfoStatistics(sourceFile)}\n  dst: {GetFileInfoStatistics(destinationFile)}");
+            Logger.Debug($"- renaming{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourceFile)}\n  destin: {GetFileInfoStatistics(destinationFile)}");
 
             if (!_settings.TrainerWheels)
                 File.Move(sourceFile, destinationFile, true);
@@ -245,7 +245,7 @@ namespace ClrVpin.Shared
 
         private static void Copy(string sourceFile, string destinationFile)
         {
-            Logger.Debug($"- copying{GetTrainerWheelsDisclosure()}..\n  src: {GetFileInfoStatistics(sourceFile)}\n  dst: {GetFileInfoStatistics(destinationFile)}");
+            Logger.Debug($"- copying{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourceFile)}\n  destin: {GetFileInfoStatistics(destinationFile)}");
 
             if (!_settings.TrainerWheels)
                 File.Copy(sourceFile, destinationFile, true);

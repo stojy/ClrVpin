@@ -15,7 +15,7 @@ namespace ClrVpin.Models
         {
             ContentTypeEnum = contentTypeEnum;
             ContentType = contentTypeEnum.GetDescription();
-            Path = path;    // full path + file name
+            Path = path;    // full = directory + file name
             File = System.IO.Path.GetFileName(path);
             Directory = System.IO.Path.GetDirectoryName(path);
             Extension = System.IO.Path.GetExtension(path);
