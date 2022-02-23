@@ -122,6 +122,7 @@ public class FuzzyTests
     [TestCase("Cactus Canyon (Bally 1998)", "659655879_CactusCanyon(Bally1998)VPW1.0.2.vpx", true, TestName = "number preamble")]
     [TestCase("The Flintstones (Williams 1994)", "1462262523_TheFlintstones(Williams1994)v1.26.vpx", true, TestName = "file starts with 'the' without any word breaks")]
     [TestCase("Spot A Card (Gottlieb 1960)", "197295192_SpotACard(Gottlieb1960).vpx", true, TestName = "file contains 'a' without any word breaks")]
+    [TestCase("Pirates of the Caribbean (Stern 2006)", "912446039_PiratesoftheCaribbean(Stern2006)-EBv1.vpx", true, TestName = "file contains 'of' and 'the' which don't align to word boundarys and can't be removed - matching start and end instead")]
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
@@ -158,12 +159,13 @@ public class FuzzyTests
     [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 207, TestName = "after chars removed - perfect match")]
     [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 157, TestName = "after chars removed - partial match")]
     [TestCase("Junkyard Cats (Bailey 2012)", "Junkyard Cats_1.07 (3 Screen).directB2S", true, 154, TestName = "single digit in parethensis - don't mistake for year")]
+    [TestCase("Junkya blah blah Cats Dogs (Bailey 2012)", "Junkya whatever whatever Cats Dogs.vpx", false, 74, TestName = "match start and end - start: 7chars, end: 8chars")]
     public void MatchScoreTest(string gameDetail, string fileDetail, bool expectedSuccess, int expectedScore)
     {
         var (success, score) = Fuzzy.Match(gameDetail, Fuzzy.GetNameDetails(fileDetail, true));
 
-        Assert.That(success, Is.EqualTo(expectedSuccess));
         Assert.That(score, Is.EqualTo(expectedScore));
+        Assert.That(success, Is.EqualTo(expectedSuccess));
     }
 
     [Test]

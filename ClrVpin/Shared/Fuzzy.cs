@@ -212,21 +212,24 @@ namespace ClrVpin.Shared
             return yearMatchScore;
         }
 
-        private static int GetNameMatchScore(string firstName, string firstNameNoWhiteSpace, string secondName, string secondNameNoWhiteSpace)
+        private static int GetNameMatchScore(string gameName, string gameNameNoWhiteSpace, string fileName, string fileNameNoWhiteSpace)
         {
-            var score = IsExactMatch(firstName, secondName) || IsExactMatch(firstNameNoWhiteSpace, secondNameNoWhiteSpace) ? 150 : 0;
+            var score = IsExactMatch(gameName, fileName) || IsExactMatch(gameNameNoWhiteSpace, fileNameNoWhiteSpace) ? 150 : 0;
 
             if (score == 0)
-                score = IsStartsMatch(14, firstName, secondName) || IsStartsMatch(14, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 100 : 0;
+                score = IsStartsMatch(14, gameName, fileName) || IsStartsMatch(14, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
             if (score == 0)
-                score = IsStartsMatch(10, firstName, secondName) || IsStartsMatch(10, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
+                score = IsStartsMatch(10, gameName, fileName) || IsStartsMatch(10, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
             if (score == 0)
-                score = IsStartsMatch(8, firstName, secondName) || IsStartsMatch(8, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 50 : 0;
+                score = IsStartsMatch(8, gameName, fileName) || IsStartsMatch(8, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 50 : 0;
 
             if (score == 0)
-                score = IsContainsMatch(17, firstName, secondName) || IsContainsMatch(17, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 100 : 0;
+                score = IsContainsMatch(17, gameName, fileName) || IsContainsMatch(17, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
             if (score == 0)
-                score = IsContainsMatch(13, firstName, secondName) || IsContainsMatch(13, secondNameNoWhiteSpace, firstNameNoWhiteSpace) ? 60 : 0;
+                score = IsContainsMatch(13, gameName, fileName) || IsContainsMatch(13, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
+
+            if (score == 0)
+                score = IsStartsAndEndsMatch(7, 8, gameName, fileName) || IsStartsAndEndsMatch(7, 8, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
 
             return score;
         }
@@ -234,15 +237,21 @@ namespace ClrVpin.Shared
         private static string ToNull(this string name) => string.IsNullOrWhiteSpace(name) ? null : name;
         private static string ToLowerAndTrim(this string name) => string.IsNullOrWhiteSpace(name) ? null : name.ToLower().Trim();
 
-        private static bool IsExactMatch(string firstFuzzyName, string secondFuzzyName) => firstFuzzyName == secondFuzzyName;
+        private static bool IsExactMatch(string first, string second) => first == second;
 
-        private static bool IsContainsMatch(int numCharsToMatch, string firstFuzzyName, string secondFuzzyName) =>
-            firstFuzzyName.Length >= numCharsToMatch && secondFuzzyName.Length >= numCharsToMatch && (firstFuzzyName.Contains(secondFuzzyName) || secondFuzzyName.Contains(firstFuzzyName));
+        private static bool IsStartsMatch(int minStringLength, string first, string second) =>
+            first.Length >= minStringLength && second.Length >= minStringLength && (first.StartsWith(second) || second.StartsWith(first));
 
-        private static bool IsStartsMatch(int numCharsToMatch, string firstFuzzyName, string secondFuzzyName) =>
-            firstFuzzyName.Length >= numCharsToMatch && secondFuzzyName.Length >= numCharsToMatch && (firstFuzzyName.StartsWith(secondFuzzyName) || secondFuzzyName.StartsWith(firstFuzzyName));
+        private static bool IsContainsMatch(int minStringLength, string first, string second) =>
+            first.Length >= minStringLength && second.Length >= minStringLength && (first.Contains(second) || second.Contains(first));
 
+        private static bool IsStartsAndEndsMatch(int startMatchLength, int endMatchLength, string first, string second)
+        {
+            if (first.Length < Math.Max(startMatchLength, endMatchLength) || second.Length < Math.Max(startMatchLength, endMatchLength))
+                return false;
 
+            return first.StartsWith(second.Remove(startMatchLength)) && first.EndsWith(second.Substring(second.Length - endMatchLength));
+        }
         private static readonly Regex _fileNameInfoRegex;
         private static readonly Regex _trimCharRegex;
         private static readonly Regex _trimWordRegex;
