@@ -182,7 +182,7 @@ namespace ClrVpin.Rebuilder
                 // files..
                 // 1. source file - will always exist since this is the new file to be merged
                 // 2. destination file - may not exist, i.e. this is a new file name (aka new content)
-                Logger.Debug($"- ignored..\n  source: {FileUtils.GetFileInfoStatistics(sourceFileInfo.FullName)}\n  destin: {FileUtils.GetFileInfoStatistics(destinationFileInfo?.FullName)}");
+                Logger.Debug($"- ignored..\n  source: {FileUtils.GetFileInfoStatistics(sourceFileInfo.FullName)}\n  dest:   {FileUtils.GetFileInfoStatistics(destinationFileInfo?.FullName)}");
             }
             return true;
         }
@@ -213,7 +213,7 @@ namespace ClrVpin.Rebuilder
             unmatchedFilesNotDeleted.ForEach(fileDetail =>
             {
                 Logger.Info($"Skipping (unmatched file, doesn't satisfy ignore criteria).. table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {fileDetail.ContentType.GetDescription()}");
-                Logger.Debug($"- ignored..\n  source: {FileUtils.GetFileInfoStatistics(fileDetail.Path)}\n  destin: {FileUtils.GetFileInfoStatistics(null)}");
+                Logger.Debug($"- ignored..\n  source: {FileUtils.GetFileInfoStatistics(fileDetail.Path)}\n  dest:   {FileUtils.GetFileInfoStatistics(null)}");
             });
         }
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ClrVpin.Models;
+using Utils.Extensions;
 
 namespace ClrVpin.Shared
 {
@@ -22,11 +23,18 @@ namespace ClrVpin.Shared
             _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
             // words
+            _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
             string[] authors = {"jps", "jp's", "sg1bson", "vpw", "starlion"};
             string[] language = {"a", "and", "the", "premium"};
             string[] vpx = {"vpx", "mod", "vp10"};
             pattern = string.Join('|', authors.Concat(language).Concat(vpx));
-            _trimWordRegex = new Regex($@"\b({pattern})\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            
+            // captures first word match
+            // - handles start and end of string
+            // - used with Regex.Replace will capture multiple matches at once.. same word or other other words
+            // - lookahead match without capture: https://stackoverflow.com/a/3926546/227110
+            // - https://regex101.com/r/DoztL5/1
+            _trimWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             // single whitespace
             string[] spacings = {"-", " - ", "_", @"\."};
@@ -34,11 +42,13 @@ namespace ClrVpin.Shared
             _addSpacingRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
             // version
-            // - number must be at end of string, i.e. thus assumes the file extensions has already been removed
+            // - number must be at end of string
+            //   - i.e. thus assumes the file extensions has already been removed
+            //   - extra whitespace ok
             // - 2 options..
             //   a. number without decimal (or underscore) - requires v/V prefix
             //   b. number with decimal (or underscore) - optional v/V prefix
-            _versionRegex = new Regex(@"([vV]\d+$|[vV]?\d+\.+\d*\.*\d*$|[vV]?\d+_+\d*_*\d*$)", RegexOptions.Compiled);
+            _versionRegex = new Regex(@"([vV]\d+$|[vV]?\d+\.+\d*\.*\d*\s*$|[vV]?\d+_+\d*_*\d*\s*$)", RegexOptions.Compiled);
 
             // preamble
             // - number.. aka file id (assumed 5 digits or more)
@@ -57,10 +67,15 @@ namespace ClrVpin.Shared
         {
             if (name == null)
                 return null;
-
+            
             // clean the string to make it a little cleaner for subsequent matching
             // - order is important!
-            var cleanName = name.ToLower();
+
+            // insert word break for any camel casing, e.g. "SpotACard" becomes "Sport A Card"
+            var cleanName = name.FromTitleCase(_titleCaseWordExceptions);
+
+            // easier comparison when everything is in the same case
+            cleanName = cleanName.ToLowerAndTrim();
 
             // trim (whole) words
             cleanName = _trimWordRegex.Replace(cleanName, "");
@@ -94,7 +109,7 @@ namespace ClrVpin.Shared
 
             return cleanName;
         }
-
+        
         public static (string name, string nameNoWhiteSpace, string manufacturer, int? year) GetNameDetails(string sourceName, bool isFileName)
         {
             // return the fuzzy portion of the filename..
@@ -126,10 +141,10 @@ namespace ClrVpin.Shared
                 name = sourceName.ToNull();
 
             // fuzzy clean the name field
-            name = Clean(name, false);
-            var nameNoWhiteSpace = Clean(name, true);
+            var cleanName = Clean(name, false);
+            var cleanNameNoWhiteSpace = Clean(name, true);
 
-            return (name, nameNoWhiteSpace, manufacturer, year);
+            return (cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(), manufacturer.ToLowerAndTrim(), year);
         }
 
         // fuzzy match against all games
@@ -216,7 +231,8 @@ namespace ClrVpin.Shared
             return score;
         }
 
-        private static string ToNull(this string name) => name == "" ? null : name.ToLower().Trim();
+        private static string ToNull(this string name) => string.IsNullOrWhiteSpace(name) ? null : name;
+        private static string ToLowerAndTrim(this string name) => string.IsNullOrWhiteSpace(name) ? null : name.ToLower().Trim();
 
         private static bool IsExactMatch(string firstFuzzyName, string secondFuzzyName) => firstFuzzyName == secondFuzzyName;
 
@@ -234,5 +250,6 @@ namespace ClrVpin.Shared
         private static readonly Regex _versionRegex;
         private static readonly Regex _preambleRegex;
         private static readonly Regex _multipleWhitespaceRegex;
+        private static readonly string[] _titleCaseWordExceptions;
     }
 }
