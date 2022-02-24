@@ -113,7 +113,7 @@ namespace ClrVpin.Shared
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, supportedFile);
                 }
                 // fuzzy matching
-                else if ((matchedGame = games.Match(fuzzyFileNameDetails)) != null)
+                else if ((matchedGame = games.Match(fuzzyFileNameDetails).game) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, supportedFile);
                 }

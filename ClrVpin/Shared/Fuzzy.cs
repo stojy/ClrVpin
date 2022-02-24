@@ -18,17 +18,17 @@ namespace ClrVpin.Shared
 
             // chars
             // - special consideration for non-ascii characters (i.e. 8 bit chars) as handling of these between IPDB, XML DB, and file names is often inconsistent
-            string[] specialChars = {"&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"\.$", @"[^\x00-\x7F]" };
+            string[] specialChars = { "&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"\.$", @"[^\x00-\x7F]" };
             var pattern = string.Join('|', specialChars);
             _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
             // words
             _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
-            string[] authors = {"jps", "jp's", "sg1bson", "vpw", "starlion"};
-            string[] language = {"a", "and", "the", "premium"};
-            string[] vpx = {"vpx", "mod", "vp10"};
+            string[] authors = { "jps", "jp's", "sg1bson", "vpw", "starlion" };
+            string[] language = { "a", "and", "the", "premium" };
+            string[] vpx = { "vpx", "mod", "vp10" };
             pattern = string.Join('|', authors.Concat(language).Concat(vpx));
-            
+
             // captures first word match
             // - handles start and end of string
             // - used with Regex.Replace will capture multiple matches at once.. same word or other other words
@@ -37,7 +37,7 @@ namespace ClrVpin.Shared
             _trimWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             // single whitespace
-            string[] spacings = {"-", " - ", "_", @"\."};
+            string[] spacings = { "-", " - ", "_", @"\." };
             pattern = string.Join('|', spacings);
             _addSpacingRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
@@ -67,7 +67,7 @@ namespace ClrVpin.Shared
         {
             if (name == null)
                 return null;
-            
+
             // clean the string to make it a little cleaner for subsequent matching
             // - order is important!
 
@@ -109,7 +109,7 @@ namespace ClrVpin.Shared
 
             return cleanName;
         }
-        
+
         public static (string name, string nameNoWhiteSpace, string manufacturer, int? year) GetNameDetails(string sourceName, bool isFileName)
         {
             // return the fuzzy portion of the filename..
@@ -148,22 +148,40 @@ namespace ClrVpin.Shared
         }
 
         // fuzzy match against all games
-        public static Game Match(this IList<Game> games, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fuzzyFileDetails)
+        public static (Game game, int? score) Match(this IList<Game> games, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fuzzyFileDetails)
         {
             // Check EVERY game so that the most appropriate game is selected
-            //   e.g. the 2nd DB entry (i.e. the sequel) should be matched..
+            // - e.g. the 2nd DB entry (i.e. the sequel) should be matched..
             //        - fuzzy file="Cowboy Eight Ball 2"
             //        - DB entries (in order)="Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"
-            // Match table name (non-media) OR description (media)
-            var tableMatches = games.Select(game => new {game, match = Match(game.TableFile, fuzzyFileDetails)}).Where(x => x.match.success);
-            var descriptionMatches = games.Select(game => new {game, match = Match(game.Description, fuzzyFileDetails)}).Where(x => x.match.success);
+            // - Match table name (non-media) OR description (media)
+            var tableFileMatches = games.Select(game => new { game, match = Match(game.TableFile, fuzzyFileDetails) });
+            var descriptionMatches = games.Select(game => new { game, match = Match(game.Description, fuzzyFileDetails) });
 
-            var preferredMatch = tableMatches.Concat(descriptionMatches)
-                .OrderByDescending(x => x.match.score)
+            var orderedMatches = tableFileMatches.Concat(descriptionMatches)
+                .OrderByDescending(x => x.match.success)
+                .ThenByDescending(x => x.match.score)
                 .ThenByDescending(x => x.game.TableFile.Length) // tie breaker
-                .FirstOrDefault();
+                .ToList(); 
+            
+            var preferredMatch = orderedMatches.FirstOrDefault();
 
-            return preferredMatch?.game;
+            // if we still don't have a successful match, then check if any match contains the fuzzy file name in BOTH the table and description
+            var score = preferredMatch?.match.score;
+            if (score < 100)
+            {
+                var matchesContainingFileName = orderedMatches.Where(match => match.game.TableFile.ToLower().Contains(fuzzyFileDetails.name) || match.game.Description.ToLower().Contains(fuzzyFileDetails.name)).ToList();
+                if (matchesContainingFileName.Count == 2)
+                {
+                    // re-assign the preferred match and increment score by 85
+                    // - max name length score=15 + 85 >= 100
+                    preferredMatch = matchesContainingFileName.First();
+                    score = preferredMatch.match.score;
+                    score += 85; 
+                }
+            }
+
+            return (score >= 100 ? preferredMatch.game : null, score);
         }
 
         public static (bool success, int score) Match(string gameDetail, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fileFuzzyDetails)
@@ -252,6 +270,7 @@ namespace ClrVpin.Shared
 
             return first.StartsWith(second.Remove(startMatchLength)) && first.EndsWith(second.Substring(second.Length - endMatchLength));
         }
+
         private static readonly Regex _fileNameInfoRegex;
         private static readonly Regex _trimCharRegex;
         private static readonly Regex _trimWordRegex;

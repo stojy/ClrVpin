@@ -160,6 +160,7 @@ public class FuzzyTests
     [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 157, TestName = "after chars removed - partial match")]
     [TestCase("Junkyard Cats (Bailey 2012)", "Junkyard Cats_1.07 (3 Screen).directB2S", true, 154, TestName = "single digit in parethensis - don't mistake for year")]
     [TestCase("Junkya blah blah Cats Dogs (Bailey 2012)", "Junkya whatever whatever Cats Dogs.vpx", false, 74, TestName = "match start and end - start: 7chars, end: 8chars")]
+    [TestCase("Dirty Harry (Williams 1995)", "Dirty Harry 2.0 shiny mod.vpx", false, 62, TestName = "10 char name match, but not manufacturer or year match")]
     public void MatchScoreTest(string gameDetail, string fileDetail, bool expectedSuccess, int expectedScore)
     {
         var (success, score) = Fuzzy.Match(gameDetail, Fuzzy.GetNameDetails(fileDetail, true));
@@ -183,7 +184,7 @@ public class FuzzyTests
     }
 
     [Test]
-    public void DatabaseGamesMatchTest()
+    public void DatabaseMultipleGamesMatchTest()
     {
         var games = new List<Game>
         {
@@ -191,31 +192,43 @@ public class FuzzyTests
             new Game {Ipdb = "2", TableFile = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
             new Game {Ipdb = "3", TableFile = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
             new Game {Ipdb = "4", TableFile = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
+            new Game {Ipdb = "5", TableFile = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)"},
         };
 
         // exact match #1
         var fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        var game = games.Match(fileDetails);
-        Assert.That(game.Ipdb, Is.EqualTo("1"));
+        var (game, _) = games.Match(fileDetails);
+        Assert.That(game?.Ipdb, Is.EqualTo("1"));
 
         // exact match #2 - i.,e. not the first match
         fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        game = games.Match(fileDetails);
-        Assert.That(game.Ipdb, Is.EqualTo("2"));
+        (game, _) = games.Match(fileDetails);
+        Assert.That(game?.Ipdb, Is.EqualTo("2"));
 
         // longest match chosen - i.e. not the first match
         fileDetails = Fuzzy.GetNameDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        game = games.Match(fileDetails);
-        Assert.That(game.Ipdb, Is.EqualTo("4"));
+        (game, _) = games.Match(fileDetails);
+        Assert.That(game?.Ipdb, Is.EqualTo("4"));
 
         // partial match
         fileDetails = Fuzzy.GetNameDetails("Blah Cowboy Eight Ball blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        game = games.Match(fileDetails);
-        Assert.That(game.Ipdb, Is.EqualTo("1"));
+        (game, _) = games.Match(fileDetails);
+        Assert.That(game?.Ipdb, Is.EqualTo("1"));
 
         // no match chosen - i.e. not the first match
         fileDetails = Fuzzy.GetNameDetails("what the heck is this file.f4v", true);
-        game = games.Match(fileDetails);
+        (game, _) = games.Match(fileDetails);
         Assert.IsNull(game);
+
+        // partial match - extra score because file only has 1 match in the games DB
+        fileDetails = Fuzzy.GetNameDetails("Frankenstein.vpx", true);
+        (game, _) = games.Match(fileDetails);
+        Assert.That(game?.Ipdb, Is.EqualTo("5"));
+
+        // partial match - NO extra score because file has multiple matches in the games DB
+        fileDetails = Fuzzy.GetNameDetails("Ball.vpx", true);
+        (game, var score) = games.Match(fileDetails);
+        Assert.That(game?.Ipdb, Is.EqualTo(null));
+        Assert.That(score, Is.EqualTo(15));
     }
 }
