@@ -124,6 +124,7 @@ public class FuzzyTests
     [TestCase("Spot A Card (Gottlieb 1960)", "197295192_SpotACard(Gottlieb1960).vpx", true, TestName = "file contains 'a' without any word breaks")]
     [TestCase("Pirates of the Caribbean (Stern 2006)", "912446039_PiratesoftheCaribbean(Stern2006)-EBv1.vpx", true, TestName = "file contains 'of' and 'the' which don't align to word boundarys and can't be removed - matching start and end instead")]
     [TestCase("Spider-Man Classic Edition (Stern 2007)", "Spider-Man Classic_VPWmod_V1.0.1.vpx", true, TestName = "file and game have same start string, but different trailing string")]
+    [TestCase("Transformers (Stern 2011)", "Transformers Marcade Mod v1.2.vpx", false, TestName = "partial name match is insufficient.. only 12 chars")]
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
@@ -194,6 +195,7 @@ public class FuzzyTests
             new Game {Ipdb = "3", TableFile = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
             new Game {Ipdb = "4", TableFile = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"},
             new Game {Ipdb = "5", TableFile = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)"},
+            new Game {Ipdb = "6", TableFile = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)"},
         };
 
         // exact match #1
@@ -231,5 +233,10 @@ public class FuzzyTests
         (game, var score) = games.Match(fileDetails);
         Assert.That(game?.Ipdb, Is.EqualTo(null));
         Assert.That(score, Is.EqualTo(15));
+        
+        fileDetails = Fuzzy.GetNameDetails("Transformers Marcade Mod v1.2.vpx", true);
+        (game, score) = games.Match(fileDetails);
+        Assert.That(game?.Ipdb, Is.EqualTo("6"));
+        Assert.That(score, Is.EqualTo(114));
     }
 }

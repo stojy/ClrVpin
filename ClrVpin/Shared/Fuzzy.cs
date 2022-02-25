@@ -170,14 +170,29 @@ namespace ClrVpin.Shared
             var score = preferredMatch?.match.score;
             if (score < 100)
             {
-                var matchesContainingFileName = orderedMatches.Where(match => match.game.TableFile.ToLower().Contains(fuzzyFileDetails.name) || match.game.Description.ToLower().Contains(fuzzyFileDetails.name)).ToList();
+                // match full file name 
+                var matchesContainingFileName = orderedMatches.Where(match => match.game.TableFile.ToLower().Contains(fuzzyFileDetails.name) ||
+                                                                              match.game.Description.ToLower().Contains(fuzzyFileDetails.name)).ToList();
                 if (matchesContainingFileName.Count == 2)
                 {
                     // re-assign the preferred match and increment score by 85
-                    // - max name length score=15 + 85 >= 100
+                    // - max name length score= 15 + 85 >= 100
                     preferredMatch = matchesContainingFileName.First();
                     score = preferredMatch.match.score;
                     score += 85;
+                }
+                else if (fuzzyFileDetails.name.Length >= 11)
+                {
+                    // match partial file name
+                    matchesContainingFileName = orderedMatches.Where(match => match.game.TableFile.ToLower().Contains(fuzzyFileDetails.name.Remove(11)) ||
+                                                                              match.game.Description.ToLower().Contains(fuzzyFileDetails.name.Remove(11))).ToList();
+                    if (matchesContainingFileName.Count == 2)
+                    {
+                        // re-assign the preferred match and increment score by less score
+                        preferredMatch = matchesContainingFileName.First();
+                        score = preferredMatch.match.score;
+                        score += 50;
+                    }
                 }
             }
 
