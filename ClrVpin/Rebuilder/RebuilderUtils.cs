@@ -109,8 +109,13 @@ namespace ClrVpin.Rebuilder
                 // log to identify fuzzy matches - anything that isn't an exact match
                 if (Path.GetFileName(destinationFileName) != Path.GetFileName(correctDestinationFileName))
                 {
-                    Logger.Debug($"- fuzzy match (score: {(hit.Score != null ? $"{hit.Score/100f:P0}" : "n/a")}).." +
-                                 $"\n  source: {FileUtils.GetFileInfoStatistics(hit.Path)}\n  match:  {FileUtils.GetFileInfoStatistics(correctDestinationFileName)}");
+                    var (description, warning) = Fuzzy.GetScoreDetail(hit.Score);
+                    var message = $"- fuzzy match (score: {description}).." +
+                                  $"\n  source: {FileUtils.GetFileInfoStatistics(hit.Path)}\n  match:  {FileUtils.GetFileInfoStatistics(correctDestinationFileName)}";
+                    if (warning)
+                        Logger.Warn(message);
+                    else
+                        Logger.Debug(message);
                 }
             }
 

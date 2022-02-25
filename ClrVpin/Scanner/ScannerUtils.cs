@@ -190,8 +190,14 @@ namespace ClrVpin.Scanner
 
             // delete all hit files except the first
             Logger.Info($"Fixing.. table: {game.TableFile}, description: {game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
-            Logger.Debug($"- matched (score: {(preferredHit.Score != null ? $"{preferredHit.Score/100f:P0}" : "n/a")})..\n" +
-                         $"  source: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}");
+
+            var (description, warning) = Fuzzy.GetScoreDetail(preferredHit.Score);
+            var message = $"- matched (score: {description})..\n  source: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}";
+            if (warning)
+                Logger.Warn(message);
+            else
+                Logger.Debug(message);
+
             gameFiles.AddRange(FileUtils.DeleteAllExcept(orderedHits, preferredHit, _settings.Scanner.SelectedFixHitTypes));
 
             // if the preferred hit file isn't 'CorrectName', then rename it

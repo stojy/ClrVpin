@@ -162,8 +162,8 @@ namespace ClrVpin.Shared
                 .OrderByDescending(x => x.match.success)
                 .ThenByDescending(x => x.match.score)
                 .ThenByDescending(x => x.game.TableFile.Length) // tie breaker
-                .ToList(); 
-            
+                .ToList();
+
             var preferredMatch = orderedMatches.FirstOrDefault();
 
             // if we still don't have a successful match, then check if any match contains the fuzzy file name in BOTH the table and description
@@ -177,7 +177,7 @@ namespace ClrVpin.Shared
                     // - max name length score=15 + 85 >= 100
                     preferredMatch = matchesContainingFileName.First();
                     score = preferredMatch.match.score;
-                    score += 85; 
+                    score += 85;
                 }
             }
 
@@ -206,6 +206,17 @@ namespace ClrVpin.Shared
             var lengthScore = fuzzyGameDetails.nameNoWhiteSpace.Length - 8;
 
             return Math.Max(0, Math.Min(15, lengthScore));
+        }
+
+        public static (string, bool) GetScoreDetail(int? score)
+        {
+            var warning = score < 120;
+            
+            var message = score == null ? "n/a" : $"{score / 100f:P0}";
+            if (warning)
+                message = $"low {message}";
+
+            return (message, warning);
         }
 
         private static int GetYearMatchScore(int? firstYear, int? secondYear)
