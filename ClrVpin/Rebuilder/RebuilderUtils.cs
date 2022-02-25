@@ -98,16 +98,20 @@ namespace ClrVpin.Rebuilder
             var destinationFileName = Path.Combine(contentType.Folder, hit.File);
             var destinationFileInfo = File.Exists(destinationFileName) ? new FileInfo(destinationFileName) : null;
 
-            // construct the correct destination file name - i.e. the file name that would be used when the scanner is run (typically after the merge)
+            // construct the correct destination file name - i.e. the file name that WILL be used when the scanner is eventually run (typically after the merge)
+            // - calculated here the purpose of logging, i.e. so that the file details of the file that will potentially be overwritten (when scanning is run) is displayed
+            // - selecting from the relevant hit.Type would likely be more efficient, but not done because full file paths are required/useful for logging
             var correctDestinationFileName = FileUtils.GetCorrectFile(game, contentType.Category, contentType.Folder, hit.Extension);
             var correctDestinationFileInfo = File.Exists(correctDestinationFileName) ? new FileInfo(correctDestinationFileName) : null;
 
-            // useful log to identify fuzzy matches - anything that isn't an exact match
-            void LogAction()
+            void LogFuzzyMatch()
             {
-                // using the hit.Type would likely be more efficient, but not done since the file names are required anyway for logging
+                // log to identify fuzzy matches - anything that isn't an exact match
                 if (Path.GetFileName(destinationFileName) != Path.GetFileName(correctDestinationFileName))
-                    Logger.Debug($"- fuzzy match..\n  source: {FileUtils.GetFileInfoStatistics(hit.Path)}\n  match:  {FileUtils.GetFileInfoStatistics(correctDestinationFileName)}");
+                {
+                    Logger.Debug($"- fuzzy match (score: {(hit.Score != null ? $"{hit.Score/100f:P0}" : "n/a")}).." +
+                                 $"\n  source: {FileUtils.GetFileInfoStatistics(hit.Path)}\n  match:  {FileUtils.GetFileInfoStatistics(correctDestinationFileName)}");
+                }
             }
 
             // ignore file from either..
@@ -117,7 +121,7 @@ namespace ClrVpin.Rebuilder
             {
                 fixFileType = FixFileTypeEnum.Ignored;
 
-                if (!ShouldIgnore(game, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo, LogAction))
+                if (!ShouldIgnore(game, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo, LogFuzzyMatch))
                 {
                     fixFileType = FixFileTypeEnum.Merged;
 
@@ -125,7 +129,7 @@ namespace ClrVpin.Rebuilder
                     var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
 
                     Logger.Info($"Merging.. table: {game.TableFile}, description: {game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}");
-                    LogAction();
+                    LogFuzzyMatch();
                     FileUtils.Merge(hit.Path, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified, contentType.KindredExtensionsList, backupFile => hit.Path = backupFile);
                 }
             }

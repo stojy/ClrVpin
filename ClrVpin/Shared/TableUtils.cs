@@ -88,7 +88,7 @@ namespace ClrVpin.Shared
             // - ASSOCIATION IS DONE IRRESPECTIVE OF THE USER'S SELECTED PREFERENCE, I.E. THE USE SELECTIONS ARE CHECKED ELSEWHERE
             supportedFiles.ForEach((supportedFile, i) =>
             {
-                updateProgress(Path.GetFileName(supportedFile), i+1);
+                updateProgress(Path.GetFileName(supportedFile), i + 1);
 
                 Game matchedGame;
                 var fuzzyFileNameDetails = Fuzzy.GetNameDetails(supportedFile, true);
@@ -104,7 +104,7 @@ namespace ClrVpin.Shared
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, supportedFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
-                    string.Equals(game.GetContentName(contentType.Category), Path.GetFileNameWithoutExtension(supportedFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                             string.Equals(game.GetContentName(contentType.Category), Path.GetFileNameWithoutExtension(supportedFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, supportedFile);
                 }
@@ -113,16 +113,20 @@ namespace ClrVpin.Shared
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, supportedFile);
                 }
                 // fuzzy matching
-                else if ((matchedGame = games.Match(fuzzyFileNameDetails).game) != null)
-                {
-                    getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, supportedFile);
-                }
                 else
                 {
-                    // possible for..
-                    // - table --> new table files added AND the database not updated yet
-                    // - table support and media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
-                    unknownSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, supportedFile, new FileInfo(supportedFile).Length));
+                    (matchedGame, var score) = games.Match(fuzzyFileNameDetails);
+                    if (matchedGame != null)
+                    {
+                        getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, supportedFile, score);
+                    }
+                    else
+                    {
+                        // possible for..
+                        // - table --> new table files added AND the database not updated yet
+                        // - table support and media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
+                        unknownSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, supportedFile, new FileInfo(supportedFile).Length));
+                    }
                 }
             });
 

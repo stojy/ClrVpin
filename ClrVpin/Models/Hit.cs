@@ -11,7 +11,7 @@ namespace ClrVpin.Models
 {
     public class Hit
     {
-        public Hit(ContentTypeEnum contentTypeEnum, string path, HitTypeEnum type)
+        public Hit(ContentTypeEnum contentTypeEnum, string path, HitTypeEnum type, int? score = null)
         {
             ContentTypeEnum = contentTypeEnum;
             ContentType = contentTypeEnum.GetDescription();
@@ -23,6 +23,7 @@ namespace ClrVpin.Models
             Size = FileInfo?.Length;
             SizeString = type == HitTypeEnum.Missing ? null : ByteSize.FromBytes(new FileInfo(path).Length).ToString("#");
             Type = type;
+            Score = score;
 
             // performance tweak - explicitly assign a property instead of relying on ToString during subsequent binding
             Description = ToString();
@@ -33,8 +34,7 @@ namespace ClrVpin.Models
             ExplorerCommand = new ActionCommand(ShowInExplorer);
             CopyPathCommand = new ActionCommand(CopyPath);
         }
-
-
+        
         public string Path { get; set; }
         public string File { get; }
         public string Directory { get; }
@@ -42,8 +42,10 @@ namespace ClrVpin.Models
 
         public FileInfo FileInfo { get; }
         public string SizeString { get; }
-        public long? Size { get; set; }
+        public long? Size { get;  }
         public HitTypeEnum Type { get; }
+        public int? Score { get;  }
+        
         public string Description { get; }
         public bool IsPresent { get; set; }
         public string ContentType { get; }
