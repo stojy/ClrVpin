@@ -98,7 +98,7 @@ public class FuzzyTests
     [TestCase("medieval madnes (Williams 2006)", "medieval madness", true, TestName="15 char minimum")]
     [TestCase("medieval madness (Williams 2006)", "medieval madness (blah 2006)", true)]
     [TestCase("medieval madness (  Williams 2006)", "medieval madness (blah 2006)", true)]
-    [TestCase("medieval madnesas (Williams 2006)", "medieval madness", false, TestName = "typo")]
+    [TestCase("medieval midness (Williams 2006)", "medieval madness", false, TestName = "typo")]
     [TestCase("ali (Stern 1980)", "ali", true, TestName = "short name exact match")]
     [TestCase("ali (Williams 2006)", "alien (blah)", false, TestName = "#1 - minimum 15 characters required for partial match")]
     [TestCase("black knight 2000", "black knight", false, TestName = "#2 - minimum 15 characters required for partial match")]
@@ -123,6 +123,7 @@ public class FuzzyTests
     [TestCase("The Flintstones (Williams 1994)", "1462262523_TheFlintstones(Williams1994)v1.26.vpx", true, TestName = "file starts with 'the' without any word breaks")]
     [TestCase("Spot A Card (Gottlieb 1960)", "197295192_SpotACard(Gottlieb1960).vpx", true, TestName = "file contains 'a' without any word breaks")]
     [TestCase("Pirates of the Caribbean (Stern 2006)", "912446039_PiratesoftheCaribbean(Stern2006)-EBv1.vpx", true, TestName = "file contains 'of' and 'the' which don't align to word boundarys and can't be removed - matching start and end instead")]
+    [TestCase("Spider-Man Classic Edition (Stern 2007)", "Spider-Man Classic_VPWmod_V1.0.1.vpx", true, TestName = "file and game have same start string, but different trailing string")]
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
@@ -213,7 +214,7 @@ public class FuzzyTests
         // partial match
         fileDetails = Fuzzy.GetNameDetails("Blah Cowboy Eight Ball blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         (game, _) = games.Match(fileDetails);
-        Assert.That(game?.Ipdb, Is.EqualTo("1"));
+        Assert.That(game?.Ipdb, Is.EqualTo("2"));
 
         // no match chosen - i.e. not the first match
         fileDetails = Fuzzy.GetNameDetails("what the heck is this file.f4v", true);

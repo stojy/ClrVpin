@@ -257,11 +257,21 @@ namespace ClrVpin.Shared
 
         private static bool IsExactMatch(string first, string second) => first == second;
 
-        private static bool IsStartsMatch(int minStringLength, string first, string second) =>
-            first.Length >= minStringLength && second.Length >= minStringLength && (first.StartsWith(second) || second.StartsWith(first));
+        private static bool IsStartsMatch(int minStringLength, string first, string second)
+        {
+            if (minStringLength > first.Length || minStringLength > second.Length)
+                return false;
 
-        private static bool IsContainsMatch(int minStringLength, string first, string second) =>
-            first.Length >= minStringLength && second.Length >= minStringLength && (first.Contains(second) || second.Contains(first));
+            return first.StartsWith(second.Remove(minStringLength)) || second.StartsWith(first.Remove(minStringLength));
+        }
+
+        private static bool IsContainsMatch(int minStringLength, string first, string second)
+        {
+            if (minStringLength > first.Length || minStringLength > second.Length)
+                return false;
+
+            return first.Contains(second.Remove(minStringLength)) || second.Contains(first.Remove(minStringLength));
+        }
 
         private static bool IsStartsAndEndsMatch(int startMatchLength, int endMatchLength, string first, string second)
         {
