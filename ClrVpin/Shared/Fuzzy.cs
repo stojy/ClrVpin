@@ -26,7 +26,7 @@ namespace ClrVpin.Shared
             _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
             string[] authors = { "jps", "jp's", "sg1bson", "vpw", "starlion" };
             string[] language = { "a", "and", "the", "premium" };
-            string[] vpx = { "vpx", "mod", "vp10" };
+            string[] vpx = { "vpx", "mod", "vp10", "4k" };
             pattern = string.Join('|', authors.Concat(language).Concat(vpx));
 
             // captures first word match
@@ -255,7 +255,11 @@ namespace ClrVpin.Shared
 
         private static int GetNameMatchScore(string gameName, string gameNameNoWhiteSpace, string fileName, string fileNameNoWhiteSpace)
         {
-            var score = IsExactMatch(gameName, fileName) || IsExactMatch(gameNameNoWhiteSpace, fileNameNoWhiteSpace) ? 150 : 0;
+            // matching order is important.. highest priority matches must be first!
+            var score = IsExactMatch(gameName, fileName) ? 150 : 0;
+            
+            if (score == 0)
+                score = IsExactMatch(gameNameNoWhiteSpace, fileNameNoWhiteSpace) ? 145 : 0;
 
             if (score == 0)
                 score = IsStartsMatch(14, gameName, fileName) || IsStartsMatch(14, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
