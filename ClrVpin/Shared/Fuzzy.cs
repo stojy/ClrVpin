@@ -24,7 +24,7 @@ namespace ClrVpin.Shared
 
             // words
             _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
-            string[] authors = { "jps", "jp's", "sg1bson", "vpw", "starlion" };
+            string[] authors = { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58" };
             string[] language = { "a", "and", "the", "premium" };
             string[] vpx = { "vpx", "mod", "vp10", "4k" };
             pattern = string.Join('|', authors.Concat(language).Concat(vpx));
@@ -36,14 +36,21 @@ namespace ClrVpin.Shared
             // - https://regex101.com/r/DoztL5/1
             _trimWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-            // single whitespace
-            string[] spacings = { "-", " - ", "_", @"\." };
+            // first pass single whitespace
+            // - performed BEFORE other checks that aren't sensitive to these changes
+            string[] firstPassSpacings = { "-", " - " };
+            pattern = string.Join('|', firstPassSpacings);
+            _addSpacingFirstPassRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
+
+            // second pass single whitespace
+            // - performed AFTER other checks that are sensitive to these changes, e.g. version checking
+            string[] spacings = { "_", @"\." };
             pattern = string.Join('|', spacings);
-            _addSpacingRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
+            _addSpacingSecondPassRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
             // version
             // - number must be at end of string
-            //   - i.e. thus assumes the file extensions has already been removed
+            //   - assumes other processing has completed, e.g. strip file extension, author, etc
             //   - extra whitespace ok
             // - 2 options..
             //   a. number without decimal (or underscore) - requires v/V prefix
@@ -83,14 +90,17 @@ namespace ClrVpin.Shared
             // trim chars - must trim extension period for version to work correctly!
             cleanName = _trimCharRegex.Replace(cleanName, "");
 
+            // add whitespace - first pass
+            cleanName = _addSpacingFirstPassRegex.Replace(cleanName, " ");
+
             // trim version
             cleanName = _versionRegex.Replace(cleanName, "");
 
             // trim preamble
             cleanName = _preambleRegex.Replace(cleanName, "");
 
-            // add whitespace
-            cleanName = _addSpacingRegex.Replace(cleanName, " ");
+            // add whitespace - second pass
+            cleanName = _addSpacingSecondPassRegex.Replace(cleanName, " ");
 
             // substitutions
             cleanName = cleanName
@@ -336,7 +346,8 @@ namespace ClrVpin.Shared
         private static readonly Regex _fileNameInfoRegex;
         private static readonly Regex _trimCharRegex;
         private static readonly Regex _trimWordRegex;
-        private static readonly Regex _addSpacingRegex;
+        private static readonly Regex _addSpacingFirstPassRegex;
+        private static readonly Regex _addSpacingSecondPassRegex;
         private static readonly Regex _versionRegex;
         private static readonly Regex _preambleRegex;
         private static readonly Regex _multipleWhitespaceRegex;

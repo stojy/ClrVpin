@@ -54,7 +54,10 @@ public class FuzzyTests
     [TestCase("Twilight Zone 3_0.vpx", true, "twilightzone", TestName = "remove version - double digit with underscore")]
     [TestCase("Twilight Zone 30.00.10.vpx", true, "twilightzone", TestName = "remove version - triple digit")]
     [TestCase("Twilight Zone v1.2.vpx", true, "twilightzone", TestName = "remove version - double digit with prefix")]
-    [TestCase("Twilight Zone v1.2 blah.vpx", true, "twilightzonev12blah", TestName = "remove version - version not at the end - number ot remain")]
+    [TestCase("Twilight Zone v1.2 blah.vpx", true, "twilightzonev12blah", TestName = "remove version - version not at the end - number to remain")]
+    [TestCase("Twilight Zone v1.2 - blah.vpx", true, "twilightzonev12blah", TestName = "remove version - version before hyphen and not at the end - number to remain")]
+    [TestCase("Twilight Zone v1.2 - VP10.vpx", true, "twilightzone", TestName = "remove version with decimal - version before hyphen and IS at the end (VP10 keyword removed) - number to be stripped")]
+    [TestCase("Twilight Zone v1_2 - VP10.vpx", true, "twilightzone", TestName = "remove version with underscore - version before hyphen and IS at the end (VP10 keyword removed) - number to be stripped")]
     [TestCase("._Twilight Zone SG1bsoN Mod V3.vpx", true, "twilightzone", TestName = "remove multple.. author, version, mod, etc")]
     [TestCase("the black knight", false, "black knight", TestName = "remove 'the'")]
     [TestCase("black&apos; knight", false, "black knight", TestName = "remove '&apos;'")]
@@ -128,6 +131,7 @@ public class FuzzyTests
     [TestCase("Spider-Man Classic Edition (Stern 2007)", "Spider-Man Classic_VPWmod_V1.0.1.vpx", true, TestName = "file and game have same start string, but different trailing string")]
     [TestCase("Transformers (Stern 2011)", "Transformers Marcade Mod v1.2.vpx", false, TestName = "partial name match is insufficient.. only 12 chars")]
     [TestCase("Whirlwind (Williams 1990)", "Whirlwind 4K 1.1.vpx", true, TestName = "ignore word: 4k")]
+    [TestCase("Wizard (Bally 1975)", "Wizard! VPX v1.03 - pinball58.vpx", true, TestName = "nasty: no manufacturer, no year, file has exclaimation, 2 digit version, hyphyen and author AFTER version")]
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
