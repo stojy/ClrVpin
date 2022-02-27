@@ -256,25 +256,39 @@ namespace ClrVpin.Shared
         private static int GetNameMatchScore(string gameName, string gameNameNoWhiteSpace, string fileName, string fileNameNoWhiteSpace)
         {
             // matching order is important.. highest priority matches must be first!
-            var score = IsExactMatch(gameName, fileName) ? 150 : 0;
+            var score = IsExactMatch(gameName, fileName) ? 150 + ScoringNoWhiteSpaceBonus : 0;
+            if (score == 0)
+                score = IsExactMatch(gameNameNoWhiteSpace, fileNameNoWhiteSpace) ? 150 : 0;
+
+            if (score == 0)
+                score = IsStartsMatch(14, gameName, fileName) ? 100 + ScoringNoWhiteSpaceBonus: 0;
+            if (score == 0)
+                score = IsStartsMatch(14, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
             
             if (score == 0)
-                score = IsExactMatch(gameNameNoWhiteSpace, fileNameNoWhiteSpace) ? 145 : 0;
+                score = IsStartsMatch(10, gameName, fileName) ? 60 + ScoringNoWhiteSpaceBonus : 0;
+            if (score == 0)
+                score = IsStartsMatch(10, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
 
             if (score == 0)
-                score = IsStartsMatch(14, gameName, fileName) || IsStartsMatch(14, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
+                score = IsStartsMatch(8, gameName, fileName) ? 50 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsStartsMatch(10, gameName, fileName) || IsStartsMatch(10, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
-            if (score == 0)
-                score = IsStartsMatch(8, gameName, fileName) || IsStartsMatch(8, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 50 : 0;
+                score = IsStartsMatch(8, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 50 : 0;
 
             if (score == 0)
-                score = IsContainsMatch(17, gameName, fileName) || IsContainsMatch(17, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
+                score = IsContainsMatch(17, gameName, fileName) ? 100 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsContainsMatch(13, gameName, fileName) || IsContainsMatch(13, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
+                score = IsContainsMatch(17, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
+            
+            if (score == 0)
+                score = IsContainsMatch(13, gameName, fileName) ? 60 + ScoringNoWhiteSpaceBonus : 0;
+            if (score == 0)
+                score = IsContainsMatch(13, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
 
             if (score == 0)
-                score = IsStartsAndEndsMatch(7, 8, gameName, fileName) || IsStartsAndEndsMatch(7, 8, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
+                score = IsStartsAndEndsMatch(7, 8, gameName, fileName) ? 60 + ScoringNoWhiteSpaceBonus : 0;
+            if (score == 0)
+                score = IsStartsAndEndsMatch(7, 8, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
 
             return score;
         }
@@ -317,6 +331,7 @@ namespace ClrVpin.Shared
         }
 
         private const int MinMatchScore = 100;
+        public const int ScoringNoWhiteSpaceBonus = 5;
 
         private static readonly Regex _fileNameInfoRegex;
         private static readonly Regex _trimCharRegex;
