@@ -150,53 +150,37 @@ namespace ClrVpin.Shared
         // fuzzy match against all games
         public static (Game game, int? score) Match(this IList<Game> games, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fuzzyFileDetails)
         {
-            // Check EVERY game so that the most appropriate game is selected
+            // check EVERY game against the file to look for the best match
             // - e.g. the 2nd DB entry (i.e. the sequel) should be matched..
             //        - fuzzy file="Cowboy Eight Ball 2"
             //        - DB entries (in order)="Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)"
             // - Match table name (non-media) OR description (media)
-            var tableFileMatches = games.Select(game => new { game, match = Match(game.TableFile, fuzzyFileDetails) });
-            var descriptionMatches = games.Select(game => new { game, match = Match(game.Description, fuzzyFileDetails) });
+            var tableFileMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.TableFile, fuzzyFileDetails) });
+            var descriptionMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.Description, fuzzyFileDetails) });
 
             var orderedMatches = tableFileMatches.Concat(descriptionMatches)
-                .OrderByDescending(x => x.match.success)
-                .ThenByDescending(x => x.match.score)
-                .ThenByDescending(x => x.game.TableFile.Length) // tie breaker
+                .OrderByDescending(x => x.MatchResult.success)
+                .ThenByDescending(x => x.MatchResult.score)
+                .ThenByDescending(x => x.Game.TableFile.Length) // tie breaker
                 .ToList();
 
             var preferredMatch = orderedMatches.FirstOrDefault();
+            var score = preferredMatch?.MatchResult.score;
 
-            // if we still don't have a successful match, then check if any match contains the fuzzy file name in BOTH the table and description
-            var score = preferredMatch?.match.score;
-            if (score < 100)
+            // if there's still no match, check if file has a UNIQUE match within in the game DB
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.name)) != null)
             {
-                // match full file name 
-                var matchesContainingFileName = orderedMatches.Where(match => match.game.TableFile.ToLower().Contains(fuzzyFileDetails.name) ||
-                                                                              match.game.Description.ToLower().Contains(fuzzyFileDetails.name)).ToList();
-                if (matchesContainingFileName.Count == 2)
-                {
-                    // re-assign the preferred match and increment score by 85
-                    // - max name length score= 15 + 85 >= 100
-                    preferredMatch = matchesContainingFileName.First();
-                    score = preferredMatch.match.score;
-                    score += 85;
-                }
-                else if (fuzzyFileDetails.name.Length >= 11)
-                {
-                    // match partial file name
-                    matchesContainingFileName = orderedMatches.Where(match => match.game.TableFile.ToLower().Contains(fuzzyFileDetails.name.Remove(11)) ||
-                                                                              match.game.Description.ToLower().Contains(fuzzyFileDetails.name.Remove(11))).ToList();
-                    if (matchesContainingFileName.Count == 2)
-                    {
-                        // re-assign the preferred match and increment score by less score
-                        preferredMatch = matchesContainingFileName.First();
-                        score = preferredMatch.match.score;
-                        score += 50;
-                    }
-                }
+                score = preferredMatch.MatchResult.score;
+                score += 85;
             }
 
-            return (score >= 100 ? preferredMatch.game : null, score);
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.name, 11)) != null)
+            {
+                score = preferredMatch.MatchResult.score;
+                score += 50;
+            }
+
+            return (score >= MinMatchScore ? preferredMatch?.Game : null, score);
         }
 
         public static (bool success, int score) Match(string gameDetail, (string name, string nameNoWhiteSpace, string manufacturer, int? year) fileFuzzyDetails)
@@ -226,12 +210,25 @@ namespace ClrVpin.Shared
         public static (string, bool) GetScoreDetail(int? score)
         {
             var warning = score < 120;
-            
+
             var message = score == null ? "n/a" : $"{score / 100f:P0}";
             if (warning)
                 message = $"low {message}";
 
             return (message, warning);
+        }
+
+        private static MatchDetail GetUniqueMatch(List<MatchDetail> orderedMatches, string fuzzyFileName, int? startMatchLength = null)
+        {
+            // only strip file name if a length provided AND it is les than the string lenth
+            if (fuzzyFileName.Length > startMatchLength)
+                fuzzyFileName = fuzzyFileName.Remove(startMatchLength.Value);
+
+            // check if we have a match that contains the fuzzy file name in BOTH the table and description
+            var matchesContainingFileName = orderedMatches.Where(match => match.Game.TableFile.ToLower().Contains(fuzzyFileName) ||
+                                                                          match.Game.Description.ToLower().Contains(fuzzyFileName)).ToList();
+
+            return matchesContainingFileName.Count == 2 ? matchesContainingFileName.First() : null;
         }
 
         private static int GetYearMatchScore(int? firstYear, int? secondYear)
@@ -306,6 +303,16 @@ namespace ClrVpin.Shared
 
             return first.StartsWith(second.Remove(startMatchLength)) && first.EndsWith(second.Substring(second.Length - endMatchLength));
         }
+
+        // non-anonymous type so it can be passed as a method parameter
+        // - refer https://stackoverflow.com/questions/6624811/how-to-pass-anonymous-types-as-parameters
+        private class MatchDetail
+        {
+            public Game Game;
+            public (bool success, int score) MatchResult;
+        }
+
+        private const int MinMatchScore = 100;
 
         private static readonly Regex _fileNameInfoRegex;
         private static readonly Regex _trimCharRegex;
