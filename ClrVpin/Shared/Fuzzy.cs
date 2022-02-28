@@ -25,9 +25,9 @@ namespace ClrVpin.Shared
 
             // words
             _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
-            string[] authors = { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58" };
-            string[] language = { "a", "and", "the", "premium" };
-            string[] vpx = { "vpx", "mod", "vp10", "4k" };
+            string[] authors = { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99" };
+            string[] language = { "a", "and", "the", "premium", "en" };
+            string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player" };
             pattern = string.Join('|', authors.Concat(language).Concat(vpx));
 
             // captures first word match
