@@ -137,6 +137,7 @@ public class FuzzyTests
     [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Ameri Most Haunted (spooky 2014) b2s v3.directb2s", false, TestName = "single character wrong: levenshtein distance 3")]
     [TestCase("Mum (Spooky Pinball LLC 2014)", "Mom (spooky 2014) b2s v3.directb2s", false, TestName = "single character wrong: levenshtein distance 1, but length too short")]
     [TestCase("Big Brave (Gottlieb 1974)", "Big_Brave_VP99_EN_4player_b2s.directb2s", true, TestName = "various exception words: author, 4player, b2s, etc")]
+    [TestCase("Lord Of The Rings (Stern 2003)", "Lord_of_the_Rings_VPW_2022.directb2s", true, TestName = "created year in title")]
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
