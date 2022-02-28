@@ -102,7 +102,7 @@ public class FuzzyTests
     [TestCase("medieval madnes (Williams 2006)", "medieval madness", true, TestName = "15 char minimum")]
     [TestCase("medieval madness (Williams 2006)", "medieval madness (blah 2006)", true)]
     [TestCase("medieval madness (  Williams 2006)", "medieval madness (blah 2006)", true)]
-    [TestCase("medieval midness (Williams 2006)", "medieval madness", false, TestName = "typo")]
+    [TestCase("medieval midness (Williams 2006)", "medieval madness", true, TestName = "typo: Levenshtein distance match")]
     [TestCase("ali (Stern 1980)", "ali", true, TestName = "short name exact match")]
     [TestCase("ali (Williams 2006)", "alien (blah)", false, TestName = "#1 - minimum 15 characters required for partial match")]
     [TestCase("black knight 2000", "black knight", false, TestName = "#2 - minimum 15 characters required for partial match")]
@@ -132,6 +132,10 @@ public class FuzzyTests
     [TestCase("Transformers (Stern 2011)", "Transformers Marcade Mod v1.2.vpx", false, TestName = "partial name match is insufficient.. only 12 chars")]
     [TestCase("Whirlwind (Williams 1990)", "Whirlwind 4K 1.1.vpx", true, TestName = "ignore word: 4k")]
     [TestCase("Wizard (Bally 1975)", "Wizard! VPX v1.03 - pinball58.vpx", true, TestName = "nasty: no manufacturer, no year, file has exclaimation, 2 digit version, hyphyen and author AFTER version")]
+    [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Americs Most Haunted (spooky 2014) b2s v3.directb2s", true, TestName = "single character wrong: levenshtein distance 1")]
+    [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Americ Most Haunted (spooky 2014) b2s v3.directb2s", true, TestName = "single character wrong: levenshtein distance 2")]
+    [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Ameri Most Haunted (spooky 2014) b2s v3.directb2s", false, TestName = "single character wrong: levenshtein distance 3")]
+    [TestCase("Mum (Spooky Pinball LLC 2014)", "Mom (spooky 2014) b2s v3.directb2s", false, TestName = "single character wrong: levenshtein distance 1, but length too short")]
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
@@ -166,13 +170,14 @@ public class FuzzyTests
     [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 15 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 13char and +/-2 year")]
     [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 115 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 13char and +/-2 year")]
     [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 207 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "after chars removed - perfect match")]
-    [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 157 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "after chars removed - partial match")]
+    [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 213 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 157 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "after chars removed - partial match")]
     [TestCase("Junkyard Cats (Bailey 2012)", "Junkyard Cats_1.07 (3 Screen).directB2S", true, 154 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "single digit in parethensis - don't mistake for year")]
     [TestCase("Junkya blah blah Cats Dogs (Bailey 2012)", "Junkya whatever whatever Cats Dogs.vpx", false, 74 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "match start and end - start: 7chars, end: 8chars")]
     [TestCase("Dirty Harry (Williams 1995)", "Dirty Harry 2.0 shiny mod.vpx", false, 62 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "10 char name match, but not manufacturer or year match")]
     [TestCase("Blahblah (Williams 1990)", "Blahblah 4K 1.1.vpx", true, 150 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "ignore word: 4k")]
     [TestCase("Whirlwind (Williams 1990)", "Whirlwind 4K 1.1.vpx", true, 151 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "match without white space (no hyphen): should score higher")]
     [TestCase("Whirl-Wind (Gottlieb 1958)", "Whirlwind 4K 1.1.vpx", true, 151, TestName = "match with whitespace (hyphen converts to whitespace): should match lower")]
+    [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Americs Most Haunted (spooky 2014) b2s v3.directb2s", true, 186, TestName = "match with Levenshtein distance")]
     public void MatchScoreTest(string gameDetail, string fileDetail, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation

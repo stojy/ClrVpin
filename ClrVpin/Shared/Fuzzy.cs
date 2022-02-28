@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ClrVpin.Models;
+using Utils;
 using Utils.Extensions;
 
 namespace ClrVpin.Shared
@@ -270,6 +271,12 @@ namespace ClrVpin.Shared
             if (score == 0)
                 score = IsExactMatch(gameNameNoWhiteSpace, fileNameNoWhiteSpace) ? 150 : 0;
 
+            // levenshtein distance
+            if (score == 0)
+                score = IsLevenshteinMatch(14, 2, gameName, fileName) ? 120 + ScoringNoWhiteSpaceBonus: 0;
+            if (score == 0)
+                score = IsLevenshteinMatch(14, 2, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 120 : 0;
+
             if (score == 0)
                 score = IsStartsMatch(14, gameName, fileName) ? 100 + ScoringNoWhiteSpaceBonus: 0;
             if (score == 0)
@@ -307,6 +314,14 @@ namespace ClrVpin.Shared
         private static string ToLowerAndTrim(this string name) => string.IsNullOrWhiteSpace(name) ? null : name.ToLower().Trim();
 
         private static bool IsExactMatch(string first, string second) => first == second;
+
+        private static bool IsLevenshteinMatch(int minStringLength, int maxDistance, string first, string second)
+        {
+            if (minStringLength > first.Length || minStringLength > second.Length)
+                return false;
+
+            return LevenshteinDistance.Calculate(first, second) <= maxDistance;
+        }
 
         private static bool IsStartsMatch(int minStringLength, string first, string second)
         {
