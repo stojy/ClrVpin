@@ -30,9 +30,10 @@ public class FuzzyTests
     [TestCase("1462262523_The Flintstones(Williams1994)v1.26.vpx", true, "flintstones", "flintstones", "williams", 1994, TestName = "file name starts with 'the' keyword")]
     [TestCase("Twilight Zone SG1bsoN Mod V3.vpx", true, "twilight zone", "twilightzone", null, null, TestName = "file name with special author camelcase SG1bsoN")]
     [TestCase("Whirlwind 4K 1.1.vpx", true, "whirlwind", "whirlwind", null, null, TestName = "ignore word: 4k")]
+    [TestCase(@"C:\vp\_downloaded\wheel images\V1 (IDSA 1986) Logo.png", true, null, null, "idsa", 1986, TestName = "name stripped completely: empty string converted to null")]
     public void GetNameDetailsTest(string sourceName, bool isFileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, int? expectedYear)
     {
-        var (name, nameNoWhiteSpace, manufacturer, year) = Fuzzy.GetNameDetails(sourceName, isFileName);
+        var (name, nameNoWhiteSpace, manufacturer, year, _) = Fuzzy.GetNameDetails(sourceName, isFileName);
 
         Assert.That(name, Is.EqualTo(expectedName));
         Assert.That(nameNoWhiteSpace, Is.EqualTo(expectedNameNoWhiteSpace));
@@ -138,6 +139,7 @@ public class FuzzyTests
     [TestCase("Mum (Spooky Pinball LLC 2014)", "Mom (spooky 2014) b2s v3.directb2s", false, TestName = "single character wrong: levenshtein distance 1, but length too short")]
     [TestCase("Big Brave (Gottlieb 1974)", "Big_Brave_VP99_EN_4player_b2s.directb2s", true, TestName = "various exception words: author, 4player, b2s, etc")]
     [TestCase("Lord Of The Rings (Stern 2003)", "Lord_of_the_Rings_VPW_2022.directb2s", true, TestName = "created year in title")]
+    [TestCase("V1 (IDSA 1986)", "V1 (IDSA 1986) Logo.png", false, TestName = "correct name: but name cleansing removes all contents")]
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
@@ -180,6 +182,7 @@ public class FuzzyTests
     [TestCase("Whirlwind (Williams 1990)", "Whirlwind 4K 1.1.vpx", true, 151 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "match without white space (no hyphen): should score higher")]
     [TestCase("Whirl-Wind (Gottlieb 1958)", "Whirlwind 4K 1.1.vpx", true, 151, TestName = "match with whitespace (hyphen converts to whitespace): should match lower")]
     [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Americs Most Haunted (spooky 2014) b2s v3.directb2s", true, 186, TestName = "match with Levenshtein distance")]
+    [TestCase("V1 (IDSA 1986) Logo", "V1 (IDSA 1986) Logo.png", false, 50, TestName = "perfect match: but no name match score because the cleansed names are null.. since 'v1' is stripped")]
     public void MatchScoreTest(string gameDetail, string fileDetail, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
@@ -213,7 +216,8 @@ public class FuzzyTests
             new Game { Ipdb = "3", TableFile = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
             new Game { Ipdb = "4", TableFile = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
             new Game { Ipdb = "5", TableFile = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" },
-            new Game { Ipdb = "6", TableFile = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" }
+            new Game { Ipdb = "6", TableFile = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" },
+            new Game { Ipdb = "7", TableFile = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo" }
         };
 
         // exact match #1
@@ -252,9 +256,16 @@ public class FuzzyTests
         Assert.That(game?.Ipdb, Is.EqualTo(null));
         Assert.That(score, Is.EqualTo(15));
 
+        // ??
         fileDetails = Fuzzy.GetNameDetails("Transformers Marcade Mod v1.2.vpx", true);
         (game, score) = games.Match(fileDetails);
         Assert.That(game?.Ipdb, Is.EqualTo("6"));
         Assert.That(score, Is.EqualTo(114 + Fuzzy.ScoringNoWhiteSpaceBonus));
+
+        // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw table name
+        fileDetails = Fuzzy.GetNameDetails("V1 (IDSA 1986) Logo.png", true);
+        (game, score) = games.Match(fileDetails);
+        Assert.That(game?.Ipdb, Is.EqualTo("7"));
+        Assert.That(score, Is.EqualTo(135));
     }
 }
