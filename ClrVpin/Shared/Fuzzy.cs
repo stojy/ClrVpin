@@ -215,8 +215,8 @@ namespace ClrVpin.Shared
 
             var score = yearMatchScore + nameMatchScore + lengthScore;
 
-            // total 'identity check/match' score must be 100 or more
-            return (score >= 100, score);
+            // total 'identity check/match' score must be >= _minMatchScore
+            return (score >= MinMatchScore, score);
         }
 
         public static int GetLengthMatchScore((string name, string nameNoWhiteSpace, string manufacturer, int? year, string actualName) fuzzyGameDetails)
@@ -373,7 +373,7 @@ namespace ClrVpin.Shared
             public (bool success, int score) MatchResult;
         }
 
-        private const int MinMatchScore = 100;
+        private static decimal MinMatchScore => Model.Settings.Rebuilder.MatchFuzzyMinimumPercentage;
         public const int ScoringNoWhiteSpaceBonus = 5;
 
         private static readonly Regex _fileNameInfoRegex;

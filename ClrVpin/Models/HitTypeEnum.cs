@@ -9,9 +9,9 @@ namespace ClrVpin.Models
 
         [Description("Wrong Case")] WrongCase,
 
-        [Description("Table Name Match")] TableName,
+        [Description("Table Name")] TableName,
 
-        [Description("Fuzzy Name Match")] Fuzzy,
+        [Description("Fuzzy Name")] Fuzzy,
 
         [Description("Duplicate Extension")] DuplicateExtension,    // requires that a 'CorrectName' hit also exist
 

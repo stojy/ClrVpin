@@ -9,7 +9,7 @@
   </ResourceDictionary.MergedDictionaries>
 
   <converters:BoolToStringConverter x:Key="BoolToFontStyleConverter" True="Italic" False="Normal" />
-  <converters:BoolToStringConverter x:Key="BoolToMarginConverter" True="0,10,0,0" False="0" />
+  <converters:BoolToStringConverter x:Key="BoolToMarginConverter" True="0,10,0,0" False="0,2,0,0" />
 
   <DataTemplate x:Key="FeatureTypeTemplate" DataType="models:FeatureType">
     <CheckBox Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"

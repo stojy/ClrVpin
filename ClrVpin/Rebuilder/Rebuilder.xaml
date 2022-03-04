@@ -42,28 +42,28 @@
 
       <TextBlock Style="{StaticResource Title}">Match</TextBlock>
       <GroupBox Header="Criteria" Width="650">
-        <ItemsControl ItemsSource="{Binding MatchCriteriaTypesView}" BorderThickness="5" HorizontalAlignment="Left">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="models:FeatureType">
-              <!-- fixed width to have items align nicely -->
-              <WrapPanel Width="300">
-                <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
-                
-                <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
-                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
-                  <materialDesign:PackIcon Kind="InformationOutline" />
-                </Button>
-              </WrapPanel>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
+        <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
+          <!-- not using an ItemsControl in order to accommodate the associated controls (without mucking about with template triggers) -->
+          <ContentControl Content="{Binding MatchWrongCase}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+          <ContentControl Content="{Binding MatchDuplicate}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+          <ContentControl Content="{Binding MatchTableName}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+          <WrapPanel>
+            <WrapPanel Width="230">
+              <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
+              <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
+                      Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
+                <materialDesign:PackIcon Kind="InformationOutline" />
+              </Button>
+            </WrapPanel>
+            <Slider Margin="5,0" Width="390" HorizontalAlignment="Left" Foreground="Coral" 
+                    Minimum="50" Maximum="250" SelectionStart="100" SelectionEnd="150" IsSelectionRangeEnabled="True"
+                    Value="{Binding Settings.Rebuilder.MatchFuzzyMinimumPercentage}" 
+                    IsEnabled="{Binding MatchFuzzy.IsActive}" 
+                    ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
+          </WrapPanel>
 
-          <!-- placed in a wrap panel to scroll horizontally -->
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel />
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-        </ItemsControl>
+          <ContentControl Content="{Binding MatchSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" Width="230" HorizontalAlignment="Left" />
+        </StackPanel>
       </GroupBox>
 
       <TextBlock Style="{StaticResource Title}" Text="Ignore" ToolTip="Multiple criteria whereby source files will not be considered for merging" />
@@ -86,13 +86,13 @@
           </WrapPanel>
 
           <WrapPanel Margin="0,5,0,0">
-            <ContentControl Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" Width="230"/>
+            <ContentControl Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" Width="230" />
             <Slider Margin="5,0" Width="390" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}"
                     IsEnabled="{Binding IgnoreIfSmallerFeature.IsActive}"
                     ToolTip="Ignore if file is smaller than the specified percentage" />
           </WrapPanel>
 
-          <ContentControl Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" Width="230"/>
+          <ContentControl Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" HorizontalAlignment="Left" Width="230" />
 
           <ContentControl Content="{Binding DeleteIgnoredFilesOptionFeature}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
 

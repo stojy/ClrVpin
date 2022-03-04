@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using PropertyChanged;
-using Utils;
 using Utils.Extensions;
 
 namespace ClrVpin.Models.Settings

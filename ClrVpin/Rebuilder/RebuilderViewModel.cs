@@ -30,7 +30,7 @@ namespace ClrVpin.Rebuilder
             DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
 
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
-            
+
             IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
 
             MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
@@ -73,6 +73,15 @@ namespace ClrVpin.Rebuilder
         public FeatureType DeleteIgnoredFilesOptionFeature { get; set; }
         public FeatureType IgnoreSelectClearAllFeature { get; set; }
 
+        public FeatureType MatchDuplicate { get; set; }
+
+        public FeatureType MatchFuzzy { get; set; }
+
+        public FeatureType MatchTableName { get; set; }
+
+        public FeatureType MatchWrongCase { get; set; }
+        public FeatureType MatchSelectClearAllFeature { get; set; }
+
         public void Show(Window parent)
         {
             _rebuilderWindow = new MaterialWindowEx
@@ -97,6 +106,20 @@ namespace ClrVpin.Rebuilder
             };
         }
 
+        public FeatureType CreateDeleteIgnoredFilesOption()
+        {
+            var feature = new FeatureType(-1)
+            {
+                Description = StaticSettings.DeleteIgnoredFilesOption.Description,
+                Tip = StaticSettings.DeleteIgnoredFilesOption.Tip,
+                IsSupported = true,
+                IsActive = Settings.Rebuilder.DeleteIgnoredFiles,
+                SelectedCommand = new ActionCommand(() => Settings.Rebuilder.DeleteIgnoredFiles = !Settings.Rebuilder.DeleteIgnoredFiles)
+            };
+
+            return feature;
+        }
+
         private void IgnoreWordsChanged()
         {
             Settings.Rebuilder.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
@@ -119,7 +142,7 @@ namespace ClrVpin.Rebuilder
             // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
             var featureTypes = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
             {
-                var featureType = new FeatureType((int) matchType.Enum)
+                var featureType = new FeatureType((int)matchType.Enum)
                 {
                     Description = matchType.Description,
                     Tip = matchType.Tip,
@@ -128,21 +151,30 @@ namespace ClrVpin.Rebuilder
                     SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMatchTypes.Toggle(matchType.Enum)),
                     IsHighlighted = matchType.IsHighlighted,
                     IsHelpSupported = matchType.HelpUrl != null,
-                    HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) {UseShellExecute = true}))
+                    HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) { UseShellExecute = true }))
                 };
 
                 return featureType;
             }).ToList();
 
-            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
+            // create separate property for each so they can be referenced individually in the UI
+            MatchWrongCase = featureTypes.First(x => x.Id == (int)HitTypeEnum.WrongCase);
+            MatchTableName = featureTypes.First(x => x.Id == (int)HitTypeEnum.TableName);
+            MatchDuplicate = featureTypes.First(x => x.Id == (int)HitTypeEnum.DuplicateExtension);
+            MatchFuzzy = featureTypes.First(x => x.Id == (int)HitTypeEnum.Fuzzy);
+
+            // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
+            MatchSelectClearAllFeature = FeatureType.CreateSelectAll(featureTypes);
+
+            return featureTypes.Concat(new[] { MatchSelectClearAllFeature });
         }
 
         private IEnumerable<FeatureType> CreateIgnoreOptions()
         {
-            // show all merge options
+            // create ignore options
             var featureTypes = StaticSettings.IgnoreOptions.Select(ignoreOption =>
             {
-                var featureType = new FeatureType((int) ignoreOption.Enum)
+                var featureType = new FeatureType((int)ignoreOption.Enum)
                 {
                     Description = ignoreOption.Description,
                     Tip = ignoreOption.Tip,
@@ -154,10 +186,11 @@ namespace ClrVpin.Rebuilder
                 return featureType;
             }).ToList();
 
-            IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfContainsWords);
-            IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfSmaller);
-            IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int) IgnoreOptionEnum.IgnoreIfNotNewer);
-            
+            // create separate property for each so they can be referenced individually in the UI
+            IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int)IgnoreOptionEnum.IgnoreIfContainsWords);
+            IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int)IgnoreOptionEnum.IgnoreIfSmaller);
+            IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int)IgnoreOptionEnum.IgnoreIfNotNewer);
+
             // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
             DeleteIgnoredFilesOptionFeature = CreateDeleteIgnoredFilesOption();
             featureTypes.Add(DeleteIgnoredFilesOptionFeature);
@@ -167,26 +200,12 @@ namespace ClrVpin.Rebuilder
             return featureTypes;
         }
 
-        public FeatureType CreateDeleteIgnoredFilesOption()
-        {
-            var feature = new FeatureType(-1)
-            {
-                Description = StaticSettings.DeleteIgnoredFilesOption.Description,
-                Tip = StaticSettings.DeleteIgnoredFilesOption.Tip,
-                IsSupported = true,
-                IsActive = Settings.Rebuilder.DeleteIgnoredFiles,
-                SelectedCommand = new ActionCommand(() => Settings.Rebuilder.DeleteIgnoredFiles = !Settings.Rebuilder.DeleteIgnoredFiles)
-            };
-
-            return feature;
-        }
-
         private IEnumerable<FeatureType> CreateMergeOptions()
         {
             // show all merge options
             var featureTypes = StaticSettings.MergeOptions.Select(mergeOption =>
             {
-                var featureType = new FeatureType((int) mergeOption.Enum)
+                var featureType = new FeatureType((int)mergeOption.Enum)
                 {
                     Description = mergeOption.Description,
                     Tip = mergeOption.Tip,
@@ -212,7 +231,7 @@ namespace ClrVpin.Rebuilder
             progress.Show(_rebuilderWindow);
 
             progress.Update("Loading Database");
-            var games = TableUtils.GetGamesFromDatabases(new List<ContentType> {Settings.GetSelectedDestinationContentType()});
+            var games = TableUtils.GetGamesFromDatabases(new List<ContentType> { Settings.GetSelectedDestinationContentType() });
 
             progress.Update("Checking Files");
             var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
