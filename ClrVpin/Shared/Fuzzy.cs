@@ -246,7 +246,7 @@ namespace ClrVpin.Shared
 
         public static (string, bool) GetScoreDetail(int? score)
         {
-            var warning = score < 120;
+            var warning = score < MinMatchWarningScore;
 
             var message = score == null ? "n/a" : $"{score / 100f:P0}";
             if (warning)
@@ -389,6 +389,7 @@ namespace ClrVpin.Shared
         }
 
         private static decimal MinMatchScore => Model.Settings.Rebuilder.MatchFuzzyMinimumPercentage;
+        private static decimal MinMatchWarningScore => MinMatchScore * 1.2m;
         public const int ScoringNoWhiteSpaceBonus = 5;
 
         private static readonly Regex _fileNameInfoRegex;
