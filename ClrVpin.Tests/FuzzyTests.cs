@@ -146,6 +146,7 @@ public class FuzzyTests
     [TestCase("Big Brave (Gottlieb 1974)", "Big_Brave_VP99_EN_4player_b2s.directb2s", true, TestName = "various exception words: author, 4player, b2s, etc")]
     [TestCase("Lord Of The Rings (Stern 2003)", "Lord_of_the_Rings_VPW_2022.directb2s", true, TestName = "created year in title")]
     [TestCase("V1 (IDSA 1986)", "V1 (IDSA 1986) Logo.png", false, TestName = "correct name: but name cleansing removes all contents")]
+    [TestCase("Sir Lancelot (Peyper 1994)", "Sir Lancelot (Peyper 1984) Logo.png", false, TestName = "perfect name match: but wrong decade")]
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
