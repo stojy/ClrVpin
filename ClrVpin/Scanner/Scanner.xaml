@@ -59,7 +59,7 @@
                   <Slider Visibility="{Binding Id, Converter={StaticResource HitTypeFuzzyToVisibilityConverter}}"
                           Margin="10,0,4,0" Width="250" HorizontalAlignment="Left"
                           Minimum="50" Maximum="250" SelectionStart="100" SelectionEnd="150" IsSelectionRangeEnabled="True"
-                          Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Settings.Rebuilder.MatchFuzzyMinimumPercentage}"
+                          Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Settings.MatchFuzzyMinimumPercentage}"
                           IsEnabled="{Binding IsActive}"
                           ToolTipService.InitialShowDelay="0" ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
                 </WrapPanel>

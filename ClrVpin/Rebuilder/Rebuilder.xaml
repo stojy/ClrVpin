@@ -57,7 +57,7 @@
             </WrapPanel>
             <Slider Margin="5,0" Width="390" HorizontalAlignment="Left"  
                     Minimum="50" Maximum="250" SelectionStart="100" SelectionEnd="150" IsSelectionRangeEnabled="True"
-                    Value="{Binding Settings.Rebuilder.MatchFuzzyMinimumPercentage}" 
+                    Value="{Binding Settings.MatchFuzzyMinimumPercentage}" 
                     IsEnabled="{Binding MatchFuzzy.IsActive}" 
                     ToolTipService.InitialShowDelay="0" ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
           </WrapPanel>

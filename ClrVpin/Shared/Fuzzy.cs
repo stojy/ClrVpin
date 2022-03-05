@@ -388,7 +388,7 @@ namespace ClrVpin.Shared
             public (bool success, int score) MatchResult;
         }
 
-        private static decimal MinMatchScore => Model.Settings.Rebuilder.MatchFuzzyMinimumPercentage;
+        private static decimal MinMatchScore => Model.Settings.MatchFuzzyMinimumPercentage;
         private static decimal MinMatchWarningScore => MinMatchScore * 1.2m;
         public const int ScoringNoWhiteSpaceBonus = 5;
 

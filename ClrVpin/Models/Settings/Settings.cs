@@ -76,6 +76,8 @@ namespace ClrVpin.Models.Settings
 
         public string BackupFolder { get; set; }
         public bool TrainerWheels { get; set; }
+        
+        public decimal MatchFuzzyMinimumPercentage { get; set; } = 100;
 
         public ScannerSettings Scanner { get; set; }
         public RebuilderSettings Rebuilder { get; set; }
