@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using System.Xml.Serialization;
+using ClrVpin.Shared;
 
 namespace ClrVpin.Models
 {
@@ -67,8 +68,8 @@ namespace ClrVpin.Models
 
         // view model info..
 
-        // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
         [XmlIgnore]
+        // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
         public Content Content { get; set; } = new Content();
 
         [XmlIgnore]
@@ -91,6 +92,12 @@ namespace ClrVpin.Models
 
         [XmlIgnore]
         public ICommand NavigateToIpdbCommand { get; set; }
+
+        [XmlIgnore]
+        public Fuzzy.FuzzyNameDetails FuzzyTableDetails { get; set; }
+        
+        [XmlIgnore]
+        public Fuzzy.FuzzyNameDetails FuzzyDescriptionDetails { get; set; }
 
         public string GetContentName(ContentTypeCategoryEnum category)
         {

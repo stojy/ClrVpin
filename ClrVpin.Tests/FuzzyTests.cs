@@ -8,6 +8,12 @@ namespace ClrVpin.Tests;
 
 public class FuzzyTests
 {
+    [SetUp]
+    public void Setup()
+    {
+        Model.Settings = new Models.Settings.Settings();
+    }
+
     [Test]
     [TestCase("Indiana Jones (Williams 1993) blah.directb2s", true, "indiana jones", "indianajones", "williams", 1993)]
     [TestCase("Indiana Jones (Williams 1993 blah) blah.directb2s", true, "indiana jones", "indianajones", "williams", 1993, TestName = "year doesn't need to be at the end of the parenthesis")]
@@ -33,12 +39,12 @@ public class FuzzyTests
     [TestCase(@"C:\vp\_downloaded\wheel images\V1 (IDSA 1986) Logo.png", true, null, null, "idsa", 1986, TestName = "name stripped completely: empty string converted to null")]
     public void GetNameDetailsTest(string sourceName, bool isFileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, int? expectedYear)
     {
-        var (name, nameNoWhiteSpace, manufacturer, year, _) = Fuzzy.GetNameDetails(sourceName, isFileName);
+        var fuzzyDetails = Fuzzy.GetNameDetails(sourceName, isFileName);
 
-        Assert.That(name, Is.EqualTo(expectedName));
-        Assert.That(nameNoWhiteSpace, Is.EqualTo(expectedNameNoWhiteSpace));
-        Assert.That(manufacturer, Is.EqualTo(expectedManufacturer));
-        Assert.That(year, Is.EqualTo(expectedYear));
+        Assert.That(fuzzyDetails.Name, Is.EqualTo(expectedName));
+        Assert.That(fuzzyDetails.NameNoWhiteSpace, Is.EqualTo(expectedNameNoWhiteSpace));
+        Assert.That(fuzzyDetails.Manufacturer, Is.EqualTo(expectedManufacturer));
+        Assert.That(fuzzyDetails.Year, Is.EqualTo(expectedYear));
     }
 
     [Test]
@@ -143,7 +149,7 @@ public class FuzzyTests
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
-        var isMatch = Fuzzy.Match(gameName, Fuzzy.GetNameDetails(fileName, true)).success;
+        var isMatch = Fuzzy.Match(Fuzzy.GetNameDetails(gameName, false), Fuzzy.GetNameDetails(fileName, true)).success;
 
         Assert.That(isMatch, Is.EqualTo(expectedSuccess));
     }
@@ -183,10 +189,10 @@ public class FuzzyTests
     [TestCase("Whirl-Wind (Gottlieb 1958)", "Whirlwind 4K 1.1.vpx", true, 151, TestName = "match with whitespace (hyphen converts to whitespace): should match lower")]
     [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Americs Most Haunted (spooky 2014) b2s v3.directb2s", true, 186, TestName = "match with Levenshtein distance")]
     [TestCase("V1 (IDSA 1986) Logo", "V1 (IDSA 1986) Logo.png", false, 50, TestName = "perfect match: but no name match score because the cleansed names are null.. since 'v1' is stripped")]
-    public void MatchScoreTest(string gameDetail, string fileDetail, bool expectedSuccess, int expectedScore)
+    public void MatchScoreTest(string gameName, string fileDetail, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
-        var (success, score) = Fuzzy.Match(gameDetail, Fuzzy.GetNameDetails(fileDetail, true));
+        var (success, score) = Fuzzy.Match(Fuzzy.GetNameDetails(gameName, false), Fuzzy.GetNameDetails(fileDetail, true));
 
         Assert.That(score, Is.EqualTo(expectedScore));
         Assert.That(success, Is.EqualTo(expectedSuccess));
@@ -219,6 +225,12 @@ public class FuzzyTests
             new Game { Ipdb = "6", TableFile = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" },
             new Game { Ipdb = "7", TableFile = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo" }
         };
+
+        games.ForEach(g =>
+        {
+            g.FuzzyTableDetails = Fuzzy.GetNameDetails(g.TableFile, false);
+            g.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(g.Description, false);
+        });
 
         // exact match #1
         var fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);

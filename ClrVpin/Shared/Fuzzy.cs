@@ -121,7 +121,24 @@ namespace ClrVpin.Shared
             return cleanName;
         }
 
-        public static (string name, string nameNoWhiteSpace, string manufacturer, int? year, string actualName) GetNameDetails(string sourceName, bool isFileName)
+        public class FuzzyNameDetails
+        {
+            public FuzzyNameDetails(string name, string nameNoWhiteSpace, string manufacturer, int? year, string actualName)
+            {
+                Name = name;
+                NameNoWhiteSpace = nameNoWhiteSpace;
+                Manufacturer = manufacturer;
+                Year = year;
+                ActualName = actualName;
+            }
+            public string Name { get; }
+            public string NameNoWhiteSpace { get; }
+            public string Manufacturer { get; }
+            public int? Year { get; }
+            public string ActualName { get; }
+        }
+
+        public static FuzzyNameDetails GetNameDetails(string sourceName, bool isFileName)
         {
             // return the fuzzy portion of the filename..
             // - no file extensions
@@ -155,17 +172,17 @@ namespace ClrVpin.Shared
             var cleanName = Clean(name, false);
             var cleanNameNoWhiteSpace = Clean(name, true);
 
-            return (cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(), manufacturer.ToLowerAndTrim(), year, sourceName.ToLower());
+            return new FuzzyNameDetails(cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(), manufacturer.ToLowerAndTrim(), year, sourceName.ToLower());
         }
 
         // fuzzy match against all games
-        public static (Game game, int? score) Match(this IList<Game> games, (string name, string nameNoWhiteSpace, string manufacturer, int? year, string actualName) fuzzyFileDetails)
+        public static (Game game, int? score) Match(this IList<Game> games, FuzzyNameDetails fuzzyFileDetails)
         {
             // check EVERY DB game entry against the file to look for the best match
             // - Match will create a fuzzy version (aka cleaned) of each game DB entry so it can be compared against the fuzzy file details (already cleaned)
             // - Match table name (non-media) OR description (media)
-            var tableFileMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.TableFile, fuzzyFileDetails) });
-            var descriptionMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.Description, fuzzyFileDetails) });
+            var tableFileMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.FuzzyTableDetails, fuzzyFileDetails) });
+            var descriptionMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.FuzzyDescriptionDetails, fuzzyFileDetails) });
 
             var orderedMatches = tableFileMatches.Concat(descriptionMatches)
                 .OrderByDescending(x => x.MatchResult.success)
@@ -177,26 +194,26 @@ namespace ClrVpin.Shared
             var score = preferredMatch?.MatchResult.score;
 
             // second chance - if there's still no match, check if the fuzzy file has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.name)) != null)
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.Name)) != null)
             {
                 score = preferredMatch.MatchResult.score;
                 score += 85;
             }
 
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.name, 11)) != null)
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.Name, 11)) != null)
             {
                 score = preferredMatch.MatchResult.score;
                 score += 50;
             }
 
             // third chance - if there's still no match, check if the non-fuzzy file has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.actualName)) != null)
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.ActualName)) != null)
             {
                 score = preferredMatch.MatchResult.score;
                 score += 85;
             }
 
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.actualName, 11)) != null)
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.ActualName, 11)) != null)
             {
                 score = preferredMatch.MatchResult.score;
                 score += 50;
@@ -205,12 +222,10 @@ namespace ClrVpin.Shared
             return (score >= MinMatchScore ? preferredMatch?.Game : null, score);
         }
 
-        public static (bool success, int score) Match(string gameDetail, (string name, string nameNoWhiteSpace, string manufacturer, int? year, string actualName) fileFuzzyDetails)
+        public static (bool success, int score) Match(FuzzyNameDetails gameDetailFuzzyDetails, FuzzyNameDetails fileFuzzyDetails)
         {
-            var gameDetailFuzzyDetails = GetNameDetails(gameDetail, false);
-
-            var nameMatchScore = GetNameMatchScore(gameDetailFuzzyDetails.name, gameDetailFuzzyDetails.nameNoWhiteSpace, fileFuzzyDetails.name, fileFuzzyDetails.nameNoWhiteSpace);
-            var yearMatchScore = GetYearMatchScore(gameDetailFuzzyDetails.year, fileFuzzyDetails.year);
+            var nameMatchScore = GetNameMatchScore(gameDetailFuzzyDetails.Name, gameDetailFuzzyDetails.NameNoWhiteSpace, fileFuzzyDetails.Name, fileFuzzyDetails.NameNoWhiteSpace);
+            var yearMatchScore = GetYearMatchScore(gameDetailFuzzyDetails.Year, fileFuzzyDetails.Year);
             var lengthScore = GetLengthMatchScore(gameDetailFuzzyDetails);
 
             var score = yearMatchScore + nameMatchScore + lengthScore;
@@ -219,12 +234,12 @@ namespace ClrVpin.Shared
             return (score >= MinMatchScore, score);
         }
 
-        public static int GetLengthMatchScore((string name, string nameNoWhiteSpace, string manufacturer, int? year, string actualName) fuzzyGameDetails)
+        public static int GetLengthMatchScore(FuzzyNameDetails fuzzyGameDetails)
         {
             // score the match length of the underlying game database entry (i.e. not the file!!)
             // - use the sanitized name to avoid white space, manufacturer, year, etc
             // - 1 for every character beyond 8 characters.. to a maximum of 15pts
-            var lengthScore = (fuzzyGameDetails.nameNoWhiteSpace?.Length ?? 0) - 8;
+            var lengthScore = (fuzzyGameDetails.NameNoWhiteSpace?.Length ?? 0) - 8;
 
             return Math.Max(0, Math.Min(15, lengthScore));
         }

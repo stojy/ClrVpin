@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using ClrVpin.Models;
 using Utils;
@@ -48,6 +47,11 @@ namespace ClrVpin.Shared
                     game.IpdbUrl = string.IsNullOrEmpty(game.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
                     game.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.IpdbUrl));
                     game.Content.Init(contentTypes);
+
+                    // assign fuzzy name details here to avoid it being calculated multiple times when comparing against EACH of the file matches
+                    game.FuzzyTableDetails = Fuzzy.GetNameDetails(game.TableFile, false);
+                    game.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(game.Description, false);
+
                 });
 
                 games.AddRange(menu.Games);
