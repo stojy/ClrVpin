@@ -109,7 +109,7 @@
       </WrapPanel>
 
       <!-- trainer wheels -->
-      <CheckBox Margin="0,10" ToolTipService.InitialShowDelay="0"
+      <CheckBox Margin="0,10"
                 ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
                 IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels" />
 
