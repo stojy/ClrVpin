@@ -6,7 +6,8 @@
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:shared="clr-namespace:ClrVpin.Shared">
+                    xmlns:shared="clr-namespace:ClrVpin.Shared"
+                    xmlns:converters="clr-namespace:ClrVpin.Converters">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -42,7 +43,7 @@
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
-  <models:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />
+  <converters:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />
 
   <DataTemplate x:Key="ResultsTemplate" DataType="{x:Type shared:ResultsViewModel}">
     <!--dock panel to provide a scrollbar for the treeview-->

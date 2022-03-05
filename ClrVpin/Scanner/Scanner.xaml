@@ -13,11 +13,13 @@
     <ResourceDictionary Source="/Controls/Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <models:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
+  <converters:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
   <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter" />
 
+  <converters:HitTypeEnumToVisibilityConverter x:Key="HitTypeFuzzyToVisibilityConverter" />
+
   <ItemsPanelTemplate x:Key="ContentTypeItemsTemplate">
-    <WrapPanel Orientation="Vertical" ItemWidth="180" />
+    <WrapPanel Orientation="Vertical" ItemWidth="195" />
   </ItemsPanelTemplate>
 
   <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:ScannerViewModel}">
@@ -46,13 +48,20 @@
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="models:FeatureType">
                 <!-- fixed width to have items align nicely -->
-                <WrapPanel Width="180">
+
+                <WrapPanel Width="400">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
-                  
+
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
-                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
+                          Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="0" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                     <materialDesign:PackIcon Kind="InformationOutline" />
                   </Button>
+                  <Slider Visibility="{Binding Id, Converter={StaticResource HitTypeFuzzyToVisibilityConverter}}"
+                          Margin="10,0,4,0" Width="250" HorizontalAlignment="Left"
+                          Minimum="50" Maximum="250" SelectionStart="100" SelectionEnd="150" IsSelectionRangeEnabled="True"
+                          Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Settings.Rebuilder.MatchFuzzyMinimumPercentage}"
+                          IsEnabled="{Binding IsActive}"
+                          ToolTipService.InitialShowDelay="0" ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
                 </WrapPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -64,11 +73,11 @@
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="models:FeatureType">
                 <!-- fixed width to have items align nicely -->
-                <WrapPanel Width="180">
+                <WrapPanel Width="185">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
-                  
+
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
-                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
+                          Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="0" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                     <materialDesign:PackIcon Kind="InformationOutline" />
                   </Button>
                 </WrapPanel>
@@ -86,19 +95,22 @@
             <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">
-                  <RadioButton Width="330" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
+                  <RadioButton Width="330" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTipService.InitialShowDelay="0" ToolTip="{Binding Tip}"
+                               IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
                                Command="{Binding SelectedCommand}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Slider Margin="27,0,10,10" Width="300" HorizontalAlignment="Left" Value="{Binding Settings.Scanner.MultipleMatchExceedSizeThresholdPercentage}" IsEnabled="{Binding ExceedSizeThresholdSelected}" />
+            <Slider Margin="27,0,10,10" Width="300" HorizontalAlignment="Left" Value="{Binding Settings.Scanner.MultipleMatchExceedSizeThresholdPercentage}"
+                    IsEnabled="{Binding ExceedSizeThresholdSelected}" />
           </StackPanel>
         </GroupBox>
       </WrapPanel>
 
       <!-- trainer wheels -->
-      <CheckBox Margin="0,10" ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
+      <CheckBox Margin="0,10" ToolTipService.InitialShowDelay="0"
+                ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
                 IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels" />
 
       <Button Width="50" Command="{Binding StartCommand}" IsEnabled="{Binding IsValid}" Style="{StaticResource AlternateButton}">Start</Button>

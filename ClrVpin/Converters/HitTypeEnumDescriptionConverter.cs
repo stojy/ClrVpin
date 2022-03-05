@@ -2,10 +2,10 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using Utils;
+using ClrVpin.Models;
 using Utils.Extensions;
 
-namespace ClrVpin.Models
+namespace ClrVpin.Converters
 {
     public class HitTypeEnumDescriptionConverter : IValueConverter
     {
