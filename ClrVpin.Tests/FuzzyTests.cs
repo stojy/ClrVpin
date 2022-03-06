@@ -218,18 +218,18 @@ public class FuzzyTests
     {
         var games = new List<Game>
         {
-            new Game { Ipdb = "1", TableFile = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
-            new Game { Ipdb = "2", TableFile = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
-            new Game { Ipdb = "3", TableFile = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
-            new Game { Ipdb = "4", TableFile = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
-            new Game { Ipdb = "5", TableFile = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" },
-            new Game { Ipdb = "6", TableFile = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" },
-            new Game { Ipdb = "7", TableFile = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo" }
+            new Game { Ipdb = "1", Name = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
+            new Game { Ipdb = "2", Name = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
+            new Game { Ipdb = "3", Name = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
+            new Game { Ipdb = "4", Name = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
+            new Game { Ipdb = "5", Name = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" },
+            new Game { Ipdb = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" },
+            new Game { Ipdb = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo" }
         };
 
         games.ForEach(g =>
         {
-            g.FuzzyTableDetails = Fuzzy.GetNameDetails(g.TableFile, false);
+            g.FuzzyTableDetails = Fuzzy.GetNameDetails(g.Name, false);
             g.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(g.Description, false);
         });
 

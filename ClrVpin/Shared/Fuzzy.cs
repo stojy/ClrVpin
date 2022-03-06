@@ -187,7 +187,7 @@ namespace ClrVpin.Shared
             var orderedMatches = tableFileMatches.Concat(descriptionMatches)
                 .OrderByDescending(x => x.MatchResult.success)
                 .ThenByDescending(x => x.MatchResult.score)
-                .ThenByDescending(x => x.Game.TableFile.Length) // tie breaker
+                .ThenByDescending(x => x.Game.Name.Length) // tie breaker
                 .ToList();
 
             var preferredMatch = orderedMatches.FirstOrDefault();
@@ -265,7 +265,7 @@ namespace ClrVpin.Shared
                 fuzzyFileName = fuzzyFileName.Remove(startMatchLength.Value);
 
             // check if we have a match that contains the fuzzy file name in BOTH the table and description
-            var matchesContainingFileName = orderedMatches.Where(match => match.Game.TableFile.ToLower().Contains(fuzzyFileName) ||
+            var matchesContainingFileName = orderedMatches.Where(match => match.Game.Name.ToLower().Contains(fuzzyFileName) ||
                                                                           match.Game.Description.ToLower().Contains(fuzzyFileName)).ToList();
 
             return matchesContainingFileName.Count == 2 ? matchesContainingFileName.First() : null;

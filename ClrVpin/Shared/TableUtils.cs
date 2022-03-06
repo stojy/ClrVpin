@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using ClrVpin.Models;
 using Utils;
@@ -33,7 +34,7 @@ namespace ClrVpin.Shared
                 //   - utf-8 = �
                 // - further reading.. https://en.wikipedia.org/wiki/Extended_ASCII, https://codepoints.net/U+2122?lang=en
                 using var reader = new StreamReader(file, Encoding.GetEncoding("Windows-1252"));
-                
+
                 var doc = XDocument.Load(reader);
                 if (doc.Root == null)
                     throw new Exception($"Failed to load database: '{file}'");
@@ -49,15 +50,29 @@ namespace ClrVpin.Shared
                     game.Content.Init(contentTypes);
 
                     // assign fuzzy name details here to avoid it being calculated multiple times when comparing against EACH of the file matches
-                    game.FuzzyTableDetails = Fuzzy.GetNameDetails(game.TableFile, false);
+                    game.FuzzyTableDetails = Fuzzy.GetNameDetails(game.Name, false);
                     game.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(game.Description, false);
-
                 });
+
+                WriteDatabase(file, doc);
 
                 games.AddRange(menu.Games);
             });
 
             return games;
+        }
+
+        private static void WriteDatabase(string file, XDocument doc)
+        {
+            // proof of concept to confirm DB can be written back as an EXACT match when the view model properties are present
+            using var writer = XmlWriter.Create(file + ".bak", new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "\t",
+                Encoding = Encoding.GetEncoding("Windows-1252"),
+                DoNotEscapeUriAttributes = true
+            });
+            doc.Save(writer);
         }
 
         public static IList<string> GetContentFileNames(ContentType contentType, string folder)
@@ -112,7 +127,7 @@ namespace ClrVpin.Shared
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, supportedFile);
                 }
-                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGame = games.FirstOrDefault(game => game.TableFile == Path.GetFileNameWithoutExtension(supportedFile))) != null)
+                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGame = games.FirstOrDefault(game => game.Name == Path.GetFileNameWithoutExtension(supportedFile))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.TableName, supportedFile);
                 }
@@ -136,7 +151,7 @@ namespace ClrVpin.Shared
 
             return unknownSupportedFiles;
         }
-        
-        private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
+
+        private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
 }

@@ -133,7 +133,7 @@ namespace ClrVpin.Rebuilder
                     var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
                     var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
 
-                    Logger.Info($"Merging.. table: {game.TableFile}, description: {game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}");
+                    Logger.Info($"Merging.. table: {game.Name}, description: {game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}");
                     LogFuzzyMatch();
                     FileUtils.Merge(hit.Path, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified, contentType.KindredExtensionsList, backupFile => hit.Path = backupFile);
                 }
@@ -174,7 +174,7 @@ namespace ClrVpin.Rebuilder
             FileSystemInfo destinationFileInfo, Action logAction = null)
         {
             var prefix = _settings.Rebuilder.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
-            Logger.Info($"{prefix}.. table: {game?.TableFile ?? "n/a"}, description: {game?.Description ?? "n/a"}, type: {hitTypeEnum.GetDescription()}, " +
+            Logger.Info($"{prefix}.. table: {game?.Name ?? "n/a"}, description: {game?.Description ?? "n/a"}, type: {hitTypeEnum.GetDescription()}, " +
                         $"content: {contentTypeEnum.GetDescription()}, ignore option: {ignoreOptionDescription}, delete ignored: {_settings.Rebuilder.DeleteIgnoredFiles}");
             logAction?.Invoke();
 
