@@ -172,7 +172,7 @@ namespace ClrVpin.Scanner
             // - e.g. preferred = wrong case, other=correct name (not selected)
             if (preferredHit.Type == HitTypeEnum.CorrectName && !nonPreferredHits.Any(hit => hit.Type.In(_settings.Scanner.SelectedFixHitTypes)))
             {
-                Logger.Info($"Skipping (fix criteria not selected).. table: {game.TableFile}, description: {game.Description}, " +
+                Logger.Info($"Skipping (fix criteria not selected).. table: {game.Name}, description: {game.Description}, " +
                             $"preferred type: {preferredHit.Type.GetDescription()}, required fix types (unselected): {string.Join('|', nonPreferredHits.Select(x => x.Type.GetDescription()).Distinct())}, " +
                             $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
@@ -182,14 +182,14 @@ namespace ClrVpin.Scanner
             // - e.g. correct name not selected
             if (preferredHit.Type != HitTypeEnum.CorrectName && !preferredHit.Type.In(_settings.Scanner.SelectedFixHitTypes))
             {
-                Logger.Info($"Skipping (fix criteria not selected).. table: {game.TableFile}, description: {game.Description}, " +
+                Logger.Info($"Skipping (fix criteria not selected).. table: {game.Name}, description: {game.Description}, " +
                             $"preferred type (unselected): {preferredHit.Type.GetDescription()}, " +
                             $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
             }
 
             // delete all hit files except the first
-            Logger.Info($"Fixing.. table: {game.TableFile}, description: {game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
+            Logger.Info($"Fixing.. table: {game.Name}, description: {game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
 
             var (description, warning) = Fuzzy.GetScoreDetail(preferredHit.Score);
             var message = $"- matched (score: {description})..\n  source: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}";

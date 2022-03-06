@@ -4,10 +4,10 @@ using ClrVpin.Shared;
 
 namespace ClrVpin.Models
 {
-    public class Game
+    public class GameBase
     {
         [XmlAttribute("name")]
-        public string TableFile { get; set; } // used by VPX (table, b2s, and pov - filename must match this property.  Refer GetContentName
+        public string Name { get; set; } // used by VPX (table, b2s, and pov - filename must match this property.  Refer GetContentName
 
         [XmlElement("description", IsNullable = true)]
         public string Description { get; set; } // used by frontends (pbx/pby) - filename must match this property.  Refer GetContentName
@@ -65,15 +65,17 @@ namespace ClrVpin.Models
 
         [XmlElement("datemodified", IsNullable = true)]
         public string DateModified { get; set; }
+    }
 
-        // view model info..
-
+    // view model info..
+    public class Game : GameBase
+    {
         [XmlIgnore]
         // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
         public Content Content { get; set; } = new Content();
 
         [XmlIgnore]
-        public string TableFileWithExtension => TableFile + ".vpx";
+        public string TableFileWithExtension => Name + ".vpx";
 
         [XmlIgnore]
         public int Number { get; set; }
@@ -95,15 +97,13 @@ namespace ClrVpin.Models
 
         [XmlIgnore]
         public Fuzzy.FuzzyNameDetails FuzzyTableDetails { get; set; }
-        
+
         [XmlIgnore]
         public Fuzzy.FuzzyNameDetails FuzzyDescriptionDetails { get; set; }
 
-        public string GetContentName(ContentTypeCategoryEnum category)
-        {
+        public string GetContentName(ContentTypeCategoryEnum category) =>
             // determine the correct name - different for media vs pinball
-            return category == ContentTypeCategoryEnum.Media ? Description : TableFile;
-        }
+            category == ContentTypeCategoryEnum.Media ? Description : Name;
 
         public override string ToString() => $"Table: {TableFileWithExtension}, IsSmelly: {Content?.IsSmelly}";
     }
