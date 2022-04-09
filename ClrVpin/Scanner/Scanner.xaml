@@ -53,7 +53,7 @@
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
 
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
-                          Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="0" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
+                          Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="500" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                     <materialDesign:PackIcon Kind="InformationOutline" />
                   </Button>
                   <Slider Visibility="{Binding Id, Converter={StaticResource HitTypeFuzzyToVisibilityConverter}}"
@@ -61,7 +61,7 @@
                           Minimum="50" Maximum="250" SelectionStart="100" SelectionEnd="150" IsSelectionRangeEnabled="True"
                           Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Settings.MatchFuzzyMinimumPercentage}"
                           IsEnabled="{Binding IsActive}"
-                          ToolTipService.InitialShowDelay="0" ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
+                          ToolTipService.InitialShowDelay="500" ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
                 </WrapPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -77,7 +77,7 @@
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
 
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
-                          Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="0" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
+                          Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="500" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                     <materialDesign:PackIcon Kind="InformationOutline" />
                   </Button>
                 </WrapPanel>
@@ -95,7 +95,7 @@
             <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="models:FeatureType">
-                  <RadioButton Width="330" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTipService.InitialShowDelay="0" ToolTip="{Binding Tip}"
+                  <RadioButton Width="330" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTipService.InitialShowDelay="500" ToolTip="{Binding Tip}"
                                IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
                                Command="{Binding SelectedCommand}" />
                 </DataTemplate>
