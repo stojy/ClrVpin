@@ -66,6 +66,9 @@ jobs:
     - name: test
       run: ls
       
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+    
     - name: my build
       run: |
        msbuild ./ClrVpin.sln -t:rebuild -p:Configuration=Release -m
