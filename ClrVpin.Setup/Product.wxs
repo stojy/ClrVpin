@@ -105,6 +105,7 @@
           <Shortcut Id="DesktopShortcut" Name="ClrVpin" Directory="DesktopFolder" Icon="ClrVpxIcon.exe" Advertise="yes" />
         </File>
         <File Source="$(var.ClrVpin.TargetDir)ClrVpin.dll" />
+        <File Source="$(var.ClrVpin.TargetDir)ClrVpin.pdb" />
         <File Source="$(var.ClrVpin.TargetDir)ByteSize.dll" />
         <File Source="$(var.ClrVpin.TargetDir)MaterialDesignColors.dll" />
         <File Source="$(var.ClrVpin.TargetDir)MaterialDesignExtensions.dll" />
@@ -114,6 +115,7 @@
         <File Source="$(var.ClrVpin.TargetDir)Microsoft.Xaml.Behaviors.dll" />
         <File Source="$(var.ClrVpin.TargetDir)NLog.dll" />
         <File Source="$(var.ClrVpin.TargetDir)Utils.dll" />
+        <File Source="$(var.ClrVpin.TargetDir)Utils.pdb" />
       </Component>
 
       <Component Id="ContentComponent" Guid="8A17DDBE-F668-4821-A8FF-DE0878EDD381" Win64="yes">
