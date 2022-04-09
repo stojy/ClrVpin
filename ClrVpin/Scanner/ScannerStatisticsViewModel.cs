@@ -82,6 +82,7 @@ namespace ClrVpin.Scanner
             var fixFilesIgnoredSize = fixFilesIgnored.Sum(x => x.Size);
             var fixFilesIgnoredUnknown = fixFilesIgnored.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
             var fixFilesIgnoredUnknownSize = fixFilesIgnoredUnknown.Sum(x => x.Size);
+            var eligibleHitsPercentage = eligibleHits == 0 ? "n/a" : $"{(decimal)validHits.Count / eligibleHits:P2}";
 
             return "\n-----------------------------------------------\n" +
                    "\nTotals" +
@@ -90,7 +91,7 @@ namespace ClrVpin.Scanner
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"All Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +
                    $"\n\n{"CorrectName Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
-                   $"\n{"- Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({(decimal)validHits.Count / eligibleHits:P2})" +
+                   $"\n{"- Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({eligibleHitsPercentage})" +
                    $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Count, GameFiles.Sum(x => x.Size))}" +
                    $"\n{"- renamed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +
                    $"\n{"- removed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeleted.Count, fixFilesDeletedSize)}" +
