@@ -71,7 +71,9 @@ jobs:
     
     - name: my build
       run: |
-       msbuild ./ClrVpin.sln -t:rebuild -p:Configuration=Release -m
+       msbuild ./ClrVpin.sln -t:clean -p:Configuration=Release -m
+       msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
+       msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -m
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
