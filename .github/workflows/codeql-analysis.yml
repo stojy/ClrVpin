@@ -63,7 +63,8 @@ jobs:
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
 
-    - run: |
+    - name: non-auto build
+      run: |
        msbuild clrvpin.sln -t:rebuild -p:Configuration=Release -m
 
     - name: Perform CodeQL Analysis
