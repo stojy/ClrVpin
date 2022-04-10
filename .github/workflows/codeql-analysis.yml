@@ -50,21 +50,20 @@ jobs:
     - name: add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
     
-    #- name: everything
-    #  run: |
-    #   msbuild ./ClrVpin.sln -t:clean -p:Configuration=Release -m
-    #   msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
-    #   msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
     - name: clean
       run: msbuild ./ClrVpin.sln -t:clean -p:Configuration=Release -m
     - name: restore
       run: msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
     - name: build
       run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
-    - name: tests 1
-      run: dotnet test ClrVpin.tests
-    - name: tests 2
-      run: dotnet test Utils.tests
+    
+    - name: tests
+      # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
+      run: dotnet test ClrVpin.tests --no-build &&  dotnet test Utils.tests --no-build
+    #- name: tests 1
+    #  run: dotnet test ClrVpin.tests --no-build
+    #- name: tests 2
+    #  run: dotnet test Utils.tests
    
     - name: perform CodeQL analysis
       uses: github/codeql-action/analyze@v1
