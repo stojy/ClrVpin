@@ -60,9 +60,10 @@ jobs:
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
       run: dotnet test ClrVpin.tests --no-restore && dotnet test Utils.tests --no-restore
 
-    - name: artifact installer
+    - name: installer artifact
       uses: actions/upload-artifact@v3
       with:
+        name: installer
         path: ClrVpin.setup\bin\release\*.msi
         retention-days: 5
           
