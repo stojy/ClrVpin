@@ -34,7 +34,7 @@ jobs:
 
     steps:
     - name: checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Initializes the CodeQL tools for scanning.
     - name: initialize CodeQL
@@ -59,7 +59,7 @@ jobs:
     
     - name: tests
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
-      run: dotnet test ClrVpin.tests &&  dotnet test Utils.tests
+      run: dotnet test ClrVpin.tests --no-restore && dotnet test Utils.tests --no-restore
     #- name: tests 1
     #  run: dotnet test ClrVpin.tests --no-build
     #- name: tests 2
