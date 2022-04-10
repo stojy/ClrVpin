@@ -3,11 +3,12 @@ name: "Build and Test"
 
 on:
   push:
-    branches: [ master_ ]
+    #branches: [ master_ ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
   schedule:
+    # 5.35am GMT = 1.35pm WST
     - cron: '33 5 * * *'
 
 jobs:
