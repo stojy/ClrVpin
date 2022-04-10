@@ -46,7 +46,7 @@ jobs:
     
     # setup latest msbuild (v17.1 at time of writing)
     # - https://github.com/marketplace/actions/setup-msbuild
-    - name: Add msbuild to PATH
+    - name: add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
     
     #- name: everything
@@ -59,7 +59,7 @@ jobs:
     - name: restore
       run: msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
     - name: build
-      run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -m
+      run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
 
-    - name: Perform CodeQL Analysis
+    - name: perform CodeQL analysis
       uses: github/codeql-action/analyze@v1
