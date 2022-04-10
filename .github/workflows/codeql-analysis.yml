@@ -59,7 +59,7 @@ jobs:
     
     - name: tests
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
-      run: dotnet test ClrVpin.tests --no-build &&  dotnet test Utils.tests --no-build
+      run: dotnet test ClrVpin.tests &&  dotnet test Utils.tests
     #- name: tests 1
     #  run: dotnet test ClrVpin.tests --no-build
     #- name: tests 2
