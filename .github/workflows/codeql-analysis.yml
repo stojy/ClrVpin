@@ -9,7 +9,7 @@ on:
     #branches: [ master ]
   schedule:
     # 5.35am GMT = 1.35pm WST
-    - cron: '33 5 * * *'
+    - cron: '01 5 * * *'
 
 jobs:
   info:
@@ -61,6 +61,10 @@ jobs:
       run: msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
     - name: build
       run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
-
+    - name: tests
+      run: |
+        dotnet test ClrVpin.tests
+        dotnet test Utils.tests
+   
     - name: perform CodeQL analysis
       uses: github/codeql-action/analyze@v1
