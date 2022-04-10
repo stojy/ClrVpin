@@ -34,4 +34,4 @@ Refer [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots).
 Refer [Roadmap](https://github.com/stojy/ClrVpin/wiki/Roadmap).
 
 ## Build Status
-<a href="https://github.com/stojy/ClrVpin/branches"><img src="https://github.com/stojy/ClrVpin/actions/workflows/codeql-analysis.yml/badge.svg?event=push"/></a>
+<a href="https://github.com/stojy/ClrVpin/branches"><img src="https://github.com/stojy/ClrVpin/actions/workflows/build.yml/badge.svg?event=push"/></a>
