@@ -34,4 +34,5 @@ Refer [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots).
 Refer [Roadmap](https://github.com/stojy/ClrVpin/wiki/Roadmap).
 
 ## Build Status
-<a href="https://github.com/stojy/ClrVpin/branches"><img src="https://github.com/stojy/ClrVpin/actions/workflows/build.yml/badge.svg?event=push"/></a>
+[![build](https://github.com/stojy/ClrVpin/actions/workflows/build.yml/badge.svg)](https://github.com/stojy/ClrVpin/actions/workflows/build.yml)
+<!--<a href="https://github.com/stojy/ClrVpin/branches"><img src="https://github.com/stojy/ClrVpin/actions/workflows/build.yml/badge.svg?event=push"/></a>-->
