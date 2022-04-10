@@ -6,7 +6,7 @@ on:
     #branches: [ master_ ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ master ]
+    #branches: [ master ]
   schedule:
     # 5.35am GMT = 1.35pm WST
     - cron: '33 5 * * *'
@@ -50,17 +50,17 @@ jobs:
     - name: add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
     
-    #- name: everything
-    #  run: |
-    #   msbuild ./ClrVpin.sln -t:clean -p:Configuration=Release -m
-    #   msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
-    #  msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -m
-    - name: clean
-      run: msbuild ./ClrVpin.sln -t:clean -p:Configuration=Release -m
-    - name: restore
-      run: msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
-    - name: build
-      run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
+    - name: everything
+      run: |
+       msbuild ./ClrVpin.sln -t:clean -p:Configuration=Release -m
+       msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
+       msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
+    #- name: clean
+    #  run: msbuild ./ClrVpin.sln -t:clean -p:Configuration=Release -m
+    #- name: restore
+    #  run: msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
+    #- name: build
+    #  run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
 
     - name: perform CodeQL analysis
       uses: github/codeql-action/analyze@v1
