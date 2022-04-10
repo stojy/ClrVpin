@@ -1,5 +1,5 @@
 # github actions help: https://git.io/JvXDl
-name: "Build and Test"
+name: "build"
 
 on:
   push:
@@ -12,18 +12,25 @@ on:
     - cron: '33 5 * * *'
 
 jobs:
-  analyze:
-    name: Analyze
+  info:
+    name: machine info
+    runs-on: windows-latest
+    steps:
+    - name: dotnet info
+      run: dotnet --info
+
+  build:
+    name: build, test, analyse
     runs-on: windows-latest
     permissions:
       actions: read
       contents: read
       security-events: write
 
-    #strategy:
-    #  fail-fast: true
-    #  matrix:
-    #    language: [ 'csharp' ]
+    strategy:
+      fail-fast: true
+      matrix:
+        language: [ 'csharp' ]
 
     steps:
     - name: checkout
@@ -34,13 +41,6 @@ jobs:
       uses: github/codeql-action/init@v1
       with:
         languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
-        # queries: ./path/to/local/query, your-org/your-repo/queries@main
-
-    - name: dotnet info
-      run: dotnet --info
       
     # building via msbuild (as used by VS) instead of dotnet because Wix v3 lacks dotnet support
     # - https://github.com/wixtoolset/issues/issues/5627
