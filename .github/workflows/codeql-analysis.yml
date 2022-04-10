@@ -61,10 +61,10 @@ jobs:
       run: msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
     - name: build
       run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
-    - name: tests
-      run: |
-        dotnet test ClrVpin.tests
-        dotnet test Utils.tests
+    - name: tests 1
+      run: dotnet test ClrVpin.tests
+    - name: tests 2
+      run: dotnet test Utils.tests
    
     - name: perform CodeQL analysis
       uses: github/codeql-action/analyze@v1
