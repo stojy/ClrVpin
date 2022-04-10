@@ -55,15 +55,16 @@ jobs:
     - name: restore
       run: msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
     - name: build
-      run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
-    
+      run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m    
     - name: tests
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
       run: dotnet test ClrVpin.tests --no-restore && dotnet test Utils.tests --no-restore
-    #- name: tests 1
-    #  run: dotnet test ClrVpin.tests --no-build
-    #- name: tests 2
-    #  run: dotnet test Utils.tests
-   
+
+    - name: artifact installer
+      uses: actions/upload-artifact@v3
+      with:
+        path: ClrVpin.setup\bin\release\*.msi
+        retention-days: 5
+          
     - name: perform CodeQL analysis
       uses: github/codeql-action/analyze@v1
