@@ -7,7 +7,7 @@ namespace ClrVpin.Tests.Shared
     internal class FileUtilsTests
     {
         [Test]
-        [TestCase(null, true)]
+        [TestCase(null, false)]
         [TestCase("file", false)]
         [TestCase("file.txt", false)]
         [TestCase("file/", false)]
