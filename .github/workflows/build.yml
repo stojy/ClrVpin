@@ -72,6 +72,7 @@ jobs:
   
   release:
     name: tag and release (TBD)
+    environment: prod
     runs-on: ubuntu-latest
     needs: build
     steps:
