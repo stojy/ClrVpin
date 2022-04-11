@@ -20,7 +20,7 @@ jobs:
       run: dotnet --info
 
   build:
-    name: build, test, analyse
+    name: build, test, and analyse
     runs-on: windows-latest
     permissions:
       actions: read
@@ -34,7 +34,7 @@ jobs:
 
     steps:
     - name: checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Initializes the CodeQL tools for scanning.
     - name: initialize CodeQL
@@ -55,15 +55,34 @@ jobs:
     - name: restore
       run: msbuild ./ClrVpin.sln -t:restore -p:Configuration=Release -m
     - name: build
-      run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m
-    
+      run: msbuild ./ClrVpin.sln -t:build -p:Configuration=Release -p:UseSharedCompilation=false -m    
     - name: tests
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
-      run: dotnet test ClrVpin.tests &&  dotnet test Utils.tests
-    #- name: tests 1
-    #  run: dotnet test ClrVpin.tests --no-build
-    #- name: tests 2
-    #  run: dotnet test Utils.tests
-   
+      run: dotnet test ClrVpin.tests --no-restore && dotnet test Utils.tests --no-restore
+
+    - name: installer artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: installer
+        path: ClrVpin.setup\bin\release\*.msi
+        retention-days: 5
+          
     - name: perform CodeQL analysis
       uses: github/codeql-action/analyze@v1
+  
+  release:
+    name: tag and release (TBD)
+    environment: prod
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: release
+        uses: actions/download-artifact@v3
+        with:
+          name: installer
+      - name: show
+        run: dir
+          
+          
+          
+    
