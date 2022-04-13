@@ -143,7 +143,7 @@ namespace ClrVpin.Importer
                 game.LastCreatedAt = maxCreatedAt;
             }
 
-            // fix game updated timestamp - must not be equal to the max file timestamp
+            // fix game updated timestamp - must not be less than the max file timestamp
             var maxUpdatedAt = game.AllFilesList.Max(x => x.UpdatedAt);
             if (game.UpdatedAt < maxUpdatedAt)
             {
