@@ -83,6 +83,16 @@ jobs:
       - name: show
         run: dir
           
+  debugging:
+    name: debugging info
+    runs-on: ubuntu-latest
+    steps:
+      - name: show
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          echo $GITHUB_CONTEXT
+          
   release_notes:
     name: release notes (TBD)
     runs-on: ubuntu-latest
@@ -93,9 +103,9 @@ jobs:
       #    name: installer
       - name: show
         env:
-          EVENT_CONTEXT: ${{ toJSON(github) }}
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: |
-          echo $EVENT_CONTEXT
-          
+          echo $GITHUB_CONTEXT
+                    
           
     
