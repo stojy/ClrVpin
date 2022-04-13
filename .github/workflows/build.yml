@@ -83,6 +83,19 @@ jobs:
       - name: show
         run: dir
           
+  release_notes:
+    name: release notes (TBD)
+    runs-on: ubuntu-latest
+    steps:
+      #- name: release
+      #  uses: actions/download-artifact@v3
+      # with:
+      #    name: installer
+      - name: show
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          echo $EVENT_CONTEXT
           
           
     
