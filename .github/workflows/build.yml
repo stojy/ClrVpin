@@ -88,11 +88,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: installer
-      - name: unzip artifacts
-        run: |
-          dir
-          tar -xf installer.zip
-          dir
       - name: release
         uses: ncipollo/release-action@v1
         with:
