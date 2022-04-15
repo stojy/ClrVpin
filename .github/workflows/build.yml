@@ -4,7 +4,7 @@ name: "CI build"
 on:
   push:
     #branches: [ master_ ]
-  pull_request:
+  #pull_request:
     # The branches below must be a subset of the branches above
     #branches: [ master ]
   schedule:
