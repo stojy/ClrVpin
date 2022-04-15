@@ -1,5 +1,5 @@
 # github actions help: https://git.io/JvXDl
-name: "build"
+name: "CI build"
 
 on:
   push:
@@ -13,11 +13,11 @@ on:
 
 jobs:
   info:
-    name: build info
+    name: info
     runs-on: ubuntu-latest
     steps:
     - name: directory
-      run: dir /s
+      run: dir -R
     - name: dotnet
       run: dotnet --info
     - name: git context
