@@ -4,8 +4,8 @@ on:
   workflow_call:
 
 jobs:
-  info:
-    name: info
+  info_ubuntu:
+    name: info_ubuntu
     runs-on: ubuntu-latest
     steps:
     - name: current path
