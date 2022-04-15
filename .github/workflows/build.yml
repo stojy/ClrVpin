@@ -21,7 +21,7 @@ jobs:
     - name: git context
       env:
         GITHUB_CONTEXT: ${{ toJSON(github) }}
-#      run: |
+      run: echo done
 #        echo $GITHUB_CONTEXT
 #        echo $GITHUB_CONTEXT | jq
         
