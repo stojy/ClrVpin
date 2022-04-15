@@ -13,15 +13,18 @@ on:
 
 jobs:
   info:
-    name: debugging info
+    name: build info
     runs-on: ubuntu-latest
     steps:
-    - name: dotnet info
+    - name: dotnet
       run: dotnet --info
     - name: git context
       env:
         GITHUB_CONTEXT: ${{ toJSON(github) }}
-      run: echo $GITHUB_CONTEXT
+      run: |
+        - echo $GITHUB_CONTEXT
+        - echo $GITHUB_CONTEXT | jq
+        
 
   build:
     name: build, test, and analyse
