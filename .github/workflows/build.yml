@@ -60,7 +60,7 @@ jobs:
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
       run: dotnet test ClrVpin.tests --no-restore && dotnet test Utils.tests --no-restore
 
-    - name: uplolad artifact (tag only)
+    - name: upload artifact (tag only)
       # only create artifactgs for tagged versions
       if: startsWith(github.ref, 'refs/tags/v')
       uses: actions/upload-artifact@v3
@@ -76,17 +76,15 @@ jobs:
           
   release:
     name: release (tag only)
-    runs-on: ubuntu-latest
-    # https://stackoverflow.com/a/58478262/227110
     if: startsWith(github.ref, 'refs/tags/v')      
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # required for release notes only
     steps:
       - name: download artifacts
         uses: actions/download-artifact@v3
         with:
           name: installer
       - name: release
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: |
-          echo $GITHUB_CONTEXT
+        uses: ncipollo/release-action@v1
                     
