@@ -78,7 +78,10 @@ jobs:
     # - setup latest msbuild (v17.1 at time of writing), refer https://github.com/marketplace/actions/setup-msbuild
     - name: add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
-    
+    - name: directories
+      run: |
+        dir "C:\Program Files (x86)"
+        dir "C:\Program Files"
     - name: build
       run: msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m    
     - name: tests
@@ -122,7 +125,7 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: ClrVpin.Setup.msi
           draft: true
-          name: '${{github.ref_name}}: TBA'
+          name: '${{github.ref_name}}: tba'
           generateReleaseNotes: true
           bodyFile: docs/release/releaseNotesBody.md
                     
