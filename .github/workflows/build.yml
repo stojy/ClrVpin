@@ -99,6 +99,7 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: ClrVpin.Setup.msi
           draft: true
+          generateReleaseNotes: true
           body: blah
           
                     
