@@ -57,7 +57,10 @@ jobs:
         
   build:
     name: build, test, analyse, artifact (windows)
-    runs-on: ubuntu-latest
+    # windows runner required because..
+    # - setup-msbuild can only be run on Windows runners
+    # - also WiX not installed on ubuntu/-latestlinux
+    runs-on: windows-latest
     permissions:
       actions: read
       contents: read
