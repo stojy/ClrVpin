@@ -1,0 +1,50 @@
+name: "shared workflow"
+
+on:
+  workflow_call:
+
+jobs:
+  info-ubuntu:
+    name: info-ubuntu
+    runs-on: ubuntu-latest
+    steps:
+    - name: current path
+      run: cd
+    - name: directory
+      run: dir -R
+    - name: dotnet
+      run: dotnet --info
+    - name: git context
+      env:
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
+      run: echo expand above
+    - name: job context
+      env:
+        JOB_CONTEXT: ${{ toJSON(job) }}
+      run: echo expand above
+    - name: steps context
+      env:
+        STEPS_CONTEXT: ${{ toJSON(steps) }}
+      run: echo expand above
+    - name: runner context
+      env:
+        RUNNER_CONTEXT: ${{ toJSON(runner) }}
+      run: echo expand above
+    - name: strategy context
+      env:
+        STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
+      run: echo expand above
+    - name: matrix context
+      env:
+        MATRIX_CONTEXT: ${{ toJSON(matrix) }}
+      run: echo expand above
+    - name: inputs context
+      env:
+        INPUTS_CONTEXT: ${{ toJSON(inputs) }}
+      run: echo expand above
+    - name: env context
+      env:
+        ENV_CONTEXT: ${{ toJSON(env) }}
+      run: echo expand above
+        
+  
