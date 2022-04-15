@@ -22,8 +22,8 @@ jobs:
       env:
         GITHUB_CONTEXT: ${{ toJSON(github) }}
       run: |
-        - echo $GITHUB_CONTEXT
-        - echo $GITHUB_CONTEXT | jq
+        echo $GITHUB_CONTEXT
+        echo $GITHUB_CONTEXT | jq
         
 
   build:
