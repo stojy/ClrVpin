@@ -124,6 +124,5 @@ jobs:
           draft: true
           name: '${{github.ref_name}}: TBA'
           generateReleaseNotes: true
-          body: blah
           bodyFile: docs/release/releaseNotesBody.md
                     
