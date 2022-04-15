@@ -80,6 +80,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{E2
 		docs\screenshots\settings\settings.png = docs\screenshots\settings\settings.png
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{91051017-6BDE-4196-8C55-23CBDBA3B9D3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{DC689ACB-B600-4FB1-81C2-82C45E20FC59}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "release", "release", "{2BC96910-E2FE-4F90-811F-C370C8E69B58}"
+	ProjectSection(SolutionItems) = preProject
+		docs\release\releaseNotesBody.md = docs\release\releaseNotesBody.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -140,6 +152,8 @@ Global
 		{A9565933-F1E0-4F5D-A181-E2BF62C87787} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
 		{A5DA1FE0-9375-46AE-A586-8119AA14C8C8} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
 		{E26BC194-1205-46D0-8227-3B647DB8D77D} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
+		{DC689ACB-B600-4FB1-81C2-82C45E20FC59} = {91051017-6BDE-4196-8C55-23CBDBA3B9D3}
+		{2BC96910-E2FE-4F90-811F-C370C8E69B58} = {34B6F8B8-7694-4097-811B-C7B944177E1C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EEFDE1FF-91E7-4C51-8546-5721BAE8910A}

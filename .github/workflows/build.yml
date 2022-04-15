@@ -84,10 +84,15 @@ jobs:
     permissions:
       contents: write # required for release notes only
     steps:
+      # checkout required the release notes template
+      - name: checkout
+        uses: actions/checkout@v3
+      
       - name: download artifacts
         uses: actions/download-artifact@v3
         with:
           name: installer
+      
       - name: release
         uses: ncipollo/release-action@v1
         with:
@@ -96,5 +101,5 @@ jobs:
           draft: true
           generateReleaseNotes: true
           body: blah
-          
+          bodyFile: docs/release/releaseNotesBody.md
                     
