@@ -98,7 +98,8 @@ jobs:
     - name: build (tag only)
       env:
         # extact version from ref_name if this is a tag, otherwise provide a default value (since msbuild won't accept a null value)
-        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '0.0.2' }}
+        # default to 0.0.2 instead of 0.0.1 because the version must excceed the minimum allowed version (refer wix proj)
+        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '0.0.2-no_tag' }}
       
       run: |
         echo version = $env:VERSION
