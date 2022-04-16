@@ -50,7 +50,7 @@
     <Icon Id="ClrVpxIcon.exe" SourceFile="$(var.ClrVpin.TargetDir)ClrVpin.exe" />
     <Property Id="ARPPRODUCTICON" Value="ClrVpxIcon.exe" />
 
-    <!--not strictly required at the moment.. but kept here for future use if/when version upgrade constraints are requried-->
+    <!--not strictly required at the moment.. but kept here for future use if/when version upgrade constraints are required-->
     <Upgrade Id="$(var.UpgradeCode)">
       <UpgradeVersion Minimum="0.0.1" IncludeMinimum="yes" OnlyDetect="no" Maximum="$(var.Version)" IncludeMaximum="no" Property="OLDVERSIONFOUND" />
     </Upgrade>
