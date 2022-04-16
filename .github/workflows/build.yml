@@ -58,8 +58,8 @@ jobs:
   build:
     name: build, test, analyse, artifact (windows)
     # windows runner required because..
-    # - setup-msbuild can only be run on Windows runners
-    # - also WiX not installed on ubuntu/-latestlinux
+    # - setup-msbuild can only be run on Windows runners, i.e. not available on ubuntu-latest
+    # - in theory, we could run a matrix here.. ubuntu for CI and windows for release (tag only) --> but likely not worth the overhead
     runs-on: windows-latest
     permissions:
       actions: read
@@ -87,12 +87,30 @@ jobs:
         dir "C:\Program Files (x86)"
         dir "C:\Program Files"
         echo path
+        echo 1
+        echo $VERSION
+        echo 2
+        echo $env:VERSION
+        echo 2.1
+        echo %VERSION%
+        echo 4
+        echo $env:VERSION
     - name: build
-      run: msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m    
+      env:
+        # extact version from ref_name if this is a tag, otherwise provide a default value (since msbuild won't accept a null value)
+        # default to 0.0.2 instead of 0.0.1 because the version must excceed the minimum allowed version (refer wix proj)
+        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '0.0.2-no-tag' }}
+      run: |
+        msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m -p:Version=$env:VERSION
     - name: tests
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
       run: dotnet test ClrVpin.tests --no-restore && dotnet test Utils.tests --no-restore
 
+    - name: analysis (master and tag only)
+      # codeQL is rather slow, so only perform for master commits and tagging
+      if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
+      uses: github/codeql-action/analyze@v1
+      
     - name: upload artifact (tag only)
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v3
@@ -100,11 +118,6 @@ jobs:
         name: installer
         path: ClrVpin.setup\bin\release\*.msi
         retention-days: 5
-
-    - name: analysis (master and tag only)
-      # codeQL is rather slow, so only perform for master commits and tagging
-      if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
-      uses: github/codeql-action/analyze@v1
           
   release:
     name: release (tag only - ubuntu)
