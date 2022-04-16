@@ -82,19 +82,21 @@ jobs:
     # - setup latest msbuild (v17.1 at time of writing), refer https://github.com/marketplace/actions/setup-msbuild
     - name: add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
-    - name: default version
+    - name: version
       env:
-        VERSION: '1.0.0.0'
+        VERSION: ${{github.ref}}
+      run: |
+        echo $VERSION
+        echo $env:VERSION
+        $env:VERSION ??= '1.0.0.0'
+        echo $VERSION
+        echo $env:VERSION
     - name: info
       run: |
         dir "C:\Program Files (x86)"
         dir "C:\Program Files"
         echo path
-        echo %VERSION%
-    - name: override version (tag only)
-      if: startsWith(github.ref, 'refs/tags/')
-      env:
-        VERSION: github.ref      
+        echo %VERSION%      
     - name: build (tag only)
       run: msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m -p:Version=%VERSION%
     - name: tests
