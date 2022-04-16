@@ -86,10 +86,16 @@ jobs:
       env:
         VERSION: ${{github.ref}}
       run: |
+        echo 1
         echo $VERSION
+        echo 2
         echo $env:VERSION
+        
         $env:VERSION ??= '1.0.0.0'
+        
+        echo 3
         echo $VERSION
+        echo 4
         echo $env:VERSION
     - name: info
       run: |
