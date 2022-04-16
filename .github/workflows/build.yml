@@ -58,8 +58,8 @@ jobs:
   build:
     name: build, test, analyse, artifact (windows)
     # windows runner required because..
-    # - setup-msbuild can only be run on Windows runners
-    # - also WiX not installed on ubuntu/-latestlinux
+    # - setup-msbuild can only be run on Windows runners, i.e. not available on ubuntu-latest
+    # - in theory, we could run a matrix here.. ubuntu for CI and windows for release (tag only) --> but likely not worth the overhead
     runs-on: windows-latest
     permissions:
       actions: read
@@ -84,7 +84,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
     - name: version
       env:
-        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '0.0.0.1' }}
+        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '1.0.0.0' }}
       run: |
         echo 1
         echo $VERSION
@@ -113,7 +113,7 @@ jobs:
     - name: build (tag only)
       env:
         # extact version from ref_name if this is a tag, otherwise provide a default value (since msbuild won't accept a null value)
-        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '0.0.0.1' }}
+        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '1.0.0.0' }}
       run: msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m -p:Version=$env:VERSION
     - name: tests
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
