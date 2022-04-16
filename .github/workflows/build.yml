@@ -110,6 +110,8 @@ jobs:
         echo $env:VERSION
         echo 2.1
         echo %VERSION%
+        echo 4
+        echo $env:VERSION
     - name: build (tag only)
       env:
         # extact version from ref_name if this is a tag, otherwise provide a default value (since msbuild won't accept a null value)
@@ -119,6 +121,11 @@ jobs:
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
       run: dotnet test ClrVpin.tests --no-restore && dotnet test Utils.tests --no-restore
 
+    - name: analysis (master and tag only)
+      # codeQL is rather slow, so only perform for master commits and tagging
+      if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
+      uses: github/codeql-action/analyze@v1
+      
     - name: upload artifact (tag only)
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v3
@@ -126,11 +133,6 @@ jobs:
         name: installer
         path: ClrVpin.setup\bin\release\*.msi
         retention-days: 5
-
-    - name: analysis (master and tag only)
-      # codeQL is rather slow, so only perform for master commits and tagging
-      if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
-      uses: github/codeql-action/analyze@v1
           
   release:
     name: release (tag only - ubuntu)
