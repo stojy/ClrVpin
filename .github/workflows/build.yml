@@ -111,7 +111,10 @@ jobs:
         echo 2.1
         echo %VERSION%
     - name: build (tag only)
-      run: msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m -p:Version=%VERSION%
+      env:
+        # extact version from ref_name if this is a tag, otherwise provide a default value (since msbuild won't accept a null value)
+        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '0.0.0.1' }}
+      run: msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m -p:Version=$env:VERSION
     - name: tests
       # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
       run: dotnet test ClrVpin.tests --no-restore && dotnet test Utils.tests --no-restore
