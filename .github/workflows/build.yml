@@ -90,6 +90,8 @@ jobs:
         echo $VERSION
         echo 2
         echo $env:VERSION
+        echo 2.1
+        echo %VERSION%
         
         $env:VERSION ??= '1.0.0.0'
         
@@ -102,7 +104,12 @@ jobs:
         dir "C:\Program Files (x86)"
         dir "C:\Program Files"
         echo path
-        echo %VERSION%      
+        echo 1
+        echo $VERSION
+        echo 2
+        echo $env:VERSION
+        echo 2.1
+        echo %VERSION%
     - name: build (tag only)
       run: msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m -p:Version=%VERSION%
     - name: tests
