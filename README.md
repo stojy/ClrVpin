@@ -9,8 +9,8 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
 - Current
 
 ## Supported Platforms and Content
-1. [Visual Pinball X (open source)](https://github.com/vpinball/vpinball) - Tables, Backglasses, and POV.
-1. [PinballY (open source)](https://github.com/mjrgh/PinballY) and [PinballX (proprietary)](https://www.pinballx.com/) - Videos, Audio, Wheels, Instructions, Flyters, etc.
+1. [Visual Pinball X (open source)](https://github.com/vpinball/vpinball) engine - Tables, Backglasses, and POV.
+1. [PinballY (open source)](https://github.com/mjrgh/PinballY) and [PinballX (proprietary)](https://www.pinballx.com/) frontends - Videos, Audio, Wheels, Instructions, Flyters, etc.
 
 ## Features
 1. Scanner - clean your existing pinball files
