@@ -25,7 +25,7 @@
         </TextBox.Text>
         <b:Interaction.Triggers>
           <b:EventTrigger EventName="TextChanged">
-            <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
+            <b:InvokeCommandAction Command="{Binding ExtensionsChangedCommandWithParam}" PassEventArgsToCommand="True" />
           </b:EventTrigger>
         </b:Interaction.Triggers>
       </TextBox>
@@ -35,7 +35,7 @@
                Text="{Binding KindredExtensions, UpdateSourceTrigger=PropertyChanged}">
         <b:Interaction.Triggers>
           <b:EventTrigger EventName="TextChanged">
-            <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
+            <b:InvokeCommandAction Command="{Binding KindredExtensionsChangedCommandWithParam}" PassEventArgsToCommand="True"/>
           </b:EventTrigger>
         </b:Interaction.Triggers>
       </TextBox>

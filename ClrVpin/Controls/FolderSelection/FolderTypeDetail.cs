@@ -15,6 +15,6 @@ namespace ClrVpin.Controls.FolderSelection
         public string PatternValidation { get; set; }
 
         public ActionCommand FolderExplorerCommand { get; set; }
-        public ActionCommand<TextChangedEventArgs> TextChangedCommandWithParam { get; set; }
+        public ActionCommand<TextChangedEventArgs> FolderChangedCommandWithParam { get; set; }
     }
 }

@@ -41,7 +41,7 @@
         <b:Interaction.Triggers>
           <b:EventTrigger EventName="TextChanged">
             <!-- pass event args to allow workaround for the validation rule triggering which subsequently doesn't update the binding source -->
-            <b:InvokeCommandAction Command="{Binding TextChangedCommandWithParam}" PassEventArgsToCommand="True" />
+            <b:InvokeCommandAction Command="{Binding FolderChangedCommandWithParam}" PassEventArgsToCommand="True" />
           </b:EventTrigger>
         </b:Interaction.Triggers>
       </TextBox>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models;
@@ -24,20 +25,25 @@ namespace ClrVpin.Settings
             Extensions = string.Join(", ", contentType.Extensions);
             KindredExtensions = string.Join(", ", contentType.KindredExtensions);
 
-            TextChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
+            FolderChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
             {
-                // workaround (aka hack) to cater for when a ValidationRule fires..
-                // - UI is updated nicely with a warning (e.g. folder must be specified), but alas the underlying binding source is not updated.. i.e. user's interaction is ignored :(
-                // - e.g. using clear button on Material styled TextBox firs the validation
-                // - sequence..
-                //   a. ValidationRule fires (refer xaml) - which potentially rejecting the change
-                //   b. TextChanged bubbled event caught here - fortunately, this occurs irrespective of whether the ValidationRule rules
-                if (e.Source is TextBox textBox)
-                    Folder = textBox.Text;
+                // for display and storage
+                contentType.Folder = Folder = GetText(e);
 
-                // for storage
-                contentType.Folder = Folder;
-                contentType.Extensions = Extensions;
+                updatedAction?.Invoke();
+            });
+
+            ExtensionsChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
+            {
+                // for display and storage
+                contentType.Extensions = Extensions = GetText(e);
+
+                updatedAction?.Invoke();
+            });
+
+            KindredExtensionsChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
+            {
+                // for display and storage
                 contentType.KindredExtensions = KindredExtensions;
 
                 updatedAction?.Invoke();
@@ -55,6 +61,19 @@ namespace ClrVpin.Settings
             }));
         }
 
+        public ActionCommand<TextChangedEventArgs> KindredExtensionsChangedCommandWithParam { get; set; }
+
+        public ActionCommand<TextChangedEventArgs> ExtensionsChangedCommandWithParam { get; set; }
+
         public ContentType ContentType { get; set; }
+
+        private static string GetText(RoutedEventArgs e) =>
+            // workaround (aka hack) to cater for when a ValidationRule fires..
+            // - UI is updated nicely with a warning (e.g. folder must be specified), but alas the underlying binding source is not updated.. i.e. user's interaction is ignored :(
+            // - e.g. using clear button on Material styled TextBox fires the validation
+            // - sequence..
+            //   a. ValidationRule fires (refer xaml) - which potentially rejecting the change
+            //   b. TextChanged bubbled event caught here - fortunately, this occurs irrespective of whether the ValidationRule result
+            e.Source is TextBox textBox ? textBox.Text : null;
     }
 }
