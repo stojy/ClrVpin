@@ -80,12 +80,16 @@
           <StackPanel>
             <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
 
-            <WrapPanel Margin="5,0">
+            <WrapPanel Margin="5">
+              <ToggleButton ToolTip="When enabled, additional diagnostic logging is generated." IsChecked="{Binding Settings.EnableDiagnosticLogging}" />
+              <TextBlock Margin="10,0,0,0" Text="Diagnostic Logging" />
+            </WrapPanel>
+            <WrapPanel Margin="5">
               <ToggleButton ToolTip="When enabled, all file operations are ignored. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
               <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
             </WrapPanel>
 
-            <Button ToolTip="Reset the entire config to their installation values" Width="90" Margin="5,10,0,5" HorizontalAlignment="Left" Command="{Binding ResetCommand}">Reset</Button>
+            <Button ToolTip="Reset the entire config to their installation values" Width="90" Margin="5" HorizontalAlignment="Left" Command="{Binding ResetCommand}">Reset</Button>
           </StackPanel>
         </GroupBox>
 

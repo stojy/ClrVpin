@@ -211,7 +211,7 @@ namespace ClrVpin.Importer
             progress.Update("Updating online DB");
             var feedFixStatistics = ImporterUtils.Update(games);
 
-            Logger.Info($"Loading online DB complete, duration={progress.Duration}");
+            Logger.Info($"Loading online DB complete, duration={progress.Duration}", true);
 
             //var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
 
@@ -227,7 +227,7 @@ namespace ClrVpin.Importer
 
             
             ShowResults(progress.Duration, games, feedFixStatistics);
-            Logger.Info($"Importer rendered, duration={progress.Duration}");
+            Logger.Info($"Importer rendered, duration={progress.Duration}", true);
             
             progress.Close();
 

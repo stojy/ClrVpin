@@ -22,6 +22,7 @@ namespace ClrVpin.Models.Settings
             Version = MinVersion;
 
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
+            EnableDiagnosticLogging = false;
             TrainerWheels = true;
 
             AllContentTypes = new List<ContentType>
@@ -75,6 +76,7 @@ namespace ClrVpin.Models.Settings
         public List<ContentType> AllContentTypes { get; set; }
 
         public string BackupFolder { get; set; }
+        public bool EnableDiagnosticLogging { get; set; }
         public bool TrainerWheels { get; set; }
         
         public decimal MatchFuzzyMinimumPercentage { get; set; } = 100;
