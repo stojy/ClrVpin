@@ -202,7 +202,7 @@ namespace ClrVpin.Importer
             AddFixStatistic(type);
 
             var name = $"'{game.Name[..Math.Min(game.Name.Length, 23)].Trim()}'";
-            Logger.Warn($"Fixed {type,-26} index={game.Index:0000} name={name,-25} {details}");
+            Logger.Warn($"Fixed {type,-26} index={game.Index:0000} name={name,-25} {details}", true);
         }
 
         private static void AddFixStatistic(string key)

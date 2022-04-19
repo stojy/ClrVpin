@@ -4,12 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Threading;
 using ByteSizeLib;
+using Microsoft.VisualBasic.Devices;
 using NLog;
 using NLog.Targets;
 
 namespace ClrVpin.Logging
 {
-    public class Logger
+    public static class Logger
     {
         static Logger()
         {
@@ -18,14 +19,14 @@ namespace ClrVpin.Logging
 
             var currentProcess = Process.GetCurrentProcess();
 
-            var computerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
+            var computerInfo = new ComputerInfo();
             var systemInfo = "\n\n---------- System Info ----------\n" +
                              $"Start Time:            {currentProcess.StartTime}\n" +
                              $"App:                   {currentProcess.ProcessName}\n" +
                              $"Version:               {currentProcess.MainModule?.FileVersionInfo.ProductVersion}\n" +
                              $"Path:                  {currentProcess.MainModule?.FileName}\n" +
                              $"Command Line:          {Environment.CommandLine}\n" +
-                             $"Processor Type:        {Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER")}\n" +           // https://en.wikichip.org/wiki/intel/cpuid
+                             $"Processor Type:        {Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER")}\n" + // https://en.wikichip.org/wiki/intel/cpuid
                              $"Processor Count:       {Environment.ProcessorCount}\n" +
                              $"Free Physical Memory:  {ByteSize.FromBytes(computerInfo.AvailablePhysicalMemory).ToString("0.#")}\n" +
                              $"Free Virtual Memory:   {ByteSize.FromBytes(computerInfo.AvailableVirtualMemory).ToString("0.#")}\n" +
@@ -33,26 +34,36 @@ namespace ClrVpin.Logging
                              $"64 bit:                {Environment.Is64BitOperatingSystem}\n" +
                              $"CLI Version:           {Environment.Version}\n" +
                              "---------------------------------";
+
             Info(systemInfo);
         }
 
         public static ObservableCollection<Log> Logs { get; } = new ObservableCollection<Log>();
         public static string File { get; }
 
-        public static void Debug(string message)
+        public static void Debug(string message, bool isDiagnostic = false)
         {
+            if (IsIgnored(isDiagnostic))
+                return;
+
             _logger.Debug(message);
             Add(Level.Debug, message);
         }
 
-        public static void Info(string message)
+        public static void Info(string message, bool isDiagnostic = false)
         {
+            if (IsIgnored(isDiagnostic))
+                return;
+
             _logger.Info(message);
             Add(Level.Info, message);
         }
 
-        public static void Warn(string message)
+        public static void Warn(string message, bool isDiagnostic = false)
         {
+            if (IsIgnored(isDiagnostic))
+                return;
+
             _logger.Warn(message);
             Add(Level.Warn, message);
         }
@@ -74,12 +85,14 @@ namespace ClrVpin.Logging
             _dispatch.BeginInvoke(() => Logs.Clear());
         }
 
+        private static bool IsIgnored(bool isDiagnostic) => isDiagnostic && Model.Settings?.EnableDiagnosticLogging == false;
+
         private static string GetLogFile()
         {
-            var fileTarget = (FileTarget) LogManager.Configuration.FindTargetByName("Service");
+            var fileTarget = (FileTarget)LogManager.Configuration.FindTargetByName("Service");
 
             // Need to set timestamp here if filename uses date. e.g. filename="${basedir}/logs/${shortdate}/trace.log"
-            var logEventInfo = new LogEventInfo {TimeStamp = DateTime.Now};
+            var logEventInfo = new LogEventInfo { TimeStamp = DateTime.Now };
             var fileName = fileTarget.FileName.Render(logEventInfo);
             var path = Path.GetFullPath(fileName);
 
