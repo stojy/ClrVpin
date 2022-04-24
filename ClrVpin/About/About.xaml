@@ -63,7 +63,7 @@
           </StackPanel>
         </Button>
 
-        <Button Command="{Binding DonateCommand}" Style="{StaticResource AlternateButton}" Width="70" ToolTip="Make a donation">
+        <Button Command="{Binding DonateCommand}" Style="{StaticResource RaisedAccentButton}" Width="70" ToolTip="Make a donation">
           <StackPanel>
             <TextBlock Text="Donate" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="GiftOutline" Style="{StaticResource PackIconStyle}"/>

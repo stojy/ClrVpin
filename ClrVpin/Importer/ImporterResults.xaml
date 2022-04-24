@@ -199,16 +199,20 @@
     <materialDesign:DialogHost Identifier="ImageDialog" CloseOnClickAway="True" VerticalAlignment="Stretch" DialogMargin="0" DialogBackground="Transparent">
       <materialDesign:DialogHost.DialogContentTemplate>
         <DataTemplate DataType="vps:UrlSelection">
-          <Image Margin="15" Source="{Binding Url}" Stretch="Uniform">
-            <Image.Effect>
-              <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance" />
-            </Image.Effect>
-            <b:Interaction.Triggers>
-              <b:EventTrigger EventName="MouseUp">
-                <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
-              </b:EventTrigger>
-            </b:Interaction.Triggers>
-          </Image>
+          <StackPanel>
+            <Image Margin="15" Source="{Binding Url}" Stretch="Uniform">
+              <Image.Effect>
+                <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance" />
+              </Image.Effect>
+              <b:Interaction.Triggers>
+                <b:EventTrigger EventName="MouseUp">
+                  <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
+                </b:EventTrigger>
+              </b:Interaction.Triggers>
+            </Image>
+            <!--non-visible button marked with IsCancel to support the escape key-->
+            <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+          </StackPanel>
         </DataTemplate>
       </materialDesign:DialogHost.DialogContentTemplate>
 

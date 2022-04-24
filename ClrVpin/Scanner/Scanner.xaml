@@ -113,7 +113,7 @@
                 ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
                 IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels" />
 
-      <Button Width="50" Command="{Binding StartCommand}" IsEnabled="{Binding IsValid}" Style="{StaticResource AlternateButton}">Start</Button>
+      <Button Width="50" Command="{Binding StartCommand}" IsEnabled="{Binding IsValid}" Style="{StaticResource RaisedAccentButton}">Start</Button>
     </StackPanel>
   </DataTemplate>
 

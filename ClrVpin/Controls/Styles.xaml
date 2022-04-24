@@ -48,7 +48,7 @@
 
   <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButton}" />
 
-  <Style x:Key="AlternateButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+  <Style x:Key="RaisedAccentButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
     <Setter Property="Margin" Value="5,0" />
     <Setter Property="Padding" Value="5" />
     <Setter Property="Height" Value="Auto" />
@@ -56,9 +56,19 @@
     <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4" />
   </Style>
   
-  <Style x:Key="AlternateHighlightButton" TargetType="Button" BasedOn="{StaticResource AlternateButton}">
+  <Style x:Key="AlternateRaisedHighlightButton" TargetType="Button" BasedOn="{StaticResource RaisedAccentButton}">
     <Setter Property="Background" Value="Coral" />
     <Setter Property="BorderBrush" Value="Coral" />
+  </Style>
+
+
+  <Style x:Key="FlatButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="Width" Value="70" />
+  </Style>
+
+  <Style x:Key="FlatHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatButtonStyle}">
+    <Setter Property="Foreground" Value="Coral" />
   </Style>
 
   <Style x:Key="Title" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}">

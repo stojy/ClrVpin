@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
 using Octokit;
 using PropertyChanged;
+using Utils;
 using Application = System.Windows.Application;
 
 namespace ClrVpin.Home
@@ -30,7 +32,7 @@ namespace ClrVpin.Home
                 if (Model.SettingsManager.WasReset && !_configWasResetHandled)
                 {
                     _configWasResetHandled = true;
-                    await DialogHost.Show(new RestartDetail
+                    await DialogHost.Show(new RestartInfo
                     {
                         Title = "Your settings have been reset",
                         Detail = "ClrVpin will now be restarted."
@@ -40,22 +42,23 @@ namespace ClrVpin.Home
                 if (!_skipCheckForUpdate)
                 {
                     _skipCheckForUpdate = true;
-                    await CheckAndHandleUpdates();
+                    var release = await VersionManagement.CheckForUpdate("stojy", "ClrVpin");
+
+                    if (release != null)
+                    {
+                        var result = await DialogHost.Show(new VersionUpdateInfo
+                        {
+                            Title = "A new version is available",
+                            ExistingVersion = VersionManagement.GetProductVersion(),
+                            NewVersion = release.TagName,
+                            CreatedAt = release.CreatedAt.LocalDateTime,
+                            ReleaseNotes = release.Body,
+                        }, "HomeDialog") as VersionManagementAction?;
+
+                        await VersionManagement.ProcessAction(release, result);
+                    }
                 }
             };
-        }
-
-        private async Task CheckAndHandleUpdates()
-        {
-            var client = new GitHubClient(new ProductHeaderValue("ClrVpin"));
-
-            var latestRelease = await client.Repository.Release.GetLatest("stojy", "ClrVpin");
-
-            await DialogHost.Show(new NewVersionDetail
-            {
-                Title = "A new version is available!",
-                Detail = $"Details..\n\n{latestRelease.Body}"
-            }, "HomeDialog");
         }
 
         private static void Restart()
