@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
@@ -19,8 +18,7 @@ namespace ClrVpin.About
             ThanksCommand = new ActionCommand(() => new ThanksViewModel().Show(_window));
             DonateCommand = new ActionCommand(() => new DonateViewModel().Show(_window));
 
-            var version = Assembly.GetEntryAssembly()?.GetName().Version!;
-            AssemblyVersion = $"v{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
+            AssemblyVersion = $"v{VersionManagement.GetProductVersion()}";
         }
 
         public string AssemblyVersion { get; set; }
