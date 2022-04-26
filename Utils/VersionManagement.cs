@@ -1,7 +1,12 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using Octokit;
+using FileMode = System.IO.FileMode;
 
 namespace Utils
 {
@@ -31,7 +36,7 @@ namespace Utils
             switch (action)
             {
                 case VersionManagementAction.Install:
-                    await Install(release);
+                    Install(await Download(release));
                     break;
                 case VersionManagementAction.View:
                     View(release);
@@ -41,7 +46,26 @@ namespace Utils
             }
         }
 
-        private static async Task Install(Release release) { }
+        private static async Task<string> Download(Release release)
+        {
+            // download as stream
+            using var httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
+            var msiAsset = release.Assets.First(asset => asset.BrowserDownloadUrl.EndsWith(".msi"));
+            await using var stream = await httpClient.GetStreamAsync(msiAsset.BrowserDownloadUrl);
+            
+            // store stream as file
+            var fileName = @$"{SpecialFolder.Downloads}\{Path.GetFileNameWithoutExtension(msiAsset.Name)}-{release.TagName}{Path.GetExtension(msiAsset.Name)}";
+            await using var fileStream = new FileStream(fileName, FileMode.Create);
+            await stream.CopyToAsync(fileStream);
+
+            return fileName;
+        }
+
+        private static void Install(string fileName)
+        {
+            Process.Start(new ProcessStartInfo(fileName) { UseShellExecute = true });
+            Environment.Exit(0);
+        }
 
         private static void View(Release release)
         {
