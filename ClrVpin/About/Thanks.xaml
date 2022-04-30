@@ -19,7 +19,7 @@
             <TextBlock Margin="10,10,0,0" FontSize="16">
               <Run Text="• " />
               <Hyperlink Command="{Binding DataContext.NavigateToPage, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Path=Url}"
-                         ToolTip="{Binding Note}" ToolTipService.InitialShowDelay="100">
+                         ToolTip="{Binding Note}" ToolTipService.InitialShowDelay="500">
                 <Run Text="{Binding Path=Url}" />
               </Hyperlink>
             </TextBlock>

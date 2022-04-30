@@ -10,6 +10,8 @@ namespace ClrVpin.Models.Settings
         public static T Reset<T>(DefaultSettings defaultSettings) where T : ISettings, new()
         {
             var settings = new T();
+
+            // use the default settings to seed the new settings instance, e.g. for useful folder setup
             if (defaultSettings != null)
                 settings.Init(defaultSettings);
 

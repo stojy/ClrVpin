@@ -62,7 +62,7 @@
                   </StackPanel>
                 </DataTemplate>
 
-                <!--new version dialog-->
+                <!--new version available dialog-->
                 <DataTemplate DataType="{x:Type home:VersionUpdateInfo}">
                   <StackPanel Margin="10">
                     <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" Margin="0,0,0,20" HorizontalAlignment="Center"/>
@@ -70,7 +70,7 @@
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Existing" controls:GenericAttached.String2="{Binding ExistingVersion}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="New" controls:GenericAttached.String2="{Binding NewVersion}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Description" controls:GenericAttached.String2="{Binding ReleaseNotes}" Margin="0,30,0,0" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Details" controls:GenericAttached.String2="{Binding ReleaseNotes}" Margin="0,30,0,0" />
 
                     <WrapPanel Margin="0,20, 0, 0" HorizontalAlignment="Center">
                       <WrapPanel.Resources>
