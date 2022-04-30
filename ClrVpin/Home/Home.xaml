@@ -86,7 +86,7 @@
                       
                       <Button Content="Install" CommandParameter="{x:Static utils:VersionManagementAction.Install}" Style="{StaticResource HighlightButtonStyle}" 
                               ToolTip="Download and install the windows msi"/>
-                      <Button Content="View" CommandParameter="{x:Static utils:VersionManagementAction.View}" Style="{StaticResource ButtonStyle}" 
+                      <Button Content="View" Command="{Binding ViewNewVersionCommand}" Style="{StaticResource ButtonStyle}" 
                               ToolTip="View the release in your web browser"/>
                       <Button Content="Later" CommandParameter="{x:Static utils:VersionManagementAction.Later}" Style="{StaticResource ButtonStyle}" 
                               ToolTip="Don't check or prompt again for 24hrs"/>
