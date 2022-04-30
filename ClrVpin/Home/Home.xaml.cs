@@ -1,13 +1,12 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System;
+using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using ClrVpin.Logging;
 using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
-using Octokit;
 using PropertyChanged;
 using Utils;
-using Application = System.Windows.Application;
 
 namespace ClrVpin.Home
 {
@@ -20,8 +19,7 @@ namespace ClrVpin.Home
             // initialise encoding to workaround the error "Windows -1252 is not supported encoding name"
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            Model = new Model(this);
-            DataContext = Model;
+            DataContext = new Model(this);
 
             InitializeComponent();
 
@@ -29,21 +27,28 @@ namespace ClrVpin.Home
             {
                 Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
 
-                if (Model.SettingsManager.WasReset && !_configWasResetHandled)
+                // guard against multiple window activations
+                if (Model.SettingsManager.WasReset && !_wasConfigResetHandled)
                 {
-                    _configWasResetHandled = true;
+                    _wasConfigResetHandled = true;
                     await DialogHost.Show(new RestartInfo
                     {
                         Title = "Your settings have been reset",
                         Detail = "ClrVpin will now be restarted."
                     }, "HomeDialog").ContinueWith(_ => Dispatcher.Invoke(Restart));
                 }
+            };
 
-                //var shouldCheckForUpdate = Model.SettingsManager.Settings.
-                if (!_skipCheckForUpdate)
+            Loaded += async (_, _) =>
+            {
+                var settings = Model.SettingsManager.Settings;
+                var shouldCheckForUpdate = settings.EnableCheckForNewVersion &&
+                                           (settings.LastCheckForNewVersion == null || DateTime.Now - settings.LastCheckForNewVersion.Value > TimeSpan.FromDays(1));
+                Logger.Info($"Version checking: shouldCheckForUpdate={shouldCheckForUpdate}, EnableCheckForNewVersion={settings.EnableCheckForNewVersion}, LastCheckForNewVersion={settings.LastCheckForNewVersion}");
+                
+                if (shouldCheckForUpdate)
                 {
-                    _skipCheckForUpdate = true;
-                    var release = await VersionManagement.CheckForUpdate("stojy", "ClrVpin");
+                    var release = await VersionManagement.Check("stojy", "ClrVpin", msg => Logger.Info($"Version checking: {msg}"));
 
                     if (release != null)
                     {
@@ -53,11 +58,16 @@ namespace ClrVpin.Home
                             ExistingVersion = VersionManagement.GetProductVersion(),
                             NewVersion = release.TagName,
                             CreatedAt = release.CreatedAt.LocalDateTime,
-                            ReleaseNotes = release.Body,
+                            ReleaseNotes = release.Body
                         }, "HomeDialog") as VersionManagementAction?;
 
-                        await VersionManagement.ProcessAction(release, result);
+                        await VersionManagement.Process(release, result);
                     }
+
+                    // update last check AFTER processing to ensure the msi installer (if invoked) doesn't update the version (since it causes the process to exit before it reaches here)
+                    // - intention is that the new version when it starts up will perform another version check to ensure everything is up to date (which it should be!)
+                    settings.LastCheckForNewVersion = DateTime.Now;
+                    Model.SettingsManager.Write();
                 }
             };
         }
@@ -68,8 +78,6 @@ namespace ClrVpin.Home
             Application.Current.Shutdown();
         }
 
-        private Model Model { get; }
-        private bool _configWasResetHandled;
-        private bool _skipCheckForUpdate;
+        private bool _wasConfigResetHandled;
     }
 }

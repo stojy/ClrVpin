@@ -81,11 +81,15 @@
             <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
 
             <WrapPanel Margin="5">
-              <ToggleButton ToolTip="When enabled, additional diagnostic logging is generated." IsChecked="{Binding Settings.EnableDiagnosticLogging}" />
+              <ToggleButton ToolTip="Include additional diagnostic logging" IsChecked="{Binding Settings.EnableDiagnosticLogging}" />
               <TextBlock Margin="10,0,0,0" Text="Diagnostic Logging" />
             </WrapPanel>
             <WrapPanel Margin="5">
-              <ToggleButton ToolTip="When enabled, all file operations are ignored. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
+              <ToggleButton ToolTip="Automatically check for a new application version during startup.  Limited to once per day." IsChecked="{Binding Settings.EnableCheckForNewVersion}" />
+              <TextBlock Margin="10,0,0,0" Text="Check For Updates" />
+            </WrapPanel>
+            <WrapPanel Margin="5">
+              <ToggleButton ToolTip="When enabled, all file operations are ignored, i.e. no files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
               <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
             </WrapPanel>
 
