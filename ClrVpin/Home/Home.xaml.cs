@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
-using System.Windows;
 using ClrVpin.Logging;
 using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
+using Octokit;
 using PropertyChanged;
 using Utils;
+using Application = System.Windows.Application;
 
 namespace ClrVpin.Home
 {
@@ -45,11 +46,10 @@ namespace ClrVpin.Home
                 var shouldCheckForUpdate = settings.EnableCheckForNewVersion &&
                                            (settings.LastCheckForNewVersion == null || DateTime.Now - settings.LastCheckForNewVersion.Value > TimeSpan.FromDays(1));
                 Logger.Info($"Version checking: shouldCheckForUpdate={shouldCheckForUpdate}, EnableCheckForNewVersion={settings.EnableCheckForNewVersion}, LastCheckForNewVersion={settings.LastCheckForNewVersion}");
-                
+
                 if (shouldCheckForUpdate)
                 {
                     var release = await VersionManagement.Check("stojy", "ClrVpin", msg => Logger.Info($"Version checking: {msg}"));
-
                     if (release != null)
                     {
                         var result = await DialogHost.Show(new VersionUpdateInfo
@@ -58,7 +58,8 @@ namespace ClrVpin.Home
                             ExistingVersion = VersionManagement.GetProductVersion(),
                             NewVersion = release.TagName,
                             CreatedAt = release.CreatedAt.LocalDateTime,
-                            ReleaseNotes = release.Body
+                            ReleaseNotes = release.Body,
+                            ViewNewVersionCommand = new ActionCommand(() => ViewNewVersion(release))
                         }, "HomeDialog") as VersionManagementAction?;
 
                         await VersionManagement.Process(release, result);
@@ -70,6 +71,11 @@ namespace ClrVpin.Home
                     Model.SettingsManager.Write();
                 }
             };
+        }
+
+        private static async void ViewNewVersion(Release release)
+        {
+            await VersionManagement.Process(release, VersionManagementAction.View);
         }
 
         private static void Restart()

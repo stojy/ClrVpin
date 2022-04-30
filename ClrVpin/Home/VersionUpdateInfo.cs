@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Input;
 
 namespace ClrVpin.Home
 {
@@ -9,5 +10,6 @@ namespace ClrVpin.Home
         public string NewVersion { get; init; }
         public DateTime CreatedAt { get; init; }
         public string ReleaseNotes { get; init; }
+        public ICommand ViewNewVersionCommand { get; init; }
     }
 }

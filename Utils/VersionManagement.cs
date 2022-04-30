@@ -31,7 +31,6 @@ namespace Utils
             return existingVersion != release.TagName ? release : null;
         }
 
-
         public static async Task Process(Release release, VersionManagementAction? action)
         {
             switch (action)
