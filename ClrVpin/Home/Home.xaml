@@ -8,6 +8,7 @@
                            xmlns:controls="clr-namespace:ClrVpin.Controls"
                            xmlns:home="clr-namespace:ClrVpin.Home"
                            xmlns:utils="clr-namespace:Utils;assembly=Utils"
+                           xmlns:mdXaml="clr-namespace:MdXaml;assembly=MdXaml"
                            mc:Ignorable="d"
                            d:DataContext="{d:DesignData}"
                            ResizeMode="NoResize"
@@ -70,7 +71,9 @@
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Existing" controls:GenericAttached.String2="{Binding ExistingVersion}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="New" controls:GenericAttached.String2="{Binding NewVersion}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Details" controls:GenericAttached.String2="{Binding ReleaseNotes}" Margin="0,30,0,0" />
+
+                    <Separator Margin="0,15"/>
+                    <mdXaml:MarkdownScrollViewer Markdown="{Binding ReleaseNotes}" MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" VerticalScrollBarVisibility="Auto"/>
 
                     <WrapPanel Margin="0,20, 0, 0" HorizontalAlignment="Center">
                       <WrapPanel.Resources>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
 using ClrVpin.Logging;
 using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
@@ -52,13 +53,19 @@ namespace ClrVpin.Home
                     var release = await VersionManagement.Check("stojy", "ClrVpin", msg => Logger.Info($"Version checking: {msg}"));
                     if (release != null)
                     {
+                        // cleanse the MD to make it compatible with the MD renderer..
+                        // - strip '#' from git issue references that are part of bullet points
+                        // - convert "-" bullet points to "*" bullet points
+                        var regex = new Regex(@"(- #|\* #)", RegexOptions.Compiled);
+                        var releaseNotes = regex.Replace(release.Body, "* ");
+
                         var result = await DialogHost.Show(new VersionUpdateInfo
                         {
                             Title = "A new version is available",
                             ExistingVersion = VersionManagement.GetProductVersion(),
                             NewVersion = release.TagName,
                             CreatedAt = release.CreatedAt.LocalDateTime,
-                            ReleaseNotes = release.Body,
+                            ReleaseNotes = releaseNotes,
                             ViewNewVersionCommand = new ActionCommand(() => ViewNewVersion(release))
                         }, "HomeDialog") as VersionManagementAction?;
 
