@@ -18,20 +18,21 @@ namespace Utils
             return _productVersion ??= FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()?.Location!).ProductVersion;
         }
 
-        public static async Task<Release> CheckForUpdate(string author, string repository)
+        public static async Task<Release> Check(string author, string repository, Action<string> logAction)
         {
             var client = new GitHubClient(new ProductHeaderValue(repository));
-
             var release = await client.Repository.Release.GetLatest(author, repository);
-
             var existingVersion = GetProductVersion();
 
-            // no need to compare which is 'latest' as this is already taken care of by the underlying git API
+            logAction($"existingVersion={existingVersion}, newVersion={release.TagName}");
+
+            // no need to compare which is the actual 'latest' since this is already taken care of by the underlying git API
+            // - i.e. avoid any mucking about with SemVer comparison logic
             return existingVersion != release.TagName ? release : null;
         }
 
 
-        public static async Task ProcessAction(Release release, VersionManagementAction? action)
+        public static async Task Process(Release release, VersionManagementAction? action)
         {
             switch (action)
             {
@@ -63,13 +64,13 @@ namespace Utils
 
         private static void Install(string fileName)
         {
-            Process.Start(new ProcessStartInfo(fileName) { UseShellExecute = true });
+            System.Diagnostics.Process.Start(new ProcessStartInfo(fileName) { UseShellExecute = true });
             Environment.Exit(0);
         }
 
         private static void View(Release release)
         {
-            Process.Start(new ProcessStartInfo(release.HtmlUrl) { UseShellExecute = true });
+            System.Diagnostics.Process.Start(new ProcessStartInfo(release.HtmlUrl) { UseShellExecute = true });
         }
 
         private static string _productVersion;
