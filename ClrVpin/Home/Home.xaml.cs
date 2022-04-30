@@ -39,6 +39,7 @@ namespace ClrVpin.Home
                     }, "HomeDialog").ContinueWith(_ => Dispatcher.Invoke(Restart));
                 }
 
+                //var shouldCheckForUpdate = Model.SettingsManager.Settings.
                 if (!_skipCheckForUpdate)
                 {
                     _skipCheckForUpdate = true;
