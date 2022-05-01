@@ -16,10 +16,14 @@ namespace ClrVpin.Models.Settings
 
             PinballFolder = @"C:\vp\tables\vpx";
             FrontendFolder = @"C:\vp\apps\PinballX";
+            Guid = System.Guid.NewGuid().ToString();
         }
 
         public string PinballFolder { get; set; }
         public string FrontendFolder { get; set; }
+        
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
+        public string Guid { get; set; }
 
         public int Version { get; set; }
         

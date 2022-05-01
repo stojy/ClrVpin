@@ -15,6 +15,9 @@ namespace ClrVpin.Models.Settings
 
             _defaultSettings = SettingsHelper.Read<DefaultSettings>(null);
             Settings = SettingsHelper.Read<Settings>(_defaultSettings);
+            
+            // update config after read to store any new properties that have been added
+            Write();
 
             UpdateIsValid();
         }

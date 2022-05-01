@@ -50,7 +50,7 @@ namespace ClrVpin.Home
 
                 if (shouldCheckForUpdate)
                 {
-                    var release = await VersionManagement.Check("stojy", "ClrVpin", msg => Logger.Info($"Version checking: {msg}"));
+                    var release = await VersionManagement.Check(settings.Guid, "stojy", "ClrVpin", msg => Logger.Info($"Version checking: {msg}"));
                     if (release != null)
                     {
                         // cleanse the MD to make it compatible with the MD renderer..
