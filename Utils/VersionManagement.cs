@@ -18,9 +18,9 @@ namespace Utils
             return _productVersion ??= FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()?.Location!).ProductVersion;
         }
 
-        public static async Task<Release> Check(string author, string repository, Action<string> logAction)
+        public static async Task<Release> Check(string guid, string author, string repository, Action<string> logAction)
         {
-            var client = new GitHubClient(new ProductHeaderValue(repository));
+            var client = new GitHubClient(new ProductHeaderValue($"ClrVpin_{guid}"));
             var release = await client.Repository.Release.GetLatest(author, repository);
             var existingVersion = GetProductVersion();
 

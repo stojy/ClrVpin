@@ -75,6 +75,7 @@ namespace ClrVpin.Models.Settings
                     _defaultSettings.FrontendFolder = value;
             }
         }
+        public string Guid => _defaultSettings?.Guid;
 
         // ReSharper disable once MemberCanBePrivate.Global - property is serialized
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - property is serialized
