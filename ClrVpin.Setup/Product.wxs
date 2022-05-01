@@ -122,6 +122,7 @@
         <File Source="$(var.ClrVpin.TargetDir)Utils.pdb" />
         <File Source="$(var.ClrVpin.TargetDir)Octokit.dll" />
         <File Source="$(var.ClrVpin.TargetDir)MdXaml.dll" />
+        <File Source="$(var.ClrVpin.TargetDir)ICSharpCode.AvalonEdit.dll" />
       </Component>
 
       <Component Id="ContentComponent" Guid="8A17DDBE-F668-4821-A8FF-DE0878EDD381" Win64="yes">
