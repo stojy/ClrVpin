@@ -134,7 +134,7 @@ namespace ClrVpin.Scanner
                             if (correctHitLength != null)
                             {
                                 var sizeThreshold = _settings.Scanner.MultipleMatchExceedSizeThresholdPercentage / 100;
-                                orderedByMostRecent = orderedByMostRecent.OrderByDescending(hit => hit.FileInfo?.Length / correctHitLength > sizeThreshold).ToList();
+                                orderedByMostRecent = orderedByMostRecent.OrderByDescending(hit => correctHitLength != 0 && hit.FileInfo?.Length / correctHitLength > sizeThreshold).ToList();
                             }
 
                             FixOrderedHits(orderedByMostRecent.ToList(), gameFiles, game);

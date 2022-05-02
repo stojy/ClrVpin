@@ -16,12 +16,6 @@ namespace ClrVpin.Importer
     {
         static ImporterUtils()
         {
-            _httpClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(60),
-                MaxResponseContentBufferSize = 10 * 1024 * 1024
-            };
-
             _jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -44,7 +38,14 @@ namespace ClrVpin.Importer
             _feedFixStatistics.Add(InvalidUrl, 0);
             _feedFixStatistics.Add(WrongUrl, 0);
 
-            return (await _httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
+
+            using var httpClient = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(60),
+                MaxResponseContentBufferSize = 10 * 1024 * 1024 // 10MB
+            };
+
+            return (await httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
         }
 
         public static Dictionary<string, int> Update(List<Game> games)
@@ -143,7 +144,7 @@ namespace ClrVpin.Importer
                 game.LastCreatedAt = maxCreatedAt;
             }
 
-            // fix game updated timestamp - must not be equal to the max file timestamp
+            // fix game updated timestamp - must not be less than the max file timestamp
             var maxUpdatedAt = game.AllFilesList.Max(x => x.UpdatedAt);
             if (game.UpdatedAt < maxUpdatedAt)
             {
@@ -202,7 +203,7 @@ namespace ClrVpin.Importer
             AddFixStatistic(type);
 
             var name = $"'{game.Name[..Math.Min(game.Name.Length, 23)].Trim()}'";
-            Logger.Warn($"Fixed {type,-26} index={game.Index:0000} name={name,-25} {details}");
+            Logger.Warn($"Fixed {type,-26} index={game.Index:0000} name={name,-25} {details}", true);
         }
 
         private static void AddFixStatistic(string key)
@@ -225,7 +226,6 @@ namespace ClrVpin.Importer
         private const string InvalidUrl = "Invalid Url";
         private const string WrongUrl = "Wrong Url";
 
-        private static readonly HttpClient _httpClient;
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
 
         private static readonly Dictionary<string, int> _feedFixStatistics = new Dictionary<string, int>();

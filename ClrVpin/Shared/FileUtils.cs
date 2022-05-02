@@ -5,7 +5,6 @@ using System.Linq;
 using ByteSizeLib;
 using ClrVpin.Logging;
 using ClrVpin.Models;
-using Utils;
 using Utils.Extensions;
 
 namespace ClrVpin.Shared
@@ -19,22 +18,22 @@ namespace ClrVpin.Shared
 
         public static string ActiveBackupFolder { get; private set; }
 
-        public static string SetActiveBackupFolder(string rootBackupFolder)
+        public static void SetActiveBackupFolder(string rootBackupFolder)
         {
             _rootBackupFolder = rootBackupFolder;
-            return ActiveBackupFolder = $"{rootBackupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
+            ActiveBackupFolder = $"{rootBackupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
         }
 
-        public static void Delete(string file, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
+        public static void Delete(string path, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
-            Backup(file, "deleted", backupAction);
-            Delete(file);
+            Backup(path, "deleted", backupAction);
+            Delete(path);
         }
 
-        public static void DeleteIgnored(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
+        public static void DeleteIgnored(string sourcePath, string destinationPath, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
-            Backup(sourceFile, "deleted.ignored", backupAction);
-            DeleteIgnored(sourceFile, destinationFile);
+            Backup(sourcePath, "deleted.ignored", backupAction);
+            DeleteIgnored(sourcePath, destinationPath);
         }
 
         public static IEnumerable<FileDetail> DeleteAllExcept(IEnumerable<Hit> hits, Hit hit, ICollection<HitTypeEnum> supportedHitTypes)
@@ -47,14 +46,14 @@ namespace ClrVpin.Shared
             return deleted;
         }
 
-        public static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, IEnumerable<string> kindredExtensions,
+        public static void Merge(string sourcePath, string destinationPath, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, IEnumerable<string> kindredExtensions,
             Action<string> backupAction)
         {
             // merge the specific file
-            Merge(sourceFile, destinationFile, hitTypeEnum, contentType, deleteSource, preserveDateModified, backupAction);
+            Merge(sourcePath, destinationPath, hitTypeEnum, contentType, deleteSource, preserveDateModified, backupAction);
 
             // merge any kindred files
-            ExecuteForKindred(kindredExtensions, sourceFile, destinationFile, (source, destination) => Merge(source, destination, hitTypeEnum, contentType, deleteSource, preserveDateModified));
+            ExecuteForKindred(kindredExtensions, sourcePath, destinationPath, (source, destination) => Merge(source, destination, hitTypeEnum, contentType, deleteSource, preserveDateModified));
         }
 
         public static FileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes, IEnumerable<string> kindredExtensions)
@@ -121,35 +120,44 @@ namespace ClrVpin.Shared
             return details;
         }
 
-        private static void Rename(string sourceFile, string newFile, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
+        public static bool HasInvalidFileNameChars(this string path)
         {
-            //Logger.Info($"Renaming file{GetTrainerWheelsDisclosure()}.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, original: {sourceFile}, new: {newFile}");
+            // empty path has no invalid chars!
+            if (path == null)
+                return false;
 
-            Backup(sourceFile, "renamed", backupAction);
-            Rename(sourceFile, newFile);
+            var fileName = Path.GetFileName(path);
+            return fileName.IndexOfAny(_invalidFileNameChars) != -1;
         }
 
-        private static void Merge(string sourceFile, string destinationFile, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, Action<string> backupAction = null)
+        private static void Rename(string sourcePath, string newPath, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
+        {
+            //Logger.Info($"Renaming file{GetTrainerWheelsDisclosure()}.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, original: {sourcePath}, new: {newPath}");
+            Backup(sourcePath, "renamed", backupAction);
+            Rename(sourcePath, newPath);
+        }
+
+        private static void Merge(string sourcePath, string destinationPath, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, Action<string> backupAction = null)
         {
             // backup the existing file (if any) before overwriting
-            Backup(destinationFile, "deleted");
+            Backup(destinationPath, "deleted");
 
             // backup the source file before merging it
-            Backup(sourceFile, "merged", backupAction);
+            Backup(sourcePath, "merged", backupAction);
 
             // copy the source file into the 'merged' destination folder
-            Copy(sourceFile, destinationFile);
+            Copy(sourcePath, destinationPath);
 
             // delete the source file if required - no need to backup as this is already done in the "merged" folder
             if (deleteSource)
-                Delete(sourceFile);
+                Delete(sourcePath);
 
             // optionally reset date modified if preservation isn't selected
             // - by default windows behaviour when copying file.. last access & creation timestamps are DateTime.Now, but last modified is unchanged!
             if (!preserveDateModified)
             {
-                if (File.Exists(destinationFile))
-                    File.SetLastWriteTime(destinationFile, DateTime.Now);
+                if (File.Exists(destinationPath))
+                    File.SetLastWriteTime(destinationPath, DateTime.Now);
             }
         }
 
@@ -218,43 +226,60 @@ namespace ClrVpin.Shared
             return new FileDetail(hit.ContentTypeEnum, hit.Type, deleted ? FixFileTypeEnum.Deleted : FixFileTypeEnum.Skipped, hit.Path, hit.Size ?? 0);
         }
 
-        private static void Delete(string sourceFile)
+        private static void Delete(string sourcePath)
         {
-            Logger.Debug($"- deleting{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourceFile)}");
+            Logger.Debug($"- deleting{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourcePath)}");
 
             if (!_settings.TrainerWheels)
-                File.Delete(sourceFile);
+                File.Delete(sourcePath);
         }
 
         // same as delete, but also logging the destination file info (for comparison)
-        private static void DeleteIgnored(string sourceFile, string destinationFile)
+        private static void DeleteIgnored(string sourcePath, string destinationPath)
         {
-            Logger.Debug($"- deleting ignored{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourceFile)}\n  dest:   {GetFileInfoStatistics(destinationFile)}");
+            Logger.Debug($"- deleting ignored{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourcePath)}\n  dest:   {GetFileInfoStatistics(destinationPath)}");
 
             if (!_settings.TrainerWheels)
-                File.Delete(sourceFile);
+                File.Delete(sourcePath);
         }
 
-        private static void Rename(string sourceFile, string destinationFile)
+        private static void Rename(string sourcePath, string destinationPath)
         {
-            Logger.Debug($"- renaming{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourceFile)}\n  dest:   {GetFileInfoStatistics(destinationFile)}");
+            string skippedDisclaimer = null;
+            var isWarning = false;
+
+            // confirm the new file path is valid before attempting renaming, e.g. no invalid character.. ':', '/', etc
+            if (HasInvalidFileNameChars(destinationPath))
+            {
+                skippedDisclaimer = " (skipped: dest has invalid file name characters)";
+                isWarning = true;
+            }
+
+            skippedDisclaimer ??= GetTrainerWheelsDisclosure();
+
+            var message = $"- renaming{skippedDisclaimer}..\n  source: {GetFileInfoStatistics(sourcePath)}\n  dest:   {GetFileInfoStatistics(destinationPath)}";
+            if (isWarning)
+                Logger.Error(message);
+            else
+                Logger.Debug(message);
+
+            // only perform the rename if their is no skipped required
+            if (skippedDisclaimer == null)
+                File.Move(sourcePath, destinationPath, true);
+        }
+
+        private static void Copy(string sourcePath, string destinationPath)
+        {
+            Logger.Debug($"- copying{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourcePath)}\n  dest:   {GetFileInfoStatistics(destinationPath)}");
 
             if (!_settings.TrainerWheels)
-                File.Move(sourceFile, destinationFile, true);
+                File.Copy(sourcePath, destinationPath, true);
         }
 
-        private static void Copy(string sourceFile, string destinationFile)
-        {
-            Logger.Debug($"- copying{GetTrainerWheelsDisclosure()}..\n  source: {GetFileInfoStatistics(sourceFile)}\n  dest:   {GetFileInfoStatistics(destinationFile)}");
-
-            if (!_settings.TrainerWheels)
-                File.Copy(sourceFile, destinationFile, true);
-        }
-
-
-        private static string GetTrainerWheelsDisclosure() => _settings.TrainerWheels ? " (skipped: trainer wheels)" : "";
-
+        private static string GetTrainerWheelsDisclosure() => _settings.TrainerWheels ? " (skipped: trainer wheels)" : null;
         private static string _rootBackupFolder;
         private static readonly Models.Settings.Settings _settings;
+
+        private static readonly char[] _invalidFileNameChars = Path.GetInvalidFileNameChars();
     }
 }

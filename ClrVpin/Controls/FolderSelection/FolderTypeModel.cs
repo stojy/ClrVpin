@@ -13,7 +13,7 @@ namespace ClrVpin.Controls.FolderSelection
             Folder = folder;
             Description = description;
 
-            TextChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
+            FolderChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
             {
                 // workaround for validation error not updating binding
                 // - refer ContentTypeModel comments

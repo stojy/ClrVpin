@@ -13,38 +13,36 @@ namespace ClrVpin.Models.Settings
     {
         public Settings()
         {
-            // temporary default settings instance to prevent the json deserializer exceptions as it invoke the property getters/setters
-            // - the 'real' defaultSettings will be assigned after construction via Init()
-            _defaultSettings = new DefaultSettings();
-
-            // default settings
-            // - during json.net deserialization.. ctor is invoked BEFORE deserialized version overwrites the values, i.e. they will be overwritten where a stored setting exists
+            // following settings are assigned BEFORE json.net deserialization potentially overwrites the values
+            // - i.e. they will be overwritten where a stored setting file exists, otherwise these will become the defaults
             Version = MinVersion;
 
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
+            EnableDiagnosticLogging = false;
+            EnableCheckForNewVersion = true;
             TrainerWheels = true;
 
             AllContentTypes = new List<ContentType>
             {
-                new ContentType {Enum = ContentTypeEnum.Tables, Tip = "Playfield table", Extensions = "*.vpx, *.vpt", KindredExtensions = "*.vbs, *.txt, *.pdf", Category = ContentTypeCategoryEnum.Pinball},
-                new ContentType {Enum = ContentTypeEnum.Backglasses, Tip = "Image used for the backglass", Extensions = "*.directb2s", Category = ContentTypeCategoryEnum.Pinball},
-                new ContentType {Enum = ContentTypeEnum.PointOfViews, Tip = "3D camera configuration", Extensions = "*.pov", Category = ContentTypeCategoryEnum.Pinball},
-                new ContentType {Enum = ContentTypeEnum.Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", Category = ContentTypeCategoryEnum.Database},
-                new ContentType {Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.TableVideos, Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.apng, *.jpg", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.TopperVideos, Tip = "Video used when displaying the topper", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.InstructionCards, Tip = "Image used when displaying instruction cards", Extensions = "*.png, *.jpg, *.swf", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.FlyerImagesBack, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.FlyerImagesFront, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside1, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside2, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside3, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside4, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside5, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media},
-                new ContentType {Enum = ContentTypeEnum.FlyerImagesInside6, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media}
+                new ContentType { Enum = ContentTypeEnum.Tables, Tip = "Playfield table", Extensions = "*.vpx, *.vpt", KindredExtensions = "*.vbs, *.txt, *.pdf", Category = ContentTypeCategoryEnum.Pinball },
+                new ContentType { Enum = ContentTypeEnum.Backglasses, Tip = "Image used for the backglass", Extensions = "*.directb2s", Category = ContentTypeCategoryEnum.Pinball },
+                new ContentType { Enum = ContentTypeEnum.PointOfViews, Tip = "3D camera configuration", Extensions = "*.pov", Category = ContentTypeCategoryEnum.Pinball },
+                new ContentType { Enum = ContentTypeEnum.Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", Category = ContentTypeCategoryEnum.Database },
+                new ContentType { Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.TableVideos, Tip = "Video used when displaying a table", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.BackglassVideos, Tip = "Video used when displaying a table's backglass", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.WheelImages, Tip = "Image used when displaying a table", Extensions = "*.png, *.apng, *.jpg", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.TopperVideos, Tip = "Video used when displaying the topper", Extensions = "*.f4v, *.mp4, *.mkv", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.InstructionCards, Tip = "Image used when displaying instruction cards", Extensions = "*.png, *.jpg, *.swf", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.FlyerImagesBack, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.FlyerImagesFront, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.FlyerImagesInside1, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.FlyerImagesInside2, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.FlyerImagesInside3, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.FlyerImagesInside4, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.FlyerImagesInside5, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media },
+                new ContentType { Enum = ContentTypeEnum.FlyerImagesInside6, Tip = "Image used when displaying flyer", Extensions = "*.png, *.jpg", Category = ContentTypeCategoryEnum.Media }
             };
             AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
@@ -53,34 +51,49 @@ namespace ClrVpin.Models.Settings
             Importer = new ImporterSettings();
         }
 
-        // default settings are assigned to the underlying DefaultSettings class so that they are maintained when the config is reset, e.g. via the settings-reset ui
+        // default settings
+        // - assigned to the underlying DefaultSettings class so that they are stored independently when the config is reset
+        //   e.g. when settings reset via the UI, these default settings will remain in the separate DefaultSettings.json file to be used for reseeding the Settings file
+        // - accessed via Settings as a convenience
+        // - need to check for null as this is assigned AFTER ctor via Init() method
         public string PinballFolder
         {
-            get => _defaultSettings.PinballFolder;
-            set => _defaultSettings.PinballFolder = value;
-        }
-
-        public string PinballTablesFolder
-        {
-            get => _defaultSettings.PinballTablesFolder;
-            set => _defaultSettings.PinballTablesFolder = value;
+            get => _defaultSettings?.PinballFolder;
+            set
+            {
+                if (_defaultSettings != null)
+                    _defaultSettings.PinballFolder = value;
+            }
         }
 
         public string FrontendFolder
         {
-            get => _defaultSettings.FrontendFolder;
-            set => _defaultSettings.FrontendFolder = value;
+            get => _defaultSettings?.FrontendFolder;
+            set
+            {
+                if (_defaultSettings != null)
+                    _defaultSettings.FrontendFolder = value;
+            }
         }
+        public string Guid => _defaultSettings?.Guid;
 
+        // ReSharper disable once MemberCanBePrivate.Global - property is serialized
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - property is serialized
         public List<ContentType> AllContentTypes { get; set; }
 
         public string BackupFolder { get; set; }
+        public bool EnableDiagnosticLogging { get; set; }
+        public bool EnableCheckForNewVersion { get; set; }
+        public DateTime? LastCheckForNewVersion { get; set; }
         public bool TrainerWheels { get; set; }
-        
+
         public decimal MatchFuzzyMinimumPercentage { get; set; } = 100;
 
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
         public ScannerSettings Scanner { get; set; }
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
         public RebuilderSettings Rebuilder { get; set; }
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
         public ImporterSettings Importer { get; set; }
 
         public int Version { get; set; }
@@ -104,6 +117,7 @@ namespace ClrVpin.Models.Settings
         public ContentType[] GetSelectedCheckContentTypes() => AllContentTypes.Where(type => Scanner.SelectedCheckContentTypes.Contains(type.Description)).ToArray();
         public ContentType GetSelectedDestinationContentType() => AllContentTypes.First(x => x.Description == Rebuilder.DestinationContentType);
         public ContentType GetContentType(ContentTypeEnum contentTypeEnum) => AllContentTypes.First(x => x.Enum == contentTypeEnum);
+
         private DefaultSettings _defaultSettings;
     }
 }

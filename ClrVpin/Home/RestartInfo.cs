@@ -1,6 +1,6 @@
-﻿namespace ClrVpin
+﻿namespace ClrVpin.Home
 {
-    public class Message
+    public class RestartInfo
     {
         public string Title { get; set; }
         public string Detail { get; set; }

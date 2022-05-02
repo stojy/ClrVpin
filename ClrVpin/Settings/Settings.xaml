@@ -10,6 +10,35 @@
     <ResourceDictionary Source="\Controls\FolderSelection\FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
+  <!-- items control with virtualisation and scroll viewer  - https://stackoverflow.com/questions/2783845/virtualizing-an-itemscontrol-->
+  <Style x:Key="ItemsControlVirtualizedStyle" TargetType="ItemsControl">
+    <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+    <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <VirtualizingStackPanel />
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <Border
+            BorderThickness="{TemplateBinding Border.BorderThickness}"
+            Padding="{TemplateBinding Control.Padding}"
+            BorderBrush="{TemplateBinding Border.BorderBrush}"
+            Background="{TemplateBinding Panel.Background}"
+            SnapsToDevicePixels="True">
+            <ScrollViewer Padding="{TemplateBinding Control.Padding}" Focusable="False" CanContentScroll="True">
+              <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+            </ScrollViewer>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <DataTemplate x:Key="ContentTypeModelTemplate" DataType="settings:ContentTypeModel">
     <WrapPanel Margin="0,0,0,0" Height="50">
       <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding}" />
@@ -25,7 +54,7 @@
         </TextBox.Text>
         <b:Interaction.Triggers>
           <b:EventTrigger EventName="TextChanged">
-            <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
+            <b:InvokeCommandAction Command="{Binding ExtensionsChangedCommandWithParam}" PassEventArgsToCommand="True" />
           </b:EventTrigger>
         </b:Interaction.Triggers>
       </TextBox>
@@ -35,7 +64,7 @@
                Text="{Binding KindredExtensions, UpdateSourceTrigger=PropertyChanged}">
         <b:Interaction.Triggers>
           <b:EventTrigger EventName="TextChanged">
-            <b:InvokeCommandAction Command="{Binding TextChangedCommand}" />
+            <b:InvokeCommandAction Command="{Binding KindredExtensionsChangedCommandWithParam}" PassEventArgsToCommand="True" />
           </b:EventTrigger>
         </b:Interaction.Triggers>
       </TextBox>
@@ -71,7 +100,8 @@
                 <materialDesign:PackIcon Kind="MagicWand" />
               </Button>
             </WrapPanel>
-            <ItemsControl ItemsSource="{Binding FrontendContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}" />
+            <ItemsControl ItemsSource="{Binding FrontendContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}"
+                     Style="{StaticResource ItemsControlVirtualizedStyle}" MaxHeight="150" />
           </StackPanel>
         </GroupBox>
 
@@ -80,12 +110,20 @@
           <StackPanel>
             <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
 
-            <WrapPanel Margin="5,0">
-              <ToggleButton ToolTip="When enabled, all file operations are ignored. No files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
+            <WrapPanel Margin="5">
+              <ToggleButton ToolTip="Include additional diagnostic logging" IsChecked="{Binding Settings.EnableDiagnosticLogging}" />
+              <TextBlock Margin="10,0,0,0" Text="Diagnostic Logging" />
+            </WrapPanel>
+            <WrapPanel Margin="5">
+              <ToggleButton ToolTip="Automatically check for a new application version during startup.  Limited to once per day." IsChecked="{Binding Settings.EnableCheckForNewVersion}" />
+              <TextBlock Margin="10,0,0,0" Text="Check For Updates" />
+            </WrapPanel>
+            <WrapPanel Margin="5">
+              <ToggleButton ToolTip="When enabled, all file operations are ignored, i.e. no files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
               <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
             </WrapPanel>
 
-            <Button ToolTip="Reset the entire config to their installation values" Width="90" Margin="5,10,0,5" HorizontalAlignment="Left" Command="{Binding ResetCommand}">Reset</Button>
+            <Button ToolTip="Reset the entire config to their installation values" Width="90" Margin="5" HorizontalAlignment="Left" Command="{Binding ResetCommand}">Reset</Button>
           </StackPanel>
         </GroupBox>
 

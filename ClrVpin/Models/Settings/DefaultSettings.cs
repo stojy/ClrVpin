@@ -9,19 +9,21 @@ namespace ClrVpin.Models.Settings
     {
         public DefaultSettings()
         {
-            // default settings overrides
-            // - during json.net deserialization.. ctor is invoked BEFORE deserialized version overwrites the values, i.e. they will be overwritten where a stored setting exists
-            // - these settings are used to override the default Settings in the event of a reset
+            // special default settings override
+            // - unlike the defaults defined in Settings.cs.. these values are maintained AFTER a reset
+            // - refer SettingsManager.cs --> these settings are not deleted!
             Version = MinVersion;
 
             PinballFolder = @"C:\vp\tables\vpx";
-            PinballTablesFolder = @"C:\vp\tables\vpx";
             FrontendFolder = @"C:\vp\apps\PinballX";
+            Guid = System.Guid.NewGuid().ToString();
         }
 
         public string PinballFolder { get; set; }
-        public string PinballTablesFolder { get; set; }
         public string FrontendFolder { get; set; }
+        
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
+        public string Guid { get; set; }
 
         public int Version { get; set; }
         

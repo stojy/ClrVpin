@@ -7,9 +7,9 @@
     <Authors>Stojy</Authors>
     <Company>Stoj</Company>
     <ApplicationIcon>ClrVpin.ico</ApplicationIcon>
-    <AssemblyVersion>2.3.0.0</AssemblyVersion>
-    <FileVersion>2.3.0.0</FileVersion>
-    <Version>2.3.0.0</Version>
+    <AssemblyVersion></AssemblyVersion>
+    <FileVersion></FileVersion>
+    <Version>1.0.0.0</Version> <!-- package version = $(Version) = msbuild -p:Version='1.2.3.4' -->
     <Copyright>Stoj</Copyright>
     <PackageProjectUrl>https://github.com/stojy/ClrVpin</PackageProjectUrl>
     <PackageIcon>ClrVpin.png</PackageIcon>
@@ -47,11 +47,13 @@
     </PackageReference>
     <PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
     <PackageReference Include="MaterialDesignThemes" Version="4.3.0" />
+    <PackageReference Include="MdXaml" Version="1.13.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="NLog" Version="4.7.12" />
+    <PackageReference Include="Octokit" Version="0.50.0" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>

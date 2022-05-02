@@ -1,0 +1,148 @@
+# github actions help: https://git.io/JvXDl
+name: "CI build"
+
+on:
+  push:
+    #branches: [ master_ ]
+  #pull_request:
+    # The branches below must be a subset of the branches above
+    #branches: [ master ]
+  schedule:
+    # 5.01am GMT = 1.01pm WST
+    - cron: '01 5 * * *'
+
+jobs:
+  info:
+    name: info (ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+    - name: current path
+      run: cd
+    - name: directory
+      run: dir -R
+    - name: dotnet
+      run: dotnet --info
+    - name: git context
+      env:
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
+      run: echo expand above
+    - name: job context
+      env:
+        JOB_CONTEXT: ${{ toJSON(job) }}
+      run: echo expand above
+    - name: steps context
+      env:
+        STEPS_CONTEXT: ${{ toJSON(steps) }}
+      run: echo expand above
+    - name: runner context
+      env:
+        RUNNER_CONTEXT: ${{ toJSON(runner) }}
+      run: echo expand above
+    - name: strategy context
+      env:
+        STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
+      run: echo expand above
+    - name: matrix context
+      env:
+        MATRIX_CONTEXT: ${{ toJSON(matrix) }}
+      run: echo expand above
+    - name: inputs context
+      env:
+        INPUTS_CONTEXT: ${{ toJSON(inputs) }}
+      run: echo expand above
+    - name: env context
+      env:
+        ENV_CONTEXT: ${{ toJSON(env) }}
+      run: echo expand above
+        
+  build:
+    name: build, test, analyse, artifact (windows)
+    # windows runner required because..
+    # - setup-msbuild can only be run on Windows runners, i.e. not available on ubuntu-latest
+    # - in theory, we could run a matrix here.. ubuntu for CI and windows for release (tag only) --> but likely not worth the overhead
+    runs-on: windows-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+
+    # Initializes the CodeQL tools for scanning.
+    - name: analysis setup (master and tag only)
+      if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
+      uses: github/codeql-action/init@v1
+      with:
+        languages: 'csharp'
+      
+    # building via msbuild (as used by VS) instead of dotnet because Wix v3 lacks dotnet support
+    # - https://github.com/wixtoolset/issues/issues/5627
+    # - setup latest msbuild (v17.1 at time of writing), refer https://github.com/marketplace/actions/setup-msbuild
+    - name: add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+    - name: info
+      run: |
+        dir "C:\Program Files (x86)"
+        dir "C:\Program Files"
+        echo path
+        echo 1
+        echo $VERSION
+        echo 2
+        echo $env:VERSION
+        echo 2.1
+        echo %VERSION%
+        echo 4
+        echo $env:VERSION
+    - name: build
+      env:
+        # extact version from ref_name if this is a tag, otherwise provide a default value (since msbuild won't accept a null value)
+        # default to 0.0.2 instead of 0.0.1 because the version must excceed the minimum allowed version (refer wix proj)
+        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '0.0.2-no-tag' }}
+      run: |
+        msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m -p:Version=$env:VERSION
+    - name: tests
+      # unfortunately need to specify individual folders/projects instead of the solution file because of WiX v3 compatibility
+      run: dotnet test ClrVpin.tests --no-restore && dotnet test Utils.tests --no-restore
+
+    - name: analysis (master and tag only)
+      # codeQL is rather slow, so only perform for master commits and tagging
+      if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
+      uses: github/codeql-action/analyze@v1
+      
+    - name: upload artifact (tag only)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v3
+      with:
+        name: installer
+        path: ClrVpin.setup\bin\release\*.msi
+        retention-days: 5
+          
+  release:
+    name: release (tag only - ubuntu)
+    if: startsWith(github.ref, 'refs/tags/')      
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write # required for release notes only
+    steps:
+      # checkout required for access to the release notes template
+      - name: checkout
+        uses: actions/checkout@v3
+      
+      - name: download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: installer
+      
+      - name: release
+        uses: ncipollo/release-action@v1
+        with:
+          artifactErrorsFailBuild: true
+          artifacts: ClrVpin.Setup.msi
+          draft: true
+          name: '${{github.ref_name}}: tba'
+          generateReleaseNotes: true
+          bodyFile: docs/release/releaseNotesBody.md
+                    

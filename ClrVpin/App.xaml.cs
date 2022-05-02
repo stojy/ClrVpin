@@ -19,7 +19,7 @@ namespace ClrVpin
             
             base.OnStartup(e);
 
-            Logging.Logger.Info($"App started, settings={JsonSerializer.Serialize(SettingsManager.Create().Settings)}");
+            Logging.Logger.Info($"App started: settings={JsonSerializer.Serialize(SettingsManager.Create().Settings)}");
 
             SetupExceptionHandling();
         }

@@ -1,0 +1,155 @@
+﻿<controls:MaterialWindowEx x:Class="ClrVpin.Home.MainWindow"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                           xmlns:clrVpin="clr-namespace:ClrVpin"
+                           xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                           xmlns:controls="clr-namespace:ClrVpin.Controls"
+                           xmlns:home="clr-namespace:ClrVpin.Home"
+                           xmlns:utils="clr-namespace:Utils;assembly=Utils"
+                           xmlns:mdXaml="clr-namespace:MdXaml;assembly=MdXaml"
+                           mc:Ignorable="d"
+                           d:DataContext="{d:DesignData}"
+                           ResizeMode="NoResize"
+                           WindowStartupLocation="CenterScreen"
+                           SizeToContent="WidthAndHeight"
+                           Title="ClrVpin" WindowState="Normal"
+                           Style="{DynamicResource MaterialWindow}">
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+
+        <ResourceDictionary Source="\Controls\Styles.xaml" />
+
+        <ResourceDictionary Source="../Scanner/Scanner.xaml" />
+        <ResourceDictionary Source="../Scanner/ScannerStatistics.xaml" />
+        <ResourceDictionary Source="../Scanner/ScannerExplorer.xaml" />
+
+        <ResourceDictionary Source="../Rebuilder/Rebuilder.xaml" />
+        <ResourceDictionary Source="../Rebuilder/RebuilderStatistics.xaml" />
+
+        <ResourceDictionary Source="../Importer/Importer.xaml" />
+        <ResourceDictionary Source="../Importer/ImporterResults.xaml" />
+        <ResourceDictionary Source="../Importer/ImporterStatistics.xaml" />
+
+        <ResourceDictionary Source="../Shared/Results.xaml" />
+        <ResourceDictionary Source="../Shared/Progress.xaml" />
+
+        <ResourceDictionary Source="../Settings/Settings.xaml" />
+        <ResourceDictionary Source="../About/About.xaml" />
+        <ResourceDictionary Source="../About/Thanks.xaml" />
+        <ResourceDictionary Source="../About/Donate.xaml" />
+
+        <ResourceDictionary Source="../Logging/Logging.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+
+      <DataTemplate x:Key="MainWindowTemplate" DataType="clrVpin:Model">
+
+        <materialDesign:DialogHost Identifier="HomeDialog" CloseOnClickAway="True" VerticalAlignment="Center" DialogMargin="0">
+          <!--example of different dialogs from the same host.. https://github.com/Keboo/MaterialDesignInXaml.Examples/blob/master/DialogHost/DialogHost.FromViewModel/MainWindow.xaml-->
+          <materialDesign:DialogHost.DialogContentTemplate>
+            <DataTemplate>
+              <DataTemplate.Resources>
+                <!--restart dialog-->
+                <DataTemplate DataType="{x:Type home:RestartInfo}">
+                  <StackPanel Margin="10">
+                    <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" />
+                    <TextBlock Margin="0,20,0,0" Text="{Binding Detail}" />
+                    <Button Margin="0,20,0,0" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" HorizontalAlignment="Center" Content="Restart"
+                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+                  </StackPanel>
+                </DataTemplate>
+
+                <!--new version available dialog-->
+                <DataTemplate DataType="{x:Type home:VersionUpdateInfo}">
+                  <StackPanel Margin="10">
+                    <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+                    
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Existing" controls:GenericAttached.String2="{Binding ExistingVersion}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="New" controls:GenericAttached.String2="{Binding NewVersion}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+
+                    <Separator Margin="0,15"/>
+                    <mdXaml:MarkdownScrollViewer Markdown="{Binding ReleaseNotes}" MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" VerticalScrollBarVisibility="Auto"/>
+
+                    <WrapPanel Margin="0,20, 0, 0" HorizontalAlignment="Center">
+                      <WrapPanel.Resources>
+                        <Style x:Key="ButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatButtonStyle}">
+                          <Setter Property="Margin" Value="20,0" />
+                          <Setter Property="Command" Value="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+                        </Style>
+                        <Style x:Key="HighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatHighlightButtonStyle}">
+                          <Setter Property="Margin" Value="20,0" />
+                          <Setter Property="Command" Value="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+                        </Style>
+                      </WrapPanel.Resources>
+                      
+                      <Button Content="Install" CommandParameter="{x:Static utils:VersionManagementAction.Install}" Style="{StaticResource HighlightButtonStyle}" 
+                              ToolTip="Download and install the windows msi"/>
+                      <Button Content="View" Command="{Binding ViewNewVersionCommand}" Style="{StaticResource ButtonStyle}" 
+                              ToolTip="View the release in your web browser"/>
+                      <Button Content="Later" CommandParameter="{x:Static utils:VersionManagementAction.Later}" Style="{StaticResource ButtonStyle}" 
+                              ToolTip="Don't check or prompt again for 24hrs"/>
+                      <!--non-visible button marked with IsCancel to support the escape key-->
+                      <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Style="{StaticResource ButtonStyle}" />
+                    </WrapPanel>
+                  </StackPanel>
+                </DataTemplate>
+              </DataTemplate.Resources>
+
+              <!--render the appropriate template-->
+              <ContentControl Content="{Binding}" />
+
+            </DataTemplate>
+          </materialDesign:DialogHost.DialogContentTemplate>
+
+          <StackPanel>
+            <Image Source="/Resources/ClrVpin.png" Height="300" Margin="10" />
+
+            <WrapPanel Margin="5,5,5,10">
+              <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentButton}"
+                      ToolTip="Scan existing content and optionally fix">
+                <StackPanel>
+                  <TextBlock Text="Scanner" HorizontalAlignment="Center" />
+                  <materialDesign:PackIcon Kind="Magnify" Height="40" Width="40" HorizontalAlignment="Center" />
+                </StackPanel>
+              </Button>
+              <Button Command="{Binding RebuilderCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentButton}"
+                      ToolTip="Rebuild existing library by merging new content from alternate folders">
+                <StackPanel>
+                  <TextBlock Text="Rebuilder" HorizontalAlignment="Center" />
+                  <materialDesign:PackIcon Kind="Import" Height="40" Width="40" HorizontalAlignment="Center" />
+                </StackPanel>
+              </Button>
+              <Button Command="{Binding ImporterCommand}" Width="70" Style="{StaticResource AlternateRaisedHighlightButton}"
+                      ToolTip="Import and navigate online database to check for updated content">
+                <StackPanel>
+                  <TextBlock Text="Importer" HorizontalAlignment="Center" />
+                  <materialDesign:PackIcon Kind="Web" Height="40" Width="40" HorizontalAlignment="Center" />
+                </StackPanel>
+              </Button>
+              <Button Command="{Binding SettingsCommand}" Width="70" ToolTip="Common setting used by scanner, rebuilder, and importer">
+                <StackPanel>
+                  <TextBlock Text="Settings" HorizontalAlignment="Center" />
+                  <materialDesign:PackIcon Kind="Cog" Height="40" Width="40" HorizontalAlignment="Center" />
+                </StackPanel>
+              </Button>
+              <Button Command="{Binding AboutCommand}" Width="70" ToolTip="General application information and links">
+                <StackPanel>
+                  <TextBlock Text="About" HorizontalAlignment="Center" />
+                  <materialDesign:PackIcon Kind="AboutOutline" Height="40" Width="40" />
+                </StackPanel>
+              </Button>
+            </WrapPanel>
+          </StackPanel>
+
+        </materialDesign:DialogHost>
+      </DataTemplate>
+    </ResourceDictionary>
+  </Window.Resources>
+
+  <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource MainWindowTemplate}" />
+</controls:MaterialWindowEx>
