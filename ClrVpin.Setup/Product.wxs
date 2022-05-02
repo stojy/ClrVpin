@@ -24,6 +24,12 @@
     <!--https://sorceryforce.net/en/tips/wix-installer-create2-->
     <UIRef Id="WixUI_InstallDir" />
 
+    <!-- ensure downgrade works.. without it this after a downgrade the installation is successful, but the folder is left empty
+         - https://stackoverflow.com/questions/23614576/wix-burn-how-do-i-allow-downgrading
+         - https://docs.microsoft.com/en-au/windows/win32/msi/reinstallmode?redirectedfrom=MSDN
+    -->
+    <Property Id="REINSTALLMODE" Value="amus" />
+
     <!--retrieve previously installed folder: https://stackoverflow.com/a/36941018/227110-->
     <!--stash/retrieve settings: https://robmensching.com/blog/posts/2010/5/2/the-wix-toolsets-remember-property-pattern/-->
     <Property Id='INSTALLFOLDER'>
@@ -55,8 +61,8 @@
       <UpgradeVersion Minimum="0.0.1" IncludeMinimum="yes" OnlyDetect="no" Maximum="$(var.Version)" IncludeMaximum="no" Property="OLDVERSIONFOUND" />
     </Upgrade>
     
-    <!--allow downgrade includes allow same version upgrade (useful for development) AND avoids the double entries in appwiz-->
-    <MajorUpgrade AllowDowngrades="yes" />
+    <!-- AllowDowngrades includes AllowSameVersionUpgrades (useful for development) AND avoids the double entries in appwiz-->
+    <MajorUpgrade Schedule="afterInstallInitialize" AllowDowngrades="yes" />
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
 
     <!-- create these components -->
