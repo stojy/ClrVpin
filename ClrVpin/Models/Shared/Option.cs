@@ -1,4 +1,4 @@
-﻿namespace ClrVpin.Models
+﻿namespace ClrVpin.Models.Shared
 {
     public class Option
     {

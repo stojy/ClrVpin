@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 using ClrVpin.Shared;
 
-namespace ClrVpin.Models
+namespace ClrVpin.Models.Shared.Database
 {
     public class GameBase
     {

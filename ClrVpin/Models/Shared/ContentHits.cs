@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace ClrVpin.Models
+namespace ClrVpin.Models.Shared
 {
     public class ContentHits
     {

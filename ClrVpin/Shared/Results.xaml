@@ -7,7 +7,9 @@
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:shared="clr-namespace:ClrVpin.Shared"
-                    xmlns:converters="clr-namespace:ClrVpin.Converters">
+                    xmlns:converters="clr-namespace:ClrVpin.Converters"
+                    xmlns:database="clr-namespace:ClrVpin.Models.Shared.Database"
+                    xmlns:shared1="clr-namespace:ClrVpin.Models.Shared">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -15,28 +17,28 @@
     <ResourceDictionary Source="/Controls/Templates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <ContextMenu x:Key="HitGameContentContextMenu" d:DataContext="{d:DesignInstance models:Hit }">
+  <ContextMenu x:Key="HitGameContentContextMenu" d:DataContext="{d:DesignInstance shared1:Hit }">
     <MenuItem Header="Open File" Command="{Binding OpenFileCommand}" IsEnabled="{Binding IsPresent}" />
     <MenuItem Header="Show in Explorer" Command="{Binding ExplorerCommand}" IsEnabled="{Binding IsPresent}" />
     <MenuItem Header="Copy Path" Command="{Binding CopyPathCommand}" />
   </ContextMenu>
 
-  <Style x:Key="HitGameContentStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Hit}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
+  <Style x:Key="HitGameContentStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance shared1:Hit}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
     <Setter Property="FontWeight" Value="Normal" />
     <Setter Property="ContextMenu" Value="{StaticResource HitGameContentContextMenu}" />
     <Setter Property="controls:MouseDoubleClick.Command" Value="{Binding OpenFileCommand}" />
   </Style>
 
-  <Style x:Key="HitGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance models:Game}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
+  <Style x:Key="HitGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance database:Game}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
   </Style>
 
-  <HierarchicalDataTemplate x:Key="HitResultTemplate" DataType="models:Hit">
+  <HierarchicalDataTemplate x:Key="HitResultTemplate" DataType="shared1:Hit">
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
-  <HierarchicalDataTemplate x:Key="HitGamesItemTemplate" DataType="models:Game"
+  <HierarchicalDataTemplate x:Key="HitGamesItemTemplate" DataType="database:Game"
                             ItemsSource="{Binding Content.HitsView}"
                             ItemTemplate="{StaticResource HitResultTemplate}"
                             ItemContainerStyle="{StaticResource HitGameContentStyle}">
@@ -66,7 +68,7 @@
             <!-- fixed height control to get items in to columns -->
             <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="models:FeatureType">
+                <DataTemplate DataType="shared1:FeatureType">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
@@ -83,7 +85,7 @@
           <GroupBox Margin="10,0,0,0" Header="Criteria">
             <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="models:FeatureType">
+                <DataTemplate DataType="shared1:FeatureType">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>

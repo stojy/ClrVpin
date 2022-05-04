@@ -5,7 +5,8 @@
                     xmlns:scanner="clr-namespace:ClrVpin.Scanner"
                     xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:converters="clr-namespace:ClrVpin.Converters">
+                    xmlns:converters="clr-namespace:ClrVpin.Converters"
+                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -46,7 +47,7 @@
         <GroupBox Header="Match">
           <ItemsControl ItemsSource="{Binding CheckHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
-              <DataTemplate DataType="models:FeatureType">
+              <DataTemplate DataType="shared:FeatureType">
                 <!-- fixed width to have items align nicely -->
 
                 <WrapPanel Width="400">
@@ -71,7 +72,7 @@
         <GroupBox Margin="10,0,0,0" Header="Fix">
           <ItemsControl ItemsSource="{Binding FixHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
-              <DataTemplate DataType="models:FeatureType">
+              <DataTemplate DataType="shared:FeatureType">
                 <!-- fixed width to have items align nicely -->
                 <WrapPanel Width="185">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
@@ -94,7 +95,7 @@
           <StackPanel>
             <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
               <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="models:FeatureType">
+                <DataTemplate DataType="shared:FeatureType">
                   <RadioButton Width="330" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTipService.InitialShowDelay="500" ToolTip="{Binding Tip}"
                                IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
                                Command="{Binding SelectedCommand}" />

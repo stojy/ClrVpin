@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
+using ClrVpin.Models.Shared;
 using PropertyChanged;
 using Utils.Extensions;
 

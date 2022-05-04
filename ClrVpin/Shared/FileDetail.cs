@@ -1,4 +1,5 @@
 ﻿using ClrVpin.Models;
+using ClrVpin.Models.Shared;
 
 namespace ClrVpin.Shared
 {

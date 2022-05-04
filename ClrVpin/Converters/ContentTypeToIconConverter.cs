@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using ClrVpin.Models;
+using ClrVpin.Models.Shared;
 using MaterialDesignThemes.Wpf;
 
 namespace ClrVpin.Converters

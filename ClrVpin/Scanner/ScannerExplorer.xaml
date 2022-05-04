@@ -6,7 +6,9 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
-                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:database="clr-namespace:ClrVpin.Models.Shared.Database"
+                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -16,7 +18,7 @@
   <converters:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />
   <converters:BoolToStringConverter x:Key="SmellyToIconConverter" True="Exclamation" False="Check" />
 
-  <DataTemplate x:Key="HitTemplate" DataType="models:Hit">
+  <DataTemplate x:Key="HitTemplate" DataType="shared:Hit">
     <Grid Background="Transparent">
       <materialDesign:PackIcon Kind="{Binding ContentTypeEnum, Converter={StaticResource ContentTypeToIconConverter}}"
                                Height="45" Width="45" VerticalAlignment="Center" HorizontalAlignment="Center" />
@@ -28,7 +30,7 @@
     </Grid>
   </DataTemplate>
 
-  <DataTemplate x:Key="ContentTemplate" DataType="models:Game">
+  <DataTemplate x:Key="ContentTemplate" DataType="database:Game">
     <ListBox ItemsSource="{Binding Content.Hits}" ItemTemplate="{StaticResource HitTemplate}">
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
@@ -37,7 +39,7 @@
       </ListBox.ItemsPanel>
 
       <ListBox.ItemContainerStyle>
-        <Style TargetType="ListBoxItem" d:DataContext="{d:DesignInstance Type=models:Hit}">
+        <Style TargetType="ListBoxItem" d:DataContext="{d:DesignInstance Type=shared:Hit}">
           <!-- assign smaller padding to maximize the content size (template bound to material's Ripple) -->
           <Setter Property="Padding" Value="2" />
           <Setter Property="IsEnabled" Value="{Binding IsPresent}" />
@@ -50,7 +52,7 @@
     </ListBox>
   </DataTemplate>
 
-  <DataTemplate x:Key="SmellyTemplate" DataType="models:Game">
+  <DataTemplate x:Key="SmellyTemplate" DataType="database:Game">
     <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Content.IsSmelly, Converter={StaticResource SmellyToIconConverter}}"
                              Height="25" Width="25" VerticalAlignment="Center" HorizontalAlignment="Center">
       <!-- just for giggles.. setting foreground by a style trigger instead of a converter.. it's rather large!-->
@@ -69,7 +71,7 @@
     </materialDesign:PackIcon>
   </DataTemplate>
 
-  <DataTemplate x:Key="IpdbTemplate" DataType="models:Game">
+  <DataTemplate x:Key="IpdbTemplate" DataType="database:Game">
     <TextBlock>
       <Hyperlink NavigateUri="{Binding IpdbUrl}" Command="{Binding NavigateToIpdbCommand}">
         <TextBlock Text="{Binding Ipdb}" />
@@ -107,20 +109,20 @@
                 materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
                 CellStyle="{StaticResource NoBorderDataGridCellStyle}">
         <DataGrid.Columns>
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly"
                                   CanUserSort="True" />
-          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True"
+          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Year" Binding="{Binding Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Year" Binding="{Binding Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=models:Game}" Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />

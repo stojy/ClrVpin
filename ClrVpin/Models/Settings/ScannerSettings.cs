@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using ClrVpin.Models.Scanner;
+using ClrVpin.Models.Shared;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Settings

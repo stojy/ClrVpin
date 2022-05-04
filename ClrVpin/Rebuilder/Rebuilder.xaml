@@ -5,7 +5,8 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:converters="clr-namespace:ClrVpin.Converters">
+                    xmlns:converters="clr-namespace:ClrVpin.Converters"
+                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -104,7 +105,7 @@
       <GroupBox Header="Options" Width="650">
         <ItemsControl ItemsSource="{Binding MergeOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
           <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="models:FeatureType">
+            <DataTemplate DataType="shared:FeatureType">
               <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>
