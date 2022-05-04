@@ -29,6 +29,7 @@ namespace ClrVpin.Rebuilder
             StartCommand = new ActionCommand(Start);
             DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
 
+            // todo; remove redundant LCVs
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
 
             IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
