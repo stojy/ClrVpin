@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using ClrVpin.Importer.Vps;
+using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;

@@ -6,8 +6,8 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ClrVpin.Converters;
-using ClrVpin.Importer.Vps;
 using ClrVpin.Logging;
+using ClrVpin.Models.Importer.Vps;
 using Utils.Extensions;
 
 namespace ClrVpin.Importer

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows.Input;
 
-namespace ClrVpin.Importer.Vps;
+namespace ClrVpin.Models.Importer.Vps;
 
 // ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
 // ReSharper disable UnusedMember.Global
