@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ClrVpin.Models.Rebuilder;
+using ClrVpin.Models.Shared;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Settings;

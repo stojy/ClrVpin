@@ -8,8 +8,8 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Logging;
 using ClrVpin.Models;
-using ClrVpin.Models.Rebuilder;
 using ClrVpin.Models.Settings;
+using ClrVpin.Models.Shared;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
@@ -40,7 +40,7 @@ namespace ClrVpin.Importer
         public bool IsValid { get; set; }
 
         //public ObservableCollection<Game> Games { get; set; }
-        public ICommand StartCommand { get; set; }
+        public ICommand StartCommand { get; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
         public string IgnoreWordsString { get; set; }

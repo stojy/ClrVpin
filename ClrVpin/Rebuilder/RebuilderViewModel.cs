@@ -14,6 +14,7 @@ using ClrVpin.Logging;
 using ClrVpin.Models;
 using ClrVpin.Models.Rebuilder;
 using ClrVpin.Models.Settings;
+using ClrVpin.Models.Shared;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;

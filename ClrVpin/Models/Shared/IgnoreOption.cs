@@ -1,4 +1,4 @@
-﻿namespace ClrVpin.Models.Rebuilder
+﻿namespace ClrVpin.Models.Shared
 {
     public class IgnoreOption : Option
     {
