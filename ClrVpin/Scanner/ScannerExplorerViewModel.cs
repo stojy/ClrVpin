@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using ClrVpin.Controls;
 using ClrVpin.Models;
+using ClrVpin.Models.Shared.Database;
 using PropertyChanged;
 using Utils;
 

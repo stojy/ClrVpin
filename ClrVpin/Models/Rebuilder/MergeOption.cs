@@ -1,4 +1,6 @@
-﻿namespace ClrVpin.Models.Rebuilder
+﻿using ClrVpin.Models.Shared;
+
+namespace ClrVpin.Models.Rebuilder
 {
     public class MergeOption : Option
     {

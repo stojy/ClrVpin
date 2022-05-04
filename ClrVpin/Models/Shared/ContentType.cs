@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using PropertyChanged;
-using Utils;
 using Utils.Extensions;
 
-namespace ClrVpin.Models
+namespace ClrVpin.Models.Shared
 {
     [AddINotifyPropertyChangedInterface]
     public class ContentType : FolderType

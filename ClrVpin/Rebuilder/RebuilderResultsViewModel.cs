@@ -5,6 +5,8 @@ using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Models;
 using ClrVpin.Models.Settings;
+using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Database;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;

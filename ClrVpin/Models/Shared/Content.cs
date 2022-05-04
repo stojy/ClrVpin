@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 
-namespace ClrVpin.Models
+namespace ClrVpin.Models.Shared
 {
     public class Content
     {

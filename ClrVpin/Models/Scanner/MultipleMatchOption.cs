@@ -1,4 +1,6 @@
-﻿namespace ClrVpin.Models.Scanner
+﻿using ClrVpin.Models.Shared;
+
+namespace ClrVpin.Models.Scanner
 {
     public class MultipleMatchOption : Option
     {

@@ -4,7 +4,7 @@ using System.Windows.Input;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Models
+namespace ClrVpin.Models.Shared
 {
     [AddINotifyPropertyChangedInterface]
     public class FeatureType
