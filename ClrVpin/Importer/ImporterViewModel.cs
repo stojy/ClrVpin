@@ -14,7 +14,7 @@ using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
 using Utils.Extensions;
-using Game = ClrVpin.Importer.Vps.Game;
+using Game = ClrVpin.Models.Importer.Vps.Game;
 
 namespace ClrVpin.Importer
 {
