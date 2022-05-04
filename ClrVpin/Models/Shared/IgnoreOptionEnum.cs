@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ClrVpin.Models.Rebuilder
+namespace ClrVpin.Models.Shared
 {
     public enum IgnoreOptionEnum
     {
