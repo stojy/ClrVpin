@@ -3,7 +3,6 @@
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:models="clr-namespace:ClrVpin.Models"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:shared="clr-namespace:ClrVpin.Shared"
@@ -48,7 +47,7 @@
   <converters:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />
 
   <DataTemplate x:Key="ResultsTemplate" DataType="{x:Type shared:ResultsViewModel}">
-    <!--dock panel to provide a scrollbar for the treeview-->
+    <!--dock panel to provide a scrollbar for the tree view-->
     <DockPanel Margin="5">
       <StackPanel DockPanel.Dock="Top">
         <TextBlock Style="{StaticResource Title}">Filter Criteria</TextBlock>
