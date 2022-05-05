@@ -15,7 +15,9 @@
     <DefineConstants>Debug</DefineConstants>
     <VerboseOutput>True</VerboseOutput>
     <CompilerAdditionalOptions>-arch x64</CompilerAdditionalOptions>
-    <SuppressIces>ICE61</SuppressIces>
+    <SuppressIces>ICE61;ICE40</SuppressIces>
+    <SuppressSpecificWarnings>
+    </SuppressSpecificWarnings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
