@@ -10,7 +10,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Logging;
-using ClrVpin.Models;
 using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
@@ -37,21 +36,19 @@ namespace ClrVpin.Scanner
             FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
 
             MultipleMatchOptionsView = new ListCollectionView(CreateMultipleMatchOptionTypes().ToList());
-            
+
             UpdateExceedThresholdChecked();
             UpdateIsValid();
         }
 
         public bool IsValid { get; set; }
 
-        public ListCollectionView CheckMediaContentTypesView { get; set; }
-        public ListCollectionView CheckPinballContentTypesView { get; set; }
-        public ListCollectionView CheckHitTypesView { get; set; }
-        public ListCollectionView FixHitTypesView { get; set; }
-        public ListCollectionView MultipleMatchOptionsView { get; set; }
-
-        public ObservableCollection<Game> Games { get; set; }
-        public ICommand StartCommand { get; set; }
+        public ListCollectionView CheckMediaContentTypesView { get; }
+        public ListCollectionView CheckPinballContentTypesView { get; }
+        public ListCollectionView CheckHitTypesView { get; }
+        public ListCollectionView FixHitTypesView { get; }
+        public ListCollectionView MultipleMatchOptionsView { get; }
+        public ICommand StartCommand { get; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
         public bool ExceedSizeThresholdSelected { get; set; }
@@ -87,7 +84,7 @@ namespace ClrVpin.Scanner
             // show all hit types
             var featureTypes = contentTypes.Select(contentType =>
             {
-                var featureType = new FeatureType((int) contentType.Enum)
+                var featureType = new FeatureType((int)contentType.Enum)
                 {
                     Description = contentType.Description,
                     Tip = contentType.Tip,
@@ -103,7 +100,7 @@ namespace ClrVpin.Scanner
                 return featureType;
             }).ToList();
 
-            return featureTypes.Concat(new [] {FeatureType.CreateSelectAll(featureTypes)});
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
         }
 
         private IEnumerable<FeatureType> CreateCheckHitTypes()
@@ -111,7 +108,7 @@ namespace ClrVpin.Scanner
             // show all hit types
             var featureTypes = StaticSettings.AllHitTypes.Select(hitType =>
             {
-                var featureType = new FeatureType((int) hitType.Enum)
+                var featureType = new FeatureType((int)hitType.Enum)
                 {
                     Description = hitType.Description,
                     Tip = hitType.Tip,
@@ -145,7 +142,7 @@ namespace ClrVpin.Scanner
         private IEnumerable<FeatureType> CreateFixHitTypes()
         {
             // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
-            var featureTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int) hitType.Enum)
+            var featureTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
                 Tip = hitType.Tip,
@@ -164,7 +161,7 @@ namespace ClrVpin.Scanner
         private IEnumerable<FeatureType> CreateMultipleMatchOptionTypes()
         {
             // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
-            var contentTypes = StaticSettings.MultipleMatchOptions.Select(hitType => new FeatureType((int) hitType.Enum)
+            var contentTypes = StaticSettings.MultipleMatchOptions.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
                 Tip = hitType.Tip,
@@ -195,8 +192,6 @@ namespace ClrVpin.Scanner
             var progress = new ProgressViewModel();
             progress.Show(_scannerWindow);
 
-            // todo; retrieve 'missing games' from spreadsheet
-
             progress.Update("Loading Database");
             var games = TableUtils.GetGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
 
@@ -211,7 +206,7 @@ namespace ClrVpin.Scanner
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
-            Games = new ObservableCollection<Game>(games);
+            _games = new ObservableCollection<Game>(games);
 
             ShowResults(gameFiles, unmatchedFiles, progress.Duration);
 
@@ -222,13 +217,13 @@ namespace ClrVpin.Scanner
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
-            var statistics = new ScannerStatisticsViewModel(Games, duration, gameFiles, unmatchedFiles);
+            var statistics = new ScannerStatisticsViewModel(_games, duration, gameFiles, unmatchedFiles);
             statistics.Show(_scannerWindow, WindowMargin, WindowMargin);
 
-            var results = new ScannerResultsViewModel(Games);
+            var results = new ScannerResultsViewModel(_games);
             results.Show(_scannerWindow, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top);
 
-            var explorer = new ScannerExplorerViewModel(Games);
+            var explorer = new ScannerExplorerViewModel(_games);
             explorer.Show(_scannerWindow, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin);
 
             var logging = new LoggingViewModel();
@@ -254,6 +249,8 @@ namespace ClrVpin.Scanner
         }
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;
+
+        private ObservableCollection<Game> _games;
         private Window _scannerWindow;
         private const int WindowMargin = 0;
     }

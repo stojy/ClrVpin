@@ -11,8 +11,6 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Logging;
-using ClrVpin.Models;
-using ClrVpin.Models.Rebuilder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
@@ -31,10 +29,9 @@ namespace ClrVpin.Rebuilder
             StartCommand = new ActionCommand(Start);
             DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
 
-            // todo; remove redundant LCVs
-            MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
+            CreateMatchCriteriaTypes();
 
-            IgnoreCriteriaTypesView = new ListCollectionView(CreateIgnoreCriteria().ToList());
+            CreateIgnoreCriteria();
 
             MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
 
@@ -55,35 +52,32 @@ namespace ClrVpin.Rebuilder
 
         public bool IsValid { get; set; }
 
-        public ListCollectionView MatchCriteriaTypesView { get; set; }
-        public ListCollectionView IgnoreCriteriaTypesView { get; set; }
-        public ListCollectionView MergeOptionsTypesView { get; set; }
+        public ListCollectionView MergeOptionsTypesView { get; }
 
-        public FolderTypeModel SourceFolderModel { get; set; }
-        public ObservableCollection<string> DestinationContentTypes { get; set; }
+        public FolderTypeModel SourceFolderModel { get; }
+        public ObservableCollection<string> DestinationContentTypes { get; }
 
         public ICommand DestinationContentTypeSelectedCommand { get; set; }
-        public ObservableCollection<Game> Games { get; set; }
-        public ICommand StartCommand { get; set; }
+        public ICommand StartCommand { get; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
         public string IgnoreWordsString { get; set; }
         public ICommand IgnoreWordsChangedCommand { get; set; }
 
-        public FeatureType IgnoreIfNotNewerFeature { get; set; }
-        public FeatureType IgnoreIfSmallerFeature { get; set; }
-        public FeatureType IgnoreIfContainsWordsFeature { get; set; }
-        public FeatureType DeleteIgnoredFilesOptionFeature { get; set; }
-        public FeatureType IgnoreSelectClearAllFeature { get; set; }
+        public FeatureType IgnoreIfNotNewerFeature { get; private set; }
+        public FeatureType IgnoreIfSmallerFeature { get; private set; }
+        public FeatureType IgnoreIfContainsWordsFeature { get; private set; }
+        public FeatureType DeleteIgnoredFilesOptionFeature { get; private set; }
+        public FeatureType IgnoreSelectClearAllFeature { get; private set; }
 
-        public FeatureType MatchDuplicate { get; set; }
+        public FeatureType MatchDuplicate { get; private set; }
 
-        public FeatureType MatchFuzzy { get; set; }
+        public FeatureType MatchFuzzy { get; private set; }
 
-        public FeatureType MatchTableName { get; set; }
+        public FeatureType MatchTableName { get; private set; }
 
-        public FeatureType MatchWrongCase { get; set; }
-        public FeatureType MatchSelectClearAllFeature { get; set; }
+        public FeatureType MatchWrongCase { get; private set; }
+        public FeatureType MatchSelectClearAllFeature { get; private set; }
 
         public void Show(Window parent)
         {
@@ -109,7 +103,7 @@ namespace ClrVpin.Rebuilder
             };
         }
 
-        public FeatureType CreateDeleteIgnoredFilesOption()
+        private FeatureType CreateDeleteIgnoredFilesOption()
         {
             var feature = new FeatureType(-1)
             {
@@ -139,7 +133,7 @@ namespace ClrVpin.Rebuilder
             UpdateIsValid();
         }
 
-        private IEnumerable<FeatureType> CreateMatchCriteriaTypes()
+        private void CreateMatchCriteriaTypes()
         {
             // show all match criteria types
             // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
@@ -168,11 +162,9 @@ namespace ClrVpin.Rebuilder
 
             // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
             MatchSelectClearAllFeature = FeatureType.CreateSelectAll(featureTypes);
-
-            return featureTypes.Concat(new[] { MatchSelectClearAllFeature });
         }
 
-        private IEnumerable<FeatureType> CreateIgnoreCriteria()
+        private void CreateIgnoreCriteria()
         {
             // create ignore criteria
             var featureTypes = StaticSettings.IgnoreCriteria.Select(criteria =>
@@ -199,8 +191,6 @@ namespace ClrVpin.Rebuilder
             featureTypes.Add(DeleteIgnoredFilesOptionFeature);
 
             IgnoreSelectClearAllFeature = FeatureType.CreateSelectAll(featureTypes);
-
-            return featureTypes;
         }
 
         private IEnumerable<FeatureType> CreateMergeOptions()
@@ -247,7 +237,7 @@ namespace ClrVpin.Rebuilder
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
-            Games = new ObservableCollection<Game>(games);
+            _games = new ObservableCollection<Game>(games);
 
             ShowResults(gameFiles, unmatchedFiles, progress.Duration);
 
@@ -258,10 +248,10 @@ namespace ClrVpin.Rebuilder
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
-            var rebuilderStatistics = new RebuilderStatisticsViewModel(Games, duration, gameFiles, unmatchedFiles);
+            var rebuilderStatistics = new RebuilderStatisticsViewModel(_games, duration, gameFiles, unmatchedFiles);
             rebuilderStatistics.Show(_rebuilderWindow, WindowMargin, WindowMargin);
 
-            var rebuilderResults = new RebuilderResultsViewModel(Games);
+            var rebuilderResults = new RebuilderResultsViewModel(_games);
             rebuilderResults.Show(_rebuilderWindow, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
 
             var logging = new LoggingViewModel();
@@ -285,6 +275,7 @@ namespace ClrVpin.Rebuilder
 
 
         private readonly IEnumerable<string> _destinationContentTypes;
+        private ObservableCollection<Game> _games;
         private Window _rebuilderWindow;
 
         private const int WindowMargin = 0;
