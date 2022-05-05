@@ -27,6 +27,8 @@
     <!-- ensure downgrade works.. without it this after a downgrade the installation is successful, but the folder is left empty
          - https://stackoverflow.com/questions/23614576/wix-burn-how-do-i-allow-downgrading
          - https://docs.microsoft.com/en-au/windows/win32/msi/reinstallmode?redirectedfrom=MSDN
+         - this does generate a warning though (ignored).. ICE40: REINSTALLMODE is defined in the Property table
+           https://stackoverflow.com/questions/70882621/msi-with-wix-setting-reinstallmode-amus-triggers-lght1076-ice40-reinstallm
     -->
     <Property Id="REINSTALLMODE" Value="amus" />
 
