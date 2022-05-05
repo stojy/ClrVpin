@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Logging;
-using ClrVpin.Models;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Shared;

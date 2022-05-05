@@ -3,7 +3,6 @@ using System.Linq;
 using ClrVpin.Models.Rebuilder;
 using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Shared;
-using Utils;
 using Utils.Extensions;
 
 namespace ClrVpin.Models.Settings

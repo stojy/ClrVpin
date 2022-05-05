@@ -4,11 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using ByteSizeLib;
-using ClrVpin.Models;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
 using PropertyChanged;
-using Utils;
 using Utils.Extensions;
 
 namespace ClrVpin.Shared

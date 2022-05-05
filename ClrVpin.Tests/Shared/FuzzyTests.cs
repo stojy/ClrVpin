@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ClrVpin.Models;
 using ClrVpin.Models.Shared.Database;
 using ClrVpin.Shared;
 using NUnit.Framework;

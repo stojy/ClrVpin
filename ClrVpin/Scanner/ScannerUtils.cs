@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
-using ClrVpin.Models;
 using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;

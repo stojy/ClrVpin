@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using ClrVpin.Controls.FolderSelection;
-using ClrVpin.Models;
 using ClrVpin.Models.Shared;
 using PropertyChanged;
 using Utils;
