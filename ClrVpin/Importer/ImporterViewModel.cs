@@ -113,8 +113,8 @@ namespace ClrVpin.Importer
         private void CreateIgnoreOptions()
         {
             // show all ignore options
-            // - only fuzzy is supported, but using a list for consistency with scanner and rebuilder
-            var featureTypes = StaticSettings.IgnoreOptions.Select(ignoreOption =>
+            // - only ignore words is supported, but using a list for consistency with scanner and rebuilder
+            var featureTypes = StaticSettings.IgnoreOptions.Where(x => x.Enum.In(IgnoreOptionEnum.IgnoreIfContainsWords)).Select(ignoreOption =>
             {
                 var featureType = new FeatureType((int)ignoreOption.Enum)
                 {
