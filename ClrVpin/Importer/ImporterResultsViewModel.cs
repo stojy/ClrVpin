@@ -138,11 +138,11 @@ namespace ClrVpin.Importer
         public ImporterSettings Settings { get; } = Model.Settings.Importer;
 
         // todo; move filters into a separate class
-        public ListCollectionView<string> TablesFilterView { get; set; }
-        public ListCollectionView<string> ManufacturersFilterView { get; set; }
-        public ListCollectionView<string> YearsBeginFilterView { get; set; }
-        public ListCollectionView<string> YearsEndFilterView { get; set; }
-        public ListCollectionView<string> TypesFilterView { get; set; }
+        public ListCollectionView<string> TablesFilterView { get; }
+        public ListCollectionView<string> ManufacturersFilterView { get; }
+        public ListCollectionView<string> YearsBeginFilterView { get; }
+        public ListCollectionView<string> YearsEndFilterView { get; }
+        public ListCollectionView<string> TypesFilterView { get; }
 
         public string TableFilter { get; set; }
         public string ManufacturerFilter { get; set; }
@@ -150,8 +150,8 @@ namespace ClrVpin.Importer
         public string YearEndFilter { get; set; }
         public string TypeFilter { get; set; }
 
-        public ObservableCollection<Game> Games { get; set; }
-        public ListCollectionView<Game> GamesView { get; set; }
+        public ObservableCollection<Game> Games { get; }
+        public ListCollectionView<Game> GamesView { get; }
 
         public Window Window { get; private set; }
 
@@ -160,7 +160,7 @@ namespace ClrVpin.Importer
         public ICommand FilterChanged { get; set; }
         public ICommand UpdatedFilterChanged { get; set; }
 
-        public ICommand NavigateToIpdbCommand { get; set; }
+        public ICommand NavigateToIpdbCommand { get; }
 
         public void Show(Window parentWindow, double left, double top)
         {
