@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using ClrVpin.Models;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
 using Utils;

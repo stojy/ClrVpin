@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-using ClrVpin.Models;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
 using Utils;

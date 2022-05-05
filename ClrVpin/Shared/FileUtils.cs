@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using ByteSizeLib;
 using ClrVpin.Logging;
-using ClrVpin.Models;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
 using Utils.Extensions;
