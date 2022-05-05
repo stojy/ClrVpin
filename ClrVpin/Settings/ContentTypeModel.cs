@@ -41,7 +41,7 @@ namespace ClrVpin.Settings
                 updatedAction?.Invoke();
             });
 
-            KindredExtensionsChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
+            KindredExtensionsChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(_ =>
             {
                 // for display and storage
                 contentType.KindredExtensions = KindredExtensions;

@@ -4,7 +4,7 @@ using ClrVpin.Shared;
 using NUnit.Framework;
 
 // ReSharper disable StringLiteralTypo
-namespace ClrVpin.Tests;
+namespace ClrVpin.Tests.Shared;
 
 public class FuzzyTests
 {

@@ -28,32 +28,29 @@ namespace Utils.Tests
         [TestMethod]
         public void Tests_DeserializeFromXDoc()
         {
-            var Sheep = new Animal
+            var sheep = new Animal
             {
                 Name = "Sheep",
                 Legs = 4,
                 Nutrition = Nutrition.Herbivore,
                 Names = new [] { "a", "b"}
             };
-            var serializeToXDoc = Sheep.SerializeToXDoc();
+            var serializeToXDoc = sheep.SerializeToXDoc();
             var des = serializeToXDoc.DeserializeFromXDoc<Animal>();
 
-            Assert.AreEqual(des.Name, Sheep.Name);
-            Assert.AreEqual(des.Nutrition, Sheep.Nutrition);
-            Assert.AreEqual(des.Legs, Sheep.Legs);
-            Assert.AreNotSame(des, Sheep);
+            Assert.AreEqual(des.Name, sheep.Name);
+            Assert.AreEqual(des.Nutrition, sheep.Nutrition);
+            Assert.AreEqual(des.Legs, sheep.Legs);
+            Assert.AreNotSame(des, sheep);
         }
 
         [TestMethod]
         public void Test1()
         {
             var a = new Animal {Name = "a"};
-            var b = a.Name;
-
-            b = "b";
+            var b = "b";
 
             Assert.AreNotEqual(a.Name, b);
-
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using ByteSizeLib;
@@ -25,12 +26,14 @@ namespace ClrVpin.Shared
             ActiveBackupFolder = $"{rootBackupFolder}\\{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         public static void Delete(string path, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
             Backup(path, "deleted", backupAction);
             Delete(path);
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         public static void DeleteIgnored(string sourcePath, string destinationPath, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
             Backup(sourcePath, "deleted.ignored", backupAction);
@@ -131,6 +134,7 @@ namespace ClrVpin.Shared
             return fileName.IndexOfAny(_invalidFileNameChars) != -1;
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private static void Rename(string sourcePath, string newPath, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
             //Logger.Info($"Renaming file{GetTrainerWheelsDisclosure()}.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, original: {sourcePath}, new: {newPath}");
@@ -138,6 +142,7 @@ namespace ClrVpin.Shared
             Rename(sourcePath, newPath);
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private static void Merge(string sourcePath, string destinationPath, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, Action<string> backupAction = null)
         {
             // backup the existing file (if any) before overwriting
