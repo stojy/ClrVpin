@@ -29,7 +29,7 @@ namespace ClrVpin.Importer
 
             CreateMatchCriteriaTypes();
             
-            CreateIgnoreOptions();
+            CreateIgnoreCriteria();
 
             IgnoreWordsString = string.Join(", ", Settings.Importer.IgnoreIWords);
             IgnoreWordsChangedCommand = new ActionCommand(IgnoreWordsChanged);
@@ -110,25 +110,25 @@ namespace ClrVpin.Importer
 
         public FeatureType MatchFuzzy { get; private set; }
 
-        private void CreateIgnoreOptions()
+        private void CreateIgnoreCriteria()
         {
-            // show all ignore options
+            // show all ignore criteria
             // - only ignore words is supported, but using a list for consistency with scanner and rebuilder
-            var featureTypes = StaticSettings.IgnoreOptions.Where(x => x.Enum.In(IgnoreOptionEnum.IgnoreIfContainsWords)).Select(ignoreOption =>
+            var featureTypes = StaticSettings.IgnoreCriteria.Where(x => x.Enum.In(IgnoreCriteriaEnum.IgnoreIfContainsWords)).Select(criteria =>
             {
-                var featureType = new FeatureType((int)ignoreOption.Enum)
+                var featureType = new FeatureType((int)criteria.Enum)
                 {
-                    Description = ignoreOption.Description,
-                    Tip = ignoreOption.Tip,
+                    Description = criteria.Description,
+                    Tip = criteria.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Importer.SelectedIgnoreOptions.Contains(ignoreOption.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Importer.SelectedIgnoreOptions.Toggle(ignoreOption.Enum))
+                    IsActive = Settings.Importer.SelectedIgnoreCriteria.Contains(criteria.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Importer.SelectedIgnoreCriteria.Toggle(criteria.Enum))
                 };
 
                 return featureType;
             }).ToList();
 
-            IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int)IgnoreOptionEnum.IgnoreIfContainsWords);
+            IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfContainsWords);
         }
 
         private async void Start()

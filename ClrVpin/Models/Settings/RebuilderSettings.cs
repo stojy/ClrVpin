@@ -27,7 +27,7 @@ namespace ClrVpin.Models.Settings
         public bool DeleteIgnoredFiles { get; set; }
 
         public ObservableCollection<HitTypeEnum> SelectedMatchTypes { get; set; } = new ObservableCollection<HitTypeEnum>();
+        public ObservableCollection<IgnoreCriteriaEnum> SelectedIgnoreCriteria { get; set; } = new ObservableCollection<IgnoreCriteriaEnum>();
         public ObservableCollection<MergeOptionEnum> SelectedMergeOptions { get; set; } = new ObservableCollection<MergeOptionEnum>();
-        public ObservableCollection<IgnoreOptionEnum> SelectedIgnoreOptions { get; set; } = new ObservableCollection<IgnoreOptionEnum>();
     }
 }

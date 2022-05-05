@@ -51,7 +51,7 @@
     <!--dock panel to provide a scrollbar for the treeview-->
     <DockPanel Margin="5">
       <StackPanel DockPanel.Dock="Top">
-        <TextBlock Style="{StaticResource Title}">Filter Options</TextBlock>
+        <TextBlock Style="{StaticResource Title}">Filter Criteria</TextBlock>
         <WrapPanel Margin="5,0,0,0">
           <TextBox Width="150" VerticalAlignment="Center" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic"
                    Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

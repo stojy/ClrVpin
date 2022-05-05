@@ -80,7 +80,7 @@ namespace ClrVpin.Scanner
 
             // EVERY GAME THAT HAS A HIT (IRRESPECTIVE OF MATCH CRITERIA) WILL HAVE A GAME FILE RETURNED, i.e. irrespective of whether..
             // - match criteria is selected or relevant
-            // - skip options are selected or relevant
+            // - skip criteria is selected or relevant
             var gameFiles = new List<FileDetail>();
 
             var selectedContentTypes = _settings.GetSelectedCheckContentTypes().ToList();
