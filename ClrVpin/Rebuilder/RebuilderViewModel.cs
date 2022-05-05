@@ -34,7 +34,7 @@ namespace ClrVpin.Rebuilder
             // todo; remove redundant LCVs
             MatchCriteriaTypesView = new ListCollectionView(CreateMatchCriteriaTypes().ToList());
 
-            IgnoreOptionsTypesView = new ListCollectionView(CreateIgnoreOptions().ToList());
+            IgnoreCriteriaTypesView = new ListCollectionView(CreateIgnoreCriteria().ToList());
 
             MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
 
@@ -56,7 +56,7 @@ namespace ClrVpin.Rebuilder
         public bool IsValid { get; set; }
 
         public ListCollectionView MatchCriteriaTypesView { get; set; }
-        public ListCollectionView IgnoreOptionsTypesView { get; set; }
+        public ListCollectionView IgnoreCriteriaTypesView { get; set; }
         public ListCollectionView MergeOptionsTypesView { get; set; }
 
         public FolderTypeModel SourceFolderModel { get; set; }
@@ -172,27 +172,27 @@ namespace ClrVpin.Rebuilder
             return featureTypes.Concat(new[] { MatchSelectClearAllFeature });
         }
 
-        private IEnumerable<FeatureType> CreateIgnoreOptions()
+        private IEnumerable<FeatureType> CreateIgnoreCriteria()
         {
-            // create ignore options
-            var featureTypes = StaticSettings.IgnoreOptions.Select(ignoreOption =>
+            // create ignore criteria
+            var featureTypes = StaticSettings.IgnoreCriteria.Select(criteria =>
             {
-                var featureType = new FeatureType((int)ignoreOption.Enum)
+                var featureType = new FeatureType((int)criteria.Enum)
                 {
-                    Description = ignoreOption.Description,
-                    Tip = ignoreOption.Tip,
+                    Description = criteria.Description,
+                    Tip = criteria.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Rebuilder.SelectedIgnoreOptions.Contains(ignoreOption.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedIgnoreOptions.Toggle(ignoreOption.Enum))
+                    IsActive = Settings.Rebuilder.SelectedIgnoreCriteria.Contains(criteria.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedIgnoreCriteria.Toggle(criteria.Enum))
                 };
 
                 return featureType;
             }).ToList();
 
             // create separate property for each so they can be referenced individually in the UI
-            IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int)IgnoreOptionEnum.IgnoreIfContainsWords);
-            IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int)IgnoreOptionEnum.IgnoreIfSmaller);
-            IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int)IgnoreOptionEnum.IgnoreIfNotNewer);
+            IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfContainsWords);
+            IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfSmaller);
+            IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfNotNewer);
 
             // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
             DeleteIgnoredFilesOptionFeature = CreateDeleteIgnoredFilesOption();

@@ -50,7 +50,7 @@ namespace ClrVpin.Importer
             Games = new ObservableCollection<Game>(games);
             GamesView = new ListCollectionView<Game>(Games)
             {
-                // filter the table names list to reflect the various criteria options
+                // filter the table names list to reflect the various view filtering criteria
                 Filter = game =>
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&

@@ -23,7 +23,7 @@ namespace ClrVpin.Models.Settings
 
             // rebuilder
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            IgnoreOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            IgnoreCriteria.ForEach(x => x.Description = x.Enum.GetDescription());
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
                 HitTypeEnum.Unsupported)).ToArray();
         }
@@ -58,11 +58,11 @@ namespace ClrVpin.Models.Settings
         public static HitType[] MatchTypes;
 
         // all possible file merge options - to be used elsewhere (rebuilder)
-        public static IgnoreOption[] IgnoreOptions =
+        public static IgnoreCriteria[] IgnoreCriteria =
         {
-            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfContainsWords, Tip = "If the file is matched: ignore the source file if it contains any of the configured words"},
-            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfSmaller, Tip = "If a destination file with the same name already exists: ignore the source file if it's smaller based on the specified percentage"},
-            new IgnoreOption {Enum = IgnoreOptionEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"}
+            new IgnoreCriteria {Enum = IgnoreCriteriaEnum.IgnoreIfContainsWords, Tip = "If the file is matched: ignore the source file if it contains any of the configured words"},
+            new IgnoreCriteria {Enum = IgnoreCriteriaEnum.IgnoreIfSmaller, Tip = "If a destination file with the same name already exists: ignore the source file if it's smaller based on the specified percentage"},
+            new IgnoreCriteria {Enum = IgnoreCriteriaEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"}
         };
 
         public static Option DeleteIgnoredFilesOption = new Option {Tip = "When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled).", Description = "Delete Ignored Files"};

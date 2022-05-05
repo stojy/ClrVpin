@@ -2,7 +2,7 @@
 
 namespace ClrVpin.Models.Shared
 {
-    public enum IgnoreOptionEnum
+    public enum IgnoreCriteriaEnum
     {
         [Description("Ignore If Not Newer")] IgnoreIfNotNewer,
         [Description("Ignore If Smaller By Percentage")] IgnoreIfSmaller,

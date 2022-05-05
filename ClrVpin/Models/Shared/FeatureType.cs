@@ -32,7 +32,7 @@ namespace ClrVpin.Models.Shared
             var selectAll = new FeatureType(-1)
             {
                 Description = "Select/Clear All",
-                Tip = "Select or clear all options",
+                Tip = "Select or clear all criteria/options",
                 IsSupported = true,
                 IsActive = featureTypes.All(x => x.IsActive),
                 IsSpecial = true
