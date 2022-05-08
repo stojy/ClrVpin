@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows.Input;
+using ClrVpin.Models.Shared.Database;
 
 namespace ClrVpin.Models.Importer.Vps;
 
@@ -52,9 +53,19 @@ public class OnlineGame
     public List<ImageFile> ImageFiles { get; set; }
 
     public int Index { get; set; }
-    public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
     public UrlSelection ImageUrlSelection { get; set; }
     public string YearString { get; set; }
+
+    // reference to the highest fuzzy ranked DB match
+    public GameHit GameHit { get; set; }
+
+    public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
+}
+
+public class GameHit
+{
+    public Game Database { get; set; }
+    public int? Score { get; set; }
 }
 
 public class FileCollection : List<File>
@@ -68,7 +79,7 @@ public class FileCollection : List<File>
 }
 
 // view model
-public class UrlSelection 
+public class UrlSelection
 {
     public string Url { get; set; }
     public ICommand SelectedCommand { get; set; }
@@ -94,7 +105,7 @@ public class File
     public DateTime? CreatedAt { get; set; }
 
     public UrlDetail[] Urls { get; set; }
-    
+
     // view model properties
     public bool IsNew { get; set; }
 }

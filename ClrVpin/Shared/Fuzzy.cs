@@ -133,8 +133,8 @@ namespace ClrVpin.Shared
             }
             public string Name { get; }
             public string NameNoWhiteSpace { get; }
-            public string Manufacturer { get; }
-            public int? Year { get; }
+            public string Manufacturer { get; set; }
+            public int? Year { get; set; }
             public string ActualName { get; }
         }
 

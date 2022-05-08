@@ -20,9 +20,9 @@ namespace ClrVpin.Rebuilder
             _settings = Model.Settings;
         }
 
-        public static async Task<List<FileDetail>> CheckAsync(List<Game> games, Action<string, int> updateProgress)
+        public static async Task<List<FileDetail>> CheckAndMatchAsync(List<Game> games, Action<string, int> updateProgress)
         {
-            var unmatchedFiles = await Task.Run(() => Check(games, updateProgress));
+            var unmatchedFiles = await Task.Run(() => CheckAndMatch(games, updateProgress));
             return unmatchedFiles;
         }
 
@@ -37,21 +37,21 @@ namespace ClrVpin.Rebuilder
             await Task.Run(() => RemoveUnmatchedIgnored(unmatchedFiles, updateProgress));
         }
 
-        private static List<FileDetail> Check(IList<Game> games, Action<string, int> updateProgress)
+        private static List<FileDetail> CheckAndMatch(IList<Game> games, Action<string, int> updateProgress)
         {
             // determine the destination type
             var contentType = _settings.GetSelectedDestinationContentType();
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
-            var supportedFiles = TableUtils.GetContentFileNames(contentType, _settings.Rebuilder.SourceFolder);
-            var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
-                (fileName, fileCount) => updateProgress(fileName, 100 * fileCount / supportedFiles.Count));
+            var contentFiles = TableUtils.GetContentFileNames(contentType, _settings.Rebuilder.SourceFolder);
+            var unmatchedContentFiles = TableUtils.AddContentFilesToGames(games, contentFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
+                (fileName, fileCount) => updateProgress(fileName, 100 * fileCount / contentFiles.Count));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
-            var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, _settings.Rebuilder.SourceFolder);
+            var nonContentFiles = TableUtils.GetNonContentFileDetails(contentType, _settings.Rebuilder.SourceFolder);
 
-            // unmatchedFiles = unknownFiles + unsupportedFiles
-            return unknownFiles.Concat(unsupportedFiles).ToList();
+            // unmatchedFiles = unmatchedContentFiles + nonContentFiles
+            return unmatchedContentFiles.Concat(nonContentFiles).ToList();
         }
 
         private static List<FileDetail> Merge(IEnumerable<Game> games, string backupFolder, Action<string, int> updateProgress)

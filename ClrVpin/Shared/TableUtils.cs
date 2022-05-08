@@ -83,7 +83,7 @@ namespace ClrVpin.Shared
             return supportedFiles.SelectMany(x => x).ToList();
         }
 
-        public static IEnumerable<FileDetail> GetUnsupportedMediaFileDetails(ContentType contentType, string folder)
+        public static IEnumerable<FileDetail> GetNonContentFileDetails(ContentType contentType, string folder)
         {
             // return all files that don't match the supported file extensions
             var supportedExtensions = contentType.ExtensionsList.Select(x => x.TrimStart('*').ToLower()).ToList();
@@ -99,38 +99,38 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        public static IEnumerable<FileDetail> AssociateContentFilesWithGames(IList<Game> games, IList<string> supportedFiles, ContentType contentType,
+        public static IEnumerable<FileDetail> AddContentFilesToGames(IList<Game> games, IEnumerable<string> contentFiles, ContentType contentType,
             Func<Game, ContentHits> getContentHits, Action<string, int> updateProgress)
         {
             var unknownSupportedFiles = new List<FileDetail>();
 
             // for each file, associate it with a game or if one can't be found, then mark it as unknown
             // - ASSOCIATION IS DONE IRRESPECTIVE OF THE USER'S SELECTED PREFERENCE, I.E. THE USE SELECTIONS ARE CHECKED ELSEWHERE
-            supportedFiles.ForEach((supportedFile, i) =>
+            contentFiles.ForEach((contentFile, i) =>
             {
-                updateProgress(Path.GetFileName(supportedFile), i + 1);
+                updateProgress(Path.GetFileName(contentFile), i + 1);
 
                 Game matchedGame;
-                var fuzzyFileNameDetails = Fuzzy.GetNameDetails(supportedFile, true);
+                var fuzzyFileNameDetails = Fuzzy.GetNameDetails(contentFile, true);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
-                if ((matchedGame = games.FirstOrDefault(game => game.GetContentName(contentType.Category) == Path.GetFileNameWithoutExtension(supportedFile))) != null)
+                if ((matchedGame = games.FirstOrDefault(game => game.GetContentName(contentType.Category) == Path.GetFileNameWithoutExtension(contentFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
                     var contentHits = getContentHits(matchedGame);
-                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, supportedFile);
+                    contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, contentFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
-                             string.Equals(game.GetContentName(contentType.Category), Path.GetFileNameWithoutExtension(supportedFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                             string.Equals(game.GetContentName(contentType.Category), Path.GetFileNameWithoutExtension(contentFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, supportedFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, contentFile);
                 }
-                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGame = games.FirstOrDefault(game => game.Name == Path.GetFileNameWithoutExtension(supportedFile))) != null)
+                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGame = games.FirstOrDefault(game => game.Name == Path.GetFileNameWithoutExtension(contentFile))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, supportedFile);
+                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, contentFile);
                 }
                 // fuzzy matching
                 else
@@ -138,14 +138,14 @@ namespace ClrVpin.Shared
                     (matchedGame, var score) = games.Match(fuzzyFileNameDetails);
                     if (matchedGame != null)
                     {
-                        getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, supportedFile, score);
+                        getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, contentFile, score);
                     }
                     else
                     {
                         // possible for..
                         // - table --> new table files added AND the database not updated yet
                         // - table support and media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
-                        unknownSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, supportedFile, new FileInfo(supportedFile).Length));
+                        unknownSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, contentFile, new FileInfo(contentFile).Length));
                     }
                 }
             });
