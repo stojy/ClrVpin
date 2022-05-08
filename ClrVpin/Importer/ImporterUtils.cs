@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using ClrVpin.Converters;
 using ClrVpin.Logging;
 using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Models.Shared.Database;
+using ClrVpin.Shared;
 using Utils.Extensions;
 
 namespace ClrVpin.Importer
@@ -21,6 +23,13 @@ namespace ClrVpin.Importer
                 PropertyNameCaseInsensitive = true,
                 Converters = { new UnixToNullableDateTimeConverter { IsFormatInSeconds = false } }
             };
+
+            _settings = Model.Settings;
+        }
+
+        public static async Task CheckAndMatchAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        {
+            await Task.Run(() => CheckAndMatch(games, onlineGames, updateProgress));
         }
 
         public static async Task<List<OnlineGame>> GetOnlineDatabase()
@@ -97,6 +106,31 @@ namespace ClrVpin.Importer
             });
 
             return _feedFixStatistics;
+        }
+
+        private static void CheckAndMatch(IList<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        {
+            onlineGames.ForEach((onlineGame, i) =>
+            {
+                updateProgress(onlineGame.Name, i + 1);
+
+                // unlike rebuilder matching, only fuzzy is used
+
+                // use GetNameDetails for NameNoWhiteSpace and ActualName
+                var fuzzyNameDetails = Fuzzy.GetNameDetails(onlineGame.Name, false);
+                fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
+                fuzzyNameDetails.Year = onlineGame.Year;
+                
+                var (matchedGame, score) = games.Match(fuzzyNameDetails);
+                if (matchedGame != null)
+                {
+                    onlineGame.GameHit = new GameHit
+                    {
+                        Database = matchedGame,
+                        Score = score
+                    };
+                }
+            });
         }
 
         private static void Fix(OnlineGame onlineGame)
@@ -229,5 +263,6 @@ namespace ClrVpin.Importer
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
 
         private static readonly Dictionary<string, int> _feedFixStatistics = new Dictionary<string, int>();
+        private static readonly Models.Settings.Settings _settings;
     }
 }

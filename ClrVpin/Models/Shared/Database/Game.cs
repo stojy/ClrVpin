@@ -70,9 +70,9 @@ namespace ClrVpin.Models.Shared.Database
     // view model info..
     public class Game : GameBase
     {
-        [XmlIgnore]
         // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
-        public Content Content { get; set; } = new Content();
+        [XmlIgnore]
+        public Content Content { get; } = new Content();
 
         [XmlIgnore]
         public string TableFileWithExtension => Name + ".vpx";

@@ -44,14 +44,14 @@ namespace ClrVpin.Scanner
                 var supportedFiles = details.supportedFiles;
                 var contentType = details.contentType;
 
-                var unknownFiles = TableUtils.AssociateContentFilesWithGames(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
+                var unknownFiles = TableUtils.AddContentFilesToGames(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
                     (fileName, _) => updateProgress($"{contentType.Description}: {fileName}", 100 * ++fileCount / totalFilesCount));
                 unmatchedFiles.AddRange(unknownFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
                 if (_settings.Scanner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
-                    var unsupportedFiles = TableUtils.GetUnsupportedMediaFileDetails(contentType, contentType.Folder);
+                    var unsupportedFiles = TableUtils.GetNonContentFileDetails(contentType, contentType.Folder);
 
                     // n/a for pinball - since it's expected that extra files will exist in same tables folder
                     // - e.g. vpx, directb2s, pov, ogg, txt, exe, etc

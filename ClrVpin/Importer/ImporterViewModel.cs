@@ -141,7 +141,7 @@ namespace ClrVpin.Importer
             var progress = new ProgressViewModel();
             progress.Show(_window);
 
-            List<Game> games = null;
+            var games = new List<Game>();
             if (MatchFuzzy.IsActive)
             {
                 progress.Update("Loading database");
@@ -152,30 +152,21 @@ namespace ClrVpin.Importer
             progress.Update("Fetching online database");
             var onlineGames = await ImporterUtils.GetOnlineDatabase();
 
-            progress.Update("Updating online database");
+            progress.Update("Fixing online database");
             var feedFixStatistics = ImporterUtils.Update(onlineGames);
-
             Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
 
-            //var unmatchedFiles = await RebuilderUtils.CheckAsync(games, UpdateProgress);
+            progress.Update("Matching local and online databases");
+            await ImporterUtils.CheckAndMatchAsync(games, onlineGames, UpdateProgress);
+            Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
-            //progress.Update("Merging Files");
-            //var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, UpdateProgress);
-
-            //progress.Update("Removing Unmatched Ignored Files");
-            //await RebuilderUtils.RemoveUnmatchedIgnoredAsync(unmatchedFiles, UpdateProgress);
-
-            //progress.Update("Preparing Results");
-            //await Task.Delay(1);
-            //Games = new ObservableCollection<Game>(games);
-
-            
+            progress.Update("Preparing Results");
             ShowResults(progress.Duration, onlineGames, feedFixStatistics);
             Logger.Info($"Importer rendered, duration={progress.Duration}", true);
             
             progress.Close();
 
-            //void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
+            void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
         }
 
         private void ShowResults(TimeSpan duration, List<OnlineGame> games, Dictionary<string, int> feedFixStatistics)
