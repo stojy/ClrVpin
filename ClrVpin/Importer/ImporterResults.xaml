@@ -25,6 +25,18 @@
     <Setter Property="BorderBrush" Value="Coral" />
   </Style>
 
+
+  <Style x:Key="ButtonIconStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+    <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
+    <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="HorizontalContentAlignment" Value="Left" />
+  </Style>
+
+  <Style x:Key="HighlightedButtonIconStyle" TargetType="Button" BasedOn="{StaticResource ButtonIconStyle}">
+    <Setter Property="Foreground" Value="Coral" />
+  </Style>
+
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
   <converters:BoolToStringConverter x:Key="UrlToIconConverter" True="WebCancel" False="WebSync" />
   <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" True="Visible" False="Collapsed" />
@@ -34,7 +46,9 @@
   <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="Coral" False="#89FFFFFF" /> <!--{DynamicResource MaterialDesignBodyLight}-->
   <converters:BoolToStyleConverter x:Key="IsNewUrlButtonStyleConverter" True="{StaticResource IsNewUrlButtonStyle}" False="{StaticResource UrlButtonStyle}" />
 
-  <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}" />
+  <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+    <Setter Property="FontSize" Value="12" />
+  </Style>
 
   <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
     <!--<Button Style="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ContentControl}}, Path=DataContext.IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}"-->
@@ -323,16 +337,42 @@
 
           <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                     SelectionMode="Single"
-                    materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
+                    materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
+                    materialDesign:DataGridAssist.CellPadding="4 1 1 4"
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
                     ColumnHeaderStyle="{StaticResource HeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
                     SelectedItem="{Binding SelectedOnlineGame}">
             <DataGrid.Columns>
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="#" Binding="{Binding Index}" Width="54" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Table" Binding="{Binding Name}" Width="250" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Year" Binding="{Binding Year}" Width="53" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Updated" Binding="{Binding UpdatedAt}" Width="165" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
+                                  Header="#" Binding="{Binding Index}" Width="45" />
+
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Local" Width="40">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate DataType="vps:OnlineGame">
+                    <WrapPanel>
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="Add new local database entry"
+                              Visibility="{Binding GameHit, Converter={StaticResource NullToVisibilityConverter}}"
+                              Command="{Binding AddDatabaseEntryCommand}">
+                        <materialDesign:PackIcon Kind="PlusCircleOutline" Width="30" Height="30" />
+                      </Button>
+                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="View existing local database entry"
+                              Visibility="{Binding GameHit, Converter={StaticResource ReverseNullToVisibilityConverter}}"
+                              Command="{Binding ViewDatabaseEntryCommand}">
+                        <materialDesign:PackIcon Kind="EyeOutline" Width="30" Height="30" />
+                      </Button>
+                    </WrapPanel>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table" Binding="{Binding Name}"
+                                  Width="260" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
+                                  Binding="{Binding Manufacturer}" Width="160" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year" Binding="{Binding Year}"
+                                  Width="55" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
+                                  Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
@@ -379,7 +419,8 @@
                                     controls:GenericAttached.String2="{Binding SelectedOnlineGame.Features, Converter={StaticResource ListToStringConverter}}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Designers"
                                     controls:GenericAttached.String2="{Binding SelectedOnlineGame.Designers, Converter={StaticResource ListToStringConverter}}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding SelectedOnlineGame.LastCreatedAt}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created"
+                                    controls:GenericAttached.String2="{Binding SelectedOnlineGame.LastCreatedAt}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Broken}" />
                   </StackPanel>
