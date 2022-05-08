@@ -326,13 +326,13 @@
                     materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
                     ColumnHeaderStyle="{StaticResource HeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
-                    SelectedItem="{Binding SelectedGame}">
+                    SelectedItem="{Binding SelectedOnlineGame}">
             <DataGrid.Columns>
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="#" Binding="{Binding Index}" Width="54" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Table" Binding="{Binding Name}" Width="250" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Year" Binding="{Binding Year}" Width="53" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:Game}" Header="Updated" Binding="{Binding UpdatedAt}" Width="165" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="#" Binding="{Binding Index}" Width="54" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Table" Binding="{Binding Name}" Width="250" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Year" Binding="{Binding Year}" Width="53" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Updated" Binding="{Binding UpdatedAt}" Width="165" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
@@ -349,39 +349,39 @@
               <UniformGrid Columns="3">
                 <GroupBox Header="Hardware: Table Info">
                   <StackPanel>
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedGame.Name}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Name}" />
                     <UniformGrid Columns="2">
                       <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Manufacturer"
-                                      controls:GenericAttached.String2="{Binding SelectedGame.Manufacturer}" />
-                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Year" controls:GenericAttached.String2="{Binding SelectedGame.Year}" />
+                                      controls:GenericAttached.String2="{Binding SelectedOnlineGame.Manufacturer}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Year" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Year}" />
                     </UniformGrid>
                     <UniformGrid Columns="2">
-                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Type" controls:GenericAttached.String2="{Binding SelectedGame.Type}" />
-                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Players" controls:GenericAttached.String2="{Binding SelectedGame.Players}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Type" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Type}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Players" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Players}" />
                     </UniformGrid>
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="MPU" controls:GenericAttached.String2="{Binding SelectedGame.Mpu}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="MPU" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Mpu}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
-                                    controls:GenericAttached.String2="{Binding SelectedGame.Themes, Converter={StaticResource ListToStringConverter}}" />
+                                    controls:GenericAttached.String2="{Binding SelectedOnlineGame.Themes, Converter={StaticResource ListToStringConverter}}" />
                     <ContentControl Template="{StaticResource KeyValuePair}" controls:GenericAttached.String="IPDB">
-                      <Hyperlink Command="{Binding NavigateToIpdbCommand}" CommandParameter="{Binding SelectedGame.IpdbUrl}">
-                        <TextBlock Text="{Binding SelectedGame.IpdbUrl}" Style="{StaticResource ValueTextBlockStyle}" />
+                      <Hyperlink Command="{Binding NavigateToIpdbCommand}" CommandParameter="{Binding SelectedOnlineGame.IpdbUrl}">
+                        <TextBlock Text="{Binding SelectedOnlineGame.IpdbUrl}" Style="{StaticResource ValueTextBlockStyle}" />
                       </Hyperlink>
                     </ContentControl>
                   </StackPanel>
                 </GroupBox>
 
-                <ContentControl Content="{Binding SelectedGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" Margin="5,0" />
+                <ContentControl Content="{Binding SelectedOnlineGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" Margin="5,0" />
 
                 <GroupBox Header="Software: Virtualized Info">
                   <StackPanel>
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                                    controls:GenericAttached.String2="{Binding SelectedGame.Features, Converter={StaticResource ListToStringConverter}}" />
+                                    controls:GenericAttached.String2="{Binding SelectedOnlineGame.Features, Converter={StaticResource ListToStringConverter}}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Designers"
-                                    controls:GenericAttached.String2="{Binding SelectedGame.Designers, Converter={StaticResource ListToStringConverter}}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding SelectedGame.LastCreatedAt}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedGame.UpdatedAt}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedGame.Broken}" />
+                                    controls:GenericAttached.String2="{Binding SelectedOnlineGame.Designers, Converter={StaticResource ListToStringConverter}}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding SelectedOnlineGame.LastCreatedAt}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Broken}" />
                   </StackPanel>
                 </GroupBox>
               </UniformGrid>
@@ -401,64 +401,64 @@
                 </GroupBox.Resources>
 
                 <TabControl Style="{StaticResource TabControlStyle}">
-                  <TabItem Header="Tables" IsEnabled="{Binding SelectedGame.AllFiles[TableFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[TableFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[TableFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="Tables" IsEnabled="{Binding SelectedOnlineGame.AllFiles[TableFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[TableFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[TableFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Backglasses" IsEnabled="{Binding SelectedGame.AllFiles[B2SFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[B2SFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[B2SFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="Backglasses" IsEnabled="{Binding SelectedOnlineGame.AllFiles[B2SFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[B2SFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[B2SFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Wheels" IsEnabled="{Binding SelectedGame.AllFiles[WheelArtFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[WheelArtFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[WheelArtFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="Wheels" IsEnabled="{Binding SelectedOnlineGame.AllFiles[WheelArtFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[WheelArtFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[WheelArtFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="ROMs" IsEnabled="{Binding SelectedGame.AllFiles[RomFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[RomFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[RomFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="ROMs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[RomFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[RomFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[RomFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
-                  <TabItem Header="Media Packs" IsEnabled="{Binding SelectedGame.AllFiles[MediaPackFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[MediaPackFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[MediaPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="Media Packs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[MediaPackFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[MediaPackFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[MediaPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
-                  <TabItem Header="DMDs" IsEnabled="{Binding SelectedGame.AllFiles[AltColorFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[AltColorFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[AltColorFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="DMDs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[AltColorFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[AltColorFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[AltColorFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
 
                   </TabItem>
-                  <TabItem Header="Sounds" IsEnabled="{Binding SelectedGame.AllFiles[SoundFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[SoundFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[SoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="Sounds" IsEnabled="{Binding SelectedOnlineGame.AllFiles[SoundFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[SoundFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[SoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Toppers" IsEnabled="{Binding SelectedGame.AllFiles[TopperFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[TopperFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[TopperFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="Toppers" IsEnabled="{Binding SelectedOnlineGame.AllFiles[TopperFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[TopperFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[TopperFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedGame.AllFiles[PupPackFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[PupPackFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[PupPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[PupPackFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[PupPackFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[PupPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="POVs" IsEnabled="{Binding SelectedGame.AllFiles[PovFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[PovFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[PovFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="POVs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[PovFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[PovFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[PovFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Alt. Sounds" IsEnabled="{Binding SelectedGame.AllFiles[AltSoundFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[AltSoundFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[AltSoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="Alt. Sounds" IsEnabled="{Binding SelectedOnlineGame.AllFiles[AltSoundFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[AltSoundFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[AltSoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
 
-                  <TabItem Header="Rules" IsEnabled="{Binding SelectedGame.AllFiles[RuleFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedGame.AllFiles[RuleFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedGame.AllFiles[RuleFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
+                  <TabItem Header="Rules" IsEnabled="{Binding SelectedOnlineGame.AllFiles[RuleFiles].Count}"
+                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[RuleFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
+                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[RuleFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
                   </TabItem>
                 </TabControl>
               </GroupBox>

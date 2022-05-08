@@ -8,7 +8,7 @@ namespace ClrVpin.Models.Importer.Vps;
 // ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
 // ReSharper disable UnusedMember.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-public class Game
+public class OnlineGame
 {
     public string Id { get; set; }
     public string Name { get; set; }

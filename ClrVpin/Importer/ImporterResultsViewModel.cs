@@ -18,7 +18,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel
     {
-        public ImporterResultsViewModel(List<Game> games)
+        public ImporterResultsViewModel(List<OnlineGame> games)
         {
             // assign VM properties
             games.ForEach(game =>
@@ -47,8 +47,8 @@ namespace ClrVpin.Importer
             });
 
             // main games view (data grid)
-            Games = new ObservableCollection<Game>(games);
-            GamesView = new ListCollectionView<Game>(Games)
+            Games = new ObservableCollection<OnlineGame>(games);
+            GamesView = new ListCollectionView<OnlineGame>(Games)
             {
                 // filter the table names list to reflect the various view filtering criteria
                 Filter = game =>
@@ -150,12 +150,12 @@ namespace ClrVpin.Importer
         public string YearEndFilter { get; set; }
         public string TypeFilter { get; set; }
 
-        public ObservableCollection<Game> Games { get; }
-        public ListCollectionView<Game> GamesView { get; }
+        public ObservableCollection<OnlineGame> Games { get; }
+        public ListCollectionView<OnlineGame> GamesView { get; }
 
         public Window Window { get; private set; }
 
-        public Game SelectedGame { get; set; }
+        public OnlineGame SelectedOnlineGame { get; set; }
 
         public ICommand FilterChanged { get; set; }
         public ICommand UpdatedFilterChanged { get; set; }
