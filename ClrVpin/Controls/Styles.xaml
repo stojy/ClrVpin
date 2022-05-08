@@ -98,9 +98,31 @@
   <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" />
 
 
-  <!-- remove the border outline in the cell when selected, i.e. to give a more 'list box' feel -->
   <Style x:Key="NoBorderDataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
+    <!-- remove the border outline in the cell when selected, i.e. to give a more 'list box' feel -->
     <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="FontSize" Value="16" />
+
+    <!-- vertically align content without the 'double grid' lines anomaly by redefining the template.. https://stackoverflow.com/a/3995839/227110 
+       - below does work, but the template is incomplete and thus other useful features are lost, e.g. padding
+       - alternative is to re-define the TextBlock element style instead!
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type DataGridCell}">
+          <Grid Background="{TemplateBinding Background}">
+            <ContentPresenter VerticalAlignment="Center" />
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    -->
+  </Style>
+
+  <!-- vertically align content without the 'double grid' lines anomaly by redefining the template.. https://stackoverflow.com/a/8384608/227110
+     - works without having to re-define the entire template --> 
+  <Style x:Key="VerticalAlignDataElementTextStyle" TargetType="TextBlock">
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
   </Style>
 
   <Style TargetType="GroupBox" BasedOn="{StaticResource MaterialDesignGroupBox}">
