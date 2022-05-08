@@ -23,7 +23,7 @@ namespace ClrVpin.Importer
             };
         }
 
-        public static async Task<List<Game>> GetOnlineDatabase()
+        public static async Task<List<OnlineGame>> GetOnlineDatabase()
         {
             // create dictionary items upfront to ensure the preferred display ordering (for statistics)
             _feedFixStatistics.Clear();
@@ -45,10 +45,10 @@ namespace ClrVpin.Importer
                 MaxResponseContentBufferSize = 10 * 1024 * 1024 // 10MB
             };
 
-            return (await httpClient.GetFromJsonAsync<Game[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
+            return (await httpClient.GetFromJsonAsync<OnlineGame[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
         }
 
-        public static Dictionary<string, int> Update(List<Game> games)
+        public static Dictionary<string, int> Update(List<OnlineGame> games)
         {
             // fix game ordering - alphanumerical
             var orderedDames = games.OrderBy(game => game.Name).ToArray();
@@ -99,78 +99,78 @@ namespace ClrVpin.Importer
             return _feedFixStatistics;
         }
 
-        private static void Fix(Game game)
+        private static void Fix(OnlineGame onlineGame)
         {
             // fix image url - assign to the first available image url.. B2S then table
-            if (game.ImgUrl == null)
+            if (onlineGame.ImgUrl == null)
             {
-                var imageUrl = game.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? game.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
+                var imageUrl = onlineGame.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? onlineGame.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
                 if (imageUrl != null)
                 {
-                    LogFixed(game, GameMissingImage, $"url='{imageUrl}'");
-                    game.ImgUrl = imageUrl;
+                    LogFixed(onlineGame, GameMissingImage, $"url='{imageUrl}'");
+                    onlineGame.ImgUrl = imageUrl;
                 }
             }
 
             // fix game name - remove whitespace
-            if (game.Name != game.Name.Trim())
+            if (onlineGame.Name != onlineGame.Name.Trim())
             {
-                LogFixed(game, GameNameWhitespace);
-                game.Name = game.Name.Trim();
+                LogFixed(onlineGame, GameNameWhitespace);
+                onlineGame.Name = onlineGame.Name.Trim();
             }
 
             // fix manufacturer - remove whitespace
-            if (game.Manufacturer != game.Manufacturer.Trim())
+            if (onlineGame.Manufacturer != onlineGame.Manufacturer.Trim())
             {
-                LogFixed(game, GameManufacturerWhitespace, $"manufacturer='{game.Manufacturer}'");
-                game.Manufacturer = game.Manufacturer.Trim();
+                LogFixed(onlineGame, GameManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
+                onlineGame.Manufacturer = onlineGame.Manufacturer.Trim();
             }
 
             // fix updated timestamp - must not be lower than the created timestamp
-            game.AllFiles.ForEach(kv =>
+            onlineGame.AllFiles.ForEach(kv =>
             {
                 kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
                 {
-                    LogFixedTimestamp(game, FileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
+                    LogFixedTimestamp(onlineGame, FileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
                     f.UpdatedAt = f.CreatedAt;
                 });
             });
 
             // fix game created timestamp - must not be less than any file timestamps
-            var maxCreatedAt = game.AllFilesList.Max(x => x.CreatedAt);
-            if (game.LastCreatedAt < maxCreatedAt)
+            var maxCreatedAt = onlineGame.AllFilesList.Max(x => x.CreatedAt);
+            if (onlineGame.LastCreatedAt < maxCreatedAt)
             {
-                LogFixedTimestamp(game, GameCreatedTime, "createdAt", game.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
-                game.LastCreatedAt = maxCreatedAt;
+                LogFixedTimestamp(onlineGame, GameCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
+                onlineGame.LastCreatedAt = maxCreatedAt;
             }
 
             // fix game updated timestamp - must not be less than the max file timestamp
-            var maxUpdatedAt = game.AllFilesList.Max(x => x.UpdatedAt);
-            if (game.UpdatedAt < maxUpdatedAt)
+            var maxUpdatedAt = onlineGame.AllFilesList.Max(x => x.UpdatedAt);
+            if (onlineGame.UpdatedAt < maxUpdatedAt)
             {
-                LogFixedTimestamp(game, GameUpdatedTimeTooLow, "updatedAt", game.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
-                game.UpdatedAt = maxUpdatedAt;
+                LogFixedTimestamp(onlineGame, GameUpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
+                onlineGame.UpdatedAt = maxUpdatedAt;
             }
-            else if (game.UpdatedAt > maxUpdatedAt)
+            else if (onlineGame.UpdatedAt > maxUpdatedAt)
             {
-                LogFixedTimestamp(game, GameUpdatedTimeTooHigh, "updatedAt", game.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
-                game.UpdatedAt = maxUpdatedAt;
+                LogFixedTimestamp(onlineGame, GameUpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
+                onlineGame.UpdatedAt = maxUpdatedAt;
             }
 
             // fix file ordering - ensure a game's most recent files are shown first
-            game.AllFiles.ForEach(kv =>
+            onlineGame.AllFiles.ForEach(kv =>
             {
                 var orderByDescending = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray();
                 if (!kv.Value.SequenceEqual(orderByDescending))
                 {
-                    LogFixed(game, FileUpdateTimeOrdering, $"type={kv.Key}");
+                    LogFixed(onlineGame, FileUpdateTimeOrdering, $"type={kv.Key}");
                     kv.Value.Clear();
                     kv.Value.AddRange(orderByDescending);
                 }
             });
 
             // fix urls
-            game.AllFiles.ForEach(kv =>
+            onlineGame.AllFiles.ForEach(kv =>
             {
                 kv.Value.ForEach(f =>
                     f.Urls.ForEach(urlDetail =>
@@ -178,14 +178,14 @@ namespace ClrVpin.Importer
                         // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
                         if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
                         {
-                            LogFixed(game, InvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
+                            LogFixed(onlineGame, InvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
                             urlDetail.Broken = true;
                         }
 
                         // fix vpuniverse urls - path
                         if (urlDetail.Url?.Contains("//vpuniverse.com/forums") == true)
                         {
-                            LogFixed(game, WrongUrl, $"type={kv.Key} url={urlDetail.Url}");
+                            LogFixed(onlineGame, WrongUrl, $"type={kv.Key} url={urlDetail.Url}");
                             urlDetail.Url = urlDetail.Url.Replace("//vpuniverse.com/forums", "//vpuniverse.com");
                         }
                     })
@@ -193,17 +193,17 @@ namespace ClrVpin.Importer
             });
         }
 
-        private static void LogFixedTimestamp(Game game, string type, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
+        private static void LogFixedTimestamp(OnlineGame onlineGame, string type, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
         {
-            LogFixed(game, type, $"game.{gameTimeName} '{gameTime:dd/MM/yy HH:mm:ss}' {(greaterThan ? ">" : "<")} {maxFileTimeName} '{maxFileTime:dd/MM/yy HH:mm:ss}'");
+            LogFixed(onlineGame, type, $"game.{gameTimeName} '{gameTime:dd/MM/yy HH:mm:ss}' {(greaterThan ? ">" : "<")} {maxFileTimeName} '{maxFileTime:dd/MM/yy HH:mm:ss}'");
         }
 
-        private static void LogFixed(Game game, string type, string details = null)
+        private static void LogFixed(OnlineGame onlineGame, string type, string details = null)
         {
             AddFixStatistic(type);
 
-            var name = $"'{game.Name[..Math.Min(game.Name.Length, 23)].Trim()}'";
-            Logger.Warn($"Fixed {type,-26} index={game.Index:0000} name={name,-25} {details}", true);
+            var name = $"'{onlineGame.Name[..Math.Min(onlineGame.Name.Length, 23)].Trim()}'";
+            Logger.Warn($"Fixed {type,-26} index={onlineGame.Index:0000} name={name,-25} {details}", true);
         }
 
         private static void AddFixStatistic(string key)

@@ -11,7 +11,7 @@ public class ImporterSettings
 {
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
     public ObservableCollection<HitTypeEnum> SelectedMatchTypes { get; set; } = new ObservableCollection<HitTypeEnum>();
-    public ObservableCollection<IgnoreCriteriaEnum> SelectedIgnoreCriteria { get; set; } = new ObservableCollection<IgnoreCriteriaEnum>();
+    public ObservableCollection<IgnoreCriteriaEnum> SelectedIgnoreCriteria { get; } = new ObservableCollection<IgnoreCriteriaEnum>();
 
     public List<string> IgnoreIWords { get; set; } = new List<string>{"nude", "adult", "tba", "original", "orginal", "b&w", " bw ", "2scr", "2 screen"};
 
