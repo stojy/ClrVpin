@@ -55,6 +55,7 @@ public class OnlineGame
     public int Index { get; set; }
     public UrlSelection ImageUrlSelection { get; set; }
     public string YearString { get; set; }
+    public bool IsOriginal { get; set; }
 
     // reference to the highest fuzzy ranked DB match
     public GameHit GameHit { get; set; }
