@@ -131,7 +131,7 @@ namespace ClrVpin.Importer
                 var fuzzyNameDetails = Fuzzy.GetNameDetails(onlineGame.Name, false);
                 fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
                 fuzzyNameDetails.Year = onlineGame.Year;
-                
+
                 var (matchedGame, score) = games.Match(fuzzyNameDetails);
                 if (matchedGame != null)
                 {
@@ -247,7 +247,25 @@ namespace ClrVpin.Importer
                 );
             });
 
-            onlineGame.IsOriginal = onlineGame.Manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase);
+            // assign isOriginal based on the manufacturer
+            onlineGame.IsOriginal = onlineGame.Manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) ||
+                                    onlineGame.Manufacturer.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase);
+
+            // fix invalid IPDB Url
+            // - e.g. "Not Available" frequently used for original tables
+            if (!(Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
+            {
+                LogFixed(onlineGame, FixInvalidIpdbUrl, $"type=IPDB url={onlineGame.IpdbUrl}");
+                onlineGame.IpdbUrl = null;
+            }
+
+            // fix wrong IPDB url
+            // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
+            if (onlineGame.IsOriginal && onlineGame.IpdbUrl != null)
+            {
+                LogFixed(onlineGame, FixWrongIpdbUrl, $"type=IPDB url={onlineGame.IpdbUrl}");
+                onlineGame.IpdbUrl = null;
+            }
         }
 
         private static void LogFixedTimestamp(OnlineGame onlineGame, string type, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
@@ -282,7 +300,9 @@ namespace ClrVpin.Importer
         private const string FixFileUpdatedTime = "File Updated Time";
         private const string FixInvalidUrl = "Invalid Url";
         private const string FixWrongUrl = "Wrong Url";
-        
+        private const string FixInvalidIpdbUrl = "Invalid IPDB Url";
+        private const string FixWrongIpdbUrl = "Wrong IPDB Url";
+
         public const string MatchMatchedTotal = "Matched Total";
         public const string MatchMatchedManufactured = "Matched (manufactured)";
         public const string MatchMatchedOriginal = "Matched (originals)";
