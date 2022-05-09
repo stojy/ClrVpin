@@ -157,11 +157,11 @@ namespace ClrVpin.Importer
             Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
 
             progress.Update("Matching local and online databases");
-            await ImporterUtils.CheckAndMatchAsync(games, onlineGames, UpdateProgress);
+            var matchStatistics = await ImporterUtils.CheckAndMatchAsync(games, onlineGames, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Update("Preparing Results");
-            ShowResults(progress.Duration, onlineGames, feedFixStatistics);
+            ShowResults(progress.Duration, onlineGames, feedFixStatistics, matchStatistics);
             Logger.Info($"Importer rendered, duration={progress.Duration}", true);
             
             progress.Close();
@@ -169,12 +169,12 @@ namespace ClrVpin.Importer
             void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
         }
 
-        private void ShowResults(TimeSpan duration, List<OnlineGame> games, Dictionary<string, int> feedFixStatistics)
+        private void ShowResults(TimeSpan duration, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, Dictionary<string, int> matchStatistics)
         {
-            var results = new ImporterResultsViewModel(games);
+            var results = new ImporterResultsViewModel(onlineGames);
             results.Show(_window, WindowMargin, WindowMargin);
 
-            var statistics = new ImporterStatisticsViewModel(duration, feedFixStatistics);
+            var statistics = new ImporterStatisticsViewModel(onlineGames, duration, fixStatistics, matchStatistics);
             statistics.Show(_window, WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
             var logging = new LoggingViewModel();

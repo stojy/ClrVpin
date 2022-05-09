@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
+using ClrVpin.Models.Importer.Vps;
 using PropertyChanged;
 using Utils.Extensions;
 
@@ -11,10 +12,12 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterStatisticsViewModel
     {
-        public ImporterStatisticsViewModel(TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics)
+        public ImporterStatisticsViewModel(List<OnlineGame> onlineGames, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics, Dictionary<string, int> matchStatistics)
         {
+            _onlineGames = onlineGames;
             _elapsedTime = elapsedTime;
             _feedFixStatistics = feedFixStatistics;
+            _matchStatistics = matchStatistics;
         }
 
         public Window Window { get; private set; }
@@ -47,22 +50,27 @@ namespace ClrVpin.Importer
         private string CreateTotalStatistics()
         {
             var feedFixStatistics = _feedFixStatistics.Select(kv => $"- {kv.Key,StatisticsKeyWidth}: {kv.Value}").StringJoin("\n");
+            
+            var totalGamesCount = _onlineGames.Count;
+            var manufacturedGamesCount = _onlineGames.Count(game => !game.IsOriginal);
+            var originalGamesCount = _onlineGames.Count(game => game.IsOriginal);
 
-            return $"Feed Fixes\n{feedFixStatistics}" +
-                   //$"\n{"Source Files",StatisticsKeyWidth}" +
-                   //$"\n{"- Total",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Concat(UnmatchedFiles).ToList())}" +
-                   //$"\n{"- Matched",StatisticsKeyWidth}{CreateFileStatistic(GameFiles)}" +
-                   //$"\n{"  - Merged",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Merged))}" +
-                   //$"\n{"  - Ignored",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Ignored))}" +
-                   //$"\n{"  - Skipped",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Skipped))}" +
-                   //$"\n{"- Unmatched",StatisticsKeyWidth}{CreateFileStatistic(UnmatchedFiles)}" +
-                   //"\n  (Unknown & Unsupported)" +
-                   //"\n" +
+            return $"Feed Fixes" +
+                   $"\n{feedFixStatistics}" +
+                   $"\n\nMatched Local and Online Database" +
+                   CreatePercentageStatistic("Total", _matchStatistics[ImporterUtils.MatchMatchedTotal], totalGamesCount) +
+                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterUtils.MatchMatchedManufactured], manufacturedGamesCount) +
+                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterUtils.MatchMatchedOriginal], originalGamesCount) +
+                   CreatePercentageStatistic("Missing", _matchStatistics[ImporterUtils.MatchUnmatchedTotal], totalGamesCount) +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_elapsedTime.TotalSeconds:f2}s";
         }
 
+        private static string CreatePercentageStatistic(string title, int count, int totalCount) => $"\n- {title,StatisticsKeyWidth}: {count}/{totalCount} ({100f * count / totalCount:F2}%)";
+
         private readonly TimeSpan _elapsedTime;
         private readonly Dictionary<string, int> _feedFixStatistics;
+        private readonly Dictionary<string, int> _matchStatistics;
+        private readonly List<OnlineGame> _onlineGames;
 
         private const int StatisticsKeyWidth = -30;
         private const int WindowMargin = 0;

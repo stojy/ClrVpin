@@ -27,25 +27,25 @@ namespace ClrVpin.Importer
             _settings = Model.Settings;
         }
 
-        public static async Task CheckAndMatchAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        public static async Task<Dictionary<string, int>> CheckAndMatchAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
         {
-            await Task.Run(() => CheckAndMatch(games, onlineGames, updateProgress));
+            return await Task.Run(() => CheckAndMatch(games, onlineGames, updateProgress));
         }
 
         public static async Task<List<OnlineGame>> GetOnlineDatabase()
         {
             // create dictionary items upfront to ensure the preferred display ordering (for statistics)
             _feedFixStatistics.Clear();
-            _feedFixStatistics.Add(GameNameWhitespace, 0);
-            _feedFixStatistics.Add(GameManufacturerWhitespace, 0);
-            _feedFixStatistics.Add(GameMissingImage, 0);
-            _feedFixStatistics.Add(GameCreatedTime, 0);
-            _feedFixStatistics.Add(GameUpdatedTimeTooLow, 0);
-            _feedFixStatistics.Add(GameUpdatedTimeTooHigh, 0);
-            _feedFixStatistics.Add(FileUpdateTimeOrdering, 0);
-            _feedFixStatistics.Add(FileUpdatedTime, 0);
-            _feedFixStatistics.Add(InvalidUrl, 0);
-            _feedFixStatistics.Add(WrongUrl, 0);
+            _feedFixStatistics.Add(FixGameNameWhitespace, 0);
+            _feedFixStatistics.Add(FixGameManufacturerWhitespace, 0);
+            _feedFixStatistics.Add(FixGameMissingImage, 0);
+            _feedFixStatistics.Add(FixGameCreatedTime, 0);
+            _feedFixStatistics.Add(FixGameUpdatedTimeTooLow, 0);
+            _feedFixStatistics.Add(FixGameUpdatedTimeTooHigh, 0);
+            _feedFixStatistics.Add(FixFileUpdateTimeOrdering, 0);
+            _feedFixStatistics.Add(FixFileUpdatedTime, 0);
+            _feedFixStatistics.Add(FixInvalidUrl, 0);
+            _feedFixStatistics.Add(FixWrongUrl, 0);
 
 
             using var httpClient = new HttpClient
@@ -108,8 +108,19 @@ namespace ClrVpin.Importer
             return _feedFixStatistics;
         }
 
-        private static void CheckAndMatch(IList<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        private static Dictionary<string, int> CheckAndMatch(IList<Game> games, IEnumerable<OnlineGame> onlineGames, Action<string, int> updateProgress)
         {
+            var matchStatistics = new Dictionary<string, int>
+            {
+                // create dictionary items upfront to ensure the preferred display ordering (for statistics)
+                { MatchMatchedTotal, 0 },
+                { MatchMatchedManufactured, 0 },
+                { MatchMatchedOriginal, 0 },
+                { MatchUnmatchedTotal, 0 },
+                { MatchUnmatchedManufactured, 0 },
+                { MatchUnmatchedOriginal, 0 }
+            };
+
             onlineGames.ForEach((onlineGame, i) =>
             {
                 updateProgress(onlineGame.Name, i + 1);
@@ -124,13 +135,23 @@ namespace ClrVpin.Importer
                 var (matchedGame, score) = games.Match(fuzzyNameDetails);
                 if (matchedGame != null)
                 {
+                    matchStatistics[MatchMatchedTotal]++;
+                    matchStatistics[onlineGame.IsOriginal ? MatchMatchedOriginal : MatchMatchedManufactured]++;
+
                     onlineGame.GameHit = new GameHit
                     {
                         Database = matchedGame,
                         Score = score
                     };
                 }
+                else
+                {
+                    matchStatistics[MatchUnmatchedTotal]++;
+                    matchStatistics[onlineGame.IsOriginal ? MatchUnmatchedOriginal : MatchUnmatchedManufactured]++;
+                }
             });
+
+            return matchStatistics;
         }
 
         private static void Fix(OnlineGame onlineGame)
@@ -141,7 +162,7 @@ namespace ClrVpin.Importer
                 var imageUrl = onlineGame.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? onlineGame.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
                 if (imageUrl != null)
                 {
-                    LogFixed(onlineGame, GameMissingImage, $"url='{imageUrl}'");
+                    LogFixed(onlineGame, FixGameMissingImage, $"url='{imageUrl}'");
                     onlineGame.ImgUrl = imageUrl;
                 }
             }
@@ -149,14 +170,14 @@ namespace ClrVpin.Importer
             // fix game name - remove whitespace
             if (onlineGame.Name != onlineGame.Name.Trim())
             {
-                LogFixed(onlineGame, GameNameWhitespace);
+                LogFixed(onlineGame, FixGameNameWhitespace);
                 onlineGame.Name = onlineGame.Name.Trim();
             }
 
             // fix manufacturer - remove whitespace
             if (onlineGame.Manufacturer != onlineGame.Manufacturer.Trim())
             {
-                LogFixed(onlineGame, GameManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
+                LogFixed(onlineGame, FixGameManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
                 onlineGame.Manufacturer = onlineGame.Manufacturer.Trim();
             }
 
@@ -165,7 +186,7 @@ namespace ClrVpin.Importer
             {
                 kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
                 {
-                    LogFixedTimestamp(onlineGame, FileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
+                    LogFixedTimestamp(onlineGame, FixFileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
                     f.UpdatedAt = f.CreatedAt;
                 });
             });
@@ -174,7 +195,7 @@ namespace ClrVpin.Importer
             var maxCreatedAt = onlineGame.AllFilesList.Max(x => x.CreatedAt);
             if (onlineGame.LastCreatedAt < maxCreatedAt)
             {
-                LogFixedTimestamp(onlineGame, GameCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
+                LogFixedTimestamp(onlineGame, FixGameCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
                 onlineGame.LastCreatedAt = maxCreatedAt;
             }
 
@@ -182,12 +203,12 @@ namespace ClrVpin.Importer
             var maxUpdatedAt = onlineGame.AllFilesList.Max(x => x.UpdatedAt);
             if (onlineGame.UpdatedAt < maxUpdatedAt)
             {
-                LogFixedTimestamp(onlineGame, GameUpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
+                LogFixedTimestamp(onlineGame, FixGameUpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
                 onlineGame.UpdatedAt = maxUpdatedAt;
             }
             else if (onlineGame.UpdatedAt > maxUpdatedAt)
             {
-                LogFixedTimestamp(onlineGame, GameUpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
+                LogFixedTimestamp(onlineGame, FixGameUpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
                 onlineGame.UpdatedAt = maxUpdatedAt;
             }
 
@@ -197,7 +218,7 @@ namespace ClrVpin.Importer
                 var orderByDescending = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray();
                 if (!kv.Value.SequenceEqual(orderByDescending))
                 {
-                    LogFixed(onlineGame, FileUpdateTimeOrdering, $"type={kv.Key}");
+                    LogFixed(onlineGame, FixFileUpdateTimeOrdering, $"type={kv.Key}");
                     kv.Value.Clear();
                     kv.Value.AddRange(orderByDescending);
                 }
@@ -212,19 +233,21 @@ namespace ClrVpin.Importer
                         // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
                         if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
                         {
-                            LogFixed(onlineGame, InvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
+                            LogFixed(onlineGame, FixInvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
                             urlDetail.Broken = true;
                         }
 
                         // fix vpuniverse urls - path
                         if (urlDetail.Url?.Contains("//vpuniverse.com/forums") == true)
                         {
-                            LogFixed(onlineGame, WrongUrl, $"type={kv.Key} url={urlDetail.Url}");
+                            LogFixed(onlineGame, FixWrongUrl, $"type={kv.Key} url={urlDetail.Url}");
                             urlDetail.Url = urlDetail.Url.Replace("//vpuniverse.com/forums", "//vpuniverse.com");
                         }
                     })
                 );
             });
+
+            onlineGame.IsOriginal = onlineGame.Manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase);
         }
 
         private static void LogFixedTimestamp(OnlineGame onlineGame, string type, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
@@ -249,16 +272,23 @@ namespace ClrVpin.Importer
         // refer https://github.com/Fraesh/vps-db, https://virtual-pinball-spreadsheet.web.app/
         private const string VisualPinballSpreadsheetDatabaseUrl = "https://raw.githubusercontent.com/Fraesh/vps-db/master/vpsdb.json";
 
-        private const string GameNameWhitespace = "Game Name Whitespace";
-        private const string GameMissingImage = "Game Missing Image Url";
-        private const string GameManufacturerWhitespace = "Game Manufacturer Whitespace";
-        private const string GameCreatedTime = "Game Created Time";
-        private const string GameUpdatedTimeTooLow = "Game Updated Time Too Low";
-        private const string GameUpdatedTimeTooHigh = "Game Updated Time Too High";
-        private const string FileUpdateTimeOrdering = "File Update Time Ordering";
-        private const string FileUpdatedTime = "File Updated Time";
-        private const string InvalidUrl = "Invalid Url";
-        private const string WrongUrl = "Wrong Url";
+        private const string FixGameNameWhitespace = "Game Name Whitespace";
+        private const string FixGameMissingImage = "Game Missing Image Url";
+        private const string FixGameManufacturerWhitespace = "Game Manufacturer Whitespace";
+        private const string FixGameCreatedTime = "Game Created Time";
+        private const string FixGameUpdatedTimeTooLow = "Game Updated Time Too Low";
+        private const string FixGameUpdatedTimeTooHigh = "Game Updated Time Too High";
+        private const string FixFileUpdateTimeOrdering = "File Update Time Ordering";
+        private const string FixFileUpdatedTime = "File Updated Time";
+        private const string FixInvalidUrl = "Invalid Url";
+        private const string FixWrongUrl = "Wrong Url";
+        
+        public const string MatchMatchedTotal = "Matched Total";
+        public const string MatchMatchedManufactured = "Matched (manufactured)";
+        public const string MatchMatchedOriginal = "Matched (originals)";
+        public const string MatchUnmatchedTotal = "Unmatched Total";
+        public const string MatchUnmatchedManufactured = "Unmatched (manufactured)";
+        public const string MatchUnmatchedOriginal = "Unmatched (originals)";
 
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
 
