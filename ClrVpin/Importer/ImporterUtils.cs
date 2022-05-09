@@ -23,8 +23,6 @@ namespace ClrVpin.Importer
                 PropertyNameCaseInsensitive = true,
                 Converters = { new UnixToNullableDateTimeConverter { IsFormatInSeconds = false } }
             };
-
-            _settings = Model.Settings;
         }
 
         public static async Task<Dictionary<string, int>> CheckAndMatchAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
@@ -231,7 +229,7 @@ namespace ClrVpin.Importer
                     f.Urls.ForEach(urlDetail =>
                     {
                         // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
-                        if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
+                        if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var generatedUrl) && (generatedUrl.Scheme == Uri.UriSchemeHttp || generatedUrl.Scheme == Uri.UriSchemeHttps)))
                         {
                             LogFixed(onlineGame, FixInvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
                             urlDetail.Broken = true;
@@ -307,12 +305,11 @@ namespace ClrVpin.Importer
         public const string MatchMatchedManufactured = "Matched (manufactured)";
         public const string MatchMatchedOriginal = "Matched (originals)";
         public const string MatchUnmatchedTotal = "Unmatched Total";
-        public const string MatchUnmatchedManufactured = "Unmatched (manufactured)";
-        public const string MatchUnmatchedOriginal = "Unmatched (originals)";
+        private const string MatchUnmatchedManufactured = "Unmatched (manufactured)";
+        private const string MatchUnmatchedOriginal = "Unmatched (originals)";
 
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
 
         private static readonly Dictionary<string, int> _feedFixStatistics = new Dictionary<string, int>();
-        private static readonly Models.Settings.Settings _settings;
     }
 }
