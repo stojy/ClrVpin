@@ -191,8 +191,7 @@ namespace ClrVpin.Importer
                     results.Close();
                     statistics.Close();
                     logging.Close();
-                    //_window.Show();
-                    _window.Close();
+                    _window.Show();
                 };
             }
         }

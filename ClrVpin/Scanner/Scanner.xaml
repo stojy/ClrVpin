@@ -14,7 +14,7 @@
   </ResourceDictionary.MergedDictionaries>
 
   <converters:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
-  <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter" />
+  <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
   <converters:HitTypeEnumToVisibilityConverter x:Key="HitTypeFuzzyToVisibilityConverter" />
 
@@ -52,7 +52,7 @@
                 <WrapPanel Width="400">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
 
-                  <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
+                  <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding HelpAction}"
                           Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="500" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                     <materialDesign:PackIcon Kind="InformationOutline" />
                   </Button>
@@ -76,7 +76,7 @@
                 <WrapPanel Width="185">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
 
-                  <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding HelpAction}"
+                  <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding HelpAction}"
                           Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="500" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                     <materialDesign:PackIcon Kind="InformationOutline" />
                   </Button>
