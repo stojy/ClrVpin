@@ -29,11 +29,6 @@ namespace ClrVpin.Importer
 
             CreateMatchCriteriaTypes();
             
-            CreateIgnoreCriteria();
-
-            IgnoreWordsString = string.Join(", ", Settings.Importer.IgnoreIWords);
-            IgnoreWordsChangedCommand = new ActionCommand(IgnoreWordsChanged);
-
             UpdateIsValid();
         }
 
@@ -42,15 +37,6 @@ namespace ClrVpin.Importer
         //public ObservableCollection<Game> Games { get; set; }
         public ICommand StartCommand { get; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
-
-        public string IgnoreWordsString { get; set; }
-        public ICommand IgnoreWordsChangedCommand { get; set; }
-
-        //public FeatureType IgnoreIfNotNewerFeature { get; set; }
-        //public FeatureType IgnoreIfSmallerFeature { get; set; }
-        public FeatureType IgnoreIfContainsWordsFeature { get; set; }
-        //public FeatureType DeleteIgnoredFilesOptionFeature { get; set; }
-        //public FeatureType IgnoreSelectClearAllFeature { get; set; }
 
         public void Show(Window parent)
         {
@@ -74,11 +60,6 @@ namespace ClrVpin.Importer
                 Model.SettingsManager.Write();
                 parent.Show();
             };
-        }
-
-        private void IgnoreWordsChanged()
-        {
-            Settings.Importer.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
         }
 
         private void UpdateIsValid() => IsValid = true;
@@ -109,27 +90,6 @@ namespace ClrVpin.Importer
         }
 
         public FeatureType MatchFuzzy { get; private set; }
-
-        private void CreateIgnoreCriteria()
-        {
-            // show all ignore criteria
-            // - only ignore words is supported, but using a list for consistency with scanner and rebuilder
-            var featureTypes = StaticSettings.IgnoreCriteria.Where(x => x.Enum.In(IgnoreCriteriaEnum.IgnoreIfContainsWords)).Select(criteria =>
-            {
-                var featureType = new FeatureType((int)criteria.Enum)
-                {
-                    Description = criteria.Description,
-                    Tip = criteria.Tip,
-                    IsSupported = true,
-                    IsActive = Settings.Importer.SelectedIgnoreCriteria.Contains(criteria.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Importer.SelectedIgnoreCriteria.Toggle(criteria.Enum))
-                };
-
-                return featureType;
-            }).ToList();
-
-            IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfContainsWords);
-        }
 
         private async void Start()
         {

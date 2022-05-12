@@ -372,7 +372,7 @@
               </DataGridTemplateColumn>
 
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table" Binding="{Binding Name}"
-                                  Width="260" />
+                                  Width="255" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
                                   Binding="{Binding Manufacturer}" Width="160" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year" Binding="{Binding Year}"
