@@ -55,13 +55,16 @@ namespace ClrVpin.Importer
             var manufacturedGamesCount = _onlineGames.Count(game => !game.IsOriginal);
             var originalGamesCount = _onlineGames.Count(game => game.IsOriginal);
 
-            return $"Feed Fixes" +
+            return "Feed Fixes" +
                    $"\n{feedFixStatistics}" +
-                   $"\n\nMatched Local and Online Database" +
+                   "\n\nMatched Local and Online Database" +
                    CreatePercentageStatistic("Total", _matchStatistics[ImporterUtils.MatchMatchedTotal], totalGamesCount) +
                    CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterUtils.MatchMatchedManufactured], manufacturedGamesCount) +
                    CreatePercentageStatistic("Originals", _matchStatistics[ImporterUtils.MatchMatchedOriginal], originalGamesCount) +
-                   CreatePercentageStatistic("Missing", _matchStatistics[ImporterUtils.MatchUnmatchedTotal], totalGamesCount) +
+                   "\n\nUnmatched Local and Online Database" +
+                   CreatePercentageStatistic("Total", _matchStatistics[ImporterUtils.MatchUnmatchedTotal], totalGamesCount) +
+                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterUtils.MatchUnmatchedManufactured], manufacturedGamesCount) +
+                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterUtils.MatchUnmatchedOriginal], originalGamesCount) +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_elapsedTime.TotalSeconds:f2}s";
         }
 
