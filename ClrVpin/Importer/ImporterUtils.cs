@@ -305,8 +305,8 @@ namespace ClrVpin.Importer
         public const string MatchMatchedManufactured = "Matched (manufactured)";
         public const string MatchMatchedOriginal = "Matched (originals)";
         public const string MatchUnmatchedTotal = "Unmatched Total";
-        private const string MatchUnmatchedManufactured = "Unmatched (manufactured)";
-        private const string MatchUnmatchedOriginal = "Unmatched (originals)";
+        public const string MatchUnmatchedManufactured = "Unmatched (manufactured)";
+        public const string MatchUnmatchedOriginal = "Unmatched (originals)";
 
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
 
