@@ -59,6 +59,7 @@ public class OnlineGame
 
     // reference to the highest fuzzy ranked DB match
     public GameHit GameHit { get; set; }
+    public bool IsMatched => GameHit != null;
 
     public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
 }

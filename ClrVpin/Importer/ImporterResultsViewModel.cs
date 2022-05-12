@@ -55,6 +55,7 @@ namespace ClrVpin.Importer
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (Settings.IncludeOriginalTables || !game.IsOriginal) &&
+                    (Settings.IncludeUnmatchedTables || game.IsMatched) &&
                     (YearBeginFilter == null || string.Compare(game.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
                     (YearEndFilter == null || string.Compare(game.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
                     (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
@@ -179,9 +180,13 @@ namespace ClrVpin.Importer
             Window.Show();
         }
 
-        public void Close() => Window.Close();
+        public void Close()
+        {
+            Model.SettingsManager.Write();
+            Window.Close();
+        }
 
-        private void NavigateToUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        private static void NavigateToUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 
         private static void ShowImage(string tableImgUrl)
         {

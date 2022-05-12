@@ -17,6 +17,7 @@ public class ImporterSettings
 
     // display result filtering criteria
     public bool IncludeOriginalTables { get; set; }
+    public bool IncludeUnmatchedTables { get; set; } = true;
     public DateTime? UpdatedAtDateBegin { get; set; }
     public DateTime? UpdatedAtDateEnd { get; set; }
 }
