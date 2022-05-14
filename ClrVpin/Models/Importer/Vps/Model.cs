@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows.Input;
 using ClrVpin.Models.Shared.Database;
+using ClrVpin.Shared;
 
 namespace ClrVpin.Models.Importer.Vps;
 
@@ -55,18 +56,18 @@ public class OnlineGame
     public int Index { get; set; }
     public UrlSelection ImageUrlSelection { get; set; }
     public string YearString { get; set; }
-    public bool IsOriginal { get; set; }
+    public bool IsOriginal => TableUtils.IsOriginal(Manufacturer);
 
     // reference to the highest fuzzy ranked DB match
-    public GameHit GameHit { get; set; }
-    public bool IsMatched => GameHit != null;
+    public GameHit Hit { get; set; }
+    public bool IsMatched => Hit != null;
 
     public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
 }
 
 public class GameHit
 {
-    public Game Database { get; set; }
+    public Game Game { get; init; }
     public int? Score { get; set; }
 }
 

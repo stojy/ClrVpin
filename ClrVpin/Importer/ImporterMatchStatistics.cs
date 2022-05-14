@@ -2,9 +2,9 @@
 
 namespace ClrVpin.Importer;
 
-public static class ImporterMatchStatistics
+public class ImporterMatchStatistics
 {
-    public static void Init()
+    public ImporterMatchStatistics()
     {
         _statistics = new Dictionary<string, int>
         {
@@ -21,9 +21,9 @@ public static class ImporterMatchStatistics
         };
     }
 
-    public static void Add(string key) => _statistics[key]++;
+    public void Add(string key) => _statistics[key]++;
 
-    public static Dictionary<string, int> ToDictionary() => _statistics;
+    public Dictionary<string, int> ToDictionary() => _statistics;
 
     // exists in local and online DB
     public const string MatchedTotal = nameof(MatchedTotal);
@@ -40,5 +40,5 @@ public static class ImporterMatchStatistics
     public const string UnmatchedLocalManufactured = nameof(UnmatchedLocalManufactured);
     public const string UnmatchedLocalOriginal = nameof(UnmatchedLocalOriginal);
 
-    private static Dictionary<string, int> _statistics;
+    private readonly Dictionary<string, int> _statistics;
 }

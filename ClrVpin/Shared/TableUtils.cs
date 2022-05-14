@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
 using Utils;
@@ -60,20 +61,8 @@ namespace ClrVpin.Shared
                 games.AddRange(menu.Games);
             });
 
+            Logger.Info($"Local table count: {games.Count}");
             return games;
-        }
-
-        private static void WriteDatabase(string file, XDocument doc)
-        {
-            // proof of concept to confirm DB can be written back as an EXACT match when the view model properties are present
-            using var writer = XmlWriter.Create(file + ".bak", new XmlWriterSettings
-            {
-                Indent = true,
-                IndentChars = "\t",
-                Encoding = Encoding.GetEncoding("Windows-1252"),
-                DoNotEscapeUriAttributes = true
-            });
-            doc.Save(writer);
         }
 
         public static IList<string> GetContentFileNames(ContentType contentType, string folder)
@@ -152,6 +141,24 @@ namespace ClrVpin.Shared
 
             return unknownSupportedFiles;
         }
+
+        // assign isOriginal based on the manufacturer
+        public static bool IsOriginal(string manufacturer) => manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) ||
+                                                              manufacturer.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase);
+
+        private static void WriteDatabase(string file, XDocument doc)
+        {
+            // proof of concept to confirm DB can be written back as an EXACT match when the view model properties are present
+            using var writer = XmlWriter.Create(file + ".bak", new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "\t",
+                Encoding = Encoding.GetEncoding("Windows-1252"),
+                DoNotEscapeUriAttributes = true
+            });
+            doc.Save(writer);
+        }
+
 
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }

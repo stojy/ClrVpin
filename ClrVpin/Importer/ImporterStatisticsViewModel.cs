@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Models.Shared.Database;
 using PropertyChanged;
 using Utils.Extensions;
 
@@ -12,12 +13,13 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterStatisticsViewModel
     {
-        public ImporterStatisticsViewModel(List<OnlineGame> onlineGames, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics, Dictionary<string, int> matchStatistics)
+        public ImporterStatisticsViewModel(List<Game> games, List<OnlineGame> onlineGames, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics, ImporterMatchStatistics matchStatistics)
         {
+            _games = games;
             _onlineGames = onlineGames;
             _elapsedTime = elapsedTime;
             _feedFixStatistics = feedFixStatistics;
-            _matchStatistics = matchStatistics;
+            _matchStatistics = matchStatistics.ToDictionary();
         }
 
         public Window Window { get; private set; }
@@ -51,27 +53,31 @@ namespace ClrVpin.Importer
         {
             var feedFixStatistics = _feedFixStatistics.Select(kv => $"- {kv.Key,StatisticsKeyWidth}: {kv.Value}").StringJoin("\n");
 
-            var totalGamesCount = _onlineGames.Count;
-            var manufacturedGamesCount = _onlineGames.Count(game => !game.IsOriginal);
-            var originalGamesCount = _onlineGames.Count(game => game.IsOriginal);
+            var onlineTotalCount = _onlineGames.Count;
+            var onlineManufacturedCount = _onlineGames.Count(game => !game.IsOriginal);
+            var onlineOriginalCount = _onlineGames.Count(game => game.IsOriginal);
+
+            var localTotalCount = _games.Count;
+            var localManufacturedCount = _games.Count(game => !game.IsOriginal);
+            var localOriginalCount = _games.Count(game => game.IsOriginal);
 
             return "Feed Fixes" +
                    $"\n{feedFixStatistics}" +
 
                    "\n\nMatched Tables (exists in both Local and Online Databases)" +
-                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.MatchedTotal], totalGamesCount) +
-                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.MatchedManufactured], manufacturedGamesCount) +
-                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.MatchedOriginal], originalGamesCount) +
+                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.MatchedTotal], onlineTotalCount) +
+                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.MatchedManufactured], onlineManufacturedCount) +
+                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.MatchedOriginal], onlineOriginalCount) +
 
                    "\n\nUnmatched Online Tables (exists only in Online Database)" +
-                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineTotal], totalGamesCount) +
-                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineManufactured], manufacturedGamesCount) +
-                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineOriginal], originalGamesCount) +
+                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineTotal], onlineTotalCount) +
+                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineManufactured], onlineManufacturedCount) +
+                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineOriginal], onlineOriginalCount) +
 
                    "\n\nUnmatched Local Tables (exists only in Local Database)" +
-                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalTotal], totalGamesCount) +
-                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalManufactured], manufacturedGamesCount) +
-                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalOriginal], originalGamesCount) +
+                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalTotal], localTotalCount) +
+                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalManufactured], localManufacturedCount) +
+                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalOriginal], localOriginalCount) +
 
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_elapsedTime.TotalSeconds:f2}s";
         }
@@ -82,6 +88,7 @@ namespace ClrVpin.Importer
         private readonly Dictionary<string, int> _feedFixStatistics;
         private readonly Dictionary<string, int> _matchStatistics;
         private readonly List<OnlineGame> _onlineGames;
+        private List<Game> _games;
 
         private const int StatisticsKeyWidth = -30;
         private const int WindowMargin = 0;
