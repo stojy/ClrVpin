@@ -57,8 +57,8 @@ namespace ClrVpin.Importer
             };
 
             var onlineGames = (await httpClient.GetFromJsonAsync<OnlineGame[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
-            
-            Logger.Info($"Online table count: {onlineGames.Count}");
+
+            Logger.Info($"Online table count: {onlineGames.Count} (manufactured={onlineGames.Count(onlineGame => !onlineGame.IsOriginal)}, original={onlineGames.Count(onlineGame => onlineGame.IsOriginal)})");
             return onlineGames;
         }
 
