@@ -25,20 +25,18 @@ namespace ClrVpin.Importer
             };
         }
 
-        public static async Task<Dictionary<string, int>> MatchOnlineToLocalAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        public static async Task<ImporterMatchStatistics> MatchOnlineToLocalAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
         {
             return await Task.Run(() => MatchOnlineToLocal(games, onlineGames, updateProgress));
         }
 
-        public static async Task<Dictionary<string, int>> MatchLocalToOnlineAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        public static async Task MatchLocalToOnlineAsync(List<Game> games, List<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, int> updateProgress)
         {
-            return await Task.Run(() => MatchLocalToOnline(games, onlineGames, updateProgress));
+            await Task.Run(() => MatchLocalToOnline(games, onlineGames, matchStatistics, updateProgress));
         }
 
         public static async Task<List<OnlineGame>> GetOnlineDatabase()
         {
-            ImporterMatchStatistics.Init();
-
             // create dictionary items upfront to ensure the preferred display ordering (for statistics)
             _feedFixStatistics.Clear();
             _feedFixStatistics.Add(FixGameNameWhitespace, 0);
@@ -58,7 +56,10 @@ namespace ClrVpin.Importer
                 MaxResponseContentBufferSize = 10 * 1024 * 1024 // 10MB
             };
 
-            return (await httpClient.GetFromJsonAsync<OnlineGame[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
+            var onlineGames = (await httpClient.GetFromJsonAsync<OnlineGame[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
+            
+            Logger.Info($"Online table count: {onlineGames.Count}");
+            return onlineGames;
         }
 
         public static Dictionary<string, int> Update(List<OnlineGame> games)
@@ -112,8 +113,10 @@ namespace ClrVpin.Importer
             return _feedFixStatistics;
         }
 
-        private static Dictionary<string, int> MatchOnlineToLocal(IList<Game> games, IEnumerable<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        private static ImporterMatchStatistics MatchOnlineToLocal(IList<Game> games, IEnumerable<OnlineGame> onlineGames, Action<string, int> updateProgress)
         {
+            var matchStatistics = new ImporterMatchStatistics();
+
             onlineGames.ForEach((onlineGame, i) =>
             {
                 updateProgress(onlineGame.Name, i + 1);
@@ -128,58 +131,38 @@ namespace ClrVpin.Importer
                 var (matchedGame, score) = games.Match(fuzzyNameDetails);
                 if (matchedGame != null)
                 {
-                    ImporterMatchStatistics.Add(ImporterMatchStatistics.MatchedTotal);
-                    ImporterMatchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.MatchedOriginal : ImporterMatchStatistics.MatchedManufactured);
+                    matchStatistics.Add(ImporterMatchStatistics.MatchedTotal);
+                    matchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.MatchedOriginal : ImporterMatchStatistics.MatchedManufactured);
 
-                    onlineGame.GameHit = new GameHit
+                    onlineGame.Hit = new GameHit
                     {
-                        Database = matchedGame,
+                        Game = matchedGame,
                         Score = score
                     };
                 }
                 else
                 {
-                    ImporterMatchStatistics.Add(ImporterMatchStatistics.UnmatchedOnlineTotal);
-                    ImporterMatchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.UnmatchedOnlineOriginal : ImporterMatchStatistics.UnmatchedOnlineManufactured);
+                    matchStatistics.Add(ImporterMatchStatistics.UnmatchedOnlineTotal);
+                    matchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.UnmatchedOnlineOriginal : ImporterMatchStatistics.UnmatchedOnlineManufactured);
                 }
             });
 
-            return ImporterMatchStatistics.ToDictionary();
+            return matchStatistics;
         }
         
-        private static Dictionary<string, int> MatchLocalToOnline(IList<Game> games, IEnumerable<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        private static void MatchLocalToOnline(IEnumerable<Game> games, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, int> updateProgress)
         {
-            //onlineGames.ForEach((onlineGame, i) =>
-            //{
-            //    updateProgress(onlineGame.Name, i + 1);
+            var unmatchedGames = games.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.Game)).ToList();
 
-            //    // unlike rebuilder matching, only fuzzy is used
+            unmatchedGames.ForEach((localGame, i) =>
+            {
+                updateProgress(localGame.Name, i + 1);
 
-            //    // use GetNameDetails for NameNoWhiteSpace and ActualName
-            //    var fuzzyNameDetails = Fuzzy.GetNameDetails(onlineGame.Name, false);
-            //    fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
-            //    fuzzyNameDetails.Year = onlineGame.Year;
-
-            //    var (matchedGame, score) = games.Match(fuzzyNameDetails);
-            //    if (matchedGame != null)
-            //    {
-            //        ImporterMatchStatistics.Add(ImporterMatchStatistics.MatchedTotal);
-            //        ImporterMatchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.MatchedOriginal : ImporterMatchStatistics.MatchedManufactured);
-
-            //        onlineGame.GameHit = new GameHit
-            //        {
-            //            Database = matchedGame,
-            //            Score = score
-            //        };
-            //    }
-            //    else
-            //    {
-            //        ImporterMatchStatistics.Add(ImporterMatchStatistics.UnmatchedOnlineTotal);
-            //        ImporterMatchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.UnmatchedOnlineOriginal : ImporterMatchStatistics.UnmatchedOnlineManufactured);
-            //    }
-            //});
-
-            return ImporterMatchStatistics.ToDictionary();
+                Logger.Info($"Unmatched local table: '{localGame.Name}'");
+                
+                matchStatistics.Add(ImporterMatchStatistics.UnmatchedLocalTotal);
+                matchStatistics.Add(localGame.IsOriginal ? ImporterMatchStatistics.UnmatchedLocalOriginal : ImporterMatchStatistics.UnmatchedLocalManufactured);
+            });
         }
 
         private static void Fix(OnlineGame onlineGame)
@@ -274,10 +257,6 @@ namespace ClrVpin.Importer
                     })
                 );
             });
-
-            // assign isOriginal based on the manufacturer
-            onlineGame.IsOriginal = onlineGame.Manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) ||
-                                    onlineGame.Manufacturer.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase);
 
             // fix invalid IPDB Url
             // - e.g. "Not Available" frequently used for original tables
