@@ -116,8 +116,12 @@ namespace ClrVpin.Importer
             var feedFixStatistics = ImporterUtils.Update(onlineGames);
             Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
 
-            progress.Update("Matching local and online databases");
-            var matchStatistics = await ImporterUtils.CheckAndMatchAsync(games, onlineGames, UpdateProgress);
+            progress.Update("Matching online to local database");
+            var matchStatistics = await ImporterUtils.MatchOnlineToLocalAsync(games, onlineGames, UpdateProgress);
+            Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
+
+            progress.Update("Matching local to online database");
+            matchStatistics = await ImporterUtils.MatchLocalToOnlineAsync(games, onlineGames, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Update("Preparing Results");

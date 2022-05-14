@@ -25,13 +25,20 @@ namespace ClrVpin.Importer
             };
         }
 
-        public static async Task<Dictionary<string, int>> CheckAndMatchAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        public static async Task<Dictionary<string, int>> MatchOnlineToLocalAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
         {
-            return await Task.Run(() => CheckAndMatch(games, onlineGames, updateProgress));
+            return await Task.Run(() => MatchOnlineToLocal(games, onlineGames, updateProgress));
+        }
+
+        public static async Task<Dictionary<string, int>> MatchLocalToOnlineAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        {
+            return await Task.Run(() => MatchLocalToOnline(games, onlineGames, updateProgress));
         }
 
         public static async Task<List<OnlineGame>> GetOnlineDatabase()
         {
+            ImporterMatchStatistics.Init();
+
             // create dictionary items upfront to ensure the preferred display ordering (for statistics)
             _feedFixStatistics.Clear();
             _feedFixStatistics.Add(FixGameNameWhitespace, 0);
@@ -44,7 +51,6 @@ namespace ClrVpin.Importer
             _feedFixStatistics.Add(FixFileUpdatedTime, 0);
             _feedFixStatistics.Add(FixInvalidUrl, 0);
             _feedFixStatistics.Add(FixWrongUrl, 0);
-
 
             using var httpClient = new HttpClient
             {
@@ -106,19 +112,8 @@ namespace ClrVpin.Importer
             return _feedFixStatistics;
         }
 
-        private static Dictionary<string, int> CheckAndMatch(IList<Game> games, IEnumerable<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        private static Dictionary<string, int> MatchOnlineToLocal(IList<Game> games, IEnumerable<OnlineGame> onlineGames, Action<string, int> updateProgress)
         {
-            var matchStatistics = new Dictionary<string, int>
-            {
-                // create dictionary items upfront to ensure the preferred display ordering (for statistics)
-                { MatchMatchedTotal, 0 },
-                { MatchMatchedManufactured, 0 },
-                { MatchMatchedOriginal, 0 },
-                { MatchUnmatchedTotal, 0 },
-                { MatchUnmatchedManufactured, 0 },
-                { MatchUnmatchedOriginal, 0 }
-            };
-
             onlineGames.ForEach((onlineGame, i) =>
             {
                 updateProgress(onlineGame.Name, i + 1);
@@ -133,8 +128,8 @@ namespace ClrVpin.Importer
                 var (matchedGame, score) = games.Match(fuzzyNameDetails);
                 if (matchedGame != null)
                 {
-                    matchStatistics[MatchMatchedTotal]++;
-                    matchStatistics[onlineGame.IsOriginal ? MatchMatchedOriginal : MatchMatchedManufactured]++;
+                    ImporterMatchStatistics.Add(ImporterMatchStatistics.MatchedTotal);
+                    ImporterMatchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.MatchedOriginal : ImporterMatchStatistics.MatchedManufactured);
 
                     onlineGame.GameHit = new GameHit
                     {
@@ -144,12 +139,47 @@ namespace ClrVpin.Importer
                 }
                 else
                 {
-                    matchStatistics[MatchUnmatchedTotal]++;
-                    matchStatistics[onlineGame.IsOriginal ? MatchUnmatchedOriginal : MatchUnmatchedManufactured]++;
+                    ImporterMatchStatistics.Add(ImporterMatchStatistics.UnmatchedOnlineTotal);
+                    ImporterMatchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.UnmatchedOnlineOriginal : ImporterMatchStatistics.UnmatchedOnlineManufactured);
                 }
             });
 
-            return matchStatistics;
+            return ImporterMatchStatistics.ToDictionary();
+        }
+        
+        private static Dictionary<string, int> MatchLocalToOnline(IList<Game> games, IEnumerable<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        {
+            //onlineGames.ForEach((onlineGame, i) =>
+            //{
+            //    updateProgress(onlineGame.Name, i + 1);
+
+            //    // unlike rebuilder matching, only fuzzy is used
+
+            //    // use GetNameDetails for NameNoWhiteSpace and ActualName
+            //    var fuzzyNameDetails = Fuzzy.GetNameDetails(onlineGame.Name, false);
+            //    fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
+            //    fuzzyNameDetails.Year = onlineGame.Year;
+
+            //    var (matchedGame, score) = games.Match(fuzzyNameDetails);
+            //    if (matchedGame != null)
+            //    {
+            //        ImporterMatchStatistics.Add(ImporterMatchStatistics.MatchedTotal);
+            //        ImporterMatchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.MatchedOriginal : ImporterMatchStatistics.MatchedManufactured);
+
+            //        onlineGame.GameHit = new GameHit
+            //        {
+            //            Database = matchedGame,
+            //            Score = score
+            //        };
+            //    }
+            //    else
+            //    {
+            //        ImporterMatchStatistics.Add(ImporterMatchStatistics.UnmatchedOnlineTotal);
+            //        ImporterMatchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.UnmatchedOnlineOriginal : ImporterMatchStatistics.UnmatchedOnlineManufactured);
+            //    }
+            //});
+
+            return ImporterMatchStatistics.ToDictionary();
         }
 
         private static void Fix(OnlineGame onlineGame)
@@ -301,15 +331,7 @@ namespace ClrVpin.Importer
         private const string FixInvalidIpdbUrl = "Invalid IPDB Url";
         private const string FixWrongIpdbUrl = "Wrong IPDB Url";
 
-        public const string MatchMatchedTotal = "Matched Total";
-        public const string MatchMatchedManufactured = "Matched (manufactured)";
-        public const string MatchMatchedOriginal = "Matched (originals)";
-        public const string MatchUnmatchedTotal = "Unmatched Total";
-        public const string MatchUnmatchedManufactured = "Unmatched (manufactured)";
-        public const string MatchUnmatchedOriginal = "Unmatched (originals)";
-
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
-
         private static readonly Dictionary<string, int> _feedFixStatistics = new Dictionary<string, int>();
     }
 }
