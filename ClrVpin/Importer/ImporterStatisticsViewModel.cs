@@ -50,21 +50,29 @@ namespace ClrVpin.Importer
         private string CreateTotalStatistics()
         {
             var feedFixStatistics = _feedFixStatistics.Select(kv => $"- {kv.Key,StatisticsKeyWidth}: {kv.Value}").StringJoin("\n");
-            
+
             var totalGamesCount = _onlineGames.Count;
             var manufacturedGamesCount = _onlineGames.Count(game => !game.IsOriginal);
             var originalGamesCount = _onlineGames.Count(game => game.IsOriginal);
 
             return "Feed Fixes" +
                    $"\n{feedFixStatistics}" +
-                   "\n\nMatched Local and Online Database" +
-                   CreatePercentageStatistic("Total", _matchStatistics[ImporterUtils.MatchMatchedTotal], totalGamesCount) +
-                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterUtils.MatchMatchedManufactured], manufacturedGamesCount) +
-                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterUtils.MatchMatchedOriginal], originalGamesCount) +
-                   "\n\nUnmatched Local and Online Database" +
-                   CreatePercentageStatistic("Total", _matchStatistics[ImporterUtils.MatchUnmatchedTotal], totalGamesCount) +
-                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterUtils.MatchUnmatchedManufactured], manufacturedGamesCount) +
-                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterUtils.MatchUnmatchedOriginal], originalGamesCount) +
+
+                   "\n\nMatched Tables (exists in both Local and Online Databases)" +
+                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.MatchedTotal], totalGamesCount) +
+                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.MatchedManufactured], manufacturedGamesCount) +
+                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.MatchedOriginal], originalGamesCount) +
+
+                   "\n\nUnmatched Online Tables (exists only in Online Database)" +
+                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineTotal], totalGamesCount) +
+                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineManufactured], manufacturedGamesCount) +
+                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineOriginal], originalGamesCount) +
+
+                   "\n\nUnmatched Local Tables (exists only in Local Database)" +
+                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalTotal], totalGamesCount) +
+                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalManufactured], manufacturedGamesCount) +
+                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalOriginal], originalGamesCount) +
+
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_elapsedTime.TotalSeconds:f2}s";
         }
 
