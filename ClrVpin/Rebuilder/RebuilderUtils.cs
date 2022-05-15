@@ -20,24 +20,24 @@ namespace ClrVpin.Rebuilder
             _settings = Model.Settings;
         }
 
-        public static async Task<List<FileDetail>> CheckAndMatchAsync(List<Game> games, Action<string, int> updateProgress)
+        public static async Task<List<FileDetail>> CheckAndMatchAsync(List<Game> games, Action<string, float> updateProgress)
         {
             var unmatchedFiles = await Task.Run(() => CheckAndMatch(games, updateProgress));
             return unmatchedFiles;
         }
 
-        public static async Task<List<FileDetail>> MergeAsync(List<Game> games, string backupFolder, Action<string, int> updateProgress)
+        public static async Task<List<FileDetail>> MergeAsync(List<Game> games, string backupFolder, Action<string, float> updateProgress)
         {
             var mergedFileDetails = await Task.Run(() => Merge(games, backupFolder, updateProgress));
             return mergedFileDetails;
         }
 
-        public static async Task RemoveUnmatchedIgnoredAsync(List<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
+        public static async Task RemoveUnmatchedIgnoredAsync(List<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
         {
             await Task.Run(() => RemoveUnmatchedIgnored(unmatchedFiles, updateProgress));
         }
 
-        private static List<FileDetail> CheckAndMatch(IList<Game> games, Action<string, int> updateProgress)
+        private static List<FileDetail> CheckAndMatch(IList<Game> games, Action<string, float> updateProgress)
         {
             // determine the destination type
             var contentType = _settings.GetSelectedDestinationContentType();
@@ -45,7 +45,7 @@ namespace ClrVpin.Rebuilder
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
             var contentFiles = TableUtils.GetContentFileNames(contentType, _settings.Rebuilder.SourceFolder);
             var unmatchedContentFiles = TableUtils.AddContentFilesToGames(games, contentFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
-                (fileName, fileCount) => updateProgress(fileName, 100 * fileCount / contentFiles.Count));
+                (fileName, fileCount) => updateProgress(fileName, fileCount / (float)contentFiles.Count));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
             var nonContentFiles = TableUtils.GetNonContentFileDetails(contentType, _settings.Rebuilder.SourceFolder);
@@ -54,7 +54,7 @@ namespace ClrVpin.Rebuilder
             return unmatchedContentFiles.Concat(nonContentFiles).ToList();
         }
 
-        private static List<FileDetail> Merge(IEnumerable<Game> games, string backupFolder, Action<string, int> updateProgress)
+        private static List<FileDetail> Merge(IEnumerable<Game> games, string backupFolder, Action<string, float> updateProgress)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 
@@ -68,7 +68,7 @@ namespace ClrVpin.Rebuilder
             var gameFiles = new List<FileDetail>();
             gamesWithContent.ForEach((game, i) =>
             {
-                updateProgress(game.Description, 100 * (i + 1) / gamesWithContent.Count);
+                updateProgress(game.Description, (i + 1f) / gamesWithContent.Count);
 
                 // retrieve the relevant content hit collection
                 var contentHitCollection = game.Content.ContentHitsCollection.First(x => x.Hits.Any());
@@ -143,7 +143,7 @@ namespace ClrVpin.Rebuilder
             return new FileDetail(hit.ContentTypeEnum, hit.Type, fixFileType, sourceFileInfo.Name, hit.Size ?? 0);
         }
 
-        private static bool ShouldIgnore(Game game, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo, Action logAction)
+        private static bool ShouldIgnore(GameBase game, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo, Action logAction)
         {
             // opt out: scan through each ignore criteria to determine if the file should be considered 'merge worthy'
             // - unlike scanner 'multiple match preference'.. which is more of an 'opt in'
@@ -168,10 +168,10 @@ namespace ClrVpin.Rebuilder
             return false;
         }
 
-        private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo, Action logAction) => ProcessIgnore(
+        private static bool ProcessIgnore(GameBase game, string ignoreCriteriaDescription, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo, Action logAction) => ProcessIgnore(
             game, ignoreCriteriaDescription, hit.Type, hit.ContentTypeEnum, hit, sourceFileInfo, destinationFileInfo, logAction);
 
-        private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, HitTypeEnum hitTypeEnum, ContentTypeEnum contentTypeEnum, Hit hit, FileSystemInfo sourceFileInfo,
+        private static bool ProcessIgnore(GameBase game, string ignoreCriteriaDescription, HitTypeEnum hitTypeEnum, ContentTypeEnum contentTypeEnum, Hit hit, FileSystemInfo sourceFileInfo,
             FileSystemInfo destinationFileInfo, Action logAction = null)
         {
             var prefix = _settings.Rebuilder.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
@@ -197,7 +197,7 @@ namespace ClrVpin.Rebuilder
             return true;
         }
 
-        private static void RemoveUnmatchedIgnored(IList<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
+        private static void RemoveUnmatchedIgnored(IList<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
         {
             // delete files NOT associated with games (aka unknown files)
             // - n/a for any files that are matched as this is already considered (aka removed) during Merge()..
@@ -211,7 +211,7 @@ namespace ClrVpin.Rebuilder
 
             unmatchedFilesToDelete.ForEach((fileDetail, i) =>
             {
-                updateProgress(Path.GetFileName(fileDetail.Path), 100 * (i + 1) / unmatchedFilesToDelete.Count);
+                updateProgress(Path.GetFileName(fileDetail.Path), (i + 1f) / unmatchedFilesToDelete.Count);
 
                 ProcessIgnore(null, IgnoreCriteriaEnum.IgnoreIfContainsWords.GetDescription(), fileDetail.HitType, fileDetail.ContentType, null, new FileInfo(fileDetail.Path!), null);
 

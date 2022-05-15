@@ -16,13 +16,13 @@ namespace ClrVpin.Scanner
     {
         private static readonly Models.Settings.Settings _settings = Model.Settings;
 
-        public static async Task<List<FileDetail>> CheckAsync(List<Game> games, Action<string, int> updateProgress)
+        public static async Task<List<FileDetail>> CheckAsync(List<Game> games, Action<string, float> updateProgress)
         {
             var unmatchedFiles = await Task.Run(() => Check(games, updateProgress));
             return unmatchedFiles;
         }
 
-        private static List<FileDetail> Check(List<Game> games, Action<string, int> updateProgress)
+        private static List<FileDetail> Check(List<Game> games, Action<string, float> updateProgress)
         {
             var unmatchedFiles = new List<FileDetail>();
 
@@ -45,7 +45,7 @@ namespace ClrVpin.Scanner
                 var contentType = details.contentType;
 
                 var unknownFiles = TableUtils.AddContentFilesToGames(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
-                    (fileName, _) => updateProgress($"{contentType.Description}: {fileName}", 100 * ++fileCount / totalFilesCount));
+                    (fileName, _) => updateProgress($"{contentType.Description}: {fileName}", ++fileCount / (float)totalFilesCount));
                 unmatchedFiles.AddRange(unknownFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
@@ -67,13 +67,13 @@ namespace ClrVpin.Scanner
             return unmatchedFiles;
         }
 
-        public static async Task<List<FileDetail>> FixAsync(List<Game> games, string backupFolder, Action<string, int> updateProgress)
+        public static async Task<List<FileDetail>> FixAsync(List<Game> games, string backupFolder, Action<string, float> updateProgress)
         {
             var fixedFileDetails = await Task.Run(() => Fix(games, backupFolder, updateProgress));
             return fixedFileDetails;
         }
 
-        private static List<FileDetail> Fix(ICollection<Game> games, string backupFolder, Action<string, int> updateProgress)
+        private static List<FileDetail> Fix(ICollection<Game> games, string backupFolder, Action<string, float> updateProgress)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 
@@ -108,7 +108,7 @@ namespace ClrVpin.Scanner
                 // fix files associated with games, if they satisfy the fix criteria
                 fixableContentGames.ForEach(game =>
                 {
-                    updateProgress(game.Description, 100 * ++gamesWithContentCount / gamesWithContentMaxCount);
+                    updateProgress(game.Description, ++gamesWithContentCount / (float)gamesWithContentMaxCount);
 
                     var gameContentHits = game.Content.ContentHitsCollection.First(contentHits => contentHits.ContentType == contentType);
 
@@ -206,12 +206,12 @@ namespace ClrVpin.Scanner
                 gameFiles.Add(FileUtils.Rename(preferredHit, game, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
         }
 
-        public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
+        public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
         {
             await Task.Run(() => RemoveUnmatched(unmatchedFiles, updateProgress));
         }
 
-        private static void RemoveUnmatched(IEnumerable<FileDetail> unmatchedFiles, Action<string, int> updateProgress)
+        private static void RemoveUnmatched(IEnumerable<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
         {
             // delete files NOT associated with games, aka unmatched files
             var unmatchedFilesToDelete = unmatchedFiles.Where(unmatchedFile =>
@@ -220,7 +220,7 @@ namespace ClrVpin.Scanner
 
             unmatchedFilesToDelete.ForEach((fileDetail, i) =>
             {
-                updateProgress(Path.GetFileName(fileDetail.Path), 100 * (i+1) / unmatchedFilesToDelete.Count);
+                updateProgress(Path.GetFileName(fileDetail.Path), (i+1f) / unmatchedFilesToDelete.Count);
 
                 Logger.Info($"Fixing (unmatched).. table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {fileDetail.ContentType.GetDescription()}");
                 FileUtils.Delete(fileDetail.Path, fileDetail.HitType, null);

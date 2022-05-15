@@ -113,7 +113,7 @@ namespace ClrVpin.Importer
             var onlineGames = await ImporterUtils.GetOnlineDatabase();
 
             progress.Update("Fixing online database");
-            var feedFixStatistics = ImporterUtils.Update(onlineGames);
+            var feedFixStatistics = ImporterUtils.FixOnlineDatabase(onlineGames);
             Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
 
             progress.Update("Matching online to local database");
@@ -130,7 +130,7 @@ namespace ClrVpin.Importer
             
             progress.Close();
 
-            void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
+            void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
         private void ShowResults(TimeSpan duration, List<Game> games, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
