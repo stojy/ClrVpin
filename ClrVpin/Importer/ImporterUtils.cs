@@ -25,12 +25,12 @@ namespace ClrVpin.Importer
             };
         }
 
-        public static async Task<ImporterMatchStatistics> MatchOnlineToLocalAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        public static async Task<ImporterMatchStatistics> MatchOnlineToLocalAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
         {
             return await Task.Run(() => MatchOnlineToLocal(games, onlineGames, updateProgress));
         }
 
-        public static async Task MatchLocalToOnlineAsync(List<Game> games, List<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, int> updateProgress)
+        public static async Task MatchLocalToOnlineAsync(List<Game> games, List<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
         {
             await Task.Run(() => MatchLocalToOnline(games, onlineGames, matchStatistics, updateProgress));
         }
@@ -58,11 +58,11 @@ namespace ClrVpin.Importer
 
             var onlineGames = (await httpClient.GetFromJsonAsync<OnlineGame[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
 
-            Logger.Info($"Online table count: {onlineGames.Count} (manufactured={onlineGames.Count(onlineGame => !onlineGame.IsOriginal)}, original={onlineGames.Count(onlineGame => onlineGame.IsOriginal)})");
+            Logger.Info($"Online database table count: {onlineGames.Count} (manufactured={onlineGames.Count(onlineGame => !onlineGame.IsOriginal)}, original={onlineGames.Count(onlineGame => onlineGame.IsOriginal)})");
             return onlineGames;
         }
 
-        public static Dictionary<string, int> Update(List<OnlineGame> games)
+        public static Dictionary<string, int> FixOnlineDatabase(List<OnlineGame> games)
         {
             // fix game ordering - alphanumerical
             var orderedDames = games.OrderBy(game => game.Name).ToArray();
@@ -113,13 +113,13 @@ namespace ClrVpin.Importer
             return _feedFixStatistics;
         }
 
-        private static ImporterMatchStatistics MatchOnlineToLocal(IList<Game> games, IEnumerable<OnlineGame> onlineGames, Action<string, int> updateProgress)
+        private static ImporterMatchStatistics MatchOnlineToLocal(IList<Game> games, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
         {
             var matchStatistics = new ImporterMatchStatistics();
 
             onlineGames.ForEach((onlineGame, i) =>
             {
-                updateProgress(onlineGame.Name, i + 1);
+                updateProgress(onlineGame.Name, (i + 1f) / onlineGames.Count);
 
                 // unlike rebuilder matching, only fuzzy is used
 
@@ -150,13 +150,15 @@ namespace ClrVpin.Importer
             return matchStatistics;
         }
         
-        private static void MatchLocalToOnline(IEnumerable<Game> games, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, int> updateProgress)
+        private static void MatchLocalToOnline(IEnumerable<Game> games, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
         {
             var unmatchedGames = games.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.Game)).ToList();
 
-            unmatchedGames.ForEach((localGame, i) =>
+            // deliberately NOT performing a 'reverse' fuzzy lookup to avoid scenario where x1 online game could have multiple local files
+            // - e.g. online only has 1 AC/DC entry (which is a known issue).. whereas there are multiple local files each representing the unique IPDBs (which is correct)
+            unmatchedGames.ForEach((localGame, _) =>
             {
-                updateProgress(localGame.Name, i + 1);
+                updateProgress(localGame.Name, null);
 
                 Logger.Info($"Unmatched local table: '{localGame.Name}'");
                 

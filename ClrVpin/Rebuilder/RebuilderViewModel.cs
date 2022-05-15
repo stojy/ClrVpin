@@ -243,7 +243,7 @@ namespace ClrVpin.Rebuilder
 
             progress.Close();
 
-            void UpdateProgress(string detail, int percentage) => progress.Update(null, percentage, detail);
+            void UpdateProgress(string detail, float ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
         private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)

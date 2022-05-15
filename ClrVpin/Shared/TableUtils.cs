@@ -61,7 +61,7 @@ namespace ClrVpin.Shared
                 games.AddRange(menu.Games);
             });
 
-            Logger.Info($"Local table count: {games.Count} (manufactured={games.Count(onlineGame => !onlineGame.IsOriginal)}, original={games.Count(onlineGame => onlineGame.IsOriginal)})");
+            Logger.Info($"Local database table count: {games.Count} (manufactured={games.Count(onlineGame => !onlineGame.IsOriginal)}, original={games.Count(onlineGame => onlineGame.IsOriginal)})");
             return games;
         }
 

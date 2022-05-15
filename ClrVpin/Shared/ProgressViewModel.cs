@@ -74,13 +74,13 @@ namespace ClrVpin.Shared
             _timer.Change(0, 0);
         }
 
-        public void Update(string status, int? percentageComplete = null, string detail = null)
+        public void Update(string status, float? ratioComplete = null, string detail = null)
         {
             if (status != null)
                 Status = status;
 
-            if (percentageComplete != null)
-                Percentage = percentageComplete.Value;
+            if (ratioComplete != null)
+                Percentage = (int)(100 * ratioComplete.Value);
 
             Detail = detail;
         }
