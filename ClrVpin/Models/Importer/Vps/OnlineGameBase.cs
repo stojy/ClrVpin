@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows.Input;
 using ClrVpin.Models.Shared.Database;
-using ClrVpin.Shared;
 
 namespace ClrVpin.Models.Importer.Vps;
 
-// ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
 // ReSharper disable UnusedMember.Global
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-public class OnlineGame
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+public class OnlineGameBase
 {
     public string Id { get; set; }
     public string Name { get; set; }
@@ -47,21 +45,7 @@ public class OnlineGame
     public File[] PovFiles { get; set; } = Array.Empty<File>();
     public File[] AltSoundFiles { get; set; } = Array.Empty<File>();
     public File[] RuleFiles { get; set; } = Array.Empty<File>();
-
-    // view model properties
-    public Dictionary<string, FileCollection> AllFiles { get; set; }
-    public IEnumerable<File> AllFilesList { get; set; }
-    public List<ImageFile> ImageFiles { get; set; }
-
-    public int Index { get; set; }
-    public UrlSelection ImageUrlSelection { get; set; }
-    public string YearString { get; set; }
-    public bool IsOriginal => TableUtils.IsOriginal(Manufacturer);
-
-    // reference to the highest fuzzy ranked DB match
-    public GameHit Hit { get; set; }
-    public bool IsMatched => Hit != null;
-
+    
     public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
 }
 
@@ -88,6 +72,7 @@ public class UrlSelection
     public ICommand SelectedCommand { get; set; }
 }
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class UrlDetail
 {
     public bool Broken { get; set; }
@@ -122,6 +107,7 @@ public class ImageFile : File
     public UrlSelection ImageUrlSelection { get; set; }
 }
 
+// ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
 public class TableFile : ImageFile
 {
     [JsonPropertyName("theme")]
