@@ -18,20 +18,24 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel
     {
-        public ImporterResultsViewModel(List<OnlineGame> games)
+        public ImporterResultsViewModel(List<OnlineGame> onlineGames)
         {
             // assign VM properties
-            games.ForEach(game =>
+            onlineGames.ForEach(onlineGame =>
             {
-                // index - for display
-                game.ImageUrlSelection = new UrlSelection
+                // image - for showing dialog with larger view of image
+                onlineGame.ImageUrlSelection = new UrlSelection
                 {
-                    Url = game.ImgUrl,
-                    SelectedCommand = new ActionCommand(() => ShowImage(game.ImgUrl))
+                    Url = onlineGame.ImgUrl,
+                    SelectedCommand = new ActionCommand(() => ShowImage(onlineGame.ImgUrl))
                 };
 
+                // local database show/add commands
+                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => ShowDatabaseItem(onlineGame));
+                onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => AddDatabaseItem(onlineGame));
+
                 // show large image popup
-                game.ImageFiles.ForEach(imageFile =>
+                onlineGame.ImageFiles.ForEach(imageFile =>
                 {
                     imageFile.ImageUrlSelection = new UrlSelection
                     {
@@ -40,14 +44,14 @@ namespace ClrVpin.Importer
                     };
                 });
 
-                game.YearString = game.Year.ToString();
+                onlineGame.YearString = onlineGame.Year.ToString();
 
                 // navigate to url
-                game.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
+                onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
             });
 
             // main games view (data grid)
-            Games = new ObservableCollection<OnlineGame>(games);
+            Games = new ObservableCollection<OnlineGame>(onlineGames);
             GamesView = new ListCollectionView<OnlineGame>(Games)
             {
                 // filter the table names list to reflect the various view filtering criteria
@@ -65,31 +69,31 @@ namespace ClrVpin.Importer
             GamesView.MoveCurrentToFirst();
 
             // filters views (drop down combo boxes)
-            TablesFilterView = new ListCollectionView<string>(games.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
+            TablesFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = table => GamesView.Any(x => x.Name == table)
             };
 
-            ManufacturersFilterView = new ListCollectionView<string>(games.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList())
+            ManufacturersFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = manufacturer => GamesView.Any(x => x.Manufacturer == manufacturer)
             };
 
-            YearsBeginFilterView = new ListCollectionView<string>(games.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList())
+            YearsBeginFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = yearString => GamesView.Any(x => x.YearString == yearString)
             };
 
-            YearsEndFilterView = new ListCollectionView<string>(games.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList())
+            YearsEndFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = yearString => GamesView.Any(x => x.YearString == yearString)
             };
 
-            TypesFilterView = new ListCollectionView<string>(games.Select(x => x.Type).Distinct().Where(x => x != null).OrderBy(x => x).ToList());
+            TypesFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.Type).Distinct().Where(x => x != null).OrderBy(x => x).ToList());
 
             // generic handler for all the filter changes.. since all of the combo box values will need to be re-evaluated in sync anyway
             FilterChanged = new ActionCommand(() =>
@@ -114,26 +118,6 @@ namespace ClrVpin.Importer
             NavigateToIpdbCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
             UpdateIsNew();
-        }
-
-        private void UpdateIsNew()
-        {
-            // flag models if they satisfy the update time range
-            Games.ForEach(game => game.AllFiles.ForEach(kv =>
-            {
-                var (_, files) = kv;
-                files.ForEach(file =>
-                {
-                    // flag file - if the update time range is satisfied
-                    file.IsNew = file.UpdatedAt >= (Settings.UpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.UpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
-
-                    // flag each url within the file - required to allow for simpler view binding
-                    file.Urls.ForEach(url => url.IsNew = file.IsNew);
-                });
-
-                // flag file collection (e.g. backglasses)
-                files.IsNew = files.Any(file => file.IsNew);
-            }));
         }
 
         public ImporterSettings Settings { get; } = Model.Settings.Importer;
@@ -186,6 +170,26 @@ namespace ClrVpin.Importer
             Window.Close();
         }
 
+        private void UpdateIsNew()
+        {
+            // flag models if they satisfy the update time range
+            Games.ForEach(game => game.AllFiles.ForEach(kv =>
+            {
+                var (_, files) = kv;
+                files.ForEach(file =>
+                {
+                    // flag file - if the update time range is satisfied
+                    file.IsNew = file.UpdatedAt >= (Settings.UpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.UpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
+
+                    // flag each url within the file - required to allow for simpler view binding
+                    file.Urls.ForEach(url => url.IsNew = file.IsNew);
+                });
+
+                // flag file collection (e.g. backglasses)
+                files.IsNew = files.Any(file => file.IsNew);
+            }));
+        }
+
         private static void NavigateToUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 
         private static void ShowImage(string tableImgUrl)
@@ -195,8 +199,19 @@ namespace ClrVpin.Importer
                 Url = tableImgUrl,
                 SelectedCommand = new ActionCommand(() => DialogHost.Close("ImageDialog"))
             };
+            
+            DialogHost.Show(imageUrlSelection, "ImporterResultsDialog");
+        }
 
-            DialogHost.Show(imageUrlSelection, "ImageDialog");
+        private static void ShowDatabaseItem(OnlineGame onlineGame)
+        {
+            DialogHost.Show(onlineGame.Hit.Game, "ImporterResultsDialog");
+        }
+
+        private static void AddDatabaseItem(OnlineGame onlineGame)
+        {
+            // todo; create new entry
+            //DialogHost.Show(onlineGame.Hit.Game, "ImporterResultsDialog");
         }
 
         private const int WindowMargin = 0;
