@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Input;
 using ClrVpin.Shared;
 
 namespace ClrVpin.Models.Importer.Vps;
@@ -19,4 +20,7 @@ public class OnlineGame : OnlineGameBase
     // reference to the highest fuzzy ranked DB match
     public GameHit Hit { get; set; }
     public bool IsMatched => Hit != null;
+
+    public ICommand ViewDatabaseEntryCommand { get; set; }
+    public ICommand AddDatabaseEntryCommand { get; set; }
 }
