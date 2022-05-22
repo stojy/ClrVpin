@@ -87,6 +87,13 @@ namespace ClrVpin.Importer
 
             // create separate property for each so they can be referenced individually in the UI
             MatchFuzzy = featureTypes.First(x => x.Id == (int)HitTypeEnum.Fuzzy);
+
+            // explicitly disable fuzzy logic if the settings are fully configured, e.g. frontend database folder not setup
+            if (!Model.SettingsManager.IsValid)
+            {
+                MatchFuzzy.IsActive = false;
+                MatchFuzzy.IsSupported = false;
+            }
         }
 
         public FeatureType MatchFuzzy { get; private set; }
