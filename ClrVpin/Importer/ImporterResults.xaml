@@ -292,7 +292,7 @@
                       </WrapPanel>
 
                       <WrapPanel>
-                        <TextBox MinWidth="150" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                        <TextBox MinWidth="170" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
                                  materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
                                  Text="{Binding Rom, UpdateSourceTrigger=PropertyChanged}" />
                         <CheckBox FontSize="16" Margin="10,12,0,0" Style="{StaticResource MaterialDesignCheckBox}"

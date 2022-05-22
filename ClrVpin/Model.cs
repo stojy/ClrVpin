@@ -21,13 +21,13 @@ namespace ClrVpin
             AboutCommand = new ActionCommand(() => new About.AboutViewModel().Show(mainWindow));
         }
 
-        public ICommand ScannerCommand { get; set; }
-        public ICommand RebuilderCommand { get; set; }
-        public ICommand ImporterCommand { get; set; }
-        public ICommand SettingsCommand { get; set; }
-        public ICommand AboutCommand { get; set; }
+        public ICommand ScannerCommand { get; }
+        public ICommand RebuilderCommand { get; }
+        public ICommand ImporterCommand { get; }
+        public ICommand SettingsCommand { get; }
+        public ICommand AboutCommand { get; }
 
-        public static SettingsManager SettingsManager { get; set; }
+        public static SettingsManager SettingsManager { get; private set; }
         public static Models.Settings.Settings Settings { get; set; }
 
         public static Rect ScreenWorkArea { get; set; }
