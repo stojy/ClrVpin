@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Text.Json.Serialization;
+using System.Windows.Input;
 using System.Xml.Serialization;
 using ClrVpin.Shared;
 
@@ -30,6 +31,7 @@ public class Game : GameBase
     public bool IsSelected { get; set; }
 
     [XmlIgnore]
+    [JsonIgnore]
     public ICommand NavigateToIpdbCommand { get; set; }
 
     [XmlIgnore]

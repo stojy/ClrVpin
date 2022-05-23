@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Logging;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
 using MaterialDesignThemes.Wpf;
@@ -203,9 +204,14 @@ namespace ClrVpin.Importer
             DialogHost.Show(imageUrlSelection, "ImporterResultsDialog");
         }
 
-        private static void ShowDatabaseItem(OnlineGame onlineGame)
+        private static async void ShowDatabaseItem(OnlineGame onlineGame)
         {
-            DialogHost.Show(onlineGame.Hit.Game, "ImporterResultsDialog");
+            // copy game details so that changes can be discarded if required, i.e. not saved
+            var game = onlineGame.Hit.Game.Clone();
+
+            var result = await DialogHost.Show(game, "ImporterResultsDialog") as DatabaseItemAction?;
+
+            Logger.Info($"Database Item: action={result}");
         }
 
         private static void AddDatabaseItem(OnlineGame onlineGame)
