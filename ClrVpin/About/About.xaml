@@ -20,7 +20,7 @@
       </Style>
     </DataTemplate.Resources>
 
-    <StackPanel Margin="5" Width="400">
+    <StackPanel Margin="5" Width="500">
       <WrapPanel>
         <TextBlock Style="{StaticResource MaterialDesignHeadline1TextBlock}" HorizontalAlignment="Center">ClrVpin</TextBlock>
         <TextBlock VerticalAlignment="Bottom" Margin="10,0,0,20" Text="{Binding AssemblyVersion}" />
@@ -60,6 +60,13 @@
           <StackPanel>
             <TextBlock Text="Thanks" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="HandClap" Style="{StaticResource PackIconStyle}" />
+          </StackPanel>
+        </Button>
+        
+        <Button Command="{Binding UpdateCommand}" Width="70" ToolTip="Special community thanks">
+          <StackPanel>
+            <TextBlock Text="Update" HorizontalAlignment="Center" />
+            <materialDesign:PackIcon Kind="Update" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
 

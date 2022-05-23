@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Home;
 using PropertyChanged;
 using Utils;
 
@@ -16,18 +17,20 @@ namespace ClrVpin.About
             AuthorCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(GitHubAuthorUrl) { UseShellExecute = true }));
             HelpCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(GitHubHelpUrl) { UseShellExecute = true }));
             ThanksCommand = new ActionCommand(() => new ThanksViewModel().Show(_window));
+            UpdateCommand = new ActionCommand(CheckAndHandleUpdate);
             DonateCommand = new ActionCommand(() => new DonateViewModel().Show(_window));
 
             AssemblyVersion = $"v{VersionManagement.GetProductVersion()}";
         }
 
-        public string AssemblyVersion { get; set; }
+        public string AssemblyVersion { get; }
 
-        public ICommand SourceCommand { get; set; }
-        public ICommand AuthorCommand { get; set; }
-        public ICommand HelpCommand { get; set; }
-        public ICommand ThanksCommand { get; set; }
-        public ICommand DonateCommand { get; set; }
+        public ICommand SourceCommand { get; }
+        public ICommand AuthorCommand { get; }
+        public ICommand HelpCommand { get; }
+        public ICommand ThanksCommand { get; }
+        public ICommand UpdateCommand { get; }
+        public ICommand DonateCommand { get; }
 
         public void Show(Window parent)
         {
@@ -46,6 +49,11 @@ namespace ClrVpin.About
             _window.Show();
             parent.Hide();
             _window.Closed += (_, _) => parent.Show();
+        }
+
+        private async void CheckAndHandleUpdate()
+        {
+            await VersionManagementView.CheckAndHandle(_window);
         }
 
         private MaterialWindowEx _window;
