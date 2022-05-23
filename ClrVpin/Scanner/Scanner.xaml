@@ -11,10 +11,10 @@
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="/Controls/Styles.xaml" />
     <ResourceDictionary Source="/Controls/Templates.xaml" />
+    <ResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <converters:HitTypeEnumDescriptionConverter x:Key="HitTypeDescriptionConverter" />
-  <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
   <converters:HitTypeEnumToVisibilityConverter x:Key="HitTypeFuzzyToVisibilityConverter" />
 

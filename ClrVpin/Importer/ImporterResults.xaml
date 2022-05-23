@@ -14,10 +14,8 @@
     <ResourceDictionary Source="\Controls\Styles.xaml" />
     <ResourceDictionary Source="\Controls\Templates.xaml" />
     <ResourceDictionary Source="DatabaseItem.xaml" />
+    <ResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
-
-  <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-  <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter" True="Collapsed" False="Visible" />
 
   <Style x:Key="UrlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}">
     <Setter Property="ToolTipService.InitialShowDelay" Value="0" />

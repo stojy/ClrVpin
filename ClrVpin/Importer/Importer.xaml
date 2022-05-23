@@ -9,9 +9,8 @@
     <ResourceDictionary Source="/Controls/Styles.xaml" />
     <ResourceDictionary Source="/Controls/Templates.xaml" />
     <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
+    <ResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
-
-  <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
   <DataTemplate x:Key="ImporterTemplate" DataType="{x:Type importer:ImporterViewModel}">
     <StackPanel Margin="5">
