@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using ClrVpin.Logging;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
 using MaterialDesignThemes.Wpf;
@@ -32,8 +31,8 @@ namespace ClrVpin.Importer
                 };
 
                 // local database show/add commands
-                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => ShowDatabaseItem(onlineGame));
-                onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => AddDatabaseItem(onlineGame));
+                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => DatabaseItem.ShowDatabaseItem(onlineGame));
+                onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => DatabaseItem.AddDatabaseItem(onlineGame));
 
                 // show large image popup
                 onlineGame.ImageFiles.ForEach(imageFile =>
@@ -200,24 +199,8 @@ namespace ClrVpin.Importer
                 Url = tableImgUrl,
                 SelectedCommand = new ActionCommand(() => DialogHost.Close("ImageDialog"))
             };
-            
+
             DialogHost.Show(imageUrlSelection, "ImporterResultsDialog");
-        }
-
-        private static async void ShowDatabaseItem(OnlineGame onlineGame)
-        {
-            // copy game details so that changes can be discarded if required, i.e. not saved
-            var game = onlineGame.Hit.Game.Clone();
-
-            var result = await DialogHost.Show(game, "ImporterResultsDialog") as DatabaseItemAction?;
-
-            Logger.Info($"Database Item: action={result}");
-        }
-
-        private static void AddDatabaseItem(OnlineGame onlineGame)
-        {
-            // todo; create new entry
-            //DialogHost.Show(onlineGame.Hit.Game, "ImporterResultsDialog");
         }
 
         private const int WindowMargin = 0;
