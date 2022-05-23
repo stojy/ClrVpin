@@ -31,8 +31,8 @@ namespace ClrVpin.Importer
                 };
 
                 // local database show/add commands
-                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => DatabaseItem.ShowDatabaseItem(onlineGame));
-                onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => DatabaseItem.AddDatabaseItem(onlineGame));
+                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.ShowDatabaseItem(onlineGame));
+                onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.AddDatabaseItem(onlineGame));
 
                 // show large image popup
                 onlineGame.ImageFiles.ForEach(imageFile =>

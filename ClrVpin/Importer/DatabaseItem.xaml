@@ -2,113 +2,125 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:database="clr-namespace:ClrVpin.Models.Shared.Database"
-                    xmlns:importer="clr-namespace:ClrVpin.Importer">
+                    xmlns:importer="clr-namespace:ClrVpin.Importer"
+                    xmlns:converters="clr-namespace:ClrVpin.Converters">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="\Controls\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <!-- database item (game) -->
+  <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+  <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter" True="Collapsed" False="Visible" />
+
+  <!--table and frontend properties-->
   <DataTemplate DataType="{x:Type database:Game}">
-    <!--explicit border with background and padding required because the dialog background is transparent to support the image dialog-->
-    <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" MinWidth="400">
-      <StackPanel>
-        <StackPanel.Resources>
-          <Style x:Key="DatabaseEntryTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
-            <Setter Property="Margin" Value="0,10" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
-            <Setter Property="FontSize" Value="16" />
-          </Style>
+    <StackPanel>
+      <StackPanel.Resources>
+        <Style x:Key="DatabaseEntryTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+          <Setter Property="Margin" Value="0,10" />
+          <Setter Property="HorizontalAlignment" Value="Left" />
+          <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
+          <Setter Property="FontSize" Value="16" />
+        </Style>
 
-          <Style x:Key="DatabaseEntryReadOnlyTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DatabaseEntryTextBoxStyle}">
-            <Setter Property="IsReadOnly" Value="True" />
-            <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="False" />
-          </Style>
-        </StackPanel.Resources>
-        <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="Local Database Entry" Margin="0" HorizontalAlignment="Center" />
+        <Style x:Key="DatabaseEntryReadOnlyTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DatabaseEntryTextBoxStyle}">
+          <Setter Property="IsReadOnly" Value="True" />
+          <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="False" />
+        </Style>
+      </StackPanel.Resources>
+      <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="Local Database Entry" Margin="0" HorizontalAlignment="Center" />
 
-        <!--table properties-->
-        <GroupBox Header="Table Properties" Margin="0,10,0,0">
-          <StackPanel Margin="5,0">
-            <TextBox MinWidth="400" Margin="0,5,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                     materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding TableFileWithExtension}"
-                     Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+      <!--table properties-->
+      <GroupBox Header="Table Properties" Margin="0,10,0,0">
+        <StackPanel Margin="5,0">
+          <TextBox MinWidth="400" Margin="0,5,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                   materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding TableFileWithExtension}"
+                   Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <WrapPanel Margin="0,0,0,0">
-              <!--<ComboBox ItemsSource="{Binding ManufacturersFilterView}"
+          <WrapPanel Margin="0,0,0,0">
+            <!--<ComboBox ItemsSource="{Binding ManufacturersFilterView}"
                             Text="{Binding Path=ManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             materialDesign:HintAssist.Hint="Manufacturer"
                             Style="{StaticResource EditComboBoxStyle}"
                             Width="300" Margin="10,0,0,0" />-->
-              <TextBox MinWidth="350" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Manufacturer" materialDesign:HintAssist.HelperText="e.g. Stern"
-                       Text="{Binding Manufacturer, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="350" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Manufacturer" materialDesign:HintAssist.HelperText="e.g. Stern"
+                     Text="{Binding Manufacturer, UpdateSourceTrigger=PropertyChanged}" />
 
-              <TextBox MinWidth="45" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Year" materialDesign:HintAssist.HelperText="e.g. 2022"
-                       Text="{Binding Year, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-            </WrapPanel>
+            <TextBox MinWidth="45" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Year" materialDesign:HintAssist.HelperText="e.g. 2022"
+                     Text="{Binding Year, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+          </WrapPanel>
 
-            <WrapPanel>
-              <TextBox MinWidth="100" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Type" materialDesign:HintAssist.HelperText="e.g. EM, SS"
-                       Text="{Binding Type, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-              <TextBox MinWidth="95" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Player Count"
-                       Text="{Binding Players, UpdateSourceTrigger=PropertyChanged}" />
-              <TextBox MinWidth="195" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="IPDB Identifier" materialDesign:HintAssist.HelperText="{Binding IpdbUrl}"
-                       Text="{Binding IpdbId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-            </WrapPanel>
+          <WrapPanel>
+            <TextBox MinWidth="100" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Type" materialDesign:HintAssist.HelperText="e.g. EM, SS"
+                     Text="{Binding Type, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="95" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Player Count"
+                     Text="{Binding Players, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="195" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="IPDB Identifier" materialDesign:HintAssist.HelperText="{Binding IpdbUrl}"
+                     Text="{Binding IpdbId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+          </WrapPanel>
 
-            <WrapPanel>
-              <TextBox MinWidth="170" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
-                       Text="{Binding Rom, UpdateSourceTrigger=PropertyChanged}" />
-              <CheckBox FontSize="16" Margin="10,12,0,0" Style="{StaticResource MaterialDesignCheckBox}"
-                        Content="Original (not manufactured)" IsChecked="{Binding IsOriginal, Mode=OneWay}" IsEnabled="False" />
-            </WrapPanel>
+          <WrapPanel>
+            <TextBox MinWidth="170" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
+                     Text="{Binding Rom, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox FontSize="16" Margin="10,12,0,0" Style="{StaticResource MaterialDesignCheckBox}"
+                      Content="Original (not manufactured)" IsChecked="{Binding IsOriginal, Mode=OneWay}" IsEnabled="False" />
+          </WrapPanel>
 
-            <TextBox MinWidth="400" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                     materialDesign:HintAssist.Hint="Theme(s)"
-                     Text="{Binding Theme, UpdateSourceTrigger=PropertyChanged}" />
-          </StackPanel>
-        </GroupBox>
+          <TextBox MinWidth="400" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                   materialDesign:HintAssist.Hint="Theme(s)"
+                   Text="{Binding Theme, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+      </GroupBox>
 
-        <!--frontend properties-->
-        <GroupBox Header="Frontend Properties" Margin="0,15,0,0">
-          <StackPanel Margin="5,0">
-            <TextBox MinWidth="400" Margin="0,5,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                     materialDesign:HintAssist.Hint="Description"
-                     Text="{Binding Description, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-            <WrapPanel>
-              <TextBox MinWidth="100" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Version"
-                       Text="{Binding Version, UpdateSourceTrigger=PropertyChanged}" />
-              <TextBox MinWidth="295" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Author(s)"
-                       Text="{Binding Author, UpdateSourceTrigger=PropertyChanged}" />
-            </WrapPanel>
-            <WrapPanel>
-              <TextBox MinWidth="50" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Rating"
-                       Text="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" />
-              <TextBox MinWidth="345" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Comment(s)"
-                       Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" />
-            </WrapPanel>
-            <WrapPanel>
-              <TextBox MinWidth="200" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Date Added"
-                       Text="{Binding DateAdded, UpdateSourceTrigger=PropertyChanged}" />
-              <TextBox MinWidth="195" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
-                       materialDesign:HintAssist.Hint="Date Modified"
-                       Text="{Binding DateModified, UpdateSourceTrigger=PropertyChanged}" />
-            </WrapPanel>
-          </StackPanel>
-        </GroupBox>
+      <!--frontend properties-->
+      <GroupBox Header="Frontend Properties" Margin="0,15,0,0">
+        <StackPanel Margin="5,0">
+          <TextBox MinWidth="400" Margin="0,5,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                   materialDesign:HintAssist.Hint="Description"
+                   Text="{Binding Description, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+          <WrapPanel>
+            <TextBox MinWidth="100" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Version"
+                     Text="{Binding Version, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="295" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Author(s)"
+                     Text="{Binding Author, UpdateSourceTrigger=PropertyChanged}" />
+          </WrapPanel>
+          <WrapPanel>
+            <TextBox MinWidth="50" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Rating"
+                     Text="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="345" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Comment(s)"
+                     Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" />
+          </WrapPanel>
+          <WrapPanel>
+            <TextBox MinWidth="200" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Date Added"
+                     Text="{Binding DateAdded, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="195" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     materialDesign:HintAssist.Hint="Date Modified"
+                     Text="{Binding DateModified, UpdateSourceTrigger=PropertyChanged}" />
+          </WrapPanel>
+        </StackPanel>
+      </GroupBox>
+    </StackPanel>
+  </DataTemplate>
+
+  <!-- database item (game) -->
+  <DataTemplate DataType="{x:Type importer:DatabaseItem}">
+    <!--explicit border with background and padding required because the dialog background is transparent to support the image dialog-->
+    <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" MinWidth="400">
+      <StackPanel>
+
+        <ContentControl Content="{Binding Game}" />
 
         <!--buttons-->
         <WrapPanel HorizontalAlignment="Center" Margin="0,10,0,0">
@@ -125,7 +137,11 @@
 
           <!--<Button Content="Save" HorizontalAlignment="Center" CommandParameter="True" Style="{StaticResource DialogButtonHighlightedStyle}"
                             ToolTip="Add entry to local database file" />-->
-          <Button Content="Update" IsCancel="True" Width="100" Style="{StaticResource DialogButtonHighlightedStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
+          <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonHighlightedStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Insert}"
+                  Visibility="{Binding IsExisting, Converter={StaticResource BoolToCollapsedConverter}}"
+                  ToolTip="Update entry in your local database" />
+          <Button Content="Update" Width="100" Style="{StaticResource DialogButtonHighlightedStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
+                  Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   ToolTip="Update entry in your local database" />
           <Button Content="Cancel" IsCancel="True" Width="100" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Cancel}"
                   ToolTip="Exit without updating/inserting an entry in your local database" />

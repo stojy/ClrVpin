@@ -11,7 +11,7 @@
     <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter" />
+  <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
   <DataTemplate x:Key="ImporterTemplate" DataType="{x:Type importer:ImporterViewModel}">
     <StackPanel Margin="5">
@@ -22,7 +22,7 @@
           <WrapPanel>
             <WrapPanel Width="230">
               <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeTemplate}" />
-              <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToCollapsedConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
+              <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
                       Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="500" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                 <materialDesign:PackIcon Kind="InformationOutline" />
               </Button>

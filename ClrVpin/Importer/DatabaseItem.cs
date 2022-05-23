@@ -1,27 +1,16 @@
-﻿using ClrVpin.Logging;
-using ClrVpin.Models.Importer.Vps;
-using MaterialDesignThemes.Wpf;
-using Utils.Extensions;
+﻿using ClrVpin.Models.Shared.Database;
 
 namespace ClrVpin.Importer
 {
-    public static class DatabaseItem
+    public class DatabaseItem
     {
-        public static async void ShowDatabaseItem(OnlineGame onlineGame)
+        public DatabaseItem(Game game, bool isExisting)
         {
-            // copy game details so that changes can be discarded if required, i.e. not saved
-            var game = onlineGame.Hit.Game.Clone();
-
-            var result = await DialogHost.Show(game, "ImporterResultsDialog") as DatabaseItemAction?;
-
-            Logger.Info($"Database Item: action={result}");
+            Game = game;
+            IsExisting = isExisting;
         }
 
-        public static void AddDatabaseItem(OnlineGame onlineGame)
-        {
-            // todo; create new entry
-            //DialogHost.Show(onlineGame.Hit.Game, "ImporterResultsDialog");
-        }
-
+        public Game Game { get; set; }
+        public bool IsExisting { get; set; }
     }
 }
