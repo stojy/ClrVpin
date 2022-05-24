@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:database="clr-namespace:ClrVpin.Models.Shared.Database"
-                    xmlns:importer="clr-namespace:ClrVpin.Importer">
+                    xmlns:importer="clr-namespace:ClrVpin.Importer"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -31,9 +32,15 @@
       <!--table properties-->
       <GroupBox Header="Table Properties" Margin="0,10,0,0">
         <StackPanel Margin="5,0">
-          <TextBox MinWidth="400" Margin="0,5,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+          <TextBox MinWidth="400" Margin="0,5,0,10" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                    materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding TableFileWithExtension}"
-                   Text="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                   Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <b:Interaction.Triggers>
+              <b:EventTrigger EventName="TextChanged">
+                <b:InvokeCommandAction Command="{Binding ChangedCommand}" />
+              </b:EventTrigger>
+            </b:Interaction.Triggers>
+          </TextBox>
 
           <WrapPanel Margin="0,0,0,0">
             <!--<ComboBox ItemsSource="{Binding ManufacturersFilterView}"
@@ -41,70 +48,70 @@
                             materialDesign:HintAssist.Hint="Manufacturer"
                             Style="{StaticResource EditComboBoxStyle}"
                             Width="300" Margin="10,0,0,0" />-->
-            <TextBox MinWidth="350" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+            <TextBox MinWidth="350" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Manufacturer" materialDesign:HintAssist.HelperText="e.g. Stern"
                      Text="{Binding Manufacturer, UpdateSourceTrigger=PropertyChanged}" />
 
-            <TextBox MinWidth="45" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+            <TextBox MinWidth="45" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Year" materialDesign:HintAssist.HelperText="e.g. 2022"
-                     Text="{Binding Year, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
           </WrapPanel>
 
           <WrapPanel>
-            <TextBox MinWidth="100" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+            <TextBox MinWidth="100" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Type" materialDesign:HintAssist.HelperText="e.g. EM, SS"
-                     Text="{Binding Type, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBox MinWidth="95" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     Text="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="95" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Player Count"
-                     Text="{Binding Players, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBox MinWidth="195" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     Text="{Binding Players, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="195" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="IPDB Identifier" materialDesign:HintAssist.HelperText="{Binding IpdbUrl}"
-                     Text="{Binding IpdbId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding IpdbId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
           </WrapPanel>
 
           <WrapPanel>
-            <TextBox MinWidth="170" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+            <TextBox MinWidth="170" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
-                     Text="{Binding Rom, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <CheckBox FontSize="16" Margin="10,12,0,0" Style="{StaticResource MaterialDesignCheckBox}"
                       Content="Original (not manufactured)" IsChecked="{Binding IsOriginal, Mode=OneWay}" IsEnabled="False" />
           </WrapPanel>
 
-          <TextBox MinWidth="400" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+          <TextBox MinWidth="400" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                    materialDesign:HintAssist.Hint="Theme(s)"
-                   Text="{Binding Theme, UpdateSourceTrigger=PropertyChanged}" />
+                   Text="{Binding Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
       </GroupBox>
 
       <!--frontend properties-->
       <GroupBox Header="Frontend Properties" Margin="0,15,0,0">
         <StackPanel Margin="5,0">
-          <TextBox MinWidth="400" Margin="0,5,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+          <TextBox MinWidth="400" Margin="0,5,0,10" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                    materialDesign:HintAssist.Hint="Description"
-                   Text="{Binding Description, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                   Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
           <WrapPanel>
-            <TextBox MinWidth="100" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+            <TextBox MinWidth="100" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Version"
-                     Text="{Binding Version, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBox MinWidth="295" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     Text="{Binding Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="295" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Author(s)"
-                     Text="{Binding Author, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
           </WrapPanel>
           <WrapPanel>
-            <TextBox MinWidth="50" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+            <TextBox MinWidth="50" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Rating"
-                     Text="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBox MinWidth="345" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     Text="{Binding Rating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="345" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Comment(s)"
-                     Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
           </WrapPanel>
           <WrapPanel>
-            <TextBox MinWidth="200" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+            <TextBox MinWidth="200" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Date Added"
-                     Text="{Binding DateAdded, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBox MinWidth="195" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryReadOnlyTextBoxStyle}"
+                     Text="{Binding DateAdded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox MinWidth="195" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      materialDesign:HintAssist.Hint="Date Modified"
-                     Text="{Binding DateModified, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding DateModified, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
           </WrapPanel>
         </StackPanel>
       </GroupBox>
@@ -139,6 +146,7 @@
                   ToolTip="Update entry in your local database" />
           <Button Content="Update" Width="100" Style="{StaticResource DialogButtonHighlightedStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                  IsEnabled="{Binding IsChanged}"
                   ToolTip="Update entry in your local database" />
           <Button Content="Cancel" IsCancel="True" Width="100" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Cancel}"
                   ToolTip="Exit without updating/inserting an entry in your local database" />

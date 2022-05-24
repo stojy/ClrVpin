@@ -4,7 +4,6 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
 
   <ResourceDictionary.MergedDictionaries>

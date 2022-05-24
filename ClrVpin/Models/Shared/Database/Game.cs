@@ -43,6 +43,10 @@ public class Game : GameBase
     [XmlIgnore]
     public bool IsOriginal => TableUtils.IsOriginal(Manufacturer);
 
+    [XmlIgnore]
+    [JsonIgnore]
+    public ICommand ChangedCommand { get; set; }
+
     public string GetContentName(ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball
         category == ContentTypeCategoryEnum.Media ? Description : Name;
