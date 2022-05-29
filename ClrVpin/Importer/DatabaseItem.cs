@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using ClrVpin.Controls;
 using ClrVpin.Models.Shared.Database;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
@@ -9,7 +10,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class DatabaseItem
     {
-        public DatabaseItem(Game game, bool isExisting)
+        public DatabaseItem(Game game, IOnlineGameCollections onlineGameCollections, bool isExisting)
         {
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
@@ -21,6 +22,13 @@ namespace ClrVpin.Importer
             IsExisting = isExisting;
             IsChanged = false;
 
+            Game.ManufacturersView = new ListCollectionView<string>(onlineGameCollections.Manufacturers);
+            Game.YearsView = new ListCollectionView<string>(onlineGameCollections.Years);
+            Game.TypesView = new ListCollectionView<string>(onlineGameCollections.Types);
+            Game.RomsView = new ListCollectionView<string>(onlineGameCollections.Roms);
+            Game.PlayersView = new ListCollectionView<int?>(onlineGameCollections.Players);
+            Game.ThemesView = new ListCollectionView<string>(onlineGameCollections.Themes);
+            
             Game.ChangedCommand = new ActionCommand(() => IsChanged = !Game.IsEqual(initialSerializedGame));
         }
 

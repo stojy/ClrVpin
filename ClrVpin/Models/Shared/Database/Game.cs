@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Windows.Input;
 using System.Xml.Serialization;
+using ClrVpin.Controls;
 using ClrVpin.Shared;
 
 namespace ClrVpin.Models.Shared.Database;
@@ -43,9 +44,34 @@ public class Game : GameBase
     [XmlIgnore]
     public bool IsOriginal => TableUtils.IsOriginal(Manufacturer);
 
+    // todo; move below into DatabaseItem?
     [XmlIgnore]
     [JsonIgnore]
     public ICommand ChangedCommand { get; set; }
+
+    [XmlIgnore]
+    [JsonIgnore]
+    public ListCollectionView<string> ManufacturersView { get; set; }
+
+    [XmlIgnore]
+    [JsonIgnore]
+    public ListCollectionView<string> YearsView { get; set; }
+
+    [XmlIgnore]
+    [JsonIgnore]
+    public ListCollectionView<string> TypesView { get; set; }
+
+    [XmlIgnore]
+    [JsonIgnore]
+    public ListCollectionView<int?> PlayersView { get; set; }
+
+    [XmlIgnore]
+    [JsonIgnore]
+    public ListCollectionView<string> RomsView { get; set; }
+
+    [XmlIgnore]
+    [JsonIgnore]
+    public ListCollectionView<string> ThemesView { get; set; }
 
     public string GetContentName(ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball

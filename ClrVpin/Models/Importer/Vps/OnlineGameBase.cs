@@ -24,7 +24,7 @@ public class OnlineGameBase
     public string[] Designers { get; set; }
 
     [JsonPropertyName("theme")]
-    public string[] Themes { get; set; }
+    public string[] Themes { get; set; } = Array.Empty<string>();
 
     public int? Players { get; set; }
     public string[] Features { get; set; }

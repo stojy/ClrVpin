@@ -6,9 +6,9 @@ namespace ClrVpin.Importer
 {
     public static class DatabaseItemManagement
     {
-        public static async void ShowDatabaseItem(OnlineGame onlineGame)
+        public static async void ShowDatabaseItem(OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
         {
-            var item = new DatabaseItem(onlineGame.Hit.Game, true);
+            var item = new DatabaseItem(onlineGame.Hit.Game, onlineGameCollections, true);
 
             var result = await DialogHost.Show(item, "ImporterResultsDialog") as DatabaseItemAction?;
 

@@ -15,8 +15,18 @@ using Utils.Extensions;
 
 namespace ClrVpin.Importer
 {
+    public interface IOnlineGameCollections
+    {
+        List<string> Manufacturers { get; }
+        List<string> Types { get; }
+        List<string> Years { get; }
+        List<int?> Players { get; }
+        List<string> Roms { get; }
+        List<string> Themes { get; }
+    }
+
     [AddINotifyPropertyChangedInterface]
-    public class ImporterResultsViewModel
+    public class ImporterResultsViewModel : IOnlineGameCollections
     {
         public ImporterResultsViewModel(List<OnlineGame> onlineGames)
         {
@@ -31,7 +41,7 @@ namespace ClrVpin.Importer
                 };
 
                 // local database show/add commands
-                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.ShowDatabaseItem(onlineGame));
+                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.ShowDatabaseItem(onlineGame, this));
                 onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.AddDatabaseItem(onlineGame));
 
                 // show large image popup
@@ -75,25 +85,32 @@ namespace ClrVpin.Importer
                 Filter = table => GamesView.Any(x => x.Name == table)
             };
 
-            ManufacturersFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList())
+            Manufacturers = onlineGames.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList();
+            ManufacturersFilterView = new ListCollectionView<string>(Manufacturers)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = manufacturer => GamesView.Any(x => x.Manufacturer == manufacturer)
             };
 
-            YearsBeginFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList())
+            Years = onlineGames.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            YearsBeginFilterView = new ListCollectionView<string>(Years)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = yearString => GamesView.Any(x => x.YearString == yearString)
             };
 
-            YearsEndFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList())
+            YearsEndFilterView = new ListCollectionView<string>(Years)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = yearString => GamesView.Any(x => x.YearString == yearString)
             };
 
-            TypesFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.Type).Distinct().Where(x => x != null).OrderBy(x => x).ToList());
+            Types = onlineGames.Select(x => x.Type).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            TypesFilterView = new ListCollectionView<string>(Types);
+
+            Players = onlineGames.Select(x => x.Players).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            Roms = onlineGames.Select(x => x.RomFiles?.FirstOrDefault()?.Name).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            Themes = onlineGames.Select(x => string.Join(", ", x.Themes)).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
 
             // generic handler for all the filter changes.. since all of the combo box values will need to be re-evaluated in sync anyway
             FilterChanged = new ActionCommand(() =>
@@ -119,6 +136,16 @@ namespace ClrVpin.Importer
 
             UpdateIsNew();
         }
+
+
+
+        // IOnlineGameCollections
+        public List<string> Manufacturers { get; }
+        public List<string> Types { get; }
+        public List<string> Years { get; }
+        public List<int?> Players { get; }
+        public List<string> Roms { get; }
+        public List<string> Themes { get; }
 
         public ImporterSettings Settings { get; } = Model.Settings.Importer;
 
