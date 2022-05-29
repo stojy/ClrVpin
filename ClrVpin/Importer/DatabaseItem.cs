@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using ClrVpin.Controls;
 using ClrVpin.Models.Shared.Database;
+using ClrVpin.Shared;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
 using Utils.Extensions;
@@ -29,7 +30,14 @@ namespace ClrVpin.Importer
             Game.PlayersView = new ListCollectionView<int?>(onlineGameCollections.Players);
             Game.ThemesView = new ListCollectionView<string>(onlineGameCollections.Themes);
             
-            Game.ChangedCommand = new ActionCommand(() => IsChanged = !Game.IsEqual(initialSerializedGame));
+            Game.ChangedCommand = new ActionCommand(() =>
+            {
+                // explicitly recalculate dynamic VM properties
+                TableUtils.UpdateGameProperties(Game);
+
+                // indicate whether anything has changed
+                IsChanged = !Game.IsEqual(initialSerializedGame);
+            });
         }
 
         public Game Game { get; }

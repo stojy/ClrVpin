@@ -46,14 +46,14 @@ namespace ClrVpin.Shared
                 menu.Games.ForEach(game =>
                 {
                     game.Number = number++;
-                    game.Ipdb = game.IpdbId ?? game.IpdbNr;
-                    game.IpdbUrl = string.IsNullOrEmpty(game.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
+                    UpdateGameProperties(game);
                     game.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.IpdbUrl));
                     game.Content.Init(contentTypes);
 
                     // assign fuzzy name details here to avoid it being calculated multiple times when comparing against EACH of the file matches
                     game.FuzzyTableDetails = Fuzzy.GetNameDetails(game.Name, false);
                     game.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(game.Description, false);
+
                 });
 
                 WriteDatabase(file, doc);
@@ -63,6 +63,24 @@ namespace ClrVpin.Shared
 
             Logger.Info($"Local database table count: {games.Count} (manufactured={games.Count(onlineGame => !onlineGame.IsOriginal)}, original={games.Count(onlineGame => onlineGame.IsOriginal)})");
             return games;
+        }
+
+        public static void UpdateGameProperties(Game game)
+        {
+            game.IsOriginal = IsOriginal(game.Manufacturer);
+
+            if (game.IsOriginal)
+            {
+                game.Ipdb = null;
+                game.IpdbId = null;
+                game.IpdbNr = null;
+                game.IpdbUrl = null;
+            }
+            else
+            {
+                game.Ipdb = game.IpdbId ?? game.IpdbNr;
+                game.IpdbUrl = string.IsNullOrEmpty(game.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
+            }
         }
 
         public static IList<string> GetContentFileNames(ContentType contentType, string folder)

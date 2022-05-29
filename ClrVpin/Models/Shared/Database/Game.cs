@@ -42,8 +42,8 @@ public class Game : GameBase
     public Fuzzy.FuzzyNameDetails FuzzyDescriptionDetails { get; set; }
 
     [XmlIgnore]
-    public bool IsOriginal => TableUtils.IsOriginal(Manufacturer);
-
+    public bool IsOriginal { get; set; }
+    
     // todo; move below into DatabaseItem?
     [XmlIgnore]
     [JsonIgnore]

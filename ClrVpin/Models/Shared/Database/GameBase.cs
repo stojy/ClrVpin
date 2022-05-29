@@ -1,7 +1,9 @@
 ﻿using System.Xml.Serialization;
+using PropertyChanged;
 
 namespace ClrVpin.Models.Shared.Database;
 
+[AddINotifyPropertyChangedInterface]
 public class GameBase
 {
     [XmlAttribute("name")]
