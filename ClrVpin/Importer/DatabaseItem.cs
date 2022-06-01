@@ -29,6 +29,8 @@ namespace ClrVpin.Importer
             Game.RomsView = new ListCollectionView<string>(onlineGameCollections.Roms);
             Game.PlayersView = new ListCollectionView<int?>(onlineGameCollections.Players);
             Game.ThemesView = new ListCollectionView<string>(onlineGameCollections.Themes);
+            Game.AuthorsView = new ListCollectionView<string>(onlineGameCollections.Authors);
+            Game.RatingsView = new ListCollectionView<double?>(onlineGameCollections.Ratings);
             
             Game.ChangedCommand = new ActionCommand(() =>
             {

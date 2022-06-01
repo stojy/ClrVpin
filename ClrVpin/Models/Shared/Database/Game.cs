@@ -73,6 +73,14 @@ public class Game : GameBase
     [JsonIgnore]
     public ListCollectionView<string> ThemesView { get; set; }
 
+    [XmlIgnore]
+    [JsonIgnore]
+    public ListCollectionView<string> AuthorsView { get; set; }
+    
+    [XmlIgnore]
+    [JsonIgnore]
+    public ListCollectionView<double?> RatingsView { get; set; }
+
     public string GetContentName(ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball
         category == ContentTypeCategoryEnum.Media ? Description : Name;

@@ -23,6 +23,8 @@ namespace ClrVpin.Importer
         List<int?> Players { get; }
         List<string> Roms { get; }
         List<string> Themes { get; }
+        List<string> Authors { get; }
+        List<double?> Ratings { get; }
     }
 
     [AddINotifyPropertyChangedInterface]
@@ -109,8 +111,11 @@ namespace ClrVpin.Importer
             TypesFilterView = new ListCollectionView<string>(Types);
 
             Players = onlineGames.Select(x => x.Players).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
-            Roms = onlineGames.Select(x => x.RomFiles?.FirstOrDefault()?.Name).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
-            Themes = onlineGames.Select(x => string.Join(", ", x.Themes)).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            Roms = onlineGames.Select(x => x.RomFiles?.FirstOrDefault()?.Name).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
+            Themes = onlineGames.Select(x => string.Join(", ", x.Themes)).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
+            var tablesWithAuthors = onlineGames.Select(x => x.TableFiles.Select(table => string.Join(", ", table.Authors.OrderBy(author => author)))).SelectMany(x => x);
+            Authors = tablesWithAuthors.Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
+            Ratings = new double?[] {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5}.ToList();
 
             // generic handler for all the filter changes.. since all of the combo box values will need to be re-evaluated in sync anyway
             FilterChanged = new ActionCommand(() =>
@@ -146,6 +151,8 @@ namespace ClrVpin.Importer
         public List<int?> Players { get; }
         public List<string> Roms { get; }
         public List<string> Themes { get; }
+        public List<string> Authors { get; }
+        public List<double?> Ratings { get; }
 
         public ImporterSettings Settings { get; } = Model.Settings.Importer;
 
