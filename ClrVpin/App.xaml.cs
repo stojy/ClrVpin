@@ -18,6 +18,7 @@ namespace ClrVpin
             // - https://stackoverflow.com/a/3869415/227110
             var ci = CultureInfo.CreateSpecificCulture(CultureInfo.CurrentCulture.Name);
             ci.DateTimeFormat.ShortDatePattern = "d/M/yyyy";
+            ci.DateTimeFormat.ShortTimePattern = "HH:mm:ss";
             Thread.CurrentThread.CurrentCulture = ci;
 
             // Ensure the current culture passed into bindings is the OS culture.  By default, WPF uses en-US as the culture, regardless of the system settings.

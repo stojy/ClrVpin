@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:database="clr-namespace:ClrVpin.Models.Shared.Database"
                     xmlns:importer="clr-namespace:ClrVpin.Importer"
@@ -30,19 +31,33 @@
 
   <controls:Triggers x:Key="DatePickerChangedTriggers" x:Shared="False">
     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}"/>
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}" />
     </controls:RoutedEventTrigger>
   </controls:Triggers>
-  
-  <!--<controls:Triggers x:Key="TimePickerChangedTriggers" x:Shared="False">
-    <controls:RoutedEventTrigger RoutedEvent="materialDesign:TimePicker.SelectedTimeChanged">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}"/>
-    </controls:RoutedEventTrigger>
-  </controls:Triggers>-->
+
+  <controls:Triggers x:Key="TimePickerChangedTriggers" x:Shared="False">
+    <!--not using event trigger as it doesn't work.. for unknown reasons-->
+    <!--<b:EventTrigger EventName="SelectedTime">
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}" />
+    </b:EventTrigger>-->
+
+    <b:PropertyChangedTrigger Binding="{Binding DateModified}" d:DataContext="{d:DesignInstance Type=database:Game}">
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}" />
+    </b:PropertyChangedTrigger>
+  </controls:Triggers>
 
   <!--table and frontend properties-->
   <DataTemplate DataType="{x:Type database:Game}">
     <StackPanel>
+        <b:Interaction.Triggers>
+          <b:EventTrigger EventName="Loaded">
+            <b:InvokeCommandAction Command="{Binding LoadedCommand}"/>
+          </b:EventTrigger>
+          <b:EventTrigger EventName="Unloaded">
+            <b:InvokeCommandAction Command="{Binding UnloadedCommand}"/>
+          </b:EventTrigger>
+        </b:Interaction.Triggers>
+
       <StackPanel.Resources>
         <Style x:Key="DatabaseEntryTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
           <Setter Property="Margin" Value="0,10" />
@@ -50,6 +65,7 @@
           <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
           <Setter Property="FontSize" Value="16" />
           <Setter Property="controls:StylableInteraction.Triggers" Value="{StaticResource TextChangedTriggers}" />
+          <!--<Setter Property="TextTrimming" Value="CharacterEllipsis" />-->
         </Style>
 
         <Style x:Key="ComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}">
@@ -151,7 +167,7 @@
           <TextBox materialDesign:HintAssist.Hint="Description"
                    Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                   MinWidth="420" Margin="0,5,0,10" />
+                   Width="420" Margin="0,5,0,10" />
 
           <WrapPanel>
             <TextBox Text="{Binding Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -184,37 +200,39 @@
               <Style x:Key="DatePickerStyle" TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignFloatingHintDatePicker}">
                 <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="False" />
                 <Setter Property="Margin" Value="0,10,0,15" />
-                <Setter Property="Width" Value="120" />
+                <Setter Property="Width" Value="112" />
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="SelectedDateFormat" Value="Short" />
-                <Setter Property="DisplayDateEnd" Value="{Binding MaxDateTime}"/>
+                <Setter Property="DisplayDateEnd" Value="{Binding MaxDateTime}" />
                 <Setter Property="controls:StylableInteraction.Triggers" Value="{StaticResource DatePickerChangedTriggers}" />
               </Style>
 
               <Style x:Key="TimePickerStyle" TargetType="materialDesign:TimePicker" BasedOn="{StaticResource MaterialDesignFloatingHintTimePicker}">
                 <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="False" />
-                <Setter Property="Margin" Value="3,10,10,15" />
-                <Setter Property="Width" Value="60" />
+                <Setter Property="Margin" Value="3,10,0,15" />
+                <Setter Property="Width" Value="90" />
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="Is24Hours" Value="True" />
-                <Setter Property="WithSeconds" Value="False" />
+                <Setter Property="WithSeconds" Value="True" />
+                <Setter Property="controls:StylableInteraction.Triggers" Value="{StaticResource TimePickerChangedTriggers}" />
               </Style>
             </WrapPanel.Resources>
 
             <DatePicker SelectedDate="{Binding DateModifiedDateOnly}"
-                                       materialDesign:HintAssist.Hint="Modified Date/Time" 
-                                       materialDesign:HintAssist.HelperText="{Binding DateModified}"
-                                       Style="{StaticResource DatePickerStyle}" />
-
+                        materialDesign:HintAssist.Hint="Modified"
+                        materialDesign:HintAssist.HelperText="{Binding DateModified}"
+                        Style="{StaticResource DatePickerStyle}" />
             <materialDesign:TimePicker SelectedTime="{Binding DateModified}"
-                                       materialDesign:HintAssist.Hint=" " 
-                                       Style="{StaticResource TimePickerStyle}" 
-                                       />
-            <!--SelectedTimeChanged="{Binding ChangedCommand}"-->
+                                       materialDesign:HintAssist.Hint=" "
+                                       Style="{StaticResource TimePickerStyle}" />
 
-            <!--<TextBox MinWidth="195" Margin="5,10,0,10" Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                     materialDesign:HintAssist.Hint="Date Modified"
-                     Text="{Binding DateModified, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
+            <DatePicker SelectedDate="{Binding DateModifiedDateOnly}"
+                        materialDesign:HintAssist.Hint="Modified"
+                        materialDesign:HintAssist.HelperText="{Binding DateModified}"
+                        Style="{StaticResource DatePickerStyle}" Margin="10,10,0,15"/>
+            <materialDesign:TimePicker SelectedTime="{Binding DateModified}"
+                                       materialDesign:HintAssist.Hint=" "
+                                       Style="{StaticResource TimePickerStyle}" />
           </WrapPanel>
         </StackPanel>
       </GroupBox>

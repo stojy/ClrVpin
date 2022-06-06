@@ -12,6 +12,8 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class DatabaseItem
     {
+        private bool _loaded;
+
         public DatabaseItem(Game originalGame, IOnlineGameCollections onlineGameCollections, bool isExisting)
         {
             // clone game details so that..
@@ -38,8 +40,15 @@ namespace ClrVpin.Importer
                 Game.DateModifiedDateOnly = dateTime.Date;
             }
 
+            Game.LoadedCommand = new ActionCommand(() => _loaded = true);
+            Game.UnloadedCommand = new ActionCommand(() => _loaded = false);
             Game.ChangedCommand = new ActionCommand(() =>
             {
+                // skip unnecessary changes that occur before control is loaded OR after the control has been unloaded
+                // - e.g. populating items source for combobox causes the 'SelectedItem' to change which results in a 'false positiive' Changed event firing
+                if (!_loaded)
+                    return;
+
                 // update date/time preserving the time portion, which is unfortunately cleared by the DateTime picker
                 if (Game.DateModifiedDateOnly != null)
                     Game.DateModified = Game.DateModifiedDateOnly + (Game.DateModified?.TimeOfDay ?? TimeSpan.Zero);

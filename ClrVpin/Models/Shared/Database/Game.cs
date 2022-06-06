@@ -52,6 +52,14 @@ public class Game : GameBase
 
     [XmlIgnore]
     [JsonIgnore]
+    public ICommand LoadedCommand { get; set; }
+
+    [XmlIgnore]
+    [JsonIgnore]
+    public ICommand UnloadedCommand { get; set; }
+
+    [XmlIgnore]
+    [JsonIgnore]
     public ListCollectionView<string> ManufacturersView { get; set; }
 
     [XmlIgnore]
@@ -79,15 +87,18 @@ public class Game : GameBase
     public ListCollectionView<string> AuthorsView { get; set; }
     
     [XmlIgnore]
+    [JsonIgnore]
     public DateTime MaxDateTime { get; set; }
 
     [XmlIgnore]
+    [JsonIgnore]
     public DateTime? DateModified { get; set; }
 
     [XmlIgnore]
     [JsonIgnore]
     // date only portion to accommodate the DatePicker which resets the time portion when a date is selected
     public DateTime? DateModifiedDateOnly { get; set; }
+
 
     public string GetContentName(ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball

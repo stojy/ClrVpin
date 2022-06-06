@@ -5,6 +5,7 @@ using Microsoft.Xaml.Behaviors;
 namespace ClrVpin.Controls
 {
     // Workaround for the standard behavior EventTrigger which doesn't support attached events
+    // - e.g. ComboBox 'TextBoxBase.TextChanged' (an attached event to TextBoxBase) vs TextBox 'TextChanged' (event is defined with the control)
     // - refer
     //   - https: //stackoverflow.com/a/37635681/227110
     //   - http://joyfulwpf.blogspot.com/2009/05/mvvm-invoking-command-on-attached-event.html

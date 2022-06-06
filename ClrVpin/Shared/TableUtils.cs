@@ -81,7 +81,6 @@ namespace ClrVpin.Shared
                 game.Ipdb = game.IpdbId ?? game.IpdbNr;
                 game.IpdbUrl = string.IsNullOrEmpty(game.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
             }
-
         }
 
         public static IList<string> GetContentFileNames(ContentType contentType, string folder)
