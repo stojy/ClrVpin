@@ -228,7 +228,7 @@ namespace ClrVpin.Importer
             var imageUrlSelection = new UrlSelection
             {
                 Url = tableImgUrl,
-                SelectedCommand = new ActionCommand(() => DialogHost.Close("ImageDialog"))
+                SelectedCommand = new ActionCommand(() => DialogHost.Close("ImporterResultsDialog"))
             };
 
             DialogHost.Show(imageUrlSelection, "ImporterResultsDialog");
