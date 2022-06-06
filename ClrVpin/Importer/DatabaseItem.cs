@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using ClrVpin.Controls;
 using ClrVpin.Models.Shared.Database;
 using ClrVpin.Shared;
@@ -11,15 +12,14 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class DatabaseItem
     {
-        public DatabaseItem(Game game, IOnlineGameCollections onlineGameCollections, bool isExisting)
+        public DatabaseItem(Game originalGame, IOnlineGameCollections onlineGameCollections, bool isExisting)
         {
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
             // - allow object comparison for serialization (ignoring a few VM properties)
+            var initialSerializedGame = JsonSerializer.Serialize(originalGame.Clone());
 
-            var initialSerializedGame = JsonSerializer.Serialize(game.Clone());
-
-            Game = game.Clone();
+            Game = originalGame.Clone();
             IsExisting = isExisting;
             IsChanged = false;
 
@@ -30,10 +30,23 @@ namespace ClrVpin.Importer
             Game.PlayersView = new ListCollectionView<int?>(onlineGameCollections.Players);
             Game.ThemesView = new ListCollectionView<string>(onlineGameCollections.Themes);
             Game.AuthorsView = new ListCollectionView<string>(onlineGameCollections.Authors);
-            Game.RatingsView = new ListCollectionView<double?>(onlineGameCollections.Ratings);
-            
+            Game.MaxDateTime = DateTime.Today.AddDays(1);
+
+            if (DateTime.TryParse(Game.DateModifiedString, out var dateTime))
+            {
+                Game.DateModified = dateTime;
+                Game.DateModifiedDateOnly = dateTime.Date;
+            }
+
             Game.ChangedCommand = new ActionCommand(() =>
             {
+                // update date/time preserving the time portion, which is unfortunately cleared by the DateTime picker
+                if (Game.DateModifiedDateOnly != null)
+                    Game.DateModified = Game.DateModifiedDateOnly + (Game.DateModified?.TimeOfDay ?? TimeSpan.Zero);
+                else
+                    Game.DateModified = new DateTime(1900, 1, 1);
+                Game.DateModifiedString = Game.DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
+
                 // explicitly recalculate dynamic VM properties
                 TableUtils.UpdateGameProperties(Game);
 

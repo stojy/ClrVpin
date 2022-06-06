@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 using System.Windows.Input;
 using System.Xml.Serialization;
 using ClrVpin.Controls;
@@ -78,8 +79,15 @@ public class Game : GameBase
     public ListCollectionView<string> AuthorsView { get; set; }
     
     [XmlIgnore]
+    public DateTime MaxDateTime { get; set; }
+
+    [XmlIgnore]
+    public DateTime? DateModified { get; set; }
+
+    [XmlIgnore]
     [JsonIgnore]
-    public ListCollectionView<double?> RatingsView { get; set; }
+    // date only portion to accommodate the DatePicker which resets the time portion when a date is selected
+    public DateTime? DateModifiedDateOnly { get; set; }
 
     public string GetContentName(ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball

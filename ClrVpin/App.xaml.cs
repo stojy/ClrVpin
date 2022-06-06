@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
@@ -13,6 +14,12 @@ namespace ClrVpin
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            // override culture format so that the date picker format can be controlled
+            // - https://stackoverflow.com/a/3869415/227110
+            var ci = CultureInfo.CreateSpecificCulture(CultureInfo.CurrentCulture.Name);
+            ci.DateTimeFormat.ShortDatePattern = "d/M/yyyy";
+            Thread.CurrentThread.CurrentCulture = ci;
+
             // Ensure the current culture passed into bindings is the OS culture.  By default, WPF uses en-US as the culture, regardless of the system settings.
             // - https://stackoverflow.com/questions/520115/stringformat-localization-issues-in-wpf
             FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));

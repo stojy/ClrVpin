@@ -1,4 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
+using Microsoft.VisualBasic.CompilerServices;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Shared.Database;
@@ -64,5 +66,5 @@ public class GameBase
     public string DateAdded { get; set; }
 
     [XmlElement("datemodified", IsNullable = true)]
-    public string DateModified { get; set; }
+    public string DateModifiedString { get; set; }
 }
