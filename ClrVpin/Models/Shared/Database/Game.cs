@@ -99,6 +99,16 @@ public class Game : GameBase
     // date only portion to accommodate the DatePicker which resets the time portion when a date is selected
     public DateTime? DateModifiedDateOnly { get; set; }
 
+    [XmlIgnore]
+    [JsonIgnore]
+    public DateTime? DateAdded { get; set; }
+
+    [XmlIgnore]
+    [JsonIgnore]
+    // date only portion to accommodate the DatePicker which resets the time portion when a date is selected
+    public DateTime? DateAddedDateOnly { get; set; }
+
+
 
     public string GetContentName(ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball

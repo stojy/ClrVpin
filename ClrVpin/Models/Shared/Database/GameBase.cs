@@ -63,7 +63,7 @@ public class GameBase
     public string IpdbNr { get; set; }
 
     [XmlElement("dateadded", IsNullable = true)]
-    public string DateAdded { get; set; }
+    public string DateAddedString { get; set; }
 
     [XmlElement("datemodified", IsNullable = true)]
     public string DateModifiedString { get; set; }

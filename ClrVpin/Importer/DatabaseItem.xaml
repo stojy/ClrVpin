@@ -218,11 +218,11 @@
               </Style>
             </WrapPanel.Resources>
 
-            <DatePicker SelectedDate="{Binding DateModifiedDateOnly}"
-                        materialDesign:HintAssist.Hint="Modified"
-                        materialDesign:HintAssist.HelperText="{Binding DateModified}"
+            <DatePicker SelectedDate="{Binding DateAddedDateOnly}"
+                        materialDesign:HintAssist.Hint="Added"
+                        materialDesign:HintAssist.HelperText="{Binding DateAdded}"
                         Style="{StaticResource DatePickerStyle}" />
-            <materialDesign:TimePicker SelectedTime="{Binding DateModified}"
+            <materialDesign:TimePicker SelectedTime="{Binding DateAdded}"
                                        materialDesign:HintAssist.Hint=" "
                                        Style="{StaticResource TimePickerStyle}" />
 

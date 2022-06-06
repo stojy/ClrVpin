@@ -34,7 +34,14 @@ namespace ClrVpin.Importer
             Game.AuthorsView = new ListCollectionView<string>(onlineGameCollections.Authors);
             Game.MaxDateTime = DateTime.Today.AddDays(1);
 
-            if (DateTime.TryParse(Game.DateModifiedString, out var dateTime))
+            
+            if (DateTime.TryParse(Game.DateAddedString, out var dateTime))
+            {
+                Game.DateAdded = dateTime;
+                Game.DateAddedDateOnly = dateTime.Date;
+            }
+
+            if (DateTime.TryParse(Game.DateModifiedString, out dateTime))
             {
                 Game.DateModified = dateTime;
                 Game.DateModifiedDateOnly = dateTime.Date;
@@ -48,6 +55,13 @@ namespace ClrVpin.Importer
                 // - e.g. populating items source for combobox causes the 'SelectedItem' to change which results in a 'false positiive' Changed event firing
                 if (!_loaded)
                     return;
+
+                // update date/time preserving the time portion, which is unfortunately cleared by the DateTime picker
+                if (Game.DateAddedDateOnly != null)
+                    Game.DateAdded = Game.DateAddedDateOnly + (Game.DateAdded?.TimeOfDay ?? TimeSpan.Zero);
+                else
+                    Game.DateAdded = new DateTime(1900, 1, 1);
+                Game.DateAddedString = Game.DateAdded?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // update date/time preserving the time portion, which is unfortunately cleared by the DateTime picker
                 if (Game.DateModifiedDateOnly != null)
