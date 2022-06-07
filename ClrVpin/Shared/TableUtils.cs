@@ -78,9 +78,13 @@ namespace ClrVpin.Shared
             }
             else
             {
-                game.Ipdb = game.IpdbId ?? game.IpdbNr;
+                game.Ipdb = game.IpdbId ?? game.IpdbNr ?? game.Ipdb;
                 game.IpdbUrl = string.IsNullOrEmpty(game.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
             }
+
+            // memory optimisation to perform this operation once on database read instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
+            game.NameLowerCase = game.Name.ToLower();
+            game.DescriptionLowerCase = game.Description.ToLower();
         }
 
         public static IList<string> GetContentFileNames(ContentType contentType, string folder)
@@ -161,8 +165,8 @@ namespace ClrVpin.Shared
         }
 
         // assign isOriginal based on the manufacturer
-        public static bool IsOriginal(string manufacturer) => manufacturer.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) ||
-                                                              manufacturer.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase);
+        public static bool IsOriginal(string manufacturer) => manufacturer?.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) == true ||
+                                                              manufacturer?.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase) == true;
 
         private static void WriteDatabase(string file, XDocument doc)
         {

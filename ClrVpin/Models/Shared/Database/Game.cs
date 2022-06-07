@@ -33,6 +33,12 @@ public class Game : GameBase
     public bool IsSelected { get; set; }
 
     [XmlIgnore]
+    public string NameLowerCase { get; set; }
+
+    [XmlIgnore]
+    public string DescriptionLowerCase { get; set; }
+
+    [XmlIgnore]
     [JsonIgnore]
     public ICommand NavigateToIpdbCommand { get; set; }
 

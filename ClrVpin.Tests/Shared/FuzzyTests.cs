@@ -229,6 +229,7 @@ public class FuzzyTests
 
         games.ForEach(g =>
         {
+            TableUtils.UpdateGameProperties(g);
             g.FuzzyTableDetails = Fuzzy.GetNameDetails(g.Name, false);
             g.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(g.Description, false);
         });

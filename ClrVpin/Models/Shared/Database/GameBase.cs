@@ -1,6 +1,4 @@
-﻿using System;
-using System.Xml.Serialization;
-using Microsoft.VisualBasic.CompilerServices;
+﻿using System.Xml.Serialization;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Shared.Database;
