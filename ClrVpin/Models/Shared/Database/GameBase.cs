@@ -9,60 +9,61 @@ public class GameBase
     [XmlAttribute("name")]
     public string Name { get; set; } // used by VPX (table, b2s, and pov - filename must match this property.  Refer GetContentName
 
-    [XmlElement("description", IsNullable = true)]
+    [XmlElement("description")]
     public string Description { get; set; } // used by frontends (pbx/pby) - filename must match this property.  Refer GetContentName
 
-    [XmlElement("rom", IsNullable = true)]
+    [XmlElement("rom")]
     public string Rom { get; set; }
 
-    [XmlElement("manufacturer", IsNullable = true)]
+    [XmlElement("manufacturer")]
     public string Manufacturer { get; set; }
 
-    [XmlElement("year", IsNullable = true)]
+    [XmlElement("year")]
     public string Year { get; set; }
 
-    [XmlElement("type", IsNullable = true)]
+    [XmlElement("type")]
     public string Type { get; set; }
 
-    [XmlElement("hidedmd", IsNullable = true)]
+    [XmlElement("hidedmd")]
     public string HideDmd { get; set; }
 
-    [XmlElement("hidetopper", IsNullable = true)]
+    [XmlElement("hidetopper")]
     public string HideTopper { get; set; }
 
-    [XmlElement("hidebackglass", IsNullable = true)]
+    [XmlElement("hidebackglass")]
     public string HideBackglass { get; set; }
 
-    [XmlElement("enabled", IsNullable = true)]
+    [XmlElement("enabled")]
     public string Enabled { get; set; }
 
-    [XmlElement("rating", IsNullable = true)]
+    [XmlElement("rating")]
     public string Rating { get; set; }
 
-    [XmlElement("players", IsNullable = true)]
+    [XmlElement("players")]
     public string Players { get; set; }
 
-    [XmlElement("comment", IsNullable = true)]
+    [XmlElement("comment")]
     public string Comment { get; set; }
 
-    [XmlElement("theme", IsNullable = true)]
+    [XmlElement("theme")]
     public string Theme { get; set; }
 
-    [XmlElement("author", IsNullable = true)]
+    [XmlElement("author")]
     public string Author { get; set; }
 
-    [XmlElement("version", IsNullable = true)]
+    [XmlElement("version")]
     public string Version { get; set; }
 
-    [XmlElement("ipdbid", IsNullable = true)]
+    [XmlElement("ipdbid")]
     public string IpdbId { get; set; }
 
-    [XmlElement("ipdbNr", IsNullable = true)]
+    [XmlIgnore] // read property if it exists, but don't write it back during serialization. support kept here for PinballX Manager which (i believe) uses this field
+    [XmlElement("ipdbNr")]
     public string IpdbNr { get; set; }
 
-    [XmlElement("dateadded", IsNullable = true)]
+    [XmlElement("dateadded")]
     public string DateAddedString { get; set; }
 
-    [XmlElement("datemodified", IsNullable = true)]
+    [XmlElement("datemodified")]
     public string DateModifiedString { get; set; }
 }

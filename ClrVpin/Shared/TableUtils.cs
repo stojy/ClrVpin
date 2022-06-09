@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
 using Utils;
 using Utils.Extensions;
+using Utils.Xml;
 
 namespace ClrVpin.Shared
 {
@@ -53,10 +53,10 @@ namespace ClrVpin.Shared
                     // assign fuzzy name details here to avoid it being calculated multiple times when comparing against EACH of the file matches
                     game.FuzzyTableDetails = Fuzzy.GetNameDetails(game.Name, false);
                     game.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(game.Description, false);
-
                 });
 
-                WriteDatabase(file, doc);
+                // proof of concept - serialize to disk again to verify similarity/compatibility
+                menu.SerializeToXDocument().Cleanse().SerializeToFile(file + ".bak");
 
                 games.AddRange(menu.Games);
             });
@@ -72,14 +72,16 @@ namespace ClrVpin.Shared
             if (game.IsOriginal)
             {
                 game.Ipdb = null;
-                game.IpdbId = null;
-                game.IpdbNr = null;
                 game.IpdbUrl = null;
+                game.IpdbNr = null;
+
+                // don't assign null as this will result in the tag being removed from serialization.. which is valid, but inconsistent with the original xml file that always defines <ipdbid>
+                game.IpdbId = "";
             }
             else
             {
                 game.Ipdb = game.IpdbId ?? game.IpdbNr ?? game.Ipdb;
-                game.IpdbUrl = string.IsNullOrEmpty(game.Ipdb) ? "" : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
+                game.IpdbUrl = game.Ipdb == null ? null : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
             }
 
             // memory optimisation to perform this operation once on database read instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
@@ -167,20 +169,6 @@ namespace ClrVpin.Shared
         // assign isOriginal based on the manufacturer
         public static bool IsOriginal(string manufacturer) => manufacturer?.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) == true ||
                                                               manufacturer?.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase) == true;
-
-        private static void WriteDatabase(string file, XDocument doc)
-        {
-            // proof of concept to confirm DB can be written back as an EXACT match when the view model properties are present
-            using var writer = XmlWriter.Create(file + ".bak", new XmlWriterSettings
-            {
-                Indent = true,
-                IndentChars = "\t",
-                Encoding = Encoding.GetEncoding("Windows-1252"),
-                DoNotEscapeUriAttributes = true
-            });
-            doc.Save(writer);
-        }
-
 
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
