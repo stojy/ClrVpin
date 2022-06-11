@@ -8,6 +8,7 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
+using ClrVpin.Models.Shared.Database;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;
@@ -29,7 +30,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel : IOnlineGameCollections
     {
-        public ImporterResultsViewModel(List<OnlineGame> onlineGames)
+        public ImporterResultsViewModel(List<Game> games, List<OnlineGame> onlineGames)
         {
             // assign VM properties
             onlineGames.ForEach(onlineGame =>
@@ -42,7 +43,7 @@ namespace ClrVpin.Importer
                 };
 
                 // local database show/add commands
-                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.ShowDatabaseItem(onlineGame, this));
+                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.ViewDatabaseItem(games, onlineGame, this));
                 onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.AddDatabaseItem(onlineGame));
 
                 // show large image popup

@@ -193,7 +193,7 @@ namespace ClrVpin.Scanner
             progress.Show(_scannerWindow);
 
             progress.Update("Loading Database");
-            var games = TableUtils.GetGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
+            var games = TableUtils.ReadGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
 
             progress.Update("Checking Files");
             var unmatchedFiles = await ScannerUtils.CheckAsync(games, UpdateProgress);

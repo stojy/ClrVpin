@@ -16,7 +16,7 @@ namespace ClrVpin.Shared
 {
     public static class TableUtils
     {
-        public static List<Game> GetGamesFromDatabases(IList<ContentType> contentTypes)
+        public static List<Game> ReadGamesFromDatabases(IList<ContentType> contentTypes)
         {
             var databaseContentType = Model.Settings.GetDatabaseContentType();
 
@@ -56,13 +56,25 @@ namespace ClrVpin.Shared
                 });
 
                 // proof of concept - serialize to disk again to verify similarity/compatibility
-                menu.SerializeToXDocument().Cleanse().SerializeToFile(file + ".bak");
+                WriteGamesToDatabase(menu.Games, file + ".bak");
 
                 games.AddRange(menu.Games);
             });
 
             Logger.Info($"Local database table count: {games.Count} (manufactured={games.Count(onlineGame => !onlineGame.IsOriginal)}, original={games.Count(onlineGame => onlineGame.IsOriginal)})");
             return games;
+        }
+
+        public static void WriteGamesToDatabase(List<Game> games, string file = null)
+        {
+            if (file == null)
+            {
+                var databaseContentType = Model.Settings.GetDatabaseContentType();
+                file = Path.Combine(databaseContentType.Folder, "Visual Pinball - ClrVpin.xml.bak") ;
+            }
+
+            var menu = new Menu { Games = games };
+            menu.SerializeToXDocument().Cleanse().SerializeToFile(file);
         }
 
         public static void UpdateGameProperties(Game game)

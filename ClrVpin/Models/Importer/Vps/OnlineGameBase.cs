@@ -51,7 +51,7 @@ public class OnlineGameBase
 
 public class GameHit
 {
-    public Game Game { get; init; }
+    public Game Game { get; set; }
     public int? Score { get; set; }
 }
 

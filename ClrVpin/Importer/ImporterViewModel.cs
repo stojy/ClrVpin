@@ -112,7 +112,7 @@ namespace ClrVpin.Importer
             if (MatchFuzzy.IsActive)
             {
                 progress.Update("Loading database");
-                games = TableUtils.GetGamesFromDatabases(Settings.GetAllContentTypes());
+                games = TableUtils.ReadGamesFromDatabases(Settings.GetAllContentTypes());
                 Logger.Info($"Loading database complete, duration={progress.Duration}", true);
             }
 
@@ -142,7 +142,7 @@ namespace ClrVpin.Importer
 
         private void ShowResults(TimeSpan duration, List<Game> games, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
         {
-            var results = new ImporterResultsViewModel(onlineGames);
+            var results = new ImporterResultsViewModel(games, onlineGames);
             results.Show(_window, WindowMargin, WindowMargin);
 
             var statistics = new ImporterStatisticsViewModel(games, onlineGames, duration, fixStatistics, matchStatistics);

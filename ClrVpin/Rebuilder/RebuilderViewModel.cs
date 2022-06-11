@@ -224,7 +224,7 @@ namespace ClrVpin.Rebuilder
             progress.Show(_rebuilderWindow);
 
             progress.Update("Loading Database");
-            var games = TableUtils.GetGamesFromDatabases(new List<ContentType> { Settings.GetSelectedDestinationContentType() });
+            var games = TableUtils.ReadGamesFromDatabases(new List<ContentType> { Settings.GetSelectedDestinationContentType() });
 
             progress.Update("Checking and Matching Files");
             var unmatchedFiles = await RebuilderUtils.CheckAndMatchAsync(games, UpdateProgress);
