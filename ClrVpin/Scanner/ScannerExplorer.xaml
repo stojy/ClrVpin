@@ -20,7 +20,7 @@
   <DataTemplate x:Key="HitTemplate" DataType="shared:Hit">
     <Grid Background="Transparent">
       <materialDesign:PackIcon Kind="{Binding ContentTypeEnum, Converter={StaticResource ContentTypeToIconConverter}}"
-                               Height="45" Width="45" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                               Height="40" Width="40" VerticalAlignment="Center" HorizontalAlignment="Center" />
       <b:Interaction.Triggers>
         <b:EventTrigger EventName="MouseUp">
           <b:InvokeCommandAction Command="{Binding OpenFileCommand}" />
@@ -53,7 +53,7 @@
 
   <DataTemplate x:Key="SmellyTemplate" DataType="database:Game">
     <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Content.IsSmelly, Converter={StaticResource SmellyToIconConverter}}"
-                             Height="25" Width="25" VerticalAlignment="Center" HorizontalAlignment="Center">
+                             Height="40" Width="40" VerticalAlignment="Center" HorizontalAlignment="Center">
       <!-- just for giggles.. setting foreground by a style trigger instead of a converter.. it's rather large!-->
       <materialDesign:PackIcon.Style>
         <Style TargetType="materialDesign:PackIcon">
@@ -71,9 +71,9 @@
   </DataTemplate>
 
   <DataTemplate x:Key="IpdbTemplate" DataType="database:Game">
-    <TextBlock>
-      <Hyperlink NavigateUri="{Binding IpdbUrl}" Command="{Binding NavigateToIpdbCommand}">
-        <TextBlock Text="{Binding Ipdb}" />
+    <TextBlock VerticalAlignment="Center" >
+      <Hyperlink NavigateUri="{Binding Derived.IpdbUrl}" Command="{Binding NavigateToIpdbCommand}">
+        <TextBlock Text="{Binding Derived.Ipdb}" />
       </Hyperlink>
     </TextBlock>
 
@@ -81,10 +81,17 @@
 
   <Style x:Key="TextCellStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignDataGridTextColumnStyle}">
     <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
   <DataTemplate x:Key="ScannerExplorerTemplate" DataType="{x:Type scanner:ScannerExplorerViewModel}">
     <DockPanel>
+      <DockPanel.Resources>
+        <Style x:Key="CellStyle" TargetType="DataGridCell" BasedOn="{StaticResource NoBorderDataGridCellStyle}">
+          <Setter Property="MinHeight" Value="50" />
+        </Style>
+      </DockPanel.Resources>
+
       <WrapPanel DockPanel.Dock="Top" Margin="10,0,0,20">
         <TextBox Width="150" HorizontalAlignment="Left"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic"
@@ -106,9 +113,9 @@
 
       <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False"
                 materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
-                CellStyle="{StaticResource NoBorderDataGridCellStyle}">
+                CellStyle="{StaticResource CellStyle}">
         <DataGrid.Columns>
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="#" Binding="{Binding Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="#" Binding="{Binding Derived.Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly"
                                   CanUserSort="True" />
           <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />

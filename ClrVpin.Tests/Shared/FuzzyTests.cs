@@ -230,7 +230,7 @@ public class FuzzyTests
 
         games.ForEach((g,index) =>
         {
-            Game.UpdateDerivedProperties(g, index);
+            GameDerived.Update(g, index);
             g.FuzzyTableDetails = Fuzzy.GetNameDetails(g.Name, false);
             g.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(g.Description, false);
         });
@@ -238,22 +238,22 @@ public class FuzzyTests
         // exact match #1
         var fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         var (game, _) = games.Match(fileDetails);
-        Assert.That(game?.Ipdb, Is.EqualTo("1"));
+        Assert.That(game?.Derived.Ipdb, Is.EqualTo("1"));
 
         // exact match #2 - i.,e. not the first match
         fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         (game, _) = games.Match(fileDetails);
-        Assert.That(game?.Ipdb, Is.EqualTo("2"));
+        Assert.That(game?.Derived.Ipdb, Is.EqualTo("2"));
 
         // longest match chosen - i.e. not the first match
         fileDetails = Fuzzy.GetNameDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         (game, _) = games.Match(fileDetails);
-        Assert.That(game?.Ipdb, Is.EqualTo("4"));
+        Assert.That(game?.Derived.Ipdb, Is.EqualTo("4"));
 
         // partial match
         fileDetails = Fuzzy.GetNameDetails("Blah Cowboy Eight Ball blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         (game, _) = games.Match(fileDetails);
-        Assert.That(game?.Ipdb, Is.EqualTo("2"));
+        Assert.That(game?.Derived.Ipdb, Is.EqualTo("2"));
 
         // no match chosen - i.e. not the first match
         fileDetails = Fuzzy.GetNameDetails("what the heck is this file.f4v", true);
@@ -263,24 +263,24 @@ public class FuzzyTests
         // partial match - extra score because file only has 1 match in the games DB
         fileDetails = Fuzzy.GetNameDetails("Frankenstein.vpx", true);
         (game, _) = games.Match(fileDetails);
-        Assert.That(game?.Ipdb, Is.EqualTo("5"));
+        Assert.That(game?.Derived.Ipdb, Is.EqualTo("5"));
 
         // partial match - NO extra score because file has multiple matches in the games DB
         fileDetails = Fuzzy.GetNameDetails("Ball.vpx", true);
         (game, var score) = games.Match(fileDetails);
-        Assert.That(game?.Ipdb, Is.EqualTo(null));
+        Assert.That(game?.Derived.Ipdb, Is.EqualTo(null));
         Assert.That(score, Is.EqualTo(15));
 
         // ??
         fileDetails = Fuzzy.GetNameDetails("Transformers Marcade Mod v1.2.vpx", true);
         (game, score) = games.Match(fileDetails);
-        Assert.That(game?.Ipdb, Is.EqualTo("6"));
+        Assert.That(game?.Derived.Ipdb, Is.EqualTo("6"));
         Assert.That(score, Is.EqualTo(114 + Fuzzy.ScoringNoWhiteSpaceBonus));
 
         // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw table name
         fileDetails = Fuzzy.GetNameDetails("V1 (IDSA 1986) Logo.png", true);
         (game, score) = games.Match(fileDetails);
-        Assert.That(game?.Ipdb, Is.EqualTo("7"));
+        Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
         Assert.That(score, Is.EqualTo(135));
     }
 }

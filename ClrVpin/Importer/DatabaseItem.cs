@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Models.Shared.Database;
-using ClrVpin.Shared;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
 using Utils.Extensions;
@@ -73,7 +72,7 @@ namespace ClrVpin.Importer
                 Game.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // explicitly recalculate dynamic VM properties
-                Game.UpdateDerivedProperties(Game);
+                GameDerived.Update(Game);
 
                 // indicate whether anything has changed
                 IsItemChanged = !Game.IsEqual(initialSerializedGame);

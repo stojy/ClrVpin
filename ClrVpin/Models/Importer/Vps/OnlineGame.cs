@@ -15,7 +15,7 @@ public class OnlineGame : OnlineGameBase
     public int Index { get; set; }
     public UrlSelection ImageUrlSelection { get; set; }
     public string YearString { get; set; }
-    public bool IsOriginal => Game.CheckIsOriginal(Manufacturer);
+    public bool IsOriginal => GameDerived.CheckIsOriginal(Manufacturer);
 
     // reference to the highest fuzzy ranked DB match
     public GameHit Hit { get; set; }

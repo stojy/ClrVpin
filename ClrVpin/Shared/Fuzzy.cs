@@ -263,8 +263,8 @@ namespace ClrVpin.Shared
                 fuzzyFileName = fuzzyFileName.Remove(startMatchLength.Value);
 
             // check if we have a match that contains the fuzzy file name in BOTH the table and description
-            var matchesContainingFileName = orderedMatches.Where(match => match.Game.NameLowerCase.Contains(fuzzyFileName) ||
-                                                                          match.Game.DescriptionLowerCase.Contains(fuzzyFileName)).ToList();
+            var matchesContainingFileName = orderedMatches.Where(match => match.Game.Derived.NameLowerCase.Contains(fuzzyFileName) ||
+                                                                          match.Game.Derived.DescriptionLowerCase.Contains(fuzzyFileName)).ToList();
 
             return matchesContainingFileName.Count == 2 ? matchesContainingFileName.First() : null;
         }

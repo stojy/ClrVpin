@@ -163,7 +163,7 @@ namespace ClrVpin.Importer
                 Logger.Info($"Unmatched local table: '{localGame.Name}'");
                 
                 matchStatistics.Add(ImporterMatchStatistics.UnmatchedLocalTotal);
-                matchStatistics.Add(localGame.IsOriginal ? ImporterMatchStatistics.UnmatchedLocalOriginal : ImporterMatchStatistics.UnmatchedLocalManufactured);
+                matchStatistics.Add(localGame.Derived.IsOriginal ? ImporterMatchStatistics.UnmatchedLocalOriginal : ImporterMatchStatistics.UnmatchedLocalManufactured);
             });
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using System.Windows.Input;
 using System.Xml.Serialization;
 using ClrVpin.Shared;
@@ -11,27 +10,7 @@ public class Game : GameBase
 {
     [XmlIgnore]
     [JsonIgnore]
-    public int Number { get; private set; }
-
-    [XmlIgnore]
-    [JsonIgnore]
-    public string Ipdb { get; private set; }
-
-    [XmlIgnore]
-    [JsonIgnore]
-    public string IpdbUrl { get; private set; }
-
-    [XmlIgnore]
-    [JsonIgnore]
-    public string NameLowerCase { get; private set; }
-
-    [XmlIgnore]
-    [JsonIgnore]
-    public string DescriptionLowerCase { get; private set; }
-
-    [XmlIgnore]
-    [JsonIgnore]
-    public bool IsOriginal { get; private set; }
+    public GameDerived Derived { get; } = new GameDerived();
 
     [XmlIgnore]
     [JsonIgnore]
@@ -68,33 +47,4 @@ public class Game : GameBase
 
     public override string ToString() => $"Table: {TableFileWithExtension}, IsSmelly: {Content?.IsSmelly}";
 
-    public static void UpdateDerivedProperties(Game game, int? number = null)
-    {
-        game.Number = number ?? game.Number;
-
-        game.IsOriginal = CheckIsOriginal(game.Manufacturer);
-
-        if (game.IsOriginal)
-        {
-            game.Ipdb = null;
-            game.IpdbUrl = null;
-            game.IpdbNr = null;
-
-            // don't assign null as this will result in the tag being removed from serialization.. which is valid, but inconsistent with the original xml file that always defines <ipdbid>
-            game.IpdbId = "";
-        }
-        else
-        {
-            game.Ipdb = game.IpdbId ?? game.IpdbNr ?? game.Ipdb;
-            game.IpdbUrl = game.Ipdb == null ? null : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
-        }
-
-        // memory optimisation to perform this operation once on database read instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
-        game.NameLowerCase = game.Name.ToLower();
-        game.DescriptionLowerCase = game.Description.ToLower();
-    }
-
-    // assign isOriginal based on the manufacturer
-    public static bool CheckIsOriginal(string manufacturer) => manufacturer?.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) == true ||
-                                                               manufacturer?.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase) == true;
 }

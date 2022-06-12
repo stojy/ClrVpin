@@ -58,8 +58,8 @@ namespace ClrVpin.Importer
             var onlineOriginalCount = _onlineGames.Count(game => game.IsOriginal);
 
             var localTotalCount = _games.Count;
-            var localManufacturedCount = _games.Count(game => !game.IsOriginal);
-            var localOriginalCount = _games.Count(game => game.IsOriginal);
+            var localManufacturedCount = _games.Count(game => !game.Derived.IsOriginal);
+            var localOriginalCount = _games.Count(game => game.Derived.IsOriginal);
 
             return "Feed Fixes" +
                    $"\n{feedFixStatistics}" +
@@ -88,7 +88,7 @@ namespace ClrVpin.Importer
         private readonly Dictionary<string, int> _feedFixStatistics;
         private readonly Dictionary<string, int> _matchStatistics;
         private readonly List<OnlineGame> _onlineGames;
-        private List<Game> _games;
+        private readonly List<Game> _games;
 
         private const int StatisticsKeyWidth = -30;
         private const int WindowMargin = 0;

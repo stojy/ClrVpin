@@ -45,8 +45,8 @@ namespace ClrVpin.Shared
                 var number = 1;
                 menu.Games.ForEach(game =>
                 {
-                    Game.UpdateDerivedProperties(game, number++);
-                    game.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.IpdbUrl));
+                    GameDerived.Update(game, number++);
+                    game.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.Derived.IpdbUrl));
                     game.Content.Init(contentTypes);
 
                     // assign fuzzy name details here to avoid it being calculated multiple times when comparing against EACH of the file matches
@@ -60,7 +60,7 @@ namespace ClrVpin.Shared
                 games.AddRange(menu.Games);
             });
 
-            Logger.Info($"Local database table count: {games.Count} (manufactured={games.Count(onlineGame => !onlineGame.IsOriginal)}, original={games.Count(onlineGame => onlineGame.IsOriginal)})");
+            Logger.Info($"Local database table count: {games.Count} (manufactured={games.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={games.Count(onlineGame => onlineGame.Derived.IsOriginal)})");
             return games;
         }
 
