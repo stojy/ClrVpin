@@ -13,7 +13,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterStatisticsViewModel
     {
-        public ImporterStatisticsViewModel(List<Game> games, List<OnlineGame> onlineGames, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics, ImporterMatchStatistics matchStatistics)
+        public ImporterStatisticsViewModel(List<GameDetail> games, List<OnlineGame> onlineGames, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics, ImporterMatchStatistics matchStatistics)
         {
             _games = games;
             _onlineGames = onlineGames;
@@ -88,7 +88,7 @@ namespace ClrVpin.Importer
         private readonly Dictionary<string, int> _feedFixStatistics;
         private readonly Dictionary<string, int> _matchStatistics;
         private readonly List<OnlineGame> _onlineGames;
-        private readonly List<Game> _games;
+        private readonly List<GameDetail> _games;
 
         private const int StatisticsKeyWidth = -30;
         private const int WindowMargin = 0;

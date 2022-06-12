@@ -30,7 +30,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel : IOnlineGameCollections
     {
-        public ImporterResultsViewModel(List<Game> games, List<OnlineGame> onlineGames)
+        public ImporterResultsViewModel(List<GameDetail> games, List<OnlineGame> onlineGames)
         {
             // assign VM properties
             onlineGames.ForEach(onlineGame =>

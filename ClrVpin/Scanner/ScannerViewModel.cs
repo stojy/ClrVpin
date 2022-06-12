@@ -206,7 +206,7 @@ namespace ClrVpin.Scanner
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
-            _games = new ObservableCollection<Game>(games);
+            _games = new ObservableCollection<GameDetail>(games);
 
             ShowResults(gameFiles, unmatchedFiles, progress.Duration);
 
@@ -250,7 +250,7 @@ namespace ClrVpin.Scanner
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;
 
-        private ObservableCollection<Game> _games;
+        private ObservableCollection<GameDetail> _games;
         private Window _scannerWindow;
         private const int WindowMargin = 0;
     }

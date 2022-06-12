@@ -14,14 +14,14 @@ namespace ClrVpin.Importer
     {
         private bool _loaded;
 
-        public DatabaseItem(Game originalGame, IOnlineGameCollections onlineGameCollections, bool isExisting)
+        public DatabaseItem(GameDetail originalGameDetail, IOnlineGameCollections onlineGameCollections, bool isExisting)
         {
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
             // - allow object comparison for serialization (ignoring a few VM properties)
-            var initialSerializedGame = JsonSerializer.Serialize(originalGame.Clone());
+            var initialSerializedGame = JsonSerializer.Serialize(originalGameDetail.Clone());
 
-            Game = originalGame.Clone();
+            GameDetail = originalGameDetail.Clone();
             IsExisting = isExisting;
             IsItemChanged = false;
 
@@ -35,13 +35,13 @@ namespace ClrVpin.Importer
             
             MaxDateTime = DateTime.Today.AddDays(1);
             
-            if (DateTime.TryParse(Game.DateAddedString, out var dateTime))
+            if (DateTime.TryParse(GameDetail.DateAddedString, out var dateTime))
             {
                 DateAdded = dateTime;
                 DateAddedDateOnly = dateTime.Date;
             }
 
-            if (DateTime.TryParse(Game.DateModifiedString, out dateTime))
+            if (DateTime.TryParse(GameDetail.DateModifiedString, out dateTime))
             {
                 DateModified = dateTime;
                 DateModifiedDateOnly = dateTime.Date;
@@ -61,7 +61,7 @@ namespace ClrVpin.Importer
                     DateAdded = DateAddedDateOnly + (DateAdded?.TimeOfDay ?? TimeSpan.Zero);
                 else
                     DateAdded = new DateTime(1900, 1, 1);
-                Game.DateAddedString = DateAdded?.ToString("yyyy-MM-dd HH:mm:ss");
+                GameDetail.DateAddedString = DateAdded?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // update date/time preserving the time portion, which is unfortunately cleared by the DateTime picker
                 if (
@@ -69,17 +69,17 @@ namespace ClrVpin.Importer
                     DateModified = DateModifiedDateOnly + (DateModified?.TimeOfDay ?? TimeSpan.Zero);
                 else
                     DateModified = new DateTime(1900, 1, 1);
-                Game.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
+                GameDetail.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // explicitly recalculate dynamic VM properties
-                GameDerived.Init(Game);
+                GameDerived.Init(GameDetail);
 
                 // indicate whether anything has changed
-                IsItemChanged = !Game.IsEqual(initialSerializedGame);
+                IsItemChanged = !GameDetail.IsEqual(initialSerializedGame);
             });
         }
 
-        public Game Game { get; }
+        public GameDetail GameDetail { get; }
         public bool IsExisting { get; set; }
         public bool IsItemChanged { get; set; }
 

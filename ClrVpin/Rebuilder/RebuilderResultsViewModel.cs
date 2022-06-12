@@ -15,7 +15,7 @@ namespace ClrVpin.Rebuilder
     [AddINotifyPropertyChangedInterface]
     public class RebuilderResultsViewModel : ResultsViewModel
     {
-        public RebuilderResultsViewModel(ObservableCollection<Game> games)
+        public RebuilderResultsViewModel(ObservableCollection<GameDetail> games)
         {
             Games = games;
             Initialise();

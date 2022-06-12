@@ -14,7 +14,7 @@ namespace ClrVpin.Shared
     [AddINotifyPropertyChangedInterface]
     public abstract class StatisticsViewModel
     {
-        protected StatisticsViewModel(ObservableCollection<Game> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
+        protected StatisticsViewModel(ObservableCollection<GameDetail> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
         {
             GameFiles = gameFiles;
             UnmatchedFiles = unmatchedFiles;
@@ -25,7 +25,7 @@ namespace ClrVpin.Shared
             Settings = Model.Settings;
         }
 
-        protected ObservableCollection<Game> Games { get; }
+        protected ObservableCollection<GameDetail> Games { get; }
         protected TimeSpan ElapsedTime { get; }
 
         public string Result { get; set; }

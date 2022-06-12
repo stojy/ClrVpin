@@ -15,7 +15,7 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerResultsViewModel : ResultsViewModel
     {
-        public ScannerResultsViewModel(ObservableCollection<Game> games)
+        public ScannerResultsViewModel(ObservableCollection<GameDetail> games)
         {
             Games = games;
             Initialise();

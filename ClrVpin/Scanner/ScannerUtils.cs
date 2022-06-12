@@ -17,13 +17,13 @@ namespace ClrVpin.Scanner
     {
         private static readonly Models.Settings.Settings _settings = Model.Settings;
 
-        public static async Task<List<FileDetail>> CheckAsync(List<Game> games, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> CheckAsync(List<GameDetail> games, Action<string, float> updateProgress)
         {
             var unmatchedFiles = await Task.Run(() => Check(games, updateProgress));
             return unmatchedFiles;
         }
 
-        private static List<FileDetail> Check(List<Game> games, Action<string, float> updateProgress)
+        private static List<FileDetail> Check(List<GameDetail> games, Action<string, float> updateProgress)
         {
             var unmatchedFiles = new List<FileDetail>();
 
@@ -68,13 +68,13 @@ namespace ClrVpin.Scanner
             return unmatchedFiles;
         }
 
-        public static async Task<List<FileDetail>> FixAsync(List<Game> games, string backupFolder, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> FixAsync(List<GameDetail> games, string backupFolder, Action<string, float> updateProgress)
         {
             var fixedFileDetails = await Task.Run(() => Fix(games, backupFolder, updateProgress));
             return fixedFileDetails;
         }
 
-        private static List<FileDetail> Fix(ICollection<Game> games, string backupFolder, Action<string, float> updateProgress)
+        private static List<FileDetail> Fix(ICollection<GameDetail> games, string backupFolder, Action<string, float> updateProgress)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 
@@ -88,7 +88,7 @@ namespace ClrVpin.Scanner
             var gamesWithContentCount = 0;
             var gamesWithContentMaxCount = 0;
             
-            static bool GamesWithContentPredicate(Game game, ContentType contentType) => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing));
+            static bool GamesWithContentPredicate(GameDetail game, ContentType contentType) => game.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing));
 
             selectedContentTypes.ForEach(contentType =>
             {
@@ -153,7 +153,7 @@ namespace ClrVpin.Scanner
             return gameFiles;
         }
 
-        private static void FixOrderedHits(ICollection<Hit> orderedHits, List<FileDetail> gameFiles, Game game)
+        private static void FixOrderedHits(ICollection<Hit> orderedHits, List<FileDetail> gameFiles, GameDetail gameDetail)
         {
             // first hit may be HitType.Missing.. i.e. no file info present
             // - this is filtered out during the file delete/rename/etc because..
@@ -174,7 +174,7 @@ namespace ClrVpin.Scanner
             // - e.g. preferred = wrong case, other=correct name (not selected)
             if (preferredHit.Type == HitTypeEnum.CorrectName && !nonPreferredHits.Any(hit => hit.Type.In(_settings.Scanner.SelectedFixHitTypes)))
             {
-                Logger.Info($"Skipping (fix criteria not selected).. table: {game.Name}, description: {game.Description}, " +
+                Logger.Info($"Skipping (fix criteria not selected).. table: {gameDetail.Name}, description: {gameDetail.Description}, " +
                             $"preferred type: {preferredHit.Type.GetDescription()}, required fix types (unselected): {string.Join('|', nonPreferredHits.Select(x => x.Type.GetDescription()).Distinct())}, " +
                             $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
@@ -184,14 +184,14 @@ namespace ClrVpin.Scanner
             // - e.g. correct name not selected
             if (preferredHit.Type != HitTypeEnum.CorrectName && !preferredHit.Type.In(_settings.Scanner.SelectedFixHitTypes))
             {
-                Logger.Info($"Skipping (fix criteria not selected).. table: {game.Name}, description: {game.Description}, " +
+                Logger.Info($"Skipping (fix criteria not selected).. table: {gameDetail.Name}, description: {gameDetail.Description}, " +
                             $"preferred type (unselected): {preferredHit.Type.GetDescription()}, " +
                             $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
             }
 
             // delete all hit files except the first
-            Logger.Info($"Fixing.. table: {game.Name}, description: {game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
+            Logger.Info($"Fixing.. table: {gameDetail.Name}, description: {gameDetail.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
 
             var (description, warning) = Fuzzy.GetScoreDetail(preferredHit.Score);
             var message = $"- matched (score: {description})..\n  source: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}";
@@ -204,7 +204,7 @@ namespace ClrVpin.Scanner
 
             // if the preferred hit file isn't 'CorrectName', then rename it
             if (preferredHit.Type != HitTypeEnum.CorrectName)
-                gameFiles.Add(FileUtils.Rename(preferredHit, game, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
+                gameFiles.Add(FileUtils.Rename(preferredHit, gameDetail, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
         }
 
         public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
@@ -230,7 +230,7 @@ namespace ClrVpin.Scanner
             });
         }
 
-        private static void AddMissingStatus(List<Game> games)
+        private static void AddMissingStatus(List<GameDetail> games)
         {
             games.ForEach(game =>
             {

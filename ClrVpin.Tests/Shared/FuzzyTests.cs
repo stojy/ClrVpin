@@ -217,15 +217,15 @@ public class FuzzyTests
     [Test]
     public void DatabaseMultipleGamesMatchTest()
     {
-        var games = new List<Game>
+        var games = new List<GameDetail>
         {
-            new Game { IpdbId = "1", Name = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
-            new Game { IpdbId = "2", Name = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
-            new Game { IpdbId = "3", Name = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
-            new Game { IpdbId = "4", Name = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
-            new Game { IpdbId = "5", Name = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" },
-            new Game { IpdbId = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" },
-            new Game { IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo" }
+            new GameDetail { IpdbId = "1", Name = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
+            new GameDetail { IpdbId = "2", Name = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
+            new GameDetail { IpdbId = "3", Name = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
+            new GameDetail { IpdbId = "4", Name = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" },
+            new GameDetail { IpdbId = "5", Name = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" },
+            new GameDetail { IpdbId = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" },
+            new GameDetail { IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo" }
         };
 
         games.ForEach((g,index) =>

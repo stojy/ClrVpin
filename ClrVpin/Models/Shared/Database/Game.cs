@@ -1,32 +1,69 @@
-﻿using System.Text.Json.Serialization;
-using System.Windows.Input;
-using System.Xml.Serialization;
-using ClrVpin.Shared;
-using ClrVpin.Shared.Fuzzy;
+﻿using System.Xml.Serialization;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Shared.Database;
 
 [AddINotifyPropertyChangedInterface]
-public class Game : GameBase
+public class Game
 {
-    [XmlIgnore]
-    [JsonIgnore]
-    public GameDerived Derived { get; } = new GameDerived();
+    [XmlAttribute("name")]
+    public string Name { get; set; } // used by VPX (table, b2s, and pov - filename must match this property.  Refer GetName
 
-    [XmlIgnore]
-    [JsonIgnore]
-    public FuzzyDetails Fuzzy { get; } = new FuzzyDetails();
+    [XmlElement("description")]
+    public string Description { get; set; } // used by frontends (pbx/pby) - filename must match this property.  Refer GetName
 
-    [XmlIgnore]
-    [JsonIgnore]
-    // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
-    public Content Content { get; } = new Content();
+    [XmlElement("rom")]
+    public string Rom { get; set; }
 
-    [XmlIgnore]
-    [JsonIgnore]
-    public ViewState ViewState { get; } = new ViewState();
+    [XmlElement("manufacturer")]
+    public string Manufacturer { get; set; }
 
+    [XmlElement("year")]
+    public string Year { get; set; }
 
-    public override string ToString() => $"Table: {Derived.TableFileWithExtension}, IsSmelly: {Content?.IsSmelly}";
+    [XmlElement("type")]
+    public string Type { get; set; }
+
+    [XmlElement("hidedmd")]
+    public string HideDmd { get; set; }
+
+    [XmlElement("hidetopper")]
+    public string HideTopper { get; set; }
+
+    [XmlElement("hidebackglass")]
+    public string HideBackglass { get; set; }
+
+    [XmlElement("enabled")]
+    public string Enabled { get; set; }
+
+    [XmlElement("rating")]
+    public string Rating { get; set; }
+
+    [XmlElement("players")]
+    public string Players { get; set; }
+
+    [XmlElement("comment")]
+    public string Comment { get; set; }
+
+    [XmlElement("theme")]
+    public string Theme { get; set; }
+
+    [XmlElement("author")]
+    public string Author { get; set; }
+
+    [XmlElement("version")]
+    public string Version { get; set; }
+
+    [XmlElement("ipdbid")]
+    public string IpdbId { get; set; }
+
+    [XmlIgnore] // read property if it exists, but don't write it back during serialization. support kept here for PinballX Manager which (i believe) uses this field
+    [XmlElement("ipdbNr")]
+    public string IpdbNr { get; set; }
+
+    [XmlElement("dateadded")]
+    public string DateAddedString { get; set; }
+
+    [XmlElement("datemodified")]
+    public string DateModifiedString { get; set; }
 }

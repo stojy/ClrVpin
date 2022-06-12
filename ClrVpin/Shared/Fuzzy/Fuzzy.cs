@@ -157,18 +157,18 @@ namespace ClrVpin.Shared.Fuzzy
         }
 
         // fuzzy match against all games
-        public static (Game game, int? score) Match(this IList<Game> games, FuzzyNameDetails fuzzyFileDetails)
+        public static (GameDetail game, int? score) Match(this IList<GameDetail> games, FuzzyNameDetails fuzzyFileDetails)
         {
             // check EVERY DB game entry against the file to look for the best match
             // - Match will create a fuzzy version (aka cleaned) of each game DB entry so it can be compared against the fuzzy file details (already cleaned)
             // - Match table name (non-media) OR description (media)
-            var tableFileMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.Fuzzy.TableDetails, fuzzyFileDetails) }).ToList();
-            var descriptionMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.Fuzzy.DescriptionDetails, fuzzyFileDetails) }).ToList();
+            var tableFileMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.TableDetails, fuzzyFileDetails) }).ToList();
+            var descriptionMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.DescriptionDetails, fuzzyFileDetails) }).ToList();
 
             var orderedMatches = tableFileMatches.Concat(descriptionMatches)
                 .OrderByDescending(x => x.MatchResult.success)
                 .ThenByDescending(x => x.MatchResult.score)
-                .ThenByDescending(x => x.Game.Name.Length) // tie breaker
+                .ThenByDescending(x => x.GameDetail.Name.Length) // tie breaker
                 .ToList();
 
             var preferredMatch = orderedMatches.FirstOrDefault();
@@ -200,7 +200,7 @@ namespace ClrVpin.Shared.Fuzzy
                 score += 50;
             }
 
-            return (score >= MinMatchScore ? preferredMatch?.Game : null, score);
+            return (score >= MinMatchScore ? preferredMatch?.GameDetail : null, score);
         }
 
         public static (bool success, int score) Match(FuzzyNameDetails gameDetailFuzzyDetails, FuzzyNameDetails fileFuzzyDetails)
@@ -246,8 +246,8 @@ namespace ClrVpin.Shared.Fuzzy
                 fuzzyFileName = fuzzyFileName.Remove(startMatchLength.Value);
 
             // check if we have a match that contains the fuzzy file name in BOTH the table and description
-            var matchesContainingFileName = orderedMatches.Where(match => match.Game.Derived.NameLowerCase.Contains(fuzzyFileName) ||
-                                                                          match.Game.Derived.DescriptionLowerCase.Contains(fuzzyFileName)).ToList();
+            var matchesContainingFileName = orderedMatches.Where(match => match.GameDetail.Derived.NameLowerCase.Contains(fuzzyFileName) ||
+                                                                          match.GameDetail.Derived.DescriptionLowerCase.Contains(fuzzyFileName)).ToList();
 
             return matchesContainingFileName.Count == 2 ? matchesContainingFileName.First() : null;
         }
@@ -365,7 +365,7 @@ namespace ClrVpin.Shared.Fuzzy
         // - refer https://stackoverflow.com/questions/6624811/how-to-pass-anonymous-types-as-parameters
         private class MatchDetail
         {
-            public Game Game;
+            public GameDetail GameDetail;
             public (bool success, int score) MatchResult;
         }
 

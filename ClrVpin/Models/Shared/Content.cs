@@ -20,9 +20,9 @@ namespace ClrVpin.Models.Shared
         // true if game contains any hits types that are not valid
         public bool IsSmelly { get; set; }
 
-        public static string GetName(Game game, ContentTypeCategoryEnum category) =>
+        public static string GetName(GameDetail gameDetail, ContentTypeCategoryEnum category) =>
             // determine the correct name - different for media vs pinball
-            category == ContentTypeCategoryEnum.Media ? game.Description : game.Name;
+            category == ContentTypeCategoryEnum.Media ? gameDetail.Description : gameDetail.Name;
 
         public void Init(IEnumerable<ContentType> contentTypes)
         {

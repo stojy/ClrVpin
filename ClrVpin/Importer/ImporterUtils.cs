@@ -25,12 +25,12 @@ namespace ClrVpin.Importer
             };
         }
 
-        public static async Task<ImporterMatchStatistics> MatchOnlineToLocalAsync(List<Game> games, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+        public static async Task<ImporterMatchStatistics> MatchOnlineToLocalAsync(List<GameDetail> games, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
         {
             return await Task.Run(() => MatchOnlineToLocal(games, onlineGames, updateProgress));
         }
 
-        public static async Task MatchLocalToOnlineAsync(List<Game> games, List<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
+        public static async Task MatchLocalToOnlineAsync(List<GameDetail> games, List<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
         {
             await Task.Run(() => MatchLocalToOnline(games, onlineGames, matchStatistics, updateProgress));
         }
@@ -113,7 +113,7 @@ namespace ClrVpin.Importer
             return _feedFixStatistics;
         }
 
-        private static ImporterMatchStatistics MatchOnlineToLocal(IList<Game> games, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+        private static ImporterMatchStatistics MatchOnlineToLocal(IList<GameDetail> games, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
         {
             var matchStatistics = new ImporterMatchStatistics();
 
@@ -136,7 +136,7 @@ namespace ClrVpin.Importer
 
                     onlineGame.Hit = new GameHit
                     {
-                        Game = matchedGame,
+                        GameDetail = matchedGame,
                         Score = score
                     };
                 }
@@ -150,9 +150,9 @@ namespace ClrVpin.Importer
             return matchStatistics;
         }
         
-        private static void MatchLocalToOnline(IEnumerable<Game> games, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
+        private static void MatchLocalToOnline(IEnumerable<GameDetail> games, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
         {
-            var unmatchedGames = games.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.Game)).ToList();
+            var unmatchedGames = games.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.GameDetail)).ToList();
 
             // deliberately NOT performing a 'reverse' fuzzy lookup to avoid scenario where x1 online game could have multiple local files
             // - e.g. online only has 1 AC/DC entry (which is a known issue).. whereas there are multiple local files each representing the unique IPDBs (which is correct)

@@ -28,7 +28,7 @@
     <Setter Property="controls:MouseDoubleClick.Command" Value="{Binding OpenFileCommand}" />
   </Style>
 
-  <Style x:Key="HitGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance database:Game}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
+  <Style x:Key="HitGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance database:GameDetail}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
     <Setter Property="IsExpanded" Value="{Binding ViewState.IsExpanded, Mode=TwoWay}" />
     <Setter Property="IsSelected" Value="{Binding ViewState.IsSelected, Mode=TwoWay}" />
   </Style>
@@ -37,7 +37,7 @@
     <TextBlock Text="{Binding Description}" />
   </HierarchicalDataTemplate>
 
-  <HierarchicalDataTemplate x:Key="HitGamesItemTemplate" DataType="database:Game"
+  <HierarchicalDataTemplate x:Key="HitGamesItemTemplate" DataType="database:GameDetail"
                             ItemsSource="{Binding Content.HitsView}"
                             ItemTemplate="{StaticResource HitResultTemplate}"
                             ItemContainerStyle="{StaticResource HitGameContentStyle}">

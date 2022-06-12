@@ -237,7 +237,7 @@ namespace ClrVpin.Rebuilder
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
-            _games = new ObservableCollection<Game>(games);
+            _games = new ObservableCollection<GameDetail>(games);
 
             ShowResults(gameFiles, unmatchedFiles, progress.Duration);
 
@@ -275,7 +275,7 @@ namespace ClrVpin.Rebuilder
 
 
         private readonly IEnumerable<string> _destinationContentTypes;
-        private ObservableCollection<Game> _games;
+        private ObservableCollection<GameDetail> _games;
         private Window _rebuilderWindow;
 
         private const int WindowMargin = 0;

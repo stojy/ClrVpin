@@ -13,10 +13,10 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerExplorerViewModel
     {
-        public ScannerExplorerViewModel(ObservableCollection<Game> games)
+        public ScannerExplorerViewModel(ObservableCollection<GameDetail> games)
         {
             Games = games;
-            GamesView = new ListCollectionView<Game>(games);
+            GamesView = new ListCollectionView<GameDetail>(games);
 
             // text filter
             GamesView.Filter += gameObject => string.IsNullOrEmpty(SearchText) || gameObject.Description.ToLower().Contains(SearchText.ToLower());
@@ -24,12 +24,12 @@ namespace ClrVpin.Scanner
             SearchTextCommand = new ActionCommand(SearchTextChanged);
         }
 
-        public ListCollectionView<Game> GamesView { get; set; }
+        public ListCollectionView<GameDetail> GamesView { get; set; }
 
         public Window Window { get; private set; }
         public string SearchText { get; set; } = "";
         public ICommand SearchTextCommand { get; set; }
-        public ObservableCollection<Game> Games { get; set; }
+        public ObservableCollection<GameDetail> Games { get; set; }
 
         public void Show(Window parentWindow, double left, double top)
         {

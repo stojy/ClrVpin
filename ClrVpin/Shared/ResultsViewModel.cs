@@ -17,11 +17,11 @@ namespace ClrVpin.Shared
     public abstract class ResultsViewModel
     {
         // all games referenced in the DB.. irrespective of hits
-        public ObservableCollection<Game> Games { get; protected init; }
+        public ObservableCollection<GameDetail> Games { get; protected init; }
 
         public ListCollectionView<FeatureType> AllContentFeatureTypesView { get; private set; }
         public ListCollectionView<FeatureType> AllHitFeatureTypesView { get; private set; }
-        public ListCollectionView<Game> HitGamesView { get; private set; }
+        public ListCollectionView<GameDetail> HitGamesView { get; private set; }
 
         public ICommand ExpandGamesCommand { get; private set; }
         public string SearchText { get; set; } = "";
@@ -69,7 +69,7 @@ namespace ClrVpin.Shared
 
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
-        private void UpdateStatus(IEnumerable<Game> games)
+        private void UpdateStatus(IEnumerable<GameDetail> games)
         {
             games.ForEach(game =>
             {
@@ -88,8 +88,8 @@ namespace ClrVpin.Shared
 
         private void InitView()
         {
-            _hitGames = new ObservableCollection<Game>(Games.Where(game => game.Content.Hits.Count > 0));
-            HitGamesView = new ListCollectionView<Game>(_hitGames);
+            _hitGames = new ObservableCollection<GameDetail>(Games.Where(game => game.Content.Hits.Count > 0));
+            HitGamesView = new ListCollectionView<GameDetail>(_hitGames);
 
             // text filter
             HitGamesView.Filter += gameObject =>
@@ -121,7 +121,7 @@ namespace ClrVpin.Shared
         }
 
         // games referenced in the DB that have hits
-        private ObservableCollection<Game> _hitGames;
+        private ObservableCollection<GameDetail> _hitGames;
 
         private IEnumerable<FeatureType> _allContentFeatureTypes;
         private IEnumerable<FeatureType> _allHitFeatureTypes;

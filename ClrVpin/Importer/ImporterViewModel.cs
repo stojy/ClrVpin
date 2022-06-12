@@ -108,7 +108,7 @@ namespace ClrVpin.Importer
             var progress = new ProgressViewModel();
             progress.Show(_window);
 
-            var games = new List<Game>();
+            var games = new List<GameDetail>();
             if (MatchFuzzy.IsActive)
             {
                 progress.Update("Loading database");
@@ -140,7 +140,7 @@ namespace ClrVpin.Importer
             void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
-        private void ShowResults(TimeSpan duration, List<Game> games, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
+        private void ShowResults(TimeSpan duration, List<GameDetail> games, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
         {
             var results = new ImporterResultsViewModel(games, onlineGames);
             results.Show(_window, WindowMargin, WindowMargin);

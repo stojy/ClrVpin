@@ -21,13 +21,13 @@ namespace ClrVpin.Rebuilder
             _settings = Model.Settings;
         }
 
-        public static async Task<List<FileDetail>> CheckAndMatchAsync(List<Game> games, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> CheckAndMatchAsync(List<GameDetail> games, Action<string, float> updateProgress)
         {
             var unmatchedFiles = await Task.Run(() => CheckAndMatch(games, updateProgress));
             return unmatchedFiles;
         }
 
-        public static async Task<List<FileDetail>> MergeAsync(List<Game> games, string backupFolder, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> MergeAsync(List<GameDetail> games, string backupFolder, Action<string, float> updateProgress)
         {
             var mergedFileDetails = await Task.Run(() => Merge(games, backupFolder, updateProgress));
             return mergedFileDetails;
@@ -38,7 +38,7 @@ namespace ClrVpin.Rebuilder
             await Task.Run(() => RemoveUnmatchedIgnored(unmatchedFiles, updateProgress));
         }
 
-        private static List<FileDetail> CheckAndMatch(IList<Game> games, Action<string, float> updateProgress)
+        private static List<FileDetail> CheckAndMatch(IList<GameDetail> games, Action<string, float> updateProgress)
         {
             // determine the destination type
             var contentType = _settings.GetSelectedDestinationContentType();
@@ -55,7 +55,7 @@ namespace ClrVpin.Rebuilder
             return unmatchedContentFiles.Concat(nonContentFiles).ToList();
         }
 
-        private static List<FileDetail> Merge(IEnumerable<Game> games, string backupFolder, Action<string, float> updateProgress)
+        private static List<FileDetail> Merge(IEnumerable<GameDetail> games, string backupFolder, Action<string, float> updateProgress)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 
@@ -90,7 +90,7 @@ namespace ClrVpin.Rebuilder
         }
 
         // ReSharper disable once UnusedParameter.Local
-        private static FileDetail Merge(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes)
+        private static FileDetail Merge(Hit hit, GameDetail gameDetail, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var fixFileType = FixFileTypeEnum.Skipped;
             var sourceFileInfo = hit.FileInfo; // file to be copied, i.e. into the VP folder (potentially overriding)
@@ -103,7 +103,7 @@ namespace ClrVpin.Rebuilder
             // construct the correct destination file name - i.e. the file name that WILL be used when the scanner is eventually run (typically after the merge)
             // - calculated here the purpose of logging, i.e. so that the file details of the file that will potentially be overwritten (when scanning is run) is displayed
             // - selecting from the relevant hit.Type would likely be more efficient, but not done because full file paths are required/useful for logging
-            var correctDestinationFileName = FileUtils.GetCorrectFile(game, contentType.Category, contentType.Folder, hit.Extension);
+            var correctDestinationFileName = FileUtils.GetCorrectFile(gameDetail, contentType.Category, contentType.Folder, hit.Extension);
             var correctDestinationFileInfo = File.Exists(correctDestinationFileName) ? new FileInfo(correctDestinationFileName) : null;
 
             void LogFuzzyMatch()
@@ -128,14 +128,14 @@ namespace ClrVpin.Rebuilder
             {
                 fixFileType = FixFileTypeEnum.Ignored;
 
-                if (!ShouldIgnore(game, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo, LogFuzzyMatch))
+                if (!ShouldIgnore(gameDetail, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo, LogFuzzyMatch))
                 {
                     fixFileType = FixFileTypeEnum.Merged;
 
                     var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
                     var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
 
-                    Logger.Info($"Merging.. table: {game.Name}, description: {game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}");
+                    Logger.Info($"Merging.. table: {gameDetail.Name}, description: {gameDetail.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}");
                     LogFuzzyMatch();
                     FileUtils.Merge(hit.Path, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified, contentType.KindredExtensionsList, backupFile => hit.Path = backupFile);
                 }
@@ -144,7 +144,7 @@ namespace ClrVpin.Rebuilder
             return new FileDetail(hit.ContentTypeEnum, hit.Type, fixFileType, sourceFileInfo.Name, hit.Size ?? 0);
         }
 
-        private static bool ShouldIgnore(GameBase game, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo, Action logAction)
+        private static bool ShouldIgnore(Game game, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo, Action logAction)
         {
             // opt out: scan through each ignore criteria to determine if the file should be considered 'merge worthy'
             // - unlike scanner 'multiple match preference'.. which is more of an 'opt in'
@@ -169,10 +169,10 @@ namespace ClrVpin.Rebuilder
             return false;
         }
 
-        private static bool ProcessIgnore(GameBase game, string ignoreCriteriaDescription, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo, Action logAction) => ProcessIgnore(
+        private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo, Action logAction) => ProcessIgnore(
             game, ignoreCriteriaDescription, hit.Type, hit.ContentTypeEnum, hit, sourceFileInfo, destinationFileInfo, logAction);
 
-        private static bool ProcessIgnore(GameBase game, string ignoreCriteriaDescription, HitTypeEnum hitTypeEnum, ContentTypeEnum contentTypeEnum, Hit hit, FileSystemInfo sourceFileInfo,
+        private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, HitTypeEnum hitTypeEnum, ContentTypeEnum contentTypeEnum, Hit hit, FileSystemInfo sourceFileInfo,
             FileSystemInfo destinationFileInfo, Action logAction = null)
         {
             var prefix = _settings.Rebuilder.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";

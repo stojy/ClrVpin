@@ -17,14 +17,14 @@ namespace ClrVpin.Shared
 {
     public static class TableUtils
     {
-        public static List<Game> ReadGamesFromDatabases(IList<ContentType> contentTypes)
+        public static List<GameDetail> ReadGamesFromDatabases(IList<ContentType> contentTypes)
         {
             var databaseContentType = Model.Settings.GetDatabaseContentType();
 
             // scan through all the databases in the folder
             var files = Directory.EnumerateFiles(databaseContentType.Folder, databaseContentType.Extensions);
 
-            var games = new List<Game>();
+            var games = new List<GameDetail>();
 
             files.ForEach(file =>
             {
@@ -65,7 +65,7 @@ namespace ClrVpin.Shared
             return games;
         }
 
-        public static void WriteGamesToDatabase(List<Game> games, string file = null)
+        public static void WriteGamesToDatabase(List<GameDetail> games, string file = null)
         {
             if (file == null)
             {
@@ -100,8 +100,8 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        public static IEnumerable<FileDetail> AddContentFilesToGames(IList<Game> games, IEnumerable<string> contentFiles, ContentType contentType,
-            Func<Game, ContentHits> getContentHits, Action<string, int> updateProgress)
+        public static IEnumerable<FileDetail> AddContentFilesToGames(IList<GameDetail> games, IEnumerable<string> contentFiles, ContentType contentType,
+            Func<GameDetail, ContentHits> getContentHits, Action<string, int> updateProgress)
         {
             var unknownSupportedFiles = new List<FileDetail>();
 
@@ -111,35 +111,35 @@ namespace ClrVpin.Shared
             {
                 updateProgress(Path.GetFileName(contentFile), i + 1);
 
-                Game matchedGame;
+                GameDetail matchedGameDetail;
                 var fuzzyFileNameDetails = Fuzzy.Fuzzy.GetNameDetails(contentFile, true);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
-                if ((matchedGame = games.FirstOrDefault(game => Content.GetName(game, contentType.Category) == Path.GetFileNameWithoutExtension(contentFile))) != null)
+                if ((matchedGameDetail = games.FirstOrDefault(game => Content.GetName(game, contentType.Category) == Path.GetFileNameWithoutExtension(contentFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
-                    var contentHits = getContentHits(matchedGame);
+                    var contentHits = getContentHits(matchedGameDetail);
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, contentFile);
                 }
-                else if ((matchedGame = games.FirstOrDefault(game =>
+                else if ((matchedGameDetail = games.FirstOrDefault(game =>
                              string.Equals(Content.GetName(game, contentType.Category), Path.GetFileNameWithoutExtension(contentFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, contentFile);
+                    getContentHits(matchedGameDetail).Add(HitTypeEnum.WrongCase, contentFile);
                 }
-                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGame = games.FirstOrDefault(game => game.Name == Path.GetFileNameWithoutExtension(contentFile))) != null)
+                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGameDetail = games.FirstOrDefault(game => game.Name == Path.GetFileNameWithoutExtension(contentFile))) != null)
                 {
-                    getContentHits(matchedGame).Add(HitTypeEnum.TableName, contentFile);
+                    getContentHits(matchedGameDetail).Add(HitTypeEnum.TableName, contentFile);
                 }
                 // fuzzy matching
                 else
                 {
-                    (matchedGame, var score) = games.Match(fuzzyFileNameDetails);
-                    if (matchedGame != null)
+                    (matchedGameDetail, var score) = games.Match(fuzzyFileNameDetails);
+                    if (matchedGameDetail != null)
                     {
-                        getContentHits(matchedGame).Add(HitTypeEnum.Fuzzy, contentFile, score);
+                        getContentHits(matchedGameDetail).Add(HitTypeEnum.Fuzzy, contentFile, score);
                     }
                     else
                     {

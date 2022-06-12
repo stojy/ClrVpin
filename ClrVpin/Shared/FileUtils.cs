@@ -60,7 +60,7 @@ namespace ClrVpin.Shared
             ExecuteForKindred(kindredExtensions, sourcePath, destinationPath, (source, destination) => Merge(source, destination, hitTypeEnum, contentType, deleteSource, preserveDateModified));
         }
 
-        public static FileDetail Rename(Hit hit, Game game, ICollection<HitTypeEnum> supportedHitTypes, IEnumerable<string> kindredExtensions)
+        public static FileDetail Rename(Hit hit, GameDetail gameDetail, ICollection<HitTypeEnum> supportedHitTypes, IEnumerable<string> kindredExtensions)
         {
             var renamed = false;
 
@@ -69,7 +69,7 @@ namespace ClrVpin.Shared
                 renamed = true;
 
                 // determine the correct name - different for media vs pinball
-                var newFile = GetCorrectFile(game, _settings.GetContentType(hit.ContentTypeEnum).Category, hit.Directory, hit.Extension);
+                var newFile = GetCorrectFile(gameDetail, _settings.GetContentType(hit.ContentTypeEnum).Category, hit.Directory, hit.Extension);
 
                 // rename specific file
                 Rename(hit.Path, newFile, hit.Type, hit.ContentType, backupFile => hit.Path = backupFile);
@@ -81,10 +81,10 @@ namespace ClrVpin.Shared
             return new FileDetail(hit.ContentTypeEnum, hit.Type, renamed ? FixFileTypeEnum.Renamed : FixFileTypeEnum.Skipped, hit.Path, hit.Size ?? 0);
         }
 
-        public static string GetCorrectFile(Game game, ContentTypeCategoryEnum category, string path, string extension)
+        public static string GetCorrectFile(GameDetail gameDetail, ContentTypeCategoryEnum category, string path, string extension)
         {
             // determine the correct name - which has a different calculation for media vs pinball :(
-            var correctContentName = Content.GetName(game, category);
+            var correctContentName = Content.GetName(gameDetail, category);
 
             // use supplied path and extension - i.e. accommodate importing (source path) and scanning (destination path)
             return Path.Combine(path!, $"{correctContentName}{extension}");
