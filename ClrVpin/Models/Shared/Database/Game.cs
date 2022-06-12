@@ -66,4 +66,7 @@ public class Game
 
     [XmlElement("datemodified")]
     public string DateModifiedString { get; set; }
+
+    [XmlIgnore]
+    public string DatabaseFile { get; set; }
 }

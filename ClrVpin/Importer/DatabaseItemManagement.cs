@@ -21,8 +21,10 @@ namespace ClrVpin.Importer
                 var existingGameDetail = gameDetails.First(g => g == onlineGame.Hit.GameDetail);
                 existingGameDetail.Game = item.GameDetail.Game;
                 existingGameDetail.Derived = item.GameDetail.Derived;
-                
-                TableUtils.WriteGamesToDatabase(gameDetails);
+
+                // only update the database file tht the game belongs to
+                var gameDetailsInDatabaseFile = gameDetails.Where(gameDetail => gameDetail.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
+                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile, item.GameDetail.Game.DatabaseFile);
             }
 
             Logger.Info($"Database Item: action={result}");

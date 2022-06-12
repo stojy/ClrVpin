@@ -49,6 +49,8 @@ namespace ClrVpin.Shared
                 var number = 1;
                 databaseGameDetails.ForEach(gameDetail =>
                 {
+                    gameDetail.Game.DatabaseFile = file;
+
                     GameDerived.Init(gameDetail, number++);
                     gameDetail.ViewState.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(gameDetail.Derived.IpdbUrl));
                     gameDetail.Content.Init(contentTypes);
@@ -58,28 +60,26 @@ namespace ClrVpin.Shared
                     gameDetail.Fuzzy.DescriptionDetails = Fuzzy.Fuzzy.GetNameDetails(gameDetail.Game.Description, false);
                 });
 
-                // proof of concept - serialize to disk again to verify similarity/compatibility
-                WriteGamesToDatabase(databaseGameDetails, file + ".bak");
-
                 gameDetails.AddRange(databaseGameDetails);
+                LogDatabaseStatistics(databaseGameDetails, file);
             });
 
-            Logger.Info($"Local database table count: {gameDetails.Count} (manufactured={gameDetails.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={gameDetails.Count(onlineGame => onlineGame.Derived.IsOriginal)})");
+            LogDatabaseStatistics(gameDetails);
             return gameDetails;
         }
 
-        public static void WriteGamesToDatabase(IEnumerable<GameDetail> gameDetails, string file = null)
+        public static void WriteGamesToDatabase(IEnumerable<GameDetail> gameDetails, string file)
         {
             var games = gameDetails.Select(gameDetail => gameDetail.Game);
 
-            if (file == null)
-            {
-                var databaseContentType = Model.Settings.GetDatabaseContentType();
-                file = Path.Combine(databaseContentType.Folder, "Visual Pinball - ClrVpin.xml.bak") ;
-            }
+            //if (file == null)
+            //{
+            //    var databaseContentType = Model.Settings.GetDatabaseContentType();
+            //    file = Path.Combine(databaseContentType.Folder, "Visual Pinball - ClrVpin.xml.bak") ;
+            //}
 
             var menu = new Menu { Games = games.ToList() };
-            menu.SerializeToXDocument().Cleanse().SerializeToFile(file);
+            menu.SerializeToXDocument().Cleanse().SerializeToFile(file + ".bak");
         }
 
         public static IList<string> GetContentFileNames(ContentType contentType, string folder)
@@ -157,6 +157,13 @@ namespace ClrVpin.Shared
             });
 
             return unknownSupportedFiles;
+        }
+
+        private static void LogDatabaseStatistics(IReadOnlyCollection<GameDetail> gameDetails, string file = null)
+        {
+            Logger.Info(
+                $"Local database table {(file == null ? "total " : "")}count: {gameDetails.Count} (manufactured={gameDetails.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={gameDetails.Count(onlineGame => onlineGame.Derived.IsOriginal)})" +
+                $"{(file == null ? "" : ", file: " + file)}");
         }
 
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
