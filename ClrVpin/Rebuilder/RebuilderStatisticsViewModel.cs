@@ -6,7 +6,7 @@ using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 
 namespace ClrVpin.Rebuilder

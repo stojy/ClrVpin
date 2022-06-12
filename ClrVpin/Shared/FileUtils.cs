@@ -6,7 +6,7 @@ using System.Linq;
 using ByteSizeLib;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using Utils.Extensions;
 
 namespace ClrVpin.Shared

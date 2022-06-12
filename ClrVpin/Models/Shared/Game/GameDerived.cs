@@ -2,7 +2,7 @@
 using PropertyChanged;
 // ReSharper disable MemberCanBePrivate.Global - public setters required to support json deserialization, refer DatabaseItem
 
-namespace ClrVpin.Models.Shared.Database
+namespace ClrVpin.Models.Shared.Game
 {
     [AddINotifyPropertyChangedInterface]
     public class GameDerived

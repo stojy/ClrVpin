@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared.Fuzzy;
 using Utils;
 using Utils.Extensions;

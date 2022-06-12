@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared.Fuzzy;
 using NUnit.Framework;
 using Utils.Extensions;

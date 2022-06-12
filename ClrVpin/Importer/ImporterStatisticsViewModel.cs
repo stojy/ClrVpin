@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Models.Importer.Vps;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils.Extensions;
 

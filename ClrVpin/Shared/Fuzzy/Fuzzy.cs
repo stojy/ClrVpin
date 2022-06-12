@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using Utils;
 using Utils.Extensions;
 

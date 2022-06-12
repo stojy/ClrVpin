@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Shared;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;

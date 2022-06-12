@@ -8,7 +8,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using ClrVpin.Controls;
 using ClrVpin.Models.Shared;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using Utils;
 using Utils.Extensions;
 

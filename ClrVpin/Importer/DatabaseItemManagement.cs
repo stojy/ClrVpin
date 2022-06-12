@@ -2,7 +2,7 @@
 using System.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models.Importer.Vps;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
 

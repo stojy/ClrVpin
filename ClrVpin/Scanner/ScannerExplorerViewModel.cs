@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ClrVpin.Controls;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils;
 

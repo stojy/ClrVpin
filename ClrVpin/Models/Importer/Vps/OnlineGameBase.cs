@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows.Input;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 
 namespace ClrVpin.Models.Importer.Vps;
 

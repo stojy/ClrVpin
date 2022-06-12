@@ -8,7 +8,7 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;

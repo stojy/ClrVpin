@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using ClrVpin.Converters;
 using ClrVpin.Logging;
 using ClrVpin.Models.Importer.Vps;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;
 

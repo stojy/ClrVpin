@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
 using Utils.Extensions;

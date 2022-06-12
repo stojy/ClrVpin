@@ -6,8 +6,8 @@
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:database="clr-namespace:ClrVpin.Models.Shared.Database"
-                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
+                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
+                    xmlns:game="clr-namespace:ClrVpin.Models.Shared.Game">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -29,7 +29,7 @@
     </Grid>
   </DataTemplate>
 
-  <DataTemplate x:Key="ContentTemplate" DataType="database:GameDetail">
+  <DataTemplate x:Key="ContentTemplate" DataType="game:GameDetail">
     <ListBox ItemsSource="{Binding Content.Hits}" ItemTemplate="{StaticResource HitTemplate}">
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
@@ -51,7 +51,7 @@
     </ListBox>
   </DataTemplate>
 
-  <DataTemplate x:Key="SmellyTemplate" DataType="database:GameDetail">
+  <DataTemplate x:Key="SmellyTemplate" DataType="game:GameDetail">
     <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Content.IsSmelly, Converter={StaticResource SmellyToIconConverter}}"
                              Height="40" Width="40" VerticalAlignment="Center" HorizontalAlignment="Center">
       <!-- just for giggles.. setting foreground by a style trigger instead of a converter.. it's rather large!-->
@@ -70,7 +70,7 @@
     </materialDesign:PackIcon>
   </DataTemplate>
 
-  <DataTemplate x:Key="IpdbTemplate" DataType="database:GameDetail">
+  <DataTemplate x:Key="IpdbTemplate" DataType="game:GameDetail">
     <TextBlock VerticalAlignment="Center" >
       <Hyperlink NavigateUri="{Binding Derived.IpdbUrl}" Command="{Binding ViewState.NavigateToIpdbCommand}">
         <TextBlock Text="{Binding Derived.Ipdb}" />
@@ -115,20 +115,20 @@
                 materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
                 CellStyle="{StaticResource CellStyle}">
         <DataGrid.Columns>
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="#" Binding="{Binding Derived.Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="#" Binding="{Binding Derived.Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly"
                                   CanUserSort="True" />
-          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Table" Binding="{Binding Derived.TableFileWithExtension}" Width="280" IsReadOnly="True"
+          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Table" Binding="{Binding Derived.TableFileWithExtension}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Description" Binding="{Binding Game.Description}" Width="280" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Description" Binding="{Binding Game.Description}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Manufacturer" Binding="{Binding Game.Manufacturer}" Width="150" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Manufacturer" Binding="{Binding Game.Manufacturer}" Width="150" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Year" Binding="{Binding Game.Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Rating" Binding="{Binding Game.Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Year" Binding="{Binding Game.Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Rating" Binding="{Binding Game.Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Author(s)" Binding="{Binding Game.Author}" Width="200" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Author(s)" Binding="{Binding Game.Author}" Width="200" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />

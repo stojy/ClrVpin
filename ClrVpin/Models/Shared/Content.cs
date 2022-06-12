@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
-using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Game;
 
 namespace ClrVpin.Models.Shared
 {
