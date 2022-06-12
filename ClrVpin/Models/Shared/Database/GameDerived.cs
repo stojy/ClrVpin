@@ -25,7 +25,7 @@ namespace ClrVpin.Models.Shared.Database
 
             derived.Number = number ?? derived.Number;
 
-            derived.IsOriginal = CheckIsOriginal(gameDetail.Manufacturer);
+            derived.IsOriginal = CheckIsOriginal(gameDetail.Game.Manufacturer);
 
             if (derived.IsOriginal)
             {
@@ -38,15 +38,15 @@ namespace ClrVpin.Models.Shared.Database
             }
             else
             {
-                derived.Ipdb = gameDetail.IpdbId ?? gameDetail.IpdbNr ?? derived.Ipdb;
+                derived.Ipdb = gameDetail.Game.IpdbId ?? gameDetail.Game.IpdbNr ?? derived.Ipdb;
                 derived.IpdbUrl = derived.Ipdb == null ? null : $"https://www.ipdb.org/machine.cgi?id={derived.Ipdb}";
             }
 
             // memory optimisation to perform this operation once on database read instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
-            derived.NameLowerCase = gameDetail.Name.ToLower();
-            derived.DescriptionLowerCase = gameDetail.Description.ToLower();
+            derived.NameLowerCase = gameDetail.Game.Name.ToLower();
+            derived.DescriptionLowerCase = gameDetail.Game.Description.ToLower();
 
-            derived.TableFileWithExtension = gameDetail.Name + ".vpx";
+            derived.TableFileWithExtension = gameDetail.Game.Name + ".vpx";
         }
 
         // assign isOriginal based on the manufacturer

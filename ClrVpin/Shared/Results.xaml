@@ -41,7 +41,7 @@
                             ItemsSource="{Binding Content.HitsView}"
                             ItemTemplate="{StaticResource HitResultTemplate}"
                             ItemContainerStyle="{StaticResource HitGameContentStyle}">
-    <TextBlock Text="{Binding Description}" />
+    <TextBlock Text="{Binding Game.Description}" />
   </HierarchicalDataTemplate>
 
   <converters:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />

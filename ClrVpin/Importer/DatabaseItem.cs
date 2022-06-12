@@ -35,13 +35,13 @@ namespace ClrVpin.Importer
             
             MaxDateTime = DateTime.Today.AddDays(1);
             
-            if (DateTime.TryParse(GameDetail.DateAddedString, out var dateTime))
+            if (DateTime.TryParse(GameDetail.Game.DateAddedString, out var dateTime))
             {
                 DateAdded = dateTime;
                 DateAddedDateOnly = dateTime.Date;
             }
 
-            if (DateTime.TryParse(GameDetail.DateModifiedString, out dateTime))
+            if (DateTime.TryParse(GameDetail.Game.DateModifiedString, out dateTime))
             {
                 DateModified = dateTime;
                 DateModifiedDateOnly = dateTime.Date;
@@ -61,7 +61,7 @@ namespace ClrVpin.Importer
                     DateAdded = DateAddedDateOnly + (DateAdded?.TimeOfDay ?? TimeSpan.Zero);
                 else
                     DateAdded = new DateTime(1900, 1, 1);
-                GameDetail.DateAddedString = DateAdded?.ToString("yyyy-MM-dd HH:mm:ss");
+                GameDetail.Game.DateAddedString = DateAdded?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // update date/time preserving the time portion, which is unfortunately cleared by the DateTime picker
                 if (
@@ -69,7 +69,7 @@ namespace ClrVpin.Importer
                     DateModified = DateModifiedDateOnly + (DateModified?.TimeOfDay ?? TimeSpan.Zero);
                 else
                     DateModified = new DateTime(1900, 1, 1);
-                GameDetail.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
+                GameDetail.Game.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // explicitly recalculate dynamic VM properties
                 GameDerived.Init(GameDetail);
@@ -80,8 +80,9 @@ namespace ClrVpin.Importer
         }
 
         public GameDetail GameDetail { get; }
+
         public bool IsExisting { get; set; }
-        public bool IsItemChanged { get; set; }
+        public bool IsItemChanged { get; private set; }
 
         public ICommand ChangedCommand { get; set; }
 

@@ -28,7 +28,7 @@ namespace ClrVpin.Scanner
             SelectedCheckHitTypes = Settings.Scanner.SelectedCheckHitTypes.ToList();
             SelectedFixHitTypes = Settings.Scanner.SelectedFixHitTypes.ToList();
 
-            // unlike rebuilder, the total count represents the number of Games
+            // unlike rebuilder, the total count represents the number of GameDetails
             TotalCount = Games.Count;
         }
 

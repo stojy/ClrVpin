@@ -96,14 +96,14 @@
       <!--table properties-->
       <GroupBox Header="Table Properties" Margin="0,10,0,0">
         <StackPanel Margin="5,0">
-          <TextBox Text="{Binding GameDetail.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+          <TextBox Text="{Binding GameDetail.Game.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding GameDetail.Derived.TableFileWithExtension}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
                    MinWidth="420" Margin="0,5,0,10" />
 
           <WrapPanel Margin="0,10,0,0">
             <ComboBox ItemsSource="{Binding ManufacturersView}"
-                      Text="{Binding Path=GameDetail.Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=GameDetail.Game.Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Manufacturer"
                       Width="210">
               <ComboBox.Style>
@@ -122,7 +122,7 @@
               </ComboBox.Style>
             </ComboBox>
 
-            <TextBox Text="{Binding GameDetail.IpdbId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding GameDetail.Game.IpdbId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="IPDB Identifier" materialDesign:HintAssist.HelperText="{Binding GameDetail.Derived.IpdbUrl}"
                      IsEnabled="{Binding GameDetail.Derived.IsOriginal, Converter={StaticResource InvertBooleanConverter}}"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
@@ -131,29 +131,29 @@
 
           <WrapPanel Margin="0,20,0,0">
             <ComboBox ItemsSource="{Binding YearsView}"
-                      Text="{Binding Path=GameDetail.Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=GameDetail.Game.Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Year"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="80" />
             <ComboBox ItemsSource="{Binding TypesView}"
-                      Text="{Binding Path=GameDetail.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=GameDetail.Game.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Type" ToolTip="EM: electro-mechanical, SS: solid state, PM: purely mechanical"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="80" Margin="10,0,0,0" />
             <ComboBox ItemsSource="{Binding PlayersView}"
-                      Text="{Binding Path=GameDetail.Players, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=GameDetail.Game.Players, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Players"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="100" Margin="10,0,0,0" />
             <ComboBox ItemsSource="{Binding RomsView}"
-                      Text="{Binding Path=GameDetail.Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=GameDetail.Game.Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="130" Margin="10,0,0,0" />
           </WrapPanel>
 
           <ComboBox ItemsSource="{Binding ThemesView}"
-                    Text="{Binding Path=GameDetail.Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{Binding Path=GameDetail.Game.Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     materialDesign:HintAssist.Hint="Theme(s)"
                     Style="{StaticResource EditComboBoxStyle}"
                     MinWidth="420" Margin="0,10,0,10" />
@@ -164,31 +164,31 @@
       <GroupBox Header="Frontend Properties" Margin="0,15,0,0">
         <StackPanel Margin="5,0">
           <TextBox materialDesign:HintAssist.Hint="Description"
-                   Text="{Binding GameDetail.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                   Text="{Binding GameDetail.Game.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
                    Width="420" Margin="0,5,0,10" />
 
           <WrapPanel>
-            <TextBox Text="{Binding GameDetail.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding GameDetail.Game.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Version"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      MinWidth="100" />
             <ComboBox ItemsSource="{Binding AuthorsView}"
-                      Text="{Binding Path=GameDetail.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=GameDetail.Game.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Author(s)"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="315" Margin="5,10,0,10" />
           </WrapPanel>
 
           <WrapPanel>
-            <TextBox Text="{Binding GameDetail.Rating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding GameDetail.Game.Rating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Rating" IsReadOnly="True"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      MinWidth="65" />
-            <Slider Value="{Binding GameDetail.Rating}" Minimum="0" Maximum="5"
+            <Slider Value="{Binding GameDetail.Game.Rating}" Minimum="0" Maximum="5"
                     TickFrequency="0.5" TickPlacement="BottomRight"
                     MinWidth="105" Margin="10,28,0,0" />
-            <TextBox Text="{Binding GameDetail.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding GameDetail.Game.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Comment(s)"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      MinWidth="230" Margin="10,10,0,10" />

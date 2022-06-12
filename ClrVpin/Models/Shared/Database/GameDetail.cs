@@ -7,8 +7,11 @@ using PropertyChanged;
 namespace ClrVpin.Models.Shared.Database;
 
 [AddINotifyPropertyChangedInterface]
-public class GameDetail : Game
+public class GameDetail
 {
+    // raw deserialized database entry
+    public Game Game { get; set; }
+
     [XmlIgnore]
     [JsonIgnore]
     public GameDerived Derived { get; } = new GameDerived();

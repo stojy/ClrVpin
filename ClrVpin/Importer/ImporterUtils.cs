@@ -150,20 +150,20 @@ namespace ClrVpin.Importer
             return matchStatistics;
         }
         
-        private static void MatchLocalToOnline(IEnumerable<GameDetail> games, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
+        private static void MatchLocalToOnline(IEnumerable<GameDetail> gameDetails, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
         {
-            var unmatchedGames = games.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.GameDetail)).ToList();
+            var unmatchedGameDetails = gameDetails.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.GameDetail)).ToList();
 
             // deliberately NOT performing a 'reverse' fuzzy lookup to avoid scenario where x1 online game could have multiple local files
             // - e.g. online only has 1 AC/DC entry (which is a known issue).. whereas there are multiple local files each representing the unique IPDBs (which is correct)
-            unmatchedGames.ForEach((localGame, _) =>
+            unmatchedGameDetails.ForEach(localGameDetail =>
             {
-                updateProgress(localGame.Name, null);
+                updateProgress(localGameDetail.Game.Name, null);
 
-                Logger.Info($"Unmatched local table: '{localGame.Name}'");
+                Logger.Info($"Unmatched local table: '{localGameDetail.Game.Name}'");
                 
                 matchStatistics.Add(ImporterMatchStatistics.UnmatchedLocalTotal);
-                matchStatistics.Add(localGame.Derived.IsOriginal ? ImporterMatchStatistics.UnmatchedLocalOriginal : ImporterMatchStatistics.UnmatchedLocalManufactured);
+                matchStatistics.Add(localGameDetail.Derived.IsOriginal ? ImporterMatchStatistics.UnmatchedLocalOriginal : ImporterMatchStatistics.UnmatchedLocalManufactured);
             });
         }
 

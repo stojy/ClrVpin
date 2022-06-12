@@ -168,7 +168,7 @@ namespace ClrVpin.Shared.Fuzzy
             var orderedMatches = tableFileMatches.Concat(descriptionMatches)
                 .OrderByDescending(x => x.MatchResult.success)
                 .ThenByDescending(x => x.MatchResult.score)
-                .ThenByDescending(x => x.GameDetail.Name.Length) // tie breaker
+                .ThenByDescending(x => x.GameDetail.Game.Name.Length) // tie breaker
                 .ToList();
 
             var preferredMatch = orderedMatches.FirstOrDefault();

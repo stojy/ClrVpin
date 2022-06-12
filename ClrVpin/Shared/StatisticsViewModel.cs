@@ -37,7 +37,7 @@ namespace ClrVpin.Shared
         public IList<ContentType> SupportedContentTypes { get; set; }
         public IList<string> SelectedCheckContentTypes { get; set; }
 
-        public int TotalCount { get; protected set; } // Games.Count;
+        public int TotalCount { get; protected set; } // GameDetails.Count;
 
         protected Models.Settings.Settings Settings { get; set; }
 
@@ -91,7 +91,7 @@ namespace ClrVpin.Shared
             // discovered statistics - from the games list
             var discoveredStatistics = $"{prefix} {Games.Sum(g => g.Content.ContentHitsCollection.First(x => x.Enum == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
 
-            // file statistics - from the file list.. which is also stored in the games list, but more accessible via Games
+            // file statistics - from the file list.. which is also stored in the games list, but more accessible via GameDetails
             // - for n/a hit types (e.g. ignored) there will be no stats since there are no GameFiles :)
             var fileStatistics = CreateFileStatistics(GameFiles, contentType, hitType);
 
@@ -107,7 +107,7 @@ namespace ClrVpin.Shared
             var files = UnmatchedFiles.Where(x => x.ContentType == contentType && x.HitType == hitType).ToList();
             var discoveredStatistics = $"{prefix} {files.Count}";
 
-            // file statistics - from the file list.. which is also stored in the games list, but more accessible via Games
+            // file statistics - from the file list.. which is also stored in the games list, but more accessible via GameDetails
             // - for n/a hit types (e.g. ignored) there will be no stats since there are no GameFiles :)
             var fileStatistics = CreateFileStatistics(UnmatchedFiles, contentType, hitType);
 

@@ -69,7 +69,7 @@ namespace ClrVpin.Rebuilder
             var gameFiles = new List<FileDetail>();
             gamesWithContent.ForEach((game, i) =>
             {
-                updateProgress(game.Description, (i + 1f) / gamesWithContent.Count);
+                updateProgress(game.Game.Description, (i + 1f) / gamesWithContent.Count);
 
                 // retrieve the relevant content hit collection
                 var contentHitCollection = game.Content.ContentHitsCollection.First(x => x.Hits.Any());
@@ -128,14 +128,14 @@ namespace ClrVpin.Rebuilder
             {
                 fixFileType = FixFileTypeEnum.Ignored;
 
-                if (!ShouldIgnore(gameDetail, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo, LogFuzzyMatch))
+                if (!ShouldIgnore(gameDetail.Game, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo, LogFuzzyMatch))
                 {
                     fixFileType = FixFileTypeEnum.Merged;
 
                     var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
                     var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
 
-                    Logger.Info($"Merging.. table: {gameDetail.Name}, description: {gameDetail.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}");
+                    Logger.Info($"Merging.. table: {gameDetail.Game.Name}, description: {gameDetail.Game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}");
                     LogFuzzyMatch();
                     FileUtils.Merge(hit.Path, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified, contentType.KindredExtensionsList, backupFile => hit.Path = backupFile);
                 }

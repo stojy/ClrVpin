@@ -34,7 +34,7 @@ namespace ClrVpin.Importer
 
         public bool IsValid { get; set; }
 
-        //public ObservableCollection<Game> Games { get; set; }
+        //public ObservableCollection<Game> GameDetails { get; set; }
         public ICommand StartCommand { get; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 

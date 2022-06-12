@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Database;
@@ -9,7 +10,7 @@ namespace ClrVpin.Importer
 {
     public static class DatabaseItemManagement
     {
-        public static async void ViewDatabaseItem(List<GameDetail> games, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
+        public static async void ViewDatabaseItem(List<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
         {
             var item = new DatabaseItem(onlineGame.Hit.GameDetail, onlineGameCollections, true);
 
@@ -17,14 +18,14 @@ namespace ClrVpin.Importer
             if (result == DatabaseItemAction.Update)
             {
                 // replace the older game with the updated game
-                var gameIndex = games.FindIndex(g => g == onlineGame.Hit.GameDetail);
+                var gameIndex = gameDetails.FindIndex(g => g == onlineGame.Hit.GameDetail);
                 if (gameIndex >= 0)
-                    games[gameIndex] = item.GameDetail;
+                    gameDetails[gameIndex] = item.GameDetail;
 
                 // replace online game reference to the updated game
                 onlineGame.Hit.GameDetail = item.GameDetail;
 
-                TableUtils.WriteGamesToDatabase(games);
+                TableUtils.WriteGamesToDatabase(gameDetails.Select(gameDetail => gameDetail.Game));
             }
 
             Logger.Info($"Database Item: action={result}");

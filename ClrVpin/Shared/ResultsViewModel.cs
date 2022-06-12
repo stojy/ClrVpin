@@ -92,14 +92,14 @@ namespace ClrVpin.Shared
             HitGamesView = new ListCollectionView<GameDetail>(_hitGames);
 
             // text filter
-            HitGamesView.Filter += gameObject =>
+            HitGamesView.Filter += gameDetail =>
             {
                 // only display games that have hits AND those hits haven't already been filtered out (e.g. filtered on content or hit type)
-                if (gameObject.Content.HitsView.Count == 0)
+                if (gameDetail.Content.HitsView.Count == 0)
                     return false;
 
                 // return hits based on description match against the search text
-                return string.IsNullOrEmpty(SearchText) || gameObject.Description.ToLower().Contains(SearchText.ToLower());
+                return string.IsNullOrEmpty(SearchText) || gameDetail.Game.Description.ToLower().Contains(SearchText.ToLower());
             };
         }
 

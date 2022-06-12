@@ -7,6 +7,6 @@ namespace ClrVpin.Models.Shared.Database
     public class Menu
     {
         [XmlElement("game")]
-        public List<GameDetail> Games { get; set; }
+        public List<Game> Games { get; set; }
     }
 }

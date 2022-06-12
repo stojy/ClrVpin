@@ -105,13 +105,13 @@
         </TextBox>
 
         <WrapPanel Margin="30,0,0,0" VerticalAlignment="Bottom" TextBlock.FontStyle="Italic" Opacity="0.6">
-          <TextBlock Text="{Binding GamesView.Count}" />
+          <TextBlock Text="{Binding GameDetailsView.Count}" />
           <TextBlock Text=" / " />
-          <TextBlock Text="{Binding Games.Count}" />
+          <TextBlock Text="{Binding GameDetails.Count}" />
         </WrapPanel>
       </WrapPanel>
 
-      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False"
+      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding GameDetailsView}" AutoGenerateColumns="False" CanUserAddRows="False"
                 materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
                 CellStyle="{StaticResource CellStyle}">
         <DataGrid.Columns>
@@ -121,14 +121,14 @@
           <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
           <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Table" Binding="{Binding Derived.TableFileWithExtension}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Description" Binding="{Binding Game.Description}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Manufacturer" Binding="{Binding Manufacturer}" Width="150" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Manufacturer" Binding="{Binding Game.Manufacturer}" Width="150" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Year" Binding="{Binding Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Rating" Binding="{Binding Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Year" Binding="{Binding Game.Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Rating" Binding="{Binding Game.Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Author(s)" Binding="{Binding Author}" Width="200" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:GameDetail}" Header="Author(s)" Binding="{Binding Game.Author}" Width="200" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />

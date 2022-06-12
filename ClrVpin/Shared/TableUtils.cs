@@ -24,7 +24,7 @@ namespace ClrVpin.Shared
             // scan through all the databases in the folder
             var files = Directory.EnumerateFiles(databaseContentType.Folder, databaseContentType.Extensions);
 
-            var games = new List<GameDetail>();
+            var gameDetails = new List<GameDetail>();
 
             files.ForEach(file =>
             {
@@ -43,29 +43,31 @@ namespace ClrVpin.Shared
                     throw new Exception($"Failed to load database: '{file}'");
 
                 var menu = doc.Root.Deserialize<Menu>();
+                var databaseGameDetails = menu.Games.Select(g => new GameDetail { Game = g }).ToList();
+
                 var number = 1;
-                menu.Games.ForEach(game =>
+                databaseGameDetails.ForEach(gameDetail =>
                 {
-                    GameDerived.Init(game, number++);
-                    game.ViewState.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.Derived.IpdbUrl));
-                    game.Content.Init(contentTypes);
+                    GameDerived.Init(gameDetail, number++);
+                    gameDetail.ViewState.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(gameDetail.Derived.IpdbUrl));
+                    gameDetail.Content.Init(contentTypes);
 
                     // assign fuzzy name details up front to avoid it being re-calculated multiple times later on, e.g. when comparing against EACH of the file matches
-                    game.Fuzzy.TableDetails = Fuzzy.Fuzzy.GetNameDetails(game.Name, false);
-                    game.Fuzzy.DescriptionDetails = Fuzzy.Fuzzy.GetNameDetails(game.Description, false);
+                    gameDetail.Fuzzy.TableDetails = Fuzzy.Fuzzy.GetNameDetails(gameDetail.Game.Name, false);
+                    gameDetail.Fuzzy.DescriptionDetails = Fuzzy.Fuzzy.GetNameDetails(gameDetail.Game.Description, false);
                 });
 
                 // proof of concept - serialize to disk again to verify similarity/compatibility
-                WriteGamesToDatabase(menu.Games, file + ".bak");
+                WriteGamesToDatabase(databaseGameDetails.Select(gameDetail => gameDetail.Game), file + ".bak");
 
-                games.AddRange(menu.Games);
+                gameDetails.AddRange(databaseGameDetails);
             });
 
-            Logger.Info($"Local database table count: {games.Count} (manufactured={games.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={games.Count(onlineGame => onlineGame.Derived.IsOriginal)})");
-            return games;
+            Logger.Info($"Local database table count: {gameDetails.Count} (manufactured={gameDetails.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={gameDetails.Count(onlineGame => onlineGame.Derived.IsOriginal)})");
+            return gameDetails;
         }
 
-        public static void WriteGamesToDatabase(List<GameDetail> games, string file = null)
+        public static void WriteGamesToDatabase(IEnumerable<Game> games, string file = null)
         {
             if (file == null)
             {
@@ -73,7 +75,7 @@ namespace ClrVpin.Shared
                 file = Path.Combine(databaseContentType.Folder, "Visual Pinball - ClrVpin.xml.bak") ;
             }
 
-            var menu = new Menu { Games = games };
+            var menu = new Menu { Games = games.ToList() };
             menu.SerializeToXDocument().Cleanse().SerializeToFile(file);
         }
 
@@ -100,7 +102,7 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        public static IEnumerable<FileDetail> AddContentFilesToGames(IList<GameDetail> games, IEnumerable<string> contentFiles, ContentType contentType,
+        public static IEnumerable<FileDetail> AddContentFilesToGames(IList<GameDetail> gameDetails, IEnumerable<string> contentFiles, ContentType contentType,
             Func<GameDetail, ContentHits> getContentHits, Action<string, int> updateProgress)
         {
             var unknownSupportedFiles = new List<FileDetail>();
@@ -117,26 +119,26 @@ namespace ClrVpin.Shared
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
-                if ((matchedGameDetail = games.FirstOrDefault(game => Content.GetName(game, contentType.Category) == Path.GetFileNameWithoutExtension(contentFile))) != null)
+                if ((matchedGameDetail = gameDetails.FirstOrDefault(game => Content.GetName(game, contentType.Category) == Path.GetFileNameWithoutExtension(contentFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
                     var contentHits = getContentHits(matchedGameDetail);
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, contentFile);
                 }
-                else if ((matchedGameDetail = games.FirstOrDefault(game =>
+                else if ((matchedGameDetail = gameDetails.FirstOrDefault(game =>
                              string.Equals(Content.GetName(game, contentType.Category), Path.GetFileNameWithoutExtension(contentFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
                     getContentHits(matchedGameDetail).Add(HitTypeEnum.WrongCase, contentFile);
                 }
-                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGameDetail = games.FirstOrDefault(game => game.Name == Path.GetFileNameWithoutExtension(contentFile))) != null)
+                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGameDetail = gameDetails.FirstOrDefault(gameDetail => gameDetail.Game.Name == Path.GetFileNameWithoutExtension(contentFile))) != null)
                 {
                     getContentHits(matchedGameDetail).Add(HitTypeEnum.TableName, contentFile);
                 }
                 // fuzzy matching
                 else
                 {
-                    (matchedGameDetail, var score) = games.Match(fuzzyFileNameDetails);
+                    (matchedGameDetail, var score) = gameDetails.Match(fuzzyFileNameDetails);
                     if (matchedGameDetail != null)
                     {
                         getContentHits(matchedGameDetail).Add(HitTypeEnum.Fuzzy, contentFile, score);
@@ -153,7 +155,6 @@ namespace ClrVpin.Shared
 
             return unknownSupportedFiles;
         }
-
 
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }

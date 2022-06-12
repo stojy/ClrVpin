@@ -22,7 +22,7 @@ namespace ClrVpin.Models.Shared
 
         public static string GetName(GameDetail gameDetail, ContentTypeCategoryEnum category) =>
             // determine the correct name - different for media vs pinball
-            category == ContentTypeCategoryEnum.Media ? gameDetail.Description : gameDetail.Name;
+            category == ContentTypeCategoryEnum.Media ? gameDetail.Game.Description : gameDetail.Game.Name;
 
         public void Init(IEnumerable<ContentType> contentTypes)
         {
