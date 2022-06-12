@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
+using ClrVpin.Shared.Fuzzy;
 using Utils;
 using Utils.Extensions;
 using Utils.Xml;
@@ -49,9 +50,9 @@ namespace ClrVpin.Shared
                     game.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.Derived.IpdbUrl));
                     game.Content.Init(contentTypes);
 
-                    // assign fuzzy name details here to avoid it being calculated multiple times when comparing against EACH of the file matches
-                    game.FuzzyTableDetails = Fuzzy.GetNameDetails(game.Name, false);
-                    game.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(game.Description, false);
+                    // assign fuzzy name details up front to avoid it being re-calculated multiple times later on, e.g. when comparing against EACH of the file matches
+                    game.Fuzzy.TableDetails = Fuzzy.Fuzzy.GetNameDetails(game.Name, false);
+                    game.Fuzzy.DescriptionDetails = Fuzzy.Fuzzy.GetNameDetails(game.Description, false);
                 });
 
                 // proof of concept - serialize to disk again to verify similarity/compatibility
@@ -111,7 +112,7 @@ namespace ClrVpin.Shared
                 updateProgress(Path.GetFileName(contentFile), i + 1);
 
                 Game matchedGame;
-                var fuzzyFileNameDetails = Fuzzy.GetNameDetails(contentFile, true);
+                var fuzzyFileNameDetails = Fuzzy.Fuzzy.GetNameDetails(contentFile, true);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit

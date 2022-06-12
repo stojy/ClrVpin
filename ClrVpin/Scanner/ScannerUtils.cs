@@ -8,6 +8,7 @@ using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
 using ClrVpin.Shared;
+using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;
 
 namespace ClrVpin.Scanner

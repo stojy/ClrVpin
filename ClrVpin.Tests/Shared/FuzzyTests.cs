@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ClrVpin.Models.Shared.Database;
-using ClrVpin.Shared;
+using ClrVpin.Shared.Fuzzy;
 using NUnit.Framework;
 using Utils.Extensions;
 
@@ -231,8 +231,8 @@ public class FuzzyTests
         games.ForEach((g,index) =>
         {
             GameDerived.Update(g, index);
-            g.FuzzyTableDetails = Fuzzy.GetNameDetails(g.Name, false);
-            g.FuzzyDescriptionDetails = Fuzzy.GetNameDetails(g.Description, false);
+            g.Fuzzy.TableDetails = Fuzzy.GetNameDetails(g.Name, false);
+            g.Fuzzy.DescriptionDetails = Fuzzy.GetNameDetails(g.Description, false);
         });
 
         // exact match #1

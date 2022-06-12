@@ -9,7 +9,7 @@ using ClrVpin.Converters;
 using ClrVpin.Logging;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Database;
-using ClrVpin.Shared;
+using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;
 
 namespace ClrVpin.Importer

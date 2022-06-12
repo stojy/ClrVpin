@@ -7,7 +7,7 @@ using ClrVpin.Models.Shared.Database;
 using Utils;
 using Utils.Extensions;
 
-namespace ClrVpin.Shared
+namespace ClrVpin.Shared.Fuzzy
 {
     public static class Fuzzy
     {
@@ -119,23 +119,6 @@ namespace ClrVpin.Shared
             return cleanName;
         }
 
-        public class FuzzyNameDetails
-        {
-            public FuzzyNameDetails(string name, string nameNoWhiteSpace, string manufacturer, int? year, string actualName)
-            {
-                Name = name;
-                NameNoWhiteSpace = nameNoWhiteSpace;
-                Manufacturer = manufacturer;
-                Year = year;
-                ActualName = actualName;
-            }
-            public string Name { get; }
-            public string NameNoWhiteSpace { get; }
-            public string Manufacturer { get; set; }
-            public int? Year { get; set; }
-            public string ActualName { get; }
-        }
-
         public static FuzzyNameDetails GetNameDetails(string sourceName, bool isFileName)
         {
             // return the fuzzy portion of the filename..
@@ -179,8 +162,8 @@ namespace ClrVpin.Shared
             // check EVERY DB game entry against the file to look for the best match
             // - Match will create a fuzzy version (aka cleaned) of each game DB entry so it can be compared against the fuzzy file details (already cleaned)
             // - Match table name (non-media) OR description (media)
-            var tableFileMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.FuzzyTableDetails, fuzzyFileDetails) }).ToList();
-            var descriptionMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.FuzzyDescriptionDetails, fuzzyFileDetails) }).ToList();
+            var tableFileMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.Fuzzy.TableDetails, fuzzyFileDetails) }).ToList();
+            var descriptionMatches = games.Select(game => new MatchDetail { Game = game, MatchResult = Match(game.Fuzzy.DescriptionDetails, fuzzyFileDetails) }).ToList();
 
             var orderedMatches = tableFileMatches.Concat(descriptionMatches)
                 .OrderByDescending(x => x.MatchResult.success)
@@ -304,15 +287,15 @@ namespace ClrVpin.Shared
 
             // levenshtein distance
             if (score == 0)
-                score = IsLevenshteinMatch(14, 2, gameName, fileName) ? 120 + ScoringNoWhiteSpaceBonus: 0;
+                score = IsLevenshteinMatch(14, 2, gameName, fileName) ? 120 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
                 score = IsLevenshteinMatch(14, 2, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 120 : 0;
 
             if (score == 0)
-                score = IsStartsMatch(14, gameName, fileName) ? 100 + ScoringNoWhiteSpaceBonus: 0;
+                score = IsStartsMatch(14, gameName, fileName) ? 100 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
                 score = IsStartsMatch(14, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
-            
+
             if (score == 0)
                 score = IsStartsMatch(10, gameName, fileName) ? 60 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
@@ -327,7 +310,7 @@ namespace ClrVpin.Shared
                 score = IsContainsMatch(17, gameName, fileName) ? 100 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
                 score = IsContainsMatch(17, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
-            
+
             if (score == 0)
                 score = IsContainsMatch(13, gameName, fileName) ? 60 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
