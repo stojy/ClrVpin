@@ -17,15 +17,12 @@ namespace ClrVpin.Importer
             var result = await DialogHost.Show(item, "ImporterResultsDialog") as DatabaseItemAction?;
             if (result == DatabaseItemAction.Update)
             {
-                // replace the older game with the updated game
-                var gameIndex = gameDetails.FindIndex(g => g == onlineGame.Hit.GameDetail);
-                if (gameIndex >= 0)
-                    gameDetails[gameIndex] = item.GameDetail;
-
-                // replace online game reference to the updated game
-                onlineGame.Hit.GameDetail = item.GameDetail;
-
-                TableUtils.WriteGamesToDatabase(gameDetails.Select(gameDetail => gameDetail.Game));
+                // replace the out of date game details
+                var existingGameDetail = gameDetails.First(g => g == onlineGame.Hit.GameDetail);
+                existingGameDetail.Game = item.GameDetail.Game;
+                existingGameDetail.Derived = item.GameDetail.Derived;
+                
+                TableUtils.WriteGamesToDatabase(gameDetails);
             }
 
             Logger.Info($"Database Item: action={result}");

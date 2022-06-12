@@ -1,23 +1,19 @@
 ﻿using System;
+using PropertyChanged;
+// ReSharper disable MemberCanBePrivate.Global - public setters required to support json deserialization, refer DatabaseItem
 
 namespace ClrVpin.Models.Shared.Database
 {
+    [AddINotifyPropertyChangedInterface]
     public class GameDerived
     {
-        public int Number { get; private set; }
-
-        public string Ipdb { get; private set; }
-
-        public string IpdbUrl { get; private set; }
-
-        public string NameLowerCase { get; private set; }
-
-        public string DescriptionLowerCase { get; private set; }
-
-        public bool IsOriginal { get; private set; }
-
-        public string TableFileWithExtension { get; private set; }
-
+        public int Number { get; set; }
+        public string Ipdb { get; set; }
+        public string IpdbUrl { get; set; }
+        public string NameLowerCase { get; set; }
+        public string DescriptionLowerCase { get; set; }
+        public bool IsOriginal { get; set; }
+        public string TableFileWithExtension { get; set; }
 
         public static void Init(GameDetail gameDetail, int? number = null)
         {

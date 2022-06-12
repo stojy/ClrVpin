@@ -58,7 +58,7 @@ namespace ClrVpin.Shared
                 });
 
                 // proof of concept - serialize to disk again to verify similarity/compatibility
-                WriteGamesToDatabase(databaseGameDetails.Select(gameDetail => gameDetail.Game), file + ".bak");
+                WriteGamesToDatabase(databaseGameDetails, file + ".bak");
 
                 gameDetails.AddRange(databaseGameDetails);
             });
@@ -67,8 +67,10 @@ namespace ClrVpin.Shared
             return gameDetails;
         }
 
-        public static void WriteGamesToDatabase(IEnumerable<Game> games, string file = null)
+        public static void WriteGamesToDatabase(IEnumerable<GameDetail> gameDetails, string file = null)
         {
+            var games = gameDetails.Select(gameDetail => gameDetail.Game);
+
             if (file == null)
             {
                 var databaseContentType = Model.Settings.GetDatabaseContentType();
