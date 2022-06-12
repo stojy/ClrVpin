@@ -236,8 +236,7 @@
               </StackPanel>
             </DataTemplate>
 
-            <!-- database item (game) - refer DatabaseItem.xaml -->
-
+            <!-- database item (game) - refer DatabaseItem.xaml import (top of file) -->
           </DataTemplate.Resources>
 
           <!--render the appropriate template-->

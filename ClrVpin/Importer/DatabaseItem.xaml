@@ -4,7 +4,6 @@
                     mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:database="clr-namespace:ClrVpin.Models.Shared.Database"
                     xmlns:importer="clr-namespace:ClrVpin.Importer"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:ClrVpin.Controls">
@@ -19,19 +18,19 @@
   <!-- x:Shared resources must be at the top level resource dictionary -->
   <controls:Triggers x:Key="TextChangedTriggers" x:Shared="False">
     <b:EventTrigger EventName="TextChanged">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}" />
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}" />
     </b:EventTrigger>
   </controls:Triggers>
 
   <controls:Triggers x:Key="ComboChangedTriggers" x:Shared="False">
     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}" />
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}" />
     </controls:RoutedEventTrigger>
   </controls:Triggers>
 
   <controls:Triggers x:Key="DatePickerChangedTriggers" x:Shared="False">
     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}" />
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}" />
     </controls:RoutedEventTrigger>
   </controls:Triggers>
 
@@ -41,13 +40,13 @@
       <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}" />
     </b:EventTrigger>-->
 
-    <b:PropertyChangedTrigger Binding="{Binding DateModified}" d:DataContext="{d:DesignInstance Type=database:Game}">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}" />
+    <b:PropertyChangedTrigger Binding="{Binding DateModified}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}">
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}" />
     </b:PropertyChangedTrigger>
   </controls:Triggers>
 
   <!--table and frontend properties-->
-  <DataTemplate DataType="{x:Type database:Game}">
+  <DataTemplate x:Key="GameDetails" DataType="{x:Type importer:DatabaseItem}">
     <StackPanel>
         <b:Interaction.Triggers>
           <b:EventTrigger EventName="Loaded">
@@ -97,14 +96,14 @@
       <!--table properties-->
       <GroupBox Header="Table Properties" Margin="0,10,0,0">
         <StackPanel Margin="5,0">
-          <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                   materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding TableFileWithExtension}"
+          <TextBox Text="{Binding Game.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                   materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding Game.TableFileWithExtension}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
                    MinWidth="420" Margin="0,5,0,10" />
 
           <WrapPanel Margin="0,10,0,0">
             <ComboBox ItemsSource="{Binding ManufacturersView}"
-                      Text="{Binding Path=Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=Game.Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Manufacturer"
                       Width="210">
               <ComboBox.Style>
@@ -112,10 +111,10 @@
                      - using style trigger instead of a WrapPanel of TextBlocks with visibility trigger.. because HintAssist.HelperText is hardcoded to TextBlock and not a generic control :( -->
                 <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource EditComboBoxStyle}">
                   <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsOriginal}" Value="true">
+                    <DataTrigger Binding="{Binding Game.IsOriginal}" Value="true">
                       <Setter Property="materialDesign:HintAssist.HelperText" Value="Original table (not manufactured)" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding IsOriginal}" Value="false">
+                    <DataTrigger Binding="{Binding Game.IsOriginal}" Value="false">
                       <Setter Property="materialDesign:HintAssist.HelperText" Value="Manufactured table" />
                     </DataTrigger>
                   </Style.Triggers>
@@ -123,38 +122,38 @@
               </ComboBox.Style>
             </ComboBox>
 
-            <TextBox Text="{Binding IpdbId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     materialDesign:HintAssist.Hint="IPDB Identifier" materialDesign:HintAssist.HelperText="{Binding IpdbUrl}"
-                     IsEnabled="{Binding IsOriginal, Converter={StaticResource InvertBooleanConverter}}"
+            <TextBox Text="{Binding Game.IpdbId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     materialDesign:HintAssist.Hint="IPDB Identifier" materialDesign:HintAssist.HelperText="{Binding Game.IpdbUrl}"
+                     IsEnabled="{Binding Game.IsOriginal, Converter={StaticResource InvertBooleanConverter}}"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      MinWidth="200" Margin="10,0,0,0" />
           </WrapPanel>
 
           <WrapPanel Margin="0,20,0,0">
             <ComboBox ItemsSource="{Binding YearsView}"
-                      Text="{Binding Path=Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=Game.Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Year"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="80" />
             <ComboBox ItemsSource="{Binding TypesView}"
-                      Text="{Binding Path=Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=Game.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Type" ToolTip="EM: electro-mechanical, SS: solid state, PM: purely mechanical"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="80" Margin="10,0,0,0" />
             <ComboBox ItemsSource="{Binding PlayersView}"
-                      Text="{Binding Path=Players, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=Game.Players, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Players"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="100" Margin="10,0,0,0" />
             <ComboBox ItemsSource="{Binding RomsView}"
-                      Text="{Binding Path=Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=Game.Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="130" Margin="10,0,0,0" />
           </WrapPanel>
 
           <ComboBox ItemsSource="{Binding ThemesView}"
-                    Text="{Binding Path=Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{Binding Path=Game.Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     materialDesign:HintAssist.Hint="Theme(s)"
                     Style="{StaticResource EditComboBoxStyle}"
                     MinWidth="420" Margin="0,10,0,10" />
@@ -165,31 +164,31 @@
       <GroupBox Header="Frontend Properties" Margin="0,15,0,0">
         <StackPanel Margin="5,0">
           <TextBox materialDesign:HintAssist.Hint="Description"
-                   Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                   Text="{Binding Game.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
                    Width="420" Margin="0,5,0,10" />
 
           <WrapPanel>
-            <TextBox Text="{Binding Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding Game.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Version"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      MinWidth="100" />
             <ComboBox ItemsSource="{Binding AuthorsView}"
-                      Text="{Binding Path=Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=Game.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Author(s)"
                       Style="{StaticResource EditComboBoxStyle}"
                       MinWidth="315" Margin="5,10,0,10" />
           </WrapPanel>
 
           <WrapPanel>
-            <TextBox Text="{Binding Rating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding Game.Rating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Rating" IsReadOnly="True"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      MinWidth="65" />
-            <Slider Value="{Binding Rating}" Minimum="0" Maximum="5"
+            <Slider Value="{Binding Game.Rating}" Minimum="0" Maximum="5"
                     TickFrequency="0.5" TickPlacement="BottomRight"
                     MinWidth="105" Margin="10,28,0,0" />
-            <TextBox Text="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding Game.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Comment(s)"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      MinWidth="230" Margin="10,10,0,10" />
@@ -245,7 +244,7 @@
     <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" MinWidth="400">
       <StackPanel>
 
-        <ContentControl Content="{Binding Game}" />
+        <ContentControl ContentTemplate="{StaticResource GameDetails}" Content="{Binding}" />
 
         <!--buttons-->
         <WrapPanel HorizontalAlignment="Center" Margin="0,10,0,0">
@@ -267,7 +266,7 @@
                   ToolTip="Update entry in your local database" />
           <Button Content="Update" Width="100" Style="{StaticResource DialogButtonHighlightedStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
-                  IsEnabled="{Binding IsChanged}"
+                  IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
                   ToolTip="Update entry in your local database" />
           <Button Content="Cancel" IsCancel="True" Width="100" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Cancel}"
                   ToolTip="Exit without updating/inserting an entry in your local database" />

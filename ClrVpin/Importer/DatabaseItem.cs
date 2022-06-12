@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json;
+using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Models.Shared.Database;
 using ClrVpin.Shared;
@@ -23,63 +24,96 @@ namespace ClrVpin.Importer
 
             Game = originalGame.Clone();
             IsExisting = isExisting;
-            IsChanged = false;
+            IsItemChanged = false;
 
-            Game.ManufacturersView = new ListCollectionView<string>(onlineGameCollections.Manufacturers);
-            Game.YearsView = new ListCollectionView<string>(onlineGameCollections.Years);
-            Game.TypesView = new ListCollectionView<string>(onlineGameCollections.Types);
-            Game.RomsView = new ListCollectionView<string>(onlineGameCollections.Roms);
-            Game.PlayersView = new ListCollectionView<int?>(onlineGameCollections.Players);
-            Game.ThemesView = new ListCollectionView<string>(onlineGameCollections.Themes);
-            Game.AuthorsView = new ListCollectionView<string>(onlineGameCollections.Authors);
-            Game.MaxDateTime = DateTime.Today.AddDays(1);
-
+            ManufacturersView = new ListCollectionView<string>(onlineGameCollections.Manufacturers);
+            YearsView = new ListCollectionView<string>(onlineGameCollections.Years);
+            TypesView = new ListCollectionView<string>(onlineGameCollections.Types);
+            RomsView = new ListCollectionView<string>(onlineGameCollections.Roms);
+            PlayersView = new ListCollectionView<int?>(onlineGameCollections.Players);
+            ThemesView = new ListCollectionView<string>(onlineGameCollections.Themes);
+            AuthorsView = new ListCollectionView<string>(onlineGameCollections.Authors);
+            
+            MaxDateTime = DateTime.Today.AddDays(1);
             
             if (DateTime.TryParse(Game.DateAddedString, out var dateTime))
             {
-                Game.DateAdded = dateTime;
-                Game.DateAddedDateOnly = dateTime.Date;
+                DateAdded = dateTime;
+                DateAddedDateOnly = dateTime.Date;
             }
 
             if (DateTime.TryParse(Game.DateModifiedString, out dateTime))
             {
-                Game.DateModified = dateTime;
-                Game.DateModifiedDateOnly = dateTime.Date;
+                DateModified = dateTime;
+                DateModifiedDateOnly = dateTime.Date;
             }
 
-            Game.LoadedCommand = new ActionCommand(() => _loaded = true);
-            Game.UnloadedCommand = new ActionCommand(() => _loaded = false);
-            Game.ChangedCommand = new ActionCommand(() =>
+            LoadedCommand = new ActionCommand(() => _loaded = true);
+            UnloadedCommand = new ActionCommand(() => _loaded = false);
+            ChangedCommand = new ActionCommand(() =>
             {
                 // skip unnecessary changes that occur before control is loaded OR after the control has been unloaded
-                // - e.g. populating items source for combobox causes the 'SelectedItem' to change which results in a 'false positiive' Changed event firing
+                // - e.g. populating items source for combobox causes the 'SelectedItem' to change which results in a 'false positive' Changed event firing
                 if (!_loaded)
                     return;
 
                 // update date/time preserving the time portion, which is unfortunately cleared by the DateTime picker
-                if (Game.DateAddedDateOnly != null)
-                    Game.DateAdded = Game.DateAddedDateOnly + (Game.DateAdded?.TimeOfDay ?? TimeSpan.Zero);
+                if (DateAddedDateOnly != null)
+                    DateAdded = DateAddedDateOnly + (DateAdded?.TimeOfDay ?? TimeSpan.Zero);
                 else
-                    Game.DateAdded = new DateTime(1900, 1, 1);
-                Game.DateAddedString = Game.DateAdded?.ToString("yyyy-MM-dd HH:mm:ss");
+                    DateAdded = new DateTime(1900, 1, 1);
+                Game.DateAddedString = DateAdded?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // update date/time preserving the time portion, which is unfortunately cleared by the DateTime picker
-                if (Game.DateModifiedDateOnly != null)
-                    Game.DateModified = Game.DateModifiedDateOnly + (Game.DateModified?.TimeOfDay ?? TimeSpan.Zero);
+                if (
+                DateModifiedDateOnly != null)
+                    DateModified = DateModifiedDateOnly + (DateModified?.TimeOfDay ?? TimeSpan.Zero);
                 else
-                    Game.DateModified = new DateTime(1900, 1, 1);
-                Game.DateModifiedString = Game.DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
+                    DateModified = new DateTime(1900, 1, 1);
+                Game.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // explicitly recalculate dynamic VM properties
                 TableUtils.UpdateGameProperties(Game);
 
                 // indicate whether anything has changed
-                IsChanged = !Game.IsEqual(initialSerializedGame);
+                IsItemChanged = !Game.IsEqual(initialSerializedGame);
             });
         }
 
         public Game Game { get; }
         public bool IsExisting { get; set; }
-        public bool IsChanged { get; set; }
+        public bool IsItemChanged { get; set; }
+
+        public ICommand ChangedCommand { get; set; }
+
+        public ICommand LoadedCommand { get; set; }
+
+        public ICommand UnloadedCommand { get; set; }
+
+        public ListCollectionView<string> ManufacturersView { get; }
+
+        public ListCollectionView<string> YearsView { get; }
+
+        public ListCollectionView<string> TypesView { get; }
+
+        public ListCollectionView<int?> PlayersView { get; }
+
+        public ListCollectionView<string> RomsView { get; }
+
+        public ListCollectionView<string> ThemesView { get; }
+
+        public ListCollectionView<string> AuthorsView { get; }
+    
+        public DateTime MaxDateTime { get; set; }
+
+        public DateTime? DateModified { get; set; }
+
+        // date only portion to accommodate the DatePicker which resets the time portion when a date is selected
+        public DateTime? DateModifiedDateOnly { get; set; }
+
+        public DateTime? DateAdded { get; set; }
+
+        // date only portion to accommodate the DatePicker which resets the time portion when a date is selected
+        public DateTime? DateAddedDateOnly { get; set; }
     }
 }
