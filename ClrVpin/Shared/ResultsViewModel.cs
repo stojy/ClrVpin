@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using ClrVpin.Controls;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
 using Utils;
@@ -17,22 +17,20 @@ namespace ClrVpin.Shared
     public abstract class ResultsViewModel
     {
         // all games referenced in the DB.. irrespective of hits
-        public ObservableCollection<Game> Games { get; set; }
-        
-        // games referenced in the DB that have hits
-        public ObservableCollection<Game> HitGames { get; set; }
+        public ObservableCollection<Game> Games { get; protected init; }
 
-        public ListCollectionView AllContentFeatureTypesView { get; set; }
-        public ListCollectionView AllHitFeatureTypesView { get; set; }
-        public ListCollectionView HitGamesView { get; set; }
+        public ListCollectionView<FeatureType> AllContentFeatureTypesView { get; private set; }
+        public ListCollectionView<FeatureType> AllHitFeatureTypesView { get; private set; }
+        public ListCollectionView<Game> HitGamesView { get; private set; }
 
-        public ICommand ExpandGamesCommand { get; set; }
+        public ICommand ExpandGamesCommand { get; private set; }
         public string SearchText { get; set; } = "";
         public ICommand SearchTextCommand { get; set; }
-        public Window Window { get; set; }
+        public Window Window { get; protected set; }
 
-        public string BackupFolder { get; set; }
-        public ICommand NavigateToBackupFolderCommand { get; set; }
+        public string BackupFolder { get; private set; }
+        public ICommand NavigateToBackupFolderCommand { get; private set; }
+        protected Models.Settings.Settings Settings { get; private set; }
 
 
         public void Close()
@@ -44,11 +42,11 @@ namespace ClrVpin.Shared
         {
             Settings = Model.Settings;
 
-            AllContentFeatureTypes = CreateAllContentFeatureTypes();
-            AllContentFeatureTypesView = new ListCollectionView(AllContentFeatureTypes.ToList());
+            _allContentFeatureTypes = CreateAllContentFeatureTypes();
+            AllContentFeatureTypesView = new ListCollectionView<FeatureType>(_allContentFeatureTypes.ToList());
 
-            AllHitFeatureTypes = CreateAllHitFeatureTypes();
-            AllHitFeatureTypesView = new ListCollectionView(AllHitFeatureTypes.ToList());
+            _allHitFeatureTypes = CreateAllHitFeatureTypes();
+            AllHitFeatureTypesView = new ListCollectionView<FeatureType>(_allHitFeatureTypes.ToList());
 
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
@@ -60,22 +58,8 @@ namespace ClrVpin.Shared
             InitView();
         }
 
-        private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
-
         protected abstract IList<FeatureType> CreateAllContentFeatureTypes();
         protected abstract IList<FeatureType> CreateAllHitFeatureTypes();
-        protected Models.Settings.Settings Settings { get; set; }
-
-        protected void UpdateStatus(IEnumerable<Game> games)
-        {
-            games.ForEach(game =>
-            {
-                // update status of each game based AND filter the view based on the selected content and/or hit criteria
-                game.Content.Update(
-                    () => AllContentFeatureTypes.Where(x => x.IsActive).Select(x => x.Id),
-                    () => AllHitFeatureTypes.Where(x => x.IsActive).Select(x => x.Id));
-            });
-        }
 
         protected void UpdateHitsView()
         {
@@ -83,26 +67,39 @@ namespace ClrVpin.Shared
             HitGamesView.Refresh();
         }
 
-        protected void ExpandItems(bool expand)
+        private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
+
+        private void UpdateStatus(IEnumerable<Game> games)
         {
-            HitGames.ForEach(game => game.IsExpanded = expand);
+            games.ForEach(game =>
+            {
+                // update status of each game based AND filter the view based on the selected content and/or hit criteria
+                game.Content.Update(
+                    () => _allContentFeatureTypes.Where(x => x.IsActive).Select(x => x.Id),
+                    () => _allHitFeatureTypes.Where(x => x.IsActive).Select(x => x.Id));
+            });
+        }
+
+        private void ExpandItems(bool expand)
+        {
+            _hitGames.ForEach(game => game.ViewState.IsExpanded = expand);
             HitGamesView.Refresh();
         }
 
-        protected void InitView()
+        private void InitView()
         {
-            HitGames = new ObservableCollection<Game>(Games.Where(game => game.Content.Hits.Count > 0));
-            HitGamesView = new ListCollectionView(HitGames);
+            _hitGames = new ObservableCollection<Game>(Games.Where(game => game.Content.Hits.Count > 0));
+            HitGamesView = new ListCollectionView<Game>(_hitGames);
 
             // text filter
             HitGamesView.Filter += gameObject =>
             {
                 // only display games that have hits AND those hits haven't already been filtered out (e.g. filtered on content or hit type)
-                if (((Game) gameObject).Content.HitsView.Count == 0)
+                if (gameObject.Content.HitsView.Count == 0)
                     return false;
 
                 // return hits based on description match against the search text
-                return string.IsNullOrEmpty(SearchText) || ((Game)gameObject).Description.ToLower().Contains(SearchText.ToLower());
+                return string.IsNullOrEmpty(SearchText) || gameObject.Description.ToLower().Contains(SearchText.ToLower());
             };
         }
 
@@ -111,7 +108,7 @@ namespace ClrVpin.Shared
             // delay processing text changed
             if (_searchTextChangedDelayTimer == null)
             {
-                _searchTextChangedDelayTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(300)};
+                _searchTextChangedDelayTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
                 _searchTextChangedDelayTimer.Tick += (_, _) =>
                 {
                     _searchTextChangedDelayTimer.Stop();
@@ -123,8 +120,11 @@ namespace ClrVpin.Shared
             _searchTextChangedDelayTimer.Start();
         }
 
-        protected IEnumerable<FeatureType> AllContentFeatureTypes;
-        protected IEnumerable<FeatureType> AllHitFeatureTypes;
+        // games referenced in the DB that have hits
+        private ObservableCollection<Game> _hitGames;
+
+        private IEnumerable<FeatureType> _allContentFeatureTypes;
+        private IEnumerable<FeatureType> _allHitFeatureTypes;
         private DispatcherTimer _searchTextChangedDelayTimer;
     }
 }

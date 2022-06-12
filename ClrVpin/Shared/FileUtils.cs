@@ -84,7 +84,7 @@ namespace ClrVpin.Shared
         public static string GetCorrectFile(Game game, ContentTypeCategoryEnum category, string path, string extension)
         {
             // determine the correct name - which has a different calculation for media vs pinball :(
-            var correctContentName = game.GetContentName(category);
+            var correctContentName = Content.GetName(game, category);
 
             // use supplied path and extension - i.e. accommodate importing (source path) and scanning (destination path)
             return Path.Combine(path!, $"{correctContentName}{extension}");

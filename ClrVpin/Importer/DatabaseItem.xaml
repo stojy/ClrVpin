@@ -97,7 +97,7 @@
       <GroupBox Header="Table Properties" Margin="0,10,0,0">
         <StackPanel Margin="5,0">
           <TextBox Text="{Binding Game.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                   materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding Game.TableFileWithExtension}"
+                   materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding Game.Derived.TableFileWithExtension}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
                    MinWidth="420" Margin="0,5,0,10" />
 

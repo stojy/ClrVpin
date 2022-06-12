@@ -72,7 +72,7 @@ namespace ClrVpin.Importer
                 Game.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // explicitly recalculate dynamic VM properties
-                GameDerived.Update(Game);
+                GameDerived.Init(Game);
 
                 // indicate whether anything has changed
                 IsItemChanged = !Game.IsEqual(initialSerializedGame);

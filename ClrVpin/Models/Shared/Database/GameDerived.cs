@@ -16,7 +16,10 @@ namespace ClrVpin.Models.Shared.Database
 
         public bool IsOriginal { get; private set; }
 
-        public static void Update(Game game, int? number = null)
+        public string TableFileWithExtension { get; private set; }
+
+
+        public static void Init(Game game, int? number = null)
         {
             var derived = game.Derived;
 
@@ -42,6 +45,8 @@ namespace ClrVpin.Models.Shared.Database
             // memory optimisation to perform this operation once on database read instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
             derived.NameLowerCase = game.Name.ToLower();
             derived.DescriptionLowerCase = game.Description.ToLower();
+
+            derived.TableFileWithExtension = game.Name + ".vpx";
         }
 
         // assign isOriginal based on the manufacturer

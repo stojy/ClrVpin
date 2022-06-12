@@ -238,7 +238,7 @@ namespace ClrVpin.Scanner
                 game.Content.ContentHitsCollection.ForEach(contentHitCollection =>
                 {
                     if (!contentHitCollection.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName || hit.Type == HitTypeEnum.WrongCase))
-                        contentHitCollection.Add(HitTypeEnum.Missing, game.GetContentName(contentHitCollection.ContentType.Category));
+                        contentHitCollection.Add(HitTypeEnum.Missing, Content.GetName(game, contentHitCollection.ContentType.Category));
                 });
             });
         }

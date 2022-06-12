@@ -7,10 +7,10 @@ namespace ClrVpin.Models.Shared.Database;
 public class GameBase
 {
     [XmlAttribute("name")]
-    public string Name { get; set; } // used by VPX (table, b2s, and pov - filename must match this property.  Refer GetContentName
+    public string Name { get; set; } // used by VPX (table, b2s, and pov - filename must match this property.  Refer GetName
 
     [XmlElement("description")]
-    public string Description { get; set; } // used by frontends (pbx/pby) - filename must match this property.  Refer GetContentName
+    public string Description { get; set; } // used by frontends (pbx/pby) - filename must match this property.  Refer GetName
 
     [XmlElement("rom")]
     public string Rom { get; set; }

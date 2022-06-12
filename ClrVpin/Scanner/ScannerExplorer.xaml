@@ -72,7 +72,7 @@
 
   <DataTemplate x:Key="IpdbTemplate" DataType="database:Game">
     <TextBlock VerticalAlignment="Center" >
-      <Hyperlink NavigateUri="{Binding Derived.IpdbUrl}" Command="{Binding NavigateToIpdbCommand}">
+      <Hyperlink NavigateUri="{Binding Derived.IpdbUrl}" Command="{Binding ViewState.NavigateToIpdbCommand}">
         <TextBlock Text="{Binding Derived.Ipdb}" />
       </Hyperlink>
     </TextBlock>
@@ -119,7 +119,7 @@
           <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly"
                                   CanUserSort="True" />
           <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Table" Binding="{Binding TableFileWithExtension}" Width="280" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Table" Binding="{Binding Derived.TableFileWithExtension}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
           <DataGridTextColumn d:DataContext="{d:DesignInstance Type=database:Game}" Header="Description" Binding="{Binding Description}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />

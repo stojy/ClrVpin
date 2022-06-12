@@ -230,7 +230,7 @@ public class FuzzyTests
 
         games.ForEach((g,index) =>
         {
-            GameDerived.Update(g, index);
+            GameDerived.Init(g, index);
             g.Fuzzy.TableDetails = Fuzzy.GetNameDetails(g.Name, false);
             g.Fuzzy.DescriptionDetails = Fuzzy.GetNameDetails(g.Description, false);
         });

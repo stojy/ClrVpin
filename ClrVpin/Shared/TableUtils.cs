@@ -46,8 +46,8 @@ namespace ClrVpin.Shared
                 var number = 1;
                 menu.Games.ForEach(game =>
                 {
-                    GameDerived.Update(game, number++);
-                    game.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.Derived.IpdbUrl));
+                    GameDerived.Init(game, number++);
+                    game.ViewState.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.Derived.IpdbUrl));
                     game.Content.Init(contentTypes);
 
                     // assign fuzzy name details up front to avoid it being re-calculated multiple times later on, e.g. when comparing against EACH of the file matches
@@ -117,7 +117,7 @@ namespace ClrVpin.Shared
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
-                if ((matchedGame = games.FirstOrDefault(game => game.GetContentName(contentType.Category) == Path.GetFileNameWithoutExtension(contentFile))) != null)
+                if ((matchedGame = games.FirstOrDefault(game => Content.GetName(game, contentType.Category) == Path.GetFileNameWithoutExtension(contentFile))) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
@@ -125,7 +125,7 @@ namespace ClrVpin.Shared
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, contentFile);
                 }
                 else if ((matchedGame = games.FirstOrDefault(game =>
-                             string.Equals(game.GetContentName(contentType.Category), Path.GetFileNameWithoutExtension(contentFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                             string.Equals(Content.GetName(game, contentType.Category), Path.GetFileNameWithoutExtension(contentFile), StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
                     getContentHits(matchedGame).Add(HitTypeEnum.WrongCase, contentFile);
                 }

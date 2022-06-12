@@ -3,27 +3,32 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
+using ClrVpin.Models.Shared.Database;
 
 namespace ClrVpin.Models.Shared
 {
     public class Content
     {
-        public void Init(IList<ContentType> contentTypes)
-        {
-            // create content hits collection for the specified contentTypes, e.g. the selected contentTypes
-            ContentHitsCollection.AddRange(contentTypes.Select(contentType => new ContentHits(contentType)));
-        }
-
         // 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
         // - only the selected content types are added to the collection
-        public List<ContentHits> ContentHitsCollection { get; set; } = new List<ContentHits>();
-       
+        public List<ContentHits> ContentHitsCollection { get; } = new List<ContentHits>();
+
         // flattened collection of all media file hits (including valid) across all content types (that checking is enabled)
-        public ObservableCollection<Hit> Hits { get; set; }
+        public ObservableCollection<Hit> Hits { get; private set; }
         public ListCollectionView HitsView { get; set; }
 
         // true if game contains any hits types that are not valid
         public bool IsSmelly { get; set; }
+
+        public static string GetName(Game game, ContentTypeCategoryEnum category) =>
+            // determine the correct name - different for media vs pinball
+            category == ContentTypeCategoryEnum.Media ? game.Description : game.Name;
+
+        public void Init(IEnumerable<ContentType> contentTypes)
+        {
+            // create content hits collection for the specified contentTypes, e.g. the selected contentTypes
+            ContentHitsCollection.AddRange(contentTypes.Select(contentType => new ContentHits(contentType)));
+        }
 
         public void Update(Func<IEnumerable<int>> getActiveContentFeatureTypes, Func<IEnumerable<int>> getActiveHitContentTypes)
         {
@@ -35,8 +40,8 @@ namespace ClrVpin.Models.Shared
             {
                 // update HitsView based on the updated filtering content type and/or hit type
                 // - the getFilteredXxx return their respective enum as an integer via FeatureType.Id
-                Filter = hitObject => getActiveContentFeatureTypes().Contains((int) ((Hit) hitObject).ContentTypeEnum) &&
-                                      getActiveHitContentTypes().Contains((int) ((Hit) hitObject).Type)
+                Filter = hitObject => getActiveContentFeatureTypes().Contains((int)((Hit)hitObject).ContentTypeEnum) &&
+                                      getActiveHitContentTypes().Contains((int)((Hit)hitObject).Type)
             };
         }
     }

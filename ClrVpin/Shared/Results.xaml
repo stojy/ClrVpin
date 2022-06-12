@@ -29,8 +29,8 @@
   </Style>
 
   <Style x:Key="HitGameStyle" TargetType="TreeViewItem" d:DataContext="{d:DesignInstance database:Game}" BasedOn="{StaticResource MaterialDesignTreeViewItem}">
-    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+    <Setter Property="IsExpanded" Value="{Binding ViewState.IsExpanded, Mode=TwoWay}" />
+    <Setter Property="IsSelected" Value="{Binding ViewState.IsSelected, Mode=TwoWay}" />
   </Style>
 
   <HierarchicalDataTemplate x:Key="HitResultTemplate" DataType="shared1:Hit">
