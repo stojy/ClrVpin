@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Input;
-using ClrVpin.Shared;
+using ClrVpin.Models.Shared.Database;
 
 namespace ClrVpin.Models.Importer.Vps;
 
@@ -15,7 +15,7 @@ public class OnlineGame : OnlineGameBase
     public int Index { get; set; }
     public UrlSelection ImageUrlSelection { get; set; }
     public string YearString { get; set; }
-    public bool IsOriginal => TableUtils.IsOriginal(Manufacturer);
+    public bool IsOriginal => Game.CheckIsOriginal(Manufacturer);
 
     // reference to the highest fuzzy ranked DB match
     public GameHit Hit { get; set; }

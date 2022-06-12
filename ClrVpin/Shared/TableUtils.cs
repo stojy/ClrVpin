@@ -45,8 +45,7 @@ namespace ClrVpin.Shared
                 var number = 1;
                 menu.Games.ForEach(game =>
                 {
-                    game.Number = number++;
-                    UpdateGameProperties(game);
+                    Game.UpdateDerivedProperties(game, number++);
                     game.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(game.IpdbUrl));
                     game.Content.Init(contentTypes);
 
@@ -75,30 +74,6 @@ namespace ClrVpin.Shared
 
             var menu = new Menu { Games = games };
             menu.SerializeToXDocument().Cleanse().SerializeToFile(file);
-        }
-
-        public static void UpdateGameProperties(Game game)
-        {
-            game.IsOriginal = IsOriginal(game.Manufacturer);
-
-            if (game.IsOriginal)
-            {
-                game.Ipdb = null;
-                game.IpdbUrl = null;
-                game.IpdbNr = null;
-
-                // don't assign null as this will result in the tag being removed from serialization.. which is valid, but inconsistent with the original xml file that always defines <ipdbid>
-                game.IpdbId = "";
-            }
-            else
-            {
-                game.Ipdb = game.IpdbId ?? game.IpdbNr ?? game.Ipdb;
-                game.IpdbUrl = game.Ipdb == null ? null : $"https://www.ipdb.org/machine.cgi?id={game.Ipdb}";
-            }
-
-            // memory optimisation to perform this operation once on database read instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
-            game.NameLowerCase = game.Name.ToLower();
-            game.DescriptionLowerCase = game.Description.ToLower();
         }
 
         public static IList<string> GetContentFileNames(ContentType contentType, string folder)
@@ -178,9 +153,6 @@ namespace ClrVpin.Shared
             return unknownSupportedFiles;
         }
 
-        // assign isOriginal based on the manufacturer
-        public static bool IsOriginal(string manufacturer) => manufacturer?.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) == true ||
-                                                              manufacturer?.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase) == true;
 
         private static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
