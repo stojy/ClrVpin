@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using Microsoft.Xaml.Behaviors;
+using Utils.Extensions;
 using TriggerBase = Microsoft.Xaml.Behaviors.TriggerBase;
 
 namespace ClrVpin.Controls;
@@ -53,8 +54,18 @@ public static class StylableInteraction
         var triggers = Interaction.GetTriggers(d);
 
         // add the new interaction to the control
-        foreach (var trigger in (Triggers)e.NewValue)
-            triggers.Add(trigger);
+        if (e.NewValue != null)
+        {
+            foreach (var trigger in (Triggers)e.NewValue)
+                triggers.Add(trigger);
+        }
+
+        // remove the new interaction from the control
+        if (e.OldValue != null)
+        {
+            foreach (var trigger in (Triggers)e.OldValue)
+                triggers.Remove(trigger);
+        }
     }
 
     public static readonly DependencyProperty BehaviorsProperty =
