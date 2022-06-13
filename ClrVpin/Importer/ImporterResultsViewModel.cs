@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
@@ -44,7 +45,7 @@ namespace ClrVpin.Importer
 
                 // local database show/add commands
                 onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.ViewDatabaseItem(games, onlineGame, this));
-                onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.AddDatabaseItem(onlineGame));
+                onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.AddDatabaseItem(games, onlineGame, this));
 
                 // show large image popup
                 onlineGame.ImageFiles.ForEach(imageFile =>
@@ -57,6 +58,13 @@ namespace ClrVpin.Importer
                 });
 
                 onlineGame.YearString = onlineGame.Year.ToString();
+
+                // extract IpdbId
+                var match = _regexExtractIpdbId.Match(onlineGame.IpdbUrl ?? string.Empty);
+                if (match.Success)
+                    onlineGame.IpdbId = match.Groups["ipdbId"].Value;
+
+                onlineGame.IsMatched = onlineGame.Hit != null;
 
                 // navigate to url
                 onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
@@ -141,17 +149,6 @@ namespace ClrVpin.Importer
             UpdateIsNew();
         }
 
-
-
-        // IOnlineGameCollections
-        public List<string> Manufacturers { get; }
-        public List<string> Types { get; }
-        public List<string> Years { get; }
-        public List<int?> Players { get; }
-        public List<string> Roms { get; }
-        public List<string> Themes { get; }
-        public List<string> Authors { get; }
-
         public ImporterSettings Settings { get; } = Model.Settings.Importer;
 
         // todo; move filters into a separate class
@@ -178,6 +175,16 @@ namespace ClrVpin.Importer
         public ICommand UpdatedFilterChanged { get; set; }
 
         public ICommand NavigateToIpdbCommand { get; }
+
+
+        // IOnlineGameCollections
+        public List<string> Manufacturers { get; }
+        public List<string> Types { get; }
+        public List<string> Years { get; }
+        public List<int?> Players { get; }
+        public List<string> Roms { get; }
+        public List<string> Themes { get; }
+        public List<string> Authors { get; }
 
         public void Show(Window parentWindow, double left, double top)
         {
@@ -234,6 +241,8 @@ namespace ClrVpin.Importer
 
             DialogHost.Show(imageUrlSelection, "ImporterResultsDialog");
         }
+
+        private Regex _regexExtractIpdbId = new Regex(@"https:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
 
         private const int WindowMargin = 0;
     }

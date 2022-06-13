@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows.Input;
 using ClrVpin.Models.Shared.Game;
+using PropertyChanged;
 
 namespace ClrVpin.Models.Importer.Vps;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+[AddINotifyPropertyChangedInterface]
 public class OnlineGameBase
 {
     public string Id { get; set; }

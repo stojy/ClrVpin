@@ -370,7 +370,7 @@
                     <WrapPanel>
                       <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="Add new local database entry"
                               Visibility="{Binding IsMatched, Converter={StaticResource BoolToCollapsedConverter}}"
-                              Command="{Binding AddDatabaseEntryCommand}" IsEnabled="False">
+                              Command="{Binding AddDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="PlusCircleOutline" Width="30" Height="30" />
                       </Button>
                       <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="View existing local database entry"

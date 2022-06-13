@@ -72,11 +72,11 @@ namespace ClrVpin.Shared
         {
             var games = gameDetails.Select(gameDetail => gameDetail.Game);
 
-            //if (file == null)
-            //{
-            //    var databaseContentType = Model.Settings.GetDatabaseContentType();
-            //    file = Path.Combine(databaseContentType.Folder, "Visual Pinball - ClrVpin.xml.bak") ;
-            //}
+            if (file != null && !Path.IsPathRooted(file))
+            {
+                var databaseContentType = Model.Settings.GetDatabaseContentType();
+                file = Path.Combine(databaseContentType.Folder, file);
+            }
 
             var menu = new Menu { Games = games.ToList() };
             menu.SerializeToXDocument().Cleanse().SerializeToFile(file + ".bak");

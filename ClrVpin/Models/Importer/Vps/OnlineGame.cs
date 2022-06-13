@@ -17,9 +17,11 @@ public class OnlineGame : OnlineGameBase
     public string YearString { get; set; }
     public bool IsOriginal => GameDerived.CheckIsOriginal(Manufacturer);
 
+    public string IpdbId { get; set; } = string.Empty;
+
     // reference to the highest fuzzy ranked DB match
     public GameHit Hit { get; set; }
-    public bool IsMatched => Hit != null;
+    public bool IsMatched { get; set; }
 
     public ICommand ViewDatabaseEntryCommand { get; set; }
     public ICommand AddDatabaseEntryCommand { get; set; }
