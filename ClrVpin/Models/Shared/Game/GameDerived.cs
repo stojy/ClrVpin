@@ -47,6 +47,7 @@ namespace ClrVpin.Models.Shared.Game
 
         // assign isOriginal based on the manufacturer
         public static bool CheckIsOriginal(string manufacturer) => manufacturer?.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) == true ||
+                                                                   manufacturer?.StartsWith("OrbitalPin", StringComparison.InvariantCultureIgnoreCase) == true ||
                                                                    manufacturer?.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase) == true;
     }
 }

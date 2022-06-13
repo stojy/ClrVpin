@@ -371,12 +371,12 @@
                       <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="Add new local database entry"
                               Visibility="{Binding IsMatched, Converter={StaticResource BoolToCollapsedConverter}}"
                               Command="{Binding AddDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="PlusCircleOutline" Width="30" Height="30" />
+                        <materialDesign:PackIcon Kind="Plus" Width="35" Height="35" />
                       </Button>
-                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="View existing local database entry"
+                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="View/update existing local database entry"
                               Visibility="{Binding IsMatched, Converter={StaticResource BoolToVisibilityConverter}}"
                               Command="{Binding ViewDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="EyeOutline" Width="30" Height="30" />
+                        <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
                       </Button>
                     </WrapPanel>
                   </DataTemplate>

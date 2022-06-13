@@ -28,9 +28,9 @@ namespace ClrVpin.Importer
                 // only update the database file tht the game belongs to
                 var gameDetailsInDatabaseFile = gameDetails.Where(gameDetail => gameDetail.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
                 TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile, item.GameDetail.Game.DatabaseFile);
-            }
 
-            Logger.Info($"Database Item: action={result}");
+                Logger.Info($"Updated existing table: {item.GameDetail.Game.Name}");
+            }
         }
 
         public static async void AddDatabaseItem(List<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
@@ -85,9 +85,9 @@ namespace ClrVpin.Importer
                 // only update the database file tht the game belongs to
                 var gameDetailsInDatabaseFile = gameDetails.Where(gd => gd.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
                 TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile, item.GameDetail.Game.DatabaseFile);
-            }
 
-            Logger.Info($"Database Item: action={result}");
+                Logger.Info($"Added new table: {item.GameDetail.Game.Name}");
+            }
         }
     }
 }
