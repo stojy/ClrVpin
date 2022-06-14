@@ -134,6 +134,19 @@ namespace ClrVpin.Shared
             return fileName.IndexOfAny(_invalidFileNameChars) != -1;
         }
 
+        public static void Backup(string file, string subFolder, Action<string> backupAction = null, bool ignoreTrainerWheels = false)
+        {
+            if ((ignoreTrainerWheels || !_settings.TrainerWheels) && File.Exists(file))
+            {
+                // backup file (aka copy) to the specified sub folder
+                // - no logging since the backup is intended to be transparent
+                var backupFile = CreateBackupFileName(file, subFolder);
+                File.Copy(file, backupFile, true);
+
+                backupAction?.Invoke(backupFile);
+            }
+        }
+
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private static void Rename(string sourcePath, string newPath, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
@@ -190,19 +203,6 @@ namespace ClrVpin.Shared
 
             var kindredFiles = allFiles.Where(file => kindredExtensions.Any(file.EndsWith)).ToList();
             return kindredFiles;
-        }
-
-        private static void Backup(string file, string subFolder, Action<string> backupAction = null)
-        {
-            if (!_settings.TrainerWheels && File.Exists(file))
-            {
-                // backup file (aka copy) to the specified sub folder
-                // - no logging since the backup is intended to be transparent
-                var backupFile = CreateBackupFileName(file, subFolder);
-                File.Copy(file, backupFile, true);
-
-                backupAction?.Invoke(backupFile);
-            }
         }
 
         private static string CreateBackupFileName(string file, string subFolder = "")

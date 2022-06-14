@@ -10,6 +10,7 @@ using ClrVpin.Controls;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared.Game;
+using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;
@@ -200,6 +201,7 @@ namespace ClrVpin.Importer
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("ImporterResultsTemplate") as DataTemplate
             };
+
             Window.Show();
         }
 

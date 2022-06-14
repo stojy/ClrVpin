@@ -79,7 +79,12 @@ namespace ClrVpin.Shared
             }
 
             var menu = new Menu { Games = games.ToList() };
-            menu.SerializeToXDocument().Cleanse().SerializeToFile(file + ".bak");
+
+            // a new backup folder is designated for every backup so that we can keep a record of every file change
+            FileUtils.SetActiveBackupFolder(Model.Settings.BackupFolder);
+            FileUtils.Backup(file, "database", null, true);
+
+            menu.SerializeToXDocument().Cleanse().SerializeToFile(file);
         }
 
         public static IList<string> GetContentFileNames(ContentType contentType, string folder)
