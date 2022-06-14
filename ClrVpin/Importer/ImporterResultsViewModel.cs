@@ -10,7 +10,6 @@ using ClrVpin.Controls;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared.Game;
-using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;
@@ -148,7 +147,13 @@ namespace ClrVpin.Importer
             NavigateToIpdbCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
             UpdateIsNew();
+
+            BackupFolder = Model.Settings.BackupFolder;
+            NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
         }
+
+        public string BackupFolder { get; }
+        public ICommand NavigateToBackupFolderCommand { get; }
 
         public ImporterSettings Settings { get; } = Model.Settings.Importer;
 
@@ -211,6 +216,8 @@ namespace ClrVpin.Importer
             Window.Close();
         }
 
+        private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
+
         private void UpdateIsNew()
         {
             // flag models if they satisfy the update time range
@@ -244,7 +251,7 @@ namespace ClrVpin.Importer
             DialogHost.Show(imageUrlSelection, "ImporterResultsDialog");
         }
 
-        private Regex _regexExtractIpdbId = new Regex(@"https:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
+        private readonly Regex _regexExtractIpdbId = new Regex(@"https:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
 
         private const int WindowMargin = 0;
     }

@@ -106,7 +106,6 @@
               <TextBlock Text="{Binding BackupFolder}" />
             </Hyperlink>
           </TextBlock>
-
         </WrapPanel>
 
         <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,5,0">

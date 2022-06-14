@@ -196,7 +196,7 @@
   <Style x:Key="KeyTextBlockStyleBase" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
     <Setter Property="VerticalAlignment" Value="Center" />
     <Setter Property="HorizontalAlignment" Value="Left" />
-    <Setter Property="Margin" Value="10 0" />
+    <Setter Property="Margin" Value="0 0 10 0" />
     <Setter Property="Opacity" Value="0.56" />
   </Style>
 
@@ -234,5 +234,4 @@
       <TextBlock Text="{TemplateBinding controls:GenericAttached.String2}" Style="{StaticResource ValueTextBlockStyle}"  />
     </DockPanel>
   </ControlTemplate>
-
 </ResourceDictionary>

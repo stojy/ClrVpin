@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using Microsoft.Xaml.Behaviors;
-using Utils.Extensions;
 using TriggerBase = Microsoft.Xaml.Behaviors.TriggerBase;
 
 namespace ClrVpin.Controls;

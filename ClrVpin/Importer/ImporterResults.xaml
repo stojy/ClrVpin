@@ -122,63 +122,66 @@
 
   <!--each of the x3 types (TableFile, ImageFile and File) are subtly different enough to warrant separate templates-->
   <DataTemplate DataType="{x:Type vps:TableFile}">
-    <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
+    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
         <!--<Button Command="{Binding ImageSelectedCommand}" Background="Transparent">-->
         <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
-
         <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
 
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Comment" controls:GenericAttached.String2="{Binding Comment}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                        controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
-                        Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Format" controls:GenericAttached.String2="{Binding TableFormat}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
-                        controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+        <StackPanel Margin="5,0,0,0">
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Comment" controls:GenericAttached.String2="{Binding Comment}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
+                          controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
+                          Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Format" controls:GenericAttached.String2="{Binding TableFormat}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
+                          controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+        </StackPanel>
       </StackPanel>
     </materialDesign:Card>
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type vps:ImageFile}">
-    <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
+    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
         <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
-
         <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
 
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                        controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
-                        Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+        <StackPanel Margin="5,0,0,0">
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
+                          controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
+                          Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+        </StackPanel>
       </StackPanel>
     </materialDesign:Card>
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type vps:File}">
-    <materialDesign:Card Margin="5,0,0,0" Width="500" UniformCornerRadius="6" ClipContent="True">
+    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="6" ClipContent="True">
       <StackPanel>
         <Grid Height="300">
           <materialDesign:PackIcon Kind="GhostOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
-
         <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
 
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
-                        Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+        <StackPanel Margin="5,0,0,0">
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
+                          Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+        </StackPanel>
       </StackPanel>
     </materialDesign:Card>
   </DataTemplate>
@@ -248,14 +251,14 @@
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Left" Width="700">
-          <GroupBox DockPanel.Dock="Top" Header="Criteria" Margin="0,0,0,10">
-            <StackPanel Margin="5,0,0,5">
-              <WrapPanel>
+          <GroupBox DockPanel.Dock="Top" Header="Match" Margin="0,0,0,10">
+            <StackPanel Margin="5">
+              <WrapPanel Margin="0,-10,0,0"> <!-- margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :( -->
                 <ComboBox ItemsSource="{Binding TablesFilterView}"
                           Text="{Binding Path=TableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Table"
                           Style="{StaticResource EditComboBoxStyle}"
-                          Width="370">
+                          Width="370" Margin="0,0,5,0">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -267,7 +270,7 @@
                           Text="{Binding Path=ManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Manufacturer"
                           Style="{StaticResource EditComboBoxStyle}"
-                          Width="300" Margin="10,0,0,0">
+                          Width="300" Margin="0">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -289,7 +292,7 @@
                           SelectedItem="{Binding Path=TypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Type"
                           Style="{StaticResource ComboBoxStyle}"
-                          Width="65" Margin="10,0,0,0">
+                          Width="65" Margin="0,0,0,0">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChanged}" />
@@ -341,8 +344,21 @@
               </WrapPanel>
 
               <WrapPanel>
-                <CheckBox Margin="0,10,0,0" Content="Include 'Original'" IsChecked="{Binding Settings.IncludeOriginalTables}" Command="{Binding FilterChanged}" />
+                <CheckBox Margin="-3,10,0,0" Content="Include 'Original'" IsChecked="{Binding Settings.IncludeOriginalTables}" Command="{Binding FilterChanged}" />
                 <CheckBox Margin="10,10,0,0" Content="Include Unmatched" IsChecked="{Binding Settings.IncludeUnmatchedTables}" Command="{Binding FilterChanged}" />
+              </WrapPanel>
+            </StackPanel>
+          </GroupBox>
+
+          <GroupBox DockPanel.Dock="Top" Header="Fix" Margin="0,0,0,10">
+            <StackPanel Margin="5">
+              <WrapPanel Margin="0,0,0,0">
+                <TextBlock Text="Backup Folder: " />
+                <TextBlock DockPanel.Dock="Top" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}">
+                  <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}">
+                    <TextBlock Text="{Binding BackupFolder}" />
+                  </Hyperlink>
+                </TextBlock>
               </WrapPanel>
             </StackPanel>
           </GroupBox>
@@ -406,7 +422,7 @@
             <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource NegativeToVisibilityConverter}}">
               <UniformGrid Columns="3">
                 <GroupBox Header="Hardware: Table Info">
-                  <StackPanel>
+                  <StackPanel Margin="5,0">
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Name}" />
                     <UniformGrid Columns="2">
                       <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Manufacturer"
@@ -431,7 +447,7 @@
                 <ContentControl Content="{Binding SelectedOnlineGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" Margin="5,0" />
 
                 <GroupBox Header="Software: Virtualized Info">
-                  <StackPanel>
+                  <StackPanel Margin="5,0">
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
                                     controls:GenericAttached.String2="{Binding SelectedOnlineGame.Features, Converter={StaticResource ListToStringConverter}}" />
