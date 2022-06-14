@@ -55,6 +55,7 @@
           <TextBox Width="150" VerticalAlignment="Center" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic"
                    Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                   Margin="0,0,5,0"
                    materialDesign:TextFieldAssist.HasClearButton="True">
             <b:Interaction.Triggers>
               <b:EventTrigger EventName="TextChanged">
@@ -99,7 +100,7 @@
           </GroupBox>
         </WrapPanel>
 
-        <WrapPanel Margin="5,0,0,10">
+        <WrapPanel Margin="5,5,0,10">
           <TextBlock Text="Backup Folder: " />
           <TextBlock DockPanel.Dock="Top" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}">
             <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}">
