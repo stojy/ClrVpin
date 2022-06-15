@@ -15,7 +15,7 @@ public class OnlineGame : OnlineGameBase
     public int Index { get; set; }
     public UrlSelection ImageUrlSelection { get; set; }
     public string YearString { get; set; }
-    public bool IsOriginal => GameDerived.CheckIsOriginal(Manufacturer);
+    public bool IsOriginal => GameDerived.CheckIsOriginal(Manufacturer, Name);
 
     public string IpdbId { get; set; } = string.Empty;
 

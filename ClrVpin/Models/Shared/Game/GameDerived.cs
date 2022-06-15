@@ -21,7 +21,7 @@ namespace ClrVpin.Models.Shared.Game
 
             derived.Number = number ?? derived.Number;
 
-            derived.IsOriginal = CheckIsOriginal(gameDetail.Game.Manufacturer);
+            derived.IsOriginal = CheckIsOriginal(gameDetail.Game.Manufacturer, gameDetail.Game.Name);
 
             if (derived.IsOriginal)
             {
@@ -45,9 +45,30 @@ namespace ClrVpin.Models.Shared.Game
             derived.TableFileWithExtension = gameDetail.Game.Name + ".vpx";
         }
 
-        // assign isOriginal based on the manufacturer
-        public static bool CheckIsOriginal(string manufacturer) => manufacturer?.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) == true ||
-                                                                   manufacturer?.StartsWith("OrbitalPin", StringComparison.InvariantCultureIgnoreCase) == true ||
-                                                                   manufacturer?.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase) == true;
+        // assign isOriginal based on manufacturer
+        public static bool CheckIsOriginal(string manufacturer, string name)
+        {
+            var isManufacturerOriginal = manufacturer?.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) == true ||
+                   manufacturer?.StartsWith("OrbitalPin", StringComparison.InvariantCultureIgnoreCase) == true ||
+                   manufacturer?.StartsWith("HorsePin", StringComparison.InvariantCultureIgnoreCase) == true ||
+                   manufacturer?.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase) == true ||
+                   manufacturer?.StartsWith("Professional Pinball", StringComparison.InvariantCultureIgnoreCase) == true ||
+                   manufacturer?.StartsWith("Dream Pinball 3D", StringComparison.InvariantCultureIgnoreCase) == true;
+            
+            var isNameOriginal =  name?.Equals("Jurassic park - Limited Edition", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Kiss Live", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Dream Pinball 3D", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Sharpshooter", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Silver Line", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Space Cadet", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Yamanobori", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Siggi's Spider-Man Classic", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Mad Scientist", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Midnight Magic", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Pro Pinball The Web", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.Equals("Octopus", StringComparison.InvariantCultureIgnoreCase) == true ;
+
+            return isManufacturerOriginal || isNameOriginal;
+        }
     }
 }
