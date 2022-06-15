@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using ClrVpin.Models.Importer;
 using ClrVpin.Models.Rebuilder;
 using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Shared;
@@ -13,11 +13,8 @@ namespace ClrVpin.Models.Settings
         {
             // scanner
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
-            AllHitTypeEnums = AllHitTypes.Select(x => x.Enum);
             FixablePrioritizedHitTypeEnums = AllHitTypes.Where(x => x.Fixable).Select(x => x.Enum).ToArray();
-            IrreparablePrioritizedHitTypeEnums = AllHitTypes.Where(x => !x.Fixable).Select(x => x.Enum).ToArray();
 
-            HitTypes = AllHitTypes.Where(x => x.Enum != HitTypeEnum.CorrectName).ToArray();
             MultipleMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // rebuilder
@@ -25,19 +22,18 @@ namespace ClrVpin.Models.Settings
             IgnoreCriteria.ForEach(x => x.Description = x.Enum.GetDescription());
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
                 HitTypeEnum.Unsupported)).ToArray();
+
+            // importer
+            TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
         // hit types in priority order as determined by matching algorithm - refer AddContentFilesToGames
         public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; }
 
-        public static HitTypeEnum[] IrreparablePrioritizedHitTypeEnums { get; }
-
-        public static IEnumerable<HitTypeEnum> AllHitTypeEnums { get; }
-
         //private static Settings Settings => Model.Settings;
 
         // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
-        public static HitType[] AllHitTypes =
+        public static readonly HitType[] AllHitTypes =
         {
             new HitType(HitTypeEnum.CorrectName, true, "Files that match perfectly!"),
             new HitType(HitTypeEnum.WrongCase, true, "Files that match the correct name, but have the wrong case"),
@@ -50,31 +46,28 @@ namespace ClrVpin.Models.Settings
                 "Files that don't match the configured file extension types - ONLY APPLICABLE FOR MEDIA CONTENT, since unsupported files are EXPECTED to exist in the tables folder (e.g. txt, exe, ogg, etc)")
         };
 
-        // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
-        public static HitType[] HitTypes;
-
         // rebuilder matching criteria types - to be used elsewhere (rebuilder)
-        public static HitType[] MatchTypes;
+        public static readonly HitType[] MatchTypes;
 
         // all possible file merge options - to be used elsewhere (rebuilder)
-        public static IgnoreCriteria[] IgnoreCriteria =
+        public static readonly IgnoreCriteria[] IgnoreCriteria =
         {
             new IgnoreCriteria {Enum = IgnoreCriteriaEnum.IgnoreIfContainsWords, Tip = "If the file is matched: ignore the source file if it contains any of the configured words"},
             new IgnoreCriteria {Enum = IgnoreCriteriaEnum.IgnoreIfSmaller, Tip = "If a destination file with the same name already exists: ignore the source file if it's smaller based on the specified percentage"},
             new IgnoreCriteria {Enum = IgnoreCriteriaEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"}
         };
 
-        public static Option DeleteIgnoredFilesOption = new Option {Tip = "When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled).", Description = "Delete Ignored Files"};
+        public static readonly Option DeleteIgnoredFilesOption = new Option {Tip = "When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled).", Description = "Delete Ignored Files"};
 
         // all possible file merge options - to be used elsewhere (rebuilder)
-        public static MergeOption[] MergeOptions =
+        public static readonly MergeOption[] MergeOptions =
         {
             new MergeOption {Enum = MergeOptionEnum.PreserveDateModified, Tip = "Date modified timestamp of merged file (in the destination folder) will match the source file, else the current time will be used"},
             new MergeOption {Enum = MergeOptionEnum.RemoveSource, Tip = "Matched source files will be removed (copied to the backup folder)"}
         };
 
         // all possible multiple match fix options
-        public static MultipleMatchOption[] MultipleMatchOptions =
+        public static readonly MultipleMatchOption[] MultipleMatchOptions =
         {
             new MultipleMatchOption
             {
@@ -87,6 +80,14 @@ namespace ClrVpin.Models.Settings
                 Enum = MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold,
                 Tip = "File with the most recent modified timestamp AND exceeds the size threshold of the existing correct file (if one exists) is used, i.e. avoid using newer but smaller files"
             }
+        };
+
+        // all possible table style options - to be used elsewhere (importer)
+        public static readonly TableStyleOption[] TableStyleOptions =
+        {
+            new TableStyleOption {Enum = TableStyleOptionEnum.Manufactured, Tip = "A physical table has been manufactured"},
+            new TableStyleOption {Enum = TableStyleOptionEnum.Original, Tip = "An original table creation that has not been manufactured"},
+            new TableStyleOption {Enum = TableStyleOptionEnum.Both, Tip = "Manufactured AND original tables"}
         };
     }
 }

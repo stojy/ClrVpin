@@ -9,13 +9,30 @@
   </ResourceDictionary.MergedDictionaries>
 
   <converters:BoolToStringConverter x:Key="BoolToFontStyleConverter" True="Italic" False="Normal" />
-  <converters:BoolToStringConverter x:Key="BoolToMarginConverter" True="0,10,0,0" False="0,2,0,0" />
+  <converters:BoolToStringConverter x:Key="BoolToCheckboxMarginConverter" True="0,10,0,0" False="0,2,0,0" />
+  <converters:BoolToStringConverter x:Key="BoolToRadioButtonMarginConverter" True="5,0,5,0" False="0,0,5,0" />
 
-  <DataTemplate x:Key="FeatureTypeTemplate" DataType="shared:FeatureType">
-    <CheckBox Content="{Binding Description}" ToolTip="{Binding Tip}" IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
-              Margin="{Binding IsSpecial, Converter={StaticResource BoolToMarginConverter}}"
-              Command="{Binding SelectedCommand}" FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}" 
-              Style="{StaticResource HighlightedCheckBox}"/>
+  <DataTemplate x:Key="FeatureTypeCheckBoxTemplate" DataType="shared:FeatureType">
+    <CheckBox Content="{Binding Description}"
+              ToolTip="{Binding Tip}"
+              IsChecked="{Binding IsActive}"
+              IsEnabled="{Binding IsSupported}"
+              Margin="{Binding IsSpecial, Converter={StaticResource BoolToCheckboxMarginConverter}}"
+              Command="{Binding SelectedCommand}"
+              FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
+              Style="{StaticResource HighlightableCheckBox}" />
+  </DataTemplate>
+
+  <DataTemplate x:Key="FeatureTypeRadioButtonTemplate" DataType="shared:FeatureType">
+    <RadioButton GroupName="1"
+                 Content="{Binding Description}"
+                 ToolTip="{Binding Tip}"
+                 IsChecked="{Binding IsActive}"
+                 IsEnabled="{Binding IsSupported}"
+                 Margin="{Binding IsSpecial, Converter={StaticResource BoolToRadioButtonMarginConverter}}"
+                 Command="{Binding SelectedCommand}"
+                 FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
+                 Style="{StaticResource HighlightableRadioButton}" />
   </DataTemplate>
 
 </ResourceDictionary>

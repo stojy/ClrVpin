@@ -55,7 +55,7 @@
     <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
     <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4" />
   </Style>
-  
+
   <Style x:Key="AlternateRaisedHighlightButton" TargetType="Button" BasedOn="{StaticResource RaisedAccentButton}">
     <Setter Property="Background" Value="Coral" />
     <Setter Property="BorderBrush" Value="Coral" />
@@ -86,7 +86,15 @@
   <!--<Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}"/>-->
   <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" />
 
-  <Style x:Key="HighlightedCheckBox" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+  <Style x:Key="HighlightableCheckBox" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+    <Style.Triggers>
+      <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
+        <Setter Property="Foreground" Value="Coral" />
+      </DataTrigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style x:Key="HighlightableRadioButton" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
         <Setter Property="Foreground" Value="Coral" />
@@ -119,7 +127,7 @@
   </Style>
 
   <!-- vertically align content without the 'double grid' lines anomaly by redefining the template.. https://stackoverflow.com/a/8384608/227110
-     - works without having to re-define the entire template --> 
+     - works without having to re-define the entire template -->
   <Style x:Key="VerticalAlignDataElementTextStyle" TargetType="TextBlock">
     <Setter Property="VerticalAlignment" Value="Center" />
     <Setter Property="TextTrimming" Value="CharacterEllipsis" />
@@ -203,7 +211,7 @@
   <Style x:Key="KeyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource KeyTextBlockStyleBase}">
     <Setter Property="Width" Value="80" />
   </Style>
-  
+
   <Style x:Key="KeyTextBlockAutoStyle" TargetType="TextBlock" BasedOn="{StaticResource KeyTextBlockStyleBase}" />
 
   <Style x:Key="ValueTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
@@ -216,14 +224,14 @@
   <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
     <WrapPanel Margin="0,2">
       <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
-      <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center"/>
+      <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" />
     </WrapPanel>
   </ControlTemplate>
 
   <ControlTemplate x:Key="KeyValueAutoPair" TargetType="ContentControl">
     <WrapPanel Margin="0,2">
       <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockAutoStyle}" />
-      <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center"/>
+      <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" />
     </WrapPanel>
   </ControlTemplate>
 
@@ -231,7 +239,7 @@
     <!--using a DockPanel instead of WrapPanel so the children width are constrained.. and thus text trimming will work-->
     <DockPanel Margin="0,2">
       <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
-      <TextBlock Text="{TemplateBinding controls:GenericAttached.String2}" Style="{StaticResource ValueTextBlockStyle}"  />
+      <TextBlock Text="{TemplateBinding controls:GenericAttached.String2}" Style="{StaticResource ValueTextBlockStyle}" />
     </DockPanel>
   </ControlTemplate>
 </ResourceDictionary>

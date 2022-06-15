@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using ClrVpin.Models.Importer;
 using ClrVpin.Models.Shared;
 using PropertyChanged;
 
@@ -12,8 +13,7 @@ public class ImporterSettings
     public ObservableCollection<HitTypeEnum> SelectedMatchTypes { get; set; } = new ObservableCollection<HitTypeEnum>();
 
     // display result filtering criteria
-    public bool IncludeOriginalTables { get; set; }
-    public bool IncludeUnmatchedTables { get; set; } = true;
+    public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
     public DateTime? UpdatedAtDateBegin { get; set; }
     public DateTime? UpdatedAtDateEnd { get; set; }
 }

@@ -8,7 +8,8 @@
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml"
-                    xmlns:vps="clr-namespace:ClrVpin.Models.Importer.Vps">
+                    xmlns:vps="clr-namespace:ClrVpin.Models.Importer.Vps"
+                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
@@ -348,24 +349,21 @@
                 <CheckBox Margin="10,10,0,0" Content="Include Unmatched" IsChecked="{Binding Settings.IncludeUnmatchedTables}" Command="{Binding FilterChanged}" />-->
 
                 <WrapPanel>
-                  <ItemsControl>
+                  <ItemsControl ItemsSource="{Binding TableStyleOptionsView}">
                     <ItemsControl.ItemsPanel>
                       <ItemsPanelTemplate>
                         <WrapPanel />
                       </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-                    <!--<ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                      <RadioButton GroupName="TableStyle" Content="{Binding}" Margin="0" Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
-                    </DataTemplate>
-                  </ItemsControl.ItemTemplate>-->
-                    <RadioButton GroupName="TableStyle" Content="Manufactured" Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" Margin="0,0,5,0"/>
-                    <RadioButton GroupName="TableStyle" Content="Original" Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" Margin="0,0,5,0"/>
-                    <RadioButton GroupName="TableStyle" Content="Both" Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" Margin="0,0,5,0"/>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate DataType="shared:FeatureType">
+                        <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
                   </ItemsControl>
                 </WrapPanel>
 
-                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" BorderBrush="#848484" BorderThickness="2,0,0,0" Margin="5"/>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" BorderBrush="#848484" BorderThickness="2,0,0,0" Margin="7,5" />
 
                 <WrapPanel VerticalAlignment="Center">
                   <ItemsControl>
@@ -379,9 +377,9 @@
                       <RadioButton GroupName="TableStyle" Content="{Binding}" Margin="0" Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
                     </DataTemplate>
                   </ItemsControl.ItemTemplate>-->
-                    <RadioButton GroupName="TableMatch" Content="Matched" Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" Margin="0,0,5,0"/>
-                    <RadioButton GroupName="TableMatch" Content="Unmatched" Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" Margin="0,0,5,0"/>
-                    <RadioButton GroupName="TableMatch" Content="Both" Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" Margin="0,0,5,0"/>
+                    <RadioButton GroupName="TableMatch" Content="Matched" Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" Margin="0,0,5,0" />
+                    <RadioButton GroupName="TableMatch" Content="Unmatched" Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" Margin="0,0,5,0" />
+                    <RadioButton GroupName="TableMatch" Content="Both" Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" Margin="0,0,5,0" />
                   </ItemsControl>
                 </WrapPanel>
 

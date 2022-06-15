@@ -69,7 +69,7 @@
             <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="shared1:FeatureType">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
 
@@ -86,7 +86,7 @@
             <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="shared1:FeatureType">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
 

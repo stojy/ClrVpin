@@ -29,12 +29,12 @@
       <TextBlock Style="{StaticResource Title}">Content</TextBlock>
       <WrapPanel>
         <GroupBox Header="Pinball">
-          <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeTemplate}"
+          <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeCheckBoxTemplate}"
                         ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
 
         <GroupBox Margin="10,0,0,0" Header="Media">
-          <ItemsControl Height="185" ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeTemplate}"
+          <ItemsControl Height="185" ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeCheckBoxTemplate}"
                         ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
       </WrapPanel>
@@ -50,7 +50,7 @@
                 <!-- fixed width to have items align nicely -->
 
                 <WrapPanel Width="400">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
 
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding HelpAction}"
                           Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="500" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
@@ -74,7 +74,7 @@
               <DataTemplate DataType="shared:FeatureType">
                 <!-- fixed width to have items align nicely -->
                 <WrapPanel Width="185">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
 
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding HelpAction}"
                           Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="500" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">

@@ -5,10 +5,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Models.Importer;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
+using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
@@ -78,8 +81,9 @@ namespace ClrVpin.Importer
                 Filter = game =>
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
-                    (Settings.IncludeOriginalTables || !game.IsOriginal) &&
-                    (Settings.IncludeUnmatchedTables || game.IsMatched) &&
+                    (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both ||
+                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Manufactured && !game.IsOriginal) ||
+                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Original && game.IsOriginal)) &&
                     (YearBeginFilter == null || string.Compare(game.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
                     (YearEndFilter == null || string.Compare(game.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
                     (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
@@ -150,7 +154,11 @@ namespace ClrVpin.Importer
 
             BackupFolder = Model.Settings.BackupFolder;
             NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
+
+            TableStyleOptionsView = new ListCollectionView(CreateTableStyleOptions().ToList());
         }
+
+        public ListCollectionView TableStyleOptionsView { get; }
 
         public string BackupFolder { get; }
         public ICommand NavigateToBackupFolderCommand { get; }
@@ -214,6 +222,29 @@ namespace ClrVpin.Importer
         {
             Model.SettingsManager.Write();
             Window.Close();
+        }
+
+        private IEnumerable<FeatureType> CreateTableStyleOptions()
+        {
+            // show all merge options
+            var featureTypes = StaticSettings.TableStyleOptions.Select(tableStyleOption =>
+            {
+                var featureType = new FeatureType((int)tableStyleOption.Enum)
+                {
+                    Description = tableStyleOption.Description,
+                    Tip = tableStyleOption.Tip,
+                    IsSupported = true,
+                    IsActive = tableStyleOption.Enum == Model.Settings.Importer.SelectedTableStyleOption,
+                    SelectedCommand = new ActionCommand(() =>
+                    {
+                        Model.Settings.Importer.SelectedTableStyleOption = tableStyleOption.Enum;
+                        FilterChanged.Execute(null);
+                    })
+                };
+                return featureType;
+            }).ToList();
+
+            return featureTypes;
         }
 
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);

@@ -13,10 +13,10 @@ namespace ClrVpin.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is bool))
+            if (value is not bool boolValue)
                 return DependencyProperty.UnsetValue;
 
-            return (bool) value ? True : False;
+            return boolValue ? True : False;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
