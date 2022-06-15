@@ -25,6 +25,7 @@ namespace ClrVpin.Models.Settings
 
             // importer
             TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
         // hit types in priority order as determined by matching algorithm - refer AddContentFilesToGames
@@ -88,6 +89,14 @@ namespace ClrVpin.Models.Settings
             new TableStyleOption {Enum = TableStyleOptionEnum.Manufactured, Tip = "A physical table has been manufactured"},
             new TableStyleOption {Enum = TableStyleOptionEnum.Original, Tip = "An original table creation that has not been manufactured"},
             new TableStyleOption {Enum = TableStyleOptionEnum.Both, Tip = "Manufactured AND original tables"}
+        };
+
+        // all possible matching types
+        public static readonly TableMatchOption[] TableMatchOptions =
+        {
+            new TableMatchOption {Enum = TableMatchOptionEnum.Matched, Tip = "Online tables that exist in your local database"},
+            new TableMatchOption {Enum = TableMatchOptionEnum.Unmatched, Tip = "Online tables that do NOT exist in your local database"},
+            new TableMatchOption {Enum = TableMatchOptionEnum.Both, Tip = "All online tables irrespective of whether they exist in your local database"}
         };
     }
 }

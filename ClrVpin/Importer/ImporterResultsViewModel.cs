@@ -84,6 +84,11 @@ namespace ClrVpin.Importer
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both ||
                      (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Manufactured && !game.IsOriginal) ||
                      (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Original && game.IsOriginal)) &&
+
+                    (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Both ||
+                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Matched && game.Hit != null) ||
+                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Unmatched && game.Hit == null)) &&
+
                     (YearBeginFilter == null || string.Compare(game.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
                     (YearEndFilter == null || string.Compare(game.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
                     (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
@@ -155,10 +160,12 @@ namespace ClrVpin.Importer
             BackupFolder = Model.Settings.BackupFolder;
             NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
 
-            TableStyleOptionsView = new ListCollectionView(CreateTableStyleOptions().ToList());
+            TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
+            TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
         }
 
-        public ListCollectionView TableStyleOptionsView { get; }
+        public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
+        public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
 
         public string BackupFolder { get; }
         public ICommand NavigateToBackupFolderCommand { get; }
@@ -226,11 +233,12 @@ namespace ClrVpin.Importer
 
         private IEnumerable<FeatureType> CreateTableStyleOptions()
         {
-            // show all merge options
+            // all table style options
             var featureTypes = StaticSettings.TableStyleOptions.Select(tableStyleOption =>
             {
                 var featureType = new FeatureType((int)tableStyleOption.Enum)
                 {
+                    Tag = "TableStyleOption",
                     Description = tableStyleOption.Description,
                     Tip = tableStyleOption.Tip,
                     IsSupported = true,
@@ -238,6 +246,30 @@ namespace ClrVpin.Importer
                     SelectedCommand = new ActionCommand(() =>
                     {
                         Model.Settings.Importer.SelectedTableStyleOption = tableStyleOption.Enum;
+                        FilterChanged.Execute(null);
+                    })
+                };
+                return featureType;
+            }).ToList();
+
+            return featureTypes;
+        }
+
+        private IEnumerable<FeatureType> CreateTableMatchOptions()
+        {
+            // all table match options
+            var featureTypes = StaticSettings.TableMatchOptions.Select(tableMatchOption =>
+            {
+                var featureType = new FeatureType((int)tableMatchOption.Enum)
+                {
+                    Tag = "TableMatchOption",
+                    Description = tableMatchOption.Description,
+                    Tip = tableMatchOption.Tip,
+                    IsSupported = true,
+                    IsActive = tableMatchOption.Enum == Model.Settings.Importer.SelectedTableMatchOption,
+                    SelectedCommand = new ActionCommand(() =>
+                    {
+                        Model.Settings.Importer.SelectedTableMatchOption = tableMatchOption.Enum;
                         FilterChanged.Execute(null);
                     })
                 };

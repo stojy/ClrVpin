@@ -14,6 +14,7 @@ public class ImporterSettings
 
     // display result filtering criteria
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
+    public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.Matched;
     public DateTime? UpdatedAtDateBegin { get; set; }
     public DateTime? UpdatedAtDateEnd { get; set; }
 }
