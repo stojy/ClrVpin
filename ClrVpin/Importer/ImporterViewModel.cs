@@ -88,11 +88,12 @@ namespace ClrVpin.Importer
             // create separate property for each so they can be referenced individually in the UI
             MatchFuzzy = featureTypes.First(x => x.Id == (int)HitTypeEnum.Fuzzy);
 
-            // explicitly disable fuzzy logic if the settings are fully configured, e.g. frontend database folder not setup
+            // explicitly disable fuzzy logic if ALL of the settings are not fully configured, e.g. frontend database folder not setup
             if (!Model.SettingsManager.IsValid)
             {
                 MatchFuzzy.IsActive = false;
                 MatchFuzzy.IsSupported = false;
+                MatchFuzzy.Tip += "... DISABLED BECAUSE THE SETTINGS ARE INCOMPLETE";
             }
         }
 

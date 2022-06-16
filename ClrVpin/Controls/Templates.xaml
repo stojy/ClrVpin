@@ -16,6 +16,7 @@
   <DataTemplate x:Key="FeatureTypeCheckBoxTemplate" DataType="shared:FeatureType">
     <CheckBox Content="{Binding Description}"
               ToolTip="{Binding Tip}"
+              ToolTipService.ShowOnDisabled="true"
               IsChecked="{Binding IsActive}"
               IsEnabled="{Binding IsSupported}"
               Margin="{Binding IsSpecial, Converter={StaticResource BoolToCheckboxMarginConverter}}"
@@ -28,6 +29,7 @@
     <RadioButton GroupName="{Binding Tag}"
                  Content="{Binding Description}"
                  ToolTip="{Binding Tip}"
+                 ToolTipService.ShowOnDisabled="true"
                  IsChecked="{Binding IsActive}"
                  IsEnabled="{Binding IsSupported}"
                  Margin="{Binding IsSpecial, Converter={StaticResource BoolToRadioButtonMarginConverter}}"

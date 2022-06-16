@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using ClrVpin.Models.Shared.Game;
 
@@ -23,6 +24,9 @@ public class OnlineGame : OnlineGameBase
     public GameHit Hit { get; set; }
     public bool IsMatched { get; set; }
 
-    public ICommand ViewDatabaseEntryCommand { get; set; }
-    public ICommand AddDatabaseEntryCommand { get; set; }
+    public bool IsMatchingEnabled { get; set; }
+    public string UpdateDatabaseEntryTooltip { get; set; } = "Update existing local database entry";
+    public string CreateDatabaseEntryTooltip { get; set; } = "Create new local database entry";
+    public ICommand UpdateDatabaseEntryCommand { get; set; }
+    public ICommand CreateDatabaseEntryCommand { get; set; }
 }

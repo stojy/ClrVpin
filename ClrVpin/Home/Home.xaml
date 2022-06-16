@@ -111,14 +111,14 @@
 
             <WrapPanel Margin="5,5,5,10">
               <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentButton}"
-                      ToolTip="Scan existing content and optionally fix">
+                      ToolTip="{Binding ScannerToolTip}">
                 <StackPanel>
                   <TextBlock Text="Scanner" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Magnify" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
               <Button Command="{Binding RebuilderCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentButton}"
-                      ToolTip="Rebuild existing library by merging new content from alternate folders">
+                      ToolTip="{Binding RebuilderToolTip}">
                 <StackPanel>
                   <TextBlock Text="Rebuilder" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Import" Height="40" Width="40" HorizontalAlignment="Center" />

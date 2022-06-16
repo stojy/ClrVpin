@@ -68,7 +68,7 @@ namespace ClrVpin.Shared
             return gameDetails;
         }
 
-        public static void WriteGamesToDatabase(IEnumerable<GameDetail> gameDetails, string file)
+        public static void WriteGamesToDatabase(IEnumerable<GameDetail> gameDetails, string file, string game, bool isNewEntry)
         {
             var games = gameDetails.Select(gameDetail => gameDetail.Game);
 
@@ -77,7 +77,9 @@ namespace ClrVpin.Shared
                 var databaseContentType = Model.Settings.GetDatabaseContentType();
                 file = Path.Combine(databaseContentType.Folder, file);
             }
-
+            
+            Logger.Info($"{(isNewEntry ? "Adding new" : "Updating existing")} table: '{game}', database: {file}");
+            
             var menu = new Menu { Games = games.ToList() };
 
             // a new backup folder is designated for every backup so that we can keep a record of every file change

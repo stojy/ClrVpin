@@ -414,14 +414,16 @@
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate DataType="vps:OnlineGame">
                     <WrapPanel>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="Add new local database entry"
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding CreateDatabaseEntryTooltip}"
                               Visibility="{Binding IsMatched, Converter={StaticResource BoolToCollapsedConverter}}"
-                              Command="{Binding AddDatabaseEntryCommand}">
+                              IsEnabled="{Binding IsMatchingEnabled}"
+                              Command="{Binding CreateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="Plus" Width="35" Height="35" />
                       </Button>
-                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="View/update existing local database entry"
+                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
                               Visibility="{Binding IsMatched, Converter={StaticResource BoolToVisibilityConverter}}"
-                              Command="{Binding ViewDatabaseEntryCommand}">
+                              IsEnabled="{Binding IsMatchingEnabled}"
+                              Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
                       </Button>
                     </WrapPanel>

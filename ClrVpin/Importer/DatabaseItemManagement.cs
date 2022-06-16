@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ClrVpin.Logging;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Database;
 using ClrVpin.Models.Shared.Game;
@@ -13,7 +12,7 @@ namespace ClrVpin.Importer
 {
     public static class DatabaseItemManagement
     {
-        public static async void ViewDatabaseItem(List<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
+        public static async void UpdateDatabaseItem(List<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
         {
             var item = new DatabaseItem(onlineGame.Hit.GameDetail, onlineGameCollections, true);
 
@@ -25,22 +24,20 @@ namespace ClrVpin.Importer
                 existingGameDetail.Game = item.GameDetail.Game;
                 existingGameDetail.Derived = item.GameDetail.Derived;
 
-                // only update the database file tht the game belongs to
+                // update all games that belong to the recently updated game
                 var gameDetailsInDatabaseFile = gameDetails.Where(gameDetail => gameDetail.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
-                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile, item.GameDetail.Game.DatabaseFile);
-
-                Logger.Info($"Updated existing table: {item.GameDetail.Game.Name}");
+                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile, item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, false);
             }
         }
 
-        public static async void AddDatabaseItem(List<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
+        public static async void CreateDatabaseItem(List<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
         {
             var firstTable = onlineGame.TableFiles.FirstOrDefault();
             var gameDetail = new GameDetail
             {
                 Game = new Game
                 {
-                    DatabaseFile = "ClrVpin.xml",
+                    DatabaseFile = DefaultDatabaseFile,
                     Name = onlineGame.Name,
                     Description = onlineGame.Name,
                     IpdbId = onlineGame.IpdbId,
@@ -73,7 +70,7 @@ namespace ClrVpin.Importer
             {
                 gameDetail.Game = item.GameDetail.Game;
                 gameDetail.Derived = item.GameDetail.Derived;
-                
+
                 // assume the game is now matched to remove the 'add' option
                 // - in reality though the game may in theory still be unmatched if the user has changed the name/description beyond the reach of the fuzzy checking
                 onlineGame.Hit = new GameHit { GameDetail = gameDetail };
@@ -82,12 +79,12 @@ namespace ClrVpin.Importer
                 // insert the game
                 gameDetails.Add(gameDetail);
 
-                // only update the database file tht the game belongs to
+                // update all games that belong to the newly created game (defaulting to 'ClrVpin.xml')
                 var gameDetailsInDatabaseFile = gameDetails.Where(gd => gd.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
-                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile, item.GameDetail.Game.DatabaseFile);
-
-                Logger.Info($"Added new table: {item.GameDetail.Game.Name}");
+                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile, item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, true);
             }
         }
+
+        private const string DefaultDatabaseFile = "ClrVpin.xml";
     }
 }

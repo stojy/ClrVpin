@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Models.Importer;
@@ -36,6 +35,8 @@ namespace ClrVpin.Importer
     {
         public ImporterResultsViewModel(List<GameDetail> games, List<OnlineGame> onlineGames)
         {
+            var isMatchingEnabled = Model.Settings.Importer.SelectedMatchTypes.Any();
+
             // assign VM properties
             onlineGames.ForEach(onlineGame =>
             {
@@ -47,8 +48,8 @@ namespace ClrVpin.Importer
                 };
 
                 // local database show/add commands
-                onlineGame.ViewDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.ViewDatabaseItem(games, onlineGame, this));
-                onlineGame.AddDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.AddDatabaseItem(games, onlineGame, this));
+                onlineGame.UpdateDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.UpdateDatabaseItem(games, onlineGame, this));
+                onlineGame.CreateDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.CreateDatabaseItem(games, onlineGame, this));
 
                 // show large image popup
                 onlineGame.ImageFiles.ForEach(imageFile =>
@@ -59,6 +60,10 @@ namespace ClrVpin.Importer
                         SelectedCommand = new ActionCommand(() => ShowImage(imageFile.ImgUrl))
                     };
                 });
+
+                onlineGame.IsMatchingEnabled = isMatchingEnabled;
+                onlineGame.UpdateDatabaseEntryTooltip += onlineGame.IsMatchingEnabled ? "" : MatchingDisabledMessage;
+                onlineGame.CreateDatabaseEntryTooltip += onlineGame.IsMatchingEnabled ? "" : MatchingDisabledMessage;
 
                 onlineGame.YearString = onlineGame.Year.ToString();
 
@@ -161,7 +166,7 @@ namespace ClrVpin.Importer
             NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
 
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
-            TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
+            TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions(isMatchingEnabled).ToList());
         }
 
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
@@ -255,8 +260,12 @@ namespace ClrVpin.Importer
             return featureTypes;
         }
 
-        private IEnumerable<FeatureType> CreateTableMatchOptions()
+        private IEnumerable<FeatureType> CreateTableMatchOptions(bool isMatchingEnabled)
         {
+            // because matching is disabled, all tables will be unmatched
+            if (!isMatchingEnabled)
+                Model.Settings.Importer.SelectedTableMatchOption = TableMatchOptionEnum.Unmatched;
+
             // all table match options
             var featureTypes = StaticSettings.TableMatchOptions.Select(tableMatchOption =>
             {
@@ -265,7 +274,7 @@ namespace ClrVpin.Importer
                     Tag = "TableMatchOption",
                     Description = tableMatchOption.Description,
                     Tip = tableMatchOption.Tip,
-                    IsSupported = true,
+                    IsSupported = tableMatchOption.Enum == TableMatchOptionEnum.Unmatched || isMatchingEnabled,
                     IsActive = tableMatchOption.Enum == Model.Settings.Importer.SelectedTableMatchOption,
                     SelectedCommand = new ActionCommand(() =>
                     {
@@ -273,6 +282,9 @@ namespace ClrVpin.Importer
                         FilterChanged.Execute(null);
                     })
                 };
+                if (!isMatchingEnabled && tableMatchOption.Enum != TableMatchOptionEnum.Unmatched)
+                    featureType.Tip += featureType.Tip + MatchingDisabledMessage;
+
                 return featureType;
             }).ToList();
 
@@ -317,5 +329,6 @@ namespace ClrVpin.Importer
         private readonly Regex _regexExtractIpdbId = new Regex(@"https:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
 
         private const int WindowMargin = 0;
+        private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T USED";
     }
 }
