@@ -207,6 +207,7 @@
     <Setter Property="HorizontalAlignment" Value="Left" />
     <Setter Property="Margin" Value="0 0 10 0" />
     <Setter Property="Opacity" Value="0.56" />
+    <Setter Property="FontSize" Value="12" />
   </Style>
 
   <Style x:Key="KeyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource KeyTextBlockStyleBase}">
@@ -224,14 +225,20 @@
 
   <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
     <WrapPanel Margin="0,2">
-      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
+      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" 
+                 MinWidth="{TemplateBinding controls:GenericAttached.Double}" 
+                 FontSize="{TemplateBinding controls:GenericAttached.Double2}"
+                 Style="{StaticResource KeyTextBlockStyle}" />
       <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" />
     </WrapPanel>
   </ControlTemplate>
 
   <ControlTemplate x:Key="KeyValueAutoPair" TargetType="ContentControl">
     <WrapPanel Margin="0,2">
-      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockAutoStyle}" />
+      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" 
+                 MinWidth="{TemplateBinding controls:GenericAttached.Double}" 
+                 FontSize="{TemplateBinding controls:GenericAttached.Double2}"
+                 Style="{StaticResource KeyTextBlockAutoStyle}" />
       <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" />
     </WrapPanel>
   </ControlTemplate>
@@ -239,7 +246,10 @@
   <ControlTemplate x:Key="KeyValueStringPair" TargetType="ContentControl">
     <!--using a DockPanel instead of WrapPanel so the children width are constrained.. and thus text trimming will work-->
     <DockPanel Margin="0,2">
-      <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding controls:GenericAttached.String}" MinWidth="{TemplateBinding controls:GenericAttached.Double}" Style="{StaticResource KeyTextBlockStyle}" />
+      <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding controls:GenericAttached.String}" 
+                 MinWidth="{TemplateBinding controls:GenericAttached.Double}" 
+                 FontSize="{TemplateBinding controls:GenericAttached.Double2}"
+                 Style="{StaticResource KeyTextBlockStyle}" />
       <TextBlock Text="{TemplateBinding controls:GenericAttached.String2}" Style="{StaticResource ValueTextBlockStyle}" />
     </DockPanel>
   </ControlTemplate>

@@ -381,25 +381,40 @@
           </GroupBox>
 
           <GroupBox DockPanel.Dock="Top" Header="Fix" Margin="0,0,0,10">
-            <StackPanel Margin="5">
-              <WrapPanel Margin="0,0,0,0">
-                <TextBlock Text="Backup Folder: " />
-                <TextBlock DockPanel.Dock="Top" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}">
-                  <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}">
-                    <TextBlock Text="{Binding BackupFolder}" />
-                  </Hyperlink>
-                </TextBlock>
-              </WrapPanel>
+            <StackPanel Margin="5,0">
+              <ContentControl Template="{StaticResource KeyValuePair}"
+                              controls:GenericAttached.String="Missing Info"
+                              controls:GenericAttached.Double="100"
+                              controls:GenericAttached.Double2="14">
+                <Button ToolTip="{Binding AutoAssignDatabasePropertiesTip}"
+                        ToolTipService.ShowOnDisabled="True"
+                        Style="{StaticResource MaterialDesignIconButton}"
+                        Foreground="Coral"
+                        Width="35" Height="35"
+                        IsEnabled="{Binding IsMatchingEnabled}"
+                        Command="{Binding AutoAssignDatabasePropertiesCommand}">
+                  <materialDesign:PackIcon Kind="MagicWand" Width="35" Height="35" />
+                </Button>
+              </ContentControl>
+
+              <ContentControl Template="{StaticResource KeyValuePair}"
+                              controls:GenericAttached.String="Backup Folder"
+                              controls:GenericAttached.Double="100"
+                              controls:GenericAttached.Double2="14">
+                <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}" FontSize="16">
+                  <TextBlock Text="{Binding BackupFolder}" />
+                </Hyperlink>
+              </ContentControl>
             </StackPanel>
           </GroupBox>
 
           <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
-            <TextBlock Text="{Binding GamesView.Count}" />
+            <TextBlock Text="{Binding OnlineGamesView.Count}" />
             <TextBlock Text=" / " />
-            <TextBlock Text="{Binding Games.Count}" />
+            <TextBlock Text="{Binding OnlineGames.Count}" />
           </WrapPanel>
 
-          <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+          <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding OnlineGamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                     SelectionMode="Single"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"

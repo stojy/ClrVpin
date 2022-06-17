@@ -7,11 +7,14 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Logging;
 using ClrVpin.Models.Importer;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Database;
 using ClrVpin.Models.Shared.Game;
+using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;
@@ -35,7 +38,7 @@ namespace ClrVpin.Importer
     {
         public ImporterResultsViewModel(List<GameDetail> games, List<OnlineGame> onlineGames)
         {
-            var isMatchingEnabled = Model.Settings.Importer.SelectedMatchTypes.Any();
+            IsMatchingEnabled = Model.Settings.Importer.SelectedMatchTypes.Any();
 
             // assign VM properties
             onlineGames.ForEach(onlineGame =>
@@ -61,7 +64,7 @@ namespace ClrVpin.Importer
                     };
                 });
 
-                onlineGame.IsMatchingEnabled = isMatchingEnabled;
+                onlineGame.IsMatchingEnabled = IsMatchingEnabled;
                 onlineGame.UpdateDatabaseEntryTooltip += onlineGame.IsMatchingEnabled ? "" : MatchingDisabledMessage;
                 onlineGame.CreateDatabaseEntryTooltip += onlineGame.IsMatchingEnabled ? "" : MatchingDisabledMessage;
 
@@ -71,7 +74,7 @@ namespace ClrVpin.Importer
                 var match = _regexExtractIpdbId.Match(onlineGame.IpdbUrl ?? string.Empty);
                 if (match.Success)
                     onlineGame.IpdbId = match.Groups["ipdbId"].Value;
-
+                
                 onlineGame.IsMatched = onlineGame.Hit != null;
 
                 // navigate to url
@@ -79,8 +82,8 @@ namespace ClrVpin.Importer
             });
 
             // main games view (data grid)
-            Games = new ObservableCollection<OnlineGame>(onlineGames);
-            GamesView = new ListCollectionView<OnlineGame>(Games)
+            OnlineGames = new ObservableCollection<OnlineGame>(onlineGames);
+            OnlineGamesView = new ListCollectionView<OnlineGame>(OnlineGames)
             {
                 // filter the table names list to reflect the various view filtering criteria
                 Filter = game =>
@@ -89,44 +92,42 @@ namespace ClrVpin.Importer
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both ||
                      (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Manufactured && !game.IsOriginal) ||
                      (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Original && game.IsOriginal)) &&
-
                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Both ||
                      (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Matched && game.Hit != null) ||
                      (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Unmatched && game.Hit == null)) &&
-
                     (YearBeginFilter == null || string.Compare(game.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
                     (YearEndFilter == null || string.Compare(game.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
                     (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
                     (Settings.UpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedAtDateBegin) &&
                     (Settings.UpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedAtDateEnd.Value.AddDays(1))
             };
-            GamesView.MoveCurrentToFirst();
+            OnlineGamesView.MoveCurrentToFirst();
 
             // filters views (drop down combo boxes)
             TablesFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = table => GamesView.Any(x => x.Name == table)
+                Filter = table => OnlineGamesView.Any(x => x.Name == table)
             };
 
             Manufacturers = onlineGames.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList();
             ManufacturersFilterView = new ListCollectionView<string>(Manufacturers)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = manufacturer => GamesView.Any(x => x.Manufacturer == manufacturer)
+                Filter = manufacturer => OnlineGamesView.Any(x => x.Manufacturer == manufacturer)
             };
 
             Years = onlineGames.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
             YearsBeginFilterView = new ListCollectionView<string>(Years)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = yearString => GamesView.Any(x => x.YearString == yearString)
+                Filter = yearString => OnlineGamesView.Any(x => x.YearString == yearString)
             };
 
             YearsEndFilterView = new ListCollectionView<string>(Years)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = yearString => GamesView.Any(x => x.YearString == yearString)
+                Filter = yearString => OnlineGamesView.Any(x => x.YearString == yearString)
             };
 
             Types = onlineGames.Select(x => x.Type).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
@@ -142,7 +143,7 @@ namespace ClrVpin.Importer
             FilterChanged = new ActionCommand(() =>
             {
                 // update main list
-                GamesView.Refresh();
+                OnlineGamesView.Refresh();
 
                 // update filters based on what is shown in the main list
                 TablesFilterView.Refresh();
@@ -166,8 +167,13 @@ namespace ClrVpin.Importer
             NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
 
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
-            TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions(isMatchingEnabled).ToList());
+            TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions(IsMatchingEnabled).ToList());
+
+            AutoAssignDatabasePropertiesTip += "Assign missing information in local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
+            AutoAssignDatabasePropertiesCommand = new ActionCommand(AutoAssignDatabaseProperties);
         }
+
+        public string AutoAssignDatabasePropertiesTip { get; }
 
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
@@ -177,7 +183,7 @@ namespace ClrVpin.Importer
 
         public ImporterSettings Settings { get; } = Model.Settings.Importer;
 
-        // todo; move filters into a separate class
+        // todo; move filters into a separate class?
         public ListCollectionView<string> TablesFilterView { get; }
         public ListCollectionView<string> ManufacturersFilterView { get; }
         public ListCollectionView<string> YearsBeginFilterView { get; }
@@ -190,8 +196,8 @@ namespace ClrVpin.Importer
         public string YearEndFilter { get; set; }
         public string TypeFilter { get; set; }
 
-        public ObservableCollection<OnlineGame> Games { get; }
-        public ListCollectionView<OnlineGame> GamesView { get; }
+        public ObservableCollection<OnlineGame> OnlineGames { get; }
+        public ListCollectionView<OnlineGame> OnlineGamesView { get; }
 
         public Window Window { get; private set; }
 
@@ -201,6 +207,8 @@ namespace ClrVpin.Importer
         public ICommand UpdatedFilterChanged { get; set; }
 
         public ICommand NavigateToIpdbCommand { get; }
+        public ICommand AutoAssignDatabasePropertiesCommand { get; }
+        public bool IsMatchingEnabled { get; }
 
 
         // IOnlineGameCollections
@@ -235,6 +243,51 @@ namespace ClrVpin.Importer
             Model.SettingsManager.Write();
             Window.Close();
         }
+
+        private void AutoAssignDatabaseProperties()
+        {
+            var matchedOnlineGames = OnlineGames.Where(x => x.Hit?.GameDetail != null);
+            var updatedPropertyCount = 0;
+            var updatedGameCount = 0;
+
+            matchedOnlineGames.ForEach(onlineGame =>
+            {
+                var game = onlineGame.Hit.GameDetail.Game;
+                var beforeCount = updatedPropertyCount;
+
+                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value);
+                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(", "), value => game.Author = value);
+                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value);
+                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame.Manufacturer, value => game.Manufacturer = value);
+                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Players), () => game.Players, () => onlineGame.Players?.ToString(), value => game.Players = value);
+                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value);
+                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(", "), value => game.Theme = value);
+                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Type), () => game.Type, () => onlineGame.Type, value => game.Type = value);
+                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Year), () => game.Year, () => onlineGame.YearString, value => game.Year = value);
+
+                updatedGameCount += beforeCount == updatedPropertyCount ? 0 : 1;
+            });
+
+            // todo; write games back to each DB
+            //TableUtils.WriteGamesToDatabase();
+
+            // todo; dialog stats
+            Logger.Info($"Fixed missing info: table count: {updatedGameCount}, info count: {updatedPropertyCount}");
+        }
+
+        private static int CheckAndFixMissingProperty(string game, string property, Func<string> gameValue, Func<string> onlineGameValue, Action<string> assignAction)
+        {
+            if (gameValue().IsEmpty() && !onlineGameValue().IsEmpty())
+            {
+                assignAction(onlineGameValue());
+                Logger.Info($"Fixing missing info: table='{game}', {property}='{gameValue()}'");
+
+                return 1;
+            }
+
+            return 0;
+        }
+
 
         private IEnumerable<FeatureType> CreateTableStyleOptions()
         {
@@ -296,7 +349,7 @@ namespace ClrVpin.Importer
         private void UpdateIsNew()
         {
             // flag models if they satisfy the update time range
-            Games.ForEach(game => game.AllFiles.ForEach(kv =>
+            OnlineGames.ForEach(game => game.AllFiles.ForEach(kv =>
             {
                 var (_, files) = kv;
                 files.ForEach(file =>
@@ -326,7 +379,7 @@ namespace ClrVpin.Importer
             DialogHost.Show(imageUrlSelection, "ImporterResultsDialog");
         }
 
-        private readonly Regex _regexExtractIpdbId = new Regex(@"https:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
+        private readonly Regex _regexExtractIpdbId = new Regex(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
 
         private const int WindowMargin = 0;
         private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T USED";

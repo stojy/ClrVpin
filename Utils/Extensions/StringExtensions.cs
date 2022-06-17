@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Utils.Extensions;
@@ -24,5 +25,10 @@ public static class StringExtensions
         }
 
         return newString.ToString();
+    }
+
+    public static bool IsEmpty(this string value)
+    {
+        return string.IsNullOrWhiteSpace(value) || value == "-";
     }
 }
