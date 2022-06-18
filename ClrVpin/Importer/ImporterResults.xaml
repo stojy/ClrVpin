@@ -382,20 +382,23 @@
 
           <GroupBox DockPanel.Dock="Top" Header="Fix" Margin="0,0,0,10">
             <StackPanel Margin="5,0">
-              <ContentControl Template="{StaticResource KeyValuePair}"
-                              controls:GenericAttached.String="Missing Info"
-                              controls:GenericAttached.Double="100"
-                              controls:GenericAttached.Double2="14">
-                <Button ToolTip="{Binding AutoAssignDatabasePropertiesTip}"
-                        ToolTipService.ShowOnDisabled="True"
-                        Style="{StaticResource MaterialDesignIconButton}"
-                        Foreground="Coral"
-                        Width="35" Height="35"
-                        IsEnabled="{Binding IsMatchingEnabled}"
-                        Command="{Binding AutoAssignDatabasePropertiesCommand}">
-                  <materialDesign:PackIcon Kind="MagicWand" Width="35" Height="35" />
-                </Button>
-              </ContentControl>
+              <WrapPanel>
+                <ContentControl Template="{StaticResource KeyValuePair}"
+                                controls:GenericAttached.String="Missing Info"
+                                controls:GenericAttached.Double="100"
+                                controls:GenericAttached.Double2="14">
+                  <Button ToolTip="{Binding AutoAssignDatabasePropertiesTip}"
+                          ToolTipService.ShowOnDisabled="True"
+                          Style="{StaticResource MaterialDesignIconButton}"
+                          Foreground="Coral"
+                          Width="35" Height="35"
+                          IsEnabled="{Binding IsMatchingEnabled}"
+                          Command="{Binding AutoAssignDatabasePropertiesCommand}">
+                    <materialDesign:PackIcon Kind="MagicWand" Width="35" Height="35" />
+                  </Button>
+                </ContentControl>
+                <!--<TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Text="Update any missing information, e.g. IPDB id, ROM, theme, author, comment, etc" />-->
+              </WrapPanel>
 
               <ContentControl Template="{StaticResource KeyValuePair}"
                               controls:GenericAttached.String="Backup Folder"

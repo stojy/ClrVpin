@@ -26,7 +26,7 @@ namespace ClrVpin.Importer
 
                 // update all games that belong to the recently updated game
                 var gameDetailsInDatabaseFile = gameDetails.Where(gameDetail => gameDetail.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
-                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile, item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, false);
+                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile.Select(x => x.Game), item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, false);
             }
         }
 
@@ -81,7 +81,7 @@ namespace ClrVpin.Importer
 
                 // update all games that belong to the newly created game (defaulting to 'ClrVpin.xml')
                 var gameDetailsInDatabaseFile = gameDetails.Where(gd => gd.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
-                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile, item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, true);
+                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile.Select(x => x.Game), item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, true);
             }
         }
 

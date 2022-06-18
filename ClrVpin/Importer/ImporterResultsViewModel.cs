@@ -12,7 +12,6 @@ using ClrVpin.Models.Importer;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
-using ClrVpin.Models.Shared.Database;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
@@ -38,6 +37,7 @@ namespace ClrVpin.Importer
     {
         public ImporterResultsViewModel(List<GameDetail> games, List<OnlineGame> onlineGames)
         {
+            _games = games;
             IsMatchingEnabled = Model.Settings.Importer.SelectedMatchTypes.Any();
 
             // assign VM properties
@@ -169,7 +169,7 @@ namespace ClrVpin.Importer
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions(IsMatchingEnabled).ToList());
 
-            AutoAssignDatabasePropertiesTip += "Assign missing information in local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
+            AutoAssignDatabasePropertiesTip += "Update any missing information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
             AutoAssignDatabasePropertiesCommand = new ActionCommand(AutoAssignDatabaseProperties);
         }
 
@@ -246,7 +246,7 @@ namespace ClrVpin.Importer
 
         private void AutoAssignDatabaseProperties()
         {
-            var matchedOnlineGames = OnlineGames.Where(x => x.Hit?.GameDetail != null);
+            var matchedOnlineGames = OnlineGames.Where(x => x.Hit?.GameDetail != null).ToList();
             var updatedPropertyCount = 0;
             var updatedGameCount = 0;
 
@@ -268,8 +268,8 @@ namespace ClrVpin.Importer
                 updatedGameCount += beforeCount == updatedPropertyCount ? 0 : 1;
             });
 
-            // todo; write games back to each DB
-            //TableUtils.WriteGamesToDatabase();
+            // write ALL games back to the database(s) - i.e. irrespective of whether matched or not
+            TableUtils.WriteGamesToDatabase(_games.Select(x => x.Game));
 
             // todo; dialog stats
             Logger.Info($"Fixed missing info: table count: {updatedGameCount}, info count: {updatedPropertyCount}");
@@ -380,6 +380,7 @@ namespace ClrVpin.Importer
         }
 
         private readonly Regex _regexExtractIpdbId = new Regex(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
+        private List<GameDetail> _games;
 
         private const int WindowMargin = 0;
         private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T USED";

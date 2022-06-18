@@ -68,10 +68,14 @@ namespace ClrVpin.Shared
             return gameDetails;
         }
 
-        public static void WriteGamesToDatabase(IEnumerable<GameDetail> gameDetails, string file, string game, bool isNewEntry)
+        public static void WriteGamesToDatabase(IEnumerable<Game> games)
         {
-            var games = gameDetails.Select(gameDetail => gameDetail.Game);
+            var gamesByDatabase = games.GroupBy(game => game.DatabaseFile);
+            gamesByDatabase.ForEach(gamesGrouping => WriteGamesToDatabase(gamesGrouping, gamesGrouping.Key, "n/a", false));
+        }
 
+        public static void WriteGamesToDatabase(IEnumerable<Game> games, string file, string game, bool isNewEntry)
+        {
             if (file != null && !Path.IsPathRooted(file))
             {
                 var databaseContentType = Model.Settings.GetDatabaseContentType();
