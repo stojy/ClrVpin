@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
 using ClrVpin.Models.Settings;
+using ClrVpin.Shared;
+using MaterialDesignThemes.Wpf;
 
 namespace ClrVpin
 {
@@ -35,12 +37,14 @@ namespace ClrVpin
         private static void SetupExceptionHandling()
         {
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-                HandleError(s, (Exception) e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
+            {
+                HandleError(s, (Exception)e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
+            };
 
             Current.DispatcherUnhandledException += (s, e) =>
             {
                 HandleError(s, e.Exception, "Application.Current.DispatcherUnhandledException");
-                e.Handled = false;
+                e.Handled = true;
             };
 
             TaskScheduler.UnobservedTaskException += (s, e) =>
@@ -52,34 +56,37 @@ namespace ClrVpin
 
         private static void HandleError(object sender, Exception exception, string source)
         {
+            var assembly = Assembly.GetExecutingAssembly().GetName();
+            var message = "An unhandled exception was detected\n\n" +
+                          "Please submit a bug report via github: https://github.com/stojy/ClrVpin\n" +
+                          "(if possible, include this screen shot and the logfile)\n\n" +
+                          $"Message: {exception.Message}\n" +
+                          $"Assembly: {assembly}\n" +
+                          $"Sender: {sender}\n" +
+                          $"Source: {source}";
+
             try
             {
-                var assembly = Assembly.GetExecutingAssembly().GetName();
-                var message = "Unhandled exception detected\n\n" +
-                              $"Message: {exception.Message}\n" +
-                              $"Assembly: {assembly}\n" +
-                              $"Sender: {sender}\n" +
-                              $"Source: {source}";
-
                 Logging.Logger.Error(exception, message);
 
-                MessageBox.Show(Current.MainWindow!, $"{message}\n\n{exception}", "An Error Has Occurred.  ClrVpin will be shutdown.", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                // can't use the fancy material-ui dialog because it requires a visual tree with a DialogHost available.. and this is typically unavailable when processing unhandled exceptions
-                //DialogHost.Show(new Message
-                //{
-                //    Title = "An error has occurred. Shutting down..",
-                //    Detail = message
-                //}).ContinueWith(_ => Environment.Exit(-1));
+                Current.MainWindow!.Show();
+                Current.MainWindow!.ShowDialog(new Notification
+                {
+                    IsError = true,
+                    Detail = message
+                }).ContinueWith(_ => Environment.Exit(-1));
             }
             catch (Exception ex)
             {
+                // if the material window fails (e.g. MainWindow doesn't have a DialogHost available yet) then default back to the trusty windows message box
+                MessageBox.Show(Current.MainWindow!, $"{message}\n\n{exception}", "An Error Has Occurred.  ClrVpin will be shutdown.", MessageBoxButton.OK, MessageBoxImage.Error);
                 Logging.Logger.Error(ex, "Exception in HandleError");
+                Environment.Exit(-2);
             }
-            finally
-            {
-                Environment.Exit(-1);
-            }
+            //finally
+            //{
+            //   Environment.Exit(-1);
+            //}
         }
     }
 }
