@@ -65,7 +65,7 @@ namespace ClrVpin
 
                 MessageBox.Show(Current.MainWindow!, $"{message}\n\n{exception}", "An Error Has Occurred.  ClrVpin will be shutdown.", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                // can't use the fancy material-ui dialog because it requires a visual tree with a DialogHost available
+                // can't use the fancy material-ui dialog because it requires a visual tree with a DialogHost available.. and this is typically unavailable when processing unhandled exceptions
                 //DialogHost.Show(new Message
                 //{
                 //    Title = "An error has occurred. Shutting down..",
