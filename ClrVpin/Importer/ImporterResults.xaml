@@ -16,6 +16,7 @@
     <ResourceDictionary Source="\Controls\Templates.xaml" />
     <ResourceDictionary Source="DatabaseItem.xaml" />
     <ResourceDictionary Source="\Controls\Converters.xaml" />
+    <ResourceDictionary Source="\Shared\Notification.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <Style x:Key="UrlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}">
@@ -40,12 +41,6 @@
     <Setter Property="Foreground" Value="Coral" />
   </Style>
 
-  <converters:ListToStringConverter x:Key="ListToStringConverter" />
-  <converters:BoolToStringConverter x:Key="UrlToIconConverter" True="WebCancel" False="WebSync" />
-  <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" True="Visible" False="Collapsed" />
-  <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
-  <converters:NegativeToVisibilityConverter x:Key="NegativeToVisibilityConverter" />
-  <converters:NegativeToVisibilityConverter x:Key="PositiveToVisibilityConverter" True="Visible" False="Collapsed" />
   <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="Coral" False="#89FFFFFF" /> <!--{DynamicResource MaterialDesignBodyLight}-->
   <converters:BoolToStyleConverter x:Key="IsNewUrlButtonStyleConverter" True="{StaticResource IsNewUrlButtonStyle}" False="{StaticResource UrlButtonStyle}" />
 
@@ -225,22 +220,24 @@
             <!--image dialog-->
             <DataTemplate DataType="{x:Type vps:UrlSelection}">
               <StackPanel>
+                <b:Interaction.Triggers>
+                  <b:EventTrigger EventName="MouseUp">
+                    <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
+                  </b:EventTrigger>
+                </b:Interaction.Triggers>
+
                 <Image Margin="15" Source="{Binding Url}" Stretch="Uniform">
                   <Image.Effect>
                     <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance" />
                   </Image.Effect>
-                  <b:Interaction.Triggers>
-                    <b:EventTrigger EventName="MouseUp">
-                      <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
-                    </b:EventTrigger>
-                  </b:Interaction.Triggers>
                 </Image>
                 <!--non-visible button marked with IsCancel to support the escape key-->
-                <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+                <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"/>
               </StackPanel>
             </DataTemplate>
 
-            <!-- database item (game) - refer DatabaseItem.xaml import (top of file) -->
+            <!-- notification and database item (game) templates imported at global file scope - refer (top of file) -->
+
           </DataTemplate.Resources>
 
           <!--render the appropriate template-->

@@ -240,7 +240,7 @@
 
   <!-- database item (game) -->
   <DataTemplate DataType="{x:Type importer:DatabaseItem}">
-    <!--explicit border with background and padding required because the dialog background is transparent to support the image dialog-->
+    <!--explicit border with background and padding required to support usage within a DialogHost that has a transparent background, e.g. importer's image dialog-->
     <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" MinWidth="400">
       <StackPanel>
 

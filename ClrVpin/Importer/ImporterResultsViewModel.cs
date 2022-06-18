@@ -244,35 +244,74 @@ namespace ClrVpin.Importer
             Window.Close();
         }
 
-        private void AutoAssignDatabaseProperties()
+
+        //internal class DatabaseProperty
+        //{
+        //    public string name;
+        //    string
+        //    {
+        //        name = game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value
+        //    }
+
+        //}
+
+        private async void AutoAssignDatabaseProperties()
         {
+            
             var matchedOnlineGames = OnlineGames.Where(x => x.Hit?.GameDetail != null).ToList();
-            var updatedPropertyCount = 0;
+            var updatedIpdbIdCount = 0;
+            var updatedAuthorsCount = 0;
+            var updatedCommentCount = 0;
+            var updatedManufacturerCount = 0;
+            var updatedPlayersCount = 0;
+            var updatedRomCount = 0;
+            var updatedThemesCount = 0;
+            var updatedTypeCount = 0;
+            var updatedYearCount = 0;
             var updatedGameCount = 0;
 
             matchedOnlineGames.ForEach(onlineGame =>
             {
                 var game = onlineGame.Hit.GameDetail.Game;
-                var beforeCount = updatedPropertyCount;
+                var beforeCount = updatedIpdbIdCount + updatedAuthorsCount + updatedCommentCount + updatedManufacturerCount + updatedPlayersCount + updatedRomCount +
+                                  updatedThemesCount + updatedTypeCount + updatedYearCount;
 
-                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value);
-                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(", "), value => game.Author = value);
-                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value);
-                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame.Manufacturer, value => game.Manufacturer = value);
-                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Players), () => game.Players, () => onlineGame.Players?.ToString(), value => game.Players = value);
-                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value);
-                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(", "), value => game.Theme = value);
-                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Type), () => game.Type, () => onlineGame.Type, value => game.Type = value);
-                updatedPropertyCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Year), () => game.Year, () => onlineGame.YearString, value => game.Year = value);
+                updatedIpdbIdCount+= CheckAndFixMissingProperty(game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value);
+                updatedAuthorsCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(", "), value => game.Author = value);
+                updatedCommentCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value);
+                updatedManufacturerCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame.Manufacturer, value => game.Manufacturer = value);
+                updatedPlayersCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Players), () => game.Players, () => onlineGame.Players?.ToString(), value => game.Players = value);
+                updatedRomCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value);
+                updatedThemesCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(", "), value => game.Theme = value);
+                updatedTypeCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Type), () => game.Type, () => onlineGame.Type, value => game.Type = value);
+                updatedYearCount+= CheckAndFixMissingProperty(game.Name, nameof(game.Year), () => game.Year, () => onlineGame.YearString, value => game.Year = value);
 
-                updatedGameCount += beforeCount == updatedPropertyCount ? 0 : 1;
+                var afterCount = updatedIpdbIdCount + updatedAuthorsCount + updatedCommentCount + updatedManufacturerCount + updatedPlayersCount + updatedRomCount +
+                                  updatedThemesCount + updatedTypeCount + updatedYearCount;
+
+                updatedGameCount += beforeCount == afterCount ? 0 : 1;
             });
 
             // write ALL games back to the database(s) - i.e. irrespective of whether matched or not
             TableUtils.WriteGamesToDatabase(_games.Select(x => x.Game));
 
-            // todo; dialog stats
-            Logger.Info($"Fixed missing info: table count: {updatedGameCount}, info count: {updatedPropertyCount}");
+            await DialogHost.Show(new Notification
+            {
+                IsSuccess = true,
+                Detail = $"Number of tables fixed: {updatedGameCount}\n\n" +
+                         "Fields fixed:\n" +
+                         $"- IPDB ids: {updatedIpdbIdCount}\n" +
+                         $"- Authors: {updatedAuthorsCount}\n" +
+                         $"- Comments: {updatedCommentCount}\n" +
+                         $"- Manufacturers: {updatedManufacturerCount}\n" +
+                         $"- Players: {updatedPlayersCount}\n" +
+                         $"- ROMs: {updatedRomCount}\n" +
+                         $"- Themes: {updatedThemesCount}\n" +
+                         $"- Types: {updatedTypeCount}\n" +
+                         $"- Years: {updatedYearCount}\n"
+
+            }, "ImporterResultsDialog");
+            Logger.Info($"Fixed missing info: table count: {updatedGameCount}, info count: {updatedIpdbIdCount}");
         }
 
         private static int CheckAndFixMissingProperty(string game, string property, Func<string> gameValue, Func<string> onlineGameValue, Action<string> assignAction)
