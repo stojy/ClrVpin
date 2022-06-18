@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
@@ -7,8 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
 using ClrVpin.Models.Settings;
-using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
+using Notification = ClrVpin.Shared.Notification;
 
 namespace ClrVpin
 {
@@ -57,9 +58,10 @@ namespace ClrVpin
         private static void HandleError(object sender, Exception exception, string source)
         {
             var assembly = Assembly.GetExecutingAssembly().GetName();
-            var message = "An unhandled exception was detected\n\n" +
-                          "Please submit a bug report via github: https://github.com/stojy/ClrVpin\n" +
-                          "(if possible, include this screen shot and the logfile)\n\n" +
+            var message = "Sorry, but something has gone wrong :(\n\n" +
+                          "Please submit a bug with a screen shot and the log file..\n" +
+                          "c:\\ProgramData\\ClrVpin\\logs\\ClrVpin.log\n\n" +
+                          "Exiting this dialog will open the bug report web page and close the application.\n\n" +
                           $"Message: {exception.Message}\n" +
                           $"Assembly: {assembly}\n" +
                           $"Sender: {sender}\n" +
@@ -74,7 +76,7 @@ namespace ClrVpin
                 {
                     IsError = true,
                     Detail = message
-                }).ContinueWith(_ => Environment.Exit(-1));
+                }).ContinueWith(_ => SubmitBugAndExit());
             }
             catch (Exception ex)
             {
@@ -87,6 +89,13 @@ namespace ClrVpin
             //{
             //   Environment.Exit(-1);
             //}
+        }
+
+        private static void SubmitBugAndExit()
+        {
+            Process.Start(new ProcessStartInfo(@"https://github.com/stojy/ClrVpin/issues/new?assignees=&labels=&template=bug_report.md&title=Unhandled Error - <add overveiw here>") { UseShellExecute = true });
+
+            Environment.Exit(-1);
         }
     }
 }
