@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Models.Settings;
@@ -15,13 +16,19 @@ namespace ClrVpin.Rebuilder
     [AddINotifyPropertyChangedInterface]
     public class RebuilderResultsViewModel : ResultsViewModel
     {
-        public RebuilderResultsViewModel(ObservableCollection<GameDetail> games)
+        private ICollection<FileDetail> _gameFiles;
+        private ICollection<FileDetail> _unmatchedFiles;
+
+        public RebuilderResultsViewModel(ObservableCollection<GameDetail> games,ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
         {
             Games = games;
+            _unmatchedFiles = unmatchedFiles;
+            _gameFiles = gameFiles;
+
             Initialise();
         }
 
-        public void Show(Window parentWindow, double left, double top)
+        public async Task Show(Window parentWindow, double left, double top)
         {
             Window = new MaterialWindowEx
             {
@@ -36,6 +43,24 @@ namespace ClrVpin.Rebuilder
                 ContentTemplate = parentWindow.FindResource("ResultsTemplate") as DataTemplate
             };
             Window.Show();
+
+            await ShowSummary();
+        }
+
+        private const string DialogHostName = "ResultsDialog";
+
+        private async Task ShowSummary()
+        {
+            var detail = CreatePercentageStatistic("Unmatched Files", _unmatchedFiles.Count, _gameFiles.Concat(_unmatchedFiles).Count());
+            var isSuccess = _unmatchedFiles.Count == 0;
+            
+            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Merged") : Notification.ShowWarning(DialogHostName, "Unmatched Files Found", detail));
+        }
+
+        private static string CreatePercentageStatistic(string title, int count, int totalCount)
+        {
+            var percentage = totalCount == 0 ? 0 : 100f * count / totalCount;
+            return $"{title}:  {count} of {totalCount} ({percentage:F2}%)";
         }
 
         protected override IList<FeatureType> CreateAllContentFeatureTypes()

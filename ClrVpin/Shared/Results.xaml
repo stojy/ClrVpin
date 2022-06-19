@@ -47,88 +47,89 @@
   <converters:HitTypeEnumDescriptionConverter x:Key="HitTypeEnumDescriptionConverter" />
 
   <DataTemplate x:Key="ResultsTemplate" DataType="{x:Type shared:ResultsViewModel}">
-    <!--dock panel to provide a scrollbar for the tree view-->
-    <DockPanel Margin="5">
-      <StackPanel DockPanel.Dock="Top">
-        <TextBlock Style="{StaticResource Title}">Filter Criteria</TextBlock>
-        <WrapPanel Margin="5,0,0,0">
-          <TextBox Width="150" VerticalAlignment="Center" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic"
-                   Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                   Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                   Margin="0,0,5,0"
-                   materialDesign:TextFieldAssist.HasClearButton="True">
-            <b:Interaction.Triggers>
-              <b:EventTrigger EventName="TextChanged">
-                <b:InvokeCommandAction Command="{Binding SearchTextCommand}" />
-              </b:EventTrigger>
-            </b:Interaction.Triggers>
-          </TextBox>
+    <materialDesign:DialogHost Identifier="ResultsDialog" CloseOnClickAway="True" VerticalAlignment="Stretch" DialogMargin="0" DialogBackground="Transparent">
+      <!--dock panel to provide a scrollbar for the tree view-->
+      <DockPanel Margin="5">
+        <StackPanel DockPanel.Dock="Top">
+          <TextBlock Style="{StaticResource Title}">Filter Criteria</TextBlock>
+          <WrapPanel Margin="5,0,0,0">
+            <TextBox Width="150" VerticalAlignment="Center" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic"
+                     Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Margin="0,0,5,0"
+                     materialDesign:TextFieldAssist.HasClearButton="True">
+              <b:Interaction.Triggers>
+                <b:EventTrigger EventName="TextChanged">
+                  <b:InvokeCommandAction Command="{Binding SearchTextCommand}" />
+                </b:EventTrigger>
+              </b:Interaction.Triggers>
+            </TextBox>
 
-          <GroupBox Header="Content">
-            <!-- fixed height control to get items in to columns -->
-            <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="shared1:FeatureType">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
+            <GroupBox Header="Content">
+              <!-- fixed height control to get items in to columns -->
+              <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="shared1:FeatureType">
+                    <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
 
-              <!-- scroll vertically then horizontally -->
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Vertical" ItemWidth="170" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-            </ItemsControl>
-          </GroupBox>
+                <!-- scroll vertically then horizontally -->
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" ItemWidth="170" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+            </GroupBox>
 
-          <GroupBox Margin="10,0,0,0" Header="Criteria">
-            <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="shared1:FeatureType">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
+            <GroupBox Margin="10,0,0,0" Header="Criteria">
+              <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="shared1:FeatureType">
+                    <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
 
-              <!-- scroll vertically then horizontally -->
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Vertical" ItemWidth="170" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-            </ItemsControl>
-          </GroupBox>
-        </WrapPanel>
-
-        <WrapPanel Margin="5,5,0,10">
-          <TextBlock Text="Backup Folder: " />
-          <TextBlock DockPanel.Dock="Top" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}">
-            <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}">
-              <TextBlock Text="{Binding BackupFolder}" />
-            </Hyperlink>
-          </TextBlock>
-        </WrapPanel>
-
-        <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,5,0">
-          <CheckBox DockPanel.Dock="Left" Margin="5,5"
-                    Command="{Binding ExpandGamesCommand}" CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
-            Expand All
-          </CheckBox>
-
-          <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
-            <TextBlock Text="{Binding HitGamesView.Count}" />
-            <TextBlock Text=" / " />
-            <TextBlock Text="{Binding Games.Count}" />
+                <!-- scroll vertically then horizontally -->
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" ItemWidth="170" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+            </GroupBox>
           </WrapPanel>
-        </DockPanel>
-      </StackPanel>
 
-      <TreeView DockPanel.Dock="Bottom" ItemsSource="{Binding HitGamesView}"
-                ItemTemplate="{StaticResource HitGamesItemTemplate}"
-                ItemContainerStyle="{StaticResource HitGameStyle}"
-                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" />
-    </DockPanel>
+          <WrapPanel Margin="5,5,0,10">
+            <TextBlock Text="Backup Folder: " />
+            <TextBlock DockPanel.Dock="Top" Margin="10,0,0,0" Foreground="{DynamicResource PrimaryHueDarkBrush}">
+              <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}">
+                <TextBlock Text="{Binding BackupFolder}" />
+              </Hyperlink>
+            </TextBlock>
+          </WrapPanel>
 
+          <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,5,0">
+            <CheckBox DockPanel.Dock="Left" Margin="5,5"
+                      Command="{Binding ExpandGamesCommand}" CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}">
+              Expand All
+            </CheckBox>
+
+            <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
+              <TextBlock Text="{Binding HitGamesView.Count}" />
+              <TextBlock Text=" / " />
+              <TextBlock Text="{Binding Games.Count}" />
+            </WrapPanel>
+          </DockPanel>
+        </StackPanel>
+
+        <TreeView DockPanel.Dock="Bottom" ItemsSource="{Binding HitGamesView}"
+                  ItemTemplate="{StaticResource HitGamesItemTemplate}"
+                  ItemContainerStyle="{StaticResource HitGameStyle}"
+                  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" />
+      </DockPanel>
+    </materialDesign:DialogHost>
   </DataTemplate>
 
 </ResourceDictionary>

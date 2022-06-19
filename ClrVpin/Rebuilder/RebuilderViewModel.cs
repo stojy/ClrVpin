@@ -239,20 +239,20 @@ namespace ClrVpin.Rebuilder
             await Task.Delay(1);
             _games = new ObservableCollection<GameDetail>(games);
 
-            ShowResults(gameFiles, unmatchedFiles, progress.Duration);
-
             progress.Close();
+
+            await ShowResults(gameFiles, unmatchedFiles, progress.Duration);
 
             void UpdateProgress(string detail, float ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
-        private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
+        private async Task ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
             var rebuilderStatistics = new RebuilderStatisticsViewModel(_games, duration, gameFiles, unmatchedFiles);
             rebuilderStatistics.Show(_rebuilderWindow, WindowMargin, WindowMargin);
 
-            var rebuilderResults = new RebuilderResultsViewModel(_games);
-            rebuilderResults.Show(_rebuilderWindow, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
+            var rebuilderResults = new RebuilderResultsViewModel(_games, gameFiles, unmatchedFiles);
+            var showTask = rebuilderResults.Show(_rebuilderWindow, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
 
             var logging = new LoggingViewModel();
             logging.Show(_rebuilderWindow, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
@@ -271,6 +271,8 @@ namespace ClrVpin.Rebuilder
                     _rebuilderWindow.Show();
                 };
             }
+
+            await showTask;
         }
 
 

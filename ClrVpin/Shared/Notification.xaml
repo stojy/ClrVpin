@@ -16,7 +16,7 @@
 
   <DataTemplate DataType="{x:Type shared:Notification}">
     <!--explicit border with background and padding required to support usage within a DialogHost that has a transparent background, e.g. importer's image dialog-->
-    <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" MinWidth="400" CornerRadius="10">
+    <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" MinWidth="300" CornerRadius="10">
       <b:Interaction.Triggers>
         <b:EventTrigger EventName="MouseUp">
           <b:InvokeCommandAction Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
@@ -24,6 +24,7 @@
       </b:Interaction.Triggers>
 
       <StackPanel Margin="10">
+
         <StackPanel.Resources>
           <Style x:Key="IconStyle" TargetType="materialDesign:PackIcon">
             <Setter Property="Height" Value="200" />
@@ -34,8 +35,6 @@
           </Style>
         </StackPanel.Resources>
 
-        <TextBlock Text="{Binding Title}" Visibility="{Binding Title, Converter={StaticResource ReverseNullToVisibilityConverter}}"
-                   Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Margin="0,0,0,20" HorizontalAlignment="Center" />
         <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="{DynamicResource SecondaryHueDarkBrush}"
                                  Visibility="{Binding IsSuccess, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
         <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="Coral"
@@ -43,7 +42,12 @@
         <materialDesign:PackIcon Kind="CloseCircleOutline" Foreground="Red"
                                  Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
 
-        <TextBlock Text="{Binding Detail}" FontSize="18" />
+        <StackPanel Margin="0,0,0,10">
+          <TextBlock Text="{Binding Title}" Visibility="{Binding Title, Converter={StaticResource ReverseNullToVisibilityConverter}}"
+                     Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Margin="0" HorizontalAlignment="Center" />
+          <TextBlock Text="{Binding Detail}" Visibility="{Binding Detail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
+                     FontSize="18" Margin="0,40,0,0" />
+        </StackPanel>
 
         <!--non-visible button marked with IsCancel to support the escape key-->
         <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />

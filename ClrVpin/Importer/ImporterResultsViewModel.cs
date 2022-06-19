@@ -240,27 +240,29 @@ namespace ClrVpin.Importer
 
             Window.Show();
 
-            await ShowResultSummary();
+            await ShowSummary();
         }
 
-        private async Task ShowResultSummary()
+        private async Task ShowSummary()
         {
+            if (!IsMatchingEnabled)
+            {
+                await Notification.ShowWarning(DialogHostName, "Reduced Functionality", "Because fuzzy matching was not enabled.");
+                return;
+            }
+
             // simplified summary of the ImporterStatisticsViewModel info
             var onlineManufacturedCount = OnlineGames.Count(game => !game.IsOriginal);
-            var onlineOriginalCount = OnlineGames.Count(game => game.IsOriginal);
 
-            var detail = "Your collection.." +
-                         CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.MatchedManufactured], onlineManufacturedCount) +
-                         CreatePercentageStatistic("Original", _matchStatistics[ImporterMatchStatistics.MatchedOriginal], onlineOriginalCount) +
-                         $"\n- Unknown Tables:  {_matchStatistics[ImporterMatchStatistics.UnmatchedLocalTotal]}";
+            var detail = CreatePercentageStatistic("Missing Manufactured Tables", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineManufactured], onlineManufacturedCount);
 
             var isSuccess = onlineManufacturedCount == _matchStatistics[ImporterMatchStatistics.MatchedManufactured];
-            await (isSuccess ? Notification.ShowSuccess(DialogHostName, detail) : Notification.ShowWarning(DialogHostName, detail));
+            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Manufactured Tables Present") : Notification.ShowWarning(DialogHostName, "Manufactured Tables Missing", detail));
         }
 
         private static string CreatePercentageStatistic(string title, int count, int totalCount)
         {
-            return $"\n- {title} Tables:  {count} of {totalCount} ({100f * count / totalCount:F2}%)";
+            return $"{title}:  {count} of {totalCount} ({100f * count / totalCount:F2}%)";
         }
 
         public void Close()
