@@ -307,16 +307,20 @@ namespace ClrVpin.Importer
             });
 
             // write ALL games back to the database(s) - i.e. irrespective of whether matched or not
-            TableUtils.WriteGamesToDatabase(_games.Select(x => x.Game));
-
-            var properties = updatedPropertyCounts.Select(property => $"- {property.Key}: {property.Value}").StringJoin("\n");
-            var details = $"Tables analyzed: {matchedOnlineGames.Count}\n\n" +
-                          $"Tables fixed: {updatedGameCount}\n\n" +
-                          "Missing info fixed:\n" +
-                          $"{properties}";
-            await Notification.ShowSuccess(DialogHostName, details);
+            if (updatedGameCount != 0)
+                TableUtils.WriteGamesToDatabase(_games.Select(x => x.Game));
 
             Logger.Info($"Fixed missing info: table count: {updatedGameCount}, info count: {GetUpdateCount(updatedPropertyCounts)}");
+
+            var properties = updatedPropertyCounts.Select(property => $"- {property.Key}: {property.Value}").StringJoin("\n");
+            var details = CreatePercentageStatistic("Tables Fixed", updatedGameCount, matchedOnlineGames.Count) +
+                          $"\n{properties}";
+
+            var isSuccess = updatedGameCount == 0;
+            if (isSuccess)
+                await Notification.ShowSuccess(DialogHostName, "No Updates Required");
+            else
+                await Notification.ShowSuccess(DialogHostName, "Tables Updated", details);
         }
 
         private static int GetUpdateCount(IDictionary<string, int> updatedPropertyCounts) => updatedPropertyCounts.Sum(x => x.Value);
