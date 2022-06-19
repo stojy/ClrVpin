@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
@@ -132,19 +133,19 @@ namespace ClrVpin.Importer
             await ImporterUtils.MatchLocalToOnlineAsync(games, onlineGames, matchStatistics, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
-            progress.Update("Preparing Results");
-            ShowResults(progress.Duration, games, onlineGames, feedFixStatistics, matchStatistics);
-            Logger.Info($"Importer rendered, duration={progress.Duration}", true);
-            
             progress.Close();
+
+            progress.Update("Preparing Results");
+            await ShowResults(progress.Duration, games, onlineGames, feedFixStatistics, matchStatistics);
+            Logger.Info($"Importer rendered, duration={progress.Duration}", true);
 
             void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
-        private void ShowResults(TimeSpan duration, List<GameDetail> games, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
+        private async Task ShowResults(TimeSpan duration, List<GameDetail> games, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
         {
-            var results = new ImporterResultsViewModel(games, onlineGames);
-            results.Show(_window, WindowMargin, WindowMargin);
+            var results = new ImporterResultsViewModel(games, onlineGames, matchStatistics);
+            var showTask = results.Show(_window, WindowMargin, WindowMargin);
 
             var statistics = new ImporterStatisticsViewModel(games, onlineGames, duration, fixStatistics, matchStatistics);
             statistics.Show(_window, WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
@@ -166,6 +167,8 @@ namespace ClrVpin.Importer
                     _window.Show();
                 };
             }
+
+            await showTask;
         }
 
         //private readonly IEnumerable<string> _destinationContentTypes;

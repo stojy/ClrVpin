@@ -67,17 +67,17 @@ namespace ClrVpin.Importer
                    "\n\nMatched Tables (exists in both Local and Online Databases)" +
                    CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.MatchedTotal], onlineTotalCount) +
                    CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.MatchedManufactured], onlineManufacturedCount) +
-                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.MatchedOriginal], onlineOriginalCount) +
+                   CreatePercentageStatistic("Original", _matchStatistics[ImporterMatchStatistics.MatchedOriginal], onlineOriginalCount) +
 
                    "\n\nUnmatched Online Tables (exists only in Online Database)" +
                    CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineTotal], onlineTotalCount) +
                    CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineManufactured], onlineManufacturedCount) +
-                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineOriginal], onlineOriginalCount) +
+                   CreatePercentageStatistic("Original", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineOriginal], onlineOriginalCount) +
 
                    "\n\nUnmatched Local Tables (exists only in Local Database)" +
                    CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalTotal], localTotalCount) +
                    CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalManufactured], localManufacturedCount) +
-                   CreatePercentageStatistic("Originals", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalOriginal], localOriginalCount) +
+                   CreatePercentageStatistic("Original", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalOriginal], localOriginalCount) +
 
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_elapsedTime.TotalSeconds:f2}s";
         }

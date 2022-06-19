@@ -18,7 +18,7 @@ namespace ClrVpin.Shared
 {
     public static class TableUtils
     {
-        public static List<GameDetail> ReadGamesFromDatabases(IList<ContentType> contentTypes)
+        public static List<GameDetail> ReadGamesFromDatabases(IEnumerable<ContentType> contentTypes)
         {
             var databaseContentType = Model.Settings.GetDatabaseContentType();
 
@@ -173,7 +173,7 @@ namespace ClrVpin.Shared
         private static void LogDatabaseStatistics(IReadOnlyCollection<GameDetail> gameDetails, string file = null)
         {
             Logger.Info(
-                $"Local database table {(file == null ? "total " : "")}count: {gameDetails.Count} (manufactured={gameDetails.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={gameDetails.Count(onlineGame => onlineGame.Derived.IsOriginal)})" +
+                $"Local database tables: {(file == null ? "total " : "")}count={gameDetails.Count} (manufactured={gameDetails.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={gameDetails.Count(onlineGame => onlineGame.Derived.IsOriginal)})" +
                 $"{(file == null ? "" : ", file: " + file)}");
         }
 

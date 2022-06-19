@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
@@ -36,9 +37,10 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel : IOnlineGameCollections
     {
-        public ImporterResultsViewModel(List<GameDetail> games, List<OnlineGame> onlineGames)
+        public ImporterResultsViewModel(List<GameDetail> games, List<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics)
         {
             _games = games;
+            _matchStatistics = matchStatistics.ToDictionary();
             IsMatchingEnabled = Model.Settings.Importer.SelectedMatchTypes.Any();
 
             // assign VM properties
@@ -221,7 +223,7 @@ namespace ClrVpin.Importer
         public List<string> Themes { get; }
         public List<string> Authors { get; }
 
-        public void Show(Window parentWindow, double left, double top)
+        public async Task Show(Window parentWindow, double left, double top)
         {
             Window = new MaterialWindowEx
             {
@@ -237,6 +239,28 @@ namespace ClrVpin.Importer
             };
 
             Window.Show();
+
+            await ShowResultSummary();
+        }
+
+        private async Task ShowResultSummary()
+        {
+            // simplified summary of the ImporterStatisticsViewModel info
+            var onlineManufacturedCount = OnlineGames.Count(game => !game.IsOriginal);
+            var onlineOriginalCount = OnlineGames.Count(game => game.IsOriginal);
+
+            var detail = "Your collection.." +
+                         CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.MatchedManufactured], onlineManufacturedCount) +
+                         CreatePercentageStatistic("Original", _matchStatistics[ImporterMatchStatistics.MatchedOriginal], onlineOriginalCount) +
+                         $"\n- Unknown Tables:  {_matchStatistics[ImporterMatchStatistics.UnmatchedLocalTotal]}";
+
+            var isSuccess = onlineManufacturedCount == _matchStatistics[ImporterMatchStatistics.MatchedManufactured];
+            await (isSuccess ? Notification.ShowSuccess(DialogHostName, detail) : Notification.ShowWarning(DialogHostName, detail));
+        }
+
+        private static string CreatePercentageStatistic(string title, int count, int totalCount)
+        {
+            return $"\n- {title} Tables:  {count} of {totalCount} ({100f * count / totalCount:F2}%)";
         }
 
         public void Close()
@@ -284,15 +308,11 @@ namespace ClrVpin.Importer
             TableUtils.WriteGamesToDatabase(_games.Select(x => x.Game));
 
             var properties = updatedPropertyCounts.Select(property => $"- {property.Key}: {property.Value}").StringJoin("\n");
-
-            await DialogHost.Show(new Notification
-            {
-                IsSuccess = true,
-                Detail = $"Tables analyzed: {matchedOnlineGames.Count}\n\n" +
-                         $"Tables fixed: {updatedGameCount}\n\n" +
-                         "Missing info fixed:\n" +
-                         $"{properties}"
-            }, "ImporterResultsDialog");
+            var details = $"Tables analyzed: {matchedOnlineGames.Count}\n\n" +
+                          $"Tables fixed: {updatedGameCount}\n\n" +
+                          "Missing info fixed:\n" +
+                          $"{properties}";
+            await Notification.ShowSuccess(DialogHostName, details);
 
             Logger.Info($"Fixed missing info: table count: {updatedGameCount}, info count: {GetUpdateCount(updatedPropertyCounts)}");
         }
@@ -402,6 +422,8 @@ namespace ClrVpin.Importer
 
         private readonly Regex _regexExtractIpdbId = new Regex(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
         private readonly List<GameDetail> _games;
+        private readonly Dictionary<string, int> _matchStatistics;
+        private const string DialogHostName = "ImporterResultsDialog";
 
         private const int WindowMargin = 0;
         private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T USED";
