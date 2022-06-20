@@ -83,12 +83,6 @@ namespace ClrVpin.Rebuilder
             await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Merged") : Notification.ShowWarning(DialogHostName, "Unmatched Files Found", detail));
         }
 
-        private static string CreatePercentageStatistic(string title, int count, int totalCount)
-        {
-            var percentage = totalCount == 0 ? 0 : 100f * count / totalCount;
-            return $"{title}:  {count} of {totalCount} ({percentage:F2}%)";
-        }
-
         private readonly ICollection<FileDetail> _gameFiles;
         private readonly ICollection<FileDetail> _unmatchedFiles;
 

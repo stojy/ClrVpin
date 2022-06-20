@@ -41,25 +41,6 @@ namespace ClrVpin.Scanner
             await ShowSummary();
         }
 
-        
-        private async Task ShowSummary()
-        {
-            var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
-            var eligibleFiles = Games.Count * Settings.Scanner.SelectedCheckContentTypes.Count;
-            var missingFilesCount = eligibleFiles - validHits.Count;
-            
-            var detail = CreatePercentageStatistic("Missing Files", missingFilesCount, eligibleFiles);
-            var isSuccess = missingFilesCount == 0;
-            
-            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Incorrect Files", detail));
-        }
-
-        private static string CreatePercentageStatistic(string title, int count, int totalCount)
-        {
-            var percentage = totalCount == 0 ? 0 : 100f * count / totalCount;
-            return $"{title}:  {count} of {totalCount} ({percentage:F2}%)";
-        }
-
         protected override IList<FeatureType> CreateAllContentFeatureTypes()
         {
             // show all content types, but assign enabled and active based on the scanner configuration
@@ -90,6 +71,19 @@ namespace ClrVpin.Scanner
             }).ToList();
 
             return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) }).ToList();
+        }
+
+
+        private async Task ShowSummary()
+        {
+            var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
+            var eligibleFiles = Games.Count * Settings.Scanner.SelectedCheckContentTypes.Count;
+            var missingFilesCount = eligibleFiles - validHits.Count;
+
+            var detail = CreatePercentageStatistic("Missing Files", missingFilesCount, eligibleFiles);
+            var isSuccess = missingFilesCount == 0;
+
+            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Incorrect Files", detail));
         }
 
         private const int WindowMargin = 0;

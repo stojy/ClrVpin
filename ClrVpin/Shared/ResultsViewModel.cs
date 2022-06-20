@@ -68,6 +68,12 @@ namespace ClrVpin.Shared
             HitGamesView.Refresh();
         }
 
+        protected static string CreatePercentageStatistic(string title, int count, int totalCount)
+        {
+            var percentage = totalCount == 0 ? 0 : 100f * count / totalCount;
+            return $"{title}:  {count} of {totalCount} ({percentage:F2}%)";
+        }
+
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
         private void UpdateStatus(IEnumerable<GameDetail> games)
