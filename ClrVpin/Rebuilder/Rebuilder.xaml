@@ -114,8 +114,11 @@
         </ItemsControl>
       </GroupBox>
 
-      <CheckBox Margin="0,10" IsChecked="{Binding Settings.TrainerWheels}" Content="Trainer Wheels"
-                ToolTip="When enabled, rebuilder will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted." />
+      <WrapPanel Margin="0,10,10,10">
+        <ToggleButton ToolTip="When enabled, rebuilder will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
+                      IsChecked="{Binding Settings.TrainerWheels}" />
+        <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
+      </WrapPanel>
 
       <Button Margin="0" Width="50" Command="{Binding StartCommand}" Style="{StaticResource RaisedAccentButton}" IsEnabled="{Binding IsValid}">Start</Button>
 

@@ -32,8 +32,6 @@ namespace ClrVpin.Shared
         public ICommand NavigateToBackupFolderCommand { get; private set; }
         protected Models.Settings.Settings Settings { get; private set; }
 
-        protected const string DialogHostName = "ResultsDialog";
-
         public void Close()
         {
             Window.Close();
@@ -133,5 +131,7 @@ namespace ClrVpin.Shared
         private IEnumerable<FeatureType> _allContentFeatureTypes;
         private IEnumerable<FeatureType> _allHitFeatureTypes;
         private DispatcherTimer _searchTextChangedDelayTimer;
+
+        protected const string DialogHostName = "ResultsDialog";
     }
 }
