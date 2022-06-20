@@ -199,7 +199,7 @@ namespace ClrVpin.Scanner
             var unmatchedFiles = await ScannerUtils.CheckAsync(games, UpdateProgress);
 
             progress.Update("Fixing Files");
-            var gameFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
+            var fixedFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
 
             progress.Update("Removing Unmatched Files");
             await ScannerUtils.RemoveUnmatchedAsync(unmatchedFiles, UpdateProgress);
@@ -208,20 +208,20 @@ namespace ClrVpin.Scanner
             await Task.Delay(1);
             _games = new ObservableCollection<GameDetail>(games);
 
-            ShowResults(gameFiles, unmatchedFiles, progress.Duration);
-
             progress.Close();
+
+            await ShowResults(fixedFiles, unmatchedFiles, progress.Duration);
 
             void UpdateProgress(string detail, float ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
-        private void ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
+        private async Task ShowResults(ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
-            var statistics = new ScannerStatisticsViewModel(_games, duration, gameFiles, unmatchedFiles);
+            var statistics = new ScannerStatisticsViewModel(_games, duration, fixedFiles, unmatchedFiles);
             statistics.Show(_scannerWindow, WindowMargin, WindowMargin);
 
             var results = new ScannerResultsViewModel(_games);
-            results.Show(_scannerWindow, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top);
+            var displayTask = results.Show(_scannerWindow, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top);
 
             var explorer = new ScannerExplorerViewModel(_games);
             explorer.Show(_scannerWindow, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin);
@@ -246,6 +246,8 @@ namespace ClrVpin.Scanner
                     _scannerWindow.Show();
                 };
             }
+
+            await displayTask;
         }
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;

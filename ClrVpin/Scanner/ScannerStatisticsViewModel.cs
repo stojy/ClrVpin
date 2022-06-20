@@ -13,8 +13,8 @@ namespace ClrVpin.Scanner
 {
     public class ScannerStatisticsViewModel : StatisticsViewModel
     {
-        public ScannerStatisticsViewModel(ObservableCollection<GameDetail> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
-            : base(games, elapsedTime, gameFiles, unmatchedFiles)
+        public ScannerStatisticsViewModel(ObservableCollection<GameDetail> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
+            : base(games, elapsedTime, fixedFiles, unmatchedFiles)
         {
             // hit type stats for all supported types only
             // - including the extra 'under the hood' types.. valid, unknown, unsupported
@@ -58,32 +58,34 @@ namespace ClrVpin.Scanner
             var eligibleHits = Games.Count * Settings.Scanner.SelectedCheckContentTypes.Count;
 
             // all files
-            var allFilesCount = validHits.Count + GameFiles.Count;
-            var allFilesSize = validHits.Sum(x => x.Size) + GameFiles.Sum(x => x.Size) ?? 0;
+            var allFilesCount = validHits.Count + FixedFiles.Count;
+            var allFilesSize = validHits.Sum(x => x.Size) + FixedFiles.Sum(x => x.Size) ?? 0;
 
             // renamed
             // - must be configured as a fix hit type
             // - unknown is n/a apply for renamable, i.e. since we don't know what game/table to rename it to
-            var fixFilesRenamed = GameFiles.Where(x => x.Renamed).ToList();
-            var fixFilesRenamedSize = fixFilesRenamed.Sum(x => x.Size);
+            var fixedFilesRenamed = FixedFiles.Where(x => x.Renamed).ToList();
+            var fixedFilesRenamedSize = fixedFilesRenamed.Sum(x => x.Size);
 
             // removed (deleted)
             // - must be configured as a fix hit type
-            var fixFilesDeleted = GameFiles.Where(x => x.Deleted).ToList();
-            var fixFilesDeletedSize = fixFilesDeleted.Sum(x => x.Size);
-            var fixFilesDeletedUnknown = fixFilesDeleted.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
-            var fixFilesDeletedUnknownSize = fixFilesDeletedUnknown.Sum(x => x.Size);
+            var fixedFilesDeleted = FixedFiles.Where(x => x.Deleted).ToList();
+            var fixedFilesDeletedSize = fixedFilesDeleted.Sum(x => x.Size);
+            var fixedFilesDeletedUnknown = fixedFilesDeleted.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
+            var fixedFilesDeletedUnknownSize = fixedFilesDeletedUnknown.Sum(x => x.Size);
 
             // ignored (removable and renamable)
             // - includes renamable AND removable files
             // - unknown..
             //   - n/a apply for renamable, i.e. since we don't know what game/table to rename it to
             //   - applicable for removable
-            var fixFilesIgnored = GameFiles.Where(x => x.Ignored).ToList();
-            var fixFilesIgnoredSize = fixFilesIgnored.Sum(x => x.Size);
-            var fixFilesIgnoredUnknown = fixFilesIgnored.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
-            var fixFilesIgnoredUnknownSize = fixFilesIgnoredUnknown.Sum(x => x.Size);
+            var fixedFilesIgnored = FixedFiles.Where(x => x.Ignored).ToList();
+            var fixedFilesIgnoredSize = fixedFilesIgnored.Sum(x => x.Size);
+            var fixedFilesIgnoredUnknown = fixedFilesIgnored.Where(x => x.HitType == HitTypeEnum.Unknown).ToList();
+            var fixedFilesIgnoredUnknownSize = fixedFilesIgnoredUnknown.Sum(x => x.Size);
+
             var eligibleHitsPercentage = eligibleHits == 0 ? "n/a" : $"{(decimal)validHits.Count / eligibleHits:P2}";
+            var missingOrIncorrectHitsPercentage = eligibleHits == 0 ? "n/a" : $"{1 - (decimal)validHits.Count / eligibleHits:P2}";
 
             return "\n-----------------------------------------------\n" +
                    "\nTotals" +
@@ -91,14 +93,15 @@ namespace ClrVpin.Scanner
                    $"\n{"- Possible Content",StatisticsKeyWidth}{Games.Count * Settings.GetFixableContentTypes().Length}" +
                    $"\n{"- Checked Content",StatisticsKeyWidth}{eligibleHits}" +
                    $"\n\n{"All Files",StatisticsKeyWidth}{CreateFileStatistic(allFilesCount, allFilesSize)}" +
-                   $"\n\n{"CorrectName Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
-                   $"\n{"- Collection",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({eligibleHitsPercentage})" +
-                   $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Count, GameFiles.Sum(x => x.Size))}" +
-                   $"\n{"- renamed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesRenamed.Count, fixFilesRenamedSize)}" +
-                   $"\n{"- removed",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeleted.Count, fixFilesDeletedSize)}" +
-                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixFilesDeletedUnknown.Count, fixFilesDeletedUnknownSize)}" +
-                   $"\n{"- renamable and removable",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnored.Count, fixFilesIgnoredSize)}" +
-                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixFilesIgnoredUnknown.Count, fixFilesIgnoredUnknownSize)}" +
+                   $"\n\n{"Correct Files",StatisticsKeyWidth}{CreateFileStatistic(validHits.Count, validHits.Sum(x => x.Size ?? 0))}" +
+                   $"\n{"- Collection Present",StatisticsKeyWidth}{validHits.Count}/{eligibleHits} ({eligibleHitsPercentage})" +
+                   $"\n{"- Collection Missing",StatisticsKeyWidth}{eligibleHits - validHits.Count}/{eligibleHits} ({missingOrIncorrectHitsPercentage})" +
+                   $"\n\n{"Fixed/Fixable Files",StatisticsKeyWidth}{CreateFileStatistic(FixedFiles.Count, FixedFiles.Sum(x => x.Size))}" +
+                   $"\n{"- renamed",StatisticsKeyWidth}{CreateFileStatistic(fixedFilesRenamed.Count, fixedFilesRenamedSize)}" +
+                   $"\n{"- removed",StatisticsKeyWidth}{CreateFileStatistic(fixedFilesDeleted.Count, fixedFilesDeletedSize)}" +
+                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixedFilesDeletedUnknown.Count, fixedFilesDeletedUnknownSize)}" +
+                   $"\n{"- renamable and removable",StatisticsKeyWidth}{CreateFileStatistic(fixedFilesIgnored.Count, fixedFilesIgnoredSize)}" +
+                   $"\n{"  (criteria: unknown)",StatisticsKeyWidth}{CreateFileStatistic(fixedFilesIgnoredUnknown.Count, fixedFilesIgnoredUnknownSize)}" +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{ElapsedTime.TotalSeconds:f2}s";
         }
 

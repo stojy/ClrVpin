@@ -13,8 +13,8 @@ namespace ClrVpin.Rebuilder
 {
     public sealed class RebuilderStatisticsViewModel : StatisticsViewModel
     {
-        public RebuilderStatisticsViewModel(ObservableCollection<GameDetail> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
-            : base(games, elapsedTime, gameFiles, unmatchedFiles)
+        public RebuilderStatisticsViewModel(ObservableCollection<GameDetail> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
+            : base(games, elapsedTime, fixedFiles, unmatchedFiles)
         {
             // hit type stats for all supported types only
             // - including the extra 'under the hood' types.. valid, unknown, unsupported
@@ -31,7 +31,7 @@ namespace ClrVpin.Rebuilder
             SelectedFixHitTypes = SelectedCheckHitTypes;
 
             // unlike scanner, the total count represents the number of files that were analyzed
-            TotalCount = GameFiles.Count + UnmatchedFiles.Count;
+            TotalCount = FixedFiles.Count + UnmatchedFiles.Count;
         }
 
         public void Show(Window parentWindow, double left, double top)
@@ -57,11 +57,11 @@ namespace ClrVpin.Rebuilder
         {
             return "\n-----------------------------------------------\n" +
                    $"\n{"Source Files",StatisticsKeyWidth}" +
-                   $"\n{"- Total",StatisticsKeyWidth}{CreateFileStatistic(GameFiles.Concat(UnmatchedFiles).ToList())}" +
-                   $"\n{"- Matched",StatisticsKeyWidth}{CreateFileStatistic(GameFiles)}" +
-                   $"\n{"  - Merged",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Merged))}" +
-                   $"\n{"  - Ignored",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Ignored))}" +
-                   $"\n{"  - Skipped",StatisticsKeyWidth - 2}{CreateFileStatistic(GameFiles.Where(x => x.Skipped))}" +
+                   $"\n{"- Total",StatisticsKeyWidth}{CreateFileStatistic(FixedFiles.Concat(UnmatchedFiles).ToList())}" +
+                   $"\n{"- Matched",StatisticsKeyWidth}{CreateFileStatistic(FixedFiles)}" +
+                   $"\n{"  - Merged",StatisticsKeyWidth - 2}{CreateFileStatistic(FixedFiles.Where(x => x.Merged))}" +
+                   $"\n{"  - Ignored",StatisticsKeyWidth - 2}{CreateFileStatistic(FixedFiles.Where(x => x.Ignored))}" +
+                   $"\n{"  - Skipped",StatisticsKeyWidth - 2}{CreateFileStatistic(FixedFiles.Where(x => x.Skipped))}" +
                    $"\n{"- Unmatched",StatisticsKeyWidth}{CreateFileStatistic(UnmatchedFiles)}" +
                    "\n  (Unknown & Unsupported)" +
                    "\n" +

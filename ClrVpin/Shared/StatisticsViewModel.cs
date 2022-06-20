@@ -14,9 +14,9 @@ namespace ClrVpin.Shared
     [AddINotifyPropertyChangedInterface]
     public abstract class StatisticsViewModel
     {
-        protected StatisticsViewModel(ObservableCollection<GameDetail> games, TimeSpan elapsedTime, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
+        protected StatisticsViewModel(ObservableCollection<GameDetail> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
         {
-            GameFiles = gameFiles;
+            FixedFiles = fixedFiles;
             UnmatchedFiles = unmatchedFiles;
 
             ElapsedTime = elapsedTime;
@@ -92,8 +92,8 @@ namespace ClrVpin.Shared
             var discoveredStatistics = $"{prefix} {Games.Sum(g => g.Content.ContentHitsCollection.First(x => x.Enum == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
 
             // file statistics - from the file list.. which is also stored in the games list, but more accessible via GameDetails
-            // - for n/a hit types (e.g. ignored) there will be no stats since there are no GameFiles :)
-            var fileStatistics = CreateFileStatistics(GameFiles, contentType, hitType);
+            // - for n/a hit types (e.g. ignored) there will be no stats since there are no FixedFiles :)
+            var fileStatistics = CreateFileStatistics(FixedFiles, contentType, hitType);
 
             return string.Join(": ", new[] {discoveredStatistics, fileStatistics}.Where(x => !string.IsNullOrEmpty(x)));
         }
@@ -108,7 +108,7 @@ namespace ClrVpin.Shared
             var discoveredStatistics = $"{prefix} {files.Count}";
 
             // file statistics - from the file list.. which is also stored in the games list, but more accessible via GameDetails
-            // - for n/a hit types (e.g. ignored) there will be no stats since there are no GameFiles :)
+            // - for n/a hit types (e.g. ignored) there will be no stats since there are no FixedFiles :)
             var fileStatistics = CreateFileStatistics(UnmatchedFiles, contentType, hitType);
 
             return string.Join(": ", new[] { discoveredStatistics, fileStatistics }.Where(x => !string.IsNullOrEmpty(x)));
@@ -135,7 +135,7 @@ namespace ClrVpin.Shared
             return fileDetails.Any() || includeEmpty ? $"{prefix} {CreateFileStatistic(fileDetails.Length, fileDetails.Sum(x => x.Size))}" : null;
         }
 
-        protected readonly ICollection<FileDetail> GameFiles;
+        protected readonly ICollection<FileDetail> FixedFiles;
         protected readonly ICollection<FileDetail> UnmatchedFiles;
         public const int StatisticsKeyWidth = -26;
     }

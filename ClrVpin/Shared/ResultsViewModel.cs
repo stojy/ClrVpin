@@ -32,6 +32,7 @@ namespace ClrVpin.Shared
         public ICommand NavigateToBackupFolderCommand { get; private set; }
         protected Models.Settings.Settings Settings { get; private set; }
 
+        protected const string DialogHostName = "ResultsDialog";
 
         public void Close()
         {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Models.Settings;
@@ -21,7 +22,7 @@ namespace ClrVpin.Scanner
             Initialise();
         }
 
-        public void Show(Window parentWindow, double left, double top)
+        public async Task Show(Window parentWindow, double left, double top)
         {
             Window = new MaterialWindowEx
             {
@@ -36,6 +37,27 @@ namespace ClrVpin.Scanner
                 ContentTemplate = parentWindow.FindResource("ResultsTemplate") as DataTemplate
             };
             Window.Show();
+
+            await ShowSummary();
+        }
+
+        
+        private async Task ShowSummary()
+        {
+            var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
+            var eligibleFiles = Games.Count * Settings.Scanner.SelectedCheckContentTypes.Count;
+            var missingFilesCount = eligibleFiles - validHits.Count;
+            
+            var detail = CreatePercentageStatistic("Missing Files", missingFilesCount, eligibleFiles);
+            var isSuccess = missingFilesCount == 0;
+            
+            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Incorrect Files", detail));
+        }
+
+        private static string CreatePercentageStatistic(string title, int count, int totalCount)
+        {
+            var percentage = totalCount == 0 ? 0 : 100f * count / totalCount;
+            return $"{title}:  {count} of {totalCount} ({percentage:F2}%)";
         }
 
         protected override IList<FeatureType> CreateAllContentFeatureTypes()
