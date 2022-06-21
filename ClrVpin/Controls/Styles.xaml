@@ -58,7 +58,7 @@
     <Setter Property="ToolTipService.ShowOnDisabled" Value="true"/>
   </Style>
 
-  <Style x:Key="AlternateRaisedHighlightButton" TargetType="Button" BasedOn="{StaticResource RaisedAccentButton}">
+  <Style x:Key="AlternateRaisedButton" TargetType="Button" BasedOn="{StaticResource RaisedAccentButton}">
     <Setter Property="Background" Value="Coral" />
     <Setter Property="BorderBrush" Value="Coral" />
   </Style>

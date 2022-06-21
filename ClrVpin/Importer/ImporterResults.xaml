@@ -232,7 +232,7 @@
                   </Image.Effect>
                 </Image>
                 <!--non-visible button marked with IsCancel to support the escape key-->
-                <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"/>
+                <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
               </StackPanel>
             </DataTemplate>
 
@@ -379,22 +379,29 @@
 
           <GroupBox DockPanel.Dock="Top" Header="Fix" Margin="0,0,0,10">
             <StackPanel Margin="5,0">
-              <WrapPanel>
+              <WrapPanel Margin="0,5,0,0">
                 <ContentControl Template="{StaticResource KeyValuePair}"
-                                controls:GenericAttached.String="Missing Info"
+                                controls:GenericAttached.String="Info"
                                 controls:GenericAttached.Double="100"
                                 controls:GenericAttached.Double2="14">
-                  <Button ToolTip="{Binding AutoAssignDatabasePropertiesTip}"
-                          ToolTipService.ShowOnDisabled="True"
-                          Style="{StaticResource MaterialDesignIconButton}"
-                          Foreground="Coral"
-                          Width="35" Height="35"
-                          IsEnabled="{Binding IsMatchingEnabled}"
-                          Command="{Binding AutoAssignDatabasePropertiesCommand}">
-                    <materialDesign:PackIcon Kind="MagicWand" Width="35" Height="35" />
-                  </Button>
+                  <WrapPanel>
+                    <Button ToolTip="{Binding AddMissingDatabaseInfoTip}"
+                            ToolTipService.ShowOnDisabled="True"
+                            Style="{StaticResource RaisedAccentButton}"
+                            Width="120" Height="30"
+                            IsEnabled="{Binding IsMatchingEnabled}"
+                            Command="{Binding AddMissingDatabaseInfoCommand}">Add Missing
+                    </Button>
+                    <Button ToolTip="{Binding OverwriteDatabaseInfoTip}"
+                            ToolTipService.ShowOnDisabled="True"
+                            Style="{StaticResource RaisedDarkButton}"
+                            Width="120" Height="30"
+                            Margin="10,0,0,0"
+                            IsEnabled="{Binding IsMatchingEnabled}"
+                            Command="{Binding OverwriteDatabaseInfoCommand}">Overwrite All
+                    </Button>
+                  </WrapPanel>
                 </ContentControl>
-                <!--<TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Text="Update any missing information, e.g. IPDB id, ROM, theme, author, comment, etc" />-->
               </WrapPanel>
 
               <ContentControl Template="{StaticResource KeyValuePair}"

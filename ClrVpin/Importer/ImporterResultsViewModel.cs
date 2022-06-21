@@ -172,11 +172,15 @@ namespace ClrVpin.Importer
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions(IsMatchingEnabled).ToList());
 
-            AutoAssignDatabasePropertiesTip += "Update any missing information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
-            AutoAssignDatabasePropertiesCommand = new ActionCommand(AutoAssignDatabaseProperties);
+            AddMissingDatabaseInfoTip += "Add any missing information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
+            AddMissingDatabaseInfoCommand = new ActionCommand(AddMissingDatabaseProperties);
+
+            OverwriteDatabaseInfoTip += "Overwrite all information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
+            OverwriteDatabaseInfoCommand = new ActionCommand(OverwriteDatabaseProperties);
         }
 
-        public string AutoAssignDatabasePropertiesTip { get; }
+        public string AddMissingDatabaseInfoTip { get; }
+        public string OverwriteDatabaseInfoTip { get; }
 
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
@@ -210,7 +214,8 @@ namespace ClrVpin.Importer
         public ICommand UpdatedFilterChanged { get; set; }
 
         public ICommand NavigateToIpdbCommand { get; }
-        public ICommand AutoAssignDatabasePropertiesCommand { get; }
+        public ICommand AddMissingDatabaseInfoCommand { get; }
+        public ICommand OverwriteDatabaseInfoCommand { get; }
         public bool IsMatchingEnabled { get; }
 
 
@@ -243,6 +248,12 @@ namespace ClrVpin.Importer
             await ShowSummary();
         }
 
+        public void Close()
+        {
+            Model.SettingsManager.Write();
+            Window.Close();
+        }
+
         private async Task ShowSummary()
         {
             if (!IsMatchingEnabled)
@@ -260,18 +271,19 @@ namespace ClrVpin.Importer
             await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Manufactured Tables Present") : Notification.ShowWarning(DialogHostName, "Manufactured Tables Missing", detail));
         }
 
-        private static string CreatePercentageStatistic(string title, int count, int totalCount)
+        private static string CreatePercentageStatistic(string title, int count, int totalCount) => $"{title}:  {count} of {totalCount} ({100f * count / totalCount:F2}%)";
+
+        private async void AddMissingDatabaseProperties()
         {
-            return $"{title}:  {count} of {totalCount} ({100f * count / totalCount:F2}%)";
+            await UpdateDatabase(false);
         }
 
-        public void Close()
+        private async void OverwriteDatabaseProperties()
         {
-            Model.SettingsManager.Write();
-            Window.Close();
+            await UpdateDatabase(true);
         }
 
-        private async void AutoAssignDatabaseProperties()
+        private async Task UpdateDatabase(bool overwrite)
         {
             var matchedOnlineGames = OnlineGames.Where(x => x.Hit?.GameDetail != null).ToList();
             var updatedPropertyCounts = new Dictionary<string, int>
@@ -293,15 +305,15 @@ namespace ClrVpin.Importer
                 var game = onlineGame.Hit.GameDetail.Game;
                 var beforeCount = GetUpdateCount(updatedPropertyCounts);
 
-                CheckAndFixMissingProperty(updatedPropertyCounts, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value);
-                CheckAndFixMissingProperty(updatedPropertyCounts, game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(", "), value => game.Author = value);
-                CheckAndFixMissingProperty(updatedPropertyCounts, game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value);
-                CheckAndFixMissingProperty(updatedPropertyCounts, game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame.Manufacturer, value => game.Manufacturer = value);
-                CheckAndFixMissingProperty(updatedPropertyCounts, game.Name, nameof(game.Players), () => game.Players, () => onlineGame.Players?.ToString(), value => game.Players = value);
-                CheckAndFixMissingProperty(updatedPropertyCounts, game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value);
-                CheckAndFixMissingProperty(updatedPropertyCounts, game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(", "), value => game.Theme = value);
-                CheckAndFixMissingProperty(updatedPropertyCounts, game.Name, nameof(game.Type), () => game.Type, () => onlineGame.Type, value => game.Type = value);
-                CheckAndFixMissingProperty(updatedPropertyCounts, game.Name, nameof(game.Year), () => game.Year, () => onlineGame.YearString, value => game.Year = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(", "), value => game.Author = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame.Manufacturer, value => game.Manufacturer = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Players), () => game.Players, () => onlineGame.Players?.ToString(), value => game.Players = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(", "), value => game.Theme = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Type), () => game.Type, () => onlineGame.Type, value => game.Type = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Year), () => game.Year, () => onlineGame.YearString, value => game.Year = value);
 
                 updatedGameCount += beforeCount == GetUpdateCount(updatedPropertyCounts) ? 0 : 1;
             });
@@ -310,7 +322,7 @@ namespace ClrVpin.Importer
             if (updatedGameCount != 0)
                 TableUtils.WriteGamesToDatabase(_games.Select(x => x.Game));
 
-            Logger.Info($"Fixed missing info: table count: {updatedGameCount}, info count: {GetUpdateCount(updatedPropertyCounts)}");
+            Logger.Info($"Added missing database info: table count: {updatedGameCount}, info count: {GetUpdateCount(updatedPropertyCounts)}");
 
             var properties = updatedPropertyCounts.Select(property => $"- {property.Key}: {property.Value}").StringJoin("\n");
             var details = CreatePercentageStatistic("Tables Fixed", updatedGameCount, matchedOnlineGames.Count) +
@@ -325,9 +337,10 @@ namespace ClrVpin.Importer
 
         private static int GetUpdateCount(IDictionary<string, int> updatedPropertyCounts) => updatedPropertyCounts.Sum(x => x.Value);
 
-        private static void CheckAndFixMissingProperty(IDictionary<string, int> updatedPropertyCounts, string game, string property, Func<string> gameValue, Func<string> onlineGameValue, Action<string> assignAction)
+        private static void CheckAndFixDatabaseProperty(bool overwrite, IDictionary<string, int> updatedPropertyCounts, string game, 
+            string property, Func<string> gameValue, Func<string> onlineGameValue, Action<string> assignAction)
         {
-            if (gameValue().IsEmpty() && !onlineGameValue().IsEmpty())
+            if ((gameValue().IsEmpty() || overwrite) && !onlineGameValue().IsEmpty() && gameValue() != onlineGameValue())
             {
                 assignAction(onlineGameValue());
                 updatedPropertyCounts[property]++;
