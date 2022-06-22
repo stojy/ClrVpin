@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ClrVpin.Logging;
 using ClrVpin.Models.Shared.Game;
 using Utils;
 using Utils.Extensions;
@@ -157,13 +158,13 @@ namespace ClrVpin.Shared.Fuzzy
         }
 
         // fuzzy match against all games
-        public static (GameDetail game, int? score) Match(this IList<GameDetail> games, FuzzyNameDetails fuzzyFileDetails)
+        public static (GameDetail game, int? score) Match(this IList<GameDetail> games, FuzzyNameDetails fuzzyNameDetails)
         {
-            // check EVERY DB game entry against the file to look for the best match
+            // check EVERY DB game entry against the fuzzy name details (which can be a file file for scanner/rebuilder OR online game entry for importer(file to look for the best match)
             // - Match will create a fuzzy version (aka cleaned) of each game DB entry so it can be compared against the fuzzy file details (already cleaned)
             // - Match table name (non-media) OR description (media)
-            var tableFileMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.TableDetails, fuzzyFileDetails) }).ToList();
-            var descriptionMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.DescriptionDetails, fuzzyFileDetails) }).ToList();
+            var tableFileMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.TableDetails, fuzzyNameDetails) }).ToList();
+            var descriptionMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.DescriptionDetails, fuzzyNameDetails) }).ToList();
 
             var orderedMatches = tableFileMatches.Concat(descriptionMatches)
                 .OrderByDescending(x => x.MatchResult.success)
@@ -175,30 +176,34 @@ namespace ClrVpin.Shared.Fuzzy
             var score = preferredMatch?.MatchResult.score;
 
             // second chance - if there's still no match, check if the fuzzy file has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.Name)) != null)
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name)) != null)
             {
                 score = preferredMatch.MatchResult.score;
                 score += 85;
             }
 
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.Name, 11)) != null)
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, 11)) != null)
             {
                 score = preferredMatch.MatchResult.score;
                 score += 50;
             }
 
             // third chance - if there's still no match, check if the non-fuzzy file has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.ActualName)) != null)
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName)) != null)
             {
                 score = preferredMatch.MatchResult.score;
                 score += 85;
             }
 
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyFileDetails.ActualName, 11)) != null)
+            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, 11)) != null)
             {
                 score = preferredMatch.MatchResult.score;
                 score += 50;
             }
+
+            Logger.Debug($"Fuzzy match: score={score:000}, " +
+                         $"sourceName='{fuzzyNameDetails.ActualName}', sourceManufacturer='{fuzzyNameDetails.Manufacturer}', sourceYear={fuzzyNameDetails.Year}" +
+                         $"preferredMatchName='{preferredMatch?.GameDetail.Game.Name}' preferredMatchYear={preferredMatch?.GameDetail.Game.Year}, ", true);
 
             return (score >= MinMatchScore ? preferredMatch?.GameDetail : null, score);
         }

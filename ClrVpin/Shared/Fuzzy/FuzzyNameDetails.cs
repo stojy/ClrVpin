@@ -15,5 +15,5 @@ public class FuzzyNameDetails
     public string NameNoWhiteSpace { get; }
     public string Manufacturer { get; set; }
     public int? Year { get; set; }
-    public string ActualName { get; }
+    public string ActualName { get; set; }
 }

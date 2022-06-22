@@ -21,7 +21,8 @@ public class ImporterMatchStatistics
         };
     }
 
-    public void Add(string key) => _statistics[key]++;
+    public void Increment(string key) => _statistics[key]++;
+    public void Decrement(string key) => _statistics[key]--;
 
     public Dictionary<string, int> ToDictionary() => _statistics;
 

@@ -125,31 +125,90 @@ namespace ClrVpin.Importer
 
                 // use GetNameDetails for NameNoWhiteSpace and ActualName
                 var fuzzyNameDetails = Fuzzy.GetNameDetails(onlineGame.Name, false);
+                fuzzyNameDetails.ActualName = onlineGame.Name;
                 fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
                 fuzzyNameDetails.Year = onlineGame.Year;
 
                 var (matchedGame, score) = games.Match(fuzzyNameDetails);
                 if (matchedGame != null)
                 {
-                    matchStatistics.Add(ImporterMatchStatistics.MatchedTotal);
-                    matchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.MatchedOriginal : ImporterMatchStatistics.MatchedManufactured);
-
-                    onlineGame.Hit = new GameHit
+                    var existingMatchOnlineGame = onlineGames.FirstOrDefault(online => online.Hit?.GameDetail == matchedGame);
+                    if (existingMatchOnlineGame != null)
                     {
-                        GameDetail = matchedGame,
-                        Score = score
-                    };
+                        var removeExistingMatch = existingMatchOnlineGame.Hit.Score < score;
+                        
+                        Logger.Debug($"Duplicate fuzzy match: removeExistingMatch={removeExistingMatch}, table={existingMatchOnlineGame.Hit.GameDetail.Game.Name} + " +
+                                     $"existingMatchScore={existingMatchOnlineGame.Hit.Score:000}, newMatchScore={score:000}, ", true);
+
+                        // if the new match has a greater score..
+                        // - Yes = remove the previous hit for the SAME game since it must be wrong
+                        //        e.g. onlineGame=Apache initially matches against localGame=Apache! because localDB does not have a 'Apache' game
+                        //        .. but subsequently matches higher to onlineGame=Apache! as expected given this is the better (aka correct) match
+                        // - No = ignore the match completely since a better match was already found
+                        //        e.g. onlineGame=Apache and onlineGame=Apache! should NOT both match to the SAME localGame
+                        if (removeExistingMatch)
+                        {
+                            // remove match and adjust statistics
+                            RemoveMatch(existingMatchOnlineGame);
+                            DecrementMatchedStatistics(matchStatistics, existingMatchOnlineGame);
+                            IncrementUnmatchedStatistics(matchStatistics, existingMatchOnlineGame);
+                            
+                            // add new match
+                            AddMatch(onlineGame, matchedGame, score);
+                        }
+                        else
+                        {
+                            // ignore match - adjust statistics as if there was no match detected.. i.e. a lesser match to the SAME local DB game == effectively not a match at all
+                            IncrementUnmatchedStatistics(matchStatistics, onlineGame);
+                        }
+                    }
+                    else
+                    {
+                        AddMatch(onlineGame, matchedGame, score);
+                        IncrementMatchedStatistics(matchStatistics, onlineGame);
+                    }
                 }
                 else
                 {
-                    matchStatistics.Add(ImporterMatchStatistics.UnmatchedOnlineTotal);
-                    matchStatistics.Add(onlineGame.IsOriginal ? ImporterMatchStatistics.UnmatchedOnlineOriginal : ImporterMatchStatistics.UnmatchedOnlineManufactured);
+                    IncrementUnmatchedStatistics(matchStatistics, onlineGame);
                 }
             });
 
             return matchStatistics;
         }
-        
+
+        private static void IncrementMatchedStatistics(ImporterMatchStatistics matchStatistics, OnlineGame onlineGame)
+        {
+            matchStatistics.Increment(ImporterMatchStatistics.MatchedTotal);
+            matchStatistics.Increment(onlineGame.IsOriginal ? ImporterMatchStatistics.MatchedOriginal : ImporterMatchStatistics.MatchedManufactured);
+        }
+
+        private static void DecrementMatchedStatistics(ImporterMatchStatistics matchStatistics, OnlineGame onlineGame)
+        {
+            matchStatistics.Decrement(ImporterMatchStatistics.MatchedTotal);
+            matchStatistics.Decrement(onlineGame.IsOriginal ? ImporterMatchStatistics.MatchedOriginal : ImporterMatchStatistics.MatchedManufactured);
+        }
+
+        private static void IncrementUnmatchedStatistics(ImporterMatchStatistics matchStatistics, OnlineGame onlineGame)
+        {
+            matchStatistics.Increment(ImporterMatchStatistics.UnmatchedOnlineTotal);
+            matchStatistics.Increment(onlineGame.IsOriginal ? ImporterMatchStatistics.UnmatchedOnlineOriginal : ImporterMatchStatistics.UnmatchedOnlineManufactured);
+        }
+
+        private static void RemoveMatch(OnlineGame onlineGame)
+        {
+            onlineGame.Hit = null;
+        }
+
+        private static void AddMatch(OnlineGame onlineGame, GameDetail matchedGame, int? score)
+        {
+            onlineGame.Hit = new GameHit
+            {
+                GameDetail = matchedGame,
+                Score = score
+            };
+        }
+
         private static void MatchLocalToOnline(IEnumerable<GameDetail> gameDetails, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
         {
             var unmatchedGameDetails = gameDetails.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.GameDetail)).ToList();
@@ -162,8 +221,8 @@ namespace ClrVpin.Importer
 
                 Logger.Info($"Unmatched local table: '{localGameDetail.Game.Name}'");
                 
-                matchStatistics.Add(ImporterMatchStatistics.UnmatchedLocalTotal);
-                matchStatistics.Add(localGameDetail.Derived.IsOriginal ? ImporterMatchStatistics.UnmatchedLocalOriginal : ImporterMatchStatistics.UnmatchedLocalManufactured);
+                matchStatistics.Increment(ImporterMatchStatistics.UnmatchedLocalTotal);
+                matchStatistics.Increment(localGameDetail.Derived.IsOriginal ? ImporterMatchStatistics.UnmatchedLocalOriginal : ImporterMatchStatistics.UnmatchedLocalManufactured);
             });
         }
 
