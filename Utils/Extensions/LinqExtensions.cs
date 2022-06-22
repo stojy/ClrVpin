@@ -71,7 +71,7 @@ namespace Utils.Extensions
             return source.Contains(item);
         }
 
-        public static string StringJoin<T>(this IEnumerable<T> items, string separator = ",")
+        public static string StringJoin<T>(this IEnumerable<T> items, string separator = ", ")
         {
             return string.Join(separator, items);
         }

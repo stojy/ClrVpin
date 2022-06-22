@@ -306,12 +306,12 @@ namespace ClrVpin.Importer
                 var beforeCount = GetUpdateCount(updatedPropertyCounts);
 
                 CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value);
-                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(", "), value => game.Author = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(), value => game.Author = value);
                 CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value);
                 CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame.Manufacturer, value => game.Manufacturer = value);
                 CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Players), () => game.Players, () => onlineGame.Players?.ToString(), value => game.Players = value);
                 CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value);
-                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(", "), value => game.Theme = value);
+                CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(), value => game.Theme = value);
                 CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Type), () => game.Type, () => onlineGame.Type, value => game.Type = value);
                 CheckAndFixDatabaseProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Year), () => game.Year, () => onlineGame.YearString, value => game.Year = value);
 
