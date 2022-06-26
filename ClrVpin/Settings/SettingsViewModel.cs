@@ -27,19 +27,22 @@ namespace ClrVpin.Settings
             AutoAssignPinballFoldersCommand = new ActionCommand(AutoAssignPinballFolders);
             AutoAssignFrontendFoldersCommand = new ActionCommand(AutoAssignFrontendFolders);
             ResetCommand = new ActionCommand(Reset);
+            SaveCommand = new ActionCommand(Close);
         }
 
-        public FolderTypeModel PinballFolderModel { get; set; }
-        public List<ContentTypeModel> PinballContentTypeModels { get; set; }
+        public FolderTypeModel PinballFolderModel { get; }
+        public List<ContentTypeModel> PinballContentTypeModels { get; }
 
-        public FolderTypeModel FrontendFolderModel { get; set; }
-        public List<ContentTypeModel> FrontendContentTypeModels { get; init; }
+        public FolderTypeModel FrontendFolderModel { get; }
+        public List<ContentTypeModel> FrontendContentTypeModels { get; }
 
-        public FolderTypeModel BackupFolderModel { get; set; }
+        public FolderTypeModel BackupFolderModel { get; }
 
         public ICommand AutoAssignPinballFoldersCommand { get; }
         public ICommand AutoAssignFrontendFoldersCommand { get; }
+
         public ICommand ResetCommand { get; }
+        public ICommand SaveCommand { get; }
 
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 

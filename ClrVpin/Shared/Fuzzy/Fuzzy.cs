@@ -191,15 +191,24 @@ namespace ClrVpin.Shared.Fuzzy
                 isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 50);
 
             var isMatch = preferredMatch?.MatchResult.score >= MinMatchScore;
-            
-            var fuzzyLog = $"fuzzy table match: score={$"{preferredMatch?.MatchResult.score},",-4} success={isMatch}, isSecondChanceMatch={isSecondChanceMatch}\n" +
-                           $"- source {(isFile ? "file" : "feed")}:      {LogGameDetail(fuzzyNameDetails.ActualName, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
-                           $"- matched db table: {LogGameDetail(preferredMatch?.GameDetail.Game.Name, preferredMatch?.GameDetail.Game.Manufacturer, preferredMatch?.GameDetail.Game.Year)}";
-            
-            if (isMatch || preferredMatch?.GameDetail.Derived.IsOriginal == true)
+            var isOriginal = preferredMatch?.GameDetail.Derived.IsOriginal == true || fuzzyNameDetails.IsOriginal;
+
+            var fuzzyLog = $"fuzzy table match: score={$"{preferredMatch?.MatchResult.score},",-4} success={isMatch}, isSecondChanceMatch={isSecondChanceMatch}, isOriginal={isOriginal}\n" +
+                               $"- source {(isFile ? "file" : "feed")}:      {LogGameDetail(fuzzyNameDetails.ActualName, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
+                               $"- matched db table: {LogGameDetail(preferredMatch?.GameDetail.Game.Name, preferredMatch?.GameDetail.Game.Manufacturer, preferredMatch?.GameDetail.Game.Year)}";
+
+
+            if (isMatch)
+            {
+                // log as debug diagnostic as these are typically of 'lesser' interest
                 Logger.Debug(fuzzyLog, true);
+            }
             else
-                Logger.Warn(fuzzyLog);
+            {
+                // unmatched original tables (if setting is enabled) are logged as diagnostic to avoid cluttering the logs
+                var shouldLogAsDiagnostic = isOriginal && UnmatchedOriginalsLoggedAsDiagnostic;
+                Logger.Warn(fuzzyLog, shouldLogAsDiagnostic);
+            }
 
             return (preferredMatch?.GameDetail, preferredMatch?.MatchResult.score, isMatch);
         }
@@ -381,6 +390,7 @@ namespace ClrVpin.Shared.Fuzzy
         }
 
         private static decimal MinMatchScore => Model.Settings.MatchFuzzyMinimumPercentage;
+        private static bool UnmatchedOriginalsLoggedAsDiagnostic => Model.Settings.UnmatchedOriginalsLoggedAsDiagnostic;
         private static decimal MinMatchWarningScore => MinMatchScore * 1.2m;
         public const int ScoringNoWhiteSpaceBonus = 5;
 

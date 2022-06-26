@@ -1,4 +1,6 @@
-﻿namespace ClrVpin.Shared.Fuzzy;
+﻿using ClrVpin.Models.Shared.Game;
+
+namespace ClrVpin.Shared.Fuzzy;
 
 public class FuzzyNameDetails
 {
@@ -9,6 +11,7 @@ public class FuzzyNameDetails
         Manufacturer = manufacturer;
         Year = year;
         ActualName = actualName;
+        IsOriginal = GameDerived.CheckIsOriginal(manufacturer, name);
     }
 
     public string Name { get; }
@@ -16,4 +19,5 @@ public class FuzzyNameDetails
     public string Manufacturer { get; set; }
     public int? Year { get; set; }
     public string ActualName { get; set; }
+    public bool IsOriginal { get; }
 }
