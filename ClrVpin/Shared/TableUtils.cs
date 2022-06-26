@@ -152,8 +152,8 @@ namespace ClrVpin.Shared
                 // fuzzy matching
                 else
                 {
-                    (matchedGameDetail, var score) = gameDetails.Match(fuzzyFileNameDetails);
-                    if (matchedGameDetail != null)
+                    (matchedGameDetail, var score, var isMatch) = gameDetails.Match(fuzzyFileNameDetails);
+                    if (isMatch)
                     {
                         getContentHits(matchedGameDetail).Add(HitTypeEnum.Fuzzy, contentFile, score);
                     }

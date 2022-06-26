@@ -34,7 +34,7 @@ namespace ClrVpin.Importer
                 Title = "Importer Statistics",
                 Left = left,
                 Top = top,
-                Width = 750,
+                Width = 712,
                 Height = Model.ScreenWorkArea.Height - top - WindowMargin,
                 Content = this,
                 Resources = parentWindow.Resources,

@@ -158,7 +158,7 @@ namespace ClrVpin.Shared.Fuzzy
         }
 
         // fuzzy match against all games
-        public static (GameDetail game, int? score) Match(this IList<GameDetail> games, FuzzyNameDetails fuzzyNameDetails)
+        public static (GameDetail game, int? score, bool isMatch) Match(this IList<GameDetail> games, FuzzyNameDetails fuzzyNameDetails, bool isFile = true)
         {
             // check EVERY DB game entry against the fuzzy name details (which can be a file file for scanner/rebuilder OR online game entry for importer(file to look for the best match)
             // - Match will create a fuzzy version (aka cleaned) of each game DB entry so it can be compared against the fuzzy file details (already cleaned)
@@ -173,40 +173,46 @@ namespace ClrVpin.Shared.Fuzzy
                 .ToList();
 
             var preferredMatch = orderedMatches.FirstOrDefault();
-            var score = preferredMatch?.MatchResult.score;
 
             // second chance - if there's still no match, check if the fuzzy file has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name)) != null)
-            {
-                score = preferredMatch.MatchResult.score;
-                score += 85;
-            }
+            var isSecondChanceMatch = false;
+            MatchDetail secondChanceMatch;
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name)) != null)
+                isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 85);
 
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, 11)) != null)
-            {
-                score = preferredMatch.MatchResult.score;
-                score += 50;
-            }
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, 11)) != null)
+                isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 50);
 
             // third chance - if there's still no match, check if the non-fuzzy file has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName)) != null)
-            {
-                score = preferredMatch.MatchResult.score;
-                score += 85;
-            }
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName)) != null)
+                isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 85);
 
-            if (score < MinMatchScore && (preferredMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, 11)) != null)
-            {
-                score = preferredMatch.MatchResult.score;
-                score += 50;
-            }
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, 11)) != null)
+                isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 50);
 
-            Logger.Debug($"Fuzzy match: score={score:000}, " +
-                         $"sourceName='{fuzzyNameDetails.ActualName}', sourceManufacturer='{fuzzyNameDetails.Manufacturer}', sourceYear={fuzzyNameDetails.Year}" +
-                         $"preferredMatchName='{preferredMatch?.GameDetail.Game.Name}' preferredMatchYear={preferredMatch?.GameDetail.Game.Year}, ", true);
+            var isMatch = preferredMatch?.MatchResult.score >= MinMatchScore;
+            
+            var fuzzyLog = $"fuzzy table match: score={$"{preferredMatch?.MatchResult.score},",-4} success={isMatch}, isSecondChanceMatch={isSecondChanceMatch}\n" +
+                           $"- source {(isFile ? "file" : "feed")}:      {LogGameDetail(fuzzyNameDetails.ActualName, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
+                           $"- matched db table: {LogGameDetail(preferredMatch?.GameDetail.Game.Name, preferredMatch?.GameDetail.Game.Manufacturer, preferredMatch?.GameDetail.Game.Year)}";
+            
+            if (isMatch || preferredMatch?.GameDetail.Derived.IsOriginal == true)
+                Logger.Debug(fuzzyLog, true);
+            else
+                Logger.Warn(fuzzyLog);
 
-            return (score >= MinMatchScore ? preferredMatch?.GameDetail : null, score);
+            return (preferredMatch?.GameDetail, preferredMatch?.MatchResult.score, isMatch);
         }
+
+        private static bool UpdateMatchWithSecondChance(out MatchDetail preferredMatch, MatchDetail secondChanceMatch, int scoreAdjustment)
+        {
+            secondChanceMatch.MatchResult.score += scoreAdjustment;
+            preferredMatch = secondChanceMatch;
+            
+            return true;
+        }
+
+        private static string LogGameDetail(string name, string manufacturer, string year) => $"name={$"'{name}',",-40} manufacturer={$"'{manufacturer}',",-30} year={$"{year}",-5}";
 
         public static (bool success, int score) Match(FuzzyNameDetails gameDetailFuzzyDetails, FuzzyNameDetails fileFuzzyDetails)
         {
@@ -246,7 +252,7 @@ namespace ClrVpin.Shared.Fuzzy
             if (fuzzyFileName == null)
                 return null;
 
-            // only strip file name if a length provided AND it is les than the string length
+            // only strip file name if a length provided AND it is less than the string length
             if (fuzzyFileName.Length > startMatchLength)
                 fuzzyFileName = fuzzyFileName.Remove(startMatchLength.Value);
 
