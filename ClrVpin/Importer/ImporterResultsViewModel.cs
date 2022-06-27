@@ -171,10 +171,10 @@ namespace ClrVpin.Importer
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions(IsMatchingEnabled).ToList());
 
             AddMissingDatabaseInfoTip += "Add any missing information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
-            AddMissingDatabaseInfoCommand = new ActionCommand(AddMissingDatabaseProperties);
+            AllTableAddMissingDatabaseInfoCommand = new ActionCommand(AddMissingDatabaseProperties);
 
             OverwriteDatabaseInfoTip += "Overwrite all information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
-            OverwriteDatabaseInfoCommand = new ActionCommand(OverwriteDatabaseProperties);
+            AllTableOverwriteDatabaseInfoCommand = new ActionCommand(OverwriteDatabaseProperties);
         }
 
         public string AddMissingDatabaseInfoTip { get; }
@@ -212,8 +212,8 @@ namespace ClrVpin.Importer
         public ICommand UpdatedFilterChanged { get; set; }
 
         public ICommand NavigateToIpdbCommand { get; }
-        public ICommand AddMissingDatabaseInfoCommand { get; }
-        public ICommand OverwriteDatabaseInfoCommand { get; }
+        public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
+        public ICommand AllTableOverwriteDatabaseInfoCommand { get; }
         public bool IsMatchingEnabled { get; }
 
 

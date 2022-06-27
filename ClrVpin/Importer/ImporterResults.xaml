@@ -381,24 +381,25 @@
             <StackPanel Margin="5,0">
               <WrapPanel Margin="0,5,0,0">
                 <ContentControl Template="{StaticResource KeyValuePair}"
-                                controls:GenericAttached.String="Info"
+                                controls:GenericAttached.String="All Tables"
                                 controls:GenericAttached.Double="100"
                                 controls:GenericAttached.Double2="14">
                   <WrapPanel>
                     <Button ToolTip="{Binding AddMissingDatabaseInfoTip}"
                             ToolTipService.ShowOnDisabled="True"
                             Style="{StaticResource RaisedAccentButton}"
-                            Width="120" Height="30"
+                            Margin="0,0,5,0"
+                            Width="150" Height="30"
                             IsEnabled="{Binding IsMatchingEnabled}"
-                            Command="{Binding AddMissingDatabaseInfoCommand}">Add Missing
+                            Command="{Binding AllTableAddMissingDatabaseInfoCommand}">Add Missing Info
                     </Button>
                     <Button ToolTip="{Binding OverwriteDatabaseInfoTip}"
                             ToolTipService.ShowOnDisabled="True"
                             Style="{StaticResource RaisedDarkButton}"
-                            Width="120" Height="30"
+                            Width="150" Height="30"
                             Margin="10,0,0,0"
                             IsEnabled="{Binding IsMatchingEnabled}"
-                            Command="{Binding OverwriteDatabaseInfoCommand}">Overwrite All
+                            Command="{Binding AllTableOverwriteDatabaseInfoCommand}">Overwrite All Info
                     </Button>
                   </WrapPanel>
                 </ContentControl>
