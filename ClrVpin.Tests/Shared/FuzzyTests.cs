@@ -39,6 +39,8 @@ public class FuzzyTests
     [TestCase("Twilight Zone SG1bsoN Mod V3.vpx", true, "twilight zone", "twilightzone", null, null, TestName = "file name with special author camelcase SG1bsoN")]
     [TestCase("Whirlwind 4K 1.1.vpx", true, "whirlwind", "whirlwind", null, null, TestName = "ignore word: 4k")]
     [TestCase(@"C:\vp\_downloaded\wheel images\V1 (IDSA 1986) Logo.png", true, null, null, "idsa", 1986, TestName = "name stripped completely: empty string converted to null")]
+    [TestCase(@"1-2-3... (Automaticos 1973)", false, "1 2 3", "123", "automaticos", 1973, TestName = "name has trailing periods")]
+    [TestCase(@"1-2-3... (Automaticos 1973).vpx", true, "1 2 3", "123", "automaticos", 1973, TestName = "name has trailing periods")]
     public void GetNameDetailsTest(string sourceName, bool isFileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, int? expectedYear)
     {
         var fuzzyDetails = Fuzzy.GetNameDetails(sourceName, isFileName);
@@ -192,6 +194,7 @@ public class FuzzyTests
     [TestCase("Whirl-Wind (Gottlieb 1958)", "Whirlwind 4K 1.1.vpx", true, 151, TestName = "match with whitespace (hyphen converts to whitespace): should match lower")]
     [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Americs Most Haunted (spooky 2014) b2s v3.directb2s", true, 186, TestName = "match with Levenshtein distance")]
     [TestCase("V1 (IDSA 1986) Logo", "V1 (IDSA 1986) Logo.png", false, 50, TestName = "perfect match: but no name match score because the cleansed names are null.. since 'v1' is stripped")]
+    [TestCase(@"123 (Talleres de Llobregat 1973)", @"1-2-3... (Automaticos 1973).vpx", true, 200, TestName = "trailing periods")]
     public void MatchScoreTest(string gameName, string fileDetail, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation

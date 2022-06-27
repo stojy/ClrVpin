@@ -18,9 +18,13 @@ namespace ClrVpin.Shared.Fuzzy
 
             // chars
             // - special consideration for non-ascii characters (i.e. 8 bit chars) as handling of these between IPDB, XML DB, and file names is often inconsistent
-            string[] specialChars = { "&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"\.$", @"[^\x00-\x7F]" };
+            string[] specialChars = { "&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"[^\x00-\x7F]" };
             var pattern = string.Join('|', specialChars);
             _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
+
+            string[] trailingPeriod = { @"\.{1}$" };
+            pattern = string.Join('|', trailingPeriod);
+            _trimLastPeriodRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
             // words
             _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
@@ -90,11 +94,18 @@ namespace ClrVpin.Shared.Fuzzy
             // trim chars - must trim extension period for version to work correctly!
             cleanName = _trimCharRegex.Replace(cleanName, "");
 
+            // trim last period
+            // - required for version to work correctly
+            // - only if there are NOT 3 (or more) trailing periods, e.g. to cater for some tables like '1-2-3...' which use the trailing periods as part of their table name
+            if (!cleanName.EndsWith("..."))
+                cleanName = _trimLastPeriodRegex.Replace(cleanName, "");
+            
             // add whitespace - first pass
             cleanName = _addSpacingFirstPassRegex.Replace(cleanName, " ");
 
             // trim version
-            cleanName = _versionRegex.Replace(cleanName, "");
+            if (!cleanName.EndsWith("..."))
+                cleanName = _versionRegex.Replace(cleanName, "");
 
             // trim preamble
             cleanName = _preambleRegex.Replace(cleanName, "");
@@ -390,6 +401,7 @@ namespace ClrVpin.Shared.Fuzzy
 
         private static readonly Regex _fileNameInfoRegex;
         private static readonly Regex _trimCharRegex;
+        private static readonly Regex _trimLastPeriodRegex;
         private static readonly Regex _trimWordRegex;
         private static readonly Regex _addSpacingFirstPassRegex;
         private static readonly Regex _addSpacingSecondPassRegex;
