@@ -71,8 +71,6 @@ namespace ClrVpin.Importer
                 onlineGame.UpdateDatabaseEntryTooltip += onlineGame.IsMatchingEnabled ? "" : MatchingDisabledMessage;
                 onlineGame.CreateDatabaseEntryTooltip += onlineGame.IsMatchingEnabled ? "" : MatchingDisabledMessage;
 
-                onlineGame.YearString = onlineGame.Year.ToString();
-
                 // extract IpdbId
                 var match = _regexExtractIpdbId.Match(onlineGame.IpdbUrl ?? string.Empty);
                 if (match.Success)

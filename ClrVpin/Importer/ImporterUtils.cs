@@ -137,10 +137,15 @@ namespace ClrVpin.Importer
                     var existingMatchOnlineGame = onlineGames.FirstOrDefault(online => online.Hit?.GameDetail == matchedGame);
                     if (existingMatchOnlineGame != null)
                     {
-                        var removeExistingMatch = existingMatchOnlineGame.Hit.Score < score;
-                        
-                        Logger.Debug($"Duplicate fuzzy match: removeExistingMatch={removeExistingMatch}, table={existingMatchOnlineGame.Hit.GameDetail.Game.Name} + " +
-                                     $"existingMatchScore={existingMatchOnlineGame.Hit.Score:000}, newMatchScore={score:000}, ", true);
+                        var replaceExistingMatch = existingMatchOnlineGame.Hit.Score < score;
+
+                        var isOriginal = existingMatchOnlineGame.IsOriginal || matchedGame.Derived.IsOriginal;
+                        var existingFullName = $"{existingMatchOnlineGame.Name} ({existingMatchOnlineGame.Manufacturer} {existingMatchOnlineGame.Year})";
+                        var fuzzyLog = $"duplicate fuzzy match: replaceExisting={replaceExistingMatch}, isOriginal={isOriginal}\n" +
+                                       $"- db record:                      {Fuzzy.LogGameDetail(matchedGame.Game.Name, matchedGame.Game.Manufacturer, matchedGame.Game.Year)}\n" +
+                                       $"- existing feed match: score={$"{existingMatchOnlineGame.Hit.Score},",-4} {Fuzzy.LogGameDetail(existingFullName, existingMatchOnlineGame.Manufacturer, existingMatchOnlineGame.YearString)}\n" +
+                                       $"- new feed match:      score={$"{score},",-4} {Fuzzy.LogGameDetail(fuzzyNameDetails.ActualName, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}";
+                        Logger.Info(fuzzyLog, true);
 
                         // if the new match has a greater score..
                         // - Yes = remove the previous hit for the SAME game since it must be wrong
@@ -148,7 +153,7 @@ namespace ClrVpin.Importer
                         //        .. but subsequently matches higher to onlineGame=Apache! as expected given this is the better (aka correct) match
                         // - No = ignore the match completely since a better match was already found
                         //        e.g. onlineGame=Apache and onlineGame=Apache! should NOT both match to the SAME localGame
-                        if (removeExistingMatch)
+                        if (replaceExistingMatch)
                         {
                             // remove match and adjust statistics
                             RemoveMatch(existingMatchOnlineGame);

@@ -111,7 +111,7 @@
             <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
 
             <WrapPanel Margin="5">
-              <ToggleButton ToolTip="Include additional diagnostic logging" IsChecked="{Binding Settings.EnableDiagnosticLogging}" />
+              <ToggleButton ToolTip="Include additional diagnostic logging, e.g. fuzzy match scoring for matched tables" IsChecked="{Binding Settings.EnableDiagnosticLogging}" />
               <TextBlock Margin="10,0,0,0" Text="Diagnostic Logging" />
             </WrapPanel>
             <WrapPanel Margin="5">

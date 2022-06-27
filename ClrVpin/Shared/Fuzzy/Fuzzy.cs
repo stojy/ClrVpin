@@ -197,7 +197,6 @@ namespace ClrVpin.Shared.Fuzzy
                                $"- source {(isFile ? "file" : "feed")}:      {LogGameDetail(fuzzyNameDetails.ActualName, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
                                $"- matched db table: {LogGameDetail(preferredMatch?.GameDetail.Game.Name, preferredMatch?.GameDetail.Game.Manufacturer, preferredMatch?.GameDetail.Game.Year)}";
 
-
             if (isMatch)
             {
                 // log as debug diagnostic as these are typically of 'lesser' interest
@@ -206,8 +205,7 @@ namespace ClrVpin.Shared.Fuzzy
             else
             {
                 // unmatched original tables (if setting is enabled) are logged as diagnostic to avoid cluttering the logs
-                var shouldLogAsDiagnostic = isOriginal && UnmatchedOriginalsLoggedAsDiagnostic;
-                Logger.Warn(fuzzyLog, shouldLogAsDiagnostic);
+                Logger.Warn(fuzzyLog, isOriginal && Model.Settings.UnmatchedOriginalsLoggedAsDiagnostic);
             }
 
             return (preferredMatch?.GameDetail, preferredMatch?.MatchResult.score, isMatch);
@@ -221,7 +219,7 @@ namespace ClrVpin.Shared.Fuzzy
             return true;
         }
 
-        private static string LogGameDetail(string name, string manufacturer, string year) => $"name={$"'{name}',",-40} manufacturer={$"'{manufacturer}',",-30} year={$"{year}",-5}";
+        public static string LogGameDetail(string name, string manufacturer, string year) => $"name={$"'{name}',",-55} manufacturer={$"'{manufacturer}',",-30} year={$"{year}",-5}";
 
         public static (bool success, int score) Match(FuzzyNameDetails gameDetailFuzzyDetails, FuzzyNameDetails fileFuzzyDetails)
         {
@@ -390,7 +388,6 @@ namespace ClrVpin.Shared.Fuzzy
         }
 
         private static decimal MinMatchScore => Model.Settings.MatchFuzzyMinimumPercentage;
-        private static bool UnmatchedOriginalsLoggedAsDiagnostic => Model.Settings.UnmatchedOriginalsLoggedAsDiagnostic;
         private static decimal MinMatchWarningScore => MinMatchScore * 1.2m;
         public const int ScoringNoWhiteSpaceBonus = 5;
 
