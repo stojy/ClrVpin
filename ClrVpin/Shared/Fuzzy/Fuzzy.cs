@@ -193,19 +193,16 @@ namespace ClrVpin.Shared.Fuzzy
             var isMatch = preferredMatch?.MatchResult.score >= MinMatchScore;
             var isOriginal = preferredMatch?.GameDetail.Derived.IsOriginal == true || fuzzyNameDetails.IsOriginal;
 
-            var fuzzyLog = $"fuzzy table match: score={$"{preferredMatch?.MatchResult.score},",-4} success={isMatch}, isSecondChanceMatch={isSecondChanceMatch}, isOriginal={isOriginal}\n" +
+            var fuzzyLog = $"fuzzy table match: success={isMatch}, score={$"{preferredMatch?.MatchResult.score},",-4} isSecondChanceMatch={isSecondChanceMatch}, isOriginal={isOriginal}\n" +
                                $"- source {(isFile ? "file" : "feed")}:      {LogGameDetail(fuzzyNameDetails.ActualName, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
                                $"- matched db table: {LogGameDetail(preferredMatch?.GameDetail.Game.Name, preferredMatch?.GameDetail.Game.Manufacturer, preferredMatch?.GameDetail.Game.Year)}";
 
-            if (isMatch)
+            if (!(isOriginal && Model.Settings.SkipLoggingForOriginalTables))
             {
-                // log as debug diagnostic as these are typically of 'lesser' interest
-                Logger.Debug(fuzzyLog, true);
-            }
-            else
-            {
-                // unmatched original tables (if setting is enabled) are logged as diagnostic to avoid cluttering the logs
-                Logger.Warn(fuzzyLog, isOriginal && Model.Settings.UnmatchedOriginalsLoggedAsDiagnostic);
+                if (isMatch)
+                    Logger.Debug(fuzzyLog, true); // log as debug diagnostic as matches are are typically of 'lesser' interest
+                else
+                    Logger.Warn(fuzzyLog);
             }
 
             return (preferredMatch?.GameDetail, preferredMatch?.MatchResult.score, isMatch);

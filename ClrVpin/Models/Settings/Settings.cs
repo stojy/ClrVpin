@@ -20,7 +20,7 @@ namespace ClrVpin.Models.Settings
 
             BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
             EnableDiagnosticLogging = false;
-            UnmatchedOriginalsLoggedAsDiagnostic = true;
+            SkipLoggingForOriginalTables = true;
             EnableCheckForNewVersion = true;
             TrainerWheels = true;
 
@@ -85,7 +85,7 @@ namespace ClrVpin.Models.Settings
 
         public string BackupFolder { get; set; }
         public bool EnableDiagnosticLogging { get; set; }
-        public bool UnmatchedOriginalsLoggedAsDiagnostic { get; set; }
+        public bool SkipLoggingForOriginalTables { get; set; }
         public bool EnableCheckForNewVersion { get; set; }
         public DateTime? LastCheckForNewVersion { get; set; }
         public bool TrainerWheels { get; set; }

@@ -145,7 +145,9 @@ namespace ClrVpin.Importer
                                        $"- db record:                      {Fuzzy.LogGameDetail(matchedGame.Game.Name, matchedGame.Game.Manufacturer, matchedGame.Game.Year)}\n" +
                                        $"- existing feed match: score={$"{existingMatchOnlineGame.Hit.Score},",-4} {Fuzzy.LogGameDetail(existingFullName, existingMatchOnlineGame.Manufacturer, existingMatchOnlineGame.YearString)}\n" +
                                        $"- new feed match:      score={$"{score},",-4} {Fuzzy.LogGameDetail(fuzzyNameDetails.ActualName, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}";
-                        Logger.Info(fuzzyLog, true);
+                        
+                        if (!(isOriginal && Model.Settings.SkipLoggingForOriginalTables))
+                            Logger.Info(fuzzyLog);
 
                         // if the new match has a greater score..
                         // - Yes = remove the previous hit for the SAME game since it must be wrong

@@ -115,8 +115,8 @@
               <TextBlock Margin="10,0,0,0" Text="Diagnostic Logging" />
             </WrapPanel>
             <WrapPanel Margin="5">
-              <ToggleButton ToolTip="Log unmatched original tables at diagnostics level so they can be filtered out" IsChecked="{Binding Settings.UnmatchedOriginalsLoggedAsDiagnostic}" />
-              <TextBlock Margin="10,0,0,0" Text="Unmatched Original Table Logged as Diagnostic" />
+              <ToggleButton ToolTip="Skip logging for all details regarding original (non-manufactured) tables" IsChecked="{Binding Settings.SkipLoggingForOriginalTables}" />
+              <TextBlock Margin="10,0,0,0" Text="Skip Logging For Original Tables" />
             </WrapPanel>
             <WrapPanel Margin="5">
               <ToggleButton ToolTip="Automatically check for a new application version during startup.  Limited to once per day." IsChecked="{Binding Settings.EnableCheckForNewVersion}" />
