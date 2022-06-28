@@ -139,7 +139,7 @@ namespace ClrVpin.Importer
                     {
                         var replaceExistingMatch = existingMatchOnlineGame.Hit.Score < score;
 
-                        var isOriginal = existingMatchOnlineGame.IsOriginal || matchedGame.Derived.IsOriginal;
+                        var isOriginal = existingMatchOnlineGame.IsOriginal || matchedGame.Derived.IsOriginal || fuzzyNameDetails.IsOriginal;
                         var existingFullName = $"{existingMatchOnlineGame.Name} ({existingMatchOnlineGame.Manufacturer} {existingMatchOnlineGame.Year})";
                         var fuzzyLog = $"duplicate fuzzy match: replaceExisting={replaceExistingMatch}, isOriginal={isOriginal}\n" +
                                        $"- db record:                      {Fuzzy.LogGameDetail(matchedGame.Game.Name, matchedGame.Game.Manufacturer, matchedGame.Game.Year)}\n" +
