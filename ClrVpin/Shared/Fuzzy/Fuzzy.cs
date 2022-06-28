@@ -165,7 +165,12 @@ namespace ClrVpin.Shared.Fuzzy
             var cleanName = Clean(name, false);
             var cleanNameNoWhiteSpace = Clean(name, true);
 
-            return new FuzzyNameDetails(cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(), manufacturer.ToLowerAndTrim(), year, sourceName.ToLower());
+            // fuzzy clean the manufacturer field
+            var cleanManufacturer = Clean(manufacturer, false);
+            var cleanManufacturerNoWhiteSpace = Clean(manufacturer, true);
+
+            return new FuzzyNameDetails(sourceName.ToLower(), cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(),
+                cleanManufacturer.ToLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToLowerAndTrim(), year);
         }
 
         // fuzzy match against all games
