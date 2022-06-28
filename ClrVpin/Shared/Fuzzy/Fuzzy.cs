@@ -237,10 +237,15 @@ namespace ClrVpin.Shared.Fuzzy
         public static (bool success, int score) Match(FuzzyNameDetails gameDetailFuzzyDetails, FuzzyNameDetails fileFuzzyDetails)
         {
             var nameMatchScore = GetNameMatchScore(gameDetailFuzzyDetails.Name, gameDetailFuzzyDetails.NameNoWhiteSpace, fileFuzzyDetails.Name, fileFuzzyDetails.NameNoWhiteSpace);
+            
+            // manufacturer matching is the EXACT same as name matching, but the result is scaled back to 10% to reflect it's lesser importance
+            // - the additional scoring though is important to distinguish between games that match exactly but only 1 has the correct manufacturer 
+            var manufacturerScore = GetNameMatchScore(gameDetailFuzzyDetails.Manufacturer, gameDetailFuzzyDetails.ManufacturerNoWhiteSpace, fileFuzzyDetails.Manufacturer, fileFuzzyDetails.ManufacturerNoWhiteSpace) / 10;
+            
             var yearMatchScore = GetYearMatchScore(gameDetailFuzzyDetails.Year, fileFuzzyDetails.Year);
             var lengthScore = GetLengthMatchScore(gameDetailFuzzyDetails);
 
-            var score = yearMatchScore + nameMatchScore + lengthScore;
+            var score = nameMatchScore + manufacturerScore + yearMatchScore + lengthScore;
 
             // total 'identity check/match' score must be >= _minMatchScore
             return (score >= MinMatchScore, score);
