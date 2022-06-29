@@ -201,7 +201,7 @@ public class FuzzyTests
     [TestCase(@"The Walking Dead (Stern 2014)", @"'The Walking Dead (Zen Studios 2014)", true, 208, TestName = "manufacturer - wrong")]
     [TestCase(@"The Walking Dead (Stern is a big company 2014)", @"'The Walking Dead (Stirn is a big company 2014)", true, 220, TestName = "manufacturer - misspelt 1 char but manufacturer too small")]
     [TestCase(@"The Walking Dead (Stern 2014)", @"'The Walking Dead (Stirn 2014)", true, 208, TestName = "manufacturer - misspelt 1 char but manufacturer too small")]
-    [TestCase(@"Whoa Nellie Big Juicy Melons (Stern 2015)", @"Whoa Nellie! Big Juicy Melons (WhizBang Pinball 2011)", true, -830, TestName = "manufacturer - incorrect, also year wrong")]
+    [TestCase(@"Whoa Nellie Big Juicy Melons (Stern 2015)", @"Whoa Nellie! Big Juicy Melons (WhizBang Pinball 2011)", false, -830, TestName = "manufacturer - incorrect, also year wrong")]
     [TestCase(@"Whoa Nellie Big Juicy Melons (Stern 2015)", @"Whoa Nellie! Big Juicy Melons (Stern 2015)", true, 235, TestName = "manufacturer - correct")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
