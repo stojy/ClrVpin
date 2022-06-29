@@ -141,10 +141,11 @@ namespace ClrVpin.Importer
 
                         var isOriginal = existingMatchOnlineGame.IsOriginal || matchedGame.Derived.IsOriginal || fuzzyNameDetails.IsOriginal;
                         var existingFullName = $"{existingMatchOnlineGame.Name} ({existingMatchOnlineGame.Manufacturer} {existingMatchOnlineGame.Year})";
+                        
                         var fuzzyLog = $"duplicate fuzzy match: replaceExisting={replaceExistingMatch}, isOriginal={isOriginal}\n" +
-                                       $"- db record:                      {Fuzzy.LogGameDetail(matchedGame.Game.Name, matchedGame.Game.Manufacturer, matchedGame.Game.Year)}\n" +
-                                       $"- existing feed match: score={$"{existingMatchOnlineGame.Hit.Score},",-4} {Fuzzy.LogGameDetail(existingFullName, existingMatchOnlineGame.Manufacturer, existingMatchOnlineGame.YearString)}\n" +
-                                       $"- new feed match:      score={$"{score},",-4} {Fuzzy.LogGameDetail(fuzzyNameDetails.ActualName, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}";
+                                       $"- db record:                      {Fuzzy.LogGameDetail(matchedGame.Game.Name, matchedGame.Game.Description, matchedGame.Game.Manufacturer, matchedGame.Game.Year)}\n" +
+                                       $"- existing feed match: score={$"{existingMatchOnlineGame.Hit.Score},",-4} {Fuzzy.LogGameDetail(existingFullName, null, existingMatchOnlineGame.Manufacturer, existingMatchOnlineGame.YearString)}\n" +
+                                       $"- new feed match:      score={$"{score},",-4} {Fuzzy.LogGameDetail(fuzzyNameDetails.ActualName, null, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}";
                         
                         if (!(isOriginal && Model.Settings.SkipLoggingForOriginalTables))
                             Logger.Info(fuzzyLog);

@@ -179,8 +179,8 @@ namespace ClrVpin.Shared.Fuzzy
             // check EVERY DB game entry against the fuzzy name details (which can be a file file for scanner/rebuilder OR online game entry for importer(file to look for the best match)
             // - Match will create a fuzzy version (aka cleaned) of each game DB entry so it can be compared against the fuzzy file details (already cleaned)
             // - Match table name (non-media) OR description (media)
-            var tableFileMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.TableDetails, fuzzyNameDetails) }).ToList();
-            var descriptionMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.DescriptionDetails, fuzzyNameDetails) }).ToList();
+            var tableFileMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.TableDetails, fuzzyNameDetails) });
+            var descriptionMatches = games.Select(game => new MatchDetail { GameDetail = game, MatchResult = Match(game.Fuzzy.DescriptionDetails, fuzzyNameDetails) });
 
             var orderedMatches = tableFileMatches.Concat(descriptionMatches)
                 .OrderByDescending(x => x.MatchResult.success)
@@ -210,8 +210,8 @@ namespace ClrVpin.Shared.Fuzzy
             var isOriginal = preferredMatch?.GameDetail.Derived.IsOriginal == true || fuzzyNameDetails.IsOriginal;
 
             var fuzzyLog = $"fuzzy table match: success={isMatch}, score={$"{preferredMatch?.MatchResult.score},",-4} isSecondChanceMatch={isSecondChanceMatch}, isOriginal={isOriginal}\n" +
-                               $"- source {(isFile ? "file" : "feed")}:      {LogGameDetail(fuzzyNameDetails.ActualName, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
-                               $"- matched db table: {LogGameDetail(preferredMatch?.GameDetail.Game.Name, preferredMatch?.GameDetail.Game.Manufacturer, preferredMatch?.GameDetail.Game.Year)}";
+                               $"- source {(isFile ? "file" : "feed")}:      {LogGameDetail(fuzzyNameDetails.ActualName, null, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
+                               $"- matched db table: {LogGameDetail(preferredMatch?.GameDetail.Game.Name, preferredMatch?.GameDetail.Game.Description, preferredMatch?.GameDetail.Game.Manufacturer, preferredMatch?.GameDetail.Game.Year)}";
 
             if (!(isOriginal && Model.Settings.SkipLoggingForOriginalTables))
             {
@@ -232,7 +232,10 @@ namespace ClrVpin.Shared.Fuzzy
             return true;
         }
 
-        public static string LogGameDetail(string name, string manufacturer, string year) => $"name={$"'{name}',",-55} manufacturer={$"'{manufacturer}',",-30} year={$"{year}",-5}";
+        public static string LogGameDetail(string name, string description, string manufacturer, string year)
+        {
+            return $"name={$"'{name}',",-55} description={$"'{description}',",-55} manufacturer={$"'{manufacturer}',",-20} year={$"{year}",-5}";
+        }
 
         public static (bool success, int score) Match(FuzzyNameDetails gameDetailFuzzyDetails, FuzzyNameDetails fileFuzzyDetails)
         {
