@@ -38,11 +38,12 @@ namespace ClrVpin.Models.Shared.Game
                 derived.IpdbUrl = derived.Ipdb == null ? null : $"https://www.ipdb.org/machine.cgi?id={derived.Ipdb}";
             }
 
-            // memory optimisation to perform this operation once on database read instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
-            derived.NameLowerCase = gameDetail.Game.Name.ToLower();
-            derived.DescriptionLowerCase = gameDetail.Game.Description.ToLower();
+            // memory optimisation to perform this operation once on database read (or update) instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
+            // - null check to cater for scenario where the value can be null, e.g. when cleared via importer's database update dialog
+            derived.NameLowerCase = gameDetail.Game.Name?.ToLower();
+            derived.DescriptionLowerCase = gameDetail.Game.Description?.ToLower();
 
-            derived.TableFileWithExtension = gameDetail.Game.Name + ".vpx";
+            derived.TableFileWithExtension = gameDetail.Game.Name  + ".vpx";
         }
 
         // assign isOriginal based on manufacturer
