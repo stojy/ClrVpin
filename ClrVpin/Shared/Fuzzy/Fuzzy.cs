@@ -133,6 +133,10 @@ namespace ClrVpin.Shared.Fuzzy
 
         public static FuzzyNameDetails GetNameDetails(string sourceName, bool isFileName)
         {
+            // cater for no source name, e.g. Game.Description null value.. which should no longer be possible as it's now initialized to empty string when deserialized
+            if (sourceName == null)
+                sourceName = "";
+
             // return the fuzzy portion of the filename..
             // - no file extensions
             // - name: up to last opening parenthesis (if it exists!)
@@ -144,7 +148,7 @@ namespace ClrVpin.Shared.Fuzzy
 
             // only strip the extension if it exists, i.e. a real file and not a DB entry
             if (isFileName)
-                sourceName = Path.GetFileNameWithoutExtension(sourceName ?? "");
+                sourceName = Path.GetFileNameWithoutExtension(sourceName);
 
             var result = _fileNameInfoRegex.Match(sourceName);
 

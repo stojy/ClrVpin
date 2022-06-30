@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Game;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
@@ -12,7 +13,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class DatabaseItem
     {
-        public DatabaseItem(GameDetail originalGameDetail, IOnlineGameCollections onlineGameCollections, bool isExisting)
+        public DatabaseItem(OnlineGame onlineGame, GameDetail originalGameDetail, IOnlineGameCollections onlineGameCollections, bool isExisting)
         {
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
@@ -81,12 +82,12 @@ namespace ClrVpin.Importer
 
             AddMissingInfoCommand = new ActionCommand(() =>
             {
-                // todo; 
+                GameUpdater.UpdateProperties(onlineGame, GameDetail.Game, false);
             });
 
             OverwriteAllInfoCommand = new ActionCommand(() =>
             {
-                // todo; 
+                GameUpdater.UpdateProperties(onlineGame, GameDetail.Game, true);
             });
         }
 
@@ -98,8 +99,8 @@ namespace ClrVpin.Importer
         public ICommand LoadedCommand { get; set; }
         public ICommand UnloadedCommand { get; set; }
         public ICommand ChangedCommand { get; set; }
-        public ActionCommand AddMissingInfoCommand { get; set; }
-        public ActionCommand OverwriteAllInfoCommand { get; set; }
+        public ActionCommand AddMissingInfoCommand { get; }
+        public ActionCommand OverwriteAllInfoCommand { get; }
 
 
         public ListCollectionView<string> ManufacturersView { get; }

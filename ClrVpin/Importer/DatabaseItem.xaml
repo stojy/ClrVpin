@@ -262,12 +262,12 @@
           <!--<Button Content="Save" HorizontalAlignment="Center" CommandParameter="True" Style="{StaticResource DialogButtonHighlightedStyle}"
                             ToolTip="Add entry to local database file" />-->
           <Button Content="Add Missing Info" Width="140" Style="{StaticResource FlatButtonStyle}"
+                  Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   Command="{Binding AddMissingInfoCommand}"
-                  IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
                   ToolTip="Add any missing info for this table to your local database" />
           <Button Content="Overwrite All Info" Width="140" Style="{StaticResource FlatButtonStyle}"
+                  Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   Command="{Binding OverwriteAllInfoCommand}"
-                  IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
                   ToolTip="Overwrite all info for this table to your local database" />
 
           <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonHighlightedStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Insert}"

@@ -282,7 +282,7 @@ namespace ClrVpin.Importer
 
         private async Task UpdateAllTablesDatabase(bool overwriteProperties)
         {
-            var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateAllProperties(OnlineGames, overwriteProperties);
+            var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(OnlineGames, overwriteProperties);
 
             // write ALL games back to the database(s) - i.e. irrespective of whether matched or not
             if (updatedGameCount > 0)

@@ -19,6 +19,8 @@ public class OnlineGame : OnlineGameBase
 
     public string IpdbId { get; set; } = string.Empty;
 
+    public string Description => $"{Name} ({Manufacturer} {YearString})";
+
     // reference to the highest fuzzy ranked DB match
     public GameHit Hit { get; set; }
     public bool IsMatched { get; set; }
