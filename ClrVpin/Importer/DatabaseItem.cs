@@ -50,6 +50,7 @@ namespace ClrVpin.Importer
 
             LoadedCommand = new ActionCommand(() => _loaded = true);
             UnloadedCommand = new ActionCommand(() => _loaded = false);
+            
             ChangedCommand = new ActionCommand(() =>
             {
                 // skip unnecessary changes that occur before control is loaded OR after the control has been unloaded
@@ -77,6 +78,16 @@ namespace ClrVpin.Importer
                 // indicate whether anything has changed
                 IsItemChanged = !GameDetail.IsEqual(initialSerializedGame);
             });
+
+            AddMissingInfoCommand = new ActionCommand(() =>
+            {
+                // todo; 
+            });
+
+            OverwriteAllInfoCommand = new ActionCommand(() =>
+            {
+                // todo; 
+            });
         }
 
         public GameDetail GameDetail { get; }
@@ -84,11 +95,12 @@ namespace ClrVpin.Importer
         public bool IsExisting { get; set; }
         public bool IsItemChanged { get; private set; }
 
-        public ICommand ChangedCommand { get; set; }
-
         public ICommand LoadedCommand { get; set; }
-
         public ICommand UnloadedCommand { get; set; }
+        public ICommand ChangedCommand { get; set; }
+        public ActionCommand AddMissingInfoCommand { get; set; }
+        public ActionCommand OverwriteAllInfoCommand { get; set; }
+
 
         public ListCollectionView<string> ManufacturersView { get; }
 

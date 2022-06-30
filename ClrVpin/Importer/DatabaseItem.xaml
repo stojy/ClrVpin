@@ -261,13 +261,23 @@
 
           <!--<Button Content="Save" HorizontalAlignment="Center" CommandParameter="True" Style="{StaticResource DialogButtonHighlightedStyle}"
                             ToolTip="Add entry to local database file" />-->
+          <Button Content="Add Missing Info" Width="140" Style="{StaticResource FlatButtonStyle}"
+                  Command="{Binding AddMissingInfoCommand}"
+                  IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
+                  ToolTip="Add any missing info for this table to your local database" />
+          <Button Content="Overwrite All Info" Width="140" Style="{StaticResource FlatButtonStyle}"
+                  Command="{Binding OverwriteAllInfoCommand}"
+                  IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
+                  ToolTip="Overwrite all info for this table to your local database" />
+
           <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonHighlightedStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Insert}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToCollapsedConverter}}"
-                  ToolTip="Update entry in your local database" />
+                  ToolTip="Add a new table entry entry to your local database" />
           <Button Content="Update" Width="100" Style="{StaticResource DialogButtonHighlightedStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
-                  ToolTip="Update entry in your local database" />
+                  ToolTip="Update changed info for this table to your local database" />
+          
           <Button Content="Cancel" IsCancel="True" Width="100" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Cancel}"
                   ToolTip="Exit without updating/inserting an entry in your local database" />
         </WrapPanel>

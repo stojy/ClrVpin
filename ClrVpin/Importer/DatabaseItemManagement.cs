@@ -19,7 +19,7 @@ namespace ClrVpin.Importer
             var result = await DialogHost.Show(item, "ImporterResultsDialog") as DatabaseItemAction?;
             if (result == DatabaseItemAction.Update)
             {
-                // replace the out of date game details
+                // replace the existing game details with the updated details
                 var existingGameDetail = gameDetails.First(g => g == onlineGame.Hit.GameDetail);
                 existingGameDetail.Game = item.GameDetail.Game;
                 existingGameDetail.Derived = item.GameDetail.Derived;
