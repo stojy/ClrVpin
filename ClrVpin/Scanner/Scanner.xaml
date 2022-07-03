@@ -10,7 +10,7 @@
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="/Controls/Styles.xaml" />
-    <ResourceDictionary Source="/Controls/Templates.xaml" />
+    <ResourceDictionary Source="/Controls/DataTemplates.xaml" />
     <ResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
@@ -26,7 +26,7 @@
     <StackPanel Margin="5">
 
       <!-- content -->
-      <TextBlock Style="{StaticResource Title}">Content</TextBlock>
+      <TextBlock Style="{StaticResource TitleStyle}">Content</TextBlock>
       <WrapPanel>
         <GroupBox Header="Pinball">
           <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeCheckBoxTemplate}"
@@ -40,7 +40,7 @@
       </WrapPanel>
 
       <!-- criteria -->
-      <TextBlock Style="{StaticResource Title}">Criteria</TextBlock>
+      <TextBlock Style="{StaticResource TitleStyle}">Criteria</TextBlock>
 
       <WrapPanel>
         <GroupBox Header="Match">
@@ -88,7 +88,7 @@
       </WrapPanel>
 
       <!-- fix options -->
-      <TextBlock Style="{StaticResource Title}">Options</TextBlock>
+      <TextBlock Style="{StaticResource TitleStyle}">Options</TextBlock>
       <WrapPanel>
         <GroupBox Header="Multiple Match Preference">
           <StackPanel>
@@ -115,7 +115,7 @@
         <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
       </WrapPanel>
 
-      <Button Width="50" Command="{Binding StartCommand}" IsEnabled="{Binding IsValid}" Style="{StaticResource RaisedAccentButton}">Start</Button>
+      <Button Width="50" Command="{Binding StartCommand}" IsEnabled="{Binding IsValid}" Style="{StaticResource RaisedAccentButtonStyle}">Start</Button>
     </StackPanel>
   </DataTemplate>
 

@@ -132,7 +132,7 @@
         </GroupBox>
 
         <Button ToolTip="Save settings and return to the home page"
-                Style="{StaticResource RaisedAccentButton}" Margin="0,10,0,5" HorizontalAlignment="Center" Width="90"
+                Style="{StaticResource RaisedAccentButtonStyle}" Margin="0,10,0,5" HorizontalAlignment="Center" Width="90"
                 Command="{Binding SaveCommand}">Save</Button>
 
 

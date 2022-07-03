@@ -15,13 +15,14 @@
                            WindowStartupLocation="CenterScreen"
                            SizeToContent="WidthAndHeight"
                            Title="ClrVpin" WindowState="Normal"
-                           Style="{DynamicResource MaterialWindow}">
+                           Style="{DynamicResource MaterialWindowStyle}">
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
 
         <ResourceDictionary Source="\Controls\Styles.xaml" />
+        <ResourceDictionary Source="\Controls\ControlTemplates.xaml" />
 
         <ResourceDictionary Source="../Scanner/Scanner.xaml" />
         <ResourceDictionary Source="../Scanner/ScannerStatistics.xaml" />
@@ -110,21 +111,21 @@
             <Image Source="/Resources/ClrVpin.png" Height="300" Margin="10" />
 
             <WrapPanel Margin="5,5,5,10">
-              <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentButton}"
+              <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentButtonStyle}"
                       ToolTip="{Binding ScannerToolTip}">
                 <StackPanel>
                   <TextBlock Text="Scanner" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Magnify" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding RebuilderCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentButton}"
+              <Button Command="{Binding RebuilderCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentButtonStyle}"
                       ToolTip="{Binding RebuilderToolTip}">
                 <StackPanel>
                   <TextBlock Text="Rebuilder" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="Import" Height="40" Width="40" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button Command="{Binding ImporterCommand}" Width="70" Style="{StaticResource AlternateRaisedButton}"
+              <Button Command="{Binding ImporterCommand}" Width="70" Style="{StaticResource RaisedHighlightButtonStyle}"
                       ToolTip="Import and navigate online database to check for updated content">
                 <StackPanel>
                   <TextBlock Text="Importer" HorizontalAlignment="Center" />
