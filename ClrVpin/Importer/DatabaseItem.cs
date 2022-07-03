@@ -26,6 +26,7 @@ namespace ClrVpin.Importer
 
             IsExisting = isExisting;
             IsItemChanged = false;
+            CheckGameAgainstFeed(onlineGame);
 
             ManufacturersView = new ListCollectionView<string>(onlineGameCollections.Manufacturers);
             YearsView = new ListCollectionView<string>(onlineGameCollections.Years);
@@ -76,8 +77,10 @@ namespace ClrVpin.Importer
                 // explicitly recalculate derived properties
                 GameDerived.Init(GameDetail);
 
-                // indicate whether anything has changed
+                // check if anything has changed.. used to enable the 'update' button
                 IsItemChanged = !GameDetail.IsEqual(initialSerializedGame);
+
+                CheckGameAgainstFeed(onlineGame);
             });
 
             AddMissingInfoCommand = new ActionCommand(() =>
@@ -91,17 +94,25 @@ namespace ClrVpin.Importer
             });
         }
 
+        private void CheckGameAgainstFeed(OnlineGame onlineGame)
+        {
+            // check if anything is different to the feed.. used to enable the update missing and update all buttons
+            IsItemInfoMissing = GameUpdater.CheckProperties(onlineGame, GameDetail.Game, false);
+            IsItemInfoDifferent = IsItemInfoMissing || GameUpdater.CheckProperties(onlineGame, GameDetail.Game, true);
+        }
+
         public GameDetail GameDetail { get; }
 
         public bool IsExisting { get; set; }
         public bool IsItemChanged { get; private set; }
+        public bool IsItemInfoMissing { get; private set; }
+        public bool IsItemInfoDifferent { get; private set; }
 
         public ICommand LoadedCommand { get; set; }
         public ICommand UnloadedCommand { get; set; }
         public ICommand ChangedCommand { get; set; }
         public ActionCommand AddMissingInfoCommand { get; }
         public ActionCommand OverwriteAllInfoCommand { get; }
-
 
         public ListCollectionView<string> ManufacturersView { get; }
 

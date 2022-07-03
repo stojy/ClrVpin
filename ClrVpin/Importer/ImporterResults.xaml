@@ -395,7 +395,7 @@
                     </Button>
                     <Button ToolTip="{Binding OverwriteDatabaseInfoTip}"
                             ToolTipService.ShowOnDisabled="True"
-                            Style="{StaticResource RaisedDarkButton}"
+                            Style="{StaticResource RaisedAccentButton}"
                             Width="150" Height="30"
                             Margin="10,0,0,0"
                             IsEnabled="{Binding IsMatchingEnabled}"

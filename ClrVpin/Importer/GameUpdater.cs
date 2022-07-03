@@ -18,41 +18,49 @@ namespace ClrVpin.Importer
 
             matchedOnlineGames.ForEach(matchedOnlineGame =>
             {
-                var beforeUpdatedPropertyCount = GetPropertiesUpdatedCount(propertyStatistics);
+                var updated = CheckAndFix(matchedOnlineGame, matchedOnlineGame.Hit.GameDetail.Game, overwriteProperties, propertyStatistics);
 
-                CheckAndFix(matchedOnlineGame, matchedOnlineGame.Hit.GameDetail.Game, overwriteProperties, propertyStatistics);
-
-                updatedGameCount += beforeUpdatedPropertyCount == GetPropertiesUpdatedCount(propertyStatistics) ? 0 : 1;
+                updatedGameCount += updated ? 1 : 0;
             });
 
             return (propertyStatistics, updatedGameCount, matchedOnlineGames.Count);
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public static (Dictionary<string, int> propertyStatistics, int updatedGameCount, int matchedGameCount) UpdateProperties(OnlineGame onlineGame, Game game, bool overwriteProperties)
         {
             var propertyStatistics = CreatePropertyStatistics();
 
-            CheckAndFix(onlineGame, game, overwriteProperties, propertyStatistics);
+            var updated = CheckAndFix(onlineGame, game, overwriteProperties, propertyStatistics);
 
-            var updatedGameCount = GetPropertiesUpdatedCount(propertyStatistics) > 1 ? 1 : 0;
-
-            return (propertyStatistics, updatedGameCount, 1);
+            return (propertyStatistics, updated ? 1 : 0, 1);
+        }
+        
+        public static bool CheckProperties(OnlineGame onlineGame, Game game, bool overwriteProperties)
+        {
+            var propertyStatistics = CreatePropertyStatistics();
+            
+            return CheckAndFix(onlineGame, game, overwriteProperties, propertyStatistics, true);
         }
 
         public static int GetPropertiesUpdatedCount(IDictionary<string, int> statistics) => statistics.Sum(x => x.Value);
 
-        private static void CheckAndFix(OnlineGame onlineGame, Game game, bool overwrite, IDictionary<string, int> updatedPropertyCounts)
+        private static bool CheckAndFix(OnlineGame onlineGame, Game game, bool overwrite, IDictionary<string, int> propertyStatistics, bool skipUpdate = false)
         {
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value);
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Description), () => game.Description, () => onlineGame.Description, value => game.Description = value);
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(), value => game.Author = value);
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value);
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame.Manufacturer, value => game.Manufacturer = value);
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Players), () => game.Players, () => onlineGame.Players?.ToString(), value => game.Players = value);
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value);
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(), value => game.Theme = value);
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Type), () => game.Type, () => onlineGame.Type, value => game.Type = value);
-            CheckAndFixProperty(overwrite, updatedPropertyCounts, game.Name, nameof(game.Year), () => game.Year, () => onlineGame.YearString, value => game.Year = value);
+            var beforeUpdatedPropertyCount = GetPropertiesUpdatedCount(propertyStatistics);
+
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Description), () => game.Description, () => onlineGame.Description, value => game.Description = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(), value => game.Author = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame.Manufacturer, value => game.Manufacturer = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Players), () => game.Players, () => onlineGame.Players?.ToString(), value => game.Players = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(), value => game.Theme = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Type), () => game.Type, () => onlineGame.Type, value => game.Type = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Year), () => game.Year, () => onlineGame.YearString, value => game.Year = value, skipUpdate);
+
+            return beforeUpdatedPropertyCount != GetPropertiesUpdatedCount(propertyStatistics);
         }
 
         private static Dictionary<string, int> CreatePropertyStatistics() => new Dictionary<string, int>
@@ -70,11 +78,12 @@ namespace ClrVpin.Importer
         };
 
         private static void CheckAndFixProperty(bool overwrite, IDictionary<string, int> updatedPropertyCounts, string game,
-            string property, Func<string> gameValue, Func<string> onlineGameValue, Action<string> assignAction)
+            string property, Func<string> gameValue, Func<string> onlineGameValue, Action<string> updateAction, bool skipUpdate)
         {
             if ((gameValue().IsEmpty() || overwrite) && !onlineGameValue().IsEmpty() && gameValue() != onlineGameValue())
             {
-                assignAction(onlineGameValue());
+                if (!skipUpdate)
+                    updateAction(onlineGameValue());
                 updatedPropertyCounts[property]++;
 
                 Logger.Info($"Fixing missing info: table='{game}', {property}='{gameValue()}'");
