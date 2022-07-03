@@ -6,14 +6,14 @@
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="/Controls/Styles.xaml" />
-    <ResourceDictionary Source="/Controls/Templates.xaml" />
+    <ResourceDictionary Source="/Controls/DataTemplates.xaml" />
     <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
     <ResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <DataTemplate x:Key="ImporterTemplate" DataType="{x:Type importer:ImporterViewModel}">
     <StackPanel Margin="5">
-      <TextBlock Style="{StaticResource Title}">Match</TextBlock>
+      <TextBlock Style="{StaticResource TitleStyle}">Match</TextBlock>
       <GroupBox Header="Criteria" Width="650">
         <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
           <!-- not using an ItemsControl for the LCV (e.g. similar to scanner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
@@ -37,7 +37,7 @@
         </StackPanel>
       </GroupBox>
 
-      <Button Margin="0,10,0,0" Width="50" Command="{Binding StartCommand}" Style="{StaticResource RaisedAccentButton}" IsEnabled="{Binding IsValid}">Start</Button>
+      <Button Margin="0,10,0,0" Width="50" Command="{Binding StartCommand}" Style="{StaticResource RaisedAccentButtonStyle}" IsEnabled="{Binding IsValid}">Start</Button>
 
     </StackPanel>
   </DataTemplate>

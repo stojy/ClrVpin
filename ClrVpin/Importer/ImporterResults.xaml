@@ -13,7 +13,8 @@
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
-    <ResourceDictionary Source="\Controls\Templates.xaml" />
+    <ResourceDictionary Source="\Controls\DataTemplates.xaml" />
+    <ResourceDictionary Source="\Controls\ControlTemplates.xaml" />
     <ResourceDictionary Source="DatabaseItem.xaml" />
     <ResourceDictionary Source="\Controls\Converters.xaml" />
     <ResourceDictionary Source="\Shared\Notification.xaml" />
@@ -387,19 +388,21 @@
                   <WrapPanel>
                     <Button ToolTip="{Binding AddMissingDatabaseInfoTip}"
                             ToolTipService.ShowOnDisabled="True"
-                            Style="{StaticResource RaisedAccentButton}"
+                            Style="{StaticResource RaisedAccentButtonStyle}"
                             Margin="0,0,5,0"
                             Width="150" Height="30"
                             IsEnabled="{Binding IsMatchingEnabled}"
-                            Command="{Binding AllTableAddMissingDatabaseInfoCommand}">Add Missing Info
+                            Command="{Binding AllTableAddMissingDatabaseInfoCommand}">
+                      Add Missing Info
                     </Button>
                     <Button ToolTip="{Binding OverwriteDatabaseInfoTip}"
                             ToolTipService.ShowOnDisabled="True"
-                            Style="{StaticResource RaisedAccentButton}"
+                            Style="{StaticResource RaisedAccentButtonStyle}"
                             Width="150" Height="30"
                             Margin="10,0,0,0"
                             IsEnabled="{Binding IsMatchingEnabled}"
-                            Command="{Binding AllTableOverwriteDatabaseInfoCommand}">Overwrite All Info
+                            Command="{Binding AllTableOverwriteDatabaseInfoCommand}">
+                      Overwrite All Info
                     </Button>
                   </WrapPanel>
                 </ContentControl>

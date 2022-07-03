@@ -22,7 +22,7 @@
   </ResourceDictionary.MergedDictionaries>
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml crates MainWindow.xaml -->
-  <Style x:Key="MaterialWindowBase" TargetType="Window">
+  <Style x:Key="MaterialWindowBaseStyle" TargetType="Window">
     <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
     <Setter Property="TextElement.Foreground" Value="{DynamicResource MaterialDesignBody}" />
     <Setter Property="FontFamily" Value="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" />
@@ -30,15 +30,15 @@
     <Setter Property="TextElement.FontSize" Value="14" />
   </Style>
 
-  <Style TargetType="Window" BasedOn="{StaticResource MaterialWindowBase}" />
+  <Style TargetType="Window" BasedOn="{StaticResource MaterialWindowBaseStyle}" />
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml crates MainWindow.xaml -->
-  <Style x:Key="MaterialWindow" TargetType="controls:MaterialWindowEx" BasedOn="{StaticResource MaterialWindowBase}">
+  <Style x:Key="MaterialWindowStyle" TargetType="controls:MaterialWindowEx" BasedOn="{StaticResource MaterialWindowBaseStyle}">
     <Setter Property="BorderBackgroundBrush" Value="{DynamicResource MaterialDesignPaper}" />
   </Style>
 
   <!--un-keyed style required by windows created in code, e.g. XxxWindow.Show()-->
-  <Style TargetType="controls:MaterialWindowEx" BasedOn="{StaticResource MaterialWindow}" />
+  <Style TargetType="controls:MaterialWindowEx" BasedOn="{StaticResource MaterialWindowStyle}" />
 
   <Style x:Key="RaisedDarkButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
     <Setter Property="Margin" Value="5,0" />
@@ -49,7 +49,7 @@
 
   <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButton}" />
 
-  <Style x:Key="RaisedAccentButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+  <Style x:Key="RaisedAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
     <Setter Property="Margin" Value="5,0" />
     <Setter Property="Padding" Value="5" />
     <Setter Property="Height" Value="Auto" />
@@ -58,7 +58,7 @@
     <Setter Property="ToolTipService.ShowOnDisabled" Value="true"/>
   </Style>
 
-  <Style x:Key="AlternateRaisedButton" TargetType="Button" BasedOn="{StaticResource RaisedAccentButton}">
+  <Style x:Key="RaisedHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedAccentButtonStyle}">
     <Setter Property="Background" Value="Coral" />
     <Setter Property="BorderBrush" Value="Coral" />
   </Style>
@@ -78,7 +78,7 @@
     <Setter Property="Foreground" Value="Coral" />
   </Style>
 
-  <Style x:Key="Title" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}">
+  <Style x:Key="TitleStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}">
     <Setter Property="Margin" Value="0,9,0,4" />
   </Style>
 
@@ -93,7 +93,7 @@
   <!--<Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}"/>-->
   <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" />
 
-  <Style x:Key="HighlightableCheckBox" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+  <Style x:Key="HighlightableCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
         <Setter Property="Foreground" Value="Coral" />
@@ -101,7 +101,7 @@
     </Style.Triggers>
   </Style>
 
-  <Style x:Key="HighlightableRadioButton" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
+  <Style x:Key="HighlightableRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
         <Setter Property="Foreground" Value="Coral" />
@@ -229,34 +229,4 @@
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
-  <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
-    <WrapPanel Margin="0,2">
-      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" 
-                 MinWidth="{TemplateBinding controls:GenericAttached.Double}" 
-                 FontSize="{TemplateBinding controls:GenericAttached.Double2}"
-                 Style="{StaticResource KeyTextBlockStyle}" />
-      <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" />
-    </WrapPanel>
-  </ControlTemplate>
-
-  <ControlTemplate x:Key="KeyValueAutoPair" TargetType="ContentControl">
-    <WrapPanel Margin="0,2">
-      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" 
-                 MinWidth="{TemplateBinding controls:GenericAttached.Double}" 
-                 FontSize="{TemplateBinding controls:GenericAttached.Double2}"
-                 Style="{StaticResource KeyTextBlockAutoStyle}" />
-      <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" />
-    </WrapPanel>
-  </ControlTemplate>
-
-  <ControlTemplate x:Key="KeyValueStringPair" TargetType="ContentControl">
-    <!--using a DockPanel instead of WrapPanel so the children width are constrained.. and thus text trimming will work-->
-    <DockPanel Margin="0,2">
-      <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding controls:GenericAttached.String}" 
-                 MinWidth="{TemplateBinding controls:GenericAttached.Double}" 
-                 FontSize="{TemplateBinding controls:GenericAttached.Double2}"
-                 Style="{StaticResource KeyTextBlockStyle}" />
-      <TextBlock Text="{TemplateBinding controls:GenericAttached.String2}" Style="{StaticResource ValueTextBlockStyle}" />
-    </DockPanel>
-  </ControlTemplate>
 </ResourceDictionary>

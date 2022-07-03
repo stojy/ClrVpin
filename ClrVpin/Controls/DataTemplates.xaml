@@ -21,7 +21,7 @@
               Margin="{Binding IsSpecial, Converter={StaticResource BoolToCheckboxMarginConverter}}"
               Command="{Binding SelectedCommand}"
               FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
-              Style="{StaticResource HighlightableCheckBox}" />
+              Style="{StaticResource HighlightableCheckBoxStyle}" />
   </DataTemplate>
 
   <DataTemplate x:Key="FeatureTypeRadioButtonTemplate" DataType="shared:FeatureType">
@@ -34,7 +34,7 @@
                  Margin="{Binding IsSpecial, Converter={StaticResource BoolToRadioButtonMarginConverter}}"
                  Command="{Binding SelectedCommand}"
                  FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
-                 Style="{StaticResource HighlightableRadioButton}"
+                 Style="{StaticResource HighlightableRadioButtonStyle}"
                  />
   </DataTemplate>
 

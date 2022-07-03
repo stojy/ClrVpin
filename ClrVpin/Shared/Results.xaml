@@ -13,7 +13,7 @@
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="/Controls/Styles.xaml" />
-    <ResourceDictionary Source="/Controls/Templates.xaml" />
+    <ResourceDictionary Source="/Controls/DataTemplates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <ContextMenu x:Key="HitGameContentContextMenu" d:DataContext="{d:DesignInstance shared1:Hit }">
@@ -51,7 +51,7 @@
       <!--dock panel to provide a scrollbar for the tree view-->
       <DockPanel Margin="5">
         <StackPanel DockPanel.Dock="Top">
-          <TextBlock Style="{StaticResource Title}">Filter Criteria</TextBlock>
+          <TextBlock Style="{StaticResource TitleStyle}">Filter Criteria</TextBlock>
           <WrapPanel Margin="5,0,0,0">
             <TextBox Width="150" VerticalAlignment="Center" materialDesign:HintAssist.Hint="Search" materialDesign:HintAssist.HelperText="e.g. magic"
                      Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
