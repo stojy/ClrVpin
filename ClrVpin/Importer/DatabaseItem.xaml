@@ -6,7 +6,8 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:importer="clr-namespace:ClrVpin.Importer"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:controls="clr-namespace:ClrVpin.Controls">
+                    xmlns:controls="clr-namespace:ClrVpin.Controls"
+                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -96,10 +97,17 @@
       <!--table properties-->
       <GroupBox Header="Table Properties" Margin="0,10,0,0">
         <StackPanel Margin="5,0">
-          <TextBox Text="{Binding GameDetail.Game.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                   materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding GameDetail.Derived.TableFileWithExtension}"
+          <TextBox materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding GameDetail.Derived.TableFileWithExtension}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                   Width="420" Margin="0,5,0,10" />
+                   Width="420" Margin="0,5,0,10">
+            <TextBox.Text>
+              <Binding Path="GameDetail.Game.Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                <Binding.ValidationRules>
+                  <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue" />
+                </Binding.ValidationRules>
+              </Binding>
+            </TextBox.Text>
+          </TextBox>
 
           <WrapPanel Margin="0,10,0,0">
             <ComboBox ItemsSource="{Binding ManufacturersView}"

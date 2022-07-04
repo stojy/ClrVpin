@@ -78,7 +78,7 @@ namespace ClrVpin.Importer
                 GameDerived.Init(GameDetail);
 
                 // check if anything has changed.. used to enable the 'update' button
-                IsItemChanged = !GameDetail.IsEqual(initialSerializedGame);
+                IsItemChanged = !GameDetail.IsEqual(initialSerializedGame) && !GameDetail.Game.Name.IsEmpty();
 
                 CheckGameAgainstFeed(onlineGame);
             });
