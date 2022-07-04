@@ -49,6 +49,7 @@ namespace ClrVpin.Importer
         {
             var beforeUpdatedPropertyCount = GetPropertiesUpdatedCount(propertyStatistics);
 
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Name), () => game.Name, () => onlineGame.Description, value => game.Name = value, skipUpdate);
             CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value, skipUpdate);
             CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Description), () => game.Description, () => onlineGame.Description, value => game.Description = value, skipUpdate);
             CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(), value => game.Author = value, skipUpdate);
@@ -65,6 +66,7 @@ namespace ClrVpin.Importer
 
         private static Dictionary<string, int> CreatePropertyStatistics() => new Dictionary<string, int>
         {
+            { nameof(Game.Name), 0 },
             { nameof(Game.IpdbId), 0 },
             { nameof(Game.Description), 0 },
             { nameof(Game.Author), 0 },
@@ -83,10 +85,13 @@ namespace ClrVpin.Importer
             if ((gameValue().IsEmpty() || overwrite) && !onlineGameValue().IsEmpty() && gameValue() != onlineGameValue())
             {
                 if (!skipUpdate)
+                {
+                    Logger.Info($"Fixing missing info: table='{game}', {property}='{gameValue()}'");
                     updateAction(onlineGameValue());
+                }
+
                 updatedPropertyCounts[property]++;
 
-                Logger.Info($"Fixing missing info: table='{game}', {property}='{gameValue()}'");
             }
         }
     }

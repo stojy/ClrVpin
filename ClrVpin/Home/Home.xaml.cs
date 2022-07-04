@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using ClrVpin.Shared;
+using ClrVpin.Extensions;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Application = System.Windows.Application;
