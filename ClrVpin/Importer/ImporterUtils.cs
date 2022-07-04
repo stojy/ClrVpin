@@ -62,15 +62,17 @@ namespace ClrVpin.Importer
             return onlineGames;
         }
 
-        public static Dictionary<string, int> FixOnlineDatabase(List<OnlineGame> games)
+        public static Dictionary<string, int> FixOnlineDatabase(List<OnlineGame> onlineGames)
         {
             // fix game ordering - alphanumerical
-            var orderedDames = games.OrderBy(game => game.Name).ToArray();
-            games.Clear();
-            games.AddRange(orderedDames);
+            var orderedDames = onlineGames.OrderBy(game => game.Name).ToArray();
+            onlineGames.Clear();
+            onlineGames.AddRange(orderedDames);
+
+            FixDuplicateGames(onlineGames);
 
             // various updates and/or fixes to the feed
-            games.ForEach((game, index) =>
+            onlineGames.ForEach((game, index) =>
             {
                 game.Index = index + 1;
 
@@ -96,23 +98,66 @@ namespace ClrVpin.Importer
                 Fix(game);
 
                 // copy the dictionary files (potentially re-arranged, filtered, etc) back to the lists to ensure they are in sync
-                game.TableFiles = game.AllFiles[nameof(game.TableFiles)].Cast<TableFile>().ToArray();
-                game.B2SFiles = game.B2SFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.WheelArtFiles = game.WheelArtFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.RomFiles = game.RomFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.MediaPackFiles = game.MediaPackFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.AltColorFiles = game.AltColorFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.SoundFiles = game.SoundFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.TopperFiles = game.TopperFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.PupPackFiles = game.PupPackFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.PovFiles = game.PovFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.AltSoundFiles = game.AltSoundFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
-                game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToArray();
+                game.TableFiles = game.AllFiles[nameof(game.TableFiles)].Cast<TableFile>().ToList();
+                game.B2SFiles = game.B2SFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.WheelArtFiles = game.WheelArtFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.RomFiles = game.RomFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.MediaPackFiles = game.MediaPackFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.AltColorFiles = game.AltColorFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.SoundFiles = game.SoundFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.TopperFiles = game.TopperFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.PupPackFiles = game.PupPackFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.PovFiles = game.PovFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.AltSoundFiles = game.AltSoundFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+                game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             });
 
             return _feedFixStatistics;
         }
 
+        private static void FixDuplicateGames(List<OnlineGame> onlineGames)
+        {
+            // fix each game's url to ensure there are no invalid urls
+            // - this needs to be done BEFORE the rest of the game fixing because we must remove the duplicate entries BEFORE the various collections are created
+            onlineGames.ForEach(FixIpdbUrl);
+
+            // duplicate games are determined by whether entries are have duplicate IPDB url references
+            // - only works for manufactured tables of course
+            // - e.g. Star Trek and JP's Star Trek share the same IPDB url
+            var duplicateGames = onlineGames.Where(game => !game.IpdbUrl.IsEmpty()).GroupBy(game => game.IpdbUrl).Where(x => x.Count() > 1).ToList();
+
+            duplicateGames.ForEach(grouping =>
+            {
+                // todo; check for eligibility via fuzzy matching
+
+                // assign the duplicate
+                // todo; how to determine which is the correct name?
+                var game = grouping.ElementAt(0);
+                var duplicate = grouping.ElementAt(1);
+
+                LogFixed(game, FixDuplicateGame, $"duplicate table={duplicate.Description}");
+                
+                // todo; remove this log
+                Logger.Warn($"Duplicate table found: ${grouping.Key}\n- {grouping.StringJoin("\n- ")}");
+
+                // merge games collections
+                game.TableFiles.AddRange(duplicate.TableFiles);
+                game.B2SFiles.AddRange(duplicate.B2SFiles);
+                game.WheelArtFiles.AddRange(duplicate.WheelArtFiles);
+                game.RomFiles.AddRange(duplicate.RomFiles);
+                game.MediaPackFiles.AddRange(duplicate.MediaPackFiles);
+                game.AltColorFiles.AddRange(duplicate.AltColorFiles);
+                game.SoundFiles.AddRange(duplicate.SoundFiles);
+                game.TopperFiles.AddRange(duplicate.TopperFiles);
+                game.PupPackFiles.AddRange(duplicate.PupPackFiles);
+                game.AltSoundFiles.AddRange(duplicate.AltSoundFiles);
+                game.RuleFiles.AddRange(duplicate.RuleFiles);
+
+                // remove duplicate
+                onlineGames.Remove(duplicate);
+            });
+            duplicateGames.ForEach(grouping => Logger.Warn($"Duplicate table found for IPDB url: ${grouping.Key}\n- {grouping.StringJoin("\n- ")}"));
+        }
         private static ImporterMatchStatistics MatchOnlineToLocal(IList<GameDetail> games, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
         {
             var matchStatistics = new ImporterMatchStatistics();
@@ -148,7 +193,7 @@ namespace ClrVpin.Importer
                                        $"- new feed match:      score={$"{score},",-4} {Fuzzy.LogGameDetail(fuzzyNameDetails.ActualName, null, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}";
                         
                         if (!(isOriginal && Model.Settings.SkipLoggingForOriginalTables))
-                            Logger.Info(fuzzyLog);
+                            Logger.Info(fuzzyLog, true);
 
                         // if the new match has a greater score..
                         // - Yes = remove the previous hit for the SAME game since it must be wrong
@@ -329,11 +374,16 @@ namespace ClrVpin.Importer
                 );
             });
 
+            FixIpdbUrl(onlineGame);
+        }
+
+        private static void FixIpdbUrl(OnlineGame onlineGame)
+        {
             // fix invalid IPDB Url
             // - e.g. "Not Available" frequently used for original tables
             if (!(Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
             {
-                LogFixed(onlineGame, FixInvalidIpdbUrl, $"type=IPDB url={onlineGame.IpdbUrl}");
+                LogFixed(onlineGame, FixInvalidIpdbUrl, $"url={onlineGame.IpdbUrl}");
                 onlineGame.IpdbUrl = null;
             }
 
@@ -341,7 +391,7 @@ namespace ClrVpin.Importer
             // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
             if (onlineGame.IsOriginal && onlineGame.IpdbUrl != null)
             {
-                LogFixed(onlineGame, FixWrongIpdbUrl, $"type=IPDB url={onlineGame.IpdbUrl}");
+                LogFixed(onlineGame, FixWrongIpdbUrl, $"url={onlineGame.IpdbUrl}");
                 onlineGame.IpdbUrl = null;
             }
         }
@@ -380,6 +430,7 @@ namespace ClrVpin.Importer
         private const string FixWrongUrl = "Wrong Url";
         private const string FixInvalidIpdbUrl = "Invalid IPDB Url";
         private const string FixWrongIpdbUrl = "Wrong IPDB Url";
+        private const string FixDuplicateGame = "Duplicate Table";
 
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
         private static readonly Dictionary<string, int> _feedFixStatistics = new Dictionary<string, int>();

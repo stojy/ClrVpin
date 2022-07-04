@@ -61,6 +61,11 @@ namespace Utils.Extensions
                 Remove(source, item);
         }
 
+        public static void AddRange<T>(this ICollection<T> source, ICollection<T> items)
+        {
+            items.ForEach(source.Add);
+        }
+
         public static bool In<T>(this T item, IEnumerable<T> source)
         {
             return source.Contains(item);

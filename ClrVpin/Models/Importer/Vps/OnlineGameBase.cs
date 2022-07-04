@@ -34,21 +34,20 @@ public class OnlineGameBase
 
     public string ImgUrl { get; set; }
 
-    public TableFile[] TableFiles { get; set; } = Array.Empty<TableFile>();
-    public ImageFile[] B2SFiles { get; set; } = Array.Empty<ImageFile>();
-    public File[] WheelArtFiles { get; set; } = Array.Empty<File>();
-    public File[] RomFiles { get; set; } = Array.Empty<File>();
-
-    public File[] MediaPackFiles { get; set; } = Array.Empty<File>();
-    public File[] AltColorFiles { get; set; } = Array.Empty<File>();
-    public File[] SoundFiles { get; set; } = Array.Empty<File>();
-    public File[] TopperFiles { get; set; } = Array.Empty<File>();
-    public File[] PupPackFiles { get; set; } = Array.Empty<File>();
-    public File[] PovFiles { get; set; } = Array.Empty<File>();
-    public File[] AltSoundFiles { get; set; } = Array.Empty<File>();
-    public File[] RuleFiles { get; set; } = Array.Empty<File>();
+    public List<TableFile> TableFiles { get; set; } = new List<TableFile>();
+    public List<ImageFile> B2SFiles { get; set; } = new List<ImageFile>();
+    public List<File> WheelArtFiles { get; set; } = new List<File>();
+    public List<File> RomFiles { get; set; } = new List<File>();
+    public List<File> MediaPackFiles { get; set; } = new List<File>();
+    public List<File> AltColorFiles { get; set; } = new List<File>();
+    public List<File> SoundFiles { get; set; } = new List<File>();
+    public List<File> TopperFiles { get; set; } = new List<File>();
+    public List<File> PupPackFiles { get; set; } = new List<File>();
+    public List<File> PovFiles { get; set; } = new List<File>();
+    public List<File> AltSoundFiles { get; set; } = new List<File>();
+    public List<File> RuleFiles { get; set; } = new List<File>();
     
-    public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Length}, B2Ss={B2SFiles.Length}, Wheels={WheelArtFiles.Length}";
+    public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Count}, B2Ss={B2SFiles.Count}, Wheels={WheelArtFiles.Count}";
 }
 
 public class GameHit

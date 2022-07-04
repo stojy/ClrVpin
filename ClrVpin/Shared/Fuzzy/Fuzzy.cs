@@ -222,7 +222,7 @@ namespace ClrVpin.Shared.Fuzzy
                 if (isMatch)
                     Logger.Debug(fuzzyLog, true); // log as debug diagnostic as matches are are typically of 'lesser' interest
                 else
-                    Logger.Warn(fuzzyLog);
+                    Logger.Warn(fuzzyLog, true);
             }
 
             return (preferredMatch?.GameDetail, preferredMatch?.MatchResult.score, isMatch);
