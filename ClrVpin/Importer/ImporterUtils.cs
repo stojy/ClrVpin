@@ -74,9 +74,15 @@ namespace ClrVpin.Importer
             onlineGames.Clear();
             onlineGames.AddRange(orderedDames);
 
+
+            // perform pre-merge fixes, i.e. fixes that do NOT require any duplicate game collections to be merged
+            // - some of this information mus be done BEFORE the rest of the game fixing because the duplicate entries must be correctly removed BEFORE the various collections are created
+            onlineGames.ForEach(FixPreMerge);
+
+            // merge duplicate entries
             FixDuplicateGames(onlineGames);
 
-            // various updates and/or fixes to the feed
+            // perform post-merge fixes, i.e. fixes that DO require duplicate game collections to be merged
             onlineGames.ForEach((game, index) =>
             {
                 game.Index = index + 1;
@@ -100,7 +106,7 @@ namespace ClrVpin.Importer
                 game.AllFilesList = game.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
                 game.ImageFiles = game.TableFiles.Concat(game.B2SFiles).ToList();
 
-                Fix(game);
+                FixPostMerge(game);
 
                 // copy the dictionary files (potentially re-arranged, filtered, etc) back to the lists to ensure they are in sync
                 game.TableFiles = game.AllFiles[nameof(game.TableFiles)].Cast<TableFile>().ToList();
@@ -122,10 +128,6 @@ namespace ClrVpin.Importer
 
         private static void FixDuplicateGames(List<OnlineGame> onlineGames)
         {
-            // fix each game's url to ensure there are no invalid urls
-            // - this needs to be done BEFORE the rest of the game fixing because we must remove the duplicate entries BEFORE the various collections are created
-            onlineGames.ForEach(FixIpdbUrl);
-
             // duplicate games are determined by whether entries are have duplicate IPDB url references
             // - only works for manufactured tables of course
             // - e.g. Star Trek and JP's Star Trek share the same IPDB url
@@ -308,19 +310,9 @@ namespace ClrVpin.Importer
             });
         }
 
-        private static void Fix(OnlineGame onlineGame)
+        // fixes that do NOT require the collections to be initialized (which must occur after de-duplicating, aka merging)
+        private static void FixPreMerge(OnlineGame onlineGame)
         {
-            // fix image url - assign to the first available image url.. B2S then table
-            if (onlineGame.ImgUrl == null)
-            {
-                var imageUrl = onlineGame.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? onlineGame.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
-                if (imageUrl != null)
-                {
-                    LogFixed(onlineGame, FixGameMissingImage, $"url='{imageUrl}'");
-                    onlineGame.ImgUrl = imageUrl;
-                }
-            }
-
             // fix game name - remove whitespace
             if (onlineGame.Name != onlineGame.Name.Trim())
             {
@@ -333,6 +325,36 @@ namespace ClrVpin.Importer
             {
                 LogFixed(onlineGame, FixGameManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
                 onlineGame.Manufacturer = onlineGame.Manufacturer.Trim();
+            }
+
+            // fix invalid IPDB Url
+            // - e.g. "Not Available" frequently used for original tables
+            if (!(Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
+            {
+                LogFixed(onlineGame, FixInvalidIpdbUrl, $"url={onlineGame.IpdbUrl}");
+                onlineGame.IpdbUrl = null;
+            }
+
+            // fix wrong IPDB url
+            // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
+            if (onlineGame.IsOriginal && onlineGame.IpdbUrl != null)
+            {
+                LogFixed(onlineGame, FixWrongIpdbUrl, $"url={onlineGame.IpdbUrl}");
+                onlineGame.IpdbUrl = null;
+            }
+        }
+        
+        private static void FixPostMerge(OnlineGame onlineGame)
+        {
+            // fix image url - assign to the first available image url.. B2S then table
+            if (onlineGame.ImgUrl == null)
+            {
+                var imageUrl = onlineGame.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? onlineGame.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
+                if (imageUrl != null)
+                {
+                    LogFixed(onlineGame, FixGameMissingImage, $"url='{imageUrl}'");
+                    onlineGame.ImgUrl = imageUrl;
+                }
             }
 
             // fix updated timestamp - must not be lower than the created timestamp
@@ -400,27 +422,6 @@ namespace ClrVpin.Importer
                     })
                 );
             });
-
-            FixIpdbUrl(onlineGame);
-        }
-
-        private static void FixIpdbUrl(OnlineGame onlineGame)
-        {
-            // fix invalid IPDB Url
-            // - e.g. "Not Available" frequently used for original tables
-            if (!(Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
-            {
-                LogFixed(onlineGame, FixInvalidIpdbUrl, $"url={onlineGame.IpdbUrl}");
-                onlineGame.IpdbUrl = null;
-            }
-
-            // fix wrong IPDB url
-            // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
-            if (onlineGame.IsOriginal && onlineGame.IpdbUrl != null)
-            {
-                LogFixed(onlineGame, FixWrongIpdbUrl, $"url={onlineGame.IpdbUrl}");
-                onlineGame.IpdbUrl = null;
-            }
         }
 
         private static void LogFixedTimestamp(OnlineGame onlineGame, string type, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
