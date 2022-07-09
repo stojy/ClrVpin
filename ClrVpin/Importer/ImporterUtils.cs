@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ClrVpin.Converters;
 using ClrVpin.Logging;
@@ -14,7 +15,7 @@ using Utils.Extensions;
 
 namespace ClrVpin.Importer
 {
-    internal static class ImporterUtils
+    public static class ImporterUtils
     {
         static ImporterUtils()
         {
@@ -23,6 +24,10 @@ namespace ClrVpin.Importer
                 PropertyNameCaseInsensitive = true,
                 Converters = { new UnixToNullableDateTimeConverter { IsFormatInSeconds = false } }
             };
+
+            // used with Regex.Replace will capture multiple matches at once.. same word or other other words
+            // - refer Fuzzy.cs
+            _trimAuthorsRegex = new Regex($@"(?<=^|[^a-z^A-Z])({Fuzzy.Authors.StringJoin("|")})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         }
 
         public static async Task<ImporterMatchStatistics> MatchOnlineToLocalAsync(List<GameDetail> games, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
@@ -128,36 +133,58 @@ namespace ClrVpin.Importer
 
             duplicateGames.ForEach(grouping =>
             {
-                // todo; check for eligibility via fuzzy matching
+                // assign the unique and duplicate(s)
+                var game = GetUniqueGame(grouping.ToList());
+                var duplicates = grouping.Except(game).ToList();
 
-                // assign the duplicate
-                // todo; how to determine which is the correct name?
-                var game = grouping.ElementAt(0);
-                var duplicate = grouping.ElementAt(1);
+                LogFixed(game, FixDuplicateGame, $"duplicate table(s)={duplicates.Select(x => x.Description).StringJoin()}");
 
-                LogFixed(game, FixDuplicateGame, $"duplicate table={duplicate.Description}");
-                
-                // todo; remove this log
-                Logger.Warn($"Duplicate table found: ${grouping.Key}\n- {grouping.StringJoin("\n- ")}");
+                // todo; remove
+                Logger.Warn($"Duplicate tables from online feed will been merged, IPDB url: {grouping.Key}\n" +
+                            $"- unique:    {game}\n" +
+                            $"- duplicate: {duplicates.Select(x => x.Description).StringJoin()}");
 
-                // merge games collections
-                game.TableFiles.AddRange(duplicate.TableFiles);
-                game.B2SFiles.AddRange(duplicate.B2SFiles);
-                game.WheelArtFiles.AddRange(duplicate.WheelArtFiles);
-                game.RomFiles.AddRange(duplicate.RomFiles);
-                game.MediaPackFiles.AddRange(duplicate.MediaPackFiles);
-                game.AltColorFiles.AddRange(duplicate.AltColorFiles);
-                game.SoundFiles.AddRange(duplicate.SoundFiles);
-                game.TopperFiles.AddRange(duplicate.TopperFiles);
-                game.PupPackFiles.AddRange(duplicate.PupPackFiles);
-                game.AltSoundFiles.AddRange(duplicate.AltSoundFiles);
-                game.RuleFiles.AddRange(duplicate.RuleFiles);
+                // process the duplicates
+                duplicates.ForEach(duplicate =>
+                {
+                    // merge games collections
+                    game.TableFiles.AddRange(duplicate.TableFiles);
+                    game.B2SFiles.AddRange(duplicate.B2SFiles);
+                    game.WheelArtFiles.AddRange(duplicate.WheelArtFiles);
+                    game.RomFiles.AddRange(duplicate.RomFiles);
+                    game.MediaPackFiles.AddRange(duplicate.MediaPackFiles);
+                    game.AltColorFiles.AddRange(duplicate.AltColorFiles);
+                    game.SoundFiles.AddRange(duplicate.SoundFiles);
+                    game.TopperFiles.AddRange(duplicate.TopperFiles);
+                    game.PupPackFiles.AddRange(duplicate.PupPackFiles);
+                    game.AltSoundFiles.AddRange(duplicate.AltSoundFiles);
+                    game.RuleFiles.AddRange(duplicate.RuleFiles);
 
-                // remove duplicate
-                onlineGames.Remove(duplicate);
+                    // remove duplicate
+                    onlineGames.Remove(duplicate);
+                });
             });
-            duplicateGames.ForEach(grouping => Logger.Warn($"Duplicate table found for IPDB url: ${grouping.Key}\n- {grouping.StringJoin("\n- ")}"));
         }
+
+        public static OnlineGame GetUniqueGame(List<OnlineGame> onlineGames)
+        {
+            // create cleansed list of names ordered in ascending size
+            var cleansed = onlineGames.Select(x =>
+            {
+                // remove author
+                var cleanName = _trimAuthorsRegex.Replace(x.Name, "");
+                cleanName = cleanName.Trim();
+
+                return new
+                {
+                    name = x.Name,
+                    cleanName
+                };
+            }).OrderBy(x => x.name.Length);
+
+            return onlineGames.First(onlineGame => onlineGame.Name == cleansed.First().name);
+        }
+
         private static ImporterMatchStatistics MatchOnlineToLocal(IList<GameDetail> games, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
         {
             var matchStatistics = new ImporterMatchStatistics();
@@ -434,5 +461,6 @@ namespace ClrVpin.Importer
 
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
         private static readonly Dictionary<string, int> _feedFixStatistics = new Dictionary<string, int>();
+        private static readonly Regex _trimAuthorsRegex;
     }
 }

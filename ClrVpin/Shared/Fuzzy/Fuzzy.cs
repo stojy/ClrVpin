@@ -28,17 +28,17 @@ namespace ClrVpin.Shared.Fuzzy
 
             // words
             _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
-            string[] authors = { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99" };
+            Authors = new[] { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99" };
             string[] language = { "a", "and", "the", "premium", "en" };
             string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
-            pattern = string.Join('|', authors.Concat(language).Concat(vpx));
+            pattern = string.Join('|', Authors.Concat(language).Concat(vpx));
 
             // captures first word match
             // - handles start and end of string
             // - used with Regex.Replace will capture multiple matches at once.. same word or other other words
             // - lookahead match without capture: https://stackoverflow.com/a/3926546/227110
             // - https://regex101.com/r/DoztL5/1
-            _trimWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            _trimWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
 
             // first pass single whitespace
             // - performed BEFORE other checks that aren't sensitive to these changes
@@ -426,5 +426,6 @@ namespace ClrVpin.Shared.Fuzzy
         private static readonly Regex _preambleRegex;
         private static readonly Regex _multipleWhitespaceRegex;
         private static readonly string[] _titleCaseWordExceptions;
+        public static readonly string[] Authors;
     }
 }
