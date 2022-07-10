@@ -47,6 +47,8 @@ namespace ClrVpin.Importer
             _feedFixStatistics.Add(FixTableNameWhitespace, 0);
             _feedFixStatistics.Add(FixTableManufacturerWhitespace, 0);
             _feedFixStatistics.Add(FixManufacturedContainsAuthor, 0);
+            _feedFixStatistics.Add(FixTableWrongManufacturer, 0);
+            _feedFixStatistics.Add(FixTableWrongName, 0);
             _feedFixStatistics.Add(FixTableMissingImage, 0);
             _feedFixStatistics.Add(FixTableCreatedTime, 0);
             _feedFixStatistics.Add(FixTableUpdatedTimeTooLow, 0);
@@ -273,6 +275,9 @@ namespace ClrVpin.Importer
         // fixes that do NOT require the collections to be initialized (which must occur after de-duplicating, aka merging)
         private static void FixPreMerge(OnlineGame onlineGame)
         {
+            // fix named games
+            FixNamedGames(onlineGame);
+
             // fix game name - remove whitespace
             if (onlineGame.Name != onlineGame.Name.Trim())
             {
@@ -287,7 +292,7 @@ namespace ClrVpin.Importer
                 onlineGame.Manufacturer = onlineGame.Manufacturer.Trim();
             }
 
-            // remove author of the game is manufactured
+            // remove author of the game for manufactured tables
             // - e.g. JP's Captain Fantastic (Bally 1976)
             if (!GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name) && _trimAuthorsRegex.IsMatch(onlineGame.Name))
             {
@@ -306,21 +311,82 @@ namespace ClrVpin.Importer
 
             // fix wrong IPDB url
             // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
-            if (onlineGame.IsOriginal && onlineGame.IpdbUrl != null)
-            {
-                LogFixed(onlineGame, FixWrongIpdbUrl, $"url={onlineGame.IpdbUrl}");
-                onlineGame.IpdbUrl = null;
-            }
+            if (onlineGame.IsOriginal && onlineGame.IpdbUrl != null) 
+                FixGameWrongIpdbUrl(onlineGame, null);
+        }
 
-            // fix incorrect IPDB url
-            // - this is a very smelly fix to make (i.e. non-generic).. but making an exception here as it's one off and IPDB url is needs to be accurate for the subsequent de-duplication (aka merging)
-            if (onlineGame.Description == "Austin Powers (Stern 2001)" && onlineGame.IpdbUrl == "http://www.ipdb.org/machine.cgi?id=109")
+        private static void FixNamedGames(OnlineGame onlineGame)
+        {
+            // non-generic fixes for specifically named games
+            // - this is very smelly, but treating these as 'exceptional' (and hopefully few!) scenarios, similar to GameDerived.CheckIsOriginal
+            // - todo; report/fix the underlying VPS feed and then remove this code
+            switch (onlineGame.Description)
             {
-                LogFixed(onlineGame, FixWrongIpdbUrl, $"url={onlineGame.IpdbUrl} is NOT the correct URL!");
-                onlineGame.IpdbUrl = "https://www.ipdb.org/machine.cgi?id=4504";
+                case "Austin Powers (Stern 2001)":
+                    FixGameWrongIpdbUrl(onlineGame, "http://www.ipdb.org/machine.cgi?id=4504");
+                    break;
+                case "JP's Dale Jr. Nascar (Original 2020)":
+                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5292", "Stern", 2007);
+                    break;
+                case "JP'S Nascar Race (Original 2005)":
+                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5093", "Stern");
+                    break;
+                case "JP's Grand Prix (Original 2005)":
+                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5120", "Stern");
+                    break;
+                case "JP's Lord Of The Rings (Original 2003)":
+                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=4858", "Stern");
+                    break;
+                case "JP's Motor Show (Original 1989)":
+                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=3631", "Mr. Game");
+                    break;
+                case "JP's Spider-Man (Original 2011)":
+                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5237", "Stern", 2007);
+                    break;
+                case "Siggi's Spider-Man Classic (Stern 2016)":
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=6328", "Stern", 2016, "Spider-Man (Vault Edition)");
+                    break;
+                case "JP's Street Fighter 2 (Original 1993)":
+                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=2403", "Gottlieb");
+                    break;
+                case "JP's Terminator 2 (Original 2020)":
+                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=2524", "Williams", 1991, "Terminator 2 Judgment Day");
+                    break;
+                case "JP's Transformers (Original 2011)":
+                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5709", "Stern");
+                    break;
+                case "Phychedelic (Gottlieb 1970)":
+                    FixGameWrongName(onlineGame, "Psychedelic");
+                    break;
             }
         }
+
+        private static void FixGameWrongIpdbUrl(OnlineGameBase onlineGame, string ipdbUrl)
+        {
+            LogFixed(onlineGame, FixWrongIpdbUrl, $"old url={onlineGame.IpdbUrl}, new url={ipdbUrl}");
+            onlineGame.IpdbUrl = ipdbUrl;
+        }
         
+        private static void FixGameWrongName(OnlineGameBase onlineGame, string name)
+        {
+            LogFixed(onlineGame, FixTableWrongName, $"new name={name}");
+            onlineGame.Name = name;
+        }
+
+        private static void FixGame(OnlineGameBase onlineGame, string ipdbUrl, string manufacturer, int? year = null, string name = null)
+        {
+            // assign correct IPDB url and manufacturer
+            // - if the game already exists, then it will be picked up later as a duplicate
+            FixGameWrongIpdbUrl(onlineGame, ipdbUrl);
+
+            LogFixed(onlineGame, FixTableWrongManufacturer, $"old manufacturer={onlineGame.Manufacturer}, new manufacturer={manufacturer}");
+            onlineGame.Manufacturer = manufacturer;
+            onlineGame.Year = year ?? onlineGame.Year;
+
+            if (name != null) 
+                FixGameWrongName(onlineGame, name);
+        }
+
         private static void FixDuplicateGames(ICollection<OnlineGame> onlineGames)
         {
             // duplicate games are determined by whether entries are have duplicate IPDB url references
@@ -451,7 +517,7 @@ namespace ClrVpin.Importer
         {
             AddFixStatistic(type);
 
-            var name = $"'{onlineGame.Name[..Math.Min(onlineGame.Name.Length, 23)].Trim()}'";
+            var name = $"'{onlineGame.Name[..Math.Min(onlineGame.Name.Length, 35)].Trim()}'";
             Logger.Warn($"Fixed {type,-35} name={name,-35} {details}", true);
         }
 
@@ -468,6 +534,8 @@ namespace ClrVpin.Importer
         private const string FixTableMissingImage = "Table Missing Image Url";
         private const string FixTableManufacturerWhitespace = "Table Manufacturer Whitespace";
         private const string FixManufacturedContainsAuthor = "Manufacturered Contains Author";
+        private const string FixTableWrongManufacturer = "Table Wrong Manufacturer";
+        private const string FixTableWrongName = "Table Wrong Name";
         private const string FixTableCreatedTime = "Table Created Time";
         private const string FixTableUpdatedTimeTooLow = "Table Updated Time Too Low";
         private const string FixTableUpdatedTimeTooHigh = "Table Updated Time Too High";
