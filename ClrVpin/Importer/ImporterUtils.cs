@@ -126,7 +126,7 @@ namespace ClrVpin.Importer
             return _feedFixStatistics;
         }
 
-        private static void FixDuplicateGames(List<OnlineGame> onlineGames)
+        private static void FixDuplicateGames(ICollection<OnlineGame> onlineGames)
         {
             // duplicate games are determined by whether entries are have duplicate IPDB url references
             // - only works for manufactured tables of course
@@ -142,7 +142,7 @@ namespace ClrVpin.Importer
                 LogFixed(game, FixDuplicateGame, $"duplicate table(s)={duplicates.Select(x => x.Description).StringJoin()}");
 
                 // todo; remove
-                Logger.Warn($"Duplicate tables from online feed will been merged, IPDB url: {grouping.Key}\n" +
+                Logger.Warn($"Merging duplicate tables detected in the online feed, IPDB url: {grouping.Key}\n" +
                             $"- unique:    {game}\n" +
                             $"- duplicate: {duplicates.Select(x => x.Description).StringJoin()}");
 
@@ -342,6 +342,16 @@ namespace ClrVpin.Importer
                 LogFixed(onlineGame, FixWrongIpdbUrl, $"url={onlineGame.IpdbUrl}");
                 onlineGame.IpdbUrl = null;
             }
+
+            // fix incorrect IPDB url
+            // - this is a very smelly fix to make (i.e. non-generic).. but making an exception here as it's one off and IPDB url is needs to be accurate for the subsequent de-duplication (aka merging)
+            if (onlineGame.Description == "Austin Powers (Stern 2001)" && onlineGame.IpdbUrl == "http://www.ipdb.org/machine.cgi?id=109")
+            {
+                LogFixed(onlineGame, FixWrongIpdbUrl, $"url={onlineGame.IpdbUrl} is NOT the correct URL!");
+                onlineGame.IpdbUrl = "https://www.ipdb.org/machine.cgi?id=4504";
+            }
+            
+
         }
         
         private static void FixPostMerge(OnlineGame onlineGame)

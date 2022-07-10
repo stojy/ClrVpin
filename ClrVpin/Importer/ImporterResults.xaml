@@ -436,7 +436,7 @@
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
                                   Header="#" Binding="{Binding Index}" Width="45" />
 
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Action" Width="45" SortMemberPath="IsMatched">
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Fix" Width="45" SortMemberPath="IsMatched">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate DataType="vps:OnlineGame">
                     <WrapPanel>
