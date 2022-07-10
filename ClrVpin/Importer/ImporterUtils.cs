@@ -46,6 +46,7 @@ namespace ClrVpin.Importer
             _feedFixStatistics.Clear();
             _feedFixStatistics.Add(FixGameNameWhitespace, 0);
             _feedFixStatistics.Add(FixGameManufacturerWhitespace, 0);
+            _feedFixStatistics.Add(FixManufacturedContainsAuthor, 0);
             _feedFixStatistics.Add(FixGameMissingImage, 0);
             _feedFixStatistics.Add(FixGameCreatedTime, 0);
             _feedFixStatistics.Add(FixGameUpdatedTimeTooLow, 0);
@@ -126,56 +127,12 @@ namespace ClrVpin.Importer
             return _feedFixStatistics;
         }
 
-        private static void FixDuplicateGames(ICollection<OnlineGame> onlineGames)
-        {
-            // duplicate games are determined by whether entries are have duplicate IPDB url references
-            // - only works for manufactured tables of course
-            // - e.g. Star Trek and JP's Star Trek share the same IPDB url
-            var duplicateGames = onlineGames.Where(game => !game.IpdbUrl.IsEmpty()).GroupBy(game => game.IpdbUrl).Where(x => x.Count() > 1).ToList();
-
-            duplicateGames.ForEach(grouping =>
-            {
-                // assign the unique and duplicate(s)
-                var game = GetUniqueGame(grouping.ToList());
-                var duplicates = grouping.Except(game).ToList();
-
-                LogFixed(game, FixDuplicateGame, $"duplicate table(s)={duplicates.Select(x => x.Description).StringJoin()}");
-
-                // todo; remove
-                Logger.Warn($"Merging duplicate tables detected in the online feed, IPDB url: {grouping.Key}\n" +
-                            $"- unique:    {game}\n" +
-                            $"- duplicate: {duplicates.Select(x => x.Description).StringJoin()}");
-
-                // process the duplicates
-                duplicates.ForEach(duplicate =>
-                {
-                    // merge games collections
-                    game.TableFiles.AddRange(duplicate.TableFiles);
-                    game.B2SFiles.AddRange(duplicate.B2SFiles);
-                    game.WheelArtFiles.AddRange(duplicate.WheelArtFiles);
-                    game.RomFiles.AddRange(duplicate.RomFiles);
-                    game.MediaPackFiles.AddRange(duplicate.MediaPackFiles);
-                    game.AltColorFiles.AddRange(duplicate.AltColorFiles);
-                    game.SoundFiles.AddRange(duplicate.SoundFiles);
-                    game.TopperFiles.AddRange(duplicate.TopperFiles);
-                    game.PupPackFiles.AddRange(duplicate.PupPackFiles);
-                    game.AltSoundFiles.AddRange(duplicate.AltSoundFiles);
-                    game.RuleFiles.AddRange(duplicate.RuleFiles);
-
-                    // remove duplicate
-                    onlineGames.Remove(duplicate);
-                });
-            });
-        }
-
         public static OnlineGame GetUniqueGame(List<OnlineGame> onlineGames)
         {
             // create cleansed list of names ordered in ascending size
             var cleansed = onlineGames.Select(x =>
             {
-                // remove author
-                var cleanName = _trimAuthorsRegex.Replace(x.Name, "");
-                cleanName = cleanName.Trim();
+                var cleanName = x.Name.Trim();
 
                 return new
                 {
@@ -184,7 +141,10 @@ namespace ClrVpin.Importer
                 };
             }).OrderBy(x => x.name.Length);
 
-            return onlineGames.First(onlineGame => onlineGame.Name == cleansed.First().name);
+            // unique game is the first in the list item in the cleansed list 
+            var uniqueGame = onlineGames.First(onlineGame => onlineGame.Name == cleansed.First().name);
+
+            return uniqueGame;
         }
 
         private static ImporterMatchStatistics MatchOnlineToLocal(IList<GameDetail> games, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
@@ -327,6 +287,15 @@ namespace ClrVpin.Importer
                 onlineGame.Manufacturer = onlineGame.Manufacturer.Trim();
             }
 
+            // remove author of the game is manufactured
+            // - e.g. JP's Captain Fantastic (Bally 1976)
+            if (!GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name) && _trimAuthorsRegex.IsMatch(onlineGame.Name))
+            {
+                var cleanName = _trimAuthorsRegex.Replace(onlineGame.Name, "").Trim();
+                LogFixed(onlineGame, FixManufacturedContainsAuthor, $"correct='{cleanName}, manufacturer='{onlineGame.Manufacturer}'");
+                onlineGame.Name = cleanName;
+            }
+
             // fix invalid IPDB Url
             // - e.g. "Not Available" frequently used for original tables
             if (!(Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
@@ -350,10 +319,49 @@ namespace ClrVpin.Importer
                 LogFixed(onlineGame, FixWrongIpdbUrl, $"url={onlineGame.IpdbUrl} is NOT the correct URL!");
                 onlineGame.IpdbUrl = "https://www.ipdb.org/machine.cgi?id=4504";
             }
-            
-
         }
         
+        private static void FixDuplicateGames(ICollection<OnlineGame> onlineGames)
+        {
+            // duplicate games are determined by whether entries are have duplicate IPDB url references
+            // - only works for manufactured tables of course
+            // - e.g. Star Trek and JP's Star Trek share the same IPDB url
+            var duplicateGames = onlineGames.Where(game => !game.IpdbUrl.IsEmpty()).GroupBy(game => game.IpdbUrl).Where(x => x.Count() > 1).ToList();
+
+            duplicateGames.ForEach(grouping =>
+            {
+                // assign the unique and duplicate(s)
+                var game = GetUniqueGame(grouping.ToList());
+                var duplicates = grouping.Except(game).ToList();
+
+                LogFixed(game, FixDuplicateGame, $"duplicate table(s)={duplicates.Select(x => x.Description).StringJoin()}");
+
+                Logger.Warn($"Merging duplicate tables detected in the online feed, IPDB url: {grouping.Key}\n" +
+                            $"- unique:    {game}\n" +
+                            $"- duplicate: {duplicates.Select(x => x.Description).StringJoin()}");
+
+                // process the duplicates
+                duplicates.ForEach(duplicate =>
+                {
+                    // merge games collections
+                    game.TableFiles.AddRange(duplicate.TableFiles);
+                    game.B2SFiles.AddRange(duplicate.B2SFiles);
+                    game.WheelArtFiles.AddRange(duplicate.WheelArtFiles);
+                    game.RomFiles.AddRange(duplicate.RomFiles);
+                    game.MediaPackFiles.AddRange(duplicate.MediaPackFiles);
+                    game.AltColorFiles.AddRange(duplicate.AltColorFiles);
+                    game.SoundFiles.AddRange(duplicate.SoundFiles);
+                    game.TopperFiles.AddRange(duplicate.TopperFiles);
+                    game.PupPackFiles.AddRange(duplicate.PupPackFiles);
+                    game.AltSoundFiles.AddRange(duplicate.AltSoundFiles);
+                    game.RuleFiles.AddRange(duplicate.RuleFiles);
+
+                    // remove duplicate
+                    onlineGames.Remove(duplicate);
+                });
+            });
+        }
+
         private static void FixPostMerge(OnlineGame onlineGame)
         {
             // fix image url - assign to the first available image url.. B2S then table
@@ -434,17 +442,17 @@ namespace ClrVpin.Importer
             });
         }
 
-        private static void LogFixedTimestamp(OnlineGame onlineGame, string type, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
+        private static void LogFixedTimestamp(OnlineGameBase onlineGame, string type, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
         {
             LogFixed(onlineGame, type, $"game.{gameTimeName} '{gameTime:dd/MM/yy HH:mm:ss}' {(greaterThan ? ">" : "<")} {maxFileTimeName} '{maxFileTime:dd/MM/yy HH:mm:ss}'");
         }
 
-        private static void LogFixed(OnlineGame onlineGame, string type, string details = null)
+        private static void LogFixed(OnlineGameBase onlineGame, string type, string details = null)
         {
             AddFixStatistic(type);
 
             var name = $"'{onlineGame.Name[..Math.Min(onlineGame.Name.Length, 23)].Trim()}'";
-            Logger.Warn($"Fixed {type,-26} index={onlineGame.Index:0000} name={name,-25} {details}", true);
+            Logger.Warn($"Fixed {type,-26} name={name,-25} {details}", true);
         }
 
         private static void AddFixStatistic(string key)
@@ -459,6 +467,7 @@ namespace ClrVpin.Importer
         private const string FixGameNameWhitespace = "Game Name Whitespace";
         private const string FixGameMissingImage = "Game Missing Image Url";
         private const string FixGameManufacturerWhitespace = "Game Manufacturer Whitespace";
+        private const string FixManufacturedContainsAuthor = "Manufacturered Contains Author";
         private const string FixGameCreatedTime = "Game Created Time";
         private const string FixGameUpdatedTimeTooLow = "Game Updated Time Too Low";
         private const string FixGameUpdatedTimeTooHigh = "Game Updated Time Too High";

@@ -46,9 +46,9 @@ namespace ClrVpin.Models.Shared.Game
             derived.TableFileWithExtension = gameDetail.Game.Name  + ".vpx";
         }
 
-        // assign isOriginal based on manufacturer
         public static bool CheckIsOriginal(string manufacturer, string name)
         {
+            // determine isOriginal based on manufacturer
             var isManufacturerOriginal = manufacturer?.StartsWith("Original", StringComparison.InvariantCultureIgnoreCase) == true ||
                    manufacturer?.StartsWith("OrbitalPin", StringComparison.InvariantCultureIgnoreCase) == true ||
                    manufacturer?.StartsWith("HorsePin", StringComparison.InvariantCultureIgnoreCase) == true ||
@@ -56,6 +56,7 @@ namespace ClrVpin.Models.Shared.Game
                    manufacturer?.StartsWith("Professional Pinball", StringComparison.InvariantCultureIgnoreCase) == true ||
                    manufacturer?.StartsWith("Dream Pinball 3D", StringComparison.InvariantCultureIgnoreCase) == true;
             
+            // determine isOriginal based on table name
             var isNameOriginal =  name?.Equals("Jurassic park - Limited Edition", StringComparison.InvariantCultureIgnoreCase) == true || 
                                   name?.Equals("Kiss Live", StringComparison.InvariantCultureIgnoreCase) == true || 
                                   name?.Equals("Dream Pinball 3D", StringComparison.InvariantCultureIgnoreCase) == true || 
