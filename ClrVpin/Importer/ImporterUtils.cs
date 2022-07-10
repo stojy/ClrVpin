@@ -44,13 +44,13 @@ namespace ClrVpin.Importer
         {
             // create dictionary items upfront to ensure the preferred display ordering (for statistics)
             _feedFixStatistics.Clear();
-            _feedFixStatistics.Add(FixGameNameWhitespace, 0);
-            _feedFixStatistics.Add(FixGameManufacturerWhitespace, 0);
+            _feedFixStatistics.Add(FixTableNameWhitespace, 0);
+            _feedFixStatistics.Add(FixTableManufacturerWhitespace, 0);
             _feedFixStatistics.Add(FixManufacturedContainsAuthor, 0);
-            _feedFixStatistics.Add(FixGameMissingImage, 0);
-            _feedFixStatistics.Add(FixGameCreatedTime, 0);
-            _feedFixStatistics.Add(FixGameUpdatedTimeTooLow, 0);
-            _feedFixStatistics.Add(FixGameUpdatedTimeTooHigh, 0);
+            _feedFixStatistics.Add(FixTableMissingImage, 0);
+            _feedFixStatistics.Add(FixTableCreatedTime, 0);
+            _feedFixStatistics.Add(FixTableUpdatedTimeTooLow, 0);
+            _feedFixStatistics.Add(FixTableUpdatedTimeTooHigh, 0);
             _feedFixStatistics.Add(FixFileUpdateTimeOrdering, 0);
             _feedFixStatistics.Add(FixFileUpdatedTime, 0);
             _feedFixStatistics.Add(FixInvalidUrl, 0);
@@ -276,14 +276,14 @@ namespace ClrVpin.Importer
             // fix game name - remove whitespace
             if (onlineGame.Name != onlineGame.Name.Trim())
             {
-                LogFixed(onlineGame, FixGameNameWhitespace);
+                LogFixed(onlineGame, FixTableNameWhitespace);
                 onlineGame.Name = onlineGame.Name.Trim();
             }
 
             // fix manufacturer - remove whitespace
             if (onlineGame.Manufacturer != onlineGame.Manufacturer.Trim())
             {
-                LogFixed(onlineGame, FixGameManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
+                LogFixed(onlineGame, FixTableManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
                 onlineGame.Manufacturer = onlineGame.Manufacturer.Trim();
             }
 
@@ -370,7 +370,7 @@ namespace ClrVpin.Importer
                 var imageUrl = onlineGame.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? onlineGame.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
                 if (imageUrl != null)
                 {
-                    LogFixed(onlineGame, FixGameMissingImage, $"url='{imageUrl}'");
+                    LogFixed(onlineGame, FixTableMissingImage, $"url='{imageUrl}'");
                     onlineGame.ImgUrl = imageUrl;
                 }
             }
@@ -389,7 +389,7 @@ namespace ClrVpin.Importer
             var maxCreatedAt = onlineGame.AllFilesList.Max(x => x.CreatedAt);
             if (onlineGame.LastCreatedAt < maxCreatedAt)
             {
-                LogFixedTimestamp(onlineGame, FixGameCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
+                LogFixedTimestamp(onlineGame, FixTableCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
                 onlineGame.LastCreatedAt = maxCreatedAt;
             }
 
@@ -397,12 +397,12 @@ namespace ClrVpin.Importer
             var maxUpdatedAt = onlineGame.AllFilesList.Max(x => x.UpdatedAt);
             if (onlineGame.UpdatedAt < maxUpdatedAt)
             {
-                LogFixedTimestamp(onlineGame, FixGameUpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
+                LogFixedTimestamp(onlineGame, FixTableUpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
                 onlineGame.UpdatedAt = maxUpdatedAt;
             }
             else if (onlineGame.UpdatedAt > maxUpdatedAt)
             {
-                LogFixedTimestamp(onlineGame, FixGameUpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
+                LogFixedTimestamp(onlineGame, FixTableUpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
                 onlineGame.UpdatedAt = maxUpdatedAt;
             }
 
@@ -452,7 +452,7 @@ namespace ClrVpin.Importer
             AddFixStatistic(type);
 
             var name = $"'{onlineGame.Name[..Math.Min(onlineGame.Name.Length, 23)].Trim()}'";
-            Logger.Warn($"Fixed {type,-26} name={name,-25} {details}", true);
+            Logger.Warn($"Fixed {type,-35} name={name,-35} {details}", true);
         }
 
         private static void AddFixStatistic(string key)
@@ -464,13 +464,13 @@ namespace ClrVpin.Importer
         // refer https://github.com/Fraesh/vps-db, https://virtual-pinball-spreadsheet.web.app/
         private const string VisualPinballSpreadsheetDatabaseUrl = "https://raw.githubusercontent.com/Fraesh/vps-db/master/vpsdb.json";
 
-        private const string FixGameNameWhitespace = "Game Name Whitespace";
-        private const string FixGameMissingImage = "Game Missing Image Url";
-        private const string FixGameManufacturerWhitespace = "Game Manufacturer Whitespace";
+        private const string FixTableNameWhitespace = "Table Name Whitespace";
+        private const string FixTableMissingImage = "Table Missing Image Url";
+        private const string FixTableManufacturerWhitespace = "Table Manufacturer Whitespace";
         private const string FixManufacturedContainsAuthor = "Manufacturered Contains Author";
-        private const string FixGameCreatedTime = "Game Created Time";
-        private const string FixGameUpdatedTimeTooLow = "Game Updated Time Too Low";
-        private const string FixGameUpdatedTimeTooHigh = "Game Updated Time Too High";
+        private const string FixTableCreatedTime = "Table Created Time";
+        private const string FixTableUpdatedTimeTooLow = "Table Updated Time Too Low";
+        private const string FixTableUpdatedTimeTooHigh = "Table Updated Time Too High";
         private const string FixFileUpdateTimeOrdering = "File Update Time Ordering";
         private const string FixFileUpdatedTime = "File Updated Time";
         private const string FixInvalidUrl = "Invalid Url";

@@ -90,7 +90,7 @@ namespace ClrVpin.Importer
         private readonly List<OnlineGame> _onlineGames;
         private readonly List<GameDetail> _games;
 
-        private const int StatisticsKeyWidth = -30;
+        private const int StatisticsKeyWidth = -32;
         private const int WindowMargin = 0;
     }
 }
