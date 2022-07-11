@@ -28,6 +28,7 @@ namespace ClrVpin.Importer
             // used with Regex.Replace will capture multiple matches at once.. same word or other other words
             // - refer Fuzzy.cs
             _trimAuthorsRegex = new Regex($@"(?<=^|[^a-z^A-Z])({Fuzzy.Authors.StringJoin("|")})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            _feedFixStatistics = new Dictionary<string, int>();
         }
 
         public static async Task<ImporterMatchStatistics> MatchOnlineToLocalAsync(List<GameDetail> games, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
@@ -555,7 +556,7 @@ namespace ClrVpin.Importer
         private const string FixDuplicateGame = "Duplicate Table";
 
         private static readonly JsonSerializerOptions _jsonSerializerOptions;
-        private static readonly Dictionary<string, int> _feedFixStatistics = new Dictionary<string, int>();
+        private static readonly Dictionary<string, int> _feedFixStatistics;
         private static readonly Regex _trimAuthorsRegex;
     }
 }
