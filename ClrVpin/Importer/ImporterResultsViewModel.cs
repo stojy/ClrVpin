@@ -268,7 +268,7 @@ namespace ClrVpin.Importer
             await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Manufactured Tables Present") : Notification.ShowWarning(DialogHostName, "Manufactured Tables Missing", detail));
         }
 
-        private static string CreatePercentageStatistic(string title, int count, int totalCount) => $"{title}:  {count} of {totalCount} ({100f * count / totalCount:F2}%)";
+        private static string CreatePercentageStatistic(string title, int count, int totalCount) => $"{title} : {count} of {totalCount} ({100f * count / totalCount:F2}%)";
 
         private async void AddAllTablesMissingDatabaseProperties()
         {
@@ -290,8 +290,8 @@ namespace ClrVpin.Importer
 
             Logger.Info($"Added missing database info: table count: {updatedGameCount}, info count: {GameUpdater.GetPropertiesUpdatedCount(propertyStatistics)}");
 
-            var properties = propertyStatistics.Select(property => $"- {property.Key}: {property.Value}").StringJoin("\n");
-            var details = CreatePercentageStatistic("Tables Fixed", updatedGameCount, matchedGameCount) +
+            var properties = propertyStatistics.Select(property => $"- {property.Key,-13}: {property.Value}").StringJoin("\n");
+            var details = CreatePercentageStatistic("Tables Fixed  ", updatedGameCount, matchedGameCount) +
                           $"\n{properties}";
 
             var isSuccess = updatedGameCount == 0;

@@ -10,7 +10,6 @@
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <ResourceDictionary Source="\Controls\Styles.xaml" />
     <ResourceDictionary Source="\Controls\Converters.xaml" />
-
   </ResourceDictionary.MergedDictionaries>
 
   <DataTemplate DataType="{x:Type shared:Notification}">
@@ -23,7 +22,7 @@
           - presumably something to do with the DialogHost.. but haven't confirmed 
       -->
       <Border.InputBindings>
-        <MouseBinding MouseAction="LeftClick" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"></MouseBinding>
+        <MouseBinding MouseAction="LeftClick" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
       </Border.InputBindings>
       <!--<b:Interaction.Triggers>
         <b:EventTrigger EventName="Click">
@@ -52,14 +51,20 @@
         <StackPanel Margin="0,0,0,10">
           <TextBlock Text="{Binding Title}" Visibility="{Binding Title, Converter={StaticResource ReverseNullToVisibilityConverter}}"
                      Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Margin="0" HorizontalAlignment="Center" />
-          <TextBlock Text="{Binding Detail}" Visibility="{Binding Detail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
-                     FontSize="18" Margin="0,40,0,0" />
+          <TextBlock Name="Detail"
+                     Text="{Binding Detail}" Visibility="{Binding Detail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
+                     FontSize="18" Margin="0,30,0,0" />
         </StackPanel>
 
         <!--non-visible button marked with IsCancel to support the escape key-->
         <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
       </StackPanel>
     </Border>
+    <DataTemplate.Triggers>
+      <DataTrigger Binding="{Binding DetailIsMonospaced}" Value="True">
+        <Setter TargetName="Detail" Property="FontFamily" Value="Courier New" />
+      </DataTrigger>
+    </DataTemplate.Triggers>
   </DataTemplate>
 
 </ResourceDictionary>

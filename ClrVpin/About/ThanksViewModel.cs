@@ -16,9 +16,9 @@ namespace ClrVpin.About
             NavigateToPage = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
         }
 
-        public ICommand NavigateToPage { get; set; }
+        public ICommand NavigateToPage { get; }
 
-        public List<Contributor> Contributors { get; set; } = new List<Contributor>
+        public List<Contributor> Contributors { get; } = new List<Contributor>
         {
             new Contributor("https://virtual-pinball-spreadsheet.web.app", "VPS Web App: an excellent web page rendering of the traditional google sheets spreadsheet (beta)"),
             new Contributor("https://www.facebook.com/VPSheet", "VPS: maintainers of the google sheets spreadsheet (now a json file) used as the source of truth for the 'importer' feature"),
