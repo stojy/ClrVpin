@@ -309,6 +309,13 @@ namespace ClrVpin.Importer
                 onlineGame.IpdbUrl = null;
             }
 
+            // fix (technically upgrade) url to use https instead of http
+            if (Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out uri) && uri.Scheme == Uri.UriSchemeHttp)
+            {
+                var uriBuilder = new UriBuilder(uri) { Scheme = Uri.UriSchemeHttps };
+                onlineGame.IpdbUrl = uriBuilder.Uri.AbsoluteUri;
+            }
+
             // fix wrong IPDB url
             // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
             if (onlineGame.IsOriginal && onlineGame.IpdbUrl != null) 
@@ -323,37 +330,37 @@ namespace ClrVpin.Importer
             switch (onlineGame.Description)
             {
                 case "Austin Powers (Stern 2001)":
-                    FixGameWrongIpdbUrl(onlineGame, "http://www.ipdb.org/machine.cgi?id=4504");
+                    FixGameWrongIpdbUrl(onlineGame, "https://www.ipdb.org/machine.cgi?id=4504");
                     break;
                 case "JP's Dale Jr. Nascar (Original 2020)":
-                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5292", "Stern", 2007);
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5292", "Stern", 2007);
                     break;
                 case "JP'S Nascar Race (Original 2005)":
-                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5093", "Stern");
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5093", "Stern");
                     break;
                 case "JP's Grand Prix (Original 2005)":
-                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5120", "Stern");
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5120", "Stern");
                     break;
                 case "JP's Lord Of The Rings (Original 2003)":
-                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=4858", "Stern");
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=4858", "Stern");
                     break;
                 case "JP's Motor Show (Original 1989)":
-                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=3631", "Mr. Game");
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=3631", "Mr. Game");
                     break;
                 case "JP's Spider-Man (Original 2011)":
-                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5237", "Stern", 2007);
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5237", "Stern", 2007);
                     break;
                 case "Siggi's Spider-Man Classic (Stern 2016)":
                     FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=6328", "Stern", 2016, "Spider-Man (Vault Edition)");
                     break;
                 case "JP's Street Fighter 2 (Original 1993)":
-                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=2403", "Gottlieb");
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=2403", "Gottlieb");
                     break;
                 case "JP's Terminator 2 (Original 2020)":
-                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=2524", "Williams", 1991, "Terminator 2 Judgment Day");
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=2524", "Williams", 1991, "Terminator 2 Judgment Day");
                     break;
                 case "JP's Transformers (Original 2011)":
-                    FixGame(onlineGame, "http://www.ipdb.org/machine.cgi?id=5709", "Stern");
+                    FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5709", "Stern");
                     break;
                 case "Phychedelic (Gottlieb 1970)":
                     FixGameWrongName(onlineGame, "Psychedelic");
