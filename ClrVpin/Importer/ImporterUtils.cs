@@ -82,7 +82,7 @@ namespace ClrVpin.Importer
 
             // fix game ordering
             // - alphanumerical
-            // - after pre-merge and merged so that the table names are corret and unique
+            // - after pre-merge and merged so that the table names are correct and unique
             var orderedDames = onlineGames.OrderBy(game => game.Name).ToArray();
             onlineGames.Clear();
             onlineGames.AddRange(orderedDames);
@@ -367,6 +367,10 @@ namespace ClrVpin.Importer
                 case "Phychedelic (Gottlieb 1970)":
                     FixGameWrongName(onlineGame, "Psychedelic");
                     break;
+                case "Martian Queen (LTD ) (LTD 0)":
+                    FixGameWrongName(onlineGame, "Martian Queen");
+                    FixGameWrongManufacturer(onlineGame, "LTD do Brasil Diverses Eletrnicas Ltda", 1981);
+                    break;
             }
         }
 
@@ -382,15 +386,20 @@ namespace ClrVpin.Importer
             onlineGame.Name = name;
         }
 
+        private static void FixGameWrongManufacturer(OnlineGameBase onlineGame, string manufacturer, int? year = null)
+        {
+            LogFixed(onlineGame, FixTableWrongManufacturer, $"old manufacturer={onlineGame.Manufacturer}, new manufacturer={manufacturer}");
+            onlineGame.Manufacturer = manufacturer;
+            onlineGame.Year = year ?? onlineGame.Year;
+        }
+
         private static void FixGame(OnlineGameBase onlineGame, string ipdbUrl, string manufacturer, int? year = null, string name = null)
         {
             // assign correct IPDB url and manufacturer
             // - if the game already exists, then it will be picked up later as a duplicate
             FixGameWrongIpdbUrl(onlineGame, ipdbUrl);
 
-            LogFixed(onlineGame, FixTableWrongManufacturer, $"old manufacturer={onlineGame.Manufacturer}, new manufacturer={manufacturer}");
-            onlineGame.Manufacturer = manufacturer;
-            onlineGame.Year = year ?? onlineGame.Year;
+            FixGameWrongManufacturer(onlineGame, manufacturer, year);
 
             if (name != null) 
                 FixGameWrongName(onlineGame, name);
