@@ -313,7 +313,7 @@ namespace ClrVpin.Importer
             // fix (technically upgrade) url to use https instead of http
             if (Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out uri) && uri.Scheme == Uri.UriSchemeHttp)
             {
-                var uriBuilder = new UriBuilder(uri) { Scheme = Uri.UriSchemeHttps };
+                var uriBuilder = new UriBuilder(uri) { Scheme = Uri.UriSchemeHttps, Port = -1};
                 onlineGame.IpdbUrl = uriBuilder.Uri.AbsoluteUri;
             }
 
