@@ -73,18 +73,19 @@ namespace ClrVpin.Importer
 
         public static Dictionary<string, int> FixOnlineDatabase(List<OnlineGame> onlineGames)
         {
-            // fix game ordering - alphanumerical
-            var orderedDames = onlineGames.OrderBy(game => game.Name).ToArray();
-            onlineGames.Clear();
-            onlineGames.AddRange(orderedDames);
-
-
             // perform pre-merge fixes, i.e. fixes that do NOT require any duplicate game collections to be merged
             // - some of this information mus be done BEFORE the rest of the game fixing because the duplicate entries must be correctly removed BEFORE the various collections are created
             onlineGames.ForEach(FixPreMerge);
 
             // merge duplicate entries
             FixDuplicateGames(onlineGames);
+
+            // fix game ordering
+            // - alphanumerical
+            // - after pre-merge and merged so that the table names are corret and unique
+            var orderedDames = onlineGames.OrderBy(game => game.Name).ToArray();
+            onlineGames.Clear();
+            onlineGames.AddRange(orderedDames);
 
             // perform post-merge fixes, i.e. fixes that DO require duplicate game collections to be merged
             onlineGames.ForEach((game, index) =>
