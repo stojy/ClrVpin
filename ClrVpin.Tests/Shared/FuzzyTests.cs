@@ -203,6 +203,7 @@ public class FuzzyTests
     [TestCase(@"The Walking Dead (Stern 2014)", @"'The Walking Dead (Stirn 2014)", true, 208, TestName = "manufacturer - misspelt 1 char but manufacturer too small")]
     [TestCase(@"Whoa Nellie Big Juicy Melons (Stern 2015)", @"Whoa Nellie! Big Juicy Melons (WhizBang Pinball 2011)", false, -830, TestName = "manufacturer - incorrect, also year wrong")]
     [TestCase(@"Whoa Nellie Big Juicy Melons (Stern 2015)", @"Whoa Nellie! Big Juicy Melons (Stern 2015)", true, 235, TestName = "manufacturer - correct")]
+    [TestCase(@"X-Men LE (Stern 2012)", @"X-Men (Stern 2012)", false, 65, TestName = "name - too short to get decent match")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
