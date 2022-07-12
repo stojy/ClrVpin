@@ -71,7 +71,6 @@
                     
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Existing" controls:GenericAttached.String2="{Binding ExistingVersion}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="New" controls:GenericAttached.String2="{Binding NewVersion}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
 
                     <Separator Margin="0,15"/>
                     <mdXaml:MarkdownScrollViewer Markdown="{Binding ReleaseNotes}" MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" VerticalScrollBarVisibility="Auto"/>

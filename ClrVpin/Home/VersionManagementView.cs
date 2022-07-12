@@ -15,7 +15,6 @@ namespace ClrVpin.Home
         public string Title { get; private init; }
         public string ExistingVersion { get; init; }
         public string NewVersion { get; init; }
-        public DateTime CreatedAt { get; init; }
         public string ReleaseNotes { get; init; }
         public ICommand ViewNewVersionCommand { get; private init; }
 
@@ -47,9 +46,8 @@ namespace ClrVpin.Home
                 var result = await DialogHost.Show(new VersionManagementView
                 {
                     Title = "A new version is available",
-                    ExistingVersion = VersionManagement.GetProductVersion(),
-                    NewVersion = release.TagName,
-                    CreatedAt = release.CreatedAt.LocalDateTime,
+                    ExistingVersion = $"{VersionManagement.GetProductVersion()} ({VersionManagement.GetBuildTime()})",
+                    NewVersion = $"{release.TagName} ({release.CreatedAt.LocalDateTime})",
                     ReleaseNotes = releaseNotes,
                     ViewNewVersionCommand = new ActionCommand(() => ViewNewVersion(release))
                 }, "HomeDialog") as VersionManagementAction?;
