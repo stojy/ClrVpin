@@ -52,9 +52,12 @@
           <TextBlock Text="{Binding Title}" Visibility="{Binding Title, Converter={StaticResource ReverseNullToVisibilityConverter}}"
                      Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Margin="0" HorizontalAlignment="Center" />
           <ScrollViewer MaxWidth="1100" MaxHeight="800" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
-            <TextBox Name="Detail"
+            <TextBlock Name="Detail"
                        Text="{Binding Detail}" Visibility="{Binding Detail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
                        FontSize="18" Margin="0,30,0,0" />
+            <!--<TextBox Name="Detail"
+                     Text="{Binding Detail}" Visibility="{Binding Detail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
+                     FontSize="18" Margin="0,30,0,0" />-->
           </ScrollViewer>
         </StackPanel>
 
