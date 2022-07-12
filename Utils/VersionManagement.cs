@@ -18,6 +18,12 @@ namespace Utils
             return _productVersion ??= FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()?.Location!).ProductVersion;
         }
 
+        public static DateTime GetBuildTime()
+        {
+            // product version is a string, i.e. capable of storing as SemVer
+            return _buildTime ??= File.GetCreationTime(Assembly.GetEntryAssembly()?.Location!);
+        }
+
         public static async Task<Release> Check(string guid, string author, string repository, Action<string> logAction)
         {
             var client = new GitHubClient(new ProductHeaderValue($"ClrVpin_{guid}"));
@@ -73,5 +79,6 @@ namespace Utils
         }
 
         private static string _productVersion;
+        private static DateTime? _buildTime;
     }
 }
