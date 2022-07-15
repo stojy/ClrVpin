@@ -39,16 +39,11 @@
       </GroupBox>
 
       <TextBlock Style="{StaticResource TitleStyle}">Feed</TextBlock>
-      <GroupBox Header="Fix" Width="650">
-        <ItemsControl ItemsSource="{Binding FeedFixOptionsView}" BorderThickness="5" HorizontalAlignment="Left">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="shared:FeatureType">
-              <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
+      <GroupBox Header="Fix" >
+        <ItemsControl ItemsSource="{Binding FeedFixOptionsView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Height="150">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-              <WrapPanel ItemWidth="300" />
+              <WrapPanel Orientation="Vertical" ItemWidth="320" />
             </ItemsPanelTemplate>
           </ItemsControl.ItemsPanel>
         </ItemsControl>
