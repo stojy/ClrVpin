@@ -48,9 +48,21 @@ namespace ClrVpin.Models.Settings
             };
             AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
-            Rebuilder = new RebuilderSettings();
+            // initialise all settings to enabled 
             Scanner = new ScannerSettings();
+            Scanner.SelectedCheckContentTypes.AddRange(GetAllContentTypes().Select(x => x.Description).ToList());
+            Scanner.SelectedCheckHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
+            Scanner.SelectedFixHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
+
+            Rebuilder = new RebuilderSettings();
+            Rebuilder.SelectedMatchTypes.AddRange(StaticSettings.MatchTypes.Select(x => x.Enum).ToList());
+            Rebuilder.SelectedIgnoreCriteria.AddRange(StaticSettings.IgnoreCriteria.Select(x => x.Enum).ToList());
+            Rebuilder.SelectedMergeOptions.AddRange(StaticSettings.MergeOptions.Select(x => x.Enum).ToList());
+            Rebuilder.DeleteIgnoredFiles = true;
+
             Importer = new ImporterSettings();
+            Importer.SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
+            Importer.SelectedFeedFixOptions.AddRange(StaticSettings.FeedFixOptions.Select(x => x.Enum).ToList());
         }
 
         // default settings

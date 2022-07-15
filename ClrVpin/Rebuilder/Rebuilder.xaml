@@ -100,7 +100,7 @@
 
       <TextBlock Style="{StaticResource TitleStyle}">Merge</TextBlock>
       <GroupBox Header="Options" Width="650">
-        <ItemsControl ItemsSource="{Binding MergeOptionsTypesView}" BorderThickness="5" HorizontalAlignment="Left">
+        <ItemsControl ItemsSource="{Binding MergeOptionsView}" BorderThickness="5" HorizontalAlignment="Left">
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="shared:FeatureType">
               <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />

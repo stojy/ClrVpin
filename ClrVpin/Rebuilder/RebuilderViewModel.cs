@@ -33,7 +33,7 @@ namespace ClrVpin.Rebuilder
 
             CreateIgnoreCriteria();
 
-            MergeOptionsTypesView = new ListCollectionView(CreateMergeOptions().ToList());
+            MergeOptionsView = new ListCollectionView(CreateMergeOptions().ToList());
 
             SourceFolderModel = new FolderTypeModel("Source", Settings.Rebuilder.SourceFolder, folder =>
             {
@@ -52,7 +52,7 @@ namespace ClrVpin.Rebuilder
 
         public bool IsValid { get; set; }
 
-        public ListCollectionView MergeOptionsTypesView { get; }
+        public ListCollectionView MergeOptionsView { get; }
 
         public FolderTypeModel SourceFolderModel { get; }
         public ObservableCollection<string> DestinationContentTypes { get; }
