@@ -103,8 +103,17 @@ namespace ClrVpin.Models.Settings
         // all possible file merge options - to be used elsewhere (importer)
         public static readonly FeedFixOption[] FeedFixOptions =
         {
-            new FeedFixOption {Enum = FeedFixOptionEnum.Matched, Tip = "Date modified timestamp of merged file (in the destination folder) will match the source file, else the current time will be used"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.Unmatched, Tip = "Matched source files will be removed (copied to the backup folder)"}
+            new FeedFixOption {Enum = FeedFixOptionEnum.Whitespace, Tip = "Remove excess whitespace from table and manufacturer descriptions"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.MissingImageUrl, Tip = "Fix missing image by assigning an alternate image from the same table (if available)"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.ManufacturedTableContainsAuthor, Tip = "Remove author from manufactured table (original tables are unchanged)"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.CreatedTime, Tip = "Fix content creation time so that it's NOT less than the last updated time"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.UpdatedTime, Tip = "Fix content updated time. e.g. missing, before created time, after current time"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.InvalidUrl, Tip = "Mark incorrect URL as invalid (click will be disabled)"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.WrongManufacturer, Tip = "Fix manufacturer name"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.WrongTable, Tip = "Fix table name"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.WrongContentUrl, Tip = "Fix content URL, e.g. vpuniverse.com URL path"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.WrongIpdbUrl, Tip = "Fix IPDB URL, e.g. named tables with wrong IPDB URL, original table referencing IPDB URL"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.DuplicateTable, Tip = "Merge duplicate table entries based on the IPDB URL (n/a for original tables)"},
         };
     }
 }
