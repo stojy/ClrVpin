@@ -10,7 +10,10 @@ namespace ClrVpin.Models.Settings;
 public class ImporterSettings
 {
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
-    public ObservableCollection<HitTypeEnum> SelectedMatchTypes { get; set; } = new ObservableCollection<HitTypeEnum>();
+    public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new ObservableCollection<HitTypeEnum>();
+
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
+    public ObservableCollection<FeedFixOptionEnum> SelectedFeedFixOptions { get; set; } = new ObservableCollection<FeedFixOptionEnum>();
 
     // display result filtering criteria
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;

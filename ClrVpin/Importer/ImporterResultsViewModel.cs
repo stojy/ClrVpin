@@ -40,7 +40,7 @@ namespace ClrVpin.Importer
         {
             _games = games;
             _matchStatistics = matchStatistics.ToDictionary();
-            IsMatchingEnabled = Model.Settings.Importer.SelectedMatchTypes.Any();
+            IsMatchingEnabled = Model.Settings.Importer.SelectedMatchCriteriaOptions.Any();
 
             // assign VM properties
             onlineGames.ForEach(onlineGame =>

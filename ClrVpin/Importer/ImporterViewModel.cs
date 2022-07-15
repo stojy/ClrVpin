@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Logging;
@@ -26,10 +27,10 @@ namespace ClrVpin.Importer
         {
             StartCommand = new ActionCommand(Start);
 
-            //DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
-
             CreateMatchCriteriaTypes();
             
+            FeedFixOptionsView = new ListCollectionView(CreateFeedFixOptions().ToList());
+
             UpdateIsValid();
         }
 
@@ -38,6 +39,8 @@ namespace ClrVpin.Importer
         //public ObservableCollection<Game> GameDetails { get; set; }
         public ICommand StartCommand { get; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
+
+        public ListCollectionView FeedFixOptionsView { get; }
 
         public void Show(Window parent)
         {
@@ -76,8 +79,8 @@ namespace ClrVpin.Importer
                     Description = matchType.Description,
                     Tip = matchType.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Importer.SelectedMatchTypes.Contains(matchType.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Importer.SelectedMatchTypes.Toggle(matchType.Enum)),
+                    IsActive = Settings.Importer.SelectedMatchCriteriaOptions.Contains(matchType.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Importer.SelectedMatchCriteriaOptions.Toggle(matchType.Enum)),
                     IsHighlighted = matchType.IsHighlighted,
                     IsHelpSupported = matchType.HelpUrl != null,
                     HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) { UseShellExecute = true }))
@@ -96,6 +99,25 @@ namespace ClrVpin.Importer
                 MatchFuzzy.IsSupported = false;
                 MatchFuzzy.Tip += "... DISABLED BECAUSE THE SETTINGS ARE INCOMPLETE";
             }
+        }
+
+        private IEnumerable<FeatureType> CreateFeedFixOptions()
+        {
+            // show all feed fix options
+            var featureTypes = StaticSettings.FeedFixOptions.Select(feedFix =>
+            {
+                var featureType = new FeatureType((int)feedFix.Enum)
+                {
+                    Description = feedFix.Description,
+                    Tip = feedFix.Tip,
+                    IsSupported = true,
+                    IsActive = Settings.Importer.SelectedFeedFixOptions.Contains(feedFix.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Importer.SelectedFeedFixOptions.Toggle(feedFix.Enum))
+                };
+                return featureType;
+            }).ToList();
+
+            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
         }
 
         public FeatureType MatchFuzzy { get; private set; }

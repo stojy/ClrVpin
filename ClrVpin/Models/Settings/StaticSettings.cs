@@ -26,6 +26,7 @@ namespace ClrVpin.Models.Settings
             // importer
             TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            FeedFixOptions.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
         // hit types in priority order as determined by matching algorithm - refer AddContentFilesToGames
@@ -91,12 +92,19 @@ namespace ClrVpin.Models.Settings
             new TableStyleOption {Enum = TableStyleOptionEnum.Both, Tip = "Manufactured AND original tables"}
         };
 
-        // all possible matching types
+        // all possible matching types 
         public static readonly TableMatchOption[] TableMatchOptions =
         {
             new TableMatchOption {Enum = TableMatchOptionEnum.Matched, Tip = "Online tables that exist in your local database"},
             new TableMatchOption {Enum = TableMatchOptionEnum.Unmatched, Tip = "Online tables that do NOT exist in your local database"},
             new TableMatchOption {Enum = TableMatchOptionEnum.Both, Tip = "All online tables irrespective of whether they exist in your local database"}
+        };
+
+        // all possible file merge options - to be used elsewhere (importer)
+        public static readonly FeedFixOption[] FeedFixOptions =
+        {
+            new FeedFixOption {Enum = FeedFixOptionEnum.Matched, Tip = "Date modified timestamp of merged file (in the destination folder) will match the source file, else the current time will be used"},
+            new FeedFixOption {Enum = FeedFixOptionEnum.Unmatched, Tip = "Matched source files will be removed (copied to the backup folder)"}
         };
     }
 }

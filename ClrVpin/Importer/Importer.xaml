@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:importer="clr-namespace:ClrVpin.Importer"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -35,6 +36,22 @@
                     ToolTipService.InitialShowDelay="500" ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
           </WrapPanel>
         </StackPanel>
+      </GroupBox>
+
+      <TextBlock Style="{StaticResource TitleStyle}">Feed</TextBlock>
+      <GroupBox Header="Fix" Width="650">
+        <ItemsControl ItemsSource="{Binding FeedFixOptionsView}" BorderThickness="5" HorizontalAlignment="Left">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="shared:FeatureType">
+              <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel ItemWidth="300" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+        </ItemsControl>
       </GroupBox>
 
       <Button Margin="0,10,0,0" Width="50" Command="{Binding StartCommand}" Style="{StaticResource RaisedAccentButtonStyle}" IsEnabled="{Binding IsValid}">Start</Button>
