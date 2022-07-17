@@ -13,7 +13,7 @@ public class ImporterSettings
     public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new ObservableCollection<HitTypeEnum>();
 
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
-    public ObservableCollection<FeedFixOptionEnum> SelectedFeedFixOptions { get; set; } = new ObservableCollection<FeedFixOptionEnum>();
+    public ObservableCollection<FixFeedOptionEnum> SelectedFeedFixOptions { get; set; } = new ObservableCollection<FixFeedOptionEnum>();
 
     // display result filtering criteria
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;

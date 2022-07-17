@@ -26,7 +26,7 @@ namespace ClrVpin.Models.Settings
             // importer
             TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            FeedFixOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
         // hit types in priority order as determined by matching algorithm - refer AddContentFilesToGames
@@ -101,19 +101,19 @@ namespace ClrVpin.Models.Settings
         };
 
         // all possible file merge options - to be used elsewhere (importer)
-        public static readonly FeedFixOption[] FeedFixOptions =
+        public static readonly FixFeedOption[] FixFeedOptions =
         {
-            new FeedFixOption {Enum = FeedFixOptionEnum.Whitespace, Tip = "Remove excess whitespace from table and manufacturer descriptions"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.MissingImageUrl, Tip = "Fix missing image by assigning an alternate image from the same table (if available)"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.ManufacturedTableContainsAuthor, Tip = "Remove author from manufactured table (original tables are unchanged)"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.CreatedTime, Tip = "Fix content creation time so that it's NOT less than the last updated time"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.UpdatedTime, Tip = "Fix content updated time. e.g. missing, before created time, after current time"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.InvalidUrl, Tip = "Mark incorrect URL as invalid (click will be disabled)"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.WrongManufacturer, Tip = "Fix manufacturer name"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.WrongTable, Tip = "Fix table name"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.WrongContentUrl, Tip = "Fix content URL, e.g. vpuniverse.com URL path"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.WrongIpdbUrl, Tip = "Fix IPDB URL, e.g. named tables with wrong IPDB URL, original table referencing IPDB URL"},
-            new FeedFixOption {Enum = FeedFixOptionEnum.DuplicateTable, Tip = "Merge duplicate table entries based on the IPDB URL (n/a for original tables)"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.Whitespace, Tip = "Remove excess whitespace from table and manufacturer descriptions"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.MissingImageUrl, Tip = "Fix missing image by assigning an alternate image from the same table (if available)"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.ManufacturedTableContainsAuthor, Tip = "Remove author from manufactured table (original tables are unchanged)"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.CreatedTime, Tip = "Fix content creation time so that it's NOT less than the last updated time"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.UpdatedTime, Tip = "Fix content updated time. e.g. missing, before created time, after current time"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.InvalidUrl, Tip = "Mark incorrect URL as invalid (click will be disabled)"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.WrongContentUrl, Tip = "Fix content URL, e.g. vpuniverse.com URL path"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.WrongIpdbUrl, Tip = "Fix IPDB URL, e.g. named tables with wrong IPDB URL, original table referencing IPDB URL"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.WrongManufacturerAndYear, Tip = "Fix manufacturer name"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.WrongName, Tip = "Fix table name"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.DuplicateTable, Tip = "Merge duplicate table entries based on the IPDB URL (n/a for original tables)"},
         };
     }
 }

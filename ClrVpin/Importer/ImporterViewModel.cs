@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Logging;
+using ClrVpin.Models.Importer;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
@@ -28,7 +29,7 @@ namespace ClrVpin.Importer
             StartCommand = new ActionCommand(Start);
 
             CreateMatchCriteriaTypes();
-            
+
             FeedFixOptionsView = new ListCollectionView(CreateFeedFixOptions().ToList());
 
             UpdateIsValid();
@@ -36,11 +37,12 @@ namespace ClrVpin.Importer
 
         public bool IsValid { get; set; }
 
-        //public ObservableCollection<Game> GameDetails { get; set; }
         public ICommand StartCommand { get; }
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
         public ListCollectionView FeedFixOptionsView { get; }
+
+        public FeatureType MatchFuzzy { get; private set; }
 
         public void Show(Window parent)
         {
@@ -104,7 +106,7 @@ namespace ClrVpin.Importer
         private IEnumerable<FeatureType> CreateFeedFixOptions()
         {
             // show all feed fix options
-            var featureTypes = StaticSettings.FeedFixOptions.Select(feedFix =>
+            var feedFixOptions = StaticSettings.FixFeedOptions.Select(feedFix =>
             {
                 var featureType = new FeatureType((int)feedFix.Enum)
                 {
@@ -112,15 +114,38 @@ namespace ClrVpin.Importer
                     Tip = feedFix.Tip,
                     IsSupported = true,
                     IsActive = Settings.Importer.SelectedFeedFixOptions.Contains(feedFix.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Importer.SelectedFeedFixOptions.Toggle(feedFix.Enum))
+                    SelectedCommand = new ActionCommand(() => FixFeedOptionSelected(feedFix.Enum))
                 };
                 return featureType;
             }).ToList();
 
-            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
+            _feedFixDuplicateTableOption = feedFixOptions.First(x => x.Id == (int)FixFeedOptionEnum.DuplicateTable);
+
+            return feedFixOptions.Concat(new[] { FeatureType.CreateSelectAll(feedFixOptions) });
         }
 
-        public FeatureType MatchFuzzy { get; private set; }
+        private void FixFeedOptionSelected(FixFeedOptionEnum fixFeedOption)
+        {
+            Settings.Importer.SelectedFeedFixOptions.Toggle(fixFeedOption);
+
+            // selectively disable 'duplicate table' option if the prerequisite settings aren't set
+            if (!Settings.Importer.SelectedFeedFixOptions.ContainsAll(
+                    FixFeedOptionEnum.Whitespace,
+                    FixFeedOptionEnum.ManufacturedTableContainsAuthor,
+                    FixFeedOptionEnum.InvalidUrl,
+                    FixFeedOptionEnum.WrongManufacturerAndYear,
+                    FixFeedOptionEnum.WrongName,
+                    FixFeedOptionEnum.WrongIpdbUrl))
+            {
+                _feedFixDuplicateTableOption.IsActive = false;
+                _feedFixDuplicateTableOption.IsSupported = false;
+                Settings.Importer.SelectedFeedFixOptions.Remove(FixFeedOptionEnum.DuplicateTable);
+            }
+            else
+            {
+                _feedFixDuplicateTableOption.IsSupported = true;
+            }
+        }
 
         private async void Start()
         {
@@ -144,7 +169,7 @@ namespace ClrVpin.Importer
             var onlineGames = await ImporterUtils.GetOnlineDatabase();
 
             progress.Update("Fixing online database");
-            var feedFixStatistics = ImporterUtils.FixOnlineDatabase(onlineGames);
+            var feedFixStatistics = ImporterFix.FixOnlineDatabase(onlineGames);
             Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
 
             progress.Update("Matching online to local database");
@@ -195,6 +220,7 @@ namespace ClrVpin.Importer
 
         //private readonly IEnumerable<string> _destinationContentTypes;
         private Window _window;
+        private FeatureType _feedFixDuplicateTableOption;
         private const int WindowMargin = 0;
     }
 }
