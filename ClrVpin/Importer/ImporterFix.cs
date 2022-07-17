@@ -17,7 +17,7 @@ public static class ImporterFix
     {
         // used with Regex.Replace will capture multiple matches at once.. same word or other other words
         // - refer Fuzzy.cs
-        _trimAuthorsRegex = new Regex($@"(?<=^|[^a-z^A-Z])({Fuzzy.Authors.StringJoin()})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        _trimAuthorsRegex = new Regex($@"(?<=^|[^a-z^A-Z])({Fuzzy.Authors.StringJoin("|")})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     }
 
     public static Dictionary<string, int> FixOnlineDatabase(List<OnlineGame> onlineGames)
@@ -30,7 +30,7 @@ public static class ImporterFix
         onlineGames.ForEach(PreMerge);
 
         // merge duplicate entries
-        MergeGames(onlineGames);
+        FixDuplicateGames(onlineGames);
 
         // fix game ordering
         // - alphanumerical
@@ -94,120 +94,22 @@ public static class ImporterFix
     // fixes that do NOT require the collections to be initialized (which must occur after de-duplicating, aka merging)
     private static void PreMerge(OnlineGame onlineGame)
     {
-        // fix named games
-        FixWrongNameManufacturerYear(onlineGame);
+        FixNamedGames(onlineGame);
 
-        // fix game name - remove whitespace
         FixTableWhitespace(onlineGame);
 
-        // fix manufacturer - remove whitespace
-        if (onlineGame.Manufacturer != onlineGame.Manufacturer.Trim())
-        {
-            LogFixed(onlineGame, FixStatisticsEnum.ManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
-            onlineGame.Manufacturer = onlineGame.Manufacturer.Trim();
-        }
+        FixManufacturerWhitespace(onlineGame);
 
-        // remove author of the game for manufactured tables
-        // - e.g. JP's Captain Fantastic (Bally 1976)
-        if (!GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name) && _trimAuthorsRegex.IsMatch(onlineGame.Name))
-        {
-            var cleanName = _trimAuthorsRegex.Replace(onlineGame.Name, "").Trim();
-            LogFixed(onlineGame, FixStatisticsEnum.ManufacturedContainsAuthor, $"correct='{cleanName}, manufacturer='{onlineGame.Manufacturer}'");
-            onlineGame.Name = cleanName;
-        }
+        FixManufacturedIncludesAuthor(onlineGame);
 
-        // fix invalid IPDB Url
-        // - e.g. "Not Available" frequently used for original tables
-        if (!(Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
-        {
-            LogFixed(onlineGame, FixStatisticsEnum.InvalidIpdbUrl, $"url={onlineGame.IpdbUrl}");
-            onlineGame.IpdbUrl = null;
-        }
+        FixInvalidUrlIpdb(onlineGame);
 
-        // fix (technically upgrade) url to use https instead of http
-        if (Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out uri) && uri.Scheme == Uri.UriSchemeHttp)
-        {
-            var uriBuilder = new UriBuilder(uri) { Scheme = Uri.UriSchemeHttps, Port = -1 };
-            onlineGame.IpdbUrl = uriBuilder.Uri.AbsoluteUri;
-        }
+        FixUrlProtocol(onlineGame);
 
-        // fix wrong IPDB url
-        // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
-        if (onlineGame.IsOriginal && onlineGame.IpdbUrl != null) WrongIpdbUrl(onlineGame, null);
+        FixOriginalTableIncludesIpdbUrl(onlineGame);
     }
 
-    private static void FixTableWhitespace(OnlineGameBase onlineGame)
-    {
-        if (!IsActive(FixFeedOptionEnum.Whitespace) || onlineGame.Name == onlineGame.Name.Trim())
-            return;
-
-        LogFixed(onlineGame, FixStatisticsEnum.NameWhitespace);
-        onlineGame.Name = onlineGame.Name.Trim();
-    }
-
-    private static void FixWrongNameManufacturerYear(OnlineGame onlineGame)
-    {
-        // non-generic fixes for specifically named games
-        // - this is very smelly, but treating these as 'exceptional' (and hopefully few!) scenarios, similar to GameDerived.CheckIsOriginal
-        // - todo; report/fix the underlying VPS feed and then remove this code
-        switch (onlineGame.Description)
-        {
-            case "Austin Powers (Stern 2001)":
-                WrongIpdbUrl(onlineGame, "https://www.ipdb.org/machine.cgi?id=4504");
-                break;
-            case "JP's Dale Jr. Nascar (Original 2020)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5292", "Stern", 2007);
-                break;
-            case "JP'S Nascar Race (Original 2005)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5093", "Stern");
-                break;
-            case "JP's Grand Prix (Original 2005)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5120", "Stern");
-                break;
-            case "JP's Lord Of The Rings (Original 2003)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=4858", "Stern");
-                break;
-            case "JP's Motor Show (Original 1989)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=3631", "Mr. Game");
-                break;
-            case "JP's Spider-Man (Original 2011)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5237", "Stern", 2007);
-                break;
-            case "Siggi's Spider-Man Classic (Stern 2016)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=6328", "Stern", 2016, "Spider-Man (Vault Edition)");
-                break;
-            case "JP's Street Fighter 2 (Original 1993)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=2403", "Gottlieb");
-                break;
-            case "JP's Terminator 2 (Original 2020)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=2524", "Williams", 1991, "Terminator 2 Judgment Day");
-                break;
-            case "JP's Transformers (Original 2011)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5709", "Stern");
-                break;
-            case "Phychedelic (Gottlieb 1970)":
-                WrongName(onlineGame, "Psychedelic");
-                break;
-            case "Martian Queen (LTD ) (LTD 0)":
-                WrongName(onlineGame, "Martian Queen");
-                WrongManufacturer(onlineGame, "LTD do Brasil Diverses Eletrnicas Ltda", 1981);
-                break;
-        }
-    }
-
-    private static void FixGame(OnlineGameBase onlineGame, string ipdbUrl, string manufacturer, int? year = null, string name = null)
-    {
-        // assign correct IPDB url and manufacturer
-        // - if the game already exists, then it will be picked up later as a duplicate
-        WrongIpdbUrl(onlineGame, ipdbUrl);
-
-        WrongManufacturer(onlineGame, manufacturer, year);
-
-        if (name != null)
-            WrongName(onlineGame, name);
-    }
-
-    private static void MergeGames(ICollection<OnlineGame> onlineGames)
+    private static void FixDuplicateGames(ICollection<OnlineGame> onlineGames)
     {
         if (!IsActive(FixFeedOptionEnum.DuplicateTable))
             return;
@@ -253,34 +155,196 @@ public static class ImporterFix
 
     private static void PostMerge(OnlineGame onlineGame)
     {
-        // fix image url - assign to the first available image url.. B2S then table
-        if (onlineGame.ImgUrl == null)
-        {
-            var imageUrl = onlineGame.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? onlineGame.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
-            if (imageUrl != null)
-            {
-                LogFixed(onlineGame, FixStatisticsEnum.MissingImage, $"url='{imageUrl}'");
-                onlineGame.ImgUrl = imageUrl;
-            }
-        }
+        FixMissingImage(onlineGame);
 
-        // fix updated timestamp - must not be lower than the created timestamp
+        FixFileUpdatedTime(onlineGame);
+
+        FixTableCreatedTime(onlineGame);
+
+        FixTableUpdatedTime(onlineGame);
+
+        FixFileOrdering(onlineGame);
+
+        FixInvalidUrlContent(onlineGame);
+
+        FixWrongUrlContent(onlineGame);
+    }
+
+    private static void FixUrlProtocol(OnlineGameBase onlineGame)
+    {
+        // fix (technically upgrade) url to use https instead of http
+        if (!IsActive(FixFeedOptionEnum.UpgradeUrlHttps) || !Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttp)
+            return;
+
+        var uriBuilder = new UriBuilder(uri) { Scheme = Uri.UriSchemeHttps, Port = -1 };
+        onlineGame.IpdbUrl = uriBuilder.Uri.AbsoluteUri;
+    }
+
+    private static void FixInvalidUrlIpdb(OnlineGameBase onlineGame)
+    {
+        // fix invalid IPDB Url
+        // - e.g. "Not Available" frequently used for original tables
+        if (!IsActive(FixFeedOptionEnum.InvalidUrlIpdb) || (Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
+            return;
+
+        LogFixed(onlineGame, FixStatisticsEnum.InvalidIpdbUrl, $"url={onlineGame.IpdbUrl}");
+        onlineGame.IpdbUrl = null;
+    }
+
+    private static void FixManufacturedIncludesAuthor(OnlineGameBase onlineGame)
+    {
+        // remove author of the game for manufactured tables
+        // - e.g. JP's Captain Fantastic (Bally 1976)
+        if (!IsActive(FixFeedOptionEnum.ManufacturedTableIncludesAuthor) || GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name) || !_trimAuthorsRegex.IsMatch(onlineGame.Name))
+            return;
+
+        var cleanName = _trimAuthorsRegex.Replace(onlineGame.Name, "").Trim();
+        LogFixed(onlineGame, FixStatisticsEnum.ManufacturedContainsAuthor, $"correct='{cleanName}, manufacturer='{onlineGame.Manufacturer}'");
+        onlineGame.Name = cleanName;
+    }
+
+    private static void FixManufacturerWhitespace(OnlineGameBase onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.Whitespace) || onlineGame.Manufacturer == onlineGame.Manufacturer.Trim())
+            return;
+
+        LogFixed(onlineGame, FixStatisticsEnum.ManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
+        onlineGame.Manufacturer = onlineGame.Manufacturer.Trim();
+    }
+
+    private static void FixTableWhitespace(OnlineGameBase onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.Whitespace) || onlineGame.Name == onlineGame.Name.Trim())
+            return;
+
+        LogFixed(onlineGame, FixStatisticsEnum.NameWhitespace);
+        onlineGame.Name = onlineGame.Name.Trim();
+    }
+
+    private static void FixNamedGames(OnlineGame onlineGame)
+    {
+        // non-generic fixes for specifically named games
+        // - this is very smelly, but treating these as 'exceptional' (and hopefully few!) scenarios, similar to GameDerived.CheckIsOriginal
+        // - todo; report/fix the underlying VPS feed and then remove this code??
+        switch (onlineGame.Description)
+        {
+            case "Austin Powers (Stern 2001)":
+                FixWrongUrlIpdb(onlineGame, "https://www.ipdb.org/machine.cgi?id=4504");
+                break;
+            case "JP's Dale Jr. Nascar (Original 2020)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5292", "Stern", 2007);
+                break;
+            case "JP'S Nascar Race (Original 2005)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5093", "Stern");
+                break;
+            case "JP's Grand Prix (Original 2005)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5120", "Stern");
+                break;
+            case "JP's Lord Of The Rings (Original 2003)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=4858", "Stern");
+                break;
+            case "JP's Motor Show (Original 1989)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=3631", "Mr. Game");
+                break;
+            case "JP's Spider-Man (Original 2011)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5237", "Stern", 2007);
+                break;
+            case "Siggi's Spider-Man Classic (Stern 2016)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=6328", "Stern", 2016, "Spider-Man (Vault Edition)");
+                break;
+            case "JP's Street Fighter 2 (Original 1993)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=2403", "Gottlieb");
+                break;
+            case "JP's Terminator 2 (Original 2020)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=2524", "Williams", 1991, "Terminator 2 Judgment Day");
+                break;
+            case "JP's Transformers (Original 2011)":
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5709", "Stern");
+                break;
+            case "Phychedelic (Gottlieb 1970)":
+                WrongName(onlineGame, "Psychedelic");
+                break;
+            case "Martian Queen (LTD ) (LTD 0)":
+                WrongName(onlineGame, "Martian Queen");
+                WrongManufacturer(onlineGame, "LTD do Brasil Diverses Eletrnicas Ltda", 1981);
+                break;
+        }
+    }
+
+    private static void FixGame(OnlineGameBase onlineGame, string ipdbUrl, string manufacturer, int? year = null, string name = null)
+    {
+        // assign correct IPDB url and manufacturer
+        // - if the game already exists, then it will be picked up later as a duplicate
+        FixWrongUrlIpdb(onlineGame, ipdbUrl);
+
+        WrongManufacturer(onlineGame, manufacturer, year);
+
+        if (name != null)
+            WrongName(onlineGame, name);
+    }
+
+    private static void FixWrongUrlContent(OnlineGame onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.WrongUrlContent))
+            return;
+
         onlineGame.AllFiles.ForEach(kv =>
         {
-            kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
-            {
-                LogFixedTimestamp(onlineGame, FixStatisticsEnum.FileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
-                f.UpdatedAt = f.CreatedAt;
-            });
+            kv.Value.ForEach(f =>
+                f.Urls.ForEach(urlDetail =>
+                {
+                    // fix vpuniverse urls - path
+                    if (urlDetail.Url?.Contains("//vpuniverse.com/forums") == true)
+                    {
+                        LogFixed(onlineGame, FixStatisticsEnum.WrongUrl, $"type={kv.Key} url={urlDetail.Url}");
+                        urlDetail.Url = urlDetail.Url.Replace("//vpuniverse.com/forums", "//vpuniverse.com");
+                    }
+                })
+            );
         });
+    }
 
-        // fix game created timestamp - must not be less than any file timestamps
-        var maxCreatedAt = onlineGame.AllFilesList.Max(x => x.CreatedAt);
-        if (onlineGame.LastCreatedAt < maxCreatedAt)
+    private static void FixInvalidUrlContent(OnlineGame onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.InvalidUrlContent))
+            return;
+
+        onlineGame.AllFiles.ForEach(kv =>
         {
-            LogFixedTimestamp(onlineGame, FixStatisticsEnum.TableCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
-            onlineGame.LastCreatedAt = maxCreatedAt;
-        }
+            kv.Value.ForEach(f =>
+                f.Urls.ForEach(urlDetail =>
+                {
+                    // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
+                    if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var generatedUrl) && (generatedUrl.Scheme == Uri.UriSchemeHttp || generatedUrl.Scheme == Uri.UriSchemeHttps)))
+                    {
+                        LogFixed(onlineGame, FixStatisticsEnum.InvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
+                        urlDetail.Broken = true;
+                    }
+                })
+            );
+        });
+    }
+
+    private static void FixFileOrdering(OnlineGame onlineGame)
+    {
+        // fix file ordering - ensure a game's most recent files are shown first
+        // - deliberately no option to disable this feature
+        onlineGame.AllFiles.ForEach(kv =>
+        {
+            var orderByDescending = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray();
+            if (!kv.Value.SequenceEqual(orderByDescending))
+            {
+                LogFixed(onlineGame, FixStatisticsEnum.FileUpdateTimeOrdering, $"type={kv.Key}");
+                kv.Value.Clear();
+                kv.Value.AddRange(orderByDescending);
+            }
+        });
+    }
+
+    private static void FixTableUpdatedTime(OnlineGame onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.UpdatedTime))
+            return;
 
         // fix game updated timestamp - must not be less than the max file timestamp
         var maxUpdatedAt = onlineGame.AllFilesList.Max(x => x.UpdatedAt);
@@ -294,50 +358,72 @@ public static class ImporterFix
             LogFixedTimestamp(onlineGame, FixStatisticsEnum.TableUpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
             onlineGame.UpdatedAt = maxUpdatedAt;
         }
+    }
 
-        // fix file ordering - ensure a game's most recent files are shown first
+    private static void FixTableCreatedTime(OnlineGame onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.CreatedTime))
+            return;
+
+        // fix game created timestamp - must not be less than any file timestamps
+        var maxCreatedAt = onlineGame.AllFilesList.Max(x => x.CreatedAt);
+        if (onlineGame.LastCreatedAt < maxCreatedAt)
+        {
+            LogFixedTimestamp(onlineGame, FixStatisticsEnum.TableCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
+            onlineGame.LastCreatedAt = maxCreatedAt;
+        }
+    }
+
+    private static void FixFileUpdatedTime(OnlineGame onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.UpdatedTime))
+            return;
+
+        // fix updated timestamp - must not be lower than the created timestamp
         onlineGame.AllFiles.ForEach(kv =>
         {
-            var orderByDescending = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray();
-            if (!kv.Value.SequenceEqual(orderByDescending))
+            kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
             {
-                LogFixed(onlineGame, FixStatisticsEnum.FileUpdateTimeOrdering, $"type={kv.Key}");
-                kv.Value.Clear();
-                kv.Value.AddRange(orderByDescending);
-            }
-        });
-
-        // fix urls
-        onlineGame.AllFiles.ForEach(kv =>
-        {
-            kv.Value.ForEach(f =>
-                f.Urls.ForEach(urlDetail =>
-                {
-                    // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
-                    if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var generatedUrl) && (generatedUrl.Scheme == Uri.UriSchemeHttp || generatedUrl.Scheme == Uri.UriSchemeHttps)))
-                    {
-                        LogFixed(onlineGame, FixStatisticsEnum.InvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
-                        urlDetail.Broken = true;
-                    }
-
-                    // fix vpuniverse urls - path
-                    if (urlDetail.Url?.Contains("//vpuniverse.com/forums") == true)
-                    {
-                        LogFixed(onlineGame, FixStatisticsEnum.WrongUrl, $"type={kv.Key} url={urlDetail.Url}");
-                        urlDetail.Url = urlDetail.Url.Replace("//vpuniverse.com/forums", "//vpuniverse.com");
-                    }
-                })
-            );
+                LogFixedTimestamp(onlineGame, FixStatisticsEnum.FileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
+                f.UpdatedAt = f.CreatedAt;
+            });
         });
     }
 
-    private static void WrongIpdbUrl(OnlineGameBase onlineGame, string ipdbUrl)
+    private static void FixMissingImage(OnlineGameBase onlineGame)
     {
-        if (!IsActive(FixFeedOptionEnum.WrongIpdbUrl))
+        // fix image url - assign to the first available image url.. B2S then table
+        if (!IsActive(FixFeedOptionEnum.MissingImageUrl) || onlineGame.ImgUrl != null)
+            return;
+
+        var imageUrl = onlineGame.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? onlineGame.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
+        if (imageUrl != null)
+        {
+            LogFixed(onlineGame, FixStatisticsEnum.MissingImage, $"url='{imageUrl}'");
+            onlineGame.ImgUrl = imageUrl;
+        }
+    }
+
+    private static void FixWrongUrlIpdb(OnlineGameBase onlineGame, string ipdbUrl)
+    {
+        // fix wrong IPDB url
+        // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
+        if (!IsActive(FixFeedOptionEnum.WrongUrlIpdb) || onlineGame.IpdbUrl == ipdbUrl)
             return;
 
         LogFixed(onlineGame, FixStatisticsEnum.WrongIpdbUrl, $"old url={onlineGame.IpdbUrl}, new url={ipdbUrl}");
         onlineGame.IpdbUrl = ipdbUrl;
+    }
+    
+    private static void FixOriginalTableIncludesIpdbUrl(OnlineGame onlineGame)
+    {
+        // fix wrong IPDB url
+        // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
+        if (!IsActive(FixFeedOptionEnum.OriginalTableIncludesIpdbUrl) || !onlineGame.IsOriginal || onlineGame.IpdbUrl == null)
+            return;
+
+        LogFixed(onlineGame, FixStatisticsEnum.WrongIpdbUrl, $"old url={onlineGame.IpdbUrl}, new url={null}");
+        onlineGame.IpdbUrl = null;
     }
 
     private static void WrongName(OnlineGameBase onlineGame, string name)
