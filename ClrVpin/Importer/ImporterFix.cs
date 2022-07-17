@@ -22,6 +22,9 @@ public static class ImporterFix
 
     public static Dictionary<string, int> FixOnlineDatabase(List<OnlineGame> onlineGames)
     {
+        // create statistics dictionary items upfront to ensure the preferred display ordering (for statistics)
+        CreateStatistics();
+
         // perform pre-merge fixes, i.e. fixes that do NOT require any duplicate game collections to be merged
         // - some of this information mus be done BEFORE the rest of the game fixing because the duplicate entries must be correctly removed BEFORE the various collections are created
         onlineGames.ForEach(PreMerge);
@@ -78,46 +81,29 @@ public static class ImporterFix
             game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToList();
         });
 
-        return _statistics;
+        // keep the enum private and return a dictionary with key as the string representation (e.g. for display purposes)
+        return _statistics.ToDictionary(item => item.Key.GetDescription(), item => item.Value);
     }
 
-    public static void CreateStatistics()
+    private static void CreateStatistics()
     {
-        _statistics = new Dictionary<string, int>
-        {
-            { FixTableNameWhitespace, 0 },
-            { FixTableManufacturerWhitespace, 0 },
-            { FixManufacturedContainsAuthor, 0 },
-            { FixTableWrongManufacturer, 0 },
-            { FixTableWrongName, 0 },
-            { FixTableMissingImage, 0 },
-            { FixTableCreatedTime, 0 },
-            { FixTableUpdatedTimeTooLow, 0 },
-            { FixTableUpdatedTimeTooHigh, 0 },
-            { FixFileUpdateTimeOrdering, 0 },
-            { FixFileUpdatedTime, 0 },
-            { FixInvalidUrl, 0 },
-            { FixWrongUrl, 0 }
-        };
+        // use enum as the key to avoid unnecessary GetDescription() calls when subsequently updating the dictionary
+        _statistics = Enum.GetValues<FixStatisticsEnum>().ToDictionary(enumValue => enumValue, _ => 0);
     }
 
     // fixes that do NOT require the collections to be initialized (which must occur after de-duplicating, aka merging)
     private static void PreMerge(OnlineGame onlineGame)
     {
         // fix named games
-        WrongNameManufacturerYear(onlineGame);
+        FixWrongNameManufacturerYear(onlineGame);
 
         // fix game name - remove whitespace
-        if (onlineGame.Name != onlineGame.Name.Trim())
-        {
-            LogFixed(onlineGame, FixTableNameWhitespace);
-            onlineGame.Name = onlineGame.Name.Trim();
-        }
+        FixTableWhitespace(onlineGame);
 
         // fix manufacturer - remove whitespace
         if (onlineGame.Manufacturer != onlineGame.Manufacturer.Trim())
         {
-            LogFixed(onlineGame, FixTableManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
+            LogFixed(onlineGame, FixStatisticsEnum.ManufacturerWhitespace, $"manufacturer='{onlineGame.Manufacturer}'");
             onlineGame.Manufacturer = onlineGame.Manufacturer.Trim();
         }
 
@@ -126,7 +112,7 @@ public static class ImporterFix
         if (!GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name) && _trimAuthorsRegex.IsMatch(onlineGame.Name))
         {
             var cleanName = _trimAuthorsRegex.Replace(onlineGame.Name, "").Trim();
-            LogFixed(onlineGame, FixManufacturedContainsAuthor, $"correct='{cleanName}, manufacturer='{onlineGame.Manufacturer}'");
+            LogFixed(onlineGame, FixStatisticsEnum.ManufacturedContainsAuthor, $"correct='{cleanName}, manufacturer='{onlineGame.Manufacturer}'");
             onlineGame.Name = cleanName;
         }
 
@@ -134,7 +120,7 @@ public static class ImporterFix
         // - e.g. "Not Available" frequently used for original tables
         if (!(Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
         {
-            LogFixed(onlineGame, FixInvalidIpdbUrl, $"url={onlineGame.IpdbUrl}");
+            LogFixed(onlineGame, FixStatisticsEnum.InvalidIpdbUrl, $"url={onlineGame.IpdbUrl}");
             onlineGame.IpdbUrl = null;
         }
 
@@ -150,7 +136,16 @@ public static class ImporterFix
         if (onlineGame.IsOriginal && onlineGame.IpdbUrl != null) WrongIpdbUrl(onlineGame, null);
     }
 
-    private static void WrongNameManufacturerYear(OnlineGame onlineGame)
+    private static void FixTableWhitespace(OnlineGameBase onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.Whitespace) || onlineGame.Name == onlineGame.Name.Trim())
+            return;
+
+        LogFixed(onlineGame, FixStatisticsEnum.NameWhitespace);
+        onlineGame.Name = onlineGame.Name.Trim();
+    }
+
+    private static void FixWrongNameManufacturerYear(OnlineGame onlineGame)
     {
         // non-generic fixes for specifically named games
         // - this is very smelly, but treating these as 'exceptional' (and hopefully few!) scenarios, similar to GameDerived.CheckIsOriginal
@@ -228,7 +223,7 @@ public static class ImporterFix
             var game = ImporterUtils.GetUniqueGame(grouping.ToList());
             var duplicates = grouping.Except(game).ToList();
 
-            LogFixed(game, FixDuplicateGame, $"duplicate table(s)={duplicates.Select(x => x.Description).StringJoin()}");
+            LogFixed(game, FixStatisticsEnum.DuplicateGame, $"duplicate table(s)={duplicates.Select(x => x.Description).StringJoin()}");
 
             Logger.Warn($"Merging duplicate tables detected in the online feed, IPDB url: {grouping.Key}\n" +
                         $"- unique:    {game}\n" +
@@ -264,7 +259,7 @@ public static class ImporterFix
             var imageUrl = onlineGame.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? onlineGame.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
             if (imageUrl != null)
             {
-                LogFixed(onlineGame, FixTableMissingImage, $"url='{imageUrl}'");
+                LogFixed(onlineGame, FixStatisticsEnum.MissingImage, $"url='{imageUrl}'");
                 onlineGame.ImgUrl = imageUrl;
             }
         }
@@ -274,7 +269,7 @@ public static class ImporterFix
         {
             kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
             {
-                LogFixedTimestamp(onlineGame, FixFileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
+                LogFixedTimestamp(onlineGame, FixStatisticsEnum.FileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
                 f.UpdatedAt = f.CreatedAt;
             });
         });
@@ -283,7 +278,7 @@ public static class ImporterFix
         var maxCreatedAt = onlineGame.AllFilesList.Max(x => x.CreatedAt);
         if (onlineGame.LastCreatedAt < maxCreatedAt)
         {
-            LogFixedTimestamp(onlineGame, FixTableCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
+            LogFixedTimestamp(onlineGame, FixStatisticsEnum.TableCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
             onlineGame.LastCreatedAt = maxCreatedAt;
         }
 
@@ -291,12 +286,12 @@ public static class ImporterFix
         var maxUpdatedAt = onlineGame.AllFilesList.Max(x => x.UpdatedAt);
         if (onlineGame.UpdatedAt < maxUpdatedAt)
         {
-            LogFixedTimestamp(onlineGame, FixTableUpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
+            LogFixedTimestamp(onlineGame, FixStatisticsEnum.TableUpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
             onlineGame.UpdatedAt = maxUpdatedAt;
         }
         else if (onlineGame.UpdatedAt > maxUpdatedAt)
         {
-            LogFixedTimestamp(onlineGame, FixTableUpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
+            LogFixedTimestamp(onlineGame, FixStatisticsEnum.TableUpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
             onlineGame.UpdatedAt = maxUpdatedAt;
         }
 
@@ -306,7 +301,7 @@ public static class ImporterFix
             var orderByDescending = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray();
             if (!kv.Value.SequenceEqual(orderByDescending))
             {
-                LogFixed(onlineGame, FixFileUpdateTimeOrdering, $"type={kv.Key}");
+                LogFixed(onlineGame, FixStatisticsEnum.FileUpdateTimeOrdering, $"type={kv.Key}");
                 kv.Value.Clear();
                 kv.Value.AddRange(orderByDescending);
             }
@@ -321,14 +316,14 @@ public static class ImporterFix
                     // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
                     if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var generatedUrl) && (generatedUrl.Scheme == Uri.UriSchemeHttp || generatedUrl.Scheme == Uri.UriSchemeHttps)))
                     {
-                        LogFixed(onlineGame, FixInvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
+                        LogFixed(onlineGame, FixStatisticsEnum.InvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
                         urlDetail.Broken = true;
                     }
 
                     // fix vpuniverse urls - path
                     if (urlDetail.Url?.Contains("//vpuniverse.com/forums") == true)
                     {
-                        LogFixed(onlineGame, FixWrongUrl, $"type={kv.Key} url={urlDetail.Url}");
+                        LogFixed(onlineGame, FixStatisticsEnum.WrongUrl, $"type={kv.Key} url={urlDetail.Url}");
                         urlDetail.Url = urlDetail.Url.Replace("//vpuniverse.com/forums", "//vpuniverse.com");
                     }
                 })
@@ -341,7 +336,7 @@ public static class ImporterFix
         if (!IsActive(FixFeedOptionEnum.WrongIpdbUrl))
             return;
 
-        LogFixed(onlineGame, FixWrongIpdbUrl, $"old url={onlineGame.IpdbUrl}, new url={ipdbUrl}");
+        LogFixed(onlineGame, FixStatisticsEnum.WrongIpdbUrl, $"old url={onlineGame.IpdbUrl}, new url={ipdbUrl}");
         onlineGame.IpdbUrl = ipdbUrl;
     }
 
@@ -350,7 +345,7 @@ public static class ImporterFix
         if (!IsActive(FixFeedOptionEnum.WrongName))
             return;
 
-        LogFixed(onlineGame, FixTableWrongName, $"new name={name}");
+        LogFixed(onlineGame, FixStatisticsEnum.WrongName, $"new name={name}");
         onlineGame.Name = name;
     }
 
@@ -359,50 +354,32 @@ public static class ImporterFix
         if (!IsActive(FixFeedOptionEnum.WrongManufacturerAndYear))
             return;
 
-        LogFixed(onlineGame, FixTableWrongManufacturer, $"old manufacturer={onlineGame.Manufacturer}, new manufacturer={manufacturer}");
+        LogFixed(onlineGame, FixStatisticsEnum.WrongManufacturer, $"old manufacturer={onlineGame.Manufacturer}, new manufacturer={manufacturer}");
         onlineGame.Manufacturer = manufacturer;
         onlineGame.Year = year ?? onlineGame.Year;
     }
 
     private static bool IsActive(FixFeedOptionEnum option) => Model.Settings.Importer.SelectedFeedFixOptions.Contains(option);
 
-    private static void LogFixedTimestamp(OnlineGameBase onlineGame, string type, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
+    private static void LogFixedTimestamp(OnlineGameBase onlineGame, FixStatisticsEnum fixStatisticsEnum, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
     {
-        LogFixed(onlineGame, type, $"game.{gameTimeName} '{gameTime:dd/MM/yy HH:mm:ss}' {(greaterThan ? ">" : "<")} {maxFileTimeName} '{maxFileTime:dd/MM/yy HH:mm:ss}'");
+        LogFixed(onlineGame, fixStatisticsEnum, $"game.{gameTimeName} '{gameTime:dd/MM/yy HH:mm:ss}' {(greaterThan ? ">" : "<")} {maxFileTimeName} '{maxFileTime:dd/MM/yy HH:mm:ss}'");
     }
 
-    private static void LogFixed(OnlineGameBase onlineGame, string type, string details = null)
+    private static void LogFixed(OnlineGameBase onlineGame, FixStatisticsEnum fixStatisticsEnum, string details = null)
     {
-        AddFixStatistic(type);
+        AddFixStatistic(fixStatisticsEnum);
 
         var name = $"'{onlineGame.Name[..Math.Min(onlineGame.Name.Length, 35)].Trim()}'";
-        Logger.Warn($"Fixed {type,-35} name={name,-35} {details}", true);
+        Logger.Warn($"Fixed {fixStatisticsEnum,-25} name={name,-35} {details}", true);
     }
 
-    private static void AddFixStatistic(string key)
+    private static void AddFixStatistic(FixStatisticsEnum fixStatisticsEnum)
     {
-        _statistics.TryAdd(key, 0);
-        _statistics[key]++;
+        _statistics.TryAdd(fixStatisticsEnum, 0);
+        _statistics[fixStatisticsEnum]++;
     }
 
-    private const string FixTableNameWhitespace = "Table Name Whitespace";
-    private const string FixTableMissingImage = "Table Missing Image Url";
-    private const string FixTableManufacturerWhitespace = "Table Manufacturer Whitespace";
-    private const string FixManufacturedContainsAuthor = "Manufacturered Contains Author";
-    private const string FixTableWrongManufacturer = "Table Wrong Manufacturer";
-    private const string FixTableWrongName = "Table Wrong Name";
-    private const string FixTableCreatedTime = "Table Created Time";
-    private const string FixTableUpdatedTimeTooLow = "Table Updated Time Too Low";
-    private const string FixTableUpdatedTimeTooHigh = "Table Updated Time Too High";
-    private const string FixFileUpdateTimeOrdering = "File Update Time Ordering";
-    private const string FixFileUpdatedTime = "File Updated Time";
-    private const string FixInvalidUrl = "Invalid Url";
-    private const string FixWrongUrl = "Wrong Url";
-    private const string FixInvalidIpdbUrl = "Invalid IPDB Url";
-    private const string FixWrongIpdbUrl = "Wrong IPDB Url";
-    private const string FixDuplicateGame = "Duplicate Table";
-
-    private static Dictionary<string, int> _statistics;
-
+    private static Dictionary<FixStatisticsEnum, int> _statistics;
     private static readonly Regex _trimAuthorsRegex;
 }
