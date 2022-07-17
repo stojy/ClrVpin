@@ -31,7 +31,7 @@ public enum FixStatisticsEnum
     [Description("Table Updated Time Too High")]
     TableUpdatedTimeTooHigh,
 
-    [Description("File Update Time Ordering")]
+    [Description("File Ordering By Update Time")]
     FileUpdateTimeOrdering,
 
     [Description("File Updated Time")]

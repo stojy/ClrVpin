@@ -39,7 +39,7 @@
 
       <TextBlock Style="{StaticResource TitleStyle}">Fix</TextBlock>
       <GroupBox Header="Feed" >
-        <ItemsControl ItemsSource="{Binding FeedFixOptionsView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Height="150">
+        <ItemsControl ItemsSource="{Binding FeedFixOptionsView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Height="180">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
               <WrapPanel Orientation="Vertical" ItemWidth="320" />
