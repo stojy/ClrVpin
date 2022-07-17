@@ -4,50 +4,56 @@ namespace ClrVpin.Importer;
 
 public enum FixStatisticsEnum
 {
-    [Description("Table Name Whitespace")]
+    [Description("Whitespace - Name")]
     NameWhitespace,
 
-    [Description("Table Missing Image Url")]
-    MissingImage,
-
-    [Description("Table Manufacturer Whitespace")]
+    [Description("Whitespace - Manufacturer")]
     ManufacturerWhitespace,
 
-    [Description("Manufacturered Contains Author")]
-    ManufacturedContainsAuthor,
+    [Description("Missing Image")]
+    MissingImage,
 
-    [Description("Table Wrong Manufacturer")]
-    WrongManufacturer,
+    [Description("Manufacturered Includes Author")]
+    ManufacturedIncludesAuthor,
 
-    [Description("Table Wrong Name")]
+    [Description("Original Table Includes IPDB")]
+    OriginalTableIncludesIpdbUrl,
+
+    [Description("Created Time - Too Low")]
+    CreatedTimeLastTimeTooLow,
+
+    [Description("Updated Time - Too Low")]
+    UpdatedTimeTooLow,
+
+    [Description("Updated Time - Too High")]
+    UpdatedTimeTooHigh,
+
+    [Description("Updated Time - Ordering")]
+    UpdatedTimeOrdering,
+
+    [Description("Updated Time - Less Than Created")]
+    UpdatedTimeLessThanCreated,
+
+    [Description("Upgrade Url to Https")]
+    UpgradeUrlHttps,
+
+    [Description("Invalid URL - IPDB")]
+    InvalidUrlIpdb,
+    
+    [Description("Invalid URL - Content")]
+    InvalidUrlContent,
+
+    [Description("Wrong URL - IPDB")]
+    WrongUrlIpdb,
+    
+    [Description("Wrong URL - Content")]
+    WrongUrlContent,
+
+    [Description("Wrong Name")]
     WrongName,
 
-    [Description("Table Created Time")]
-    TableCreatedTime,
-
-    [Description("Table Updated Time Too Low")]
-    TableUpdatedTimeTooLow,
-
-    [Description("Table Updated Time Too High")]
-    TableUpdatedTimeTooHigh,
-
-    [Description("File Ordering By Update Time")]
-    FileUpdateTimeOrdering,
-
-    [Description("File Updated Time")]
-    FileUpdatedTime,
-
-    [Description("Invalid Url")]
-    InvalidUrl,
-
-    [Description("Wrong Url")]
-    WrongUrl,
-
-    [Description("Invalid IPDB Url")]
-    InvalidIpdbUrl,
-
-    [Description("Wrong IPDB Url")]
-    WrongIpdbUrl,
+    [Description("Wrong Manufacturer/Year")]
+    WrongManufacturerYear,
 
     [Description("Duplicate Table")]
     DuplicateGame
