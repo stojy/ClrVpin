@@ -50,7 +50,10 @@ namespace ClrVpin.Models.Settings
 
             // initialise all settings to enabled 
             Scanner = new ScannerSettings();
-            Scanner.SelectedCheckContentTypes.AddRange(GetAllContentTypes().Select(x => x.Description).ToList());
+
+            // very important NOT to include the database type, since doing so would cause the database file(s) to be deleted
+            // - deleted because would be designated as unmatched file since no table will match 'Visual Pinball'
+            Scanner.SelectedCheckContentTypes.AddRange(GetFixableContentTypes().Select(x => x.Description).ToList());
             Scanner.SelectedCheckHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
             Scanner.SelectedFixHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
 
@@ -129,7 +132,11 @@ namespace ClrVpin.Models.Settings
         public ContentType[] GetMediaContentTypes() => AllContentTypes.Where(x => x.Category == ContentTypeCategoryEnum.Media).ToArray();
         public ContentType GetDatabaseContentType() => AllContentTypes.First(x => x.Category == ContentTypeCategoryEnum.Database);
 
-        public ContentType[] GetSelectedCheckContentTypes() => AllContentTypes.Where(type => Scanner.SelectedCheckContentTypes.Contains(type.Description)).ToArray();
+        // it shouldn't be possible to select the database file since it's not selectable from the UI
+        // - but with an abundance caution we explicitly ignore it since if it were included the scanner would attempt to delete the file as 'unmatched'
+        // - refer ctor
+        public ContentType[] GetSelectedCheckContentTypes() => GetFixableContentTypes().Where(type => Scanner.SelectedCheckContentTypes.Contains(type.Description)).ToArray();
+
         public ContentType GetSelectedDestinationContentType() => AllContentTypes.First(x => x.Description == Rebuilder.DestinationContentType);
         public ContentType GetContentType(ContentTypeEnum contentTypeEnum) => AllContentTypes.First(x => x.Enum == contentTypeEnum);
 

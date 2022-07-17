@@ -163,7 +163,7 @@ namespace ClrVpin.Importer
             if (MatchFuzzy.IsActive)
             {
                 progress.Update("Loading database");
-                games = TableUtils.ReadGamesFromDatabases(Settings.GetAllContentTypes());
+                games = TableUtils.ReadGamesFromDatabases(Settings.GetFixableContentTypes());
                 Logger.Info($"Loading database complete, duration={progress.Duration}", true);
             }
 
