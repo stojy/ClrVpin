@@ -2,18 +2,18 @@
 
 namespace ClrVpin.Models.Importer
 {
-    public enum FeedFixOptionEnum
+    public enum FixFeedOptionEnum
     {
         [Description("Whitespace")] Whitespace,
         [Description("Missing Image")] MissingImageUrl,
-        [Description("Manufactured Table Author")] ManufacturedTableContainsAuthor,
+        [Description("Manufactured Table Includes Author")] ManufacturedTableContainsAuthor,
         [Description("Created Time")] CreatedTime,
         [Description("Updated Time")] UpdatedTime,
         [Description("Invalid URL")] InvalidUrl,
-        [Description("Wrong Manufacturer")] WrongManufacturer,
-        [Description("Wrong Table")] WrongTable,
-        [Description("Wrong Content URL")] WrongContentUrl,
-        [Description("Wrong IPDB URL")] WrongIpdbUrl,
+        [Description("Wrong URL - Content")] WrongContentUrl,
+        [Description("Wrong URL - IPDB")] WrongIpdbUrl,
+        [Description("Wrong Manufacturer & Year")] WrongManufacturerAndYear,
+        [Description("Wrong Table")] WrongName,
         [Description("Duplicate Table")] DuplicateTable,
     }
 }

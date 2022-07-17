@@ -62,7 +62,7 @@ namespace ClrVpin.Models.Settings
 
             Importer = new ImporterSettings();
             Importer.SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
-            Importer.SelectedFeedFixOptions.AddRange(StaticSettings.FeedFixOptions.Select(x => x.Enum).ToList());
+            Importer.SelectedFeedFixOptions.AddRange(StaticSettings.FixFeedOptions.Select(x => x.Enum).ToList());
         }
 
         // default settings

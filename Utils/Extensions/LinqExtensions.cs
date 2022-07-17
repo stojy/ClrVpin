@@ -66,14 +66,19 @@ namespace Utils.Extensions
             items.ForEach(source.Add);
         }
 
-        public static bool In<T>(this T item, IEnumerable<T> source)
+        public static bool In<T>(this T source, IEnumerable<T> items)
         {
-            return source.Contains(item);
+            return items.Contains(source);
         }
 
-        public static bool In<T>(this T item, params T[] source)
+        public static bool In<T>(this T source, params T[] items)
         {
-            return source.Contains(item);
+            return items.Contains(source);
+        }
+
+        public static bool ContainsAll<T>(this IEnumerable<T> source, params T[] items)
+        {
+            return items.All(source.Contains);
         }
 
         public static string StringJoin<T>(this IEnumerable<T> items, string separator = ", ")
