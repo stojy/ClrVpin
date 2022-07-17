@@ -37,9 +37,6 @@ public static class ImporterUtils
 
     public static async Task<List<OnlineGame>> GetOnlineDatabase()
     {
-        // create dictionary items upfront to ensure the preferred display ordering (for statistics)
-        ImporterFix.CreateStatistics();
-
         using var httpClient = new HttpClient
         {
             Timeout = TimeSpan.FromSeconds(60),
