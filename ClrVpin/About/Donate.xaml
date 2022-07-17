@@ -27,7 +27,9 @@
 
       <TextBlock Margin="0,30,0,10" HorizontalAlignment="Center" Text="or scan this barcode on your phone.." />
 
-      <Image Source="/Resources/PayPalQr.png" HorizontalAlignment="Center" Stretch="None" />
+      <Grid Background="White" HorizontalAlignment="Center" Width="250">
+        <Image Source="/Resources/PayPalQr.png" HorizontalAlignment="Center" Stretch="None" Margin="20" />
+      </Grid>
     </StackPanel>
   </DataTemplate>
 

@@ -42,7 +42,7 @@
           </StackPanel>
         </Button>
 
-        <Button Command="{Binding HelpCommand}" Width="70" ToolTip="Show online help">
+        <Button Command="{Binding HelpCommand}" Width="70" ToolTip="View the online help">
           <StackPanel>
             <TextBlock Text="Help" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="HelpCircleOutline" Style="{StaticResource PackIconStyle}" />
@@ -52,7 +52,7 @@
         <Button Command="{Binding AuthorCommand}" Width="70" ToolTip="Contact the Author">
           <StackPanel>
             <TextBlock Text="Author" HorizontalAlignment="Center" />
-            <materialDesign:PackIcon Kind="Account" Style="{StaticResource PackIconStyle}" />
+            <materialDesign:PackIcon Kind="Email" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
 
@@ -63,7 +63,7 @@
           </StackPanel>
         </Button>
         
-        <Button Command="{Binding UpdateCommand}" Width="70" ToolTip="Special community thanks">
+        <Button Command="{Binding UpdateCommand}" Width="70" ToolTip="Manually check for an update">
           <StackPanel>
             <TextBlock Text="Update" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="Update" Style="{StaticResource PackIconStyle}" />
