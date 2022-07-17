@@ -10,14 +10,15 @@ namespace ClrVpin.About
     [AddINotifyPropertyChangedInterface]
     public class DonateViewModel
     {
-        private string _paypalDonateUrl = @"https://www.paypal.com/donate?business=PL536UKUXC852&no_recurring=0&currency_code=AUD";
+        // donations setup via stoj@stoj.net
+        private const string PaypalDonateUrl = @"https://www.paypal.com/donate/?business=HT4GWFWEDWDCJ&no_recurring=0&item_name=ClrVpin+open+source+project.++https%3A%2F%2Fgithub.com%2Fstojy%2FClrVpin&currency_code=AUD";
 
         public DonateViewModel()
         {
-            NavigateToPayPalCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(_paypalDonateUrl) { UseShellExecute = true}));
+            NavigateToPayPalCommand = new ActionCommand(() => Process.Start(new ProcessStartInfo(PaypalDonateUrl) { UseShellExecute = true}));
         }
 
-        public ICommand NavigateToPayPalCommand { get; set; }
+        public ICommand NavigateToPayPalCommand { get; }
 
         public void Show(Window parent)
         {
