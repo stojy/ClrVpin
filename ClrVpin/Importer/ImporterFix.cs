@@ -176,6 +176,7 @@ public static class ImporterFix
         if (!IsActive(FixFeedOptionEnum.UpgradeUrlHttps) || !Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttp)
             return;
 
+        LogFixed(onlineGame, FixStatisticsEnum.UpgradeUrlHttps, $"protocol={uri.Scheme}");
         var uriBuilder = new UriBuilder(uri) { Scheme = Uri.UriSchemeHttps, Port = -1 };
         onlineGame.IpdbUrl = uriBuilder.Uri.AbsoluteUri;
     }
@@ -187,7 +188,7 @@ public static class ImporterFix
         if (!IsActive(FixFeedOptionEnum.InvalidUrlIpdb) || (Uri.TryCreate(onlineGame.IpdbUrl, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)))
             return;
 
-        LogFixed(onlineGame, FixStatisticsEnum.InvalidIpdbUrl, $"url={onlineGame.IpdbUrl}");
+        LogFixed(onlineGame, FixStatisticsEnum.InvalidUrlIpdb, $"url={onlineGame.IpdbUrl}");
         onlineGame.IpdbUrl = null;
     }
 
@@ -195,11 +196,11 @@ public static class ImporterFix
     {
         // remove author of the game for manufactured tables
         // - e.g. JP's Captain Fantastic (Bally 1976)
-        if (!IsActive(FixFeedOptionEnum.ManufacturedTableIncludesAuthor) || GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name) || !_trimAuthorsRegex.IsMatch(onlineGame.Name))
+        if (!IsActive(FixFeedOptionEnum.ManufacturedIncludesAuthor) || GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name) || !_trimAuthorsRegex.IsMatch(onlineGame.Name))
             return;
 
         var cleanName = _trimAuthorsRegex.Replace(onlineGame.Name, "").Trim();
-        LogFixed(onlineGame, FixStatisticsEnum.ManufacturedContainsAuthor, $"correct='{cleanName}, manufacturer='{onlineGame.Manufacturer}'");
+        LogFixed(onlineGame, FixStatisticsEnum.ManufacturedIncludesAuthor, $"correct='{cleanName}, manufacturer='{onlineGame.Manufacturer}'");
         onlineGame.Name = cleanName;
     }
 
@@ -266,7 +267,7 @@ public static class ImporterFix
                 break;
             case "Martian Queen (LTD ) (LTD 0)":
                 WrongName(onlineGame, "Martian Queen");
-                WrongManufacturer(onlineGame, "LTD do Brasil Diverses Eletrnicas Ltda", 1981);
+                WrongManufacturerYear(onlineGame, "LTD do Brasil Diverses Eletrnicas Ltda", 1981);
                 break;
         }
     }
@@ -277,7 +278,7 @@ public static class ImporterFix
         // - if the game already exists, then it will be picked up later as a duplicate
         FixWrongUrlIpdb(onlineGame, ipdbUrl);
 
-        WrongManufacturer(onlineGame, manufacturer, year);
+        WrongManufacturerYear(onlineGame, manufacturer, year);
 
         if (name != null)
             WrongName(onlineGame, name);
@@ -296,7 +297,7 @@ public static class ImporterFix
                     // fix vpuniverse urls - path
                     if (urlDetail.Url?.Contains("//vpuniverse.com/forums") == true)
                     {
-                        LogFixed(onlineGame, FixStatisticsEnum.WrongUrl, $"type={kv.Key} url={urlDetail.Url}");
+                        LogFixed(onlineGame, FixStatisticsEnum.WrongUrlContent, $"type={kv.Key} url={urlDetail.Url}");
                         urlDetail.Url = urlDetail.Url.Replace("//vpuniverse.com/forums", "//vpuniverse.com");
                     }
                 })
@@ -317,7 +318,7 @@ public static class ImporterFix
                     // fix urls - mark any invalid urls, e.g. Abra Ca Dabra ROM url is a string warning "copyright notices"
                     if (!urlDetail.Broken && !(Uri.TryCreate(urlDetail.Url, UriKind.Absolute, out var generatedUrl) && (generatedUrl.Scheme == Uri.UriSchemeHttp || generatedUrl.Scheme == Uri.UriSchemeHttps)))
                     {
-                        LogFixed(onlineGame, FixStatisticsEnum.InvalidUrl, $"type={kv.Key} url={urlDetail.Url}");
+                        LogFixed(onlineGame, FixStatisticsEnum.InvalidUrlContent, $"type={kv.Key} url={urlDetail.Url}");
                         urlDetail.Broken = true;
                     }
                 })
@@ -334,7 +335,7 @@ public static class ImporterFix
             var orderByDescending = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray();
             if (!kv.Value.SequenceEqual(orderByDescending))
             {
-                LogFixed(onlineGame, FixStatisticsEnum.FileUpdateTimeOrdering, $"type={kv.Key}");
+                LogFixed(onlineGame, FixStatisticsEnum.UpdatedTimeOrdering, $"type={kv.Key}");
                 kv.Value.Clear();
                 kv.Value.AddRange(orderByDescending);
             }
@@ -350,12 +351,12 @@ public static class ImporterFix
         var maxUpdatedAt = onlineGame.AllFilesList.Max(x => x.UpdatedAt);
         if (onlineGame.UpdatedAt < maxUpdatedAt)
         {
-            LogFixedTimestamp(onlineGame, FixStatisticsEnum.TableUpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
+            LogFixedTimestamp(onlineGame, FixStatisticsEnum.UpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
             onlineGame.UpdatedAt = maxUpdatedAt;
         }
         else if (onlineGame.UpdatedAt > maxUpdatedAt)
         {
-            LogFixedTimestamp(onlineGame, FixStatisticsEnum.TableUpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
+            LogFixedTimestamp(onlineGame, FixStatisticsEnum.UpdatedTimeTooHigh, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt, true);
             onlineGame.UpdatedAt = maxUpdatedAt;
         }
     }
@@ -365,11 +366,11 @@ public static class ImporterFix
         if (!IsActive(FixFeedOptionEnum.CreatedTime))
             return;
 
-        // fix game created timestamp - must not be less than any file timestamps
+        // fix game created timestamp - must not be less than any content created at timestamps
         var maxCreatedAt = onlineGame.AllFilesList.Max(x => x.CreatedAt);
         if (onlineGame.LastCreatedAt < maxCreatedAt)
         {
-            LogFixedTimestamp(onlineGame, FixStatisticsEnum.TableCreatedTime, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
+            LogFixedTimestamp(onlineGame, FixStatisticsEnum.CreatedTimeLastTimeTooLow, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
             onlineGame.LastCreatedAt = maxCreatedAt;
         }
     }
@@ -384,7 +385,7 @@ public static class ImporterFix
         {
             kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
             {
-                LogFixedTimestamp(onlineGame, FixStatisticsEnum.FileUpdatedTime, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
+                LogFixedTimestamp(onlineGame, FixStatisticsEnum.UpdatedTimeLessThanCreated, "updatedAt", f.UpdatedAt, "   createdAt", f.CreatedAt);
                 f.UpdatedAt = f.CreatedAt;
             });
         });
@@ -407,11 +408,11 @@ public static class ImporterFix
     private static void FixWrongUrlIpdb(OnlineGameBase onlineGame, string ipdbUrl)
     {
         // fix wrong IPDB url
-        // - original tables shouldn't reference a manufactured table.. but sometimes happens as a reference to the inspiration table
+        // - original tables shouldn't reference IPDB (i.e. a manufactured table).. but sometimes happens as a reference to the inspiration table
         if (!IsActive(FixFeedOptionEnum.WrongUrlIpdb) || onlineGame.IpdbUrl == ipdbUrl)
             return;
 
-        LogFixed(onlineGame, FixStatisticsEnum.WrongIpdbUrl, $"old url={onlineGame.IpdbUrl}, new url={ipdbUrl}");
+        LogFixed(onlineGame, FixStatisticsEnum.WrongUrlIpdb, $"old url={onlineGame.IpdbUrl}, new url={ipdbUrl}");
         onlineGame.IpdbUrl = ipdbUrl;
     }
     
@@ -422,7 +423,7 @@ public static class ImporterFix
         if (!IsActive(FixFeedOptionEnum.OriginalTableIncludesIpdbUrl) || !onlineGame.IsOriginal || onlineGame.IpdbUrl == null)
             return;
 
-        LogFixed(onlineGame, FixStatisticsEnum.WrongIpdbUrl, $"old url={onlineGame.IpdbUrl}, new url={null}");
+        LogFixed(onlineGame, FixStatisticsEnum.OriginalTableIncludesIpdbUrl, $"old url={onlineGame.IpdbUrl}, new url={null}");
         onlineGame.IpdbUrl = null;
     }
 
@@ -435,12 +436,12 @@ public static class ImporterFix
         onlineGame.Name = name;
     }
 
-    private static void WrongManufacturer(OnlineGameBase onlineGame, string manufacturer, int? year = null)
+    private static void WrongManufacturerYear(OnlineGameBase onlineGame, string manufacturer, int? year = null)
     {
-        if (!IsActive(FixFeedOptionEnum.WrongManufacturerAndYear))
+        if (!IsActive(FixFeedOptionEnum.WrongManufacturerYear))
             return;
 
-        LogFixed(onlineGame, FixStatisticsEnum.WrongManufacturer, $"old manufacturer={onlineGame.Manufacturer}, new manufacturer={manufacturer}");
+        LogFixed(onlineGame, FixStatisticsEnum.WrongManufacturerYear, $"old manufacturer={onlineGame.Manufacturer}, new manufacturer={manufacturer}");
         onlineGame.Manufacturer = manufacturer;
         onlineGame.Year = year ?? onlineGame.Year;
     }

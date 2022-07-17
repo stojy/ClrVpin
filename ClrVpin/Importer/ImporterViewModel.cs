@@ -131,11 +131,11 @@ namespace ClrVpin.Importer
             // disable 'duplicate table' option if the prerequisite fix options aren't enabled
             if (!Settings.Importer.SelectedFeedFixOptions.ContainsAll(
                     FixFeedOptionEnum.Whitespace,
-                    FixFeedOptionEnum.ManufacturedTableIncludesAuthor,
+                    FixFeedOptionEnum.ManufacturedIncludesAuthor,
                     FixFeedOptionEnum.OriginalTableIncludesIpdbUrl,
                     FixFeedOptionEnum.InvalidUrlIpdb,
                     FixFeedOptionEnum.UpgradeUrlHttps,
-                    FixFeedOptionEnum.WrongManufacturerAndYear,
+                    FixFeedOptionEnum.WrongManufacturerYear,
                     FixFeedOptionEnum.WrongName,
                     FixFeedOptionEnum.WrongUrlIpdb))
             {

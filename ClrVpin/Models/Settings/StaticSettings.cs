@@ -105,7 +105,7 @@ namespace ClrVpin.Models.Settings
         {
             new FixFeedOption {Enum = FixFeedOptionEnum.Whitespace, Tip = "Remove excess whitespace from table and manufacturer descriptions"},
             new FixFeedOption {Enum = FixFeedOptionEnum.MissingImageUrl, Tip = "Fix missing image by assigning an alternate image from the same table (if available)"},
-            new FixFeedOption {Enum = FixFeedOptionEnum.ManufacturedTableIncludesAuthor, Tip = "Remove author from manufactured table (original tables are unchanged)"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.ManufacturedIncludesAuthor, Tip = "Remove author from manufactured table (original tables are unchanged)"},
             new FixFeedOption {Enum = FixFeedOptionEnum.OriginalTableIncludesIpdbUrl, Tip = "Remove IPDB URL from original (non-manufactured) table"},
             new FixFeedOption {Enum = FixFeedOptionEnum.CreatedTime, Tip = "Fix content creation time so that it's NOT less than the last updated time"},
             new FixFeedOption {Enum = FixFeedOptionEnum.UpdatedTime, Tip = "Fix content updated time. e.g. missing, before created time, after current time"},
@@ -114,8 +114,8 @@ namespace ClrVpin.Models.Settings
             new FixFeedOption {Enum = FixFeedOptionEnum.InvalidUrlContent, Tip = "Mark incorrect content URL as invalid (navigation to web content will be disabled)"},
             new FixFeedOption {Enum = FixFeedOptionEnum.WrongUrlIpdb, Tip = "Fix IPDB URL, e.g. named tables with wrong IPDB URL, original table referencing IPDB URL"},
             new FixFeedOption {Enum = FixFeedOptionEnum.WrongUrlContent, Tip = "Fix content URL, e.g. vpuniverse.com URL path"},
-            new FixFeedOption {Enum = FixFeedOptionEnum.WrongManufacturerAndYear, Tip = "Fix manufacturer name"},
             new FixFeedOption {Enum = FixFeedOptionEnum.WrongName, Tip = "Fix table name"},
+            new FixFeedOption {Enum = FixFeedOptionEnum.WrongManufacturerYear, Tip = "Fix manufacturer name"},
             new FixFeedOption {Enum = FixFeedOptionEnum.DuplicateTable, Tip = "Merge duplicate table entries based on the IPDB URL (n/a for original tables)"},
         };
     }
