@@ -173,7 +173,7 @@ namespace ClrVpin.Shared
         private static void LogDatabaseStatistics(IReadOnlyCollection<GameDetail> gameDetails, string file = null)
         {
             Logger.Info(
-                $"Local database tables: {(file == null ? "total " : "")}count={gameDetails.Count} (manufactured={gameDetails.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={gameDetails.Count(onlineGame => onlineGame.Derived.IsOriginal)})" +
+                $"Local database {(file == null ? "total" : "file")}: count={gameDetails.Count} (manufactured={gameDetails.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={gameDetails.Count(onlineGame => onlineGame.Derived.IsOriginal)})" +
                 $"{(file == null ? "" : ", file: " + file)}");
         }
 
