@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ByteSizeLib;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
@@ -16,6 +17,9 @@ namespace ClrVpin.Shared
         static FileUtils()
         {
             _settings = Model.Settings;
+
+            _invalidFileNameChars = Path.GetInvalidFileNameChars();
+            _invalidCharsRegex = new Regex($"[{_invalidFileNameChars.StringJoin("")}]", RegexOptions.Compiled);
         }
 
         public static string ActiveBackupFolder { get; private set; }
@@ -132,6 +136,22 @@ namespace ClrVpin.Shared
 
             var fileName = Path.GetFileName(path);
             return fileName.IndexOfAny(_invalidFileNameChars) != -1;
+        }
+        
+        public static string RemoveInvalidFileNameChars(this string path)
+        {
+            if (path == null)
+                return null;
+
+            var fileName = Path.GetFileName(path);
+
+            // special case - replace double quote with a single quote
+            fileName = fileName.Replace("\"", "'");
+
+            // everything else - strip the character
+            fileName = _invalidCharsRegex.Replace(fileName, "");
+
+            return fileName;
         }
 
         public static void Backup(string file, string subFolder, Action<string> backupAction = null, bool ignoreTrainerWheels = false)
@@ -286,6 +306,7 @@ namespace ClrVpin.Shared
         private static string _rootBackupFolder;
         private static readonly Models.Settings.Settings _settings;
 
-        private static readonly char[] _invalidFileNameChars = Path.GetInvalidFileNameChars();
+        private static readonly char[] _invalidFileNameChars;
+        private static readonly Regex _invalidCharsRegex;
     }
 }

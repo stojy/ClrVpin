@@ -4,6 +4,7 @@ namespace ClrVpin.Models.Importer
 {
     public enum FixFeedOptionEnum
     {
+        [Description("Invalid Characters")] InvalidCharacters,
         [Description("Whitespace")] Whitespace,
         [Description("Missing Image")] MissingImageUrl,
         [Description("Manufactured Table Includes Author")] ManufacturedIncludesAuthor,
