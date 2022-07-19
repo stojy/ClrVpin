@@ -69,9 +69,9 @@ namespace ClrVpin.Shared.Fuzzy
             _multipleWhitespaceRegex = new Regex(@"(\s{2,})", RegexOptions.Compiled);
 
             // file name info parsing
-            // - faster: name via looking for the first opening parenthesis.. https://regex101.com/r/tRqeOH/1
-            // - slower: name is greedy search using the last opening parenthesis.. https://regex101.com/r/xiXsML/1.. @"(?<name>.*)\((?<manufacturer>\D*)(?<year>\d*)\).*"
-            _fileNameInfoRegex = new Regex(@"(?<name>[^(]*)\((?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*\)", RegexOptions.Compiled);
+            // - faster: name via looking for the FIRST opening parenthesis.. https://regex101.com/r/tRqeOH/1..         (?<name>[^(]*)[(](?<manufacturer>\D*)(?<year>\d*)\D*\)
+            // - slower: name is greedy search using the LAST opening parenthesis.. https://regex101.com/r/xiXsML/1..   (?<name>.*)[(](?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*[)].*
+            _fileNameInfoRegex = new Regex(@"(?<name>[^(]*).*\((?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*\).*", RegexOptions.Compiled);
         }
 
         public static string Clean(string name, bool removeAllWhiteSpace)

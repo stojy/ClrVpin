@@ -22,7 +22,8 @@ public class FuzzyTests
     [TestCase("Indiana Jones (Williams) blah.directb2s", true, "indiana jones", "indianajones", "williams", "williams", null)]
     [TestCase("Indiana Jones (1993) blah.directb2s", true, "indiana jones", "indianajones", null, null, 1993)]
     [TestCase("Indiana Jones.directb2s", true, "indiana jones", "indianajones", null, null, null)]
-    [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", true, "indiana jones", "indianajones", "williams", "williams", 1993, TestName = "only last most parenthesis is used")]
+    [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", true, "indiana jones", "indianajones", "williams", "williams", 1993, TestName = "only last most parenthesis is used #1")]
+    [TestCase("Batman (66 Limited Edition) (Stern 2016)", true, "batman", "batman", "stern", "stern", 2016, TestName = "only last most parenthesis is used #2")]
     [TestCase("", true, null, null, null, null, null, TestName = "empty string")]
     [TestCase(null, true, null, null, null, null, null, TestName = "null string")]
     [TestCase("123", true, "123", "123", null, null, null, TestName = "number title")]
@@ -205,6 +206,10 @@ public class FuzzyTests
     [TestCase(@"Whoa Nellie Big Juicy Melons (Stern 2015)", @"Whoa Nellie! Big Juicy Melons (Stern 2015)", true, 235, TestName = "manufacturer - correct")]
     [TestCase(@"X-Men LE (Stern 2012)", "X-Men (Stern 2012)", false, 65, TestName = "name - too short to get decent match")]
     [TestCase(@"X-Men (Stern 2012)", "X-Men (Stern 2012)", true, 220, TestName = "name - short name exact match")]
+    [TestCase("Batman (66 Limited Edition) (Stern 2016)", "The Batman (Original 2022)", false, -845, TestName = "low match - double parenthesis.. the first being part of the title")]
+    [TestCase("Batman 66 (Stern 2016)", "The Batman (Original 2022)", false, -1000, TestName = "low match - database to feed #2")]
+    [TestCase("Batman 66 (Stern 2016)", "Batman 66 (Original 2018)", true, 105, TestName = "low match - database to feed #1")]
+    [TestCase("Batman 66 (Original 2018)", "Batman 66 (Stern 2016).vpx", true, 105, TestName = "low match - database (after feed update) to file")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
