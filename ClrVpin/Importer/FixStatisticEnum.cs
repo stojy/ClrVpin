@@ -4,6 +4,12 @@ namespace ClrVpin.Importer;
 
 public enum FixStatisticsEnum
 {
+    [Description("Invalid Characters - Name")]
+    NameInvalidCharacters,
+
+    [Description("Invalid Characters - Manufacturer")]
+    ManufacturerInvalidCharacters,
+
     [Description("Whitespace - Name")]
     NameWhitespace,
 

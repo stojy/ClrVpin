@@ -103,6 +103,7 @@ namespace ClrVpin.Models.Settings
         // all possible file merge options - to be used elsewhere (importer)
         public static readonly FixFeedOption[] FixFeedOptions =
         {
+            new FixFeedOption {Enum = FixFeedOptionEnum.InvalidCharacters, Tip = "Fix or remove any invalid characters (anything not supported by the windows file system)"},
             new FixFeedOption {Enum = FixFeedOptionEnum.Whitespace, Tip = "Remove excess whitespace from table and manufacturer descriptions"},
             new FixFeedOption {Enum = FixFeedOptionEnum.MissingImageUrl, Tip = "Fix missing image by assigning an alternate image from the same table (if available)"},
             new FixFeedOption {Enum = FixFeedOptionEnum.ManufacturedIncludesAuthor, Tip = "Remove author from manufactured table (original tables are unchanged)"},

@@ -6,6 +6,7 @@ using ClrVpin.Logging;
 using ClrVpin.Models.Importer;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Game;
+using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;
 
@@ -96,8 +97,10 @@ public static class ImporterFix
     {
         FixNamedGames(onlineGame);
 
-        FixTableWhitespace(onlineGame);
+        FixTableInvalidCharacters(onlineGame);
+        FixManufacturerInvalidCharacters(onlineGame);
 
+        FixTableWhitespace(onlineGame);
         FixManufacturerWhitespace(onlineGame);
 
         FixManufacturedIncludesAuthor(onlineGame);
@@ -220,6 +223,24 @@ public static class ImporterFix
 
         LogFixed(onlineGame, FixStatisticsEnum.NameWhitespace);
         onlineGame.Name = onlineGame.Name.Trim();
+    }
+
+    private static void FixTableInvalidCharacters(OnlineGameBase onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.InvalidCharacters) || !onlineGame.Name.HasInvalidFileNameChars())
+            return;
+
+        LogFixed(onlineGame, FixStatisticsEnum.NameInvalidCharacters);
+        onlineGame.Name = onlineGame.Name.RemoveInvalidFileNameChars();
+    }
+    
+    private static void FixManufacturerInvalidCharacters(OnlineGameBase onlineGame)
+    {
+        if (!IsActive(FixFeedOptionEnum.InvalidCharacters) || !onlineGame.Manufacturer.HasInvalidFileNameChars())
+            return;
+
+        LogFixed(onlineGame, FixStatisticsEnum.ManufacturerInvalidCharacters);
+        onlineGame.Manufacturer = onlineGame.Manufacturer.RemoveInvalidFileNameChars();
     }
 
     private static void FixNamedGames(OnlineGame onlineGame)
