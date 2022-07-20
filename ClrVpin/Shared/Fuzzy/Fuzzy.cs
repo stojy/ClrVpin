@@ -29,7 +29,7 @@ namespace ClrVpin.Shared.Fuzzy
             // words
             _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
             Authors = new[] { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99" };
-            string[] language = { "a", "and", "the", "premium", "en" };
+            string[] language = { "a", "and", "n'", "the", "premium", "en" };
             string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
             pattern = string.Join('|', Authors.Concat(language).Concat(vpx));
 
