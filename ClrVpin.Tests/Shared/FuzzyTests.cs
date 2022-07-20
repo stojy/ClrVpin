@@ -43,7 +43,7 @@ public class FuzzyTests
     [TestCase(@"1-2-3... (Automaticos 1973)", false, "1 2 3", "123", "automaticos", "automaticos", 1973, TestName = "name has trailing periods")]
     [TestCase(@"1-2-3... (Automaticos 1973).vpx", true, "1 2 3", "123", "automaticos", "automaticos", 1973, TestName = "name has trailing periods")]
     [TestCase(@"1-2-3... (My MANufacturer   is me 1973).vpx", true, "1 2 3", "123", "my manufacturer is me", "mymanufacturerisme", 1973, TestName = "manufacturer variant - multiple spaces and capitilisation")]
-    [TestCase(@"1-2-3... (My.Manufacturer Is.&Me 1973).vpx", true, "1 2 3", "123", "my manufacturer is and me", "mymanufacturerisandme", 1973, TestName = "manufacturer variant - period and &")]
+    [TestCase(@"1-2-3... (My.Manufacturer Is.&Me 1973).vpx", true, "1 2 3", "123", "my manufacturer is me", "mymanufacturerisme", 1973, TestName = "manufacturer variant - period and &.. both chars stripped")]
     public void GetNameDetailsTest(string sourceName, bool isFileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, string expectedManufacturerNoWhiteSpace, int? expectedYear)
     {
         var fuzzyDetails = Fuzzy.GetNameDetails(sourceName, isFileName);
@@ -93,8 +93,8 @@ public class FuzzyTests
     [TestCase("black-knight", false, "black knight", TestName = "remove '-'")]
     [TestCase("black - knight", false, "black knight", TestName = "remove ' - '")]
     [TestCase("black_knight", false, "black knight", TestName = "remove '_'")]
-    [TestCase("black&knight", false, "black and knight", TestName = "replace '&'")]
-    [TestCase("black & knight", false, "black and knight", TestName = "replace ' & '")]
+    [TestCase("black&knight", false, "blackknight", TestName = "strip '&'")]
+    [TestCase("black & knight", false, "black knight", TestName = "strip ' & '")]
     [TestCase("1 2 3 (Premier 1989)", true, "123(premier1989)", TestName = "#1 white space - removed")]
     [TestCase("1-2-3-(Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#2 white space - removed")]
     [TestCase("1 2   3 (Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#3 white space - removed")]
@@ -210,6 +210,7 @@ public class FuzzyTests
     [TestCase("Batman 66 (Stern 2016)", "The Batman (Original 2022)", false, -1000, TestName = "low match - database to feed #2")]
     [TestCase("Batman 66 (Stern 2016)", "Batman 66 (Original 2018)", true, 105, TestName = "low match - database to feed #1")]
     [TestCase("Batman 66 (Original 2018)", "Batman 66 (Stern 2016).vpx", true, 105, TestName = "low match - database (after feed update) to file")]
+    [TestCase("Aces & Kings (Williams 1970)", "Aces and Kings (Williams 1970).vpx", true, 221, TestName = "And vs &.. both should be stripped to ensure a strong match")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
