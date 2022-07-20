@@ -211,7 +211,8 @@ public class FuzzyTests
     [TestCase("Batman 66 (Stern 2016)", "Batman 66 (Original 2018)", true, 105, TestName = "low match - database to feed #1")]
     [TestCase("Batman 66 (Original 2018)", "Batman 66 (Stern 2016).vpx", true, 105, TestName = "low match - database (after feed update) to file")]
     [TestCase("Aces & Kings (Williams 1970)", "Aces and Kings (Williams 1970).vpx", true, 221, TestName = "And vs &.. both should be stripped to ensure a strong match")]
-    [TestCase("Guns N' Roses (Data East 1994)", "Guns and Roses (Data East 1994).vpx", true, 221, TestName = "'N abbreviation for 'and'.. should be stripped")]
+    [TestCase("Guns N' Roses (Data East 1994)", "Guns and Roses (Data East 1994).vpx", true, 221, TestName = "N' abbreviation for 'and'.. should be stripped")]
+    [TestCase("Surf 'n Safari (Gottlieb 1991)", "Surf and Safari (Gottlieb 1992).vpx", true, 212, TestName = "'n abbreviation for 'and'.. should be stripped")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
