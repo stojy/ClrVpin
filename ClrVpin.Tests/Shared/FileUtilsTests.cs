@@ -7,20 +7,21 @@ namespace ClrVpin.Tests.Shared
     internal class FileUtilsTests
     {
         [Test]
-        [TestCase(null, false)]
-        [TestCase("file", false)]
-        [TestCase("file.txt", false)]
-        [TestCase("file/", false)]
-        [TestCase("path/file", false)]
-        [TestCase("file:", true)]
-        [TestCase("fi:le", true)]
-        [TestCase(@"directory\file", false)]
-        [TestCase(@"directory\file", false)]
-        [TestCase("Star Trek: The Next Generation (Williams 1993).mp3", true)]
-        [TestCase(@"C:\vp\apps\PinballX\Media\Visual Pinball\Launch Audio\Star Trek: The Next Generation (Williams 1993).mp3", true)]
-        public void TestContainsInvalidChars(string file, bool expectedInvalid)
+        [TestCase(null, false, false)]
+        [TestCase("file", true, false)]
+        [TestCase("file.txt", true, false)]
+        [TestCase("file/", false, false)]
+        [TestCase("path/file", false, false)]
+        [TestCase("AC/DC", true, true)]
+        [TestCase("file:", true, true)]
+        [TestCase("fi:le", true, true)]
+        [TestCase(@"directory\file", false, false)]
+        [TestCase(@"directory\file", false, false)]
+        [TestCase("Star Trek: The Next Generation (Williams 1993).mp3", true, true)]
+        [TestCase(@"C:\vp\apps\PinballX\Media\Visual Pinball\Launch Audio\Star Trek: The Next Generation (Williams 1993).mp3", false, true)]
+        public void TestContainsInvalidChars(string path, bool isFile, bool expectedInvalid)
         {
-            Assert.That(file.HasInvalidFileNameChars(), Is.EqualTo(expectedInvalid));
+            Assert.That(path.HasInvalidFileNameChars(isFile), Is.EqualTo(expectedInvalid));
         }
     }
 }

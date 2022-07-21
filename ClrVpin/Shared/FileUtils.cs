@@ -19,6 +19,7 @@ namespace ClrVpin.Shared
             _settings = Model.Settings;
 
             _invalidFileNameChars = Path.GetInvalidFileNameChars();
+
             _invalidCharsRegex = new Regex($"[{_invalidFileNameChars.StringJoin("")}]", RegexOptions.Compiled);
         }
 
@@ -128,25 +129,28 @@ namespace ClrVpin.Shared
             return details;
         }
 
-        public static bool HasInvalidFileNameChars(this string path)
+        public static bool HasInvalidFileNameChars(this string path, bool hasNoPath = false)
         {
             // empty path has no invalid chars!
             if (path == null)
                 return false;
 
-            var fileName = Path.GetFileName(path);
+            var fileName = hasNoPath ? path : Path.GetFileName(path);
             return fileName.IndexOfAny(_invalidFileNameChars) != -1;
         }
         
-        public static string RemoveInvalidFileNameChars(this string path)
+        public static string RemoveInvalidFileNameChars(this string path, bool hasNoPath = false)
         {
             if (path == null)
                 return null;
 
-            var fileName = Path.GetFileName(path);
+            var fileName = hasNoPath ? path : Path.GetFileName(path);
 
             // special case - replace double quote with a single quote
             fileName = fileName.Replace("\"", "'");
+
+            // special case - replace slash with dash
+            fileName = fileName.Replace("/", "-");
 
             // everything else - strip the character
             fileName = _invalidCharsRegex.Replace(fileName, "");
