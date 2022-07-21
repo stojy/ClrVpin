@@ -22,8 +22,9 @@ public class FuzzyTests
     [TestCase("Indiana Jones (Williams) blah.directb2s", true, "indiana jones", "indianajones", "williams", "williams", null)]
     [TestCase("Indiana Jones (1993) blah.directb2s", true, "indiana jones", "indianajones", null, null, 1993)]
     [TestCase("Indiana Jones.directb2s", true, "indiana jones", "indianajones", null, null, null)]
-    [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", true, "indiana jones", "indianajones", "williams", "williams", 1993, TestName = "only last most parenthesis is used #1")]
-    [TestCase("Batman (66 Limited Edition) (Stern 2016)", true, "batman", "batman", "stern", "stern", 2016, TestName = "only last most parenthesis is used #2")]
+    [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", true, "indiana jones blah", "indianajonesblah", "williams", "williams", 1993, TestName = "first parenthesis is used #1 - and parenthesis stripped")]
+    [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012).directb2s", true, "c dc let there be rock limited edition", "cdcletthereberocklimitededition", "stern", "stern", 2012, TestName = "first parenthesis is used #1 - and parenthesis stripped, also - becomes space")]
+    [TestCase("Batman (66 Limited Edition) (Stern 2016)", true, "batman 66 limited edition", "batman66limitededition", "stern", "stern", 2016, TestName = "first parenthesis is used #3 - and parenthesis stripped")]
     [TestCase("", true, null, null, null, null, null, TestName = "empty string")]
     [TestCase(null, true, null, null, null, null, null, TestName = "null string")]
     [TestCase("123", true, "123", "123", null, null, null, TestName = "number title")]
@@ -95,14 +96,14 @@ public class FuzzyTests
     [TestCase("black_knight", false, "black knight", TestName = "remove '_'")]
     [TestCase("black&knight", false, "blackknight", TestName = "strip '&'")]
     [TestCase("black & knight", false, "black knight", TestName = "strip ' & '")]
-    [TestCase("1 2 3 (Premier 1989)", true, "123(premier1989)", TestName = "#1 white space - removed")]
-    [TestCase("1-2-3-(Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#2 white space - removed")]
-    [TestCase("1 2   3 (Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#3 white space - removed")]
-    [TestCase("1 2 3 (Premier 1989)", false, "1 2 3 (premier 1989)", TestName = "#4 white space - kept")]
+    [TestCase("1 2 3 (Premier 1989)", true, "123premier1989", TestName = "#1 white space & parenthesis - removed")]
+    [TestCase("1-2-3-(Premier 1989)", false, "1 2 3 premier 1989", TestName = "#2 white space  & parenthesis- removed")]
+    [TestCase("1 2   3 (Premier 1989)", false, "1 2 3 premier 1989", TestName = "#3 white space  & parenthesis- removed")]
+    [TestCase("1 2 3 (Premier 1989)", false, "1 2 3 premier 1989", TestName = "#4 white space - kept")]
     [TestCase("1234 blah", false, "1234 blah", TestName = "trim number preamble")]
     [TestCase("12345 blah", false, "blah", TestName = "trim number preamble")]
     [TestCase("Vp10-The Walking Dead 1.1.vpx", false, "walking dead", TestName = "remove vp10")]
-    [TestCase("24™ Pin·bot Motörhead (Electromecánica)", false, "24 pinbot motrhead (electromecnica)", TestName = "remove non-ascii characters")]
+    [TestCase("24™ Pin·bot Motörhead (Electromecánica)", false, "24 pinbot motrhead electromecnica", TestName = "remove non-ascii characters")]
     public void CleanTest(string fileName, bool removeAllWhiteSpace, string expectedName)
     {
         // confirm Clean provides exact results - i.e. ignore scoring
@@ -206,13 +207,14 @@ public class FuzzyTests
     [TestCase(@"Whoa Nellie Big Juicy Melons (Stern 2015)", @"Whoa Nellie! Big Juicy Melons (Stern 2015)", true, 235, TestName = "manufacturer - correct")]
     [TestCase(@"X-Men LE (Stern 2012)", "X-Men (Stern 2012)", false, 65, TestName = "name - too short to get decent match")]
     [TestCase(@"X-Men (Stern 2012)", "X-Men (Stern 2012)", true, 220, TestName = "name - short name exact match")]
-    [TestCase("Batman (66 Limited Edition) (Stern 2016)", "The Batman (Original 2022)", false, -845, TestName = "low match - double parenthesis.. the first being part of the title")]
     [TestCase("Batman 66 (Stern 2016)", "The Batman (Original 2022)", false, -1000, TestName = "low match - database to feed #2")]
     [TestCase("Batman 66 (Stern 2016)", "Batman 66 (Original 2018)", true, 105, TestName = "low match - database to feed #1")]
     [TestCase("Batman 66 (Original 2018)", "Batman 66 (Stern 2016).vpx", true, 105, TestName = "low match - database (after feed update) to file")]
     [TestCase("Aces & Kings (Williams 1970)", "Aces and Kings (Williams 1970).vpx", true, 221, TestName = "And vs &.. both should be stripped to ensure a strong match")]
     [TestCase("Guns N' Roses (Data East 1994)", "Guns and Roses (Data East 1994).vpx", true, 221, TestName = "N' abbreviation for 'and'.. should be stripped")]
     [TestCase("Surf 'n Safari (Gottlieb 1991)", "Surf and Safari (Gottlieb 1992).vpx", true, 212, TestName = "'n abbreviation for 'and'.. should be stripped")]
+    [TestCase("Batman (66 Limited Edition) (Stern 2016)", "The Batman (Original 2022)", false, -986, TestName = "low match - double parenthesis.. the first being part of the title")]
+    [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012)", "AC-DC Let There Be Rock (Stern 2013).vpx", true, 175, TestName = "double parethensis - name contents exist in the first set")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
@@ -304,7 +306,7 @@ public class FuzzyTests
         fileDetails = Fuzzy.GetNameDetails("Transformers Marcade Mod v1.2.vpx", true);
         (game, score, isMatch) = gameDetails.Match(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("6"));
-        Assert.That(score, Is.EqualTo(114 + Fuzzy.ScoringNoWhiteSpaceBonus));
+        Assert.That(score, Is.EqualTo(117 + Fuzzy.ScoringNoWhiteSpaceBonus));
         Assert.That(isMatch, Is.True);
 
         // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw table name

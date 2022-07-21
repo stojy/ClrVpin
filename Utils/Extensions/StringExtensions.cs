@@ -5,7 +5,9 @@ namespace Utils.Extensions;
 
 public static class StringExtensions
 {
-    public static string FromTitleCase(this string value, IEnumerable<string> ignoreWords = null)
+    // convert from camel case to regular title cased text
+    // e.g. SpinACard --> Spin A Card
+    public static string FromCamelCase(this string value, IEnumerable<string> ignoreWords = null)
     {
         // handle ignoreWords by converting matches to lowercase so they are effectively ignored when it comes to the title case checking
         ignoreWords?.ForEach(x => value = value.Replace(x, x.ToLower()));

@@ -18,7 +18,7 @@ namespace ClrVpin.Shared.Fuzzy
 
             // chars
             // - special consideration for non-ascii characters (i.e. 8 bit chars) as handling of these between IPDB, XML DB, and file names is often inconsistent
-            string[] specialChars = { "&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"[^\x00-\x7F]", "&" };
+            string[] specialChars = { "&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"[^\x00-\x7F]", "&", @"\(", @"\)" };
             var pattern = string.Join('|', specialChars);
             _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
@@ -70,8 +70,8 @@ namespace ClrVpin.Shared.Fuzzy
 
             // file name info parsing
             // - faster: name via looking for the FIRST opening parenthesis.. https://regex101.com/r/tRqeOH/1..         (?<name>[^(]*)[(](?<manufacturer>\D*)(?<year>\d*)\D*\)
-            // - slower: name is greedy search using the LAST opening parenthesis.. https://regex101.com/r/xiXsML/1..   (?<name>.*)[(](?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*[)].*
-            _fileNameInfoRegex = new Regex(@"(?<name>[^(]*).*\((?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*\).*", RegexOptions.Compiled);
+            // - slower: name is greedy search, terminating via the LAST opening parenthesis.. https://regex101.com/r/xiXsML/1..   (?<name>.*)[(](?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*[)].*
+            _fileNameInfoRegex = new Regex(@"(?<name>.*)[(](?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*[)].*", RegexOptions.Compiled);
         }
 
         public static string Clean(string name, bool removeAllWhiteSpace)
@@ -79,11 +79,10 @@ namespace ClrVpin.Shared.Fuzzy
             if (name == null)
                 return null;
 
-            // clean the string to make it a little cleaner for subsequent matching
-            // - order is important!
+            // clean the string to make it a little cleaner for subsequent matching.. order is VERY important!
 
             // insert word break for any camel casing, e.g. "SpotACard" becomes "Sport A Card"
-            var cleanName = name.FromTitleCase(_titleCaseWordExceptions);
+            var cleanName = name.FromCamelCase(_titleCaseWordExceptions);
 
             // easier comparison when everything is in the same case
             cleanName = cleanName.ToLowerAndTrim();

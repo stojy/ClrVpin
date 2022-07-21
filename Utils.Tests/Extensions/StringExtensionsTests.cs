@@ -21,9 +21,10 @@ namespace Utils.Tests.Extensions
         [TestCase("AAA", "A AA")]
         [TestCase("TheHouse", "The House")]
         [TestCase("123TheHouse", "123The House")]
+        [TestCase("AC/DC Let There BeRock", "A C/DC Let There Be Rock")] // first word "AC" has "A" inserted as a new word.. an unfortunate side effect
         public void TestFromCamelCase(string name, string expectedName)
         {
-            Assert.That(name.FromTitleCase(), Is.EqualTo(expectedName));
+            Assert.That(name.FromCamelCase(), Is.EqualTo(expectedName));
         }
     }
 }

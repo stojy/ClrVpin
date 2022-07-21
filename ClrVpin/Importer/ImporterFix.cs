@@ -227,11 +227,11 @@ public static class ImporterFix
 
     private static void FixTableInvalidCharacters(OnlineGameBase onlineGame)
     {
-        if (!IsActive(FixFeedOptionEnum.InvalidCharacters) || !onlineGame.Name.HasInvalidFileNameChars())
+        if (!IsActive(FixFeedOptionEnum.InvalidCharacters) || !onlineGame.Name.HasInvalidFileNameChars(true))
             return;
 
         LogFixed(onlineGame, FixStatisticsEnum.NameInvalidCharacters);
-        onlineGame.Name = onlineGame.Name.RemoveInvalidFileNameChars();
+        onlineGame.Name = onlineGame.Name.RemoveInvalidFileNameChars(true);
     }
     
     private static void FixManufacturerInvalidCharacters(OnlineGameBase onlineGame)
@@ -240,7 +240,7 @@ public static class ImporterFix
             return;
 
         LogFixed(onlineGame, FixStatisticsEnum.ManufacturerInvalidCharacters);
-        onlineGame.Manufacturer = onlineGame.Manufacturer.RemoveInvalidFileNameChars();
+        onlineGame.Manufacturer = onlineGame.Manufacturer.RemoveInvalidFileNameChars(true);
     }
 
     private static void FixNamedGames(OnlineGame onlineGame)
@@ -289,6 +289,9 @@ public static class ImporterFix
             case "Martian Queen (LTD ) (LTD 0)":
                 WrongName(onlineGame, "Martian Queen");
                 WrongManufacturerYear(onlineGame, "LTD do Brasil Diverses Eletrnicas Ltda", 1981);
+                break;
+            case "AC-DC (Stern 2012)":
+                WrongName(onlineGame, "AC/DC (Let There Be Rock Limited Edition)");
                 break;
         }
     }
