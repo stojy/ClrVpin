@@ -128,7 +128,6 @@ namespace ClrVpin.Shared
                 updateProgress(Path.GetFileName(contentFile), i + 1);
 
                 GameDetail matchedGameDetail;
-                var fuzzyFileNameDetails = Fuzzy.Fuzzy.GetNameDetails(contentFile, true);
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
@@ -152,6 +151,7 @@ namespace ClrVpin.Shared
                 // fuzzy matching
                 else
                 {
+                    var fuzzyFileNameDetails = Fuzzy.Fuzzy.GetNameDetails(contentFile, true);
                     (matchedGameDetail, var score, var isMatch) = gameDetails.Match(fuzzyFileNameDetails);
                     if (isMatch)
                     {
