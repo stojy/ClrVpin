@@ -39,7 +39,7 @@ namespace ClrVpin.Shared.Fuzzy
             // - used with Regex.Replace will capture multiple matches at once.. same word or other other words
             // - lookahead match without capture: https://stackoverflow.com/a/3926546/227110
             // - https://regex101.com/r/DoztL5/1
-            _trimWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
+            _wholeWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
 
             // first pass single whitespace
             // - performed BEFORE other checks that aren't sensitive to these changes
@@ -73,6 +73,15 @@ namespace ClrVpin.Shared.Fuzzy
             // - faster: name via looking for the FIRST opening parenthesis.. https://regex101.com/r/tRqeOH/1..         (?<name>[^(]*)[(](?<manufacturer>\D*)(?<year>\d*)\D*\)
             // - slower: name is greedy search, terminating via the LAST opening parenthesis.. https://regex101.com/r/xiXsML/1..   (?<name>.*)[(](?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*[)].*
             _fileNameInfoRegex = new Regex(@"(?<name>.*)[(](?<manufacturer>\D*)((?<year>\d{4})|\d*)\D*[)].*", RegexOptions.Compiled);
+
+            // non-standard file name info parsing
+            // - intended as a second chance match, i.e. only invoked if the standard (above) fails
+            // - e.g. Bally Roller Derby 2.0.vpx --> manufacturer included in the table name without any parenthesis
+            // - https://regex101.com/r/AYTJbL/1
+            string[] manufacturers = { "bally", "williams", "stern" };
+            pattern = string.Join('|', manufacturers);
+            // todo; support year (in addition to manufacturer?)
+            _nonStandardFileNameInfoRegex = new Regex($@".*(?<manufacturer>{pattern}).*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         }
 
         public static string Clean(string name, bool removeAllWhiteSpace)
@@ -89,7 +98,7 @@ namespace ClrVpin.Shared.Fuzzy
             cleanName = cleanName.ToLowerAndTrim();
 
             // trim (whole) words
-            cleanName = _trimWordRegex.Replace(cleanName, "");
+            cleanName = _wholeWordRegex.Replace(cleanName, "");
 
             // trim chars - must trim extension period for version to work correctly!
             cleanName = _trimCharRegex.Replace(cleanName, "");
@@ -133,8 +142,7 @@ namespace ClrVpin.Shared.Fuzzy
         public static FuzzyNameDetails GetNameDetails(string sourceName, bool isFileName)
         {
             // cater for no source name, e.g. Game.Description null value.. which should no longer be possible as it's now initialized to empty string when deserialized
-            if (sourceName == null)
-                sourceName = "";
+            sourceName ??= "";
 
             // return the fuzzy portion of the filename..
             // - no file extensions
@@ -162,7 +170,20 @@ namespace ClrVpin.Shared.Fuzzy
                     year = parsedYear;
             }
             else
-                name = sourceName.ToNull();
+            {
+                // try a non-standard naming variant
+                // - e.g. Bally Roller Derby 2.0.vpx --> manufacturer included in the table name without any parenthesis
+                result = _nonStandardFileNameInfoRegex.Match(sourceName);
+                if (result.Success)
+                {
+                    manufacturer = result.Groups["manufacturer"].Value.ToNull();
+                    name = sourceName.Replace(manufacturer, "");
+                }
+                else
+                {
+                    name = sourceName.ToNull();
+                }
+            }
 
             // fuzzy clean the name field
             var cleanName = Clean(name, false);
@@ -418,7 +439,7 @@ namespace ClrVpin.Shared.Fuzzy
         private static readonly Regex _fileNameInfoRegex;
         private static readonly Regex _trimCharRegex;
         private static readonly Regex _trimLastPeriodRegex;
-        private static readonly Regex _trimWordRegex;
+        private static readonly Regex _wholeWordRegex;
         private static readonly Regex _addSpacingFirstPassRegex;
         private static readonly Regex _addSpacingSecondPassRegex;
         private static readonly Regex _versionRegex;
@@ -426,5 +447,6 @@ namespace ClrVpin.Shared.Fuzzy
         private static readonly Regex _multipleWhitespaceRegex;
         private static readonly string[] _titleCaseWordExceptions;
         public static readonly string[] Authors;
+        private static readonly Regex _nonStandardFileNameInfoRegex;
     }
 }
