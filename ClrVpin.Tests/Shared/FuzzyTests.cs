@@ -215,6 +215,9 @@ public class FuzzyTests
     [TestCase("Surf 'n Safari (Gottlieb 1991)", "Surf and Safari (Gottlieb 1992).vpx", true, 212, TestName = "'n abbreviation for 'and'.. should be stripped")]
     [TestCase("Batman (66 Limited Edition) (Stern 2016)", "The Batman (Original 2022)", false, -986, TestName = "low match - double parenthesis.. the first being part of the title")]
     [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012)", "AC-DC Let There Be Rock (Stern 2013).vpx", true, 175, TestName = "double parethensis - name contents exist in the first set")]
+    [TestCase("Pinball (Stern 1977)", "Pinball EM (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - EM")]
+    [TestCase("Pinball (Stern 1977)", "Pinball SS (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - SS")]
+    [TestCase("Pinball (Stern 1977)", "Pinball PM (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - PM")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation

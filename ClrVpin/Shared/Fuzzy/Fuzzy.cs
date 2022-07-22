@@ -31,7 +31,8 @@ namespace ClrVpin.Shared.Fuzzy
             Authors = new[] { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99" };
             string[] language = { "a", "and", "n'", "'n", "the", "premium", "en" };
             string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
-            pattern = string.Join('|', Authors.Concat(language).Concat(vpx));
+            string[] types = { "em", "ss", "pm" };
+            pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(types));
 
             // captures first word match
             // - handles start and end of string
