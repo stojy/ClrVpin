@@ -193,7 +193,7 @@ namespace ClrVpin.Shared.Fuzzy
             var cleanManufacturer = Clean(manufacturer, false);
             var cleanManufacturerNoWhiteSpace = Clean(manufacturer, true);
 
-            return new FuzzyNameDetails(sourceName.ToLower(), cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(),
+            return new FuzzyNameDetails(sourceName, cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(),
                 cleanManufacturer.ToLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToLowerAndTrim(), year);
         }
 
@@ -214,27 +214,24 @@ namespace ClrVpin.Shared.Fuzzy
 
             var preferredMatch = orderedMatches.FirstOrDefault();
 
-            // second chance - if there's still no match, check if the fuzzy name (i.e. after processing) has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            var isSecondChanceMatch = false;
-            MatchDetail secondChanceMatch;
-            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, fuzzyNameDetails.NameNoWhiteSpace)) != null)
-                isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 85);
+            // second chance
+            // - if there's still no match, check if the fuzzy name (i.e. after processing) has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
+            // - if the second chance match is the same as the preferred match, then 
+            var isUniqueMatch = false;
+            MatchDetail uniqueMatch;
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (uniqueMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, fuzzyNameDetails.NameNoWhiteSpace)) != null)
+                isUniqueMatch = ChangeMatchAndChangeScore(out preferredMatch, uniqueMatch, 85);
 
-            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, fuzzyNameDetails.NameNoWhiteSpace, 11)) != null)
-                isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 50);
-
-            // third chance - if there's still no match, check if the non-fuzzy name (i.e. before processing) has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            // - we don't have a 'no white space' version, so just reusing the non-whitespace version instead
-            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, fuzzyNameDetails.ActualName)) != null)
-                isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 85);
-
-            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, fuzzyNameDetails.ActualName, 11)) != null)
-                isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 50);
+            // third chance
+            // - only applied if no unique match was found, i.e. irrespective of whether score was sufficient
+            // - check if the non-fuzzy name (i.e. before processing) has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
+            if (!isUniqueMatch && preferredMatch?.MatchResult.score < MinMatchScore && (uniqueMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, null)) != null)
+                isUniqueMatch = ChangeMatchAndChangeScore(out preferredMatch, uniqueMatch, 85);
 
             var isMatch = preferredMatch?.MatchResult.score >= MinMatchScore;
             var isOriginal = preferredMatch?.GameDetail.Derived.IsOriginal == true || fuzzyNameDetails.IsOriginal;
 
-            var fuzzyLog = $"fuzzy table match: success={isMatch}, score={$"{preferredMatch?.MatchResult.score},",-4} isSecondChanceMatch={isSecondChanceMatch}, isOriginal={isOriginal}\n" +
+            var fuzzyLog = $"fuzzy table match: success={isMatch}, score={$"{preferredMatch?.MatchResult.score},",-4} isUniqueMatch(second chance)={isUniqueMatch}, isOriginal={isOriginal}\n" +
                                $"- source {(isFile ? "file" : "feed")}:      {LogGameDetail(fuzzyNameDetails.ActualName, null, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
                                $"- matched db table: {LogGameDetail(preferredMatch?.GameDetail.Game.Name, preferredMatch?.GameDetail.Game.Description, preferredMatch?.GameDetail.Game.Manufacturer, preferredMatch?.GameDetail.Game.Year)}";
 
@@ -249,7 +246,7 @@ namespace ClrVpin.Shared.Fuzzy
             return (preferredMatch?.GameDetail, preferredMatch?.MatchResult.score, isMatch);
         }
 
-        private static bool UpdateMatchWithSecondChance(out MatchDetail preferredMatch, MatchDetail secondChanceMatch, int scoreAdjustment)
+        private static bool ChangeMatchAndChangeScore(out MatchDetail preferredMatch, MatchDetail secondChanceMatch, int scoreAdjustment)
         {
             secondChanceMatch.MatchResult.score += scoreAdjustment;
             preferredMatch = secondChanceMatch;
@@ -300,14 +297,10 @@ namespace ClrVpin.Shared.Fuzzy
             return (message, warning);
         }
 
-        private static MatchDetail GetUniqueMatch(IEnumerable<MatchDetail> orderedMatches, string name, string nameNoWhiteSpace, int? startMatchLength = null)
+        private static MatchDetail GetUniqueMatch(IEnumerable<MatchDetail> orderedMatches, string name, string nameNoWhiteSpace)
         {
             if (name == null)
                 return null;
-
-            // only strip file name if a length provided AND it is less than the string length
-            if (name.Length > startMatchLength)
-                name = name.Remove(startMatchLength.Value);
 
             // re-use the fuzzy name match scoring to determine if we have a match
             // - check against name OR description.. to ensure both are included (if they match)
@@ -344,10 +337,6 @@ namespace ClrVpin.Shared.Fuzzy
 
         private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string second, string secondNoWhiteSpace)
         {
-            // null strings score zero
-            if (first == null || second == null || firstNoWhiteSpace == null || secondNoWhiteSpace == null)
-                return 0;
-
             // matching order is important.. highest priority matches must be first!
             var score = IsExactMatch(first, second) ? 150 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
@@ -400,10 +389,19 @@ namespace ClrVpin.Shared.Fuzzy
         private static string ToNull(this string name) => string.IsNullOrWhiteSpace(name) ? null : name;
         private static string ToLowerAndTrim(this string name) => string.IsNullOrWhiteSpace(name) ? null : name.ToLower().Trim();
 
-        private static bool IsExactMatch(string first, string second) => first == second;
+        private static bool IsExactMatch(string first, string second)
+        {
+            if (first == null || second == null)
+                return false;
+
+            return first == second;
+        }
 
         private static bool IsLevenshteinMatch(int minStringLength, int maxDistance, string first, string second)
         {
+            if (first == null || second == null)
+                return false;
+
             if (minStringLength > first.Length || minStringLength > second.Length)
                 return false;
 
@@ -412,6 +410,9 @@ namespace ClrVpin.Shared.Fuzzy
 
         private static bool IsStartsMatch(int minStringLength, string first, string second)
         {
+            if (first == null || second == null)
+                return false;
+
             if (minStringLength > first.Length || minStringLength > second.Length)
                 return false;
 
@@ -420,6 +421,9 @@ namespace ClrVpin.Shared.Fuzzy
 
         private static bool IsContainsMatch(int minStringLength, string first, string second)
         {
+            if (first == null || second == null)
+                return false;
+
             if (minStringLength > first.Length || minStringLength > second.Length)
                 return false;
 
@@ -428,6 +432,9 @@ namespace ClrVpin.Shared.Fuzzy
 
         private static bool IsStartsAndEndsMatch(int startMatchLength, int endMatchLength, string first, string second)
         {
+            if (first == null || second == null)
+                return false;
+
             if (first.Length < Math.Max(startMatchLength, endMatchLength) || second.Length < Math.Max(startMatchLength, endMatchLength))
                 return false;
 

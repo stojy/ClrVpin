@@ -84,7 +84,6 @@ public static class ImporterUtils
             // - use GetNameDetails for consistency and assign some properties, but then override with the known values (from the feed) directly
             var fullName = $"{onlineGame.Name} ({onlineGame.Manufacturer} {onlineGame.Year})";
             var fuzzyNameDetails = Fuzzy.GetNameDetails(fullName, false);
-            fuzzyNameDetails.ActualName = fullName; // overriden in order to maintain the correct capitalization
             fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
             fuzzyNameDetails.Year = onlineGame.Year;
 
