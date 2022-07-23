@@ -261,11 +261,12 @@ namespace ClrVpin.Shared.Fuzzy
 
         public static (bool success, int score) Match(FuzzyNameDetails gameDetailFuzzyDetails, FuzzyNameDetails fileFuzzyDetails)
         {
-            var nameMatchScore = GetNameMatchScore(gameDetailFuzzyDetails.Name, gameDetailFuzzyDetails.NameNoWhiteSpace, fileFuzzyDetails.Name, fileFuzzyDetails.NameNoWhiteSpace);
+            var nameMatchScore = GetNameMatchScore(gameDetailFuzzyDetails.Name, gameDetailFuzzyDetails.NameNoWhiteSpace, fileFuzzyDetails.Name, fileFuzzyDetails.NameNoWhiteSpace, true);
             
             // manufacturer matching is the EXACT same as name matching, but the result is scaled back to 10% to reflect it's lesser importance
             // - the additional scoring though is important to distinguish between games that match exactly but only 1 has the correct manufacturer 
-            var manufacturerScore = GetNameMatchScore(gameDetailFuzzyDetails.Manufacturer, gameDetailFuzzyDetails.ManufacturerNoWhiteSpace, fileFuzzyDetails.Manufacturer, fileFuzzyDetails.ManufacturerNoWhiteSpace) / 10;
+            var manufacturerScore = GetNameMatchScore(gameDetailFuzzyDetails.Manufacturer, gameDetailFuzzyDetails.ManufacturerNoWhiteSpace,
+                fileFuzzyDetails.Manufacturer, fileFuzzyDetails.ManufacturerNoWhiteSpace, true) / 10;
             
             var yearMatchScore = GetYearMatchScore(gameDetailFuzzyDetails.Year, fileFuzzyDetails.Year);
             var lengthScore = GetLengthMatchScore(gameDetailFuzzyDetails);
@@ -304,10 +305,12 @@ namespace ClrVpin.Shared.Fuzzy
 
             // re-use the fuzzy name match scoring to determine if we have a match
             // - check against name OR description.. to ensure both are included (if they match)
-            // - any score is deemed ok at this stage
+            // - don't enable levenshtein checking as this slows down the matching considerably
+            //   e.g. ~1k missing tables x ~1k database entries = ~1M calculations taking about 120s (on my i7 10th gen rig)
+            // - any score match is deemed ok at this stage
             var matchesContainingFileName = orderedMatches.Where(match =>
-                GetNameMatchScore(name, nameNoWhiteSpace, match.GameDetail.Game.Name, match.GameDetail.Derived.NameLowerCase) > 0 ||
-                GetNameMatchScore(name, nameNoWhiteSpace, match.GameDetail.Game.Description, match.GameDetail.Derived.DescriptionLowerCase) > 0).ToList();
+                GetNameMatchScore(name, nameNoWhiteSpace, match.GameDetail.Game.Name, match.GameDetail.Derived.NameLowerCase, false) > 0 ||
+                GetNameMatchScore(name, nameNoWhiteSpace, match.GameDetail.Game.Description, match.GameDetail.Derived.DescriptionLowerCase, false) > 0).ToList();
 
             // only considered a 'unique match' if it matches EXACTLY twice.. one for table and description
             return matchesContainingFileName.Count == 2 ? matchesContainingFileName.First() : null;
@@ -335,7 +338,7 @@ namespace ClrVpin.Shared.Fuzzy
             return yearMatchScore;
         }
 
-        private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string second, string secondNoWhiteSpace)
+        private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string second, string secondNoWhiteSpace, bool isLevenshteinEnabled)
         {
             // matching order is important.. highest priority matches must be first!
             var score = IsExactMatch(first, second) ? 150 + ScoringNoWhiteSpaceBonus : 0;
@@ -343,9 +346,9 @@ namespace ClrVpin.Shared.Fuzzy
                 score = IsExactMatch(firstNoWhiteSpace, secondNoWhiteSpace) ? 150 : 0;
 
             // levenshtein distance
-            if (score == 0)
+            if (score == 0 && isLevenshteinEnabled)
                 score = IsLevenshteinMatch(14, 2, first, second) ? 120 + ScoringNoWhiteSpaceBonus : 0;
-            if (score == 0)
+            if (score == 0 && isLevenshteinEnabled)
                 score = IsLevenshteinMatch(14, 2, secondNoWhiteSpace, firstNoWhiteSpace) ? 120 : 0;
 
             if (score == 0)
@@ -374,9 +377,9 @@ namespace ClrVpin.Shared.Fuzzy
                 score = IsContainsMatch(13, secondNoWhiteSpace, firstNoWhiteSpace) ? 60 : 0;
 
             if (score == 0)
-                score = IsContainsMatch(11, first, second) ? 20 + ScoringNoWhiteSpaceBonus : 0;
+                score = IsContainsMatch(11, first, second) ? 30 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsContainsMatch(11, secondNoWhiteSpace, firstNoWhiteSpace) ? 20 : 0;
+                score = IsContainsMatch(11, secondNoWhiteSpace, firstNoWhiteSpace) ? 30 : 0;
 
             if (score == 0)
                 score = IsStartsAndEndsMatch(7, 8, first, second) ? 60 + ScoringNoWhiteSpaceBonus : 0;
