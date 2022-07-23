@@ -214,20 +214,21 @@ namespace ClrVpin.Shared.Fuzzy
 
             var preferredMatch = orderedMatches.FirstOrDefault();
 
-            // second chance - if there's still no match, check if the fuzzy file has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
+            // second chance - if there's still no match, check if the fuzzy name (i.e. after processing) has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
             var isSecondChanceMatch = false;
             MatchDetail secondChanceMatch;
-            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name)) != null)
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, fuzzyNameDetails.NameNoWhiteSpace)) != null)
                 isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 85);
 
-            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, 11)) != null)
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, fuzzyNameDetails.NameNoWhiteSpace, 11)) != null)
                 isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 50);
 
-            // third chance - if there's still no match, check if the non-fuzzy file has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName)) != null)
+            // third chance - if there's still no match, check if the non-fuzzy name (i.e. before processing) has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
+            // - we don't have a 'no white space' version, so just reusing the non-whitespace version instead
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, fuzzyNameDetails.ActualName)) != null)
                 isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 85);
 
-            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, 11)) != null)
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (secondChanceMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, fuzzyNameDetails.ActualName, 11)) != null)
                 isSecondChanceMatch = UpdateMatchWithSecondChance(out preferredMatch, secondChanceMatch, 50);
 
             var isMatch = preferredMatch?.MatchResult.score >= MinMatchScore;
@@ -299,19 +300,23 @@ namespace ClrVpin.Shared.Fuzzy
             return (message, warning);
         }
 
-        private static MatchDetail GetUniqueMatch(IEnumerable<MatchDetail> orderedMatches, string fuzzyFileName, int? startMatchLength = null)
+        private static MatchDetail GetUniqueMatch(IEnumerable<MatchDetail> orderedMatches, string name, string nameNoWhiteSpace, int? startMatchLength = null)
         {
-            if (fuzzyFileName == null)
+            if (name == null)
                 return null;
 
             // only strip file name if a length provided AND it is less than the string length
-            if (fuzzyFileName.Length > startMatchLength)
-                fuzzyFileName = fuzzyFileName.Remove(startMatchLength.Value);
+            if (name.Length > startMatchLength)
+                name = name.Remove(startMatchLength.Value);
 
-            // check if we have a match that contains the fuzzy file name in BOTH the table and description
-            var matchesContainingFileName = orderedMatches.Where(match => match.GameDetail.Derived.NameLowerCase.Contains(fuzzyFileName) ||
-                                                                          match.GameDetail.Derived.DescriptionLowerCase.Contains(fuzzyFileName)).ToList();
+            // re-use the fuzzy name match scoring to determine if we have a match
+            // - check against name OR description.. to ensure both are included (if they match)
+            // - any score is deemed ok at this stage
+            var matchesContainingFileName = orderedMatches.Where(match =>
+                GetNameMatchScore(name, nameNoWhiteSpace, match.GameDetail.Game.Name, match.GameDetail.Derived.NameLowerCase) > 0 ||
+                GetNameMatchScore(name, nameNoWhiteSpace, match.GameDetail.Game.Description, match.GameDetail.Derived.DescriptionLowerCase) > 0).ToList();
 
+            // only considered a 'unique match' if it matches EXACTLY twice.. one for table and description
             return matchesContainingFileName.Count == 2 ? matchesContainingFileName.First() : null;
         }
 
@@ -337,52 +342,57 @@ namespace ClrVpin.Shared.Fuzzy
             return yearMatchScore;
         }
 
-        private static int GetNameMatchScore(string gameName, string gameNameNoWhiteSpace, string fileName, string fileNameNoWhiteSpace)
+        private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string second, string secondNoWhiteSpace)
         {
             // null strings score zero
-            if (gameName == null || fileName == null || gameNameNoWhiteSpace == null || fileNameNoWhiteSpace == null)
+            if (first == null || second == null || firstNoWhiteSpace == null || secondNoWhiteSpace == null)
                 return 0;
 
             // matching order is important.. highest priority matches must be first!
-            var score = IsExactMatch(gameName, fileName) ? 150 + ScoringNoWhiteSpaceBonus : 0;
+            var score = IsExactMatch(first, second) ? 150 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsExactMatch(gameNameNoWhiteSpace, fileNameNoWhiteSpace) ? 150 : 0;
+                score = IsExactMatch(firstNoWhiteSpace, secondNoWhiteSpace) ? 150 : 0;
 
             // levenshtein distance
             if (score == 0)
-                score = IsLevenshteinMatch(14, 2, gameName, fileName) ? 120 + ScoringNoWhiteSpaceBonus : 0;
+                score = IsLevenshteinMatch(14, 2, first, second) ? 120 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsLevenshteinMatch(14, 2, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 120 : 0;
+                score = IsLevenshteinMatch(14, 2, secondNoWhiteSpace, firstNoWhiteSpace) ? 120 : 0;
 
             if (score == 0)
-                score = IsStartsMatch(14, gameName, fileName) ? 100 + ScoringNoWhiteSpaceBonus : 0;
+                score = IsStartsMatch(14, first, second) ? 100 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsStartsMatch(14, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
+                score = IsStartsMatch(14, secondNoWhiteSpace, firstNoWhiteSpace) ? 100 : 0;
 
             if (score == 0)
-                score = IsStartsMatch(10, gameName, fileName) ? 60 + ScoringNoWhiteSpaceBonus : 0;
+                score = IsStartsMatch(10, first, second) ? 60 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsStartsMatch(10, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
+                score = IsStartsMatch(10, secondNoWhiteSpace, firstNoWhiteSpace) ? 60 : 0;
 
             if (score == 0)
-                score = IsStartsMatch(8, gameName, fileName) ? 50 + ScoringNoWhiteSpaceBonus : 0;
+                score = IsStartsMatch(8, first, second) ? 50 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsStartsMatch(8, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 50 : 0;
+                score = IsStartsMatch(8, secondNoWhiteSpace, firstNoWhiteSpace) ? 50 : 0;
 
             if (score == 0)
-                score = IsContainsMatch(17, gameName, fileName) ? 100 + ScoringNoWhiteSpaceBonus : 0;
+                score = IsContainsMatch(17, first, second) ? 100 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsContainsMatch(17, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 100 : 0;
+                score = IsContainsMatch(17, secondNoWhiteSpace, firstNoWhiteSpace) ? 100 : 0;
 
             if (score == 0)
-                score = IsContainsMatch(13, gameName, fileName) ? 60 + ScoringNoWhiteSpaceBonus : 0;
+                score = IsContainsMatch(13, first, second) ? 60 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsContainsMatch(13, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
+                score = IsContainsMatch(13, secondNoWhiteSpace, firstNoWhiteSpace) ? 60 : 0;
 
             if (score == 0)
-                score = IsStartsAndEndsMatch(7, 8, gameName, fileName) ? 60 + ScoringNoWhiteSpaceBonus : 0;
+                score = IsContainsMatch(11, first, second) ? 20 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsStartsAndEndsMatch(7, 8, fileNameNoWhiteSpace, gameNameNoWhiteSpace) ? 60 : 0;
+                score = IsContainsMatch(11, secondNoWhiteSpace, firstNoWhiteSpace) ? 20 : 0;
+
+            if (score == 0)
+                score = IsStartsAndEndsMatch(7, 8, first, second) ? 60 + ScoringNoWhiteSpaceBonus : 0;
+            if (score == 0)
+                score = IsStartsAndEndsMatch(7, 8, secondNoWhiteSpace, firstNoWhiteSpace) ? 60 : 0;
 
             return score;
         }
