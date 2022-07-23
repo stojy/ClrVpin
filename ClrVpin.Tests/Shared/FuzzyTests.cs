@@ -220,6 +220,7 @@ public class FuzzyTests
     [TestCase("Pinball (Stern 1977)", "Pinball PM (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - PM")]
     [TestCase("Roller Derby (Bally 1960)", "Bally Roller Derby 2.0.vpx", true, 173, TestName = "non-standard naming.. extract manufacturer from name")]
     [TestCase("Wolverine (Zen Studios 2013)", "X-Men Wolverine LE (Stern 2012).vpx", false, 41, TestName = "partial name match.. expected to fail")]
+    [TestCase("Mac's Galaxy (MAC S.A. 1986)", "Mac Galaxy (MAC 1986).vpx", false, 52, TestName = "similar match, but 's' preventing a better score")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
