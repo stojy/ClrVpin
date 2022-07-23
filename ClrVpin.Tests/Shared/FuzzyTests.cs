@@ -219,6 +219,7 @@ public class FuzzyTests
     [TestCase("Pinball (Stern 1977)", "Pinball SS (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - SS")]
     [TestCase("Pinball (Stern 1977)", "Pinball PM (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - PM")]
     [TestCase("Roller Derby (Bally 1960)", "Bally Roller Derby 2.0.vpx", true, 173, TestName = "non-standard naming.. extract manufacturer from name")]
+    [TestCase("Wolverine (Zen Studios 2013)", "X-Men Wolverine LE (Stern 2012).vpx", false, 41, TestName = "partial name match.. expected to fail")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
@@ -253,7 +254,8 @@ public class FuzzyTests
             new GameDetail { Game = new Game {IpdbId = "4", Name = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
             new GameDetail { Game = new Game {IpdbId = "5", Name = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" } },
             new GameDetail { Game = new Game {IpdbId = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" } },
-            new GameDetail { Game = new Game {IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo"  }}
+            new GameDetail { Game = new Game {IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo"  }},
+            new GameDetail { Game = new Game {IpdbId = "8", Name = "X-Men LE (Stern 2012)", Description = "X-Men Wolverine LE (Stern 2012)"  }}
         };
 
         gameDetails.ForEach((gameDetail,index) =>
@@ -293,6 +295,12 @@ public class FuzzyTests
         Assert.That(game, Is.Not.Null);
         Assert.That(isMatch, Is.False);
 
+        // partial match, but not long enough to score - 'wolverine' is 9 long, but 11 is required
+        fileDetails = Fuzzy.GetNameDetails("Wolverine (Zen Studios 2013).vpx", true);
+        (game, _, isMatch) = gameDetails.Match(fileDetails);
+        Assert.That(game, Is.Not.Null);
+        Assert.That(isMatch, Is.False);
+
         // partial match - extra score because file only has 1 match in the games DB
         fileDetails = Fuzzy.GetNameDetails("Frankenstein.vpx", true);
         (game, _, isMatch) = gameDetails.Match(fileDetails);
@@ -310,10 +318,10 @@ public class FuzzyTests
         fileDetails = Fuzzy.GetNameDetails("Transformers Marcade Mod v1.2.vpx", true);
         (game, score, isMatch) = gameDetails.Match(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("6"));
-        Assert.That(score, Is.EqualTo(117 + Fuzzy.ScoringNoWhiteSpaceBonus));
+        Assert.That(score, Is.EqualTo(152 + Fuzzy.ScoringNoWhiteSpaceBonus));
         Assert.That(isMatch, Is.True);
 
-        // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw table name
+        // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw (non-cleaned) table name
         fileDetails = Fuzzy.GetNameDetails("V1 (IDSA 1986) Logo.png", true);
         (game, score, isMatch) = gameDetails.Match(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
