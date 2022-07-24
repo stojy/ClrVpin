@@ -11,7 +11,7 @@ namespace ClrVpin.Models.Shared
 
         [Description("Table Name")] TableName,
 
-        [Description("Fuzzy Name")] Fuzzy,
+        [Description("Fuzzy Matching")] Fuzzy,
 
         [Description("Duplicate Extension")] DuplicateExtension,    // requires that a 'CorrectName' hit also exist
 
