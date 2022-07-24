@@ -221,6 +221,14 @@ public class FuzzyTests
     [TestCase("Roller Derby (Bally 1960)", "Bally Roller Derby 2.0.vpx", true, 173, TestName = "non-standard naming.. extract manufacturer from name")]
     [TestCase("Wolverine (Zen Studios 2013)", "X-Men Wolverine LE (Stern 2012).vpx", false, 41, TestName = "partial name match.. expected to fail")]
     [TestCase("Mac's Galaxy (MAC S.A. 1986)", "Mac Galaxy (MAC 1986).vpx", false, 52, TestName = "similar match, but 's' preventing a better score")]
+    // interesting example..
+    // - importer: database description (not name!) matches online
+    // - importer: database updated description *and name* --> via 'overwrite all properties'
+    // - scanner:  fails to match existing file to the updated database description *or name* --> because online name is too different to the original database name (which is same as file name)
+    [TestCase("Avatar (Stern 2010)", "Avatar, James Cameron's (Stern 2010)", false, 65, TestName = "online matching scenario - database name to online (forward).. expected failure")]
+    [TestCase("James Camerons Avatar (Limited Edition) (Stern 2010)", "Avatar, James Cameron's (Stern 2010)", true, 145, TestName = "online matching scenario - database desc to online (forward).. expected hit against 'james cameron'")]
+    [TestCase("Avatar, James Cameron's (Stern 2010)", "James Camerons Avatar (Limited Edition) (Stern 2010)", true, 141, TestName = "online matching scenario - online to database desc (reverse.. does not happen).. unexpected(?) lower score")]
+    [TestCase("Avatar, James Cameron's (Stern 2010)", "Avatar (Stern 2010).vpx", false, 76, TestName = "online matching scenario - after DB name & desc sync'd.. unable to match existing file (same as name)")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
