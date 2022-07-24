@@ -8,6 +8,7 @@
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <ResourceDictionary Source="\Controls\Constants.xaml" />
     <ResourceDictionary Source="\Controls\Styles.xaml" />
     <ResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
@@ -47,6 +48,8 @@
                                  Visibility="{Binding IsWarning, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
         <materialDesign:PackIcon Kind="CloseCircleOutline" Foreground="Red"
                                  Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
+        <materialDesign:PackIcon Kind="QuestionMark" Foreground="Coral"
+                                 Visibility="{Binding isConfirmation, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
 
         <StackPanel Margin="0,0,0,10">
           <TextBlock Text="{Binding Title}" Visibility="{Binding Title, Converter={StaticResource ReverseNullToVisibilityConverter}}"
@@ -55,16 +58,34 @@
             <TextBlock Name="Detail"
                        Text="{Binding Detail}" Visibility="{Binding Detail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
                        FontSize="18" Margin="0,30,0,0" />
-            <!--<TextBox Name="Detail"
-                     Text="{Binding Detail}" Visibility="{Binding Detail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
-                     FontSize="18" Margin="0,30,0,0" />-->
           </ScrollViewer>
         </StackPanel>
 
         <!--non-visible button marked with IsCancel to support the escape key-->
         <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+
+        <WrapPanel Margin="0,15,0,0" HorizontalAlignment="Center" Visibility="{Binding isConfirmation, Converter={StaticResource BoolToVisibilityConverter}}">
+          <WrapPanel.Resources>
+            <Style x:Key="StandardButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatButtonStyle}">
+              <Setter Property="Width" Value="100" />
+              <Setter Property="FontSize" Value="22" />
+              <Setter Property="Command" Value="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+            </Style>
+            <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatAccentButtonStyle}">
+              <Setter Property="Width" Value="100" />
+              <Setter Property="FontSize" Value="22" />
+              <Setter Property="Command" Value="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+            </Style>
+          </WrapPanel.Resources>
+
+          <Button Content="Yes" CommandParameter="{StaticResource TrueValue}" 
+                  Style="{StaticResource AccentButtonStyle}" />
+          <Button Content="No" CommandParameter="{StaticResource FalseValue}" 
+                  Style="{StaticResource StandardButtonStyle}" />
+        </WrapPanel>
       </StackPanel>
     </Border>
+
     <DataTemplate.Triggers>
       <DataTrigger Binding="{Binding DetailIsMonospaced}" Value="True">
         <Setter TargetName="Detail" Property="FontFamily" Value="Courier New" />

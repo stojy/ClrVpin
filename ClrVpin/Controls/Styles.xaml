@@ -55,7 +55,7 @@
     <Setter Property="Height" Value="Auto" />
     <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
     <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4" />
-    <Setter Property="ToolTipService.ShowOnDisabled" Value="true"/>
+    <Setter Property="ToolTipService.ShowOnDisabled" Value="true" />
   </Style>
 
   <Style x:Key="RaisedHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedAccentButtonStyle}">

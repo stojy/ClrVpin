@@ -282,6 +282,18 @@ namespace ClrVpin.Importer
 
         private async Task UpdateAllTablesDatabase(bool overwriteProperties)
         {
+            if (overwriteProperties)
+            {
+                var result = await Notification.ShowConfirmation(DialogHostName, "Please read before continuing",
+                    "1. Before overwrite, run Scanner to confirm your collection is clean.\n" +
+                    "2. After overwrite, run Scanner to re-clean your collection.\n" +
+                    "3. In extreme cases, if your local database 'name' and 'description' values are substantially\n" +
+                    "   different to each other, then Scanner may not be able to automatically rename the file.");
+                
+                if (result != true)
+                    return;
+            }
+
             var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(OnlineGames, overwriteProperties);
 
             // write ALL games back to the database(s) - i.e. irrespective of whether matched or not
