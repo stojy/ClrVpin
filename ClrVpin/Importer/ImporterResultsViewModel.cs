@@ -285,10 +285,10 @@ namespace ClrVpin.Importer
             if (overwriteProperties)
             {
                 var result = await Notification.ShowConfirmation(DialogHostName, "Please read before continuing",
-                    "1. Before overwrite, run Scanner to confirm your collection is clean.\n" +
-                    "2. After overwrite, run Scanner to re-clean your collection.\n" +
+                    "1. Before starting 'Overwrite All', run Scanner to confirm your collection is clean.\n" +
+                    "2. After completing 'Overwrite All', run Scanner to re-clean your collection.\n" +
                     "3. In extreme cases, if your local database 'name' and 'description' values are substantially\n" +
-                    "   different to each other, then Scanner may not be able to automatically rename the file.");
+                    "   different to each other, then Scanner may not be able to automatically rename the file.", true, "Update Now", "Maybe Later");
                 
                 if (result != true)
                     return;

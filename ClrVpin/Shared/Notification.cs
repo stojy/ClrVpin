@@ -11,7 +11,9 @@ public class Notification
     public bool IsSuccess { get; set; }
     public bool IsWarning { get; set; }
     public bool IsError { get; set; }
-    public bool isConfirmation { get; set; }
+    public bool IsConfirmation { get; set; }
+    public string FalseLabel { get; set; }
+    public string TrueLabel { get; set; }
 
     public static async Task ShowSuccess(string dialogHost, string title = null, string detail = null, bool detailIsMonospaced = true)
         => await Show(dialogHost, new Notification { Title = title, Detail = detail, IsSuccess = true, DetailIsMonospaced = detailIsMonospaced });
@@ -22,9 +24,17 @@ public class Notification
     public static async Task ShowError(string dialogHost, string title = null, string detail = null, bool detailIsMonospaced = true)
         => await Show(dialogHost, new Notification { Title = title, Detail = detail, IsError = true, DetailIsMonospaced = detailIsMonospaced });
 
-    public static async Task<bool?> ShowConfirmation(string dialogHost, string title = null, string detail = null, bool detailIsMonospaced = true)
+    public static async Task<bool?> ShowConfirmation(string dialogHost, string title = null, string detail = null, bool detailIsMonospaced = true, string trueLabel = "Yes", string falseLabel = "No")
     {
-        var result = await Show(dialogHost, new Notification { Title = title, Detail = detail, isConfirmation = true, DetailIsMonospaced = detailIsMonospaced });
+        var result = await Show(dialogHost, new Notification
+        {
+            Title = title, 
+            Detail = detail, 
+            IsConfirmation = true, 
+            DetailIsMonospaced = detailIsMonospaced, 
+            TrueLabel = trueLabel, 
+            FalseLabel = falseLabel
+        });
 
         return result as bool?;
     }
