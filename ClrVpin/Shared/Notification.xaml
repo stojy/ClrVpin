@@ -48,8 +48,8 @@
                                  Visibility="{Binding IsWarning, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
         <materialDesign:PackIcon Kind="CloseCircleOutline" Foreground="Red"
                                  Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
-        <materialDesign:PackIcon Kind="QuestionMark" Foreground="Coral"
-                                 Visibility="{Binding isConfirmation, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
+        <materialDesign:PackIcon Kind="QuestionMarkCircleOutline" Foreground="Coral"
+                                 Visibility="{Binding IsConfirmation, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
 
         <StackPanel Margin="0,0,0,10">
           <TextBlock Text="{Binding Title}" Visibility="{Binding Title, Converter={StaticResource ReverseNullToVisibilityConverter}}"
@@ -64,23 +64,24 @@
         <!--non-visible button marked with IsCancel to support the escape key-->
         <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
 
-        <WrapPanel Margin="0,15,0,0" HorizontalAlignment="Center" Visibility="{Binding isConfirmation, Converter={StaticResource BoolToVisibilityConverter}}">
+        <WrapPanel Margin="0,15,0,0" HorizontalAlignment="Center" Visibility="{Binding IsConfirmation, Converter={StaticResource BoolToVisibilityConverter}}">
           <WrapPanel.Resources>
-            <Style x:Key="StandardButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatButtonStyle}">
-              <Setter Property="Width" Value="100" />
+            <Style x:Key="HighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatHighlightButtonStyle}">
+              <Setter Property="Width" Value="NaN" />
               <Setter Property="FontSize" Value="22" />
               <Setter Property="Command" Value="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
             </Style>
-            <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatAccentButtonStyle}">
-              <Setter Property="Width" Value="100" />
+            <Style x:Key="StandardButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatButtonStyle}">
+              <Setter Property="Width" Value="NaN" />
               <Setter Property="FontSize" Value="22" />
               <Setter Property="Command" Value="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+              <Setter Property="Margin" Value="20,0,0,0"></Setter>
             </Style>
           </WrapPanel.Resources>
 
-          <Button Content="Yes" CommandParameter="{StaticResource TrueValue}" 
-                  Style="{StaticResource AccentButtonStyle}" />
-          <Button Content="No" CommandParameter="{StaticResource FalseValue}" 
+          <Button Content="{Binding TrueLabel}" CommandParameter="{StaticResource TrueValue}" 
+                  Style="{StaticResource HighlightButtonStyle}" />
+          <Button Content="{Binding FalseLabel}" CommandParameter="{StaticResource FalseValue}" 
                   Style="{StaticResource StandardButtonStyle}" />
         </WrapPanel>
       </StackPanel>
