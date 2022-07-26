@@ -170,10 +170,10 @@ namespace ClrVpin.Importer
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions(IsMatchingEnabled).ToList());
 
             AddMissingDatabaseInfoTip += "Add any missing information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
-            AllTableAddMissingDatabaseInfoCommand = new ActionCommand(AddAllTablesMissingDatabaseProperties);
+            AllTableAddMissingDatabaseInfoCommand = new ActionCommand(AllTableAddMissingDatabaseProperties);
 
             OverwriteDatabaseInfoTip += "Overwrite all information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
-            AllTableOverwriteDatabaseInfoCommand = new ActionCommand(OverwriteAllTablesDatabaseProperties);
+            AllTableOverwriteDatabaseInfoCommand = new ActionCommand(AllTableOverwriteDatabaseProperties);
         }
 
         public string AddMissingDatabaseInfoTip { get; }
@@ -270,17 +270,17 @@ namespace ClrVpin.Importer
 
         private static string CreatePercentageStatistic(string title, int count, int totalCount) => $"{title} : {count} of {totalCount} ({100f * count / totalCount:F2}%)";
 
-        private async void AddAllTablesMissingDatabaseProperties()
+        private async void AllTableAddMissingDatabaseProperties()
         {
-            await UpdateAllTablesDatabase(false);
+            await AllTableUpdateDatabase(false);
         }
 
-        private async void OverwriteAllTablesDatabaseProperties()
+        private async void AllTableOverwriteDatabaseProperties()
         {
-            await UpdateAllTablesDatabase(true);
+            await AllTableUpdateDatabase(true);
         }
 
-        private async Task UpdateAllTablesDatabase(bool overwriteProperties)
+        private async Task AllTableUpdateDatabase(bool overwriteProperties)
         {
             if (overwriteProperties)
             {
