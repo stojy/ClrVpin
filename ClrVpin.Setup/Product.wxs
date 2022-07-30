@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?define Version="!(bind.FileVersion.ClrVpxExe)"?>
-<!--<?define Version="!(bind.packageVersion.ClrVpxExe)"?>-->
-<?define UpgradeCode="65e602aa-6d03-452a-b074-fbdc774e7f9a"?>
-
 <!--https://wixtoolset.org/documentation/manual/v3/howtos/-->
 <!--https://sorceryforce.net/en/tips/wix-->
 <!--https://www.firegiant.com/wix/tutorial/getting-started/the-files-inside/-->
 <!--variable binding: 
     - http://windows-installer-xml-wix-toolset.687559.n2.nabble.com/Getting-the-version-from-the-Assembly-file-td2153899i20.html
     - https://wixtoolset.org/documentation/manual/v3/overview/light.html
-    - https://stackoverflow.com/questions/626033/how-can-i-set-the-wix-installer-version-to-the-current-build-version
 -->
+
+<!-- both version formats are used..
+     1. FileVersion
+        - x.y.z.w format required by WiX which does NOT support SemVer
+        - accessed via exe FileVersion property
+     2. ProductVersion
+        - x.y.z-meta format.. SemVer used by ClrVpin for the release candidates, betas, etc
+        - accessed via version injected at build time.. refer "msbuild ClrVpin.sln -p:Version=w.y.z-meta
+        - refer https://stackoverflow.com/questions/626033/how-can-i-set-the-wix-installer-version-to-the-current-build-version
+-->
+<?define FileVersion="!(bind.FileVersion.ClrVpxExe)"?> 
+
+<?define UpgradeCode="65e602aa-6d03-452a-b074-fbdc774e7f9a"?>
+
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   
-  <!--upgrade support; https://stackoverflow.com/a/26344742/227110
-      - product id must be variable..
-        - bind.*.Version = nuspec package version
-        - bind.*. product version = package version??
-        - bind.*. assembly version = ??
-        -->
-  <Product Id="*" Name="ClrVpin v$(var.Version)" Language="1033" Version="$(var.Version)" Manufacturer="Stoj" UpgradeCode="$(var.UpgradeCode)">
+  <!-- not used here (since they are unlikely to change).. but it's possible to extract company and product name from file also https://stackoverflow.com/a/646017/227110 -->
+  <Product Id="*" Name="ClrVpin v$(var.ProductVersion)" Language="1033" Version="$(var.FileVersion)" Manufacturer="Stoj" UpgradeCode="$(var.UpgradeCode)">
     <!-- 64bit.. https://stackoverflow.com/questions/4304253/how-do-i-get-wix-to-generate-a-64-bit-msi 
                  https://sorceryforce.net/en/tips/wix64bit -->
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
@@ -65,10 +69,12 @@
 
     <!--not strictly required at the moment.. but kept here for future use if/when version upgrade constraints are required-->
     <Upgrade Id="$(var.UpgradeCode)">
-      <UpgradeVersion Minimum="0.0.1" IncludeMinimum="yes" OnlyDetect="no" Maximum="$(var.Version)" IncludeMaximum="no" Property="OLDVERSIONFOUND" />
+      <UpgradeVersion Minimum="0.0.1" IncludeMinimum="yes" OnlyDetect="no" Maximum="$(var.FileVersion)" IncludeMaximum="no" Property="OLDVERSIONFOUND" />
     </Upgrade>
     
-    <!-- AllowDowngrades includes AllowSameVersionUpgrades (useful for development) AND avoids the double entries in appwiz-->
+    <!-- AllowDowngrades includes AllowSameVersionUpgrades (useful for development) AND avoids the double entries in appwiz
+         - https://stackoverflow.com/questions/500703/how-to-get-wix-to-update-a-previously-installed-version-of-a-program
+    -->
     <MajorUpgrade Schedule="afterInstallInitialize" AllowDowngrades="yes" />
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
 

@@ -99,7 +99,7 @@ jobs:
       env:
         # extact version from ref_name if this is a tag, otherwise provide a default value (since msbuild won't accept a null value)
         # default to 0.0.2 instead of 0.0.1 because the version must excceed the minimum allowed version (refer wix proj)
-        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '0.0.2-no-tag' }}
+        VERSION: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '0.0.1-no-tag' }}
       run: |
         msbuild ./ClrVpin.sln -t:restore,build -p:Configuration=Release -p:UseSharedCompilation=false -m -p:Version=$env:VERSION
     - name: tests

@@ -8,9 +8,7 @@
     <Company>Stoj</Company>
     <ApplicationIcon>ClrVpin.ico</ApplicationIcon>
     <AssemblyVersion></AssemblyVersion>
-    <FileVersion></FileVersion>
-    <ProductVersion></ProductVersion>
-    <Version>1.0.0.0</Version> <!-- package version = $(Version) = msbuild -p:Version='1.2.3.4' -->
+    <Version>1.0.0.0</Version> <!-- nuget package version = $(Version).. default value is overrriden by pipeline, e.g. msbuild -p:Version='1.2.3.4' -->
     <Copyright>Stoj</Copyright>
     <PackageProjectUrl>https://github.com/stojy/ClrVpin</PackageProjectUrl>
     <PackageIcon>ClrVpin.png</PackageIcon>
