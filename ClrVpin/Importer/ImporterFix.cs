@@ -247,6 +247,7 @@ public static class ImporterFix
     {
         // non-generic fixes for specifically named games
         // - this is very smelly, but treating these as 'exceptional' (and hopefully few!) scenarios, similar to GameDerived.CheckIsOriginal
+        // - no need to strip author from the manufactured table as this is done later
         // - todo; report/fix the underlying VPS feed and then remove this code??
         switch (onlineGame.Description)
         {
@@ -254,7 +255,7 @@ public static class ImporterFix
                 FixWrongUrlIpdb(onlineGame, "https://www.ipdb.org/machine.cgi?id=4504");
                 break;
             case "JP's Dale Jr. Nascar (Original 2020)":
-                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5292", "Stern", 2007);
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5292", "Stern", 2007, "Dale Jr.");
                 break;
             case "JP'S Nascar Race (Original 2005)":
                 FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5093", "Stern");
