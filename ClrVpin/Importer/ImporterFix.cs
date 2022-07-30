@@ -294,6 +294,9 @@ public static class ImporterFix
             case "AC-DC (Stern 2012)":
                 WrongName(onlineGame, "AC/DC (Let There Be Rock Limited Edition)");
                 break;
+            case "Hang Glider (Bally ) (Bally 1976)":
+                WrongName(onlineGame, "Hang Glider");
+                break;
         }
     }
 
