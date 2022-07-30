@@ -297,6 +297,30 @@ public static class ImporterFix
             case "Hang Glider (Bally ) (Bally 1976)":
                 WrongName(onlineGame, "Hang Glider");
                 break;
+            case "Avatar, James Cameron's (Stern 2010)":
+                WrongName(onlineGame, "James Cameron’s Avatar");
+                break;
+            case "Metallica (Stern 2013)":
+                WrongName(onlineGame, "Metallica (Premium Monsters)");
+                break;
+            case "North Star (Gottlieb ) (Gottlieb 1964)":
+                WrongName(onlineGame, "North Star");
+                break;
+            case "Power Play, Bobby Orr's (Bally 1978)":
+                WrongName(onlineGame, "Bobby Orr Power Play");
+                break;
+            case "Star Trek (Stern 2013)":
+                WrongName(onlineGame, "Star Trek (Enterprise Limited Edition)");
+                break;
+            case "JP's Star Trek LE (Stern 2013)": // duplicate with above star trek entry will be merged later on
+                WrongName(onlineGame, "Star Trek (Enterprise Limited Edition)");
+                break;
+            case "The Avengers (Stern 2012)":
+                WrongName(onlineGame, "The Avengers (Pro)");
+                break;
+            case "Star Wars - The Empire Strikes Back (Hankin 1980)":
+                WrongName(onlineGame, "The Empire Strikes Back");
+                break;
         }
     }
 
