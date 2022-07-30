@@ -23,7 +23,8 @@ namespace ClrVpin.Logging
             var systemInfo = "\n\n---------- System Info ----------\n" +
                              $"Start Time:            {currentProcess.StartTime}\n" +
                              $"App:                   {currentProcess.ProcessName}\n" +
-                             $"Version:               {currentProcess.MainModule?.FileVersionInfo.ProductVersion}\n" +
+                             $"File Version:          {currentProcess.MainModule?.FileVersionInfo.FileVersion}\n" +
+                             $"Product Version:       {currentProcess.MainModule?.FileVersionInfo.ProductVersion}\n" +
                              $"Path:                  {currentProcess.MainModule?.FileName}\n" +
                              $"Command Line:          {Environment.CommandLine}\n" +
                              $"Processor Type:        {Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER")}\n" + // https://en.wikichip.org/wiki/intel/cpuid

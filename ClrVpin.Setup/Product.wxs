@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?define Version="!(bind.FileVersion.ClrVpxExe)"?>
+<!--<?define Version="!(bind.packageVersion.ClrVpxExe)"?>-->
 <?define UpgradeCode="65e602aa-6d03-452a-b074-fbdc774e7f9a"?>
 
 <!--https://wixtoolset.org/documentation/manual/v3/howtos/-->
 <!--https://sorceryforce.net/en/tips/wix-->
 <!--https://www.firegiant.com/wix/tutorial/getting-started/the-files-inside/-->
-<!--variable binding: http://windows-installer-xml-wix-toolset.687559.n2.nabble.com/Getting-the-version-from-the-Assembly-file-td2153899i20.html-->
+<!--variable binding: 
+    - http://windows-installer-xml-wix-toolset.687559.n2.nabble.com/Getting-the-version-from-the-Assembly-file-td2153899i20.html
+    - https://wixtoolset.org/documentation/manual/v3/overview/light.html
+    - https://stackoverflow.com/questions/626033/how-can-i-set-the-wix-installer-version-to-the-current-build-version
+-->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   
   <!--upgrade support; https://stackoverflow.com/a/26344742/227110
