@@ -84,9 +84,6 @@ namespace ClrVpin.Rebuilder
                 mergeableHits.ForEach(hit => gameFiles.Add(Merge(hit, game, _settings.Rebuilder.SelectedMatchTypes)));
             });
 
-            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-            FileUtils.DeleteActiveBackupFolderIfEmpty();
-
             return gameFiles;
         }
 

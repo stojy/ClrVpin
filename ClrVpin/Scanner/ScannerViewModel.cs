@@ -204,6 +204,9 @@ namespace ClrVpin.Scanner
             progress.Update("Removing Unmatched Files");
             await ScannerUtils.RemoveUnmatchedAsync(unmatchedFiles, UpdateProgress);
 
+            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
+            FileUtils.DeleteActiveBackupFolderIfEmpty();
+
             progress.Update("Preparing Results");
             await Task.Delay(1);
             _games = new ObservableCollection<GameDetail>(games);

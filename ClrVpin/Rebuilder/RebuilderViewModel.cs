@@ -235,6 +235,9 @@ namespace ClrVpin.Rebuilder
             progress.Update("Removing Unmatched Ignored Files");
             await RebuilderUtils.RemoveUnmatchedIgnoredAsync(unmatchedFiles, UpdateProgress);
 
+            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
+            FileUtils.DeleteActiveBackupFolderIfEmpty();
+
             progress.Update("Preparing Results");
             await Task.Delay(1);
             _games = new ObservableCollection<GameDetail>(games);
