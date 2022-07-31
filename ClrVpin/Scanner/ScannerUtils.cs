@@ -147,9 +147,6 @@ namespace ClrVpin.Scanner
                 });
             });
 
-            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-            FileUtils.DeleteActiveBackupFolderIfEmpty();
-
             return gameFiles;
         }
 
@@ -223,8 +220,9 @@ namespace ClrVpin.Scanner
             {
                 updateProgress(Path.GetFileName(fileDetail.Path), (i+1f) / unmatchedFilesToDelete.Count);
 
-                Logger.Info($"Fixing (unmatched).. table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {fileDetail.ContentType.GetDescription()}");
-                FileUtils.Delete(fileDetail.Path, fileDetail.HitType, null);
+                var contentType = fileDetail.ContentType.GetDescription();
+                Logger.Info($"Fixing (unmatched).. table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {contentType}");
+                FileUtils.Delete(fileDetail.Path, fileDetail.HitType, contentType);
 
                 fileDetail.Deleted = true;
             });

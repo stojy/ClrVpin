@@ -34,14 +34,14 @@ namespace ClrVpin.Shared
         [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         public static void Delete(string path, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
-            Backup(path, "deleted", backupAction);
+            Backup(path, "deleted", contentType, backupAction);
             Delete(path);
         }
 
         [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         public static void DeleteIgnored(string sourcePath, string destinationPath, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
-            Backup(sourcePath, "deleted.ignored", backupAction);
+            Backup(sourcePath, "deleted.ignored", contentType, backupAction);
             DeleteIgnored(sourcePath, destinationPath);
         }
 
@@ -158,13 +158,13 @@ namespace ClrVpin.Shared
             return fileName;
         }
 
-        public static void Backup(string file, string subFolder, Action<string> backupAction = null, bool ignoreTrainerWheels = false)
+        public static void Backup(string file, string subFolder, string contentFolder, Action<string> backupAction = null, bool ignoreTrainerWheels = false)
         {
             if ((ignoreTrainerWheels || !_settings.TrainerWheels) && File.Exists(file))
             {
                 // backup file (aka copy) to the specified sub folder
                 // - no logging since the backup is intended to be transparent
-                var backupFile = CreateBackupFileName(file, subFolder);
+                var backupFile = CreateBackupFileName(file, subFolder, contentFolder);
                 File.Copy(file, backupFile, true);
 
                 backupAction?.Invoke(backupFile);
@@ -175,7 +175,7 @@ namespace ClrVpin.Shared
         private static void Rename(string sourcePath, string newPath, HitTypeEnum hitTypeEnum, string contentType, Action<string> backupAction = null)
         {
             //Logger.Info($"Renaming file{GetTrainerWheelsDisclosure()}.. type: {hitTypeEnum.GetDescription()}, content: {contentType}, original: {sourcePath}, new: {newPath}");
-            Backup(sourcePath, "renamed", backupAction);
+            Backup(sourcePath, "renamed", contentType, backupAction);
             Rename(sourcePath, newPath);
         }
 
@@ -183,10 +183,10 @@ namespace ClrVpin.Shared
         private static void Merge(string sourcePath, string destinationPath, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, Action<string> backupAction = null)
         {
             // backup the existing file (if any) before overwriting
-            Backup(destinationPath, "deleted");
+            Backup(destinationPath, contentType, "deleted");
 
             // backup the source file before merging it
-            Backup(sourcePath, "merged", backupAction);
+            Backup(sourcePath, "merged", contentType, backupAction);
 
             // copy the source file into the 'merged' destination folder
             Copy(sourcePath, destinationPath);
@@ -229,9 +229,9 @@ namespace ClrVpin.Shared
             return kindredFiles;
         }
 
-        private static string CreateBackupFileName(string file, string subFolder = "")
+        private static string CreateBackupFileName(string file, string subFolder, string contentFolder)
         {
-            var contentFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
+            //var contentFolder = Path.GetDirectoryName(file)!.Split("\\").Last();
             var folder = Path.Combine(ActiveBackupFolder, subFolder, contentFolder);
             var destFileName = Path.Combine(folder, Path.GetFileName(file));
 
