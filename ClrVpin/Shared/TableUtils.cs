@@ -88,7 +88,7 @@ namespace ClrVpin.Shared
 
             // a new backup folder is designated for every backup so that we can keep a record of every file change
             FileUtils.SetActiveBackupFolder(Model.Settings.BackupFolder);
-            FileUtils.Backup(file, "database", null, true);
+            FileUtils.Backup(file, "merged", ContentTypeEnum.Database.GetDescription(), null, true);
 
             menu.SerializeToXDocument().Cleanse().SerializeToFile(file);
         }
