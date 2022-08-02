@@ -13,7 +13,7 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
 1. [PinballY (open source)](https://github.com/mjrgh/PinballY) and [PinballX (proprietary)](https://www.pinballx.com/) frontends - Videos, Audio, Wheels, Instructions, Flyters, etc.
 
 ## Features
-1. Scanner - clean your existing collection of pinball content.
+1. Scanner - clean your existing file collection.
    - Fix files that can be fixed - e.g. rename files to match your DB and remove unsupported/obsolete files
    - Report files that can't be fixed - e.g. missing files
    - Explore file content - e.g. open files and view in explorer.
