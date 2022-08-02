@@ -17,10 +17,10 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
    - Fix files that can be fixed - e.g. rename files to match your DB and remove unsupported/obsolete files
    - Report files that can't be fixed - e.g. missing files
    - Explore file content - e.g. open files and view in explorer.
-2. Rebuilder - merge new/updated pinball files into your existing collection
+2. Rebuilder - merge new/updated pinball files into your existing collection.
    - Fuzzy logic applied to match the different author file  naming conventions/mistakes to those defined in your database
    - Automaticaly backup files that are merged and replaced.
-3. Importer - verify against online resources to check whether your collection is up to date
+3. Importer - check against online resources to check whether your collection is up to date.
    - Navigate [VPS](https://virtual-pinball-spreadsheet.web.app/) collections with variety of user defined filters - e.g. update time, type, manufacturer, etc.
    - Open browser from application to the source of the updated file so it can be reviewed and downloaded
 
