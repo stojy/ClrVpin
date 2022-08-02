@@ -74,7 +74,7 @@
 
                     <Separator Margin="0,15" />
 
-                    <mdXaml:MarkdownScrollViewer MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" VerticalScrollBarVisibility="Auto" MaxHeight="1000"
+                    <mdXaml:MarkdownScrollViewer MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" VerticalScrollBarVisibility="Auto" MaxHeight="1000" Width="800"
                                                  Markdown="{Binding ReleaseNotes}" />
 
                     <WrapPanel Margin="0,20, 0, 0" HorizontalAlignment="Center">

@@ -7,6 +7,7 @@ using ClrVpin.Logging;
 using MaterialDesignThemes.Wpf;
 using Octokit;
 using Utils;
+using Notification = ClrVpin.Shared.Notification;
 
 namespace ClrVpin.Home
 {
@@ -29,7 +30,7 @@ namespace ClrVpin.Home
             return shouldCheckForUpdate;
         }
 
-        public static async Task CheckAndHandle(Window parent = null)
+        public static async Task CheckAndHandle(Window parent = null, bool showIfNoUpdateExists = false)
         {
             var release = await VersionManagement.Check(Model.SettingsManager.Settings.Guid, "stojy", "ClrVpin", msg => Logger.Info($"Version checking: {msg}"));
             if (release != null)
@@ -55,6 +56,10 @@ namespace ClrVpin.Home
                 await VersionManagement.Process(release, result);
 
                 parent?.Show();
+            }
+            else if (showIfNoUpdateExists)
+            {
+                await Notification.ShowSuccess("HomeDialog", "No Updates Available");
             }
 
             // update last check AFTER processing to ensure the msi installer (if invoked) doesn't update the version (since it causes the process to exit before it reaches here)
