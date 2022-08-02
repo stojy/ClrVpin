@@ -20,7 +20,7 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
 2. Rebuilder - merge new/updated pinball files into your existing collection.
    - Fuzzy logic applied to match the different author file  naming conventions/mistakes to those defined in your database
    - Automaticaly backup files that are merged and replaced.
-3. Importer - check against online resources to check whether your collection is up to date.
+3. Importer - check against online resources to determine whether your collection is up to date.
    - Navigate [VPS](https://virtual-pinball-spreadsheet.web.app/) collections with variety of user defined filters - e.g. update time, type, manufacturer, etc.
    - Open browser from application to the source of the updated file so it can be reviewed and downloaded
 
