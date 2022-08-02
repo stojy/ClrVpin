@@ -57,7 +57,7 @@
                 <!--restart dialog-->
                 <DataTemplate DataType="{x:Type home:RestartInfo}">
                   <StackPanel Margin="10">
-                    <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" HorizontalAlignment="Center"/>
+                    <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" HorizontalAlignment="Center" />
                     <TextBlock Margin="0,20,0,0" Text="{Binding Detail}" />
                     <Button Margin="0,20,0,0" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True" HorizontalAlignment="Center" Content="Restart"
                             Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
@@ -67,13 +67,15 @@
                 <!--new version available dialog-->
                 <DataTemplate DataType="{x:Type home:VersionManagementView}">
                   <StackPanel Margin="10">
-                    <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" Margin="0,0,0,20" HorizontalAlignment="Center"/>
-                    
+                    <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" Margin="0,0,0,20" HorizontalAlignment="Center" />
+
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Existing" controls:GenericAttached.String2="{Binding ExistingVersion}" />
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="New" controls:GenericAttached.String2="{Binding NewVersion}" />
 
-                    <Separator Margin="0,15"/>
-                    <mdXaml:MarkdownScrollViewer Markdown="{Binding ReleaseNotes}" MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" VerticalScrollBarVisibility="Auto"/>
+                    <Separator Margin="0,15" />
+
+                    <mdXaml:MarkdownScrollViewer MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" VerticalScrollBarVisibility="Auto" MaxHeight="1000"
+                                                 Markdown="{Binding ReleaseNotes}" />
 
                     <WrapPanel Margin="0,20, 0, 0" HorizontalAlignment="Center">
                       <WrapPanel.Resources>
@@ -86,13 +88,13 @@
                           <Setter Property="Command" Value="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
                         </Style>
                       </WrapPanel.Resources>
-                      
-                      <Button Content="Install" CommandParameter="{x:Static utils:VersionManagementAction.Install}" Style="{StaticResource HighlightButtonStyle}" 
-                              ToolTip="Download and install the windows msi"/>
-                      <Button Content="View" Command="{Binding ViewNewVersionCommand}" Style="{StaticResource ButtonStyle}" 
-                              ToolTip="View the release in your web browser"/>
-                      <Button Content="Later" CommandParameter="{x:Static utils:VersionManagementAction.Later}" Style="{StaticResource ButtonStyle}" 
-                              ToolTip="Don't check or prompt again for 24hrs"/>
+
+                      <Button Content="Install" CommandParameter="{x:Static utils:VersionManagementAction.Install}" Style="{StaticResource HighlightButtonStyle}"
+                              ToolTip="Download and install the windows msi" />
+                      <Button Content="View" Command="{Binding ViewNewVersionCommand}" Style="{StaticResource ButtonStyle}"
+                              ToolTip="View the release in your web browser" />
+                      <Button Content="Later" CommandParameter="{x:Static utils:VersionManagementAction.Later}" Style="{StaticResource ButtonStyle}"
+                              ToolTip="Don't check or prompt again for 24hrs" />
                       <!--non-visible button marked with IsCancel to support the escape key-->
                       <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Style="{StaticResource ButtonStyle}" />
                     </WrapPanel>
