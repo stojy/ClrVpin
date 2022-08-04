@@ -101,7 +101,7 @@
               </Button>
             </WrapPanel>
             <ItemsControl ItemsSource="{Binding FrontendContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}"
-                     Style="{StaticResource ItemsControlVirtualizedStyle}" MaxHeight="150" />
+                     Style="{StaticResource ItemsControlVirtualizedStyle}" MaxHeight="175" />
           </StackPanel>
         </GroupBox>
 
