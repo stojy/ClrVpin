@@ -80,7 +80,7 @@ namespace ClrVpin.Rebuilder
             var detail = CreatePercentageStatistic("Unmatched Files", _unmatchedFiles.Count, _gameFiles.Concat(_unmatchedFiles).Count());
             var isSuccess = _unmatchedFiles.Count == 0;
 
-            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Merged") : Notification.ShowWarning(DialogHostName, "Unmatched Files Found", detail));
+            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Merged") : Notification.ShowWarning(DialogHostName, "Unmatched Files Found", null, detail));
         }
 
         private readonly ICollection<FileDetail> _gameFiles;

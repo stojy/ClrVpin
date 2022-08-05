@@ -55,7 +55,7 @@ namespace ClrVpin.Scanner
 
         public void Show(Window parent)
         {
-            _scannerWindow = new MaterialWindowEx
+            _window = new MaterialWindowEx
             {
                 Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -67,10 +67,10 @@ namespace ClrVpin.Scanner
                 Title = "Scanner"
             };
 
-            _scannerWindow.Show();
+            _window.Show();
             parent.Hide();
 
-            _scannerWindow.Closed += (_, _) =>
+            _window.Closed += (_, _) =>
             {
                 Model.SettingsManager.Write();
                 parent.Show();
@@ -186,14 +186,25 @@ namespace ClrVpin.Scanner
         {
             Logger.Info($"\nScanner started, settings={JsonSerializer.Serialize(Settings)}");
 
-            _scannerWindow.Hide();
+            _window.Hide();
             Logger.Clear();
 
             var progress = new ProgressViewModel();
-            progress.Show(_scannerWindow);
+            progress.Show(_window);
 
-            progress.Update("Loading Database");
-            var games = TableUtils.ReadGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
+            List<GameDetail> games;
+            try
+            {
+                progress.Update("Loading Database");
+                games = await TableUtils.ReadGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
+                Logger.Info($"Loading database complete, duration={progress.Duration}", true);
+            }
+            catch (Exception)
+            {
+                progress.Close();
+                _window.Show();
+                return;
+            }
 
             progress.Update("Checking Files");
             var unmatchedFiles = await ScannerUtils.CheckAsync(games, UpdateProgress);
@@ -221,16 +232,16 @@ namespace ClrVpin.Scanner
         private async Task ShowResults(ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
             var statistics = new ScannerStatisticsViewModel(_games, duration, fixedFiles, unmatchedFiles);
-            statistics.Show(_scannerWindow, WindowMargin, WindowMargin);
+            statistics.Show(_window, WindowMargin, WindowMargin);
 
             var results = new ScannerResultsViewModel(_games);
-            var displayTask = results.Show(_scannerWindow, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top);
+            var displayTask = results.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top);
 
             var explorer = new ScannerExplorerViewModel(_games);
-            explorer.Show(_scannerWindow, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin);
+            explorer.Show(_window, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin);
 
             var logging = new LoggingViewModel();
-            logging.Show(_scannerWindow, explorer.Window.Left, explorer.Window.Top + explorer.Window.Height + WindowMargin);
+            logging.Show(_window, explorer.Window.Left, explorer.Window.Top + explorer.Window.Height + WindowMargin);
 
             statistics.Window.Closed += CloseWindows();
             results.Window.Closed += CloseWindows();
@@ -246,7 +257,7 @@ namespace ClrVpin.Scanner
                     explorer.Close();
                     logging.Close();
 
-                    _scannerWindow.Show();
+                    _window.Show();
                 };
             }
 
@@ -256,7 +267,7 @@ namespace ClrVpin.Scanner
         private readonly IEnumerable<FeatureType> _fixHitTypes;
 
         private ObservableCollection<GameDetail> _games;
-        private Window _scannerWindow;
+        private Window _window;
         private const int WindowMargin = 0;
     }
 }

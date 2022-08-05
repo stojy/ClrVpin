@@ -162,9 +162,18 @@ namespace ClrVpin.Importer
             var games = new List<GameDetail>();
             if (MatchFuzzy.IsActive)
             {
-                progress.Update("Loading database");
-                games = TableUtils.ReadGamesFromDatabases(Settings.GetFixableContentTypes());
-                Logger.Info($"Loading database complete, duration={progress.Duration}", true);
+                try
+                {
+                    progress.Update("Loading database");
+                    games = await TableUtils.ReadGamesFromDatabases(Settings.GetFixableContentTypes());
+                    Logger.Info($"Loading database complete, duration={progress.Duration}", true);
+                }
+                catch (Exception)
+                {
+                    progress.Close();
+                    _window.Show();
+                    return;
+                }
             }
 
             progress.Update("Fetching online database");

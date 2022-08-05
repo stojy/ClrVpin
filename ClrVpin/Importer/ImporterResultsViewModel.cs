@@ -265,7 +265,7 @@ namespace ClrVpin.Importer
             var detail = CreatePercentageStatistic("Missing Manufactured Tables", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineManufactured], onlineManufacturedCount);
 
             var isSuccess = onlineManufacturedCount == _matchStatistics[ImporterMatchStatistics.MatchedManufactured];
-            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Manufactured Tables Present") : Notification.ShowWarning(DialogHostName, "Manufactured Tables Missing", detail));
+            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Manufactured Tables Present") : Notification.ShowWarning(DialogHostName, "Manufactured Tables Missing", null, detail));
         }
 
         private static string CreatePercentageStatistic(string title, int count, int totalCount) => $"{title} : {count} of {totalCount} ({100f * count / totalCount:F2}%)";
@@ -285,8 +285,9 @@ namespace ClrVpin.Importer
             if (overwriteProperties)
             {
                 var result = await Notification.ShowConfirmation(DialogHostName, 
-                    "Highly recommended for fixing incorrect (or out of date) information in your local database(s)!\n\n" +
-                    "                                                Please read carefully before proceeding.",
+                    "Overwrite All Info In Your Database Files From Online Sources",
+                    "Highly recommended for fixing incorrect (or out of date) information in your local database(s).\n\n" +
+                    "Please read carefully before proceeding.",
                     "1. Before starting, run Scanner to confirm your collection is clean.\n" +
                     "2. During the process, all the local database info is updated from online sources¹².\n" +
                     "3. After completing, run Scanner to clean your collection (e.g. rename files).\n" +

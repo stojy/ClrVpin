@@ -58,12 +58,11 @@ namespace ClrVpin
         private static void HandleError(object sender, Exception exception, string source)
         {
             var assembly = Assembly.GetExecutingAssembly().GetName();
-            const string title = "Sorry, something has gone wrong :(\n\n" +
-                                 "Exiting this dialog will close the application and open the bug report web page. Please include the following information..\n" +
-                                 "- steps to reproduce\n" +
-                                 "- screenshot (if applicable)\n" +
-                                 "- relevant portion of the log file: c:\\ProgramData\\ClrVpin\\logs\\ClrVpin.log";
-                                 
+            const string title = "Sorry, something has gone wrong :(";
+            const string subTitle = "Exiting this dialog will close the application and open the bug report web page. Please include the following information..\n" +
+                                    "- steps to reproduce\n" +
+                                    "- screenshot (if applicable)\n" +
+                                    "- relevant portion of the log file: c:\\ProgramData\\ClrVpin\\logs\\ClrVpin.log";
             var detail = $"Message:  {exception.Message}\n" +
                          $"Assembly: {assembly}\n" +
                          $"Sender:   {sender}\n" +
@@ -75,18 +74,13 @@ namespace ClrVpin
                 Logging.Logger.Error(exception, $"{title}\n{detail}");
 
                 Current.MainWindow!.Show();
-                Current.MainWindow!.ShowDialog(new Notification
-                {
-                    IsError = true,
-                    Title = title,
-                    Detail = detail,
-                    DetailIsMonospaced = true
-                }).ContinueWith(_ => SubmitBugAndExit());
+
+                Notification.ShowError("HomeDialog", title, subTitle, detail, true, true).ContinueWith(_ => SubmitBugAndExit());
             }
             catch (Exception ex)
             {
                 // if the material window fails (e.g. MainWindow doesn't have a DialogHost available yet) then default back to the trusty windows message box
-                MessageBox.Show(Current.MainWindow!, $"{title}\n\n{exception}", "An Error Has Occurred.  ClrVpin will be shutdown.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Current.MainWindow!, $"{title}\n\n{subTitle}\n\n{exception}", "An Error Has Occurred.  ClrVpin will be shutdown.", MessageBoxButton.OK, MessageBoxImage.Error);
                 Logging.Logger.Error(ex, "Exception in HandleError");
                 Environment.Exit(-2);
             }
@@ -98,7 +92,7 @@ namespace ClrVpin
 
         private static void SubmitBugAndExit()
         {
-            Process.Start(new ProcessStartInfo(@"https://github.com/stojy/ClrVpin/issues/new?assignees=&labels=&template=bug_report.md&title=Unhandled Error - <add overveiw here>") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(@"https://github.com/stojy/ClrVpin/issues/new?assignees=&labels=&template=bug_report.md&title=Unhandled Error - <add summary description here>") { UseShellExecute = true });
 
             Environment.Exit(-1);
         }

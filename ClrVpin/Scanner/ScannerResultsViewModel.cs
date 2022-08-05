@@ -83,7 +83,7 @@ namespace ClrVpin.Scanner
             var detail = CreatePercentageStatistic("Missing Files", missingFilesCount, eligibleFiles);
             var isSuccess = missingFilesCount == 0;
 
-            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Incorrect Files", detail));
+            await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Incorrect Files", null, detail));
         }
 
         private const int WindowMargin = 0;

@@ -81,7 +81,7 @@ namespace ClrVpin.Rebuilder
 
         public void Show(Window parent)
         {
-            _rebuilderWindow = new MaterialWindowEx
+            _window = new MaterialWindowEx
             {
                 Owner = parent,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -93,10 +93,10 @@ namespace ClrVpin.Rebuilder
                 Title = "Rebuilder"
             };
 
-            _rebuilderWindow.Show();
+            _window.Show();
             parent.Hide();
 
-            _rebuilderWindow.Closed += (_, _) =>
+            _window.Closed += (_, _) =>
             {
                 Model.SettingsManager.Write();
                 parent.Show();
@@ -217,14 +217,26 @@ namespace ClrVpin.Rebuilder
         {
             Logger.Info($"\nRebuilder started, settings={JsonSerializer.Serialize(Settings)}");
 
-            _rebuilderWindow.Hide();
+            _window.Hide();
             Logger.Clear();
 
             var progress = new ProgressViewModel();
-            progress.Show(_rebuilderWindow);
+            progress.Show(_window);
 
-            progress.Update("Loading Database");
-            var games = TableUtils.ReadGamesFromDatabases(new List<ContentType> { Settings.GetSelectedDestinationContentType() });
+
+            List<GameDetail> games;
+            try
+            {
+                progress.Update("Loading Database");
+                games = await TableUtils.ReadGamesFromDatabases(new List<ContentType> { Settings.GetSelectedDestinationContentType() });
+                Logger.Info($"Loading database complete, duration={progress.Duration}", true);
+            }
+            catch (Exception)
+            {
+                progress.Close();
+                _window.Show();
+                return;
+            }
 
             progress.Update("Checking and Matching Files");
             var unmatchedFiles = await RebuilderUtils.CheckAndMatchAsync(games, UpdateProgress);
@@ -252,13 +264,13 @@ namespace ClrVpin.Rebuilder
         private async Task ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
             var rebuilderStatistics = new RebuilderStatisticsViewModel(_games, duration, gameFiles, unmatchedFiles);
-            rebuilderStatistics.Show(_rebuilderWindow, WindowMargin, WindowMargin);
+            rebuilderStatistics.Show(_window, WindowMargin, WindowMargin);
 
             var rebuilderResults = new RebuilderResultsViewModel(_games, gameFiles, unmatchedFiles);
-            var showTask = rebuilderResults.Show(_rebuilderWindow, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
+            var showTask = rebuilderResults.Show(_window, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
 
             var logging = new LoggingViewModel();
-            logging.Show(_rebuilderWindow, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
+            logging.Show(_window, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
 
             logging.Window.Closed += CloseWindows();
             rebuilderResults.Window.Closed += CloseWindows();
@@ -271,7 +283,7 @@ namespace ClrVpin.Rebuilder
                     rebuilderResults.Close();
                     rebuilderStatistics.Window.Close();
                     logging.Close();
-                    _rebuilderWindow.Show();
+                    _window.Show();
                 };
             }
 
@@ -281,7 +293,7 @@ namespace ClrVpin.Rebuilder
 
         private readonly IEnumerable<string> _destinationContentTypes;
         private ObservableCollection<GameDetail> _games;
-        private Window _rebuilderWindow;
+        private Window _window;
 
         private const int WindowMargin = 0;
     }

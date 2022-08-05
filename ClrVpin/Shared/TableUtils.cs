@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
@@ -18,7 +19,29 @@ namespace ClrVpin.Shared
 {
     public static class TableUtils
     {
-        public static List<GameDetail> ReadGamesFromDatabases(IEnumerable<ContentType> contentTypes)
+        public static async Task<List<GameDetail>> ReadGamesFromDatabases(IEnumerable<ContentType> contentTypes)
+        {
+            try
+            {
+                return GetGamesFromDatabases(contentTypes);
+            }
+            catch (Exception e)
+            {
+                await Notification.ShowWarning("HomeDialog", 
+                    "Unable to read PinballY/PinballX database file",
+                    "Please check the database xml file is well formatted, e.g. via https://codebeautify.org/xmlvalidator.\n\n" +
+                    "Alternatively, log an issue via github and upload the xml file for review.", 
+                    "Details..\n\n" +
+                    $"{e.Message}\n\n" +
+                    $"{e.StackTrace}\n\n" +
+                    $"{e.InnerException?.Message}\n\n" +
+                    $"{e.InnerException?.StackTrace}",
+                    showCloseButton: true);
+                throw;
+            }
+        }
+
+        private static List<GameDetail> GetGamesFromDatabases(IEnumerable<ContentType> contentTypes)
         {
             var databaseContentType = Model.Settings.GetDatabaseContentType();
 
@@ -39,11 +62,28 @@ namespace ClrVpin.Shared
                 // - further reading.. https://en.wikipedia.org/wiki/Extended_ASCII, https://codepoints.net/U+2122?lang=en
                 using var reader = new StreamReader(file, Encoding.GetEncoding("Windows-1252"));
 
-                var doc = XDocument.Load(reader);
-                if (doc.Root == null)
-                    throw new Exception($"Failed to load database: '{file}'");
+                XDocument doc;
+                try
+                {
+                    doc = XDocument.Load(reader);
+                    if (doc.Root == null)
+                        throw new Exception("Root element missing");
+                }
+                catch (Exception e)
+                {
+                    throw new Exception($"Failed to load database: '{file}'", e);
+                }
 
-                var menu = doc.Root.Deserialize<Menu>();
+                Menu menu;
+                try
+                {
+                    menu = doc.Root.Deserialize<Menu>();
+                }
+                catch (Exception e)
+                {
+                    throw new Exception($"Failed to deserialize database: '{file}'", e);
+                }
+
                 var databaseGameDetails = menu.Games.Select(g => new GameDetail { Game = g }).ToList();
 
                 var number = 1;
