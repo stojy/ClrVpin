@@ -94,7 +94,7 @@ namespace ClrVpin.Importer
                      (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Original && game.IsOriginal)) &&
                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Both ||
                      (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Matched && game.Hit != null) ||
-                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Unmatched && game.Hit == null)) &&
+                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.UnmatchedOnline && game.Hit == null)) &&
                     (YearBeginFilter == null || string.Compare(game.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
                     (YearEndFilter == null || string.Compare(game.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
                     (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
@@ -284,7 +284,7 @@ namespace ClrVpin.Importer
         {
             if (overwriteProperties)
             {
-                var result = await Notification.ShowConfirmation(DialogHostName, 
+                var result = await Notification.ShowConfirmation(DialogHostName,
                     "Overwrite All Info In Your Database Files From Online Sources",
                     "Highly recommended for fixing incorrect (or out of date) information in your local database(s).\n\n" +
                     "Please read carefully before proceeding.",
@@ -299,7 +299,7 @@ namespace ClrVpin.Importer
                     "  b. Run Scanner without trainer wheels, then rename files (in the backup folder), then run Importer\n" +
                     "     to merge the files back into your collection."
                     , true, "Update Now", "Maybe Later");
-                
+
                 if (result != true)
                     return;
             }
@@ -351,7 +351,7 @@ namespace ClrVpin.Importer
         {
             // because matching is disabled, all tables will be unmatched
             if (!isMatchingEnabled)
-                Model.Settings.Importer.SelectedTableMatchOption = TableMatchOptionEnum.Unmatched;
+                Model.Settings.Importer.SelectedTableMatchOption = TableMatchOptionEnum.UnmatchedOnline;
 
             // all table match options
             var featureTypes = StaticSettings.TableMatchOptions.Select(tableMatchOption =>
@@ -361,7 +361,7 @@ namespace ClrVpin.Importer
                     Tag = "TableMatchOption",
                     Description = tableMatchOption.Description,
                     Tip = tableMatchOption.Tip,
-                    IsSupported = tableMatchOption.Enum == TableMatchOptionEnum.Unmatched || isMatchingEnabled,
+                    IsSupported = tableMatchOption.Enum == TableMatchOptionEnum.UnmatchedOnline || isMatchingEnabled,
                     IsActive = tableMatchOption.Enum == Model.Settings.Importer.SelectedTableMatchOption,
                     SelectedCommand = new ActionCommand(() =>
                     {
@@ -369,7 +369,7 @@ namespace ClrVpin.Importer
                         FilterChanged.Execute(null);
                     })
                 };
-                if (!isMatchingEnabled && tableMatchOption.Enum != TableMatchOptionEnum.Unmatched)
+                if (!isMatchingEnabled && tableMatchOption.Enum != TableMatchOptionEnum.UnmatchedOnline)
                     featureType.Tip += featureType.Tip + MatchingDisabledMessage;
 
                 return featureType;

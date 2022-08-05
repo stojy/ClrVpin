@@ -95,9 +95,9 @@ namespace ClrVpin.Models.Settings
         // all possible matching types 
         public static readonly TableMatchOption[] TableMatchOptions =
         {
-            new TableMatchOption {Enum = TableMatchOptionEnum.Matched, Tip = "Online tables that exist in your local database"},
-            new TableMatchOption {Enum = TableMatchOptionEnum.Unmatched, Tip = "Online tables that do NOT exist in your local database"},
-            new TableMatchOption {Enum = TableMatchOptionEnum.Both, Tip = "All online tables irrespective of whether they exist in your local database"}
+            new TableMatchOption {Enum = TableMatchOptionEnum.Matched, Tip = "Tables that exist in both online feed and your local database"},
+            new TableMatchOption {Enum = TableMatchOptionEnum.UnmatchedOnline, Tip = "Tables that exist in online feed only"},
+            new TableMatchOption {Enum = TableMatchOptionEnum.Both, Tip = "All tables"}
         };
 
         // all possible file merge options - to be used elsewhere (importer)

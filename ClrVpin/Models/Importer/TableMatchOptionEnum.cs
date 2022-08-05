@@ -5,7 +5,7 @@ namespace ClrVpin.Models.Importer
     public enum TableMatchOptionEnum
     {
         [Description("Matched")] Matched,
-        [Description("Unmatched")] Unmatched,
+        [Description("Unmatched")] UnmatchedOnline,
         [Description("Both")] Both
     }
 }
