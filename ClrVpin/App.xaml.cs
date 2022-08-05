@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
 using ClrVpin.Models.Settings;
-using MaterialDesignThemes.Wpf;
 using Notification = ClrVpin.Shared.Notification;
 
 namespace ClrVpin

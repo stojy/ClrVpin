@@ -6,14 +6,15 @@
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="\Controls\Converters.xaml" />
     <ResourceDictionary Source="\Controls\Styles.xaml" />
     <ResourceDictionary Source="\Controls\FolderSelection\FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <!-- items control with virtualisation and scroll viewer  - https://stackoverflow.com/questions/2783845/virtualizing-an-itemscontrol-->
   <Style x:Key="ItemsControlVirtualizedStyle" TargetType="ItemsControl">
-    <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
-    <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+    <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+    <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
     <Setter Property="ItemsPanel">
       <Setter.Value>
         <ItemsPanelTemplate>
@@ -81,6 +82,7 @@
               <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding PinballFolderModel}" />
               <Button ToolTip="Auto assign 'visual pinball' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="Coral"
                       HorizontalAlignment="Left"
+                      IsEnabled="{Binding PinballFolderModel.Folder, Converter={StaticResource notNullBooleanConverter}}"
                       Command="{Binding AutoAssignPinballFoldersCommand}">
                 <materialDesign:PackIcon Kind="MagicWand" />
               </Button>
@@ -96,12 +98,13 @@
               <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding FrontendFolderModel}" />
               <Button ToolTip="Auto assign 'frontend' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="Coral"
                       HorizontalAlignment="Left"
+                      IsEnabled="{Binding FrontendFolderModel.Folder, Converter={StaticResource notNullBooleanConverter}}"
                       Command="{Binding AutoAssignFrontendFoldersCommand}">
                 <materialDesign:PackIcon Kind="MagicWand" />
               </Button>
             </WrapPanel>
             <ItemsControl ItemsSource="{Binding FrontendContentTypeModels}" BorderThickness="0" ItemTemplate="{StaticResource ContentTypeModelTemplate}"
-                     Style="{StaticResource ItemsControlVirtualizedStyle}" MaxHeight="175" />
+                          Style="{StaticResource ItemsControlVirtualizedStyle}" MaxHeight="175" />
           </StackPanel>
         </GroupBox>
 
@@ -129,14 +132,21 @@
           </StackPanel>
         </GroupBox>
 
+        <TextBlock Margin="0,15,0,5" FontStyle="Italic"
+                   Text="Note - folder setup is optional. It's only applicable for PinballY/PinballX users to enable Scanner, Rebuilder, and Fuzzy Matching features." />
+
         <WrapPanel HorizontalAlignment="Center" Margin="0,10,0,5">
-          <Button ToolTip="Reset the entire config to their installation values" 
+          <Button ToolTip="Reset the entire config to their installation values"
                   Width="90"
-                  Command="{Binding ResetCommand}">Reset</Button>
+                  Command="{Binding ResetCommand}">
+            Reset
+          </Button>
           <Button ToolTip="Save settings and return to the home page"
-                  Style="{StaticResource RaisedAccentButtonStyle}" 
+                  Style="{StaticResource RaisedAccentButtonStyle}"
                   Width="90" Margin="10,0,0,0"
-                  Command="{Binding SaveCommand}">Save</Button>
+                  Command="{Binding SaveCommand}">
+            Save
+          </Button>
         </WrapPanel>
 
       </StackPanel>
