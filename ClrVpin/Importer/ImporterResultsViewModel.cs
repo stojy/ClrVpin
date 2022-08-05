@@ -320,7 +320,7 @@ namespace ClrVpin.Importer
             if (isSuccess)
                 await Notification.ShowSuccess(DialogHostName, "No Updates Required");
             else
-                await Notification.ShowSuccess(DialogHostName, "Tables Updated", details);
+                await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
         }
 
         private IEnumerable<FeatureType> CreateTableStyleOptions()

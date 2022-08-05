@@ -31,7 +31,6 @@ namespace ClrVpin.Shared
                     "Unable to read PinballY/PinballX database file",
                     "Please check the database xml file is well formatted, e.g. via https://codebeautify.org/xmlvalidator.\n\n" +
                     "Alternatively, log an issue via github and upload the xml file for review.", 
-                    "Details..\n\n" +
                     $"{e.Message}\n\n" +
                     $"{e.StackTrace}\n\n" +
                     $"{e.InnerException?.Message}\n\n" +
