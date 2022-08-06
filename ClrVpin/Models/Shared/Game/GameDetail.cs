@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
 using PropertyChanged;
@@ -23,6 +24,9 @@ public class GameDetail
 
     [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
     public ViewState ViewState { get; } = new ViewState();
+
+    [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
+    public OnlineGame OnlineGame { get; set; }
 
     public override string ToString() => $"Table: {Derived.TableFileWithExtension}, IsSmelly: {Content?.IsSmelly}";
 }
