@@ -252,6 +252,24 @@
         <DockPanel DockPanel.Dock="Left" Width="700">
           <GroupBox DockPanel.Dock="Top" Header="Criteria" Margin="0,0,0,10">
             <StackPanel Margin="5">
+              <ContentControl Template="{StaticResource KeyValuePair}"
+                              controls:GenericAttached.String="Perspective"
+                              controls:GenericAttached.Double="100"
+                              controls:GenericAttached.Double2="14">
+                <ItemsControl ItemsSource="{Binding PerspectiveOptionsView}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <WrapPanel />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="shared:FeatureType">
+                      <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ContentControl>
+
               <WrapPanel Margin="0,-10,0,0"> <!-- margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :( -->
                 <ComboBox ItemsSource="{Binding TablesFilterView}"
                           Text="{Binding Path=TableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

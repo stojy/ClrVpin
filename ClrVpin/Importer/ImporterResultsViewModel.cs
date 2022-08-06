@@ -166,6 +166,7 @@ namespace ClrVpin.Importer
             BackupFolder = Model.Settings.BackupFolder;
             NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
 
+            PerspectiveOptionsView = new ListCollectionView<FeatureType>(CreatePerspectiveOptions().ToList());
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions(IsMatchingEnabled).ToList());
 
@@ -176,9 +177,11 @@ namespace ClrVpin.Importer
             AllTableOverwriteDatabaseInfoCommand = new ActionCommand(AllTableOverwriteDatabaseProperties);
         }
 
+
         public string AddMissingDatabaseInfoTip { get; }
         public string OverwriteDatabaseInfoTip { get; }
 
+        public ListCollectionView<FeatureType> PerspectiveOptionsView { get; set; }
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
 
@@ -286,7 +289,7 @@ namespace ClrVpin.Importer
             {
                 var result = await Notification.ShowConfirmation(DialogHostName,
                     "Overwrite All Info In Your Database Files From Online Sources",
-                    "Highly recommended for fixing incorrect (or out of date) information in your local database(s).\n\n" +
+                    "Highly recommended for fixing incorrect (or out of date) information in your local database.\n\n" +
                     "Please read carefully before proceeding.",
                     "1. Before starting, run Scanner to confirm your collection is clean.\n" +
                     "2. During the process, all the local database info is updated from online sources¹².\n" +
@@ -306,7 +309,7 @@ namespace ClrVpin.Importer
 
             var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(OnlineGames, overwriteProperties);
 
-            // write ALL games back to the database(s) - i.e. irrespective of whether matched or not
+            // write ALL games back to the database - i.e. irrespective of whether matched or not
             if (updatedGameCount > 0)
                 TableUtils.WriteGamesToDatabase(_games.Select(x => x.Game));
 
@@ -321,6 +324,33 @@ namespace ClrVpin.Importer
                 await Notification.ShowSuccess(DialogHostName, "No Updates Required");
             else
                 await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
+        }
+
+        private IEnumerable<FeatureType> CreatePerspectiveOptions()
+        {
+            // all table style options
+            var featureTypes = StaticSettings.PerspectiveOptions.Select(perspectiveOption =>
+            {
+                var featureType = new FeatureType((int)perspectiveOption.Enum)
+                {
+                    Tag = nameof(PerspectiveOption),
+                    Description = perspectiveOption.Description,
+                    Tip = perspectiveOption.Tip,
+                    IsSupported = true,
+                    IsActive = perspectiveOption.Enum == Model.Settings.Importer.SelectedPerspectiveOptionEnum,
+                    SelectedCommand = new ActionCommand(() =>
+                    {
+                        if (Model.Settings.Importer.SelectedPerspectiveOptionEnum != perspectiveOption.Enum)
+                        {
+                            Model.Settings.Importer.SelectedPerspectiveOptionEnum = perspectiveOption.Enum;
+                            FilterChanged.Execute(null);
+                        }
+                    })
+                };
+                return featureType;
+            }).ToList();
+
+            return featureTypes;
         }
 
         private IEnumerable<FeatureType> CreateTableStyleOptions()

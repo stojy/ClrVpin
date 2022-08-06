@@ -159,13 +159,13 @@ namespace ClrVpin.Importer
             var progress = new ProgressViewModel();
             progress.Show(_window);
 
-            var games = new List<GameDetail>();
+            var localGames = new List<GameDetail>();
             if (MatchFuzzy.IsActive)
             {
                 try
                 {
                     progress.Update("Loading database");
-                    games = await TableUtils.ReadGamesFromDatabases(Settings.GetFixableContentTypes());
+                    localGames = await TableUtils.ReadGamesFromDatabases(Settings.GetFixableContentTypes());
                     Logger.Info($"Loading database complete, duration={progress.Duration}", true);
                 }
                 catch (Exception)
@@ -177,24 +177,24 @@ namespace ClrVpin.Importer
             }
 
             progress.Update("Fetching online database");
-            var onlineGames = await ImporterUtils.GetOnlineDatabase();
+            var onlineGames = await ImporterUtils.ReadGamesFromOnlineDatabase();
 
             progress.Update("Fixing online database");
             var feedFixStatistics = ImporterFix.FixOnlineDatabase(onlineGames);
             Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
 
             progress.Update("Matching online to local database");
-            var matchStatistics = await ImporterUtils.MatchOnlineToLocalAsync(games, onlineGames, UpdateProgress);
+            var matchStatistics = await ImporterUtils.MatchOnlineToLocalAsync(localGames, onlineGames, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Update("Matching local to online database");
-            await ImporterUtils.MatchLocalToOnlineAsync(games, onlineGames, matchStatistics, UpdateProgress);
+            await ImporterUtils.MatchLocalToOnlineAsync(localGames, onlineGames, matchStatistics, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Close();
 
             progress.Update("Preparing Results");
-            await ShowResults(progress.Duration, games, onlineGames, feedFixStatistics, matchStatistics);
+            await ShowResults(progress.Duration, localGames, onlineGames, feedFixStatistics, matchStatistics);
             Logger.Info($"Importer rendered, duration={progress.Duration}", true);
 
             void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);

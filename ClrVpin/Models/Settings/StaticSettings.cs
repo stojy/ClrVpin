@@ -24,6 +24,7 @@ namespace ClrVpin.Models.Settings
                 HitTypeEnum.Unsupported)).ToArray();
 
             // importer
+            PerspectiveOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -84,6 +85,13 @@ namespace ClrVpin.Models.Settings
             }
         };
 
+        // all possible perspective options - to be used elsewhere (importer)
+        public static readonly PerspectiveOption[] PerspectiveOptions =
+        {
+            new PerspectiveOption {Enum = PerspectiveOptionEnum.OnlineFeed, Tip = "Tables from online feed, matched against local database"},
+            new PerspectiveOption {Enum = PerspectiveOptionEnum.LocalDatabase, Tip = "Tables from local database, matched against the online feed"}
+        };
+
         // all possible table style options - to be used elsewhere (importer)
         public static readonly TableStyleOption[] TableStyleOptions =
         {
@@ -92,11 +100,11 @@ namespace ClrVpin.Models.Settings
             new TableStyleOption {Enum = TableStyleOptionEnum.Both, Tip = "Manufactured AND original tables"}
         };
 
-        // all possible matching types 
+        // all possible table match options
         public static readonly TableMatchOption[] TableMatchOptions =
         {
             new TableMatchOption {Enum = TableMatchOptionEnum.Matched, Tip = "Tables that exist in both online feed and your local database"},
-            new TableMatchOption {Enum = TableMatchOptionEnum.UnmatchedOnline, Tip = "Tables that exist in online feed only"},
+            new TableMatchOption {Enum = TableMatchOptionEnum.UnmatchedOnline, Tip = "Tables that do NOT exist in both online feed and your local database"},
             new TableMatchOption {Enum = TableMatchOptionEnum.Both, Tip = "All tables"}
         };
 
