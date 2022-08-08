@@ -181,7 +181,6 @@ public static class ImporterUtils
     private static void MatchLocalToOnline(IEnumerable<GameDetail> localGames, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
     {
         var unmatchedLocalGames = localGames.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.GameDetail)).ToList();
-        var test = localGames.Where(localGame => localGame.OnlineGame == null);
 
         // the earlier 'online to local' matching has already determined the matches.. so need to redo it again
         // - deliberately NOT performing a 'reverse' fuzzy lookup to avoid scenario where x1 online game could have multiple local files
