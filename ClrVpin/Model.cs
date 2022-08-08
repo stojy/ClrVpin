@@ -43,6 +43,6 @@ namespace ClrVpin
 
         public static Rect ScreenWorkArea { get; set; }
 
-        private const string OptionsDisabledMessage = "... DISABLED BECAUSE THE SETTINGS ARE INCOMPLETE";
+        public const string OptionsDisabledMessage = "... DISABLED BECAUSE THE FOLDER SETTINGS (USED BY PBY/PBX) ARE INCOMPLETE";
     }
 }

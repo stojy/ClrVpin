@@ -97,9 +97,13 @@ namespace ClrVpin.Importer
             // explicitly disable fuzzy logic if ALL of the settings are not fully configured, e.g. frontend database folder not setup
             if (!Model.SettingsManager.IsValid)
             {
+                // clear the settings to disable matching
+                Settings.Importer.SelectedMatchCriteriaOptions.Clear();
+
+                // disable the UI so it can't be selected
                 MatchFuzzy.IsActive = false;
                 MatchFuzzy.IsSupported = false;
-                MatchFuzzy.Tip += "... DISABLED BECAUSE THE SETTINGS ARE INCOMPLETE";
+                MatchFuzzy.Tip += Model.OptionsDisabledMessage;
             }
         }
 

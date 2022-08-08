@@ -42,6 +42,10 @@ namespace ClrVpin.Importer
             _matchStatistics = matchStatistics.ToDictionary();
             IsMatchingEnabled = Model.Settings.Importer.SelectedMatchCriteriaOptions.Any();
 
+            PerspectiveOptionsView = new ListCollectionView<FeatureType>(CreatePerspectiveOptions().ToList());
+            TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
+            TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
+
             // assign VM properties
             onlineGames.ForEach(onlineGame =>
             {
@@ -166,10 +170,6 @@ namespace ClrVpin.Importer
             BackupFolder = Model.Settings.BackupFolder;
             NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
 
-            PerspectiveOptionsView = new ListCollectionView<FeatureType>(CreatePerspectiveOptions().ToList());
-            TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
-            TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions(IsMatchingEnabled).ToList());
-
             AddMissingDatabaseInfoTip += "Add any missing information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
             AllTableAddMissingDatabaseInfoCommand = new ActionCommand(AllTableAddMissingDatabaseProperties);
 
@@ -181,7 +181,7 @@ namespace ClrVpin.Importer
         public string AddMissingDatabaseInfoTip { get; }
         public string OverwriteDatabaseInfoTip { get; }
 
-        public ListCollectionView<FeatureType> PerspectiveOptionsView { get; set; }
+        public ListCollectionView<FeatureType> PerspectiveOptionsView { get; }
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
 
@@ -328,6 +328,10 @@ namespace ClrVpin.Importer
 
         private IEnumerable<FeatureType> CreatePerspectiveOptions()
         {
+            // because matching is disabled, only the online perspective is available
+            if (!IsMatchingEnabled)
+                Model.Settings.Importer.SelectedPerspectiveOption = PerspectiveOptionEnum.OnlineFeed;
+
             // all table style options
             var featureTypes = StaticSettings.PerspectiveOptions.Select(perspectiveOption =>
             {
@@ -336,17 +340,21 @@ namespace ClrVpin.Importer
                     Tag = nameof(PerspectiveOption),
                     Description = perspectiveOption.Description,
                     Tip = perspectiveOption.Tip,
-                    IsSupported = true,
-                    IsActive = perspectiveOption.Enum == Model.Settings.Importer.SelectedPerspectiveOptionEnum,
+                    IsSupported = perspectiveOption.Enum == PerspectiveOptionEnum.OnlineFeed || IsMatchingEnabled,
+                    IsActive = perspectiveOption.Enum == Model.Settings.Importer.SelectedPerspectiveOption,
                     SelectedCommand = new ActionCommand(() =>
                     {
-                        if (Model.Settings.Importer.SelectedPerspectiveOptionEnum != perspectiveOption.Enum)
+                        if (Model.Settings.Importer.SelectedPerspectiveOption != perspectiveOption.Enum)
                         {
-                            Model.Settings.Importer.SelectedPerspectiveOptionEnum = perspectiveOption.Enum;
+                            Model.Settings.Importer.SelectedPerspectiveOption = perspectiveOption.Enum;
                             FilterChanged.Execute(null);
                         }
                     })
                 };
+
+                if (!IsMatchingEnabled && perspectiveOption.Enum == PerspectiveOptionEnum.LocalDatabase)
+                    featureType.Tip += MatchingDisabledMessage;
+
                 return featureType;
             }).ToList();
 
@@ -371,16 +379,17 @@ namespace ClrVpin.Importer
                         FilterChanged.Execute(null);
                     })
                 };
+
                 return featureType;
             }).ToList();
 
             return featureTypes;
         }
 
-        private IEnumerable<FeatureType> CreateTableMatchOptions(bool isMatchingEnabled)
+        private IEnumerable<FeatureType> CreateTableMatchOptions()
         {
             // because matching is disabled, all tables will be unmatched
-            if (!isMatchingEnabled)
+            if (!IsMatchingEnabled)
                 Model.Settings.Importer.SelectedTableMatchOption = TableMatchOptionEnum.UnmatchedOnline;
 
             // all table match options
@@ -391,7 +400,7 @@ namespace ClrVpin.Importer
                     Tag = "TableMatchOption",
                     Description = tableMatchOption.Description,
                     Tip = tableMatchOption.Tip,
-                    IsSupported = tableMatchOption.Enum == TableMatchOptionEnum.UnmatchedOnline || isMatchingEnabled,
+                    IsSupported = tableMatchOption.Enum == TableMatchOptionEnum.UnmatchedOnline || IsMatchingEnabled,
                     IsActive = tableMatchOption.Enum == Model.Settings.Importer.SelectedTableMatchOption,
                     SelectedCommand = new ActionCommand(() =>
                     {
@@ -399,8 +408,9 @@ namespace ClrVpin.Importer
                         FilterChanged.Execute(null);
                     })
                 };
-                if (!isMatchingEnabled && tableMatchOption.Enum != TableMatchOptionEnum.UnmatchedOnline)
-                    featureType.Tip += featureType.Tip + MatchingDisabledMessage;
+
+                if (!IsMatchingEnabled && tableMatchOption.Enum != TableMatchOptionEnum.UnmatchedOnline)
+                    featureType.Tip += MatchingDisabledMessage;
 
                 return featureType;
             }).ToList();
@@ -449,6 +459,6 @@ namespace ClrVpin.Importer
         private const string DialogHostName = "ImporterResultsDialog";
 
         private const int WindowMargin = 0;
-        private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T USED";
+        private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T ENABLED";
     }
 }

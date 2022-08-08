@@ -88,8 +88,8 @@ namespace ClrVpin.Models.Settings
         // all possible perspective options - to be used elsewhere (importer)
         public static readonly PerspectiveOption[] PerspectiveOptions =
         {
-            new PerspectiveOption {Enum = PerspectiveOptionEnum.OnlineFeed, Tip = "Tables from online feed, matched against local database"},
-            new PerspectiveOption {Enum = PerspectiveOptionEnum.LocalDatabase, Tip = "Tables from local database, matched against the online feed"}
+            new PerspectiveOption {Enum = PerspectiveOptionEnum.OnlineFeed, Tip = "All online tables matched against the local database"},
+            new PerspectiveOption {Enum = PerspectiveOptionEnum.LocalDatabase, Tip = "All local database tables matched against the online feed"}
         };
 
         // all possible table style options - to be used elsewhere (importer)
