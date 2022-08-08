@@ -164,14 +164,15 @@ namespace ClrVpin.Shared
             // - ASSOCIATION IS DONE IRRESPECTIVE OF THE USER'S SELECTED PREFERENCE, I.E. THE USE SELECTIONS ARE CHECKED ELSEWHERE
             contentFiles.ForEach((contentFile, i) =>
             {
-                updateProgress(Path.GetFileName(contentFile), i + 1);
+                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(contentFile);
+                updateProgress(fileNameWithoutExtension, i + 1);
 
                 GameDetail matchedGameDetail;
 
                 // check for hit..
                 // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
-                if ((matchedGameDetail = gameDetails.FirstOrDefault(game => Content.GetName(game, contentType.Category) == Path.GetFileNameWithoutExtension(contentFile))) != null)
+                if ((matchedGameDetail = gameDetails.FirstOrDefault(game => Content.GetName(game, contentType.Category) == fileNameWithoutExtension)) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
@@ -179,11 +180,11 @@ namespace ClrVpin.Shared
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, contentFile);
                 }
                 else if ((matchedGameDetail = gameDetails.FirstOrDefault(game =>
-                             string.Equals(Content.GetName(game, contentType.Category), Path.GetFileNameWithoutExtension(contentFile), StringComparison.CurrentCultureIgnoreCase))) != null)
+                             string.Equals(Content.GetName(game, contentType.Category), fileNameWithoutExtension, StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
                     getContentHits(matchedGameDetail).Add(HitTypeEnum.WrongCase, contentFile);
                 }
-                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGameDetail = gameDetails.FirstOrDefault(gameDetail => gameDetail.Game.Name == Path.GetFileNameWithoutExtension(contentFile))) != null)
+                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGameDetail = gameDetails.FirstOrDefault(gameDetail => gameDetail.Game.Name == fileNameWithoutExtension)) != null)
                 {
                     getContentHits(matchedGameDetail).Add(HitTypeEnum.TableName, contentFile);
                 }
