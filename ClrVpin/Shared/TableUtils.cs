@@ -170,7 +170,7 @@ namespace ClrVpin.Shared
                 GameDetail matchedGameDetail;
 
                 // check for hit..
-                // - only 1 hit per file.. but a game can have multiple hits.. with a maximum of 1 valid hit
+                // - only 1 hit per file.. but a game DB entry can have multiple file hits.. with a maximum of 1 valid hit, i.e. the others considered as duplicate, wrong case, fuzzy matched, etc.
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
                 if ((matchedGameDetail = gameDetails.FirstOrDefault(game => Content.GetName(game, contentType.Category) == fileNameWithoutExtension)) != null)
                 {
@@ -192,7 +192,7 @@ namespace ClrVpin.Shared
                 else
                 {
                     var fuzzyFileNameDetails = Fuzzy.Fuzzy.GetNameDetails(contentFile, true);
-                    (matchedGameDetail, var score, var isMatch) = gameDetails.Match(fuzzyFileNameDetails);
+                    (matchedGameDetail, var score, var isMatch) = gameDetails.MatchToLocalDatabase(fuzzyFileNameDetails);
                     if (isMatch)
                     {
                         getContentHits(matchedGameDetail).Add(HitTypeEnum.Fuzzy, contentFile, score);

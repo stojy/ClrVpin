@@ -78,18 +78,30 @@ public static class ImporterUtils
         {
             updateProgress(onlineGame.Name, (i + 1f) / onlineGames.Count);
 
+            // todo; perform an exact match check to potentially avoid the need for the more expensive fuzzy match check
+            // - similar to TableUtils.AddContentFilesToGames() uses since VPX/PBY mandates that the entries must be the same!
+            // - a LOT faster!!
+
+            
             // unlike rebuilder matching, only fuzzy is used
 
-            // unlike scanner/rebuilder we already have the manufacturer and year breakdowns, so we can skip the parsing step and assign them directly instead
+            // unlike scanner/rebuilder..
+            // - we already have the manufacturer and year breakdowns, so we can skip the parsing step and assign them directly instead
             // - use GetNameDetails for consistency and assign some properties, but then override with the known values (from the feed) directly
             var fullName = $"{onlineGame.Name} ({onlineGame.Manufacturer} {onlineGame.Year})";
             var fuzzyNameDetails = Fuzzy.GetNameDetails(fullName, false);
             fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
             fuzzyNameDetails.Year = onlineGame.Year;
-
-            var (localMatchedGame, score, isMatch) = localGames.Match(fuzzyNameDetails, false);
+            
+            var (localMatchedGame, score, isMatch) = localGames.MatchToLocalDatabase(fuzzyNameDetails, false);
             if (isMatch)
             {
+                // would it be more efficient to match to the online games instead of the reverse.. mataching to local database
+                // - ensure a specified local game will only have at most 1 online match (the best match( match exists for every local game).. i.e. no need for the 'is higher scoring' handling below
+                // - since only 1 online game can be chosen, we could progressively reduce the 'pool of online games' as candidates by filtering out those that are already matched
+                // - BUT, it would require some reworking of Fuzzy.MatchToLocalDatabase() to accommodate
+
+                // check to see if the local game has already been matched to an online game
                 var existingMatchOnlineGame = onlineGames.FirstOrDefault(online => online.Hit?.GameDetail == localMatchedGame);
                 if (existingMatchOnlineGame != null)
                 {
