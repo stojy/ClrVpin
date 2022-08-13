@@ -276,63 +276,63 @@ public class FuzzyTests
 
         // exact match #1
         var fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        var (game, _, isMatch) = gameDetails.Match(fileDetails);
+        var (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("1"));
         Assert.That(isMatch, Is.True);
 
         // exact match #2 - i.,e. not the first match
         fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        (game, _, isMatch) = gameDetails.Match(fileDetails);
+        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("2"));
         Assert.That(isMatch, Is.True);
 
         // longest match chosen - i.e. not the first match
         fileDetails = Fuzzy.GetNameDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        (game, _, isMatch) = gameDetails.Match(fileDetails);
+        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("4"));
         Assert.That(isMatch, Is.True);
 
         // partial match
         fileDetails = Fuzzy.GetNameDetails("Blah Cowboy Eight Ball blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        (game, _, isMatch) = gameDetails.Match(fileDetails);
+        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("2"));
         Assert.That(isMatch, Is.True);
 
         // no match chosen - i.e. not the first match
         fileDetails = Fuzzy.GetNameDetails("what the heck is this file.f4v", true);
-        (game, _, isMatch) = gameDetails.Match(fileDetails);
+        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game, Is.Not.Null);
         Assert.That(isMatch, Is.False);
 
         // partial match, but not long enough to score - 'wolverine' is 9 long, but 11 is required
         fileDetails = Fuzzy.GetNameDetails("Wolverine (Zen Studios 2013).vpx", true);
-        (game, _, isMatch) = gameDetails.Match(fileDetails);
+        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game, Is.Not.Null);
         Assert.That(isMatch, Is.False);
 
         // partial match - extra score because file only has 1 match in the games DB
         fileDetails = Fuzzy.GetNameDetails("Frankenstein.vpx", true);
-        (game, _, isMatch) = gameDetails.Match(fileDetails);
+        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("5"));
         Assert.That(isMatch, Is.True);
 
         // partial match - NO extra score because file has multiple matches in the games DB
         fileDetails = Fuzzy.GetNameDetails("Ball.vpx", true);
-        (game, var score, isMatch) = gameDetails.Match(fileDetails);
+        (game, var score, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.Not.Null);
         Assert.That(score, Is.EqualTo(15));
         Assert.That(isMatch, Is.False);
 
         // ??
         fileDetails = Fuzzy.GetNameDetails("Transformers Marcade Mod v1.2.vpx", true);
-        (game, score, isMatch) = gameDetails.Match(fileDetails);
+        (game, score, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("6"));
         Assert.That(score, Is.EqualTo(152 + Fuzzy.ScoringNoWhiteSpaceBonus));
         Assert.That(isMatch, Is.True);
 
         // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw (non-cleaned) table name
         fileDetails = Fuzzy.GetNameDetails("V1 (IDSA 1986) Logo.png", true);
-        (game, score, isMatch) = gameDetails.Match(fileDetails);
+        (game, score, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
         Assert.That(score, Is.EqualTo(150));
         Assert.That(isMatch, Is.True);

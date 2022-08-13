@@ -198,7 +198,7 @@ namespace ClrVpin.Shared.Fuzzy
         }
 
         // fuzzy match against all games
-        public static (GameDetail game, int? score, bool isMatch) Match(this IList<GameDetail> games, FuzzyNameDetails fuzzyNameDetails, bool isFile = true)
+        public static (GameDetail game, int? score, bool isMatch) MatchToLocalDatabase(this IList<GameDetail> games, FuzzyNameDetails fuzzyNameDetails, bool isFile = true)
         {
             // check EVERY DB game entry against the fuzzy name details (which can be a file file for scanner/rebuilder OR online game entry for importer(file to look for the best match)
             // - Match will create a fuzzy version (aka cleaned) of each game DB entry so it can be compared against the fuzzy file details (already cleaned)
