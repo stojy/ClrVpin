@@ -10,7 +10,6 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Logging;
 using ClrVpin.Models.Importer;
-using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
@@ -198,13 +197,13 @@ namespace ClrVpin.Importer
             progress.Close();
 
             progress.Update("Preparing Results");
-            await ShowResults(progress.Duration, gameItems, localGames, onlineGames, feedFixStatistics, matchStatistics);
+            await ShowResults(progress.Duration, gameItems, feedFixStatistics, matchStatistics);
             Logger.Info($"Importer rendered, duration={progress.Duration}", true);
 
             void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
-        private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, List<GameDetail> localGames, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
+        private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
         {
             var results = new ImporterResultsViewModel(gameItems, matchStatistics);
             var showTask = results.Show(_window, WindowMargin, WindowMargin);
