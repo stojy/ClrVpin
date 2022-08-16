@@ -192,24 +192,24 @@ namespace ClrVpin.Importer
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Update("Matching local to online database");
-            await ImporterUtils.MatchLocalToOnlineAsync(localGames, onlineGames, matchStatistics, UpdateProgress);
+            var gameItems = await ImporterUtils.MergeOnlineAndLocalGamesAsync(localGames, onlineGames, matchStatistics, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Close();
 
             progress.Update("Preparing Results");
-            await ShowResults(progress.Duration, localGames, onlineGames, feedFixStatistics, matchStatistics);
+            await ShowResults(progress.Duration, gameItems, localGames, onlineGames, feedFixStatistics, matchStatistics);
             Logger.Info($"Importer rendered, duration={progress.Duration}", true);
 
             void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
-        private async Task ShowResults(TimeSpan duration, List<GameDetail> games, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
+        private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, List<GameDetail> localGames, List<OnlineGame> onlineGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
         {
-            var results = new ImporterResultsViewModel(games, onlineGames, matchStatistics);
+            var results = new ImporterResultsViewModel(gameItems, matchStatistics);
             var showTask = results.Show(_window, WindowMargin, WindowMargin);
 
-            var statistics = new ImporterStatisticsViewModel(games, onlineGames, duration, fixStatistics, matchStatistics);
+            var statistics = new ImporterStatisticsViewModel(gameItems, duration, fixStatistics, matchStatistics);
             statistics.Show(_window, WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
             var logging = new LoggingViewModel();

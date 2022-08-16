@@ -36,9 +36,9 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel : IOnlineGameCollections
     {
-        public ImporterResultsViewModel(List<GameDetail> games, List<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics)
+        public ImporterResultsViewModel(IList<GameItem> gameItems, ImporterMatchStatistics matchStatistics)
         {
-            _games = games;
+            _localGames = gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList();
             _matchStatistics = matchStatistics.ToDictionary();
             IsMatchingEnabled = Model.Settings.Importer.SelectedMatchCriteriaOptions.Any();
 
@@ -47,6 +47,8 @@ namespace ClrVpin.Importer
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
 
             // assign VM properties
+            var onlineGames = gameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame).ToList();
+
             onlineGames.ForEach(onlineGame =>
             {
                 // image - for showing dialog with larger view of image
@@ -57,8 +59,8 @@ namespace ClrVpin.Importer
                 };
 
                 // local database show/add commands
-                onlineGame.UpdateDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.UpdateDatabaseItem(games, onlineGame, this));
-                onlineGame.CreateDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.CreateDatabaseItem(games, onlineGame, this));
+                onlineGame.UpdateDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.UpdateDatabaseItem(gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList(), onlineGame, this));
+                onlineGame.CreateDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.CreateDatabaseItem(gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList(), onlineGame, this));
 
                 // show large image popup
                 onlineGame.ImageFiles.ForEach(imageFile =>
@@ -309,9 +311,11 @@ namespace ClrVpin.Importer
 
             var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(OnlineGames, overwriteProperties);
 
-            // write ALL games back to the database - i.e. irrespective of whether matched or not
+            // write ALL local game entries back to the database
+            // - updated properties via OnlineGames.Hit.GameDetail are reflected in the local game entries
+            // - write irrespective of whether matched or not so that no entries are lost
             if (updatedGameCount > 0)
-                TableUtils.WriteGamesToDatabase(_games.Select(x => x.Game));
+                TableUtils.WriteGamesToDatabase(_localGames.Select(x => x.Game));
 
             Logger.Info($"Added missing database info: table count: {updatedGameCount}, info count: {GameUpdater.GetPropertiesUpdatedCount(propertyStatistics)}");
 
@@ -454,7 +458,7 @@ namespace ClrVpin.Importer
         }
 
         private readonly Regex _regexExtractIpdbId = new Regex(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
-        private readonly List<GameDetail> _games;
+        private readonly List<GameDetail> _localGames;
         private readonly Dictionary<string, int> _matchStatistics;
         private const string DialogHostName = "ImporterResultsDialog";
 
