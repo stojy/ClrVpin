@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -7,6 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using ClrVpin.Converters;
 using ClrVpin.Logging;
+using ClrVpin.Models.Importer;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared.Fuzzy;
@@ -30,9 +32,9 @@ public static class ImporterUtils
         return await Task.Run(() => MatchOnlineToLocal(localGames, onlineGames, updateProgress));
     }
 
-    public static async Task MatchLocalToOnlineAsync(List<GameDetail> localGames, List<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
+    public static async Task<IList<GameItem>> MergeOnlineAndLocalGamesAsync(List<GameDetail> localGames, List<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
     {
-        await Task.Run(() => MatchLocalToOnline(localGames, onlineGames, matchStatistics, updateProgress));
+        return await Task.Run(() => MergeLocalAndOnlineGames(localGames, onlineGames, matchStatistics, updateProgress));
     }
 
     public static async Task<List<OnlineGame>> ReadGamesFromOnlineDatabase()
@@ -190,22 +192,30 @@ public static class ImporterUtils
         localMatchedGame.OnlineGame = onlineGame;
     }
 
-    private static void MatchLocalToOnline(IEnumerable<GameDetail> localGames, IEnumerable<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
+    private static List<GameItem> MergeLocalAndOnlineGames(IEnumerable<GameDetail> localGames, IList<OnlineGame> onlineGames, ImporterMatchStatistics matchStatistics, Action<string, float?> updateProgress)
     {
-        var unmatchedLocalGames = localGames.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.GameDetail)).ToList();
+        var localOnlyGameDetails = localGames.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.GameDetail)).ToList();
 
         // the earlier 'online to local' matching has already determined the matches.. so need to redo it again
         // - deliberately NOT performing a 'reverse' fuzzy lookup to avoid scenario where x1 online game could have multiple local files
         // - e.g. online only has 1 AC/DC entry (which is a known issue).. whereas there are multiple local files each representing the unique IPDBs (which is correct)
-        unmatchedLocalGames.ForEach(localGameDetail =>
+        localOnlyGameDetails.ForEach(localOnlyGameDetail =>
         {
-            updateProgress(localGameDetail.Game.Name, null);
+            updateProgress(localOnlyGameDetail.Game.Name, null);
 
-            Logger.Info($"Unmatched local table: '{localGameDetail.Game.Name}'");
+            Logger.Info($"Unmatched local table: '{localOnlyGameDetail.Game.Name}'");
 
             matchStatistics.Increment(ImporterMatchStatistics.UnmatchedLocalTotal);
-            matchStatistics.Increment(localGameDetail.Derived.IsOriginal ? ImporterMatchStatistics.UnmatchedLocalOriginal : ImporterMatchStatistics.UnmatchedLocalManufactured);
+            matchStatistics.Increment(localOnlyGameDetail.Derived.IsOriginal ? ImporterMatchStatistics.UnmatchedLocalOriginal : ImporterMatchStatistics.UnmatchedLocalManufactured);
         });
+
+        // merge online and local games into a single collection of GameItem
+        var onlineGameItems = onlineGames.Select(onlineGame => new GameItem(onlineGame));
+        var localOnlyGameItems = localOnlyGameDetails.Select(localOnlyGameDetail => new GameItem(localOnlyGameDetail));
+
+        var allGameItems = onlineGameItems.Concat(localOnlyGameItems).OrderBy(item => item.Name).ToList();
+
+        return allGameItems;
     }
 
     // refer https://github.com/Fraesh/vps-db, https://virtual-pinball-spreadsheet.web.app/

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
+using ClrVpin.Models.Importer;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
@@ -13,10 +14,10 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterStatisticsViewModel
     {
-        public ImporterStatisticsViewModel(List<GameDetail> games, List<OnlineGame> onlineGames, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics, ImporterMatchStatistics matchStatistics)
+        public ImporterStatisticsViewModel(IList<GameItem> gameItems, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics, ImporterMatchStatistics matchStatistics)
         {
-            _games = games;
-            _onlineGames = onlineGames;
+            _games = gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList();
+            _onlineGames = gameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame).ToList();
             _elapsedTime = elapsedTime;
             _feedFixStatistics = feedFixStatistics;
             _matchStatistics = matchStatistics.ToDictionary();
