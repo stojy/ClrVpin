@@ -213,6 +213,7 @@ public static class ImporterUtils
         var localOnlyGameItems = localOnlyGameDetails.Select(localOnlyGameDetail => new GameItem(localOnlyGameDetail));
 
         var allGameItems = onlineGameItems.Concat(localOnlyGameItems).OrderBy(item => item.Name).ToList();
+        allGameItems.ForEach((gameItem, index) => gameItem.Index = index + 1);
 
         return allGameItems;
     }

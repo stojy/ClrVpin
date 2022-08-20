@@ -43,8 +43,6 @@ public static class ImporterFix
         // perform post-merge fixes, i.e. fixes that DO require duplicate game collections to be merged
         onlineGames.ForEach((game, index) =>
         {
-            game.Index = index + 1;
-
             // group files into collections so they can be treated generically
             game.AllFiles = new Dictionary<string, FileCollection>
             {
