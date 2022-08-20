@@ -14,7 +14,6 @@ public class OnlineGame : OnlineGameBase
     public IEnumerable<File> AllFilesList { get; set; }
     public List<ImageFile> ImageFiles { get; set; }
 
-    public int Index { get; set; }
     public UrlSelection ImageUrlSelection { get; set; }
     public string YearString => Year.ToString();
 
