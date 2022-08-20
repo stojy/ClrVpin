@@ -47,10 +47,11 @@ namespace ClrVpin.Importer
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
 
             // assign VM properties
-            var onlineGames = gameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame).ToList();
-
-            onlineGames.ForEach(onlineGame =>
+            gameItems.ForEach(gameItem =>
             {
+                if (gameItem.OnlineGame is not { } onlineGame) // pattern matching - assign AND check for not null!
+                    return;
+
                 // image - for showing dialog with larger view of image
                 onlineGame.ImageUrlSelection = new UrlSelection
                 {
@@ -73,8 +74,8 @@ namespace ClrVpin.Importer
                 });
 
                 onlineGame.IsMatchingEnabled = IsMatchingEnabled;
-                onlineGame.UpdateDatabaseEntryTooltip += onlineGame.IsMatchingEnabled ? "" : MatchingDisabledMessage;
-                onlineGame.CreateDatabaseEntryTooltip += onlineGame.IsMatchingEnabled ? "" : MatchingDisabledMessage;
+                onlineGame.UpdateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
+                onlineGame.CreateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
 
                 // extract IpdbId
                 var match = _regexExtractIpdbId.Match(onlineGame.IpdbUrl ?? string.Empty);
@@ -86,6 +87,9 @@ namespace ClrVpin.Importer
                 // navigate to url
                 onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
             });
+
+            // todo; render everything!
+            var onlineGames = gameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame).ToList();
 
             // main games view (data grid)
             OnlineGames = new ObservableCollection<OnlineGame>(onlineGames);
