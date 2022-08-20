@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -21,7 +22,7 @@ namespace ClrVpin.Logging
         public string File { get; }
         public ICommand NavigateToFileCommand { get; }
 
-        public void Show(Window parentWindow, double left, double top)
+        public void Show(Window parentWindow, double left, double top, double width)
         {
             Window = new MaterialWindowEx
             {
@@ -30,8 +31,8 @@ namespace ClrVpin.Logging
                 WindowStartupLocation = WindowStartupLocation.Manual,
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
-                Height = Model.ScreenWorkArea.Height - top - WindowMargin,
+                Width = width,
+                Height = Model.ScreenWorkArea.Height - Math.Abs(top) - WindowMargin,
                 Content = this,
                 Resources = parentWindow.Resources,
                 ContentTemplate = parentWindow.FindResource("LoggingTemplate") as DataTemplate

@@ -60,8 +60,10 @@ namespace ClrVpin.Importer
                 };
 
                 // local database show/add commands
-                onlineGame.UpdateDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.UpdateDatabaseItem(gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList(), onlineGame, this));
-                onlineGame.CreateDatabaseEntryCommand = new ActionCommand(() => DatabaseItemManagement.CreateDatabaseItem(gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList(), onlineGame, this));
+                onlineGame.UpdateDatabaseEntryCommand = new ActionCommand(() => 
+                    DatabaseItemManagement.UpdateDatabaseItem(gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList(), onlineGame, this));
+                onlineGame.CreateDatabaseEntryCommand = new ActionCommand(() => 
+                    DatabaseItemManagement.CreateDatabaseItem(gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList(), onlineGame, this));
 
                 // show large image popup
                 onlineGame.ImageFiles.ForEach(imageFile =>
@@ -243,10 +245,11 @@ namespace ClrVpin.Importer
             Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual,
                 Title = "Results",
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
+                Width = Model.ScreenWorkArea.Width - WindowMargin,
                 Height = (Model.ScreenWorkArea.Height - 10) * 0.73,
                 Content = this,
                 Resources = parentWindow.Resources,

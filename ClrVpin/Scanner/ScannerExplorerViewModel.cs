@@ -31,7 +31,7 @@ namespace ClrVpin.Scanner
         public ICommand SearchTextCommand { get; set; }
         public ObservableCollection<GameDetail> GameDetails { get; set; }
 
-        public void Show(Window parentWindow, double left, double top)
+        public void Show(Window parentWindow, double left, double top, double width)
         {
             Window = new MaterialWindowEx
             {
@@ -39,7 +39,7 @@ namespace ClrVpin.Scanner
                 Title = "Explorer (Tables)",
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
+                Width = width,
                 Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) / 3,
                 MinWidth = 400,
                 Content = this,

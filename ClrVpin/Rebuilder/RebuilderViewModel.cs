@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Controls.FolderSelection;
+using ClrVpin.Extensions;
 using ClrVpin.Logging;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
@@ -263,25 +264,28 @@ namespace ClrVpin.Rebuilder
 
         private async Task ShowResults(ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
-            var rebuilderStatistics = new RebuilderStatisticsViewModel(_games, duration, gameFiles, unmatchedFiles);
-            rebuilderStatistics.Show(_window, WindowMargin, WindowMargin);
+            var screenPosition = _window.GetCurrentScreenPosition();
 
+            var statistics = new RebuilderStatisticsViewModel(_games, duration, gameFiles, unmatchedFiles);
+            statistics.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
+
+            var width = Model.ScreenWorkArea.Width - statistics.Window.Width - WindowMargin;
             var rebuilderResults = new RebuilderResultsViewModel(_games, gameFiles, unmatchedFiles);
-            var showTask = rebuilderResults.Show(_window, rebuilderStatistics.Window.Left + rebuilderStatistics.Window.Width + WindowMargin, WindowMargin);
+            var showTask = rebuilderResults.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, WindowMargin, width);
 
             var logging = new LoggingViewModel();
-            logging.Show(_window, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin);
+            logging.Show(_window, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin, width);
 
             logging.Window.Closed += CloseWindows();
             rebuilderResults.Window.Closed += CloseWindows();
-            rebuilderStatistics.Window.Closed += CloseWindows();
+            statistics.Window.Closed += CloseWindows();
 
             EventHandler CloseWindows()
             {
                 return (_, _) =>
                 {
                     rebuilderResults.Close();
-                    rebuilderStatistics.Window.Close();
+                    statistics.Window.Close();
                     logging.Close();
                     _window.Show();
                 };
