@@ -88,72 +88,70 @@ namespace ClrVpin.Importer
                 onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
             });
 
-            // todo; render everything!
-            var onlineGames = gameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame).ToList();
-
             // main games view (data grid)
-            OnlineGames = new ObservableCollection<OnlineGame>(onlineGames);
-            OnlineGamesView = new ListCollectionView<OnlineGame>(OnlineGames)
+            GameItems = new ObservableCollection<GameItem>(gameItems);
+            GameItemsView = new ListCollectionView<GameItem>(GameItems)
             {
                 // filter the table names list to reflect the various view filtering criteria
                 Filter = game =>
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both ||
-                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Manufactured && !game.IsOriginal) ||
-                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Original && game.IsOriginal)) &&
+                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Manufactured && !game.OnlineGame?.IsOriginal == true) ||
+                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Original && game.OnlineGame?.IsOriginal == true)) &&
                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Both ||
-                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Matched && game.Hit != null) ||
-                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.UnmatchedOnline && game.Hit == null)) &&
-                    (YearBeginFilter == null || string.Compare(game.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
-                    (YearEndFilter == null || string.Compare(game.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
+                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Matched && game.OnlineGame?.Hit != null) ||
+                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.UnmatchedOnline && game.OnlineGame?.Hit == null)) &&
+                    (YearBeginFilter == null || string.Compare(game.OnlineGame?.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
+                    (YearEndFilter == null || string.Compare(game.OnlineGame?.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
                     (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
                     (Settings.UpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedAtDateBegin) &&
                     (Settings.UpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedAtDateEnd.Value.AddDays(1))
             };
-            OnlineGamesView.MoveCurrentToFirst();
-
-            // filters views (drop down combo boxes)
-            TablesFilterView = new ListCollectionView<string>(onlineGames.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
+            GameItemsView.MoveCurrentToFirst();
+            
+            // filters views (drop down combo boxes) - uses the online AND unmatched local DB 
+            TablesFilterView = new ListCollectionView<string>(gameItems.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = table => OnlineGamesView.Any(x => x.Name == table)
+                Filter = table => GameItemsView.Any(x => x.Name == table)
             };
 
-            Manufacturers = onlineGames.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList();
+            Manufacturers = gameItems.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList();
             ManufacturersFilterView = new ListCollectionView<string>(Manufacturers)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = manufacturer => OnlineGamesView.Any(x => x.Manufacturer == manufacturer)
+                Filter = manufacturer => GameItemsView.Any(x => x.Manufacturer == manufacturer)
             };
 
-            Years = onlineGames.Select(x => x.YearString).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            Years = gameItems.Select(x => x.Year).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
             YearsBeginFilterView = new ListCollectionView<string>(Years)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = yearString => OnlineGamesView.Any(x => x.YearString == yearString)
+                Filter = yearString => GameItemsView.Any(x => x.Year == yearString)
             };
 
             YearsEndFilterView = new ListCollectionView<string>(Years)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = yearString => OnlineGamesView.Any(x => x.YearString == yearString)
+                Filter = yearString => GameItemsView.Any(x => x.Year == yearString)
             };
 
-            Types = onlineGames.Select(x => x.Type).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            Types = gameItems.Select(x => x.Type).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
             TypesFilterView = new ListCollectionView<string>(Types);
 
-            Players = onlineGames.Select(x => x.Players).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
-            Roms = onlineGames.Select(x => x.RomFiles?.FirstOrDefault()?.Name).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
-            Themes = onlineGames.Select(x => string.Join(", ", x.Themes)).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
-            var tablesWithAuthors = onlineGames.Select(x => x.TableFiles.Select(table => string.Join(", ", table.Authors.OrderBy(author => author)))).SelectMany(x => x);
+            Players = gameItems.Select(x => x.OnlineGame?.Players).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            Roms = gameItems.Select(x => x.OnlineGame?.RomFiles?.FirstOrDefault()?.Name).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
+            Themes = gameItems.Select(x => string.Join(", ", x.OnlineGame?.Themes ?? new [] {""})).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
+            
+            var tablesWithAuthors = gameItems.Select(x => x.OnlineGame?.TableFiles.Select(table => string.Join(", ", table.Authors.OrderBy(author => author)))).Where(x => x != null).SelectMany(x => x);
             Authors = tablesWithAuthors.Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
 
             // generic handler for all the filter changes.. since all of the combo box values will need to be re-evaluated in sync anyway
             FilterChanged = new ActionCommand(() =>
             {
                 // update main list
-                OnlineGamesView.Refresh();
+                GameItemsView.Refresh();
 
                 // update filters based on what is shown in the main list
                 TablesFilterView.Refresh();
@@ -181,6 +179,9 @@ namespace ClrVpin.Importer
 
             OverwriteDatabaseInfoTip += "Overwrite all information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
             AllTableOverwriteDatabaseInfoCommand = new ActionCommand(AllTableOverwriteDatabaseProperties);
+
+            // assign a convenience property to avoid a *lot* of nested referenced in the xaml
+            GameItemSelectedCommand = new ActionCommand(() => SelectedOnlineGame = SelectedGameItem.OnlineGame);
         }
 
 
@@ -209,11 +210,12 @@ namespace ClrVpin.Importer
         public string YearEndFilter { get; set; }
         public string TypeFilter { get; set; }
 
-        public ObservableCollection<OnlineGame> OnlineGames { get; }
-        public ListCollectionView<OnlineGame> OnlineGamesView { get; }
+        public ObservableCollection<GameItem> GameItems { get; }
+        public ListCollectionView<GameItem> GameItemsView { get; }
 
         public Window Window { get; private set; }
 
+        public GameItem SelectedGameItem { get; set; }
         public OnlineGame SelectedOnlineGame { get; set; }
 
         public ICommand FilterChanged { get; set; }
@@ -222,6 +224,8 @@ namespace ClrVpin.Importer
         public ICommand NavigateToIpdbCommand { get; }
         public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
         public ICommand AllTableOverwriteDatabaseInfoCommand { get; }
+        public ICommand GameItemSelectedCommand { get; }
+        
         public bool IsMatchingEnabled { get; }
 
 
@@ -269,7 +273,7 @@ namespace ClrVpin.Importer
             }
 
             // simplified summary of the ImporterStatisticsViewModel info
-            var onlineManufacturedCount = OnlineGames.Count(game => !game.IsOriginal);
+            var onlineManufacturedCount = GameItems.Count(game => !game.OnlineGame?.IsOriginal == true);
 
             var detail = CreatePercentageStatistic("Missing Manufactured Tables", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineManufactured], onlineManufacturedCount);
 
@@ -313,7 +317,7 @@ namespace ClrVpin.Importer
                     return;
             }
 
-            var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(OnlineGames, overwriteProperties);
+            var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(GetOnlineGames(), overwriteProperties);
 
             // write ALL local game entries back to the database
             // - updated properties via OnlineGames.Hit.GameDetail are reflected in the local game entries
@@ -334,6 +338,7 @@ namespace ClrVpin.Importer
                 await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
         }
 
+        // todo; remove
         private IEnumerable<FeatureType> CreatePerspectiveOptions()
         {
             // because matching is disabled, only the online perspective is available
@@ -431,7 +436,8 @@ namespace ClrVpin.Importer
         private void UpdateIsNew()
         {
             // flag models if they satisfy the update time range
-            OnlineGames.ForEach(game => game.AllFiles.ForEach(kv =>
+            var onlineGames = GetOnlineGames();
+            onlineGames.ForEach(onlineGame => onlineGame.AllFiles.ForEach(kv =>
             {
                 var (_, files) = kv;
                 files.ForEach(file =>
@@ -460,6 +466,8 @@ namespace ClrVpin.Importer
 
             DialogHost.Show(imageUrlSelection, "ImporterResultsDialog");
         }
+
+        private IEnumerable<OnlineGame> GetOnlineGames() => GameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame);
 
         private readonly Regex _regexExtractIpdbId = new Regex(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
         private readonly List<GameDetail> _localGames;
