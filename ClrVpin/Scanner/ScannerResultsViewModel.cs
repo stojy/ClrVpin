@@ -22,7 +22,7 @@ namespace ClrVpin.Scanner
             Initialise();
         }
 
-        public async Task Show(Window parentWindow, double left, double top)
+        public async Task Show(Window parentWindow, double left, double top, double width)
         {
             Window = new MaterialWindowEx
             {
@@ -30,7 +30,7 @@ namespace ClrVpin.Scanner
                 Title = "Results (Issues and Fixes)",
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
+                Width = width,
                 Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) / 3,
                 Content = this,
                 Resources = parentWindow.Resources,

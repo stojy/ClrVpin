@@ -29,5 +29,16 @@ namespace ClrVpin.Extensions
             // - according to SO post.. it's somehow(?) relative to 96dpi.. but i don't see how this can be true!
             return new Rect { Width = screen.WorkingArea.Width / dpiScale.DpiScaleX, Height = screen.WorkingArea.Height / dpiScale.DpiScaleY };
         }
+
+        public static Point GetCurrentScreenPosition(this Window window)
+        {
+            // retrieve current screen via winform - dimensions provided in pixels
+            var screen = Screen.FromPoint(new Point((int)window.Left, (int)window.Top));
+
+            // convert position to WPF screen independent units
+            var dpiScale = VisualTreeHelper.GetDpi(window);
+
+            return new Point { X = (int)(screen.WorkingArea.X / dpiScale.DpiScaleX), Y = (int)(screen.WorkingArea.Y / dpiScale.DpiScaleY) };
+        }
     }
 }

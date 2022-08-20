@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Extensions;
 using ClrVpin.Logging;
 using ClrVpin.Models.Importer;
 using ClrVpin.Models.Settings;
@@ -205,14 +206,17 @@ namespace ClrVpin.Importer
 
         private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
         {
+            var screenPosition = _window.GetCurrentScreenPosition();
+
             var results = new ImporterResultsViewModel(gameItems, matchStatistics);
-            var showTask = results.Show(_window, WindowMargin, WindowMargin);
+            var showTask = results.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
 
             var statistics = new ImporterStatisticsViewModel(gameItems, duration, fixStatistics, matchStatistics);
-            statistics.Show(_window, WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
+            statistics.Show(_window, screenPosition.X  + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
             var logging = new LoggingViewModel();
-            logging.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
+            logging.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin,
+                Model.ScreenWorkArea.Width - statistics.Window.Width - WindowMargin);
 
             logging.Window.Closed += CloseWindows();
             results.Window.Closed += CloseWindows();

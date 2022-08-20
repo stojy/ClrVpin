@@ -25,7 +25,7 @@ namespace ClrVpin.Rebuilder
             Initialise();
         }
 
-        public async Task Show(Window parentWindow, double left, double top)
+        public async Task Show(Window parentWindow, double left, double top, double width)
         {
             Window = new MaterialWindowEx
             {
@@ -33,7 +33,7 @@ namespace ClrVpin.Rebuilder
                 Title = "Results (Matched Files)",
                 Left = left,
                 Top = top,
-                Width = Model.ScreenWorkArea.Width - left - WindowMargin,
+                Width = width,
                 Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) / 2,
                 Content = this,
                 Resources = parentWindow.Resources,

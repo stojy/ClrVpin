@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Extensions;
 using ClrVpin.Logging;
 using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Settings;
@@ -231,17 +232,20 @@ namespace ClrVpin.Scanner
 
         private async Task ShowResults(ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
         {
-            var statistics = new ScannerStatisticsViewModel(_games, duration, fixedFiles, unmatchedFiles);
-            statistics.Show(_window, WindowMargin, WindowMargin);
+            var screenPosition = _window.GetCurrentScreenPosition();
 
+            var statistics = new ScannerStatisticsViewModel(_games, duration, fixedFiles, unmatchedFiles);
+            statistics.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
+
+            var width = Model.ScreenWorkArea.Width - statistics.Window.Width - WindowMargin;
             var results = new ScannerResultsViewModel(_games);
-            var displayTask = results.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top);
+            var displayTask = results.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top, width);
 
             var explorer = new ScannerExplorerViewModel(_games);
-            explorer.Show(_window, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin);
+            explorer.Show(_window, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin, width);
 
             var logging = new LoggingViewModel();
-            logging.Show(_window, explorer.Window.Left, explorer.Window.Top + explorer.Window.Height + WindowMargin);
+            logging.Show(_window, explorer.Window.Left, explorer.Window.Top + explorer.Window.Height + WindowMargin, width);
 
             statistics.Window.Closed += CloseWindows();
             results.Window.Closed += CloseWindows();
