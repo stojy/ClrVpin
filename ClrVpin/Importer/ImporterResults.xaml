@@ -9,7 +9,8 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml"
                     xmlns:vps="clr-namespace:ClrVpin.Models.Importer.Vps"
-                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
+                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
+                    xmlns:importerModel="clr-namespace:ClrVpin.Models.Importer">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="\Controls\Styles.xaml" />
@@ -438,36 +439,43 @@
           </GroupBox>
 
           <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
-            <TextBlock Text="{Binding OnlineGamesView.Count}" />
+            <TextBlock Text="{Binding GameItemsView.Count}" />
             <TextBlock Text=" / " />
-            <TextBlock Text="{Binding OnlineGames.Count}" />
+            <TextBlock Text="{Binding GameItems.Count}" />
           </WrapPanel>
 
-          <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding OnlineGamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+          <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GameItemsView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                     SelectionMode="Single"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
                     ColumnHeaderStyle="{StaticResource HeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
-                    SelectedItem="{Binding SelectedOnlineGame}">
+                    SelectedItem="{Binding SelectedGameItem}">
+
+            <b:Interaction.Triggers>
+              <controls:RoutedEventTrigger RoutedEvent="Selector.SelectionChanged">
+                <b:InvokeCommandAction Command="{Binding GameItemSelectedCommand}" />
+              </controls:RoutedEventTrigger>
+            </b:Interaction.Triggers>
+
             <DataGrid.Columns>
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
                                   Header="#" Binding="{Binding Index}" Width="45" />
 
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" Header="Fix" Width="45" SortMemberPath="IsMatched">
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" Header="Fix" Width="45" SortMemberPath="OnlineGame.IsMatched">
                 <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate DataType="vps:OnlineGame">
-                    <WrapPanel>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding CreateDatabaseEntryTooltip}"
-                              Visibility="{Binding IsMatched, Converter={StaticResource BoolToCollapsedConverter}}"
-                              IsEnabled="{Binding IsMatchingEnabled}"
-                              Command="{Binding CreateDatabaseEntryCommand}">
+                  <DataTemplate >
+                    <WrapPanel Visibility="{Binding OnlineGame, Converter={StaticResource ReverseNullToVisibilityConverter}}">
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding OnlineGame.CreateDatabaseEntryTooltip}"
+                              Visibility="{Binding OnlineGame.IsMatched, Converter={StaticResource BoolToCollapsedConverter}}"
+                              IsEnabled="{Binding OnlineGame.IsMatchingEnabled}"
+                              Command="{Binding OnlineGame.CreateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="Plus" Width="35" Height="35" />
                       </Button>
-                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
-                              Visibility="{Binding IsMatched, Converter={StaticResource BoolToVisibilityConverter}}"
-                              IsEnabled="{Binding IsMatchingEnabled}"
-                              Command="{Binding UpdateDatabaseEntryCommand}">
+                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding OnlineGame.UpdateDatabaseEntryTooltip}"
+                              Visibility="{Binding OnlineGame.IsMatched, Converter={StaticResource BoolToVisibilityConverter}}"
+                              IsEnabled="{Binding OnlineGame.IsMatchingEnabled}"
+                              Command="{Binding OnlineGame.UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
                       </Button>
                     </WrapPanel>
@@ -475,13 +483,13 @@
                 </DataGridTemplateColumn.CellTemplate>
               </DataGridTemplateColumn>
 
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table" Binding="{Binding Name}"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table" Binding="{Binding Name}"
                                   Width="255" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
                                   Binding="{Binding Manufacturer}" Width="160" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year" Binding="{Binding Year}"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year" Binding="{Binding Year}"
                                   Width="55" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=vps:OnlineGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
                                   Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
             </DataGrid.Columns>
           </DataGrid>
