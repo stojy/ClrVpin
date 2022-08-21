@@ -271,12 +271,12 @@
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemInfoMissing, Mode=OneWay}"
                   Command="{Binding AddMissingInfoCommand}"
-                  ToolTip="Add any missing info for this table to your local database" />
+                  ToolTip="Add any missing info for this table to your local database from online sources" />
           <Button Content="Overwrite All Info" Width="140" Style="{StaticResource FlatHighlightButtonStyle}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemInfoDifferent, Mode=OneWay}"
                   Command="{Binding OverwriteAllInfoCommand}"
-                  ToolTip="Overwrite all info for this table to your local database" />
+                  ToolTip="Overwrite all info for this table to your local database from online sources. Information that doesn't exist from online sources will not be overwritten (e.g. ratings)." />
 
           <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Insert}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToCollapsedConverter}}"

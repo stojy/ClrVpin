@@ -12,7 +12,7 @@ namespace ClrVpin.Importer
 {
     public static class DatabaseItemManagement
     {
-        public static async void UpdateDatabaseItem(List<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
+        public static async void UpdateDatabaseItem(IList<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
         {
             var item = new DatabaseItem(onlineGame, onlineGame.Hit.GameDetail, onlineGameCollections, true);
 
@@ -24,13 +24,13 @@ namespace ClrVpin.Importer
                 existingGameDetail.Game = item.GameDetail.Game;
                 existingGameDetail.Derived = item.GameDetail.Derived;
 
-                // update all games that belong to the recently updated game
+                // update all games that reside in the same database file as the updated game
                 var gameDetailsInDatabaseFile = gameDetails.Where(gameDetail => gameDetail.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
                 TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile.Select(x => x.Game), item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, false);
             }
         }
 
-        public static async void CreateDatabaseItem(List<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
+        public static async void CreateDatabaseItem(IList<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
         {
             var firstTable = onlineGame.TableFiles.FirstOrDefault();
             var gameDetail = new GameDetail

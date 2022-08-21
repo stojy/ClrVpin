@@ -82,7 +82,10 @@ namespace ClrVpin.Importer
         private static void CheckAndFixProperty(bool overwrite, IDictionary<string, int> updatedPropertyCounts, string game,
             string property, Func<string> gameValue, Func<string> onlineGameValue, Action<string> updateAction, bool skipUpdate)
         {
-            if ((gameValue().IsEmpty() || overwrite) && !onlineGameValue().IsEmpty() && gameValue() != onlineGameValue())
+            if (gameValue() != onlineGameValue() &&     // values must be different
+                (gameValue().IsEmpty() || overwrite) && // local DB entry can be null OR overwrite option requested
+                !onlineGameValue().IsEmpty())           // don't overwrite local DB with a null online value
+
             {
                 if (!skipUpdate)
                 {

@@ -198,17 +198,17 @@ namespace ClrVpin.Importer
             progress.Close();
 
             progress.Update("Preparing Results");
-            await ShowResults(progress.Duration, gameItems, feedFixStatistics, matchStatistics);
+            await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics, matchStatistics);
             Logger.Info($"Importer rendered, duration={progress.Duration}", true);
 
             void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
-        private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
+        private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, IList<GameDetail> localGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
         {
             var screenPosition = _window.GetCurrentScreenPosition();
 
-            var results = new ImporterResultsViewModel(gameItems, matchStatistics);
+            var results = new ImporterResultsViewModel(gameItems, localGames, matchStatistics);
             var showTask = results.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
 
             var statistics = new ImporterStatisticsViewModel(gameItems, duration, fixStatistics, matchStatistics);
