@@ -74,6 +74,12 @@ namespace ClrVpin.Importer
                     DateModified = new DateTime(1900, 1, 1);
                 GameDetail.Game.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
 
+                // update rounding
+                // - required because the underlying RatingsBar unfortunately doesn't bind the value to the 'ValueIncrements' used in the UI, e.g. bound value 1.456700001
+                // - if the rounding value is changed, the textbox will rebind and cause another ChangedCommand to fire
+                if (decimal.TryParse(GameDetail.Game.Rating, out var rating))
+                    GameDetail.Game.Rating = (Math.Round(rating * 2) / 2).ToString();
+
                 // explicitly recalculate derived properties
                 GameDerived.Init(GameDetail);
 

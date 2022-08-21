@@ -49,14 +49,14 @@
   <!--table and frontend properties-->
   <DataTemplate x:Key="GameDetails" DataType="{x:Type importer:DatabaseItem}">
     <StackPanel>
-        <b:Interaction.Triggers>
-          <b:EventTrigger EventName="Loaded">
-            <b:InvokeCommandAction Command="{Binding LoadedCommand}"/>
-          </b:EventTrigger>
-          <b:EventTrigger EventName="Unloaded">
-            <b:InvokeCommandAction Command="{Binding UnloadedCommand}"/>
-          </b:EventTrigger>
-        </b:Interaction.Triggers>
+      <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Loaded">
+          <b:InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </b:EventTrigger>
+        <b:EventTrigger EventName="Unloaded">
+          <b:InvokeCommandAction Command="{Binding UnloadedCommand}" />
+        </b:EventTrigger>
+      </b:Interaction.Triggers>
 
       <StackPanel.Resources>
         <Style x:Key="DatabaseEntryTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
@@ -189,17 +189,24 @@
           </WrapPanel>
 
           <WrapPanel>
+            <!-- ratings is bound to TextBox so..
+                 - easy to distinguish between 0 rating and no rating (aka unrated)
+                 - use of clear button to assign no rating (aka null value)
+                 - a common trigger for the ChangedCommand.. i.e. avoid need to use interaction triggers for ValueChanged
+            --> 
             <TextBox Text="{Binding GameDetail.Game.Rating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Rating" IsReadOnly="True"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                     Width="65" />
-            <Slider Value="{Binding GameDetail.Game.Rating}" Minimum="0" Maximum="5"
-                    TickFrequency="0.5" TickPlacement="BottomRight"
-                    Width="105" Margin="10,28,0,0" />
+                     Width="190" />
+            <!--ratings bar is drawn within the TextBox so it appears to be part of the same control-->
+            <materialDesign:RatingBar Value="{Binding GameDetail.Game.Rating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Min="0" Max="5" ValueIncrements="0.5" IsPreviewValueEnabled="True"
+                                      Width="100" Margin="-150,24,0,0" />
+
             <TextBox Text="{Binding GameDetail.Game.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Comment(s)"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                     Width="228" Margin="10,10,0,10" />
+                     Width="218" Margin="10,10,0,10" />
           </WrapPanel>
 
           <WrapPanel>
@@ -236,7 +243,7 @@
             <DatePicker SelectedDate="{Binding DateModifiedDateOnly}"
                         materialDesign:HintAssist.Hint="Modified"
                         materialDesign:HintAssist.HelperText="{Binding DateModified}"
-                        Style="{StaticResource DatePickerStyle}" Margin="10,10,0,15"/>
+                        Style="{StaticResource DatePickerStyle}" Margin="10,10,0,15" />
             <materialDesign:TimePicker SelectedTime="{Binding DateModified}"
                                        materialDesign:HintAssist.Hint=" "
                                        Style="{StaticResource TimePickerStyle}" />
@@ -285,7 +292,7 @@
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
                   ToolTip="Update changed info for this table to your local database" />
-          
+
           <Button Content="Cancel" IsCancel="True" Width="100" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Cancel}"
                   ToolTip="Exit without updating/inserting an entry in your local database" />
         </WrapPanel>

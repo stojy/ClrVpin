@@ -37,7 +37,7 @@ public class Game
     public string Enabled { get; set; }
 
     [XmlElement("rating")]
-    public string Rating { get; set; } = "";
+    public string Rating { get; set; }
 
     [XmlElement("players")]
     public string Players { get; set; }
