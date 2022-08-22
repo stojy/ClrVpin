@@ -306,7 +306,7 @@ namespace ClrVpin.Importer
             {
                 var result = await Notification.ShowConfirmation(DialogHostName,
                     "Overwrite All Info In Your Database Files From Online Sources",
-                    "Highly recommended for fixing incorrect (or out of date) information in your local database.\n\n" +
+                    "This will fix incorrect and out of date information in your local database.\n\n" +
                     "Please read carefully before proceeding.",
                     "1. Before starting, run Scanner to confirm your collection is clean.\n" +
                     "2. During the process, all the local database info is updated from online sources¹²³.\n" +

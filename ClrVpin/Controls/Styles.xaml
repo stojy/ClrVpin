@@ -9,6 +9,7 @@
 
   <ResourceDictionary.MergedDictionaries>
     <!-- generated brush names (reference as DynamicResource, not StaticResource)
+         = https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Getting-Started
          - https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Brush-Name
          - e.g. PrimaryHueDarkBrush, PrimaryHueLightBrush, PrimaryHueMidBrush  = blue shades
                 SecondaryHueDarkBrush, SecondaryHueLightBrush, SecondaryHueMidBrush  = green shades
@@ -21,7 +22,7 @@
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/generic.xaml" /> <!-- e.g. TabControlTemplates -->
   </ResourceDictionary.MergedDictionaries>
 
-  <!-- keyed window required by windows created in xaml.. i.e. App.xaml crates MainWindow.xaml -->
+  <!-- keyed window required by windows created in xaml.. i.e. App.xaml creates MainWindow.xaml -->
   <Style x:Key="MaterialWindowBaseStyle" TargetType="Window">
     <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
     <Setter Property="TextElement.Foreground" Value="{DynamicResource MaterialDesignBody}" />
