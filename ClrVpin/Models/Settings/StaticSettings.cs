@@ -24,7 +24,6 @@ namespace ClrVpin.Models.Settings
                 HitTypeEnum.Unsupported)).ToArray();
 
             // importer
-            PerspectiveOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -85,13 +84,6 @@ namespace ClrVpin.Models.Settings
             }
         };
 
-        // all possible perspective options - to be used elsewhere (importer)
-        public static readonly PerspectiveOption[] PerspectiveOptions =
-        {
-            new PerspectiveOption {Enum = PerspectiveOptionEnum.OnlineFeed, Tip = "All online tables matched against the local database"},
-            new PerspectiveOption {Enum = PerspectiveOptionEnum.LocalDatabase, Tip = "All local database tables matched against the online feed"}
-        };
-
         // all possible table style options - to be used elsewhere (importer)
         public static readonly TableStyleOption[] TableStyleOptions =
         {
@@ -103,9 +95,10 @@ namespace ClrVpin.Models.Settings
         // all possible table match options
         public static readonly TableMatchOption[] TableMatchOptions =
         {
-            new TableMatchOption {Enum = TableMatchOptionEnum.Matched, Tip = "Tables that exist in both online feed and your local database"},
-            new TableMatchOption {Enum = TableMatchOptionEnum.UnmatchedOnline, Tip = "Tables that do NOT exist in both online feed and your local database"},
-            new TableMatchOption {Enum = TableMatchOptionEnum.Both, Tip = "All tables"}
+            new TableMatchOption {Enum = TableMatchOptionEnum.LocalAndOnline, Tip = "Tables that exist in both local database and the online feed"},
+            new TableMatchOption {Enum = TableMatchOptionEnum.LocalOnly, Tip = "Tables that only exist in your local database, i.e. unmatched tables that may require renaming to match the online feed"},
+            new TableMatchOption {Enum = TableMatchOptionEnum.OnlineOnly, Tip = "Tables that only exist in the online feed, i.e. tables missing from your collection"},
+            new TableMatchOption {Enum = TableMatchOptionEnum.All, Tip = "All tables irrespective of whether they are matched, missing, or unmatched"}
         };
 
         // all possible file merge options - to be used elsewhere (importer)
