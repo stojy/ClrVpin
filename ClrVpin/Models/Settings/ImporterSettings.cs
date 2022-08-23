@@ -16,9 +16,8 @@ public class ImporterSettings
     public ObservableCollection<FixFeedOptionEnum> SelectedFeedFixOptions { get; set; } = new ObservableCollection<FixFeedOptionEnum>();
 
     // display result filtering criteria
-    public PerspectiveOptionEnum SelectedPerspectiveOption { get; set; } = PerspectiveOptionEnum.OnlineFeed;
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
-    public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.Matched;
+    public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.LocalAndOnline;
     public DateTime? UpdatedAtDateBegin { get; set; }
     public DateTime? UpdatedAtDateEnd { get; set; }
 }

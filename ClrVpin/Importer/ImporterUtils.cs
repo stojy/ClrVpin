@@ -181,7 +181,7 @@ public static class ImporterUtils
 
     private static void AddMatch(OnlineGame onlineGame, GameDetail localMatchedGame, int? score)
     {
-        // link both entities to each other so they can be referenced form either perspective
+        // link both entities together so they can be referenced from all perspectives.. matched, unmatched, and missing (refer TableMatchOptionEnum)
         onlineGame.Hit = new GameHit
         {
             GameDetail = localMatchedGame,

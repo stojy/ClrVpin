@@ -36,7 +36,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel : IOnlineGameCollections
     {
-        public ImporterResultsViewModel(IList<GameItem> gameItems, IList<GameDetail>  localGames, ImporterMatchStatistics matchStatistics)
+        public ImporterResultsViewModel(IList<GameItem> gameItems, IList<GameDetail> localGames, ImporterMatchStatistics matchStatistics)
         {
             // use the supplied localGames list instead of extracting from gameItems to ensure the existing ordering in the DB file(s) is preserved
             // - we don't want to re-order based on the online feed (after the various importer fixes) as this makes it too difficult to track the differences
@@ -46,7 +46,6 @@ namespace ClrVpin.Importer
             _matchStatistics = matchStatistics.ToDictionary();
             IsMatchingEnabled = Model.Settings.Importer.SelectedMatchCriteriaOptions.Any();
 
-            PerspectiveOptionsView = new ListCollectionView<FeatureType>(CreatePerspectiveOptions().ToList());
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
 
@@ -64,9 +63,9 @@ namespace ClrVpin.Importer
                 };
 
                 // local database show/add commands
-                onlineGame.UpdateDatabaseEntryCommand = new ActionCommand(() => 
+                onlineGame.UpdateDatabaseEntryCommand = new ActionCommand(() =>
                     DatabaseItemManagement.UpdateDatabaseItem(_localGames, onlineGame, this));
-                onlineGame.CreateDatabaseEntryCommand = new ActionCommand(() => 
+                onlineGame.CreateDatabaseEntryCommand = new ActionCommand(() =>
                     DatabaseItemManagement.CreateDatabaseItem(_localGames, onlineGame, this));
 
                 // show large image popup
@@ -103,11 +102,12 @@ namespace ClrVpin.Importer
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both ||
-                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Manufactured && !game.OnlineGame?.IsOriginal == true) ||
-                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Original && game.OnlineGame?.IsOriginal == true)) &&
-                    (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Both ||
-                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.Matched && game.OnlineGame?.Hit != null) ||
-                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.UnmatchedOnline && game.OnlineGame?.Hit == null)) &&
+                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Manufactured && !game.IsOriginal) ||
+                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Original && game.IsOriginal)) &&
+                    (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All ||
+                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.LocalAndOnline && game.OnlineGame != null && game.GameDetail != null) ||
+                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.LocalOnly && game.OnlineGame == null) ||
+                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.OnlineOnly && game.GameDetail == null)) &&
                     (YearBeginFilter == null || string.Compare(game.OnlineGame?.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
                     (YearEndFilter == null || string.Compare(game.OnlineGame?.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
                     (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
@@ -115,7 +115,7 @@ namespace ClrVpin.Importer
                     (Settings.UpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedAtDateEnd.Value.AddDays(1))
             };
             GameItemsView.MoveCurrentToFirst();
-            
+
             // filters views (drop down combo boxes) - uses the online AND unmatched local DB 
             TablesFilterView = new ListCollectionView<string>(gameItems.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
             {
@@ -148,8 +148,8 @@ namespace ClrVpin.Importer
 
             Players = gameItems.Select(x => x.OnlineGame?.Players).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
             Roms = gameItems.Select(x => x.OnlineGame?.RomFiles?.FirstOrDefault()?.Name).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
-            Themes = gameItems.Select(x => string.Join(", ", x.OnlineGame?.Themes ?? new [] {""})).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
-            
+            Themes = gameItems.Select(x => string.Join(", ", x.OnlineGame?.Themes ?? new[] { "" })).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
+
             var tablesWithAuthors = gameItems.Select(x => x.OnlineGame?.TableFiles.Select(table => string.Join(", ", table.Authors.OrderBy(author => author)))).Where(x => x != null).SelectMany(x => x);
             Authors = tablesWithAuthors.Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
 
@@ -183,18 +183,18 @@ namespace ClrVpin.Importer
             AddMissingDatabaseInfoTip += "Add any missing information in your local database from online sources" + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
             AllTableAddMissingDatabaseInfoCommand = new ActionCommand(AllTableAddMissingDatabaseProperties);
 
-            OverwriteDatabaseInfoTip += "Overwrite all information in your local database from online sources. Information that doesn't exist from online sources will not be overwritten (e.g. ratings)." + (IsMatchingEnabled ? "" : MatchingDisabledMessage);
+            OverwriteDatabaseInfoTip += "Overwrite all information in your local database from online sources. Information that doesn't exist from online sources will not be overwritten (e.g. ratings)." +
+                                        (IsMatchingEnabled ? "" : MatchingDisabledMessage);
             AllTableOverwriteDatabaseInfoCommand = new ActionCommand(AllTableOverwriteDatabaseProperties);
 
             // assign a convenience property to avoid a *lot* of nested referenced in the xaml
-            GameItemSelectedCommand = new ActionCommand(() => SelectedOnlineGame = SelectedGameItem.OnlineGame);
+            GameItemSelectedCommand = new ActionCommand(() => SelectedOnlineGame = SelectedGameItem?.OnlineGame);
         }
 
 
         public string AddMissingDatabaseInfoTip { get; }
         public string OverwriteDatabaseInfoTip { get; }
 
-        public ListCollectionView<FeatureType> PerspectiveOptionsView { get; }
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
 
@@ -231,7 +231,7 @@ namespace ClrVpin.Importer
         public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
         public ICommand AllTableOverwriteDatabaseInfoCommand { get; }
         public ICommand GameItemSelectedCommand { get; }
-        
+
         public bool IsMatchingEnabled { get; }
 
 
@@ -346,42 +346,6 @@ namespace ClrVpin.Importer
                 await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
         }
 
-        // todo; remove
-        private IEnumerable<FeatureType> CreatePerspectiveOptions()
-        {
-            // because matching is disabled, only the online perspective is available
-            if (!IsMatchingEnabled)
-                Model.Settings.Importer.SelectedPerspectiveOption = PerspectiveOptionEnum.OnlineFeed;
-
-            // all table style options
-            var featureTypes = StaticSettings.PerspectiveOptions.Select(perspectiveOption =>
-            {
-                var featureType = new FeatureType((int)perspectiveOption.Enum)
-                {
-                    Tag = nameof(PerspectiveOption),
-                    Description = perspectiveOption.Description,
-                    Tip = perspectiveOption.Tip,
-                    IsSupported = perspectiveOption.Enum == PerspectiveOptionEnum.OnlineFeed || IsMatchingEnabled,
-                    IsActive = perspectiveOption.Enum == Model.Settings.Importer.SelectedPerspectiveOption,
-                    SelectedCommand = new ActionCommand(() =>
-                    {
-                        if (Model.Settings.Importer.SelectedPerspectiveOption != perspectiveOption.Enum)
-                        {
-                            Model.Settings.Importer.SelectedPerspectiveOption = perspectiveOption.Enum;
-                            FilterChanged.Execute(null);
-                        }
-                    })
-                };
-
-                if (!IsMatchingEnabled && perspectiveOption.Enum == PerspectiveOptionEnum.LocalDatabase)
-                    featureType.Tip += MatchingDisabledMessage;
-
-                return featureType;
-            }).ToList();
-
-            return featureTypes;
-        }
-
         private IEnumerable<FeatureType> CreateTableStyleOptions()
         {
             // all table style options
@@ -411,7 +375,7 @@ namespace ClrVpin.Importer
         {
             // because matching is disabled, all tables will be unmatched
             if (!IsMatchingEnabled)
-                Model.Settings.Importer.SelectedTableMatchOption = TableMatchOptionEnum.UnmatchedOnline;
+                Model.Settings.Importer.SelectedTableMatchOption = TableMatchOptionEnum.OnlineOnly;
 
             // all table match options
             var featureTypes = StaticSettings.TableMatchOptions.Select(tableMatchOption =>
@@ -421,7 +385,7 @@ namespace ClrVpin.Importer
                     Tag = "TableMatchOption",
                     Description = tableMatchOption.Description,
                     Tip = tableMatchOption.Tip,
-                    IsSupported = tableMatchOption.Enum == TableMatchOptionEnum.UnmatchedOnline || IsMatchingEnabled,
+                    IsSupported = tableMatchOption.Enum == TableMatchOptionEnum.OnlineOnly || IsMatchingEnabled,
                     IsActive = tableMatchOption.Enum == Model.Settings.Importer.SelectedTableMatchOption,
                     SelectedCommand = new ActionCommand(() =>
                     {
@@ -430,7 +394,7 @@ namespace ClrVpin.Importer
                     })
                 };
 
-                if (!IsMatchingEnabled && tableMatchOption.Enum != TableMatchOptionEnum.UnmatchedOnline)
+                if (!IsMatchingEnabled && tableMatchOption.Enum != TableMatchOptionEnum.OnlineOnly)
                     featureType.Tip += MatchingDisabledMessage;
 
                 return featureType;
