@@ -103,6 +103,7 @@ namespace ClrVpin.Importer
         private void CheckGameAgainstFeed(OnlineGame onlineGame)
         {
             // check if anything is different to the feed.. used to enable the update missing and update all buttons
+            // - if game is unmatched then onlineGame will be null.. which is explicitly ignored thus correctly returning false for both flags
             IsItemInfoMissing = GameUpdater.CheckProperties(onlineGame, GameDetail.Game, false);
             IsItemInfoDifferent = IsItemInfoMissing || GameUpdater.CheckProperties(onlineGame, GameDetail.Game, true);
         }

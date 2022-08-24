@@ -49,17 +49,17 @@ namespace ClrVpin.Importer
         {
             var beforeUpdatedPropertyCount = GetPropertiesUpdatedCount(propertyStatistics);
 
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Name), () => game.Name, () => onlineGame.Description, value => game.Name = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame.IpdbId, value => game.IpdbId = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Description), () => game.Description, () => onlineGame.Description, value => game.Description = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Author), () => game.Author, () => onlineGame.TableFiles.FirstOrDefault()?.Authors?.StringJoin(), value => game.Author = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame.Manufacturer, value => game.Manufacturer = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Players), () => game.Players, () => onlineGame.Players?.ToString(), value => game.Players = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame.Themes.StringJoin(), value => game.Theme = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Type), () => game.Type, () => onlineGame.Type, value => game.Type = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Year), () => game.Year, () => onlineGame.YearString, value => game.Year = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Name), () => game.Name, () => onlineGame?.Description, value => game.Name = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame?.IpdbId, value => game.IpdbId = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Description), () => game.Description, () => onlineGame?.Description, value => game.Description = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Author), () => game.Author, () => onlineGame?.TableFiles.FirstOrDefault()?.Authors?.StringJoin(), value => game.Author = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame?.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Manufacturer), () => game.Manufacturer, () => onlineGame?.Manufacturer, value => game.Manufacturer = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Players), () => game.Players, () => onlineGame?.Players?.ToString(), value => game.Players = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Rom), () => game.Rom, () => onlineGame?.RomFiles.FirstOrDefault()?.Name, value => game.Rom = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Theme), () => game.Theme, () => onlineGame?.Themes.StringJoin(), value => game.Theme = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Type), () => game.Type, () => onlineGame?.Type, value => game.Type = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Year), () => game.Year, () => onlineGame?.YearString, value => game.Year = value, skipUpdate);
 
             return beforeUpdatedPropertyCount != GetPropertiesUpdatedCount(propertyStatistics);
         }

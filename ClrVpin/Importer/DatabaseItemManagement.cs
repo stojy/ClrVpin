@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using ClrVpin.Models.Importer;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Database;
 using ClrVpin.Models.Shared.Game;
@@ -12,15 +14,15 @@ namespace ClrVpin.Importer
 {
     public static class DatabaseItemManagement
     {
-        public static async void UpdateDatabaseItem(IList<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
+        public static async void UpdateDatabaseItem(IList<GameDetail> gameDetails, GameItem gameItem, IOnlineGameCollections onlineGameCollections)
         {
-            var item = new DatabaseItem(onlineGame, onlineGame.Hit.GameDetail, onlineGameCollections, true);
+            var item = new DatabaseItem(gameItem.OnlineGame, gameItem.GameDetail, onlineGameCollections, true);
 
             var result = await DialogHost.Show(item, "ImporterResultsDialog") as DatabaseItemAction?;
             if (result == DatabaseItemAction.Update)
             {
                 // replace the existing game details with the updated details
-                var existingGameDetail = gameDetails.First(g => g == onlineGame.Hit.GameDetail);
+                var existingGameDetail = gameDetails.First(g => g == gameItem.GameDetail);
                 existingGameDetail.Game = item.GameDetail.Game;
                 existingGameDetail.Derived = item.GameDetail.Derived;
 
@@ -30,8 +32,10 @@ namespace ClrVpin.Importer
             }
         }
 
-        public static async void CreateDatabaseItem(IList<GameDetail> gameDetails, OnlineGame onlineGame, IOnlineGameCollections onlineGameCollections)
+        public static async void CreateDatabaseItem(IList<GameDetail> gameDetails, GameItem gameItem, IOnlineGameCollections onlineGameCollections)
         {
+            var onlineGame = gameItem.OnlineGame;
+
             var firstTable = onlineGame.TableFiles.FirstOrDefault();
             var gameDetail = new GameDetail
             {
@@ -74,7 +78,7 @@ namespace ClrVpin.Importer
                 // assume the game is now matched to remove the 'add' option
                 // - in reality though the game may in theory still be unmatched if the user has changed the name/description beyond the reach of the fuzzy checking
                 onlineGame.Hit = new GameHit { GameDetail = gameDetail };
-                onlineGame.IsMatched = true;
+                gameItem.GameDetail = gameDetail;
 
                 // insert the game
                 gameDetails.Add(gameDetail);
@@ -85,6 +89,6 @@ namespace ClrVpin.Importer
             }
         }
 
-        private const string DefaultDatabaseFile = "ClrVpin.xml";
+        private static string DefaultDatabaseFile => Path.Combine(Model.Settings.GetDatabaseContentType().Folder, "ClrVpin.xml");
     }
 }

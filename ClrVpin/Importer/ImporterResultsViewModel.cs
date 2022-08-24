@@ -52,6 +52,15 @@ namespace ClrVpin.Importer
             // assign VM properties
             gameItems.ForEach(gameItem =>
             {
+                // local database show/add commands
+                gameItem.IsMatchingEnabled = IsMatchingEnabled;
+                gameItem.UpdateDatabaseEntryCommand = new ActionCommand(() =>
+                    DatabaseItemManagement.UpdateDatabaseItem(_localGames, gameItem, this));
+                gameItem.CreateDatabaseEntryCommand = new ActionCommand(() =>
+                    DatabaseItemManagement.CreateDatabaseItem(_localGames, gameItem, this));
+                gameItem.UpdateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
+                gameItem.CreateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
+
                 if (gameItem.OnlineGame is not { } onlineGame) // pattern matching - assign AND check for not null!
                     return;
 
@@ -61,12 +70,6 @@ namespace ClrVpin.Importer
                     Url = onlineGame.ImgUrl,
                     SelectedCommand = new ActionCommand(() => ShowImage(onlineGame.ImgUrl))
                 };
-
-                // local database show/add commands
-                onlineGame.UpdateDatabaseEntryCommand = new ActionCommand(() =>
-                    DatabaseItemManagement.UpdateDatabaseItem(_localGames, onlineGame, this));
-                onlineGame.CreateDatabaseEntryCommand = new ActionCommand(() =>
-                    DatabaseItemManagement.CreateDatabaseItem(_localGames, onlineGame, this));
 
                 // show large image popup
                 onlineGame.ImageFiles.ForEach(imageFile =>
@@ -78,16 +81,10 @@ namespace ClrVpin.Importer
                     };
                 });
 
-                onlineGame.IsMatchingEnabled = IsMatchingEnabled;
-                onlineGame.UpdateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
-                onlineGame.CreateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
-
                 // extract IpdbId
                 var match = _regexExtractIpdbId.Match(onlineGame.IpdbUrl ?? string.Empty);
                 if (match.Success)
                     onlineGame.IpdbId = match.Groups["ipdbId"].Value;
-
-                onlineGame.IsMatched = onlineGame.Hit != null;
 
                 // navigate to url
                 onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
