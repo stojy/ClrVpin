@@ -447,17 +447,17 @@
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" Header="Fix" Width="45" SortMemberPath="OnlineGame.IsMatched">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate >
-                    <WrapPanel Visibility="{Binding OnlineGame, Converter={StaticResource ReverseNullToVisibilityConverter}}">
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding OnlineGame.CreateDatabaseEntryTooltip}"
-                              Visibility="{Binding OnlineGame.IsMatched, Converter={StaticResource BoolToCollapsedConverter}}"
-                              IsEnabled="{Binding OnlineGame.IsMatchingEnabled}"
-                              Command="{Binding OnlineGame.CreateDatabaseEntryCommand}">
+                    <WrapPanel>
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding CreateDatabaseEntryTooltip}"
+                              Visibility="{Binding GameDetail, Converter={StaticResource NullToVisibilityConverter}}"
+                              IsEnabled="{Binding IsMatchingEnabled}"
+                              Command="{Binding CreateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="Plus" Width="35" Height="35" />
                       </Button>
-                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding OnlineGame.UpdateDatabaseEntryTooltip}"
-                              Visibility="{Binding OnlineGame.IsMatched, Converter={StaticResource BoolToVisibilityConverter}}"
-                              IsEnabled="{Binding OnlineGame.IsMatchingEnabled}"
-                              Command="{Binding OnlineGame.UpdateDatabaseEntryCommand}">
+                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
+                              Visibility="{Binding GameDetail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
+                              IsEnabled="{Binding IsMatchingEnabled}"
+                              Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
                       </Button>
                     </WrapPanel>

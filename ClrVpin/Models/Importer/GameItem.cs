@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Windows.Input;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Game;
+using PropertyChanged;
 
 namespace ClrVpin.Models.Importer;
 
+[AddINotifyPropertyChangedInterface]
 public class GameItem
 {
     public GameItem(OnlineGame onlineGame)
@@ -25,6 +28,16 @@ public class GameItem
     public DateTime? UpdatedAt => OnlineGame?.UpdatedAt; // not supported in local DB GameDetail
     public bool IsOriginal => OnlineGame?.IsOriginal ?? GameDetail.Derived.IsOriginal;
 
-    public GameDetail GameDetail { get; }
+    public GameDetail GameDetail { get; set; }
     public OnlineGame OnlineGame { get; }
+
+    // view model properties
+    public bool IsMatchingEnabled { get; set; }
+    
+    public ICommand UpdateDatabaseEntryCommand { get; set; }
+    public ICommand CreateDatabaseEntryCommand { get; set; }
+    
+    public string UpdateDatabaseEntryTooltip { get; set; } = "Update existing local database entry";
+    public string CreateDatabaseEntryTooltip { get; set; } = "Create new local database entry";
+
 }
