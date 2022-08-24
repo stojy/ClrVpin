@@ -88,15 +88,12 @@ namespace ClrVpin.Shared
                 var number = 1;
                 databaseGameDetails.ForEach(gameDetail =>
                 {
-                    gameDetail.Game.DatabaseFile = file;
+                    gameDetail.Init(number++);
 
-                    GameDerived.Init(gameDetail, number++);
+                    gameDetail.Game.DatabaseFile = file;
                     gameDetail.ViewState.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(gameDetail.Derived.IpdbUrl));
                     gameDetail.Content.Init(contentTypes);
 
-                    // assign fuzzy name details up front to avoid it being re-calculated multiple times later on, e.g. when comparing against EACH of the file matches
-                    gameDetail.Fuzzy.TableDetails = Fuzzy.Fuzzy.GetNameDetails(gameDetail.Game.Name, false);
-                    gameDetail.Fuzzy.DescriptionDetails = Fuzzy.Fuzzy.GetNameDetails(gameDetail.Game.Description, false);
                 });
 
                 gameDetails.AddRange(databaseGameDetails);
