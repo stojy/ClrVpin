@@ -9,6 +9,14 @@ namespace ClrVpin.Models.Shared.Game;
 [AddINotifyPropertyChangedInterface]
 public class GameDetail
 {
+    public void Init(int? number = null)
+    {
+        GameDerived.Init(this, number);
+        
+        // assign fuzzy name details before they are used to to avoid need for re-calculate multiple times later on, e.g. when comparing against EACH of the file matches
+        FuzzyDetails.Init(this);
+    }
+
     // raw deserialized database entry
     public Database.Game Game { get; set; }
 
@@ -26,6 +34,7 @@ public class GameDetail
     public ViewState ViewState { get; } = new ViewState();
 
     [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global - keeping for future use
     public OnlineGame OnlineGame { get; set; }
 
     public override string ToString() => $"Table: {Derived.TableFileWithExtension}, IsSmelly: {Content?.IsSmelly}";

@@ -22,7 +22,7 @@ namespace ClrVpin.Importer
             var initialSerializedGame = JsonSerializer.Serialize(originalGameDetail.Clone());
 
             GameDetail = originalGameDetail.Clone();
-            GameDerived.Init(GameDetail);
+            GameDetail.Init();
 
             IsExisting = isExisting;
             IsItemChanged = false;
@@ -80,8 +80,8 @@ namespace ClrVpin.Importer
                 if (decimal.TryParse(GameDetail.Game.Rating, out var rating))
                     GameDetail.Game.Rating = (Math.Round(rating * 2) / 2).ToString();
 
-                // explicitly recalculate derived properties
-                GameDerived.Init(GameDetail);
+                // explicitly update dynamic game details to account for any updated properties, e.g. table name, ipdb, etc
+                GameDetail.Init();
 
                 // check if anything has changed.. used to enable the 'update' button
                 IsItemChanged = !GameDetail.IsEqual(initialSerializedGame) && !GameDetail.Game.Name.IsEmpty();
