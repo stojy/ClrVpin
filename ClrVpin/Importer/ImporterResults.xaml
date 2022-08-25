@@ -42,6 +42,10 @@
   <Style x:Key="HighlightedButtonIconStyle" TargetType="Button" BasedOn="{StaticResource ButtonIconStyle}">
     <Setter Property="Foreground" Value="Coral" />
   </Style>
+  
+  <Style x:Key="EmphasisButtonIconStyle" TargetType="Button" BasedOn="{StaticResource ButtonIconStyle}">
+    <Setter Property="Foreground" Value="{DynamicResource SecondaryHueDarkBrush}" />
+  </Style>
 
   <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="Coral" False="#89FFFFFF" /> <!--{DynamicResource MaterialDesignBodyLight}-->
   <converters:BoolToStyleConverter x:Key="IsNewUrlButtonStyleConverter" True="{StaticResource IsNewUrlButtonStyle}" False="{StaticResource UrlButtonStyle}" />
@@ -449,16 +453,22 @@
                   <DataTemplate >
                     <WrapPanel>
                       <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding CreateDatabaseEntryTooltip}"
-                              Visibility="{Binding GameDetail, Converter={StaticResource NullToVisibilityConverter}}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.OnlineOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding CreateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="Plus" Width="35" Height="35" />
                       </Button>
                       <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
-                              Visibility="{Binding GameDetail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalAndOnline}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
+                      </Button>
+                      <Button Style="{StaticResource EmphasisButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalOnly}}"
+                              IsEnabled="{Binding IsMatchingEnabled}"
+                              Command="{Binding UpdateDatabaseEntryCommand}">
+                        <materialDesign:PackIcon Kind="AutoFix" Width="35" Height="35" />
                       </Button>
                     </WrapPanel>
                   </DataTemplate>

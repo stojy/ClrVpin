@@ -13,11 +13,23 @@ public class GameItem
     {
         OnlineGame = onlineGame;
         GameDetail = onlineGame.Hit?.GameDetail;
+
+        TableMatchType = GetTableMatchEnum();
+    }
+
+    private TableMatchOptionEnum GetTableMatchEnum()
+    {
+        if (OnlineGame != null && GameDetail != null)
+            return TableMatchOptionEnum.LocalAndOnline;
+        if (OnlineGame != null)
+            return TableMatchOptionEnum.OnlineOnly;
+        return TableMatchOptionEnum.LocalOnly;
     }
 
     public GameItem(GameDetail localGame)
     {
         GameDetail = localGame;
+        TableMatchType = GetTableMatchEnum();
     }
 
     public int Index { get; set; } // 1 based index of every game in the list
@@ -30,6 +42,7 @@ public class GameItem
 
     public GameDetail GameDetail { get; set; }
     public OnlineGame OnlineGame { get; }
+    public TableMatchOptionEnum TableMatchType { get; }
 
     // view model properties
     public bool IsMatchingEnabled { get; set; }
