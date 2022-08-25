@@ -193,7 +193,7 @@ namespace ClrVpin.Shared.Fuzzy
             var cleanManufacturer = Clean(manufacturer, false);
             var cleanManufacturerNoWhiteSpace = Clean(manufacturer, true);
 
-            return new FuzzyNameDetails(sourceName, name.Trim(), cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(),
+            return new FuzzyNameDetails(sourceName, name?.Trim() ?? "", cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(),
                 cleanManufacturer.ToLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToLowerAndTrim(), year);
         }
 
