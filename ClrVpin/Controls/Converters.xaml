@@ -16,5 +16,11 @@
   <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:NegativeToVisibilityConverter x:Key="NegativeToVisibilityConverter" />
   <converters:NegativeToVisibilityConverter x:Key="PositiveToVisibilityConverter" True="Visible" False="Collapsed" />
+  <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+  
+  <converters:ValueConverterGroup x:Key="EnumToVisibilityConverter">
+    <converters:EnumToBoolConverter />
+    <converters:BoolToVisibilityConverter />
+  </converters:ValueConverterGroup>
 
 </ResourceDictionary>
