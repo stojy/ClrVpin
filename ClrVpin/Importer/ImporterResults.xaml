@@ -18,6 +18,7 @@
     <ResourceDictionary Source="\Controls\ControlTemplates.xaml" />
     <ResourceDictionary Source="DatabaseItem.xaml" />
     <ResourceDictionary Source="\Controls\Converters.xaml" />
+    <ResourceDictionary Source="\Controls\Constants.xaml" />
     <ResourceDictionary Source="\Shared\Notification.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
@@ -452,23 +453,23 @@
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate >
                     <WrapPanel>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding CreateDatabaseEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.OnlineOnly}}"
-                              IsEnabled="{Binding IsMatchingEnabled}"
-                              Command="{Binding CreateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="Plus" Width="35" Height="35" />
-                      </Button>
                       <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalAndOnline}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
                       </Button>
-                      <Button Style="{StaticResource EmphasisButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="AutoFix" Width="35" Height="35" />
+                        <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
+                      </Button>
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding CreateDatabaseEntryTooltip}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.OnlineOnly}}"
+                              IsEnabled="{Binding IsMatchingEnabled}"
+                              Command="{Binding CreateDatabaseEntryCommand}">
+                        <materialDesign:PackIcon Kind="Plus" Width="35" Height="35" />
                       </Button>
                     </WrapPanel>
                   </DataTemplate>

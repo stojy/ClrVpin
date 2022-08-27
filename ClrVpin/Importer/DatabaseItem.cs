@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Models.Importer;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Game;
 using Microsoft.Xaml.Behaviors.Core;
@@ -13,7 +14,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class DatabaseItem
     {
-        public DatabaseItem(OnlineGame onlineGame, GameDetail originalGameDetail, IOnlineGameCollections onlineGameCollections, bool isExisting)
+        public DatabaseItem(OnlineGame onlineGame, GameDetail originalGameDetail, IOnlineGameCollections onlineGameCollections, bool isExisting, TableMatchOptionEnum tableMatchType)
         {
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
@@ -23,6 +24,14 @@ namespace ClrVpin.Importer
 
             GameDetail = originalGameDetail.Clone();
             GameDetail.Init();
+
+            Title = tableMatchType switch
+            {
+                TableMatchOptionEnum.LocalAndOnline => "Update Matched Table¹",
+                TableMatchOptionEnum.LocalOnly => "Update Unmatched Table¹",
+                TableMatchOptionEnum.OnlineOnly => "Add Missing Table¹",
+                _ => null
+            };
 
             IsExisting = isExisting;
             IsItemChanged = false;
@@ -147,5 +156,6 @@ namespace ClrVpin.Importer
         // date only portion to accommodate the DatePicker which resets the time portion when a date is selected
         public DateTime? DateAddedDateOnly { get; set; }
         private bool _loaded;
+        public string Title { get; set; }
     }
 }
