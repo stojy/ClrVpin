@@ -16,7 +16,7 @@ namespace ClrVpin.Importer
     {
         public static async void UpdateDatabaseItem(IList<GameDetail> gameDetails, GameItem gameItem, IOnlineGameCollections onlineGameCollections)
         {
-            var item = new DatabaseItem(gameItem.OnlineGame, gameItem.GameDetail, onlineGameCollections, true);
+            var item = new DatabaseItem(gameItem.OnlineGame, gameItem.GameDetail, onlineGameCollections, true, gameItem.TableMatchType);
 
             var result = await DialogHost.Show(item, "ImporterResultsDialog") as DatabaseItemAction?;
             if (result == DatabaseItemAction.Update)
@@ -67,7 +67,7 @@ namespace ClrVpin.Importer
                 }
             };
 
-            var item = new DatabaseItem(onlineGame, gameDetail, onlineGameCollections, false);
+            var item = new DatabaseItem(onlineGame, gameDetail, onlineGameCollections, false, gameItem.TableMatchType);
 
             var result = await DialogHost.Show(item, "ImporterResultsDialog") as DatabaseItemAction?;
             if (result == DatabaseItemAction.Insert)
