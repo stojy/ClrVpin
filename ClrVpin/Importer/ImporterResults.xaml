@@ -453,13 +453,13 @@
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate >
                     <WrapPanel>
-                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
+                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalAndOnline}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
                       </Button>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseEntryTooltip}"
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">

@@ -50,7 +50,8 @@ public class GameItem
     public ICommand UpdateDatabaseEntryCommand { get; set; }
     public ICommand CreateDatabaseEntryCommand { get; set; }
     
-    public string UpdateDatabaseEntryTooltip { get; set; } = "Update existing local database entry";
-    public string CreateDatabaseEntryTooltip { get; set; } = "Create new local database entry";
+    public string UpdateDatabaseMatchedEntryTooltip { get; set; } = "Update matched table";
+    public string UpdateDatabaseUnmatchedEntryTooltip { get; set; } = "Update unmatched table";
+    public string CreateDatabaseEntryTooltip { get; set; } = "Add missing table";
 
 }

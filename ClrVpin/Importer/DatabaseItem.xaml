@@ -266,8 +266,15 @@
         </StackPanel>
       </GroupBox>
 
-      <TextBlock Margin="0,10,0,0" Text="¹ Rerun Importer if these are modified.. Title, Manufacturer, Year, Description"></TextBlock>
-      
+      <TextBlock FontStyle="Italic" Margin="0,10,0,0">
+        <Run Text="¹ Rerun if these are modified: Title, Manufacturer, Year, Description.." />
+        <LineBreak />
+        <Run Text="  1. Scanner - to correct content file names" />
+        <LineBreak />
+        <Run Text="  2. Importer - to rematch content against online sources" />
+        <LineBreak />
+      </TextBlock>
+
     </StackPanel>
   </DataTemplate>
 
