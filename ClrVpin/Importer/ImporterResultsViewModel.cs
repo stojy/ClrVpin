@@ -96,21 +96,18 @@ namespace ClrVpin.Importer
             GameItemsView = new ListCollectionView<GameItem>(GameItems)
             {
                 // filter the table names list to reflect the various view filtering criteria
+                // - quickest checks placed first to short circuit evaluation of more complex checks
                 Filter = game =>
-                    (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
-                    (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
-                    (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both ||
-                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Manufactured && !game.IsOriginal) ||
-                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Original && game.IsOriginal)) &&
-                    (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All ||
-                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.LocalAndOnline && game.OnlineGame != null && game.GameDetail != null) ||
-                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.LocalOnly && game.OnlineGame == null) ||
-                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.OnlineOnly && game.GameDetail == null)) &&
-                    (YearBeginFilter == null || string.Compare(game.OnlineGame?.YearString, YearBeginFilter, StringComparison.OrdinalIgnoreCase) >= 0) &&
-                    (YearEndFilter == null || string.Compare(game.OnlineGame?.YearString, YearEndFilter, StringComparison.OrdinalIgnoreCase) <= 0) &&
-                    (TypeFilter == null || game.Type?.Equals(TypeFilter, StringComparison.OrdinalIgnoreCase) == true) &&
+                    (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || Settings.SelectedTableMatchOption == game.TableMatchType) &&
+                    (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || Settings.SelectedTableStyleOption == game.TableStyleOption) &&
+                    (YearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearBeginFilter, 0, 50) >= 0) &&
+                    (YearEndFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearEndFilter, 0, 50) <= 0) &&
+
+                    (TypeFilter == null || string.CompareOrdinal(TypeFilter, 0, game.Type, 0, 50) == 0) &&
                     (Settings.UpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedAtDateBegin) &&
-                    (Settings.UpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedAtDateEnd.Value.AddDays(1))
+                    (Settings.UpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedAtDateEnd.Value.AddDays(1)) &&
+                    (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
+                    (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase))
             };
             GameItemsView.MoveCurrentToFirst();
 
@@ -118,7 +115,7 @@ namespace ClrVpin.Importer
             TablesFilterView = new ListCollectionView<string>(gameItems.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = table => GameItemsView.Any(x => x.Name == table)
+                Filter = table => GameItemsView.Any(x => x.Name == table),
             };
 
             Manufacturers = gameItems.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList();
