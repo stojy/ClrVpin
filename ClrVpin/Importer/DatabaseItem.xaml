@@ -7,7 +7,8 @@
                     xmlns:importer="clr-namespace:ClrVpin.Importer"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
+                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
+                    xmlns:importerModel="clr-namespace:ClrVpin.Models.Importer">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -266,12 +267,16 @@
         </StackPanel>
       </GroupBox>
 
-      <TextBlock FontStyle="Italic" Margin="0,10,0,0">
-        <Run Text="¹ Rerun if these are modified: Title, Manufacturer, Year, Description.." />
-        <LineBreak />
+      <TextBlock FontStyle="Italic" Margin="0,10,0,0" 
+                 Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                 Text="¹ Run the following if 'Title, Manufacturer, Year, or Description' are modified.." />
+      <TextBlock FontStyle="Italic" Margin="0,10,0,0" 
+                 Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
+                 Text="¹ Run the following after the missing table is added.."/>
+      <TextBlock FontStyle="Italic">
         <Run Text="  1. Scanner - to correct content file names" />
         <LineBreak />
-        <Run Text="  2. Importer - to rematch content against online sources" />
+        <Run Text="  2. Importer - to match content against online sources" />
         <LineBreak />
       </TextBlock>
 
@@ -311,7 +316,7 @@
                   ToolTip="Overwrite all info for this table to your local database from online sources. Information that doesn't exist from online sources will not be overwritten (e.g. ratings)." />
 
           <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Insert}"
-                  Visibility="{Binding IsExisting, Converter={StaticResource BoolToCollapsedConverter}}"
+                  Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
                   ToolTip="Add a new table entry entry to your local database" />
           <Button Content="Update" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"

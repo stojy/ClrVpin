@@ -42,8 +42,8 @@ namespace ClrVpin.Importer
                 Game = new Game
                 {
                     DatabaseFile = DefaultDatabaseFile,
-                    Name = onlineGame.Name,
-                    Description = onlineGame.Name,
+                    Name = onlineGame.Description,
+                    Description = onlineGame.Description,
                     IpdbId = onlineGame.IpdbId,
 
                     Manufacturer = onlineGame.Manufacturer,
@@ -78,7 +78,7 @@ namespace ClrVpin.Importer
                 // assume the game is now matched to remove the 'add' option
                 // - in reality though the game may in theory still be unmatched if the user has changed the name/description beyond the reach of the fuzzy checking
                 onlineGame.Hit = new GameHit { GameDetail = gameDetail };
-                gameItem.GameDetail = gameDetail;
+                gameItem.UpdateGameDetail(gameDetail);
 
                 // insert the game
                 gameDetails.Add(gameDetail);
