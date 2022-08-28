@@ -238,4 +238,12 @@
     <Setter Property="VerticalAlignment" Value="Center" />
   </Style>
 
+  <Style x:Key="{x:Type ToolTip}" TargetType="{x:Type ToolTip}">
+    <Setter Property="FontSize" Value="17"/>
+  </Style>
+
+  <Style TargetType="{x:Type ToolTipService}">
+    <Setter Property="InitialShowDelay" Value="250"/>
+  </Style>
+
 </ResourceDictionary>

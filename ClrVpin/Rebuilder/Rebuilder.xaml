@@ -49,7 +49,7 @@
             <WrapPanel Width="230">
               <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
               <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
-                      Style="{StaticResource MaterialDesignIconButton}" ToolTipService.InitialShowDelay="500" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
+                      Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
                 <materialDesign:PackIcon Kind="InformationOutline" />
               </Button>
             </WrapPanel>
@@ -57,14 +57,14 @@
                     Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
                     Value="{Binding Settings.MatchFuzzyMinimumPercentage}" 
                     IsEnabled="{Binding MatchFuzzy.IsActive}" 
-                    ToolTipService.InitialShowDelay="500" ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
+                    ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
           </WrapPanel>
 
           <ContentControl Content="{Binding MatchSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Width="230" HorizontalAlignment="Left" />
         </StackPanel>
       </GroupBox>
 
-      <TextBlock Style="{StaticResource TitleStyle}" Text="Ignore" ToolTipService.InitialShowDelay="500" ToolTip="Criteria whereby source files will NOT be considered for merging" />
+      <TextBlock Style="{StaticResource TitleStyle}" Text="Ignore" ToolTip="Criteria whereby source files will NOT be considered for merging" />
       <GroupBox Header="Criteria" Width="650">
         <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
           <!-- not using an ItemsControl for the LCV (e.g. similar to scanner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
@@ -73,7 +73,7 @@
 
             <TextBox Margin="5,0,0,0" Width="390" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
                      IsEnabled="{Binding IgnoreIfContainsWordsFeature.IsActive}"
-                     ToolTipService.InitialShowDelay="500" ToolTip="Ignore if file contain the following words (case insensitive, comma delimited)"
+                     ToolTip="Ignore if file contain the following words (case insensitive, comma delimited)"
                      Text="{Binding IgnoreWordsString, UpdateSourceTrigger=PropertyChanged}">
               <b:Interaction.Triggers>
                 <b:EventTrigger EventName="TextChanged">
@@ -87,7 +87,7 @@
             <ContentControl Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Width="230" />
             <Slider Margin="5,0" Width="390" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}"
                     IsEnabled="{Binding IgnoreIfSmallerFeature.IsActive}"
-                    ToolTipService.InitialShowDelay="500" ToolTip="Ignore if file is smaller than the specified percentage" />
+                    ToolTip="Ignore if file is smaller than the specified percentage" />
           </WrapPanel>
 
           <ContentControl Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" HorizontalAlignment="Left" Width="230" />

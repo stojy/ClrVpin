@@ -22,7 +22,6 @@
               <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
               <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
                       Style="{StaticResource MaterialDesignIconButton}" 
-                      ToolTipService.InitialShowDelay="500" 
                       ToolTip="Open help page in the browser" 
                       Height="NaN" Width="NaN" Margin="10,0,0,0">
                 <materialDesign:PackIcon Kind="InformationOutline" />
@@ -32,7 +31,7 @@
                     Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
                     Value="{Binding Settings.MatchFuzzyMinimumPercentage}"
                     IsEnabled="{Binding MatchFuzzy.IsActive}"
-                    ToolTipService.InitialShowDelay="500" ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
+                    ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
           </WrapPanel>
         </StackPanel>
       </GroupBox>

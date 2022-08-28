@@ -23,7 +23,7 @@ namespace ClrVpin.Models.Shared
         public ICommand SelectedCommand { get; set; }
         public bool IsHighlighted { get; set; }
         public bool IsHelpSupported { get; set; }
-        public ActionCommand HelpAction { get; set; }
+        public ICommand HelpAction { get; set; }
         public bool IsSpecial { get; set; }
         public string Tag { get; set; } // arbitrary tagging value, e.g. to be used to identify a type uniquely for RadioButton.GroupName
 

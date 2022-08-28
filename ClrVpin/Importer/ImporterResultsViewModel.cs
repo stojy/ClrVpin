@@ -58,7 +58,8 @@ namespace ClrVpin.Importer
                     DatabaseItemManagement.UpdateDatabaseItem(_localGames, gameItem, this));
                 gameItem.CreateDatabaseEntryCommand = new ActionCommand(() =>
                     DatabaseItemManagement.CreateDatabaseItem(_localGames, gameItem, this));
-                gameItem.UpdateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
+                gameItem.UpdateDatabaseMatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
+                gameItem.UpdateDatabaseUnmatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
                 gameItem.CreateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
 
                 if (gameItem.OnlineGame is not { } onlineGame) // pattern matching - assign AND check for not null!
