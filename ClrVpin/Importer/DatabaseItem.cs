@@ -16,6 +16,8 @@ namespace ClrVpin.Importer
     {
         public DatabaseItem(OnlineGame onlineGame, GameDetail originalGameDetail, IOnlineGameCollections onlineGameCollections, bool isExisting, TableMatchOptionEnum tableMatchType)
         {
+            TableMatchType = tableMatchType;
+
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
             // - allow object comparison for serialization (ignoring a few VM properties)
@@ -156,6 +158,7 @@ namespace ClrVpin.Importer
         // date only portion to accommodate the DatePicker which resets the time portion when a date is selected
         public DateTime? DateAddedDateOnly { get; set; }
         private bool _loaded;
+        public TableMatchOptionEnum TableMatchType { get; set; }
         public string Title { get; set; }
     }
 }

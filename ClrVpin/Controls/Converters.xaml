@@ -9,7 +9,7 @@
 
   <!--commonly used converter resources-->
   <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-  <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter" True="Collapsed" False="Visible" />
+  <converters:BoolToVisibilityConverter x:Key="ReverseBoolToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
   <converters:BoolToStringConverter x:Key="UrlToIconConverter" True="WebCancel" False="WebSync" />
   <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" True="Visible" False="Collapsed" />

@@ -1,7 +1,5 @@
-﻿using System.Windows.Controls;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using PropertyChanged;
-using Utils;
 
 namespace ClrVpin.Controls.FolderSelection
 {
@@ -15,7 +13,7 @@ namespace ClrVpin.Controls.FolderSelection
         
         public string PatternValidation { get; set; }
 
-        public ICommand FolderExplorerCommand { get; set; }
+        public ICommand FolderExplorerCommand { get; protected init; }
         public ICommand FolderChangedCommandWithParam { get; set; }
     }
 }
