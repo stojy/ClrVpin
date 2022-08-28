@@ -13,6 +13,9 @@ namespace ClrVpin.Controls
         {
             // remove selected item to avoid defaulting to the first item
             MoveCurrentTo(null);
+            IsLiveFiltering = false;
+            IsLiveGrouping = false;
+            IsLiveSorting = false;
         }
 
         // typed filter.. assign to the base untyped filter so that it will be invoked as required

@@ -7,8 +7,7 @@
                     xmlns:importer="clr-namespace:ClrVpin.Importer"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
-                    xmlns:importerModel="clr-namespace:ClrVpin.Models.Importer">
+                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
