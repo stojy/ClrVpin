@@ -94,7 +94,7 @@ public class File
     public DateTime? UpdatedAt { get; set; }
     public DateTime? CreatedAt { get; set; }
 
-    public UrlDetail[] Urls { get; set; }
+    public UrlDetail[] Urls { get; set; } = Array.Empty<UrlDetail>();
 
     // view model properties
     public bool IsNew { get; set; }

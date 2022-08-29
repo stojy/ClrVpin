@@ -20,4 +20,5 @@ public class ImporterSettings
     public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.LocalAndOnline;
     public DateTime? UpdatedAtDateBegin { get; set; }
     public DateTime? UpdatedAtDateEnd { get; set; }
+    public bool HideUnavailableTables { get; set; }  // tables that don't have any valid download url
 }

@@ -14,14 +14,14 @@ public class OnlineGame : OnlineGameBase
     public List<ImageFile> ImageFiles { get; set; }
 
     public UrlSelection ImageUrlSelection { get; set; }
-    public string YearString => Year.ToString();
+    public string YearString { get; set; }
+    public bool IsTableDownloadAvailable { get; set; }
 
     // todo; assign once only.. since th is method is getting rather complex
     public bool IsOriginal => GameDerived.CheckIsOriginal(Manufacturer, Name);
 
     public string IpdbId { get; set; } = string.Empty;
-
-    public string Description => $"{Name} ({Manufacturer} {YearString})";
+    public string Description { get; set; }
 
     // reference to the highest fuzzy ranked DB match
     public GameHit Hit { get; set; }
