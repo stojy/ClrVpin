@@ -62,6 +62,10 @@ public static class ImporterFix
             game.AllFilesList = game.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
             game.ImageFiles = game.TableFiles.Concat(game.B2SFiles).ToList();
 
+            // assign helper properties here to avoid re-calculating them later
+            game.Description = $"{game.Name} ({game.Manufacturer} {game.YearString})";
+            game.YearString = game.Year.ToString();
+            
             // perform post-merge fixes, e.g. missing image url
             PostMerge(game);
 
@@ -78,6 +82,8 @@ public static class ImporterFix
             game.PovFiles = game.PovFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             game.AltSoundFiles = game.AltSoundFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+
+            game.IsTableDownloadAvailable = game.TableFiles.Any(file => file.Urls.Any(url => !url.Broken));
         });
 
         // keep the enum private and return a dictionary with key as the string representation (e.g. for display purposes)

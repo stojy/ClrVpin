@@ -49,6 +49,8 @@ namespace ClrVpin.Importer
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
 
+            HideUnavailableTables = CreateHideUnavailableTablesFeature();
+
             // assign VM properties
             gameItems.ForEach(gameItem =>
             {
@@ -98,11 +100,11 @@ namespace ClrVpin.Importer
                 // filter the table names list to reflect the various view filtering criteria
                 // - quickest checks placed first to short circuit evaluation of more complex checks
                 Filter = game =>
+                    (Settings.HideUnavailableTables == false || Settings.SelectedTableMatchOption != TableMatchOptionEnum.OnlineOnly || game.OnlineGame?.IsTableDownloadAvailable == true) &&
                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || Settings.SelectedTableMatchOption == game.TableMatchType) &&
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || Settings.SelectedTableStyleOption == game.TableStyleOption) &&
                     (YearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearBeginFilter, 0, 50) >= 0) &&
                     (YearEndFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearEndFilter, 0, 50) <= 0) &&
-
                     (TypeFilter == null || string.CompareOrdinal(TypeFilter, 0, game.Type, 0, 50) == 0) &&
                     (Settings.UpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedAtDateBegin) &&
                     (Settings.UpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedAtDateEnd.Value.AddDays(1)) &&
@@ -186,12 +188,12 @@ namespace ClrVpin.Importer
             GameItemSelectedCommand = new ActionCommand(() => SelectedOnlineGame = SelectedGameItem?.OnlineGame);
         }
 
-
         public string AddMissingDatabaseInfoTip { get; }
         public string OverwriteDatabaseInfoTip { get; }
 
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
+        public FeatureType HideUnavailableTables { get; private set; }
 
         public string BackupFolder { get; }
         public ICommand NavigateToBackupFolderCommand { get; }
@@ -396,6 +398,23 @@ namespace ClrVpin.Importer
             }).ToList();
 
             return featureTypes;
+        }
+
+        private FeatureType CreateHideUnavailableTablesFeature()
+        {
+            return new FeatureType(0)
+            {
+                Description = "Hide Unavailable",
+                Tip = "Hide missing tables that are not available for download",
+                IsSupported = true,
+                IsActive = Settings.HideUnavailableTables,
+                SelectedCommand = new ActionCommand(() =>
+                {
+                    Settings.HideUnavailableTables = !Settings.HideUnavailableTables;
+                    FilterChanged?.Execute(null);
+                }),
+                IsHighlighted = false,
+            };
         }
 
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);

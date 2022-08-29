@@ -379,6 +379,8 @@
                       </DataTemplate>
                     </ItemsControl.ItemTemplate>
                   </ItemsControl>
+
+                  <ContentControl Content="{Binding HideUnavailableTables}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
                 </WrapPanel>
               </WrapPanel>
             </StackPanel>
