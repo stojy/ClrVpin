@@ -449,27 +449,30 @@
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
                                   Header="#" Binding="{Binding Index}" Width="45" />
 
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" Header="Fix" Width="45" SortMemberPath="OnlineGame.IsMatched">
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" Header="Fix" Width="30" SortMemberPath="OnlineGame.IsMatched">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate >
-                    <WrapPanel>
-                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
+                    <WrapPanel Margin="-7,-2,0,0">
+                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30" 
+                              ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalAndOnline}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
+                        <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
                       </Button>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" Width="30" 
+                              ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="AutoRenew" Width="35" Height="35" />
+                        <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
                       </Button>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" ToolTip="{Binding CreateDatabaseEntryTooltip}"
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" Width="30" 
+                              ToolTip="{Binding CreateDatabaseEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.OnlineOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding CreateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="Plus" Width="35" Height="35" />
+                        <materialDesign:PackIcon Kind="Plus" Width="33" Height="33" />
                       </Button>
                     </WrapPanel>
                   </DataTemplate>
