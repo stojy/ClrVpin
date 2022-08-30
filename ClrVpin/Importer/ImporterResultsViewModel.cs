@@ -36,14 +36,13 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel : IOnlineGameCollections
     {
-        public ImporterResultsViewModel(IList<GameItem> gameItems, IList<GameDetail> localGames, ImporterMatchStatistics matchStatistics)
+        public ImporterResultsViewModel(IList<GameItem> gameItems, IList<GameDetail> localGames)
         {
             // use the supplied localGames list instead of extracting from gameItems to ensure the existing ordering in the DB file(s) is preserved
             // - we don't want to re-order based on the online feed (after the various importer fixes) as this makes it too difficult to track the differences
             // - _localGames = gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList();
             _localGames = localGames;
 
-            _matchStatistics = matchStatistics.ToDictionary();
             IsMatchingEnabled = Model.Settings.Importer.SelectedMatchCriteriaOptions.Any();
 
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
@@ -193,7 +192,7 @@ namespace ClrVpin.Importer
 
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
-        public FeatureType HideUnavailableTables { get; private set; }
+        public FeatureType HideUnavailableTables { get; }
 
         public string BackupFolder { get; }
         public ICommand NavigateToBackupFolderCommand { get; }
@@ -219,7 +218,7 @@ namespace ClrVpin.Importer
         public Window Window { get; private set; }
 
         public GameItem SelectedGameItem { get; set; }
-        public OnlineGame SelectedOnlineGame { get; set; }
+        public OnlineGame SelectedOnlineGame { get; private set; }
 
         public ICommand FilterChanged { get; set; }
         public ICommand UpdatedFilterChanged { get; set; }
@@ -277,11 +276,12 @@ namespace ClrVpin.Importer
             }
 
             // simplified summary of the ImporterStatisticsViewModel info
-            var onlineManufacturedCount = GameItems.Count(game => !game.OnlineGame?.IsOriginal == true);
+            var matchedManufacturedCount = GameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.LocalAndOnline && !gameItem.IsOriginal);
+            var missingManufacturedCount = GameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.OnlineOnly && !gameItem.IsOriginal);
 
-            var detail = CreatePercentageStatistic("Missing Manufactured Tables", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineManufactured], onlineManufacturedCount);
+            var detail = CreatePercentageStatistic("Missing Manufactured Tables", missingManufacturedCount, missingManufacturedCount + matchedManufacturedCount);
 
-            var isSuccess = onlineManufacturedCount == _matchStatistics[ImporterMatchStatistics.MatchedManufactured];
+            var isSuccess = missingManufacturedCount == 0;
             await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Manufactured Tables Present") : Notification.ShowWarning(DialogHostName, "Manufactured Tables Missing", null, detail));
         }
 
@@ -457,7 +457,6 @@ namespace ClrVpin.Importer
 
         private readonly Regex _regexExtractIpdbId = new Regex(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
         private readonly IList<GameDetail> _localGames;
-        private readonly Dictionary<string, int> _matchStatistics;
         private const string DialogHostName = "ImporterResultsDialog";
 
         private const int WindowMargin = 0;
