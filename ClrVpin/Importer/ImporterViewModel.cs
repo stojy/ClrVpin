@@ -188,27 +188,27 @@ namespace ClrVpin.Importer
             Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
 
             progress.Update("Matching online to local database");
-            var matchStatistics = await ImporterUtils.MatchOnlineToLocalAsync(localGames, onlineGames, UpdateProgress);
+            await ImporterUtils.MatchOnlineToLocalAsync(localGames, onlineGames, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Update("Matching local to online database");
-            var gameItems = await ImporterUtils.MergeOnlineAndLocalGamesAsync(localGames, onlineGames, matchStatistics, UpdateProgress);
+            var gameItems = await ImporterUtils.MergeOnlineAndLocalGamesAsync(localGames, onlineGames, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Close();
 
             progress.Update("Preparing Results");
-            await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics, matchStatistics);
+            await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics);
             Logger.Info($"Importer rendered, duration={progress.Duration}", true);
 
             void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
-        private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, IList<GameDetail> localGames, Dictionary<string, int> fixStatistics, ImporterMatchStatistics matchStatistics)
+        private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, IList<GameDetail> localGames, Dictionary<string, int> fixStatistics)
         {
             var screenPosition = _window.GetCurrentScreenPosition();
 
-            var results = new ImporterResultsViewModel(gameItems, localGames, matchStatistics);
+            var results = new ImporterResultsViewModel(gameItems, localGames);
             var showTask = results.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
 
             var statistics = new ImporterStatisticsViewModel(gameItems, duration, fixStatistics);
