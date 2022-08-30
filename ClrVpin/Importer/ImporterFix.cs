@@ -68,7 +68,7 @@ public static class ImporterFix
             
             // perform post-merge fixes, e.g. missing image url
             PostMerge(game);
-
+            
             // copy the dictionary files (potentially re-arranged, filtered, etc) back to the lists to ensure they are in sync
             game.TableFiles = game.AllFiles[nameof(game.TableFiles)].Cast<TableFile>().ToList();
             game.B2SFiles = game.B2SFiles.OrderByDescending(x => x.UpdatedAt).ToList();
@@ -106,6 +106,9 @@ public static class ImporterFix
 
         FixTableWhitespace(onlineGame);
         FixManufacturerWhitespace(onlineGame);
+
+        // assign (not fix) is original game state
+        onlineGame.IsOriginal = GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name);
 
         FixManufacturedIncludesAuthor(onlineGame);
 

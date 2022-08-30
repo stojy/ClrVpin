@@ -211,7 +211,7 @@ namespace ClrVpin.Importer
             var results = new ImporterResultsViewModel(gameItems, localGames, matchStatistics);
             var showTask = results.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
 
-            var statistics = new ImporterStatisticsViewModel(gameItems, duration, fixStatistics, matchStatistics);
+            var statistics = new ImporterStatisticsViewModel(gameItems, duration, fixStatistics);
             statistics.Show(_window, screenPosition.X  + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
             var logging = new LoggingViewModel();
