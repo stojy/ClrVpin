@@ -4,8 +4,6 @@ using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Models.Importer;
-using ClrVpin.Models.Importer.Vps;
-using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils.Extensions;
 
@@ -14,13 +12,11 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterStatisticsViewModel
     {
-        public ImporterStatisticsViewModel(IList<GameItem> gameItems, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics, ImporterMatchStatistics matchStatistics)
+        public ImporterStatisticsViewModel(IList<GameItem> gameItems, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics)
         {
-            _games = gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList();
-            _onlineGames = gameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame).ToList();
+            _gameItems = gameItems;
             _elapsedTime = elapsedTime;
             _feedFixStatistics = feedFixStatistics;
-            _matchStatistics = matchStatistics.ToDictionary();
         }
 
         public Window Window { get; private set; }
@@ -54,42 +50,52 @@ namespace ClrVpin.Importer
         {
             var feedFixStatistics = _feedFixStatistics.Select(kv => $"- {kv.Key,StatisticsKeyWidth}: {kv.Value}").StringJoin("\n");
 
-            var onlineTotalCount = _onlineGames.Count;
-            var onlineManufacturedCount = _onlineGames.Count(game => !game.IsOriginal);
-            var onlineOriginalCount = _onlineGames.Count(game => game.IsOriginal);
-
-            var localTotalCount = _games.Count;
-            var localManufacturedCount = _games.Count(game => !game.Derived.IsOriginal);
-            var localOriginalCount = _games.Count(game => game.Derived.IsOriginal);
+            var matchedItems = _gameItems.Where(gameItem => gameItem.TableMatchType == TableMatchOptionEnum.LocalAndOnline).ToList();
+            var unmatchedItems = _gameItems.Where(gameItem => gameItem.TableMatchType == TableMatchOptionEnum.LocalOnly).ToList();
+            var missingItems = _gameItems.Where(gameItem => gameItem.TableMatchType == TableMatchOptionEnum.OnlineOnly).ToList();
+            var matchedAndMissingItems = matchedItems.Concat(missingItems).ToList();
 
             return "Feed Fixes" +
                    $"\n{feedFixStatistics}" +
-
+                   "\n\nAll Tables" +
+                   CreateCountMatchTypeGrouping(_gameItems, matchedItems, missingItems, unmatchedItems) +
                    "\n\nMatched Tables (exists in both Local and Online Databases)" +
-                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.MatchedTotal], onlineTotalCount) +
-                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.MatchedManufactured], onlineManufacturedCount) +
-                   CreatePercentageStatistic("Original", _matchStatistics[ImporterMatchStatistics.MatchedOriginal], onlineOriginalCount) +
-
-                   "\n\nUnmatched Online Tables (exists only in Online Database)" +
-                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineTotal], onlineTotalCount) +
-                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineManufactured], onlineManufacturedCount) +
-                   CreatePercentageStatistic("Original", _matchStatistics[ImporterMatchStatistics.UnmatchedOnlineOriginal], onlineOriginalCount) +
-
-                   "\n\nUnmatched Local Tables (exists only in Local Database)" +
-                   CreatePercentageStatistic("Total", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalTotal], localTotalCount) +
-                   CreatePercentageStatistic("Manufactured", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalManufactured], localManufacturedCount) +
-                   CreatePercentageStatistic("Original", _matchStatistics[ImporterMatchStatistics.UnmatchedLocalOriginal], localOriginalCount) +
-
+                   CreatePercentageGrouping(matchedItems, matchedAndMissingItems) +
+                   "\n\nMissing Tables (exists only in Online Database)" +
+                   CreatePercentageGrouping(missingItems, matchedAndMissingItems) +
+                   "\n\nUnmatched Tables (exists only in Local Database)" +
+                   CreateCountGrouping(unmatchedItems) +
                    $"\n\n{"Time Taken",StatisticsKeyWidth}{_elapsedTime.TotalSeconds:f2}s";
         }
 
+        private static string CreateCountMatchTypeGrouping(ICollection<GameItem> allItems, ICollection<GameItem> matchedItems, ICollection<GameItem> missingItems, ICollection<GameItem> unmatchedItems)
+        {
+            return CreateCountStatistic("Total", allItems.Count) +
+                   CreateCountStatistic("Matched", matchedItems.Count) +
+                   CreateCountStatistic("Missing", missingItems.Count) +
+                   CreateCountStatistic("Unmatched", unmatchedItems.Count);
+        }
+
+        private static string CreateCountGrouping(ICollection<GameItem> gameItems)
+        {
+            return CreateCountStatistic("Total", gameItems.Count) +
+                   CreateCountStatistic("Manufactured", gameItems.Count(item => !item.IsOriginal)) +
+                   CreateCountStatistic("Original", gameItems.Count(item => item.IsOriginal));
+        }
+
+        private static string CreatePercentageGrouping(ICollection<GameItem> gameItems, ICollection<GameItem> matchedAndMissingItems)
+        {
+            return CreatePercentageStatistic("Total", gameItems.Count, matchedAndMissingItems.Count) +
+                   CreatePercentageStatistic("Manufactured", gameItems.Count(item => !item.IsOriginal), matchedAndMissingItems.Count(item => !item.IsOriginal)) +
+                   CreatePercentageStatistic("Original", gameItems.Count(item => item.IsOriginal), matchedAndMissingItems.Count(item => item.IsOriginal));
+        }
+
         private static string CreatePercentageStatistic(string title, int count, int totalCount) => $"\n- {title,StatisticsKeyWidth}: {count}/{totalCount} ({100f * count / totalCount:F2}%)";
+        private static string CreateCountStatistic(string title, int count) => $"\n- {title,StatisticsKeyWidth}: {count}";
 
         private readonly TimeSpan _elapsedTime;
         private readonly Dictionary<string, int> _feedFixStatistics;
-        private readonly Dictionary<string, int> _matchStatistics;
-        private readonly List<OnlineGame> _onlineGames;
-        private readonly List<GameDetail> _games;
+        private readonly IList<GameItem> _gameItems;
 
         private const int StatisticsKeyWidth = -35;
         private const int WindowMargin = 0;

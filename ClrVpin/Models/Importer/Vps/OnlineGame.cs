@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ClrVpin.Models.Shared.Game;
 
 namespace ClrVpin.Models.Importer.Vps;
 
@@ -17,8 +16,7 @@ public class OnlineGame : OnlineGameBase
     public string YearString { get; set; }
     public bool IsTableDownloadAvailable { get; set; }
 
-    // todo; assign once only.. since th is method is getting rather complex
-    public bool IsOriginal => GameDerived.CheckIsOriginal(Manufacturer, Name);
+    public bool IsOriginal { get; set; }
 
     public string IpdbId { get; set; } = string.Empty;
     public string Description { get; set; }
