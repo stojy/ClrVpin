@@ -13,13 +13,13 @@
                     xmlns:importerModel="clr-namespace:ClrVpin.Models.Importer">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="\Controls\Styles.xaml" />
-    <ResourceDictionary Source="\Controls\DataTemplates.xaml" />
-    <ResourceDictionary Source="\Controls\ControlTemplates.xaml" />
-    <ResourceDictionary Source="DatabaseItem.xaml" />
-    <ResourceDictionary Source="\Controls\Converters.xaml" />
-    <ResourceDictionary Source="\Controls\Constants.xaml" />
-    <ResourceDictionary Source="\Shared\Notification.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\DataTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="DatabaseItem.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Constants.xaml" />
+    <controls:SharedResourceDictionary Source="\Shared\Notification.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <Style x:Key="UrlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}">

@@ -4,14 +4,15 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
+                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
+                    xmlns:controls="clr-namespace:ClrVpin.Controls">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="/Controls/Styles.xaml" />
-    <ResourceDictionary Source="/Controls/DataTemplates.xaml" />
-    <ResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
-    <ResourceDictionary Source="\Controls\Converters.xaml" />
+    <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <controls:SharedResourceDictionary Source="/Controls/Styles.xaml" />
+    <controls:SharedResourceDictionary Source="/Controls/DataTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <DataTemplate x:Key="RebuilderTemplate" DataType="{x:Type rebuilder:RebuilderViewModel}">

@@ -10,9 +10,9 @@
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="\Controls\Styles.xaml" />
-    <ResourceDictionary Source="\Controls\Converters.xaml" />
+    <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
 
   </ResourceDictionary.MergedDictionaries>
 
