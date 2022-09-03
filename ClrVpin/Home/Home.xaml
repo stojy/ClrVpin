@@ -19,31 +19,31 @@
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+        <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
 
-        <ResourceDictionary Source="\Controls\Styles.xaml" />
-        <ResourceDictionary Source="\Controls\ControlTemplates.xaml" />
+        <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
+        <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
 
-        <ResourceDictionary Source="../Scanner/Scanner.xaml" />
-        <ResourceDictionary Source="../Scanner/ScannerStatistics.xaml" />
-        <ResourceDictionary Source="../Scanner/ScannerExplorer.xaml" />
+        <controls:SharedResourceDictionary Source="../Scanner/Scanner.xaml" />
+        <controls:SharedResourceDictionary Source="../Scanner/ScannerStatistics.xaml" />
+        <controls:SharedResourceDictionary Source="../Scanner/ScannerExplorer.xaml" />
 
-        <ResourceDictionary Source="../Rebuilder/Rebuilder.xaml" />
-        <ResourceDictionary Source="../Rebuilder/RebuilderStatistics.xaml" />
+        <controls:SharedResourceDictionary Source="../Rebuilder/Rebuilder.xaml" />
+        <controls:SharedResourceDictionary Source="../Rebuilder/RebuilderStatistics.xaml" />
 
-        <ResourceDictionary Source="../Importer/Importer.xaml" />
-        <ResourceDictionary Source="../Importer/ImporterResults.xaml" />
-        <ResourceDictionary Source="../Importer/ImporterStatistics.xaml" />
+        <controls:SharedResourceDictionary Source="../Importer/Importer.xaml" />
+        <controls:SharedResourceDictionary Source="../Importer/ImporterResults.xaml" />
+        <controls:SharedResourceDictionary Source="../Importer/ImporterStatistics.xaml" />
 
-        <ResourceDictionary Source="../Shared/Results.xaml" />
-        <ResourceDictionary Source="../Shared/Progress.xaml" />
+        <controls:SharedResourceDictionary Source="../Shared/Results.xaml" />
+        <controls:SharedResourceDictionary Source="../Shared/Progress.xaml" />
 
-        <ResourceDictionary Source="../Settings/Settings.xaml" />
-        <ResourceDictionary Source="../About/About.xaml" />
-        <ResourceDictionary Source="../About/Thanks.xaml" />
-        <ResourceDictionary Source="../About/Donate.xaml" />
+        <controls:SharedResourceDictionary Source="../Settings/Settings.xaml" />
+        <controls:SharedResourceDictionary Source="../About/About.xaml" />
+        <controls:SharedResourceDictionary Source="../About/Thanks.xaml" />
+        <controls:SharedResourceDictionary Source="../About/Donate.xaml" />
 
-        <ResourceDictionary Source="../Logging/Logging.xaml" />
+        <controls:SharedResourceDictionary Source="../Logging/Logging.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
 

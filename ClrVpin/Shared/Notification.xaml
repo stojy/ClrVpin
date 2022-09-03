@@ -4,13 +4,14 @@
                     mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:shared="clr-namespace:ClrVpin.Shared"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:controls="clr-namespace:ClrVpin.Controls">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="\Controls\Constants.xaml" />
-    <ResourceDictionary Source="\Controls\Styles.xaml" />
-    <ResourceDictionary Source="\Controls\Converters.xaml" />
+    <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Constants.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <DataTemplate DataType="{x:Type shared:Notification}">

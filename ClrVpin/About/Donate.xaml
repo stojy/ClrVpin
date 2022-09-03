@@ -1,9 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:donate="clr-namespace:ClrVpin.About">
+                    xmlns:donate="clr-namespace:ClrVpin.About"
+                    xmlns:controls="clr-namespace:ClrVpin.Controls">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="\Controls\Styles.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <DataTemplate x:Key="DonateTemplate" DataType="{x:Type donate:DonateViewModel}">

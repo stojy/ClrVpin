@@ -7,11 +7,12 @@
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
-                    xmlns:game="clr-namespace:ClrVpin.Models.Shared.Game">
+                    xmlns:game="clr-namespace:ClrVpin.Models.Shared.Game"
+                    xmlns:controls="clr-namespace:ClrVpin.Controls">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-    <ResourceDictionary Source="/Controls/Styles.xaml" />
+    <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <controls:SharedResourceDictionary Source="/Controls/Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <converters:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />

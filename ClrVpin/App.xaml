@@ -7,7 +7,7 @@
     <!-- windows created in code (but not xaml??) inherit this resource dictionary - i.e. they are not required to import Styles.xaml --><!--
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Styles.xaml" />
+        <SharedResourceDictionary Source="Styles.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>-->
   </Application.Resources>

@@ -3,12 +3,13 @@
                     xmlns:settings="clr-namespace:ClrVpin.Settings"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
+                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
+                    xmlns:controls="clr-namespace:ClrVpin.Controls">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="\Controls\Converters.xaml" />
-    <ResourceDictionary Source="\Controls\Styles.xaml" />
-    <ResourceDictionary Source="\Controls\FolderSelection\FolderSelection.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\FolderSelection\FolderSelection.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <!-- items control with virtualisation and scroll viewer  - https://stackoverflow.com/questions/2783845/virtualizing-an-itemscontrol-->
