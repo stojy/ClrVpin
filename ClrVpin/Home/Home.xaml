@@ -21,7 +21,7 @@
       <ResourceDictionary.MergedDictionaries>
         <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
 
-        <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
+        <controls:SharedResourceDictionary Source="..\Controls\Styles.xaml" />
         <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
 
         <controls:SharedResourceDictionary Source="../Scanner/Scanner.xaml" />
