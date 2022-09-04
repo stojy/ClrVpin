@@ -6,7 +6,7 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
 
   <ResourceDictionary.MergedDictionaries>
-    <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
+    <controls:SharedResourceDictionary Source="Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <ControlTemplate x:Key="KeyValuePair" TargetType="ContentControl">
