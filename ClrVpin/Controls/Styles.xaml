@@ -242,8 +242,8 @@
     <Setter Property="FontSize" Value="17"/>
   </Style>
 
-  <Style TargetType="{x:Type ToolTipService}">
+  <!--<Style TargetType="{x:Type ToolTipService}">
     <Setter Property="InitialShowDelay" Value="250"/>
-  </Style>
+  </Style>-->
 
 </ResourceDictionary>

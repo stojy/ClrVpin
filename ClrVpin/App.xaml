@@ -4,10 +4,38 @@
              StartupUri="Home/Home.xaml">
 
   <Application.Resources>
-    <!-- windows created in code (but not xaml??) inherit this resource dictionary - i.e. they are not required to import Styles.xaml --><!--
-    <ResourceDictionary>
+    <!-- windows created in code and xaml inherit this resource dictionary - i.e. they are not required to import the resources explicitly.. i.e. it's like a 'global resource definition' -->
+    <!-- using home.xaml instead because (for reasons unknown!) the windows (e.g. settings.xaml) are approximately twice as slow to render if resources are defined here!!
+         - perhaps related somehow to how WPF manages resources in app.xaml differently to other xaml files, e.g. affecting the need for referencing files (refer above)
+         - perhaps somehow circumvents the SharedResourceDictionary?
+    -->
+    <!--<ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <SharedResourceDictionary Source="Styles.xaml" />
+        <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+
+        <controls:SharedResourceDictionary Source="..\Controls\Styles.xaml" />
+        <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
+
+        <controls:SharedResourceDictionary Source="../Scanner/Scanner.xaml" />
+        <controls:SharedResourceDictionary Source="../Scanner/ScannerStatistics.xaml" />
+        <controls:SharedResourceDictionary Source="../Scanner/ScannerExplorer.xaml" />
+
+        <controls:SharedResourceDictionary Source="../Rebuilder/Rebuilder.xaml" />
+        <controls:SharedResourceDictionary Source="../Rebuilder/RebuilderStatistics.xaml" />
+
+        <controls:SharedResourceDictionary Source="../Importer/Importer.xaml" />
+        <controls:SharedResourceDictionary Source="../Importer/ImporterResults.xaml" />
+        <controls:SharedResourceDictionary Source="../Importer/ImporterStatistics.xaml" />
+
+        <controls:SharedResourceDictionary Source="../Shared/Results.xaml" />
+        <controls:SharedResourceDictionary Source="../Shared/Progress.xaml" />
+
+        <controls:SharedResourceDictionary Source="../Settings/Settings.xaml" />
+        <controls:SharedResourceDictionary Source="../About/About.xaml" />
+        <controls:SharedResourceDictionary Source="../About/Thanks.xaml" />
+        <controls:SharedResourceDictionary Source="../About/Donate.xaml" />
+
+        <controls:SharedResourceDictionary Source="../Logging/Logging.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>-->
   </Application.Resources>

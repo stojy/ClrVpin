@@ -26,12 +26,33 @@ namespace ClrVpin
             // Ensure the current culture passed into bindings is the OS culture.  By default, WPF uses en-US as the culture, regardless of the system settings.
             // - https://stackoverflow.com/questions/520115/stringformat-localization-issues-in-wpf
             FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
-            
+
+            WalkDictionary(Resources);
             base.OnStartup(e);
 
             Logging.Logger.Info($"App started: settings={JsonSerializer.Serialize(SettingsManager.Create().Settings)}");
 
             SetupExceptionHandling();
+        }
+
+        private static void WalkDictionary(ResourceDictionary resources)
+        {
+            // required for .net 3.5 to fix a lazy hydration strong reference memory leak
+            // - https://stackoverflow.com/questions/6857355/memory-leak-when-using-sharedresourcedictionary
+            //   http: //blog.lexique-du-net.com/index.php?post/2011/03/27/What-Dynamic-resources-creates-Memory-leaks-in-WPF-3.5-%28SP1%29
+            // - load every resource in every resource dictionary to ensure no references to non-hydrated resources are made
+            // - whilst no longer required for .net4, it's still useful (especially in combination with SharedResourceDictionary)..
+            //   a. invoke resource initialization during app startup instead of on demand (i.e. when user is clicking through the UI)
+            //   b. validate resources to find errors *before* they are used
+            // - BUT NOT USED BECAUSE RESOURCES ARE DEFINED IN HOME.XAML INSTEAD OF APP.XAML --> refer app.xaml
+            
+            // ReSharper disable once UnusedVariable
+            foreach (var unused in resources)
+            {
+            }
+            
+            foreach (var rd in resources.MergedDictionaries)
+                WalkDictionary(rd);
         }
 
         private static void SetupExceptionHandling()
