@@ -50,12 +50,14 @@ public class OnlineGameBase
     public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Count}, B2Ss={B2SFiles.Count}, Wheels={WheelArtFiles.Count}";
 }
 
+[AddINotifyPropertyChangedInterface]
 public class GameHit
 {
     public GameDetail GameDetail { get; set; }
     public int? Score { get; set; }
 }
 
+[AddINotifyPropertyChangedInterface]
 public class FileCollection : List<File>
 {
     public FileCollection(IEnumerable<File> files)
@@ -67,6 +69,7 @@ public class FileCollection : List<File>
 }
 
 // view model
+[AddINotifyPropertyChangedInterface]
 public class UrlSelection
 {
     public string Url { get; set; }
@@ -74,6 +77,7 @@ public class UrlSelection
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
+[AddINotifyPropertyChangedInterface]
 public class UrlDetail
 {
     public bool Broken { get; set; }
@@ -84,6 +88,7 @@ public class UrlDetail
     public bool IsNew { get; set; }
 }
 
+[AddINotifyPropertyChangedInterface]
 public class File
 {
     public string Name { get; set; }
@@ -100,6 +105,7 @@ public class File
     public bool IsNew { get; set; }
 }
 
+[AddINotifyPropertyChangedInterface]
 public class ImageFile : File
 {
     public string ImgUrl { get; set; }
@@ -110,6 +116,7 @@ public class ImageFile : File
 }
 
 // ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
+[AddINotifyPropertyChangedInterface]
 public class TableFile : ImageFile
 {
     [JsonPropertyName("theme")]

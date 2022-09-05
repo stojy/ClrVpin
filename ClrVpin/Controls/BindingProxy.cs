@@ -11,8 +11,8 @@ namespace ClrVpin.Controls
         protected override Freezable CreateInstanceCore()
         {
             var bindingProxy = new BindingProxy();
-            bindingProxy.Freeze();
-
+            if (bindingProxy.CanFreeze)
+                bindingProxy.Freeze();
             return bindingProxy;
         }
 

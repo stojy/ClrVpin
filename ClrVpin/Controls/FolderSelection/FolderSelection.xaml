@@ -4,7 +4,8 @@
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:folderSelection="clr-namespace:ClrVpin.Controls.FolderSelection"
-                    xmlns:controls="clr-namespace:ClrVpin.Controls">
+                    xmlns:controls="clr-namespace:ClrVpin.Controls"
+                    xmlns:ice="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -21,7 +22,7 @@
     <WrapPanel Height="50">
       <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}">
         <TextBox.Resources>
-          <validationRules:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+          <validationRules:BindingProxy x:Key="BindingProxy" Data="{Binding}" ice:Freeze="True"/>
         </TextBox.Resources>
 
         <TextBox.Text>
@@ -32,7 +33,7 @@
                 <!-- convoluted args property and bindingproxy required to support adding a new property that doesn't directly support binding
                      - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx -->
                 <validationRules:FilePatternValidation.Args>
-                  <validationRules:Args Pattern="{Binding Data.PatternValidation, Source={StaticResource Proxy}}"/>
+                  <validationRules:Args Pattern="{Binding Data.PatternValidation, Source={StaticResource BindingProxy}}"/>
                 </validationRules:FilePatternValidation.Args>
               </validationRules:FilePatternValidation>
             </Binding.ValidationRules>
