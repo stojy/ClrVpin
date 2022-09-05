@@ -6,11 +6,13 @@ using System.Windows.Input;
 using ClrVpin.Logging;
 using MaterialDesignThemes.Wpf;
 using Octokit;
+using PropertyChanged;
 using Utils;
 using Notification = ClrVpin.Shared.Notification;
 
 namespace ClrVpin.Home
 {
+    [AddINotifyPropertyChangedInterface]
     public class VersionManagementView
     {
         public string Title { get; private init; }

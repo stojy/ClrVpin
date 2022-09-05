@@ -25,6 +25,7 @@ namespace ClrVpin.Shared
 
         public TimeSpan Duration => _durationStopwatch.Elapsed;
         public TimeSpan DisplayDuration { get; set; }
+        public double DisplayDurationTotalSeconds => DisplayDuration.TotalSeconds;
         public string Status { get; set; }
         public string Detail { get; set; }
         public int Percentage { get; set; }

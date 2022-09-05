@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using ClrVpin.Controls.FolderSelection;
 
@@ -44,7 +46,10 @@ namespace ClrVpin.Validation_Rules
     {
         protected override Freezable CreateInstanceCore()
         {
-            return new BindingProxy();
+            var bindingProxy = new BindingProxy();
+            if (bindingProxy.CanFreeze)
+                bindingProxy.Freeze();
+            return bindingProxy;
         }
 
         public FolderTypeDetail Data
