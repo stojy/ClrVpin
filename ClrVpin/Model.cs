@@ -6,10 +6,12 @@ using ClrVpin.Models.Settings;
 using ClrVpin.Rebuilder;
 using ClrVpin.Scanner;
 using ClrVpin.Settings;
+using PropertyChanged;
 using Utils;
 
 namespace ClrVpin
 {
+    [AddINotifyPropertyChangedInterface]
     public class Model
     {
         public Model(Window mainWindow)
