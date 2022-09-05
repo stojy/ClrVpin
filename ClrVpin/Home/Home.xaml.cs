@@ -22,6 +22,12 @@ namespace ClrVpin.Home
 
             Activated += async (_, _) =>
             {
+                if (!_activated)
+                {
+                    _activated = true;
+                    Resources.WalkDictionary();
+                }
+
                 Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
 
                 // guard against multiple window activations
@@ -50,5 +56,6 @@ namespace ClrVpin.Home
         }
 
         private bool _wasConfigResetHandled;
+        private bool _activated;
     }
 }

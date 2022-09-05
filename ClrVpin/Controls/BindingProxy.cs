@@ -10,7 +10,10 @@ namespace ClrVpin.Controls
     {
         protected override Freezable CreateInstanceCore()
         {
-            return new BindingProxy();
+            var bindingProxy = new BindingProxy();
+            bindingProxy.Freeze();
+
+            return bindingProxy;
         }
 
         public object Data
