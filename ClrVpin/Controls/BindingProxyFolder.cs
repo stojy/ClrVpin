@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using ClrVpin.Controls.FolderSelection;
 
 namespace ClrVpin.Controls;
 
@@ -6,15 +7,14 @@ namespace ClrVpin.Controls;
 // - this class creates a proxy object which stores the data context so it can be referenced elsewhere in xaml
 // - Freezable class accommodates this because it can capture the DataContext despite not being in the visual tree
 // - https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx
-public class BindingProxy : DependencyObject
+public class BindingProxyFolder : DependencyObject
 {
-
-    public object Data
+    public FolderTypeDetail Data
     {
-        get => GetValue(DataProperty);
+        get => (FolderTypeDetail)GetValue(DataProperty);
         set => SetValue(DataProperty, value);
     }
 
     public static readonly DependencyProperty DataProperty =
-        DependencyProperty.Register(nameof(Data), typeof(object), typeof(BindingProxy), new PropertyMetadata(null));
+        DependencyProperty.Register(nameof(Data), typeof(FolderTypeDetail), typeof(BindingProxyFolder), new PropertyMetadata(null));
 }

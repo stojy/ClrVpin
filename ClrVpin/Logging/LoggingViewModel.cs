@@ -5,9 +5,11 @@ using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using Microsoft.Xaml.Behaviors.Core;
+using PropertyChanged;
 
 namespace ClrVpin.Logging
 {
+    [AddINotifyPropertyChangedInterface]
     public class LoggingViewModel
     {
         public LoggingViewModel()
