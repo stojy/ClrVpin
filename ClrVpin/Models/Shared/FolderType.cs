@@ -1,8 +1,10 @@
-﻿namespace ClrVpin.Models.Shared
+﻿using PropertyChanged;
+
+namespace ClrVpin.Models.Shared;
+
+[AddINotifyPropertyChangedInterface]
+public class FolderType
 {
-    public class FolderType
-    {
-        public string Folder { get; set; }
-        public string Description { get; set; }
-    }
+    public string Folder { get; set; }
+    public string Description { get; set; }
 }

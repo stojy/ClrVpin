@@ -2,9 +2,11 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 using ClrVpin.Extensions;
+using PropertyChanged;
 
 namespace ClrVpin.Validation_Rules;
 
+[AddINotifyPropertyChangedInterface]
 public class NotEmptyValidationRule : ValidationRule
 {
     public string Description { get; set; } = "Field";

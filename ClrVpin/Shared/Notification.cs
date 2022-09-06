@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
 using MaterialDesignThemes.Wpf;
+using PropertyChanged;
 
 namespace ClrVpin.Shared;
 
+[AddINotifyPropertyChangedInterface]
 public class Notification
 {
     public string Title { get; set; }
