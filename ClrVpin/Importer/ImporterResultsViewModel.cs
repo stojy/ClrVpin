@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using ClrVpin.Controls;
 using ClrVpin.Logging;
 using ClrVpin.Models.Importer;
@@ -117,7 +116,7 @@ namespace ClrVpin.Importer
             TablesFilterView = new ListCollectionView<string>(gameItems.Select(x => x.Name).Distinct().OrderBy(x => x).ToList())
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = table => GameItemsView.Any(x => x.Name == table),
+                Filter = table => GameItemsView.Any(x => x.Name == table)
             };
 
             Manufacturers = gameItems.Select(x => x.Manufacturer).Distinct().OrderBy(x => x).ToList();
@@ -176,22 +175,6 @@ namespace ClrVpin.Importer
             GameItemSelectedCommand = new ActionCommand(() => SelectedOnlineGame = SelectedGameItem?.OnlineGame);
         }
 
-        private void RefreshViews()
-        {
-            // update main list
-            Dispatcher.CurrentDispatcher.InvokeAsync(() => GameItemsView.Refresh(), DispatcherPriority.ApplicationIdle);
-            
-            // update filters based on what is shown in the main list
-            Dispatcher.CurrentDispatcher.InvokeAsync(() =>
-            {
-                TablesFilterView.Refresh();
-                ManufacturersFilterView.Refresh();
-                YearsBeginFilterView.Refresh();
-                YearsEndFilterView.Refresh();
-                TypesFilterView.Refresh();
-            }, DispatcherPriority.ApplicationIdle);
-        }
-		
         public string AddMissingDatabaseInfoTip { get; }
         public string OverwriteDatabaseInfoTip { get; }
 
@@ -270,6 +253,19 @@ namespace ClrVpin.Importer
         {
             Model.SettingsManager.Write();
             Window.Close();
+        }
+
+        private void RefreshViews()
+        {
+            // update main list
+            GameItemsView.Refresh();
+
+            // update filters based on what is shown in the main list
+            TablesFilterView.Refresh();
+            ManufacturersFilterView.Refresh();
+            YearsBeginFilterView.Refresh();
+            YearsEndFilterView.Refresh();
+            TypesFilterView.Refresh();
         }
 
         private async Task ShowSummary()
@@ -418,7 +414,7 @@ namespace ClrVpin.Importer
                     Settings.HideUnavailableTables = !Settings.HideUnavailableTables;
                     FilterChanged?.Execute(null);
                 }),
-                IsHighlighted = false,
+                IsHighlighted = false
             };
         }
 
@@ -460,7 +456,7 @@ namespace ClrVpin.Importer
 
         private IEnumerable<OnlineGame> GetOnlineGames() => GameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame);
 
-        private readonly Regex _regexExtractIpdbId = new Regex(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
+        private readonly Regex _regexExtractIpdbId = new(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
         private readonly IList<GameDetail> _localGames;
         private const string DialogHostName = "ImporterResultsDialog";
 
