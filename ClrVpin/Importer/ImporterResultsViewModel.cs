@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ClrVpin.Controls;
 using ClrVpin.Logging;
 using ClrVpin.Models.Importer;
@@ -149,19 +150,7 @@ namespace ClrVpin.Importer
             var tablesWithAuthors = gameItems.Select(x => x.OnlineGame?.TableFiles.Select(table => string.Join(", ", table.Authors.OrderBy(author => author)))).Where(x => x != null).SelectMany(x => x);
             Authors = tablesWithAuthors.Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
 
-            // generic handler for all the filter changes.. since all of the combo box values will need to be re-evaluated in sync anyway
-            FilterChanged = new ActionCommand(() =>
-            {
-                // update main list
-                GameItemsView.Refresh();
-
-                // update filters based on what is shown in the main list
-                TablesFilterView.Refresh();
-                ManufacturersFilterView.Refresh();
-                YearsBeginFilterView.Refresh();
-                YearsEndFilterView.Refresh();
-                TypesFilterView.Refresh();
-            });
+            FilterChanged = new ActionCommand(RefreshViews);
 
             UpdatedFilterChanged = new ActionCommand(() =>
             {
@@ -187,6 +176,22 @@ namespace ClrVpin.Importer
             GameItemSelectedCommand = new ActionCommand(() => SelectedOnlineGame = SelectedGameItem?.OnlineGame);
         }
 
+        private void RefreshViews()
+        {
+            // update main list
+            Dispatcher.CurrentDispatcher.InvokeAsync(() => GameItemsView.Refresh(), DispatcherPriority.ApplicationIdle);
+            
+            // update filters based on what is shown in the main list
+            Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+            {
+                TablesFilterView.Refresh();
+                ManufacturersFilterView.Refresh();
+                YearsBeginFilterView.Refresh();
+                YearsEndFilterView.Refresh();
+                TypesFilterView.Refresh();
+            }, DispatcherPriority.ApplicationIdle);
+        }
+		
         public string AddMissingDatabaseInfoTip { get; }
         public string OverwriteDatabaseInfoTip { get; }
 
