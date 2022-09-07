@@ -3,6 +3,7 @@
 namespace ClrVpin.Controls;
 
 // refer BindingProxyFolder.cs
+// ReSharper disable once UnusedType.Global
 public class BindingProxy : FrameworkElement
 {
 
