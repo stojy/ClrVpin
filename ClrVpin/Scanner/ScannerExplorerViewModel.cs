@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using ClrVpin.Controls;
 using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
@@ -24,12 +22,12 @@ namespace ClrVpin.Scanner
             SearchTextCommand = new ActionCommand(SearchTextChanged);
         }
 
-        public ListCollectionView<GameDetail> GameDetailsView { get; set; }
+        public ListCollectionView<GameDetail> GameDetailsView { get; }
 
         public Window Window { get; private set; }
         public string SearchText { get; set; } = "";
         public ICommand SearchTextCommand { get; set; }
-        public ObservableCollection<GameDetail> GameDetails { get; set; }
+        public ObservableCollection<GameDetail> GameDetails { get; }
 
         public void Show(Window parentWindow, double left, double top, double width)
         {
@@ -52,24 +50,8 @@ namespace ClrVpin.Scanner
 
         public void Close() => Window.Close();
 
-        private void SearchTextChanged()
-        {
-            // delay processing text changed
-            if (_searchTextChangedDelayTimer == null)
-            {
-                _searchTextChangedDelayTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
-                _searchTextChangedDelayTimer.Tick += (_, _) =>
-                {
-                    _searchTextChangedDelayTimer.Stop();
-                    GameDetailsView.Refresh();
-                };
-            }
+        private void SearchTextChanged() => GameDetailsView.RefreshDebounce();
 
-            _searchTextChangedDelayTimer.Stop(); // Resets the timer
-            _searchTextChangedDelayTimer.Start();
-        }
-
-        private DispatcherTimer _searchTextChangedDelayTimer;
         private const int WindowMargin = 0;
     }
 }
