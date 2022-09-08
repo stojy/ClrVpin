@@ -258,14 +258,14 @@ namespace ClrVpin.Importer
         private void RefreshViews()
         {
             // update main list
-            GameItemsView.Refresh();
+            GameItemsView.RefreshDebounce();
 
             // update filters based on what is shown in the main list
-            TablesFilterView.Refresh();
-            ManufacturersFilterView.Refresh();
-            YearsBeginFilterView.Refresh();
-            YearsEndFilterView.Refresh();
-            TypesFilterView.Refresh();
+            TablesFilterView.RefreshDebounce();
+            ManufacturersFilterView.RefreshDebounce();
+            YearsBeginFilterView.RefreshDebounce();
+            YearsEndFilterView.RefreshDebounce();
+            TypesFilterView.RefreshDebounce();
         }
 
         private async Task ShowSummary()

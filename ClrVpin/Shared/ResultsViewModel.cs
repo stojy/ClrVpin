@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using ClrVpin.Controls;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
@@ -108,29 +106,13 @@ namespace ClrVpin.Shared
             };
         }
 
-        private void SearchTextChanged()
-        {
-            // delay processing text changed
-            if (_searchTextChangedDelayTimer == null)
-            {
-                _searchTextChangedDelayTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
-                _searchTextChangedDelayTimer.Tick += (_, _) =>
-                {
-                    _searchTextChangedDelayTimer.Stop();
-                    HitGamesView.Refresh();
-                };
-            }
-
-            _searchTextChangedDelayTimer.Stop(); // Resets the timer
-            _searchTextChangedDelayTimer.Start();
-        }
+        private void SearchTextChanged() => HitGamesView.RefreshDebounce();
 
         // games referenced in the DB that have hits
         private ObservableCollection<GameDetail> _hitGames;
 
         private IEnumerable<FeatureType> _allContentFeatureTypes;
         private IEnumerable<FeatureType> _allHitFeatureTypes;
-        private DispatcherTimer _searchTextChangedDelayTimer;
 
         protected const string DialogHostName = "ResultsDialog";
     }
