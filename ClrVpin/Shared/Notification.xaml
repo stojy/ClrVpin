@@ -60,11 +60,11 @@
 
         <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="{DynamicResource SecondaryHueDarkBrush}"
                                  Visibility="{Binding IsSuccess, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
-        <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="Coral"
+        <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="{StaticResource WarningBrush}"
                                  Visibility="{Binding IsWarning, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
-        <materialDesign:PackIcon Kind="CloseCircleOutline" Foreground="Red"
+        <materialDesign:PackIcon Kind="CloseCircleOutline" Foreground="{StaticResource ErrorBrush}"
                                  Visibility="{Binding IsError, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
-        <materialDesign:PackIcon Kind="QuestionMarkCircleOutline" Foreground="Coral"
+        <materialDesign:PackIcon Kind="QuestionMarkCircleOutline" Foreground="{StaticResource WarningBrush}"
                                  Visibility="{Binding IsConfirmation, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource IconStyle}" />
 
         <StackPanel Margin="0,0,0,10">

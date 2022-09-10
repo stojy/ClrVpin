@@ -82,7 +82,7 @@
           <StackPanel Margin="0,0,0,3">
             <WrapPanel>
               <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding PinballFolderModel}" />
-              <Button ToolTip="Auto assign 'visual pinball' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="Coral"
+              <Button ToolTip="Auto assign 'visual pinball' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="{StaticResource WarningBrush}"
                       HorizontalAlignment="Left"
                       IsEnabled="{Binding PinballFolderModel.Folder, Converter={StaticResource notNullBooleanConverter}}"
                       Command="{Binding AutoAssignPinballFoldersCommand}">
@@ -98,7 +98,7 @@
           <StackPanel Margin="0,0,0,3">
             <WrapPanel>
               <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding FrontendFolderModel}" />
-              <Button ToolTip="Auto assign 'frontend' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="Coral"
+              <Button ToolTip="Auto assign 'frontend' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="{StaticResource WarningBrush}"
                       HorizontalAlignment="Left"
                       IsEnabled="{Binding FrontendFolderModel.Folder, Converter={StaticResource notNullBooleanConverter}}"
                       Command="{Binding AutoAssignFrontendFoldersCommand}">

@@ -22,6 +22,10 @@
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/generic.xaml" /> <!-- e.g. TabControlTemplates -->
   </ResourceDictionary.MergedDictionaries>
 
+  <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource SecondaryHueBrush}"/>
+  <SolidColorBrush x:Key="WarningBrush" Color="Coral"/>
+  <SolidColorBrush x:Key="ErrorBrush" Color="Red"/>
+
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml creates MainWindow.xaml -->
   <Style x:Key="MaterialWindowBaseStyle" TargetType="Window">
     <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
@@ -60,8 +64,8 @@
   </Style>
 
   <Style x:Key="RaisedHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedAccentButtonStyle}">
-    <Setter Property="Background" Value="Coral" />
-    <Setter Property="BorderBrush" Value="Coral" />
+    <Setter Property="Background" Value="{StaticResource WarningBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
   </Style>
 
 
@@ -76,7 +80,7 @@
   </Style>
 
   <Style x:Key="FlatHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatButtonStyle}">
-    <Setter Property="Foreground" Value="Coral" />
+    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
   </Style>
 
   <Style x:Key="TitleStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}">
@@ -97,7 +101,7 @@
   <Style x:Key="HighlightableCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
-        <Setter Property="Foreground" Value="Coral" />
+        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
       </DataTrigger>
     </Style.Triggers>
   </Style>
@@ -105,7 +109,7 @@
   <Style x:Key="HighlightableToggleButtonBoxStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
-        <Setter Property="Foreground" Value="Coral" />
+        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
       </DataTrigger>
     </Style.Triggers>
   </Style>
@@ -113,7 +117,7 @@
   <Style x:Key="HighlightableRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
-        <Setter Property="Foreground" Value="Coral" />
+        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
       </DataTrigger>
     </Style.Triggers>
   </Style>

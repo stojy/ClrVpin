@@ -62,11 +62,14 @@ namespace ClrVpin
                                     "- steps to reproduce\n" +
                                     "- screenshot (if applicable)\n" +
                                     "- relevant portion of the log file: c:\\ProgramData\\ClrVpin\\logs\\ClrVpin.log";
-            var detail = $"Message:  {exception.Message}\n" +
-                         $"Assembly: {assembly}\n" +
-                         $"Sender:   {sender}\n" +
-                         $"Source:   {source}\n" +
-                         $"Stack:\n{exception.StackTrace}";
+            var detail = $"Message:       {exception.Message}\n" +
+                         $"Inner Message: {exception.InnerException?.Message}\n" +
+                         $"Assembly:      {assembly}\n" +
+                         $"Sender:        {sender}\n" +
+                         $"Source:        {source}\n" +
+                         $"Stack:\n{exception.StackTrace}\n" +
+                         $"Inner Stack:\n{exception.InnerException?.StackTrace}";
+
 
             try
             {

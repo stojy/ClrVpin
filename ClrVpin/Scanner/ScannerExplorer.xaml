@@ -60,7 +60,7 @@
         <Style TargetType="materialDesign:PackIcon">
           <Style.Triggers>
             <DataTrigger Binding="{Binding Content.IsSmelly}" Value="True">
-              <Setter Property="Foreground" Value="Coral" />
+              <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
             </DataTrigger>
             <DataTrigger Binding="{Binding Content.IsSmelly}" Value="False">
               <Setter Property="Foreground" Value="{DynamicResource SecondaryHueDarkBrush}" />
