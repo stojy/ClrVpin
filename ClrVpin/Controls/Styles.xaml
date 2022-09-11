@@ -4,8 +4,7 @@
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     mc:Ignorable="d"
-                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared">
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
 
   <ResourceDictionary.MergedDictionaries>
     <!-- generated brush names (reference as DynamicResource, not StaticResource)
@@ -22,9 +21,9 @@
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/generic.xaml" /> <!-- e.g. TabControlTemplates -->
   </ResourceDictionary.MergedDictionaries>
 
-  <SolidColorBrush x:Key="AccentLightBrush" Color="#FF00C853"/> <!-- not using DynamicResource=SecondaryHueLightBrush because snoop (incorrectly?) identifies the color brush as freezable-->
-  <SolidColorBrush x:Key="AlertBrush" Color="Coral"/>
-  <SolidColorBrush x:Key="ErrorBrush" Color="Red"/>
+  <SolidColorBrush x:Key="AccentLightBrush" Color="#FF00C853" /> <!-- not using DynamicResource=SecondaryHueLightBrush because snoop (incorrectly??) identifies the color brush as freezable-->
+  <SolidColorBrush x:Key="AlertBrush" Color="Coral" />
+  <SolidColorBrush x:Key="ErrorBrush" Color="Red" />
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml creates MainWindow.xaml -->
   <Style x:Key="MaterialWindowBaseStyle" TargetType="Window">
@@ -68,7 +67,6 @@
     <Setter Property="BorderBrush" Value="{DynamicResource SecondaryHueDarkBrush}" />
   </Style>
 
-
   <Style x:Key="FlatAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="Width" Value="70" />
@@ -80,7 +78,7 @@
   </Style>
 
   <Style x:Key="FlatHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatButtonStyle}">
-    <Setter Property="Foreground" Value="{DynamicResource SecondaryHueDarkBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
   </Style>
 
   <Style x:Key="TitleStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}">
@@ -98,28 +96,16 @@
   <!--<Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}"/>-->
   <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" />
 
-  <Style x:Key="HighlightableCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
-    <Style.Triggers>
-      <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
-        <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
-      </DataTrigger>
-    </Style.Triggers>
+  <Style x:Key="AccentCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignAccentCheckBox}">
+    <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
   </Style>
 
-  <Style x:Key="HighlightableToggleButtonBoxStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}">
-    <Style.Triggers>
-      <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
-        <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
-      </DataTrigger>
-    </Style.Triggers>
+  <Style x:Key="AccentToggleButtonBoxStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchAccentToggleButton}">
+    <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
   </Style>
 
-  <Style x:Key="HighlightableRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
-    <Style.Triggers>
-      <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
-        <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
-      </DataTrigger>
-    </Style.Triggers>
+  <Style x:Key="AccentRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipAccentRadioButton}">
+    <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
   </Style>
 
   <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}" />
@@ -243,7 +229,7 @@
   </Style>
 
   <Style x:Key="{x:Type ToolTip}" TargetType="{x:Type ToolTip}">
-    <Setter Property="FontSize" Value="17"/>
+    <Setter Property="FontSize" Value="17" />
   </Style>
 
   <!--<Style TargetType="{x:Type ToolTipService}">

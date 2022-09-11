@@ -14,10 +14,10 @@ public class HitType
         HelpUrl = helpUrl;
     }
 
-    public HitTypeEnum Enum { get; set; }
-    public string Tip { get; set; }
-    public bool Fixable { get; set; }
+    public HitTypeEnum Enum { get; }
+    public string Tip { get; }
+    public bool Fixable { get; }
     public string Description { get; set; }
-    public string HelpUrl { get; set; }
-    public bool IsHighlighted { get; set; }
+    public string HelpUrl { get; }
+    public bool IsHighlighted { get; }
 }

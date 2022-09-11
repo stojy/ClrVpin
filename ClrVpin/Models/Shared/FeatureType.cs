@@ -15,17 +15,17 @@ public class FeatureType
     }
 
     public int Id { get; set; } // unique identifier with the scope of the other feature types, e.g. HitType.Enum
-    public string Description { get; set; }
+    public string Description { get; init; }
     public string Tip { get; set; }
     public bool IsSupported { get; set; }
-    public bool IsNeverSupported { get; set; }
+    public bool IsNeverSupported { get; init; }
     public bool IsActive { get; set; }
     public ICommand SelectedCommand { get; set; }
-    public bool IsHighlighted { get; set; }
+    public bool IsHighlighted { get; init; }
     public bool IsHelpSupported { get; set; }
-    public ICommand HelpAction { get; set; }
-    public bool IsSpecial { get; set; }
-    public string Tag { get; set; } // arbitrary tagging value, e.g. to be used to identify a type uniquely for RadioButton.GroupName
+    public ICommand HelpAction { get; init; }
+    public bool IsSpecial { get; private init; }
+    public string Tag { get; init; } // arbitrary tagging value, e.g. to be used to identify a type uniquely for RadioButton.GroupName
 
     public static FeatureType CreateSelectAll(List<FeatureType> featureTypes)
     {

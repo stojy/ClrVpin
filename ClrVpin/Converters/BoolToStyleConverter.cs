@@ -5,6 +5,7 @@ using System.Windows.Data;
 
 namespace ClrVpin.Converters;
 
+[ValueConversion(typeof(bool), typeof(Style))]
 public class BoolToStyleConverter : IValueConverter
 {
     public Style True { get; set; }
