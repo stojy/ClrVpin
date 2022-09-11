@@ -370,6 +370,7 @@ namespace ClrVpin.Importer
                     Tip = tableStyleOption.Tip,
                     IsSupported = true,
                     IsActive = tableStyleOption.Enum == Model.Settings.Importer.SelectedTableStyleOption,
+                    IsHighlighted = tableStyleOption.Enum == TableStyleOptionEnum.Manufactured,
                     SelectedCommand = new ActionCommand(() =>
                     {
                         Model.Settings.Importer.SelectedTableStyleOption = tableStyleOption.Enum;
@@ -399,6 +400,7 @@ namespace ClrVpin.Importer
                     Tip = tableMatchOption.Tip,
                     IsSupported = tableMatchOption.Enum == TableMatchOptionEnum.OnlineOnly || IsMatchingEnabled,
                     IsActive = tableMatchOption.Enum == Model.Settings.Importer.SelectedTableMatchOption,
+                    IsHighlighted = tableMatchOption.Enum == TableMatchOptionEnum.LocalAndOnline,
                     SelectedCommand = new ActionCommand(() =>
                     {
                         Model.Settings.Importer.SelectedTableMatchOption = tableMatchOption.Enum;

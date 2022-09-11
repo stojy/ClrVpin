@@ -14,7 +14,12 @@
   <converters:BoolToStringConverter x:Key="BoolToToggleButtonMarginConverter" True="5,10,5,5" False="5" />
   <converters:BoolToStringConverter x:Key="BoolToRadioButtonMarginConverter" True="5,0,5,0" False="0,0,5,0" />
 
+  <converters:BoolToStyleConverter x:Key="BoolToCheckboxStyeConverter" True="{StaticResource AccentCheckBoxStyle}" False="{StaticResource MaterialDesignCheckBox}" />
+  <converters:BoolToStyleConverter x:Key="BooToToggleButtonStyeConverter" True="{StaticResource AccentToggleButtonBoxStyle}" False="{StaticResource MaterialDesignSwitchToggleButton}" />
+  <converters:BoolToStyleConverter x:Key="BoolToRadioButtonStyeConverter" True="{StaticResource AccentRadioButtonStyle}" False="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" />
+
   <DataTemplate x:Key="FeatureTypeCheckBoxTemplate" DataType="shared:FeatureType">
+
     <CheckBox Content="{Binding Description}"
               ToolTip="{Binding Tip}"
               ToolTipService.ShowOnDisabled="true"
@@ -23,7 +28,7 @@
               Margin="{Binding IsSpecial, Converter={StaticResource BoolToCheckboxMarginConverter}}"
               Command="{Binding SelectedCommand}"
               FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
-              Style="{StaticResource HighlightableCheckBoxStyle}" />
+              Style="{Binding IsHighlighted, Converter={StaticResource BoolToCheckboxStyeConverter}}" />
   </DataTemplate>
 
   <DataTemplate x:Key="FeatureTypeToggleButtonTemplate" DataType="shared:FeatureType">
@@ -31,11 +36,11 @@
       <ToggleButton IsChecked="{Binding IsActive}"
                     IsEnabled="{Binding IsSupported}"
                     Command="{Binding SelectedCommand}"
-                    Style="{StaticResource HighlightableToggleButtonBoxStyle}" />
-      <TextBlock Text="{Binding Description}" 
-                 VerticalAlignment="Center" 
+                    Style="{Binding IsHighlighted, Converter={StaticResource BooToToggleButtonStyeConverter}}" />
+      <TextBlock Text="{Binding Description}"
+                 VerticalAlignment="Center"
                  Margin="5,0,0,0"
-                 FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"/>
+                 FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}" />
     </WrapPanel>
   </DataTemplate>
 
@@ -49,8 +54,7 @@
                  Margin="{Binding IsSpecial, Converter={StaticResource BoolToRadioButtonMarginConverter}}"
                  Command="{Binding SelectedCommand}"
                  FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
-                 Style="{StaticResource HighlightableRadioButtonStyle}"
-                 />
+                 Style="{Binding IsHighlighted, Converter={StaticResource BoolToRadioButtonStyeConverter}}" />
   </DataTemplate>
 
 </ResourceDictionary>
