@@ -64,8 +64,12 @@ public static class ImporterFix
             game.ImageFiles = game.TableFiles.Concat(game.B2SFiles).ToList();
 
             // assign helper properties here to avoid re-calculating them later
-            game.Description = $"{game.Name} ({game.Manufacturer} {game.YearString})";
             game.YearString = game.Year.ToString();
+            
+            // assign Description in the correct preferred format.. the format is VERY important since..
+            // - used to update the local DB entry if an update is requested.. used for both fields; Name (vpx) and Description (media)
+            // - used by fix online game which references games by the description in order to include all 3 fields
+            game.Description = $"{game.Name} ({game.Manufacturer} {game.YearString})";
 
             // perform post-merge fixes, e.g. missing image url
             PostMerge(game);

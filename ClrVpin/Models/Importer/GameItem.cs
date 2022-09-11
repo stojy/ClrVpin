@@ -6,6 +6,7 @@ using PropertyChanged;
 
 namespace ClrVpin.Models.Importer;
 
+// a common access class to harmonize access to the underlying OnlineGame or LocalGame properties
 [AddINotifyPropertyChangedInterface]
 public class GameItem
 {
