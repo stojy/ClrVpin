@@ -171,12 +171,21 @@ namespace ClrVpin.Importer
                                         (IsMatchingEnabled ? "" : MatchingDisabledMessage);
             AllTableOverwriteDatabaseInfoCommand = new ActionCommand(AllTableOverwriteDatabaseProperties);
 
-            // assign a convenience property to avoid a *lot* of nested referenced in the xaml
             GameItemSelectedCommand = new ActionCommand(() =>
             {
+                // override the selected tab item for the newly selected game
+                // - keep the existing file collection (aka tab item) if the new game has files in this category, else select the first file collection (aka 'tables')
+                var selectedFileCollection = SelectedGameItem?.OnlineGame?.AllFilesList
+                    .FirstOrDefault(fileList => fileList.Title == SelectedFileCollection?.Title && fileList.Count > 0) ?? SelectedGameItem?.OnlineGame?.AllFilesList.First();
+
+                // assign a convenience property to avoid a *lot* of nested referenced in the xaml
                 SelectedOnlineGame = SelectedGameItem?.OnlineGame;
-                SelectedFileCollection = SelectedOnlineGame?.AllFilesList.First();
+                SelectedFileCollection = selectedFileCollection;
             });
+
+            // select the first item from the filtered list
+            SelectedGameItem = GameItemsView.FirstOrDefault();
+            GameItemSelectedCommand.Execute(null);
         }
 
         public string AddMissingDatabaseInfoTip { get; }
@@ -221,6 +230,7 @@ namespace ClrVpin.Importer
         public ICommand GameItemSelectedCommand { get; }
 
         public bool IsMatchingEnabled { get; }
+        public FileCollection SelectedFileCollection { get; set; }
 
 
         // IOnlineGameCollections
@@ -231,7 +241,6 @@ namespace ClrVpin.Importer
         public List<string> Roms { get; }
         public List<string> Themes { get; }
         public List<string> Authors { get; }
-        public FileCollection SelectedFileCollection { get; set; }
 
         public async Task Show(Window parentWindow, double left, double top)
         {
