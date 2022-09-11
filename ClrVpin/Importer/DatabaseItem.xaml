@@ -318,6 +318,7 @@
                   Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
                   ToolTip="Add a new table entry entry to your local database" />
           <Button Content="Update" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
+                  Foreground="{StaticResource AlertBrush}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
                   ToolTip="Update changed info for this table to your local database" />
