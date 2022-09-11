@@ -34,18 +34,18 @@ public class OnlineGameBase
 
     public string ImgUrl { get; set; }
 
-    public List<TableFile> TableFiles { get; set; } = new List<TableFile>();
-    public List<ImageFile> B2SFiles { get; set; } = new List<ImageFile>();
-    public List<File> WheelArtFiles { get; set; } = new List<File>();
-    public List<File> RomFiles { get; set; } = new List<File>();
-    public List<File> MediaPackFiles { get; set; } = new List<File>();
-    public List<File> AltColorFiles { get; set; } = new List<File>();
-    public List<File> SoundFiles { get; set; } = new List<File>();
-    public List<File> TopperFiles { get; set; } = new List<File>();
-    public List<File> PupPackFiles { get; set; } = new List<File>();
-    public List<File> PovFiles { get; set; } = new List<File>();
-    public List<File> AltSoundFiles { get; set; } = new List<File>();
-    public List<File> RuleFiles { get; set; } = new List<File>();
+    public List<TableFile> TableFiles { get; set; } = new();
+    public List<ImageFile> B2SFiles { get; set; } = new();
+    public List<File> WheelArtFiles { get; set; } = new();
+    public List<File> RomFiles { get; set; } = new();
+    public List<File> MediaPackFiles { get; set; } = new();
+    public List<File> AltColorFiles { get; set; } = new();
+    public List<File> SoundFiles { get; set; } = new();
+    public List<File> TopperFiles { get; set; } = new();
+    public List<File> PupPackFiles { get; set; } = new();
+    public List<File> PovFiles { get; set; } = new();
+    public List<File> AltSoundFiles { get; set; } = new();
+    public List<File> RuleFiles { get; set; } = new();
     
     public override string ToString() => $"{Name} ({Manufacturer} {Year}), Tables={TableFiles.Count}, B2Ss={B2SFiles.Count}, Wheels={WheelArtFiles.Count}";
 }
@@ -53,7 +53,9 @@ public class OnlineGameBase
 [AddINotifyPropertyChangedInterface]
 public class GameHit
 {
+    // ReSharper disable once PropertyCanBeMadeInitOnly.Global
     public GameDetail GameDetail { get; set; }
+    // ReSharper disable once PropertyCanBeMadeInitOnly.Global
     public int? Score { get; set; }
 }
 
@@ -66,6 +68,7 @@ public class FileCollection : List<File>
     }
 
     public bool IsNew { get; set; }
+    public string Title { get; set; }
 }
 
 // view model
@@ -99,6 +102,7 @@ public class File
     public DateTime? UpdatedAt { get; set; }
     public DateTime? CreatedAt { get; set; }
 
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public UrlDetail[] Urls { get; set; } = Array.Empty<UrlDetail>();
 
     // view model properties

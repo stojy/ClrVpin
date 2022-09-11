@@ -54,7 +54,7 @@
 
   <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButton}" />
 
-  <Style x:Key="RaisedAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+  <Style x:Key="RaisedWarningButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
     <Setter Property="Margin" Value="5,0" />
     <Setter Property="Padding" Value="5" />
     <Setter Property="Height" Value="Auto" />
@@ -63,7 +63,7 @@
     <Setter Property="ToolTipService.ShowOnDisabled" Value="true" />
   </Style>
 
-  <Style x:Key="RaisedHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedAccentButtonStyle}">
+  <Style x:Key="RaisedHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedWarningButtonStyle}">
     <Setter Property="Background" Value="{StaticResource WarningBrush}" />
     <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
   </Style>

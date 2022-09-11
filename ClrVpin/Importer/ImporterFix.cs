@@ -46,31 +46,33 @@ public static class ImporterFix
             // group files into collections so they can be treated generically
             game.AllFiles = new Dictionary<string, FileCollection>
             {
-                { nameof(game.TableFiles), new FileCollection(game.TableFiles) },
-                { nameof(game.B2SFiles), new FileCollection(game.B2SFiles) },
-                { nameof(game.RuleFiles), new FileCollection(game.RuleFiles) },
-                { nameof(game.AltColorFiles), new FileCollection(game.AltColorFiles) },
-                { nameof(game.AltSoundFiles), new FileCollection(game.AltSoundFiles) },
-                { nameof(game.MediaPackFiles), new FileCollection(game.MediaPackFiles) },
-                { nameof(game.PovFiles), new FileCollection(game.PovFiles) },
-                { nameof(game.PupPackFiles), new FileCollection(game.PupPackFiles) },
-                { nameof(game.RomFiles), new FileCollection(game.RomFiles) },
-                { nameof(game.SoundFiles), new FileCollection(game.SoundFiles) },
-                { nameof(game.TopperFiles), new FileCollection(game.TopperFiles) },
-                { nameof(game.WheelArtFiles), new FileCollection(game.WheelArtFiles) }
+                { "Tables", new FileCollection(game.TableFiles) },
+                { "Backglasses", new FileCollection(game.B2SFiles) },
+                { "Wheels", new FileCollection(game.WheelArtFiles) },
+                { "ROMs", new FileCollection(game.RomFiles) },
+                { "DMDs", new FileCollection(game.AltColorFiles) },
+                { "Media Packs", new FileCollection(game.MediaPackFiles) },
+                { "Sounds", new FileCollection(game.SoundFiles) },
+                { "Toppers", new FileCollection(game.TopperFiles) },
+                { "PuP Packs", new FileCollection(game.PupPackFiles) },
+                { "POVs", new FileCollection(game.PovFiles) },
+                { "Alt. Sounds", new FileCollection(game.AltSoundFiles) },
+                { "Rules", new FileCollection(game.RuleFiles) }
             };
-            game.AllFilesList = game.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
+            game.AllFilesList = game.AllFiles.Select(kv => kv.Value).ToList();
+            game.AllFilesFlattenedList = game.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
             game.ImageFiles = game.TableFiles.Concat(game.B2SFiles).ToList();
 
             // assign helper properties here to avoid re-calculating them later
             game.Description = $"{game.Name} ({game.Manufacturer} {game.YearString})";
             game.YearString = game.Year.ToString();
-            
+
             // perform post-merge fixes, e.g. missing image url
             PostMerge(game);
-            
-            // copy the dictionary files (potentially re-arranged, filtered, etc) back to the lists to ensure they are in sync
-            game.TableFiles = game.AllFiles[nameof(game.TableFiles)].Cast<TableFile>().ToList();
+
+            // assign the dictionary files (potentially re-arranged, filtered, etc) back to the lists to ensure they are in sync
+            //game.TableFiles = game.AllFiles[nameof(game.TableFiles)].Cast<TableFile>().ToList();
+            game.TableFiles = game.TableFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             game.B2SFiles = game.B2SFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             game.WheelArtFiles = game.WheelArtFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             game.RomFiles = game.RomFiles.OrderByDescending(x => x.UpdatedAt).ToList();
@@ -240,7 +242,7 @@ public static class ImporterFix
         LogFixed(onlineGame, FixStatisticsEnum.NameInvalidCharacters);
         onlineGame.Name = onlineGame.Name.RemoveInvalidFileNameChars(true);
     }
-    
+
     private static void FixManufacturerInvalidCharacters(OnlineGameBase onlineGame)
     {
         if (!IsActive(FixFeedOptionEnum.InvalidCharacters) || !onlineGame.Manufacturer.HasInvalidFileNameChars())
@@ -407,7 +409,7 @@ public static class ImporterFix
             return;
 
         // fix game updated timestamp - must not be less than the max file timestamp
-        var maxUpdatedAt = onlineGame.AllFilesList.Max(x => x.UpdatedAt);
+        var maxUpdatedAt = onlineGame.AllFilesFlattenedList.Max(x => x.UpdatedAt);
         if (onlineGame.UpdatedAt < maxUpdatedAt)
         {
             LogFixedTimestamp(onlineGame, FixStatisticsEnum.UpdatedTimeTooLow, "updatedAt", onlineGame.UpdatedAt, nameof(maxUpdatedAt), maxUpdatedAt);
@@ -426,7 +428,7 @@ public static class ImporterFix
             return;
 
         // fix game created timestamp - must not be less than any content created at timestamps
-        var maxCreatedAt = onlineGame.AllFilesList.Max(x => x.CreatedAt);
+        var maxCreatedAt = onlineGame.AllFilesFlattenedList.Max(x => x.CreatedAt);
         if (onlineGame.LastCreatedAt < maxCreatedAt)
         {
             LogFixedTimestamp(onlineGame, FixStatisticsEnum.CreatedTimeLastTimeTooLow, "createdAt", onlineGame.LastCreatedAt, nameof(maxCreatedAt), maxCreatedAt);
@@ -474,7 +476,7 @@ public static class ImporterFix
         LogFixed(onlineGame, FixStatisticsEnum.WrongUrlIpdb, $"old url={onlineGame.IpdbUrl}, new url={ipdbUrl}");
         onlineGame.IpdbUrl = ipdbUrl;
     }
-    
+
     private static void FixOriginalTableIncludesIpdbUrl(OnlineGame onlineGame)
     {
         // fix wrong IPDB url

@@ -144,7 +144,7 @@
             Reset
           </Button>
           <Button ToolTip="Save settings and return to the home page"
-                  Style="{StaticResource RaisedAccentButtonStyle}"
+                  Style="{StaticResource RaisedWarningButtonStyle}"
                   Width="90" Margin="10,0,0,0"
                   Command="{Binding SaveCommand}">
             Save
