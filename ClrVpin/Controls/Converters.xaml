@@ -10,6 +10,7 @@
 
   <!--commonly used converter resources-->
   <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+  <converters:BoolToVisibilityConverter x:Key="ReverseBoolToHiddenConverter" True="Visible" False="Hidden" />
   <converters:BoolToVisibilityConverter x:Key="ReverseBoolToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
   <converters:BoolToStringConverter x:Key="UrlToIconConverter" True="WebCancel" False="WebSync" />
@@ -17,6 +18,9 @@
   <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:NegativeToVisibilityConverter x:Key="NegativeToVisibilityConverter" />
   <converters:NegativeToVisibilityConverter x:Key="PositiveToVisibilityConverter" True="Visible" False="Collapsed" />
+  <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroToBoolConverter" TrueValue="true" FalseValue="false" />
+  
+  
   <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
   
   <converters:ValueConverterGroup x:Key="EnumToVisibilityConverter">

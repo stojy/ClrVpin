@@ -7,7 +7,6 @@
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml"
                     xmlns:vps="clr-namespace:ClrVpin.Models.Importer.Vps"
                     xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
                     xmlns:importerModel="clr-namespace:ClrVpin.Models.Importer">
@@ -28,10 +27,9 @@
   </Style>
 
   <Style x:Key="IsNewUrlButtonStyle" TargetType="Button" BasedOn="{StaticResource UrlButtonStyle}">
-    <Setter Property="Background" Value="Coral" />
-    <Setter Property="BorderBrush" Value="Coral" />
+    <Setter Property="Background" Value="{StaticResource WarningBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
   </Style>
-
 
   <Style x:Key="ButtonIconStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
     <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
@@ -41,9 +39,9 @@
   </Style>
 
   <Style x:Key="HighlightedButtonIconStyle" TargetType="Button" BasedOn="{StaticResource ButtonIconStyle}">
-    <Setter Property="Foreground" Value="Coral" />
+    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
   </Style>
-  
+
   <Style x:Key="EmphasisButtonIconStyle" TargetType="Button" BasedOn="{StaticResource ButtonIconStyle}">
     <Setter Property="Foreground" Value="{DynamicResource SecondaryHueDarkBrush}" />
   </Style>
@@ -396,7 +394,7 @@
                   <WrapPanel>
                     <Button ToolTip="{Binding AddMissingDatabaseInfoTip}"
                             ToolTipService.ShowOnDisabled="True"
-                            Style="{StaticResource RaisedAccentButtonStyle}"
+                            Style="{StaticResource RaisedWarningButtonStyle}"
                             Margin="0,0,5,0"
                             Width="150" Height="30"
                             IsEnabled="{Binding IsMatchingEnabled}"
@@ -442,9 +440,9 @@
                     SelectedItem="{Binding SelectedGameItem}">
 
             <b:Interaction.Triggers>
-              <controls:RoutedEventTrigger RoutedEvent="Selector.SelectionChanged">
+              <b:EventTrigger EventName="SelectionChanged">
                 <b:InvokeCommandAction Command="{Binding GameItemSelectedCommand}" />
-              </controls:RoutedEventTrigger>
+              </b:EventTrigger>
             </b:Interaction.Triggers>
 
             <DataGrid.Columns>
@@ -453,23 +451,23 @@
 
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" Header="Fix" Width="30" SortMemberPath="OnlineGame.IsMatched">
                 <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate >
+                  <DataTemplate>
                     <WrapPanel Margin="-7,-2,0,0">
-                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30" 
+                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30"
                               ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalAndOnline}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
                       </Button>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" Width="30" 
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" Width="30"
                               ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
                       </Button>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" Width="30" 
+                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" Width="30"
                               ToolTip="{Binding CreateDatabaseEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.OnlineOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
@@ -481,11 +479,13 @@
                 </DataGridTemplateColumn.CellTemplate>
               </DataGridTemplateColumn>
 
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table" Binding="{Binding Name}"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
+                                  Binding="{Binding Name}"
                                   Width="255" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
                                   Binding="{Binding Manufacturer}" Width="160" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year" Binding="{Binding Year}"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
+                                  Binding="{Binding Year}"
                                   Width="55" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
                                   Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
@@ -544,79 +544,37 @@
               </UniformGrid>
 
               <GroupBox Margin="0,10,0,0" Header="Files">
-                <!-- explicitly defining each tab item separately because TabControl.ItemSource is unusable..
-                 1. TabControl.ContentTemplate  - data context is assigned as ItemSource, but DataContext is missing.. can be worked around using markup extensions
-                 2. TabControl.ItemContainerStyle - required to be overridden to enable/disable tabs, but MaterialDesignExtensions TabControl doesn't define a keyed style template to use for BasedOn            
-                 3. Not dictionary friendly - TabControl.ItemTemplate receives key (good), but TabControl.ItemTemplate receives KeyValuePair instead of just Value (bad).. impossible to bind (easily) in xaml due to generics
-                 4. Not much point - simpler to duplicate the xaml than create a separate collection of the x3 types
-            -->
                 <GroupBox.Resources>
-                  <Style x:Key="TabControlStyle" TargetType="TabControl" BasedOn="{StaticResource MaterialDesignTabControl}">
-                    <Setter Property="mde:TabControlAssist.TabHeaderFontWeight" Value="Bold" />
-                    <Setter Property="mde:TabControlAssist.TabHeaderFontSize" Value="18" />
-                  </Style>
+                  <Style x:Key="TabControlStyle" TargetType="TabControl" BasedOn="{StaticResource MaterialDesignTabControl}"/>
                 </GroupBox.Resources>
 
-                <TabControl Style="{StaticResource TabControlStyle}">
-                  <TabItem Header="Tables" IsEnabled="{Binding SelectedOnlineGame.AllFiles[TableFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[TableFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[TableFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                  </TabItem>
+                <TabControl Style="{StaticResource TabControlStyle}" ItemsSource="{Binding SelectedOnlineGame.AllFilesList}" SelectedItem="{Binding SelectedFileCollection}">
+                  <TabControl.ItemTemplate>
+                    <!--tab item header content-->
+                    <DataTemplate DataType="{x:Type vps:FileCollection}">
+                      <WrapPanel>
+                        <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Title}"
+                                   Foreground="{Binding IsNew, Converter={StaticResource TabItemToColorConverter}}" />
+                        <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0" Foreground="{StaticResource WarningBrush}"
+                                                 Visibility="{Binding IsNew, Converter={StaticResource ReverseBoolToHiddenConverter}}" />
+                      </WrapPanel>
+                    </DataTemplate>
+                  </TabControl.ItemTemplate>
 
-                  <TabItem Header="Backglasses" IsEnabled="{Binding SelectedOnlineGame.AllFiles[B2SFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[B2SFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[B2SFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                  </TabItem>
+                  <TabControl.ContentTemplate>
+                    <DataTemplate>
+                      <!-- selected tab item contents (underneath) -->
+                      <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FilesTemplate}" />
+                    </DataTemplate>
+                  </TabControl.ContentTemplate>
 
-                  <TabItem Header="Wheels" IsEnabled="{Binding SelectedOnlineGame.AllFiles[WheelArtFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[WheelArtFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[WheelArtFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                  </TabItem>
-
-                  <TabItem Header="ROMs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[RomFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[RomFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[RomFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-
-                  </TabItem>
-                  <TabItem Header="Media Packs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[MediaPackFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[MediaPackFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[MediaPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-
-                  </TabItem>
-                  <TabItem Header="DMDs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[AltColorFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[AltColorFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[AltColorFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-
-                  </TabItem>
-                  <TabItem Header="Sounds" IsEnabled="{Binding SelectedOnlineGame.AllFiles[SoundFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[SoundFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[SoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                  </TabItem>
-
-                  <TabItem Header="Toppers" IsEnabled="{Binding SelectedOnlineGame.AllFiles[TopperFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[TopperFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[TopperFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                  </TabItem>
-
-                  <TabItem Header="PuP Packs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[PupPackFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[PupPackFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[PupPackFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                  </TabItem>
-
-                  <TabItem Header="POVs" IsEnabled="{Binding SelectedOnlineGame.AllFiles[PovFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[PovFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[PovFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                  </TabItem>
-
-                  <TabItem Header="Alt. Sounds" IsEnabled="{Binding SelectedOnlineGame.AllFiles[AltSoundFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[AltSoundFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[AltSoundFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                  </TabItem>
-
-                  <TabItem Header="Rules" IsEnabled="{Binding SelectedOnlineGame.AllFiles[RuleFiles].Count}"
-                           mde:TabControlAssist.TabHeaderForeground="{Binding SelectedOnlineGame.AllFiles[RuleFiles].IsNew, Converter={StaticResource TabItemToColorConverter}}">
-                    <ContentControl Content="{Binding SelectedOnlineGame.AllFiles[RuleFiles]}" ContentTemplate="{StaticResource FilesTemplate}" />
-                  </TabItem>
+                  <TabControl.ItemContainerStyle>
+                    <!-- tab item header style, e.g. padding, disabled, etc -->
+                    <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MaterialDesignTabItem}" d:DataContext="{d:DesignInstance vps:FileCollection}">
+                      <Setter Property="IsEnabled" Value="{Binding Count}" />
+                      <Setter Property="Padding" Value="6,12" />
+                    </Style>
+                  </TabControl.ItemContainerStyle>
                 </TabControl>
               </GroupBox>
             </StackPanel>

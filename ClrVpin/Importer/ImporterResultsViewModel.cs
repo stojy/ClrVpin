@@ -172,7 +172,11 @@ namespace ClrVpin.Importer
             AllTableOverwriteDatabaseInfoCommand = new ActionCommand(AllTableOverwriteDatabaseProperties);
 
             // assign a convenience property to avoid a *lot* of nested referenced in the xaml
-            GameItemSelectedCommand = new ActionCommand(() => SelectedOnlineGame = SelectedGameItem?.OnlineGame);
+            GameItemSelectedCommand = new ActionCommand(() =>
+            {
+                SelectedOnlineGame = SelectedGameItem?.OnlineGame;
+                SelectedFileCollection = SelectedOnlineGame?.AllFilesList.First();
+            });
         }
 
         public string AddMissingDatabaseInfoTip { get; }
@@ -227,6 +231,7 @@ namespace ClrVpin.Importer
         public List<string> Roms { get; }
         public List<string> Themes { get; }
         public List<string> Authors { get; }
+        public FileCollection SelectedFileCollection { get; set; }
 
         public async Task Show(Window parentWindow, double left, double top)
         {
@@ -426,7 +431,7 @@ namespace ClrVpin.Importer
             var onlineGames = GetOnlineGames();
             onlineGames.ForEach(onlineGame => onlineGame.AllFiles.ForEach(kv =>
             {
-                var (_, files) = kv;
+                var (type, files) = kv;
                 files.ForEach(file =>
                 {
                     // flag file - if the update time range is satisfied
@@ -438,6 +443,7 @@ namespace ClrVpin.Importer
 
                 // flag file collection (e.g. backglasses)
                 files.IsNew = files.Any(file => file.IsNew);
+                files.Title = type;
             }));
         }
 

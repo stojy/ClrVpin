@@ -9,7 +9,8 @@ public class OnlineGame : OnlineGameBase
 {
     // view model properties
     public Dictionary<string, FileCollection> AllFiles { get; set; }
-    public IEnumerable<File> AllFilesList { get; set; }
+    public List<FileCollection> AllFilesList { get; set; }
+    public IEnumerable<File> AllFilesFlattenedList { get; set; }
     public List<ImageFile> ImageFiles { get; set; }
 
     public UrlSelection ImageUrlSelection { get; set; }
