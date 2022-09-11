@@ -121,7 +121,7 @@
         <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
       </WrapPanel>
 
-      <Button Margin="0" Width="50" Command="{Binding StartCommand}" Style="{StaticResource RaisedWarningButtonStyle}" IsEnabled="{Binding IsValid}">Start</Button>
+      <Button Margin="0" Width="50" Command="{Binding StartCommand}" Style="{StaticResource RaisedAccentButtonStyle}" IsEnabled="{Binding IsValid}">Start</Button>
 
     </StackPanel>
   </DataTemplate>

@@ -82,7 +82,7 @@
           <StackPanel Margin="0,0,0,3">
             <WrapPanel>
               <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding PinballFolderModel}" />
-              <Button ToolTip="Auto assign 'visual pinball' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="{StaticResource WarningBrush}"
+              <Button ToolTip="Auto assign 'visual pinball' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="{StaticResource AlertBrush}"
                       HorizontalAlignment="Left"
                       IsEnabled="{Binding PinballFolderModel.Folder, Converter={StaticResource notNullBooleanConverter}}"
                       Command="{Binding AutoAssignPinballFoldersCommand}">
@@ -98,7 +98,7 @@
           <StackPanel Margin="0,0,0,3">
             <WrapPanel>
               <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding FrontendFolderModel}" />
-              <Button ToolTip="Auto assign 'frontend' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="{StaticResource WarningBrush}"
+              <Button ToolTip="Auto assign 'frontend' folders" Style="{StaticResource MaterialDesignIconButton}" Margin="-10,-5,0,0" VerticalAlignment="Top" Foreground="{StaticResource AlertBrush}"
                       HorizontalAlignment="Left"
                       IsEnabled="{Binding FrontendFolderModel.Folder, Converter={StaticResource notNullBooleanConverter}}"
                       Command="{Binding AutoAssignFrontendFoldersCommand}">
@@ -144,7 +144,7 @@
             Reset
           </Button>
           <Button ToolTip="Save settings and return to the home page"
-                  Style="{StaticResource RaisedWarningButtonStyle}"
+                  Style="{StaticResource RaisedAccentButtonStyle}"
                   Width="90" Margin="10,0,0,0"
                   Command="{Binding SaveCommand}">
             Save

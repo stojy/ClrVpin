@@ -22,8 +22,8 @@
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/generic.xaml" /> <!-- e.g. TabControlTemplates -->
   </ResourceDictionary.MergedDictionaries>
 
-  <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource SecondaryHueBrush}"/>
-  <SolidColorBrush x:Key="WarningBrush" Color="Coral"/>
+  <SolidColorBrush x:Key="AccentLightBrush" Color="#FF00C853"/> <!-- not using DynamicResource=SecondaryHueLightBrush because snoop (incorrectly?) identifies the color brush as freezable-->
+  <SolidColorBrush x:Key="AlertBrush" Color="Coral"/>
   <SolidColorBrush x:Key="ErrorBrush" Color="Red"/>
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml creates MainWindow.xaml -->
@@ -54,7 +54,7 @@
 
   <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButton}" />
 
-  <Style x:Key="RaisedWarningButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+  <Style x:Key="RaisedAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
     <Setter Property="Margin" Value="5,0" />
     <Setter Property="Padding" Value="5" />
     <Setter Property="Height" Value="Auto" />
@@ -63,13 +63,13 @@
     <Setter Property="ToolTipService.ShowOnDisabled" Value="true" />
   </Style>
 
-  <Style x:Key="RaisedHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedWarningButtonStyle}">
-    <Setter Property="Background" Value="{StaticResource WarningBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
+  <Style x:Key="RaisedAccentDarkButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedAccentButtonStyle}">
+    <Setter Property="Background" Value="{DynamicResource SecondaryHueDarkBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource SecondaryHueDarkBrush}" />
   </Style>
 
 
-  <Style x:Key="FlatAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatAccentButton}">
+  <Style x:Key="FlatAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="Width" Value="70" />
   </Style>
@@ -80,7 +80,7 @@
   </Style>
 
   <Style x:Key="FlatHighlightButtonStyle" TargetType="Button" BasedOn="{StaticResource FlatButtonStyle}">
-    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource SecondaryHueDarkBrush}" />
   </Style>
 
   <Style x:Key="TitleStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHeadline6TextBlock}">
@@ -101,7 +101,7 @@
   <Style x:Key="HighlightableCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
-        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
       </DataTrigger>
     </Style.Triggers>
   </Style>
@@ -109,7 +109,7 @@
   <Style x:Key="HighlightableToggleButtonBoxStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
-        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
       </DataTrigger>
     </Style.Triggers>
   </Style>
@@ -117,7 +117,7 @@
   <Style x:Key="HighlightableRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}">
     <Style.Triggers>
       <DataTrigger Binding="{Binding IsHighlighted}" Value="True" d:DataContext="{d:DesignInstance shared:FeatureType}">
-        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
       </DataTrigger>
     </Style.Triggers>
   </Style>
