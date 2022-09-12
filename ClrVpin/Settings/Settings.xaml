@@ -94,7 +94,7 @@
         </GroupBox>
 
         <!-- front end folders -->
-        <GroupBox Header="Frontend - PinballY/PinballX" Margin="0,10,0,0">
+        <GroupBox Header="Frontend - PinballY/PinballX¹" Margin="0,10,0,0">
           <StackPanel Margin="0,0,0,3">
             <WrapPanel>
               <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding FrontendFolderModel}" />
@@ -109,6 +109,8 @@
                           Style="{StaticResource ItemsControlVirtualizedStyle}" MaxHeight="375" />
           </StackPanel>
         </GroupBox>
+        <TextBlock Margin="0,5" FontStyle="Italic"
+                   Text="¹ Folder setup is optional. It's only applicable for PinballY/PinballX users to enable Scanner, Rebuilder, and Fuzzy Matching features." />
 
         <!-- general -->
         <GroupBox Header="General" Margin="0,10,0,0">
@@ -133,9 +135,6 @@
             </WrapPanel>
           </StackPanel>
         </GroupBox>
-
-        <TextBlock Margin="0,15,0,5" FontStyle="Italic"
-                   Text="Note - folder setup is optional. It's only applicable for PinballY/PinballX users to enable Scanner, Rebuilder, and Fuzzy Matching features." />
 
         <WrapPanel HorizontalAlignment="Center" Margin="0,10,0,5">
           <Button ToolTip="Reset the entire config to their installation values"
