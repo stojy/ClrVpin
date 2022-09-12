@@ -196,7 +196,7 @@
                    - a common trigger for the ChangedCommand.. i.e. avoid need to use interaction triggers for ValueChanged
               -->
               <TextBox Text="{Binding GameDetail.Game.Rating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                       materialDesign:HintAssist.Hint="Rating" IsReadOnly="True"
+                       materialDesign:HintAssist.Hint="Rating" IsReadOnly="True" Opacity="0.5"
                        Style="{StaticResource DatabaseEntryTextBoxStyle}"
                        Width="220" />
               <!--ratings bar is drawn within the TextBox so it appears to be part of the same control-->
