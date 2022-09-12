@@ -50,15 +50,20 @@
             <WrapPanel Width="230">
               <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
               <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
-                      Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
+                      Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
+                      Foreground="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
                 <materialDesign:PackIcon Kind="InformationOutline" />
               </Button>
             </WrapPanel>
-            <Slider Margin="5,0" Width="390" HorizontalAlignment="Left"  
+            <Slider Margin="5,0" Width="390" HorizontalAlignment="Left"
                     Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
-                    Value="{Binding Settings.MatchFuzzyMinimumPercentage}" 
-                    IsEnabled="{Binding MatchFuzzy.IsActive}" 
-                    ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
+                    Value="{Binding Settings.MatchFuzzyMinimumPercentage}"
+                    IsEnabled="{Binding MatchFuzzy.IsActive}"
+                    ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
+              <Slider.Resources>
+                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
+              </Slider.Resources>
+            </Slider>
           </WrapPanel>
 
           <ContentControl Content="{Binding MatchSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Width="230" HorizontalAlignment="Left" />

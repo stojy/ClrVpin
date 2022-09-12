@@ -21,7 +21,11 @@
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/generic.xaml" /> <!-- e.g. TabControlTemplates -->
   </ResourceDictionary.MergedDictionaries>
 
-  <SolidColorBrush x:Key="AccentLightBrush" Color="#FF00C853" /> <!-- not using DynamicResource=SecondaryHueLightBrush because snoop (incorrectly??) identifies the color brush as freezable-->
+  <!-- not using DynamicResource=PrimaryHueMidBrush because it's referenced via BoolToBrushConverter which doesn't support a dependency property -->
+  <SolidColorBrush x:Key="PrimaryMidBrush" Color="#FF2196F3" />
+  <!-- not using DynamicResource=SecondaryHueLightBrush because snoop (incorrectly??) identifies the color brush as freezable-->
+  <SolidColorBrush x:Key="AccentLightBrush" Color="#FF00C853" /> 
+  
   <SolidColorBrush x:Key="AlertBrush" Color="Coral" />
   <SolidColorBrush x:Key="ErrorBrush" Color="Red" />
 
