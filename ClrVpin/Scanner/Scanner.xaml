@@ -54,7 +54,8 @@
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
 
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding HelpAction}"
-                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0">
+                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
+                          Foreground="{Binding IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
                     <materialDesign:PackIcon Kind="InformationOutline" />
                   </Button>
                   <Slider Visibility="{Binding Id, Converter={StaticResource HitTypeFuzzyToVisibilityConverter}}"
@@ -62,7 +63,11 @@
                           Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
                           Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Settings.MatchFuzzyMinimumPercentage}"
                           IsEnabled="{Binding IsActive}"
-                          ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
+                          ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
+                    <Slider.Resources>
+                      <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
+                    </Slider.Resources>
+                  </Slider>
                 </WrapPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>

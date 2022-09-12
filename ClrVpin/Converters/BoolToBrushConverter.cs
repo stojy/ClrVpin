@@ -1,27 +1,25 @@
-//using System;
-//using System.Drawing;
-//using System.Globalization;
-//using System.Windows;
-//using System.Windows.Data;
-//using System.Windows.Media;
-//using Brush = System.Drawing.Brush;
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Media;
 
-//namespace ClrVpin.Converters
-//{
-//    [ValueConversion(typeof(bool), typeof(Brush))]
-//    public class BoolToBrushConverter : IValueConverter
-//    {
-//        public string True { get; set; } = "SecondaryHueDarkBrush";
-//        public string False { get; set; } = "PrimaryHueDarkBrush";
+namespace ClrVpin.Converters
+{
+    [ValueConversion(typeof(bool), typeof(SolidColorBrush))]
+    public class BoolToBrushConverter : IValueConverter
+    {
+        public SolidColorBrush TrueBrush { get; set; }
+        public SolidColorBrush FalseBrush { get; set; }
 
-//        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-//        {
-//            if (!(value is bool))
-//                return DependencyProperty.UnsetValue;
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not bool boolValue)
+                return DependencyProperty.UnsetValue;
 
-//            return (Brush)value ? new Brush(True) : False;
-//        }
+            return boolValue ? TrueBrush : FalseBrush;
+        }
 
-//        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
-//    }
-//}
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+    }
+}

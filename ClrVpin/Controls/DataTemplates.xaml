@@ -19,7 +19,6 @@
   <converters:BoolToStyleConverter x:Key="BoolToRadioButtonStyeConverter" True="{StaticResource AccentRadioButtonStyle}" False="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" />
 
   <DataTemplate x:Key="FeatureTypeCheckBoxTemplate" DataType="shared:FeatureType">
-
     <CheckBox Content="{Binding Description}"
               ToolTip="{Binding Tip}"
               ToolTipService.ShowOnDisabled="true"

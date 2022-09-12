@@ -15,8 +15,8 @@
   <DataTemplate x:Key="ImporterTemplate" DataType="{x:Type importer:ImporterViewModel}">
     <StackPanel Margin="5">
       <TextBlock Style="{StaticResource TitleStyle}">Match</TextBlock>
-      <GroupBox Header="Criteria" Width="650">
-        <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
+      <GroupBox Header="Criteria" Width="660">
+        <StackPanel Margin="5" HorizontalAlignment="Left">
           <!-- not using an ItemsControl for the LCV (e.g. similar to scanner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
           <WrapPanel>
             <WrapPanel Width="230">
@@ -24,7 +24,8 @@
               <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
                       Style="{StaticResource MaterialDesignIconButton}" 
                       ToolTip="Open help page in the browser" 
-                      Height="NaN" Width="NaN" Margin="10,0,0,0">
+                      Height="NaN" Width="NaN" Margin="10,0,0,0"
+                      Foreground="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
                 <materialDesign:PackIcon Kind="InformationOutline" />
               </Button>
             </WrapPanel>
@@ -32,7 +33,11 @@
                     Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
                     Value="{Binding Settings.MatchFuzzyMinimumPercentage}"
                     IsEnabled="{Binding MatchFuzzy.IsActive}"
-                    ToolTip="Minimum confidence required for a fuzzy match (default 100%)" />
+                    ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
+              <Slider.Resources>
+                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
+              </Slider.Resources>
+            </Slider>
           </WrapPanel>
         </StackPanel>
       </GroupBox>

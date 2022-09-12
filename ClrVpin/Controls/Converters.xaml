@@ -14,6 +14,7 @@
   <converters:BoolToVisibilityConverter x:Key="ReverseBoolToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:ListToStringConverter x:Key="ListToStringConverter" />
   <converters:BoolToStringConverter x:Key="UrlToIconConverter" True="WebCancel" False="WebSync" />
+  <converters:BoolToBrushConverter x:Key="BoolToAccentBrush" TrueBrush="{StaticResource AccentLightBrush}" FalseBrush="{StaticResource PrimaryMidBrush}" />
   <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" True="Visible" False="Collapsed" />
   <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:NegativeToVisibilityConverter x:Key="NegativeToVisibilityConverter" />
