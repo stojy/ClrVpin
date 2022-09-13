@@ -303,12 +303,12 @@
             </Style>
           </WrapPanel.Resources>
 
-          <Button Content="Add Missing Info" Width="140" Style="{StaticResource FlatHighlightButtonStyle}"
+          <Button Content="Add Missing Info" Width="140" Style="{StaticResource FlatButtonStyle}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemInfoMissing, Mode=OneWay}"
                   Command="{Binding AddMissingInfoCommand}"
                   ToolTip="Add any missing info for this table to your local database from online sources" />
-          <Button Content="Overwrite All Info" Width="140" Style="{StaticResource FlatHighlightButtonStyle}"
+          <Button Content="Overwrite All Info" Width="140" Style="{StaticResource FlatButtonStyle}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemInfoDifferent, Mode=OneWay}"
                   Command="{Binding OverwriteAllInfoCommand}"
@@ -318,7 +318,6 @@
                   Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
                   ToolTip="Add a new table entry entry to your local database" />
           <Button Content="Update" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
-                  Foreground="{StaticResource AlertBrush}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
                   ToolTip="Update changed info for this table to your local database" />
