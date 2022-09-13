@@ -188,7 +188,8 @@ namespace ClrVpin.Scanner
             }
 
             // delete all hit files except the first
-            Logger.Info($"Fixing.. table: {gameDetail.Game.Name}, description: {gameDetail.Game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
+            Logger.Info($"Fixing.. table: {gameDetail.Game.Name}, description: {gameDetail.Game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}",
+                isHighlight: true);
 
             var (description, warning) = Fuzzy.GetScoreDetail(preferredHit.Score);
             var message = $"- matched (score: {description})..\n  source: {FileUtils.GetFileInfoStatistics(preferredHit.Path)}";

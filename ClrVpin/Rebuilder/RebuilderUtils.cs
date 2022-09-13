@@ -133,7 +133,7 @@ namespace ClrVpin.Rebuilder
                     var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
                     var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
 
-                    Logger.Info($"Merging.. table: {gameDetail.Game.Name}, description: {gameDetail.Game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}");
+                    Logger.Info($"Merging.. table: {gameDetail.Game.Name}, description: {gameDetail.Game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}", isHighlight: true);
                     LogFuzzyMatch();
                     FileUtils.Merge(hit.Path, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified, contentType.KindredExtensionsList, backupFile => hit.Path = backupFile);
                 }

@@ -17,8 +17,9 @@ namespace ClrVpin.Logging
             var color = (Level) value switch
             {
                 Level.Debug => Colors.DarkGray,
-                Level.Warn => Colors.DarkSalmon,
-                Level.Error => Colors.IndianRed,
+                Level.Warn => Colors.Coral,
+                Level.Error => Colors.Red,
+                Level.InfoHighlight => Color.FromArgb(0xff,0x00, 0xc8, 0x53), // styles.xaml: AccentLightBrush
                 _ => Colors.White   // info
             };
 
