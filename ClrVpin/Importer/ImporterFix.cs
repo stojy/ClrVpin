@@ -68,8 +68,8 @@ public static class ImporterFix
             
             // assign Description in the correct preferred format.. the format is VERY important since..
             // - used to update the local DB entry if an update is requested.. used for both fields; Name (vpx) and Description (media)
-            // - used by fix online game which references games by the description in order to include all 3 fields
-            game.Description = $"{game.Name} ({game.Manufacturer} {game.YearString})";
+            // - used by fix online game which references games by the description in order to include all 3 fields.. this is performed earlier on though BEFORE any online fixes are made
+            game.Description = game.CreateDescription();
 
             // perform post-merge fixes, e.g. missing image url
             PostMerge(game);
@@ -262,7 +262,8 @@ public static class ImporterFix
         // - this is very smelly, but treating these as 'exceptional' (and hopefully few!) scenarios, similar to GameDerived.CheckIsOriginal
         // - no need to strip author from the manufactured table as this is done later
         // - todo; report/fix the underlying VPS feed and then remove this code??
-        switch (onlineGame.Description)
+        var description = onlineGame.CreateDescription();
+        switch (description)
         {
             case "Austin Powers (Stern 2001)":
                 FixWrongUrlIpdb(onlineGame, "https://www.ipdb.org/machine.cgi?id=4504");

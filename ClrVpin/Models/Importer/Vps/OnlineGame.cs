@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ClrVpin.Models.Shared.Database;
+using System.Collections.Generic;
 
 namespace ClrVpin.Models.Importer.Vps;
 
@@ -24,4 +25,6 @@ public class OnlineGame : OnlineGameBase
 
     // reference to the highest fuzzy ranked DB match
     public GameHit Hit { get; set; }
+
+    public string CreateDescription() => $"{Name} ({Manufacturer} {Year})";
 }
