@@ -51,13 +51,13 @@ namespace ClrVpin.Logging
             Add(Level.Debug, message);
         }
 
-        public static void Info(string message, bool isDiagnostic = false)
+        public static void Info(string message, bool isDiagnostic = false, bool isHighlight = false)
         {
             if (IsIgnored(isDiagnostic))
                 return;
 
             _logger.Info(message);
-            Add(Level.Info, message);
+            Add(isHighlight ? Level.InfoHighlight : Level.Info, message);
         }
 
         public static void Warn(string message, bool isDiagnostic = false)

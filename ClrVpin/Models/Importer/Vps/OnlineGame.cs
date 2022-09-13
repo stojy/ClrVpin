@@ -1,5 +1,4 @@
-﻿using ClrVpin.Models.Shared.Database;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ClrVpin.Models.Importer.Vps;
 
