@@ -89,7 +89,7 @@ namespace ClrVpin.Importer
             {
                 if (!skipUpdate)
                 {
-                    Logger.Info($"Fixing missing info: table='{game}', {property}='{gameValue()}'");
+                    Logger.Info($"Updating local DB info: table='{game}', property={property}, existing='{gameValue()}', new='{onlineGameValue()}'");
                     updateAction(onlineGameValue());
                 }
 
