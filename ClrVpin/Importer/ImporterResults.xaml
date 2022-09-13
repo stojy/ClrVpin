@@ -27,8 +27,8 @@
   </Style>
 
   <Style x:Key="IsNewUrlButtonStyle" TargetType="Button" BasedOn="{StaticResource UrlButtonStyle}">
-    <Setter Property="Background" Value="{StaticResource AlertBrush}" />
-    <Setter Property="BorderBrush" Value="{StaticResource AlertBrush}" />
+    <Setter Property="Background" Value="{StaticResource AccentLightBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource AccentLightBrush}" />
   </Style>
 
   <Style x:Key="ButtonIconStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
@@ -38,15 +38,15 @@
     <Setter Property="HorizontalContentAlignment" Value="Left" />
   </Style>
 
-  <Style x:Key="HighlightedButtonIconStyle" TargetType="Button" BasedOn="{StaticResource ButtonIconStyle}">
-    <Setter Property="Foreground" Value="{StaticResource AlertBrush}" />
-  </Style>
-
   <Style x:Key="AccentButtonIconStyle" TargetType="Button" BasedOn="{StaticResource ButtonIconStyle}">
     <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
   </Style>
 
-  <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="Coral" False="#89FFFFFF" /> <!--{DynamicResource MaterialDesignBodyLight}-->
+  <Style x:Key="StandardButtonIconStyle" TargetType="Button" BasedOn="{StaticResource ButtonIconStyle}">
+    <Setter Property="Foreground" Value="{StaticResource PrimaryMidBrush}" />
+  </Style>
+
+  <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="#FF00C853" False="#89FFFFFF" /> <!--{DynamicResource MaterialDesignBodyLight}-->
   <converters:BoolToStyleConverter x:Key="IsNewUrlButtonStyleConverter" True="{StaticResource IsNewUrlButtonStyle}" False="{StaticResource UrlButtonStyle}" />
 
   <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
@@ -460,14 +460,14 @@
                               Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
                       </Button>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" Width="30"
+                      <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
                               ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
                       </Button>
-                      <Button Style="{StaticResource HighlightedButtonIconStyle}" Height="30" Width="30"
+                      <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
                               ToolTip="{Binding CreateDatabaseEntryTooltip}"
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.OnlineOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
@@ -555,7 +555,7 @@
                       <WrapPanel>
                         <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Title}"
                                    Foreground="{Binding IsNew, Converter={StaticResource TabItemToColorConverter}}" />
-                        <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0" Foreground="{StaticResource AlertBrush}"
+                        <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0" Foreground="{StaticResource AccentLightBrush}"
                                                  Visibility="{Binding IsNew, Converter={StaticResource ReverseBoolToHiddenConverter}}" />
                       </WrapPanel>
                     </DataTemplate>
