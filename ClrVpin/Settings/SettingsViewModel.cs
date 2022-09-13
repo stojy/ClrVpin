@@ -19,7 +19,7 @@ namespace ClrVpin.Settings
 
             PinballContentTypeModels = Model.Settings.GetPinballContentTypes().Select(contentType => new ContentTypeModel(contentType)).ToList();
 
-            FrontendFolderModel = new FolderTypeModel("Frontend Executable", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
+            FrontendFolderModel = new FolderTypeModel("PinballY/X Frontend Executable", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
             FrontendContentTypeModels = Model.Settings.GetFrontendContentTypes().Select(contentType => new ContentTypeModel(contentType)).ToList();
 
             BackupFolderModel = new FolderTypeModel("Backup Root", Settings.BackupFolder, folder => Settings.BackupFolder = folder);
