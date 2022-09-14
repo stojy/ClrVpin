@@ -46,7 +46,8 @@ public static class ImporterUtils
 
         var onlineGames = (await httpClient.GetFromJsonAsync<OnlineGame[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
 
-        Logger.Info($"Online database: count={onlineGames.Count} (manufactured={onlineGames.Count(onlineGame => !onlineGame.IsOriginal)}, original={onlineGames.Count(onlineGame => onlineGame.IsOriginal)})");
+        Logger.Info($"Online database pre-fix:  count={onlineGames.Count} (manufactured={onlineGames.Count(onlineGame => !GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name))}, " +
+                    $"original={onlineGames.Count(onlineGame => GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name))})");
 
         return onlineGames;
     }
@@ -169,7 +170,7 @@ public static class ImporterUtils
         {
             updateProgress(localOnlyGameDetail.Game.Name, null);
 
-            Logger.Info($"Unmatched local table: '{localOnlyGameDetail.Game.Name}'");
+            Logger.Debug($"Unmatched local table: '{localOnlyGameDetail.Game.Name}'", true);
         });
 
         // merge online and local games into a single collection of GameItem

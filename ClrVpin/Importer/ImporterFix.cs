@@ -92,6 +92,8 @@ public static class ImporterFix
             game.IsTableDownloadAvailable = game.TableFiles.Any(file => file.Urls.Any(url => !url.Broken));
         });
 
+        Logger.Info($"Online database post-fix: count={onlineGames.Count} (manufactured={onlineGames.Count(onlineGame => !onlineGame.IsOriginal)}, original={onlineGames.Count(onlineGame => onlineGame.IsOriginal)})");
+
         // keep the enum private and return a dictionary with key as the string representation (e.g. for display purposes)
         return _statistics.ToDictionary(item => item.Key.GetDescription(), item => item.Value);
     }
@@ -133,9 +135,9 @@ public static class ImporterFix
         // duplicate games are determined by whether entries are have duplicate IPDB url references
         // - only works for manufactured tables of course
         // - e.g. Star Trek and JP's Star Trek share the same IPDB url
-        var duplicateGames = onlineGames.Where(game => !game.IpdbUrl.IsEmpty()).GroupBy(game => game.IpdbUrl).Where(x => x.Count() > 1).ToList();
+        var duplicateGamesGrouping = onlineGames.Where(game => !game.IpdbUrl.IsEmpty()).GroupBy(game => game.IpdbUrl).Where(x => x.Count() > 1).ToList();
 
-        duplicateGames.ForEach(grouping =>
+        duplicateGamesGrouping.ForEach(grouping =>
         {
             // assign the unique and duplicate(s)
             var game = ImporterUtils.GetUniqueGame(grouping.ToList());
@@ -145,7 +147,7 @@ public static class ImporterFix
 
             Logger.Warn($"Merging duplicate tables detected in the online feed, IPDB url: {grouping.Key}\n" +
                         $"- unique:    {game}\n" +
-                        $"- duplicate: {duplicates.Select(x => x.Description).StringJoin()}");
+                        $"- duplicate: {duplicates.Select(x => x.CreateDescription()).StringJoin()}", true);
 
             // process the duplicates
             duplicates.ForEach(duplicate =>
@@ -167,6 +169,8 @@ public static class ImporterFix
                 onlineGames.Remove(duplicate);
             });
         });
+
+        Logger.Debug($"Merged duplicate tables: count={duplicateGamesGrouping.Sum(grouping => grouping.Count() - 1)} (enable diagnostic logging for the table details)");
     }
 
     private static void PostMerge(OnlineGame onlineGame)
