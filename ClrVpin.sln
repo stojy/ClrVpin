@@ -25,7 +25,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "screenshots", "screenshots"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wiki", "wiki", "{7ACAABF4-86F5-4DEB-A6D8-0B0DC0801498}"
 	ProjectSection(SolutionItems) = preProject
-		ClrVpin.wiki\_Sidebar.md = ClrVpin.wiki\_Sidebar.md
 		ClrVpin.wiki\Common-Use-Cases.md = ClrVpin.wiki\Common-Use-Cases.md
 		ClrVpin.wiki\Fuzzy-Logic.md = ClrVpin.wiki\Fuzzy-Logic.md
 		ClrVpin.wiki\Home.md = ClrVpin.wiki\Home.md
@@ -36,8 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wiki", "wiki", "{7ACAABF4-8
 		ClrVpin.wiki\Roadmap.md = ClrVpin.wiki\Roadmap.md
 		ClrVpin.wiki\Screenshots.md = ClrVpin.wiki\Screenshots.md
 		ClrVpin.wiki\Step-By-Step.md = ClrVpin.wiki\Step-By-Step.md
-		ClrVpin.wiki\Step-by-Step1.md = ClrVpin.wiki\Step-by-Step1.md
 		ClrVpin.wiki\TL&DR.md = ClrVpin.wiki\TL&DR.md
+		ClrVpin.wiki\_Sidebar.md = ClrVpin.wiki\_Sidebar.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scanner", "scanner", "{B2EA9621-BFC7-4C92-941E-62F8ABFBAA2E}"
