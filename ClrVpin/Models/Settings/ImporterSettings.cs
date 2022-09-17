@@ -21,5 +21,5 @@ public class ImporterSettings
     public TableAvailabilityOptionEnum SelectedTableAvailabilityOption { get; set; } = TableAvailabilityOptionEnum.Both;
     public DateTime? UpdatedAtDateBegin { get; set; }
     public DateTime? UpdatedAtDateEnd { get; set; }
-    public bool HideTablesWithUnavailableDownload { get; set; }  // tables that don't have any valid download url
+    public bool HideIfNoTableBackglassUpdatesOption { get; set; }  // tables that don't have any valid download url
 }

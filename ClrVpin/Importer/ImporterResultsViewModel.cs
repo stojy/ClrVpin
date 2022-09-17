@@ -49,7 +49,7 @@ namespace ClrVpin.Importer
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
             TableAvailabilityOptionsView = new ListCollectionView<FeatureType>(CreateTableAvailabilityOptions().ToList());
 
-            //HideUnavailableTables = CreateHideUnavailableTablesFeature();
+            HideIfNoTableBackglassUpdatesFeature = CreateHideIfNoTableBackglassUpdatesFeature();
 
             // assign VM properties
             gameItems.ForEach(gameItem =>
@@ -101,6 +101,7 @@ namespace ClrVpin.Importer
                 // - quickest checks placed first to short circuit evaluation of more complex checks
                 Filter = game =>
                     (Settings.SelectedTableAvailabilityOption == TableAvailabilityOptionEnum.Both || Settings.SelectedTableAvailabilityOption == game.OnlineGame?.TableAvailability) &&
+                    (Settings.HideIfNoTableBackglassUpdatesOption == false || game.OnlineGame?.IsTableOrBackglassNew != false) &&
                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || Settings.SelectedTableMatchOption == game.TableMatchType) &&
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || Settings.SelectedTableStyleOption == game.TableStyleOption) &&
                     (YearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearBeginFilter, 0, 50) >= 0) &&
@@ -152,7 +153,7 @@ namespace ClrVpin.Importer
 
             FilterChanged = new ActionCommand(RefreshViews);
 
-            UpdatedFilterChanged = new ActionCommand(() =>
+            UpdatedFilterTimeChanged = new ActionCommand(() =>
             {
                 UpdateIsNew();
                 FilterChanged.Execute(null);
@@ -198,7 +199,7 @@ namespace ClrVpin.Importer
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
         public ListCollectionView<FeatureType> TableAvailabilityOptionsView { get; }
-        public FeatureType HideUnavailableTables { get; }
+        public FeatureType HideIfNoTableBackglassUpdatesFeature { get; }
 
         public string BackupFolder { get; }
         public ICommand NavigateToBackupFolderCommand { get; }
@@ -227,7 +228,7 @@ namespace ClrVpin.Importer
         public OnlineGame SelectedOnlineGame { get; private set; }
 
         public ICommand FilterChanged { get; set; }
-        public ICommand UpdatedFilterChanged { get; set; }
+        public ICommand UpdatedFilterTimeChanged { get; set; }
 
         public ICommand NavigateToIpdbCommand { get; }
         public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
@@ -448,22 +449,21 @@ namespace ClrVpin.Importer
             return featureTypes;
         }
 
-        //private FeatureType CreateHideUnavailableTablesFeature()
-        //{
-        //    return new FeatureType(0)
-        //    {
-        //        Description = "Hide Unavailable",
-        //        Tip = "Hide tables that are unavailable for download because no valid table URL(s) exist",
-        //        IsSupported = true,
-        //        IsActive = Settings.HideTablesWithUnavailableDownload,
-        //        SelectedCommand = new ActionCommand(() =>
-        //        {
-        //            Settings.HideTablesWithUnavailableDownload = !Settings.HideTablesWithUnavailableDownload;
-        //            FilterChanged?.Execute(null);
-        //        }),
-        //        IsHighlighted = false
-        //    };
-        //}
+        private FeatureType CreateHideIfNoTableBackglassUpdatesFeature()
+        {
+            return new FeatureType(0)
+            {
+                Description = "Hide Non-Table/Backglass Updates",
+                Tip = "Hide tables that do not have any new table or backglass file update(s)",
+                IsSupported = true,
+                IsActive = Settings.HideIfNoTableBackglassUpdatesOption,
+                SelectedCommand = new ActionCommand(() =>
+                {
+                    Settings.HideIfNoTableBackglassUpdatesOption = !Settings.HideIfNoTableBackglassUpdatesOption;
+                    FilterChanged?.Execute(null);
+                }),
+            };
+        }
 
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Utils.Extensions;
 
 namespace ClrVpin.Models.Importer.Vps;
 
@@ -25,5 +27,6 @@ public class OnlineGame : OnlineGameBase
     // reference to the highest fuzzy ranked DB match
     public GameHit Hit { get; set; }
 
+    public bool IsTableOrBackglassNew => AllFilesList.Where(fileList => fileList.Title.In("Tables", "Backglasses")).Any(fileList => fileList.IsNew);
     public string CreateDescription() => $"{Name} ({Manufacturer} {Year})";
 }
