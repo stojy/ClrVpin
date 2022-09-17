@@ -15,7 +15,7 @@ public class OnlineGame : OnlineGameBase
 
     public UrlSelection ImageUrlSelection { get; set; }
     public string YearString { get; set; }
-    public bool IsTableDownloadAvailable { get; set; }
+    public TableAvailabilityOptionEnum TableAvailability { get; set; }
 
     public bool IsOriginal { get; set; }
 

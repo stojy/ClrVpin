@@ -89,7 +89,7 @@ public static class ImporterFix
             game.AltSoundFiles = game.AltSoundFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToList();
 
-            game.IsTableDownloadAvailable = game.TableFiles.Any(file => file.Urls.Any(url => !url.Broken));
+            game.TableAvailability = game.TableFiles.Any(file => file.Urls.Any(url => !url.Broken)) ? TableAvailabilityOptionEnum.Available : TableAvailabilityOptionEnum.Unavailable;
         });
 
         Logger.Info($"Online database post-fix: count={onlineGames.Count} (manufactured={onlineGames.Count(onlineGame => !onlineGame.IsOriginal)}, original={onlineGames.Count(onlineGame => onlineGame.IsOriginal)})");

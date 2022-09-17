@@ -47,8 +47,9 @@ namespace ClrVpin.Importer
 
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
+            TableAvailabilityOptionsView = new ListCollectionView<FeatureType>(CreateTableAvailabilityOptions().ToList());
 
-            HideUnavailableTables = CreateHideUnavailableTablesFeature();
+            //HideUnavailableTables = CreateHideUnavailableTablesFeature();
 
             // assign VM properties
             gameItems.ForEach(gameItem =>
@@ -99,7 +100,7 @@ namespace ClrVpin.Importer
                 // filter the table names list to reflect the various view filtering criteria
                 // - quickest checks placed first to short circuit evaluation of more complex checks
                 Filter = game =>
-                    (Settings.HideUnavailableTables == false || Settings.SelectedTableMatchOption != TableMatchOptionEnum.OnlineOnly || game.OnlineGame?.IsTableDownloadAvailable == true) &&
+                    (Settings.SelectedTableAvailabilityOption == TableAvailabilityOptionEnum.Both || Settings.SelectedTableAvailabilityOption == game.OnlineGame?.TableAvailability) &&
                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || Settings.SelectedTableMatchOption == game.TableMatchType) &&
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || Settings.SelectedTableStyleOption == game.TableStyleOption) &&
                     (YearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearBeginFilter, 0, 50) >= 0) &&
@@ -196,6 +197,7 @@ namespace ClrVpin.Importer
 
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
+        public ListCollectionView<FeatureType> TableAvailabilityOptionsView { get; }
         public FeatureType HideUnavailableTables { get; }
 
         public string BackupFolder { get; }
@@ -420,22 +422,48 @@ namespace ClrVpin.Importer
             return featureTypes;
         }
 
-        private FeatureType CreateHideUnavailableTablesFeature()
+        private IEnumerable<FeatureType> CreateTableAvailabilityOptions()
         {
-            return new FeatureType(0)
+            // all table style options
+            var featureTypes = StaticSettings.TableAvailabilityOptions.Select(tableAvailabilityOption =>
             {
-                Description = "Hide Unavailable",
-                Tip = "Hide missing tables that are not available for download",
-                IsSupported = true,
-                IsActive = Settings.HideUnavailableTables,
-                SelectedCommand = new ActionCommand(() =>
+                var featureType = new FeatureType((int)tableAvailabilityOption.Enum)
                 {
-                    Settings.HideUnavailableTables = !Settings.HideUnavailableTables;
-                    FilterChanged?.Execute(null);
-                }),
-                IsHighlighted = false
-            };
+                    Tag = "TableAvailability",
+                    Description = tableAvailabilityOption.Description,
+                    Tip = tableAvailabilityOption.Tip,
+                    IsSupported = true,
+                    IsActive = tableAvailabilityOption.Enum == Model.Settings.Importer.SelectedTableAvailabilityOption,
+                    IsHighlighted = tableAvailabilityOption.Enum == TableAvailabilityOptionEnum.Both,
+                    SelectedCommand = new ActionCommand(() =>
+                    {
+                        Model.Settings.Importer.SelectedTableAvailabilityOption = tableAvailabilityOption.Enum;
+                        FilterChanged.Execute(null);
+                    })
+                };
+
+                return featureType;
+            }).ToList();
+
+            return featureTypes;
         }
+
+        //private FeatureType CreateHideUnavailableTablesFeature()
+        //{
+        //    return new FeatureType(0)
+        //    {
+        //        Description = "Hide Unavailable",
+        //        Tip = "Hide tables that are unavailable for download because no valid table URL(s) exist",
+        //        IsSupported = true,
+        //        IsActive = Settings.HideTablesWithUnavailableDownload,
+        //        SelectedCommand = new ActionCommand(() =>
+        //        {
+        //            Settings.HideTablesWithUnavailableDownload = !Settings.HideTablesWithUnavailableDownload;
+        //            FilterChanged?.Execute(null);
+        //        }),
+        //        IsHighlighted = false
+        //    };
+        //}
 
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 

@@ -18,7 +18,8 @@ public class ImporterSettings
     // display result filtering criteria
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
     public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.LocalAndOnline;
+    public TableAvailabilityOptionEnum SelectedTableAvailabilityOption { get; set; } = TableAvailabilityOptionEnum.Both;
     public DateTime? UpdatedAtDateBegin { get; set; }
     public DateTime? UpdatedAtDateEnd { get; set; }
-    public bool HideUnavailableTables { get; set; }  // tables that don't have any valid download url
+    public bool HideTablesWithUnavailableDownload { get; set; }  // tables that don't have any valid download url
 }
