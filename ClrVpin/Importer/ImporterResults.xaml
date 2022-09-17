@@ -21,7 +21,7 @@
     <controls:SharedResourceDictionary Source="\Shared\Notification.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <Style x:Key="UrlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFloatingActionSecondaryDarkButton}">
+  <Style x:Key="UrlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFloatingActionDarkButton}">
     <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
     <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
   </Style>
