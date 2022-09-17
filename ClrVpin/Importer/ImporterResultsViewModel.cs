@@ -173,10 +173,13 @@ namespace ClrVpin.Importer
 
             GameItemSelectedCommand = new ActionCommand(() =>
             {
-                // override the selected tab item for the newly selected game
-                // - keep the existing file collection (aka tab item) if the new game has files in this category, else select the first file collection (aka 'tables')
-                var selectedFileCollection = SelectedGameItem?.OnlineGame?.AllFilesList
-                    .FirstOrDefault(fileList => fileList.Title == SelectedFileCollection?.Title && fileList.Count > 0) ?? SelectedGameItem?.OnlineGame?.AllFilesList.First();
+                // re-assign the selected tab item when the selected game is changed, priority order..
+                // - select the first tab item that has new file content, e.g. tables, backglasses, etc.
+                // - else, select the first tab that has file content
+                // - else, select the first tab
+                var selectedFileCollection = SelectedGameItem?.OnlineGame?.AllFilesList.FirstOrDefault(fileList => fileList.IsNew) ?? 
+                                             SelectedGameItem?.OnlineGame?.AllFilesList.FirstOrDefault(fileList => fileList.Count > 0) ?? 
+                                             SelectedGameItem?.OnlineGame?.AllFilesList.First();
 
                 // assign a convenience property to avoid a *lot* of nested referenced in the xaml
                 SelectedOnlineGame = SelectedGameItem?.OnlineGame;
