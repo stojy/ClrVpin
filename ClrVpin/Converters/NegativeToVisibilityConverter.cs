@@ -8,8 +8,8 @@ namespace ClrVpin.Converters
     [ValueConversion(typeof(object), typeof(Visibility))]
     public class NegativeToVisibilityConverter : IValueConverter
     {
-        public Visibility True { get; set; } = Visibility.Collapsed;
-        public Visibility False { get; set; } = Visibility.Visible;
+        public Visibility True { get; set; } = Visibility.Visible;
+        public Visibility False { get; set; } = Visibility.Collapsed;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

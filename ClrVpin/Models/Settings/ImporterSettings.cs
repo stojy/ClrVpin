@@ -16,10 +16,14 @@ public class ImporterSettings
     public ObservableCollection<FixFeedOptionEnum> SelectedFeedFixOptions { get; set; } = new();
 
     // display result filtering criteria
+    
+    // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global - setter is assigned member expression, refer Accessor.cs
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
-    public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.LocalAndOnline;
+    public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.All;
     public TableAvailabilityOptionEnum SelectedTableAvailabilityOption { get; set; } = TableAvailabilityOptionEnum.Both;
-    public TableNewContentOptionEnum SelectedTableNewContentOption { get; set; } = TableNewContentOptionEnum.TableBackglassDmd;
+    public TableNewContentOptionEnum SelectedTableNewContentOption { get; set; } = TableNewContentOptionEnum.All;
+    // ReSharper restore AutoPropertyCanBeMadeGetOnly.Global
+    
     public DateTime? UpdatedAtDateBegin { get; set; }
     public DateTime? UpdatedAtDateEnd { get; set; }
 }

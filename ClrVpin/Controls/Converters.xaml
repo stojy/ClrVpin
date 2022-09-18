@@ -18,7 +18,7 @@
   <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" True="Visible" False="Collapsed" />
   <converters:NullToVisibilityConverter x:Key="ReverseNullToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:NegativeToVisibilityConverter x:Key="NegativeToVisibilityConverter" />
-  <converters:NegativeToVisibilityConverter x:Key="PositiveToVisibilityConverter" True="Visible" False="Collapsed" />
+  <converters:NegativeToVisibilityConverter x:Key="PositiveToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroToBoolConverter" TrueValue="true" FalseValue="false" />
   
   

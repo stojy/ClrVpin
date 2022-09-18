@@ -49,7 +49,7 @@ namespace ClrVpin.Importer
             TableStyleOptionsView = CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured, () => Model.Settings.Importer.SelectedTableStyleOption);
             TableMatchOptionsView = CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All, () => Model.Settings.Importer.SelectedTableMatchOption);
             TableAvailabilityOptionsView = CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Both, () => Model.Settings.Importer.SelectedTableAvailabilityOption);
-            TableNewContentOptionsView = CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.TableBackglassDmd, () => Model.Settings.Importer.SelectedTableNewContentOption);
+            TableNewContentOptionsView = CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.All, () => Model.Settings.Importer.SelectedTableNewContentOption);
 
             // assign VM properties
             gameItems.ForEach(gameItem =>

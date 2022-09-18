@@ -372,8 +372,9 @@
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
-                
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Origin" controls:GenericAttached.Double="70" controls:GenericAttached.Double2="14">
+
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Origin" controls:GenericAttached.Double="70"
+                                controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableStyleOptionsView}" />
                 </ContentControl>
               </Grid>
@@ -390,7 +391,8 @@
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="URL" controls:GenericAttached.Double="70" controls:GenericAttached.Double2="14">
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="URL" controls:GenericAttached.Double="70"
+                                controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableAvailabilityOptionsView}" />
                 </ContentControl>
               </Grid>
@@ -508,88 +510,102 @@
 
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
           <Grid>
-            <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
+            <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource NegativeToVisibilityConverter}}"
                         VerticalAlignment="Center" HorizontalAlignment="Center">
               <materialDesign:PackIcon Kind="HelpCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
-              <TextBlock Text="Select a table from the left hand side" FontSize="24" />
+              <TextBlock Text="Select a table to view the online information" FontSize="28" />
             </StackPanel>
 
-            <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource NegativeToVisibilityConverter}}">
-              <UniformGrid Columns="3">
-                <GroupBox Header="Hardware: Table Info">
-                  <StackPanel Margin="5,0">
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Name}" />
-                    <UniformGrid Columns="2">
-                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Manufacturer"
-                                      controls:GenericAttached.String2="{Binding SelectedOnlineGame.Manufacturer}" />
-                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Year" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Year}" />
-                    </UniformGrid>
-                    <UniformGrid Columns="2">
-                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Type" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Type}" />
-                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Players" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Players}" />
-                    </UniformGrid>
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="MPU" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Mpu}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
-                                    controls:GenericAttached.String2="{Binding SelectedOnlineGame.Themes, Converter={StaticResource ListToStringConverter}}" />
-                    <ContentControl Template="{StaticResource KeyValuePair}" controls:GenericAttached.String="IPDB">
-                      <Hyperlink Command="{Binding NavigateToIpdbCommand}" CommandParameter="{Binding SelectedOnlineGame.IpdbUrl}">
-                        <TextBlock Text="{Binding SelectedOnlineGame.IpdbUrl}" Style="{StaticResource ValueTextBlockStyle}" />
-                      </Hyperlink>
-                    </ContentControl>
-                  </StackPanel>
+            <StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource NullToVisibilityConverter}}"
+                        VerticalAlignment="Center" HorizontalAlignment="Center">
+              <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
+                          VerticalAlignment="Center" HorizontalAlignment="Center">
+                <materialDesign:PackIcon Kind="AlertCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
+                <TextBlock Text="Online information is not available for unmatched tables" FontSize="28" />
+              </StackPanel>
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
+              <StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource ReverseNullToVisibilityConverter}}">
+                <UniformGrid Columns="3">
+                  <GroupBox Header="Hardware: Table Info">
+                    <StackPanel Margin="5,0">
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Name}" />
+                      <UniformGrid Columns="2">
+                        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Manufacturer"
+                                        controls:GenericAttached.String2="{Binding SelectedOnlineGame.Manufacturer}" />
+                        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Year" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Year}" />
+                      </UniformGrid>
+                      <UniformGrid Columns="2">
+                        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Type" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Type}" />
+                        <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Players"
+                                        controls:GenericAttached.String2="{Binding SelectedOnlineGame.Players}" />
+                      </UniformGrid>
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="MPU" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Mpu}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
+                                      controls:GenericAttached.String2="{Binding SelectedOnlineGame.Themes, Converter={StaticResource ListToStringConverter}}" />
+                      <ContentControl Template="{StaticResource KeyValuePair}" controls:GenericAttached.String="IPDB">
+                        <Hyperlink Command="{Binding NavigateToIpdbCommand}" CommandParameter="{Binding SelectedOnlineGame.IpdbUrl}">
+                          <TextBlock Text="{Binding SelectedOnlineGame.IpdbUrl}" Style="{StaticResource ValueTextBlockStyle}" />
+                        </Hyperlink>
+                      </ContentControl>
+                    </StackPanel>
+                  </GroupBox>
+
+                  <ContentControl Content="{Binding SelectedOnlineGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" Margin="5,0" />
+
+                  <GroupBox Header="Software: Virtualized Info">
+                    <StackPanel Margin="5,0">
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated"
+                                      controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
+                                      controls:GenericAttached.String2="{Binding SelectedOnlineGame.Features, Converter={StaticResource ListToStringConverter}}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Designers"
+                                      controls:GenericAttached.String2="{Binding SelectedOnlineGame.Designers, Converter={StaticResource ListToStringConverter}}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created"
+                                      controls:GenericAttached.String2="{Binding SelectedOnlineGame.LastCreatedAt}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated"
+                                      controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
+                      <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Broken}" />
+                    </StackPanel>
+                  </GroupBox>
+                </UniformGrid>
+
+                <GroupBox Margin="0,10,0,0" Header="Files">
+                  <GroupBox.Resources>
+                    <Style x:Key="TabControlStyle" TargetType="TabControl" BasedOn="{StaticResource MaterialDesignTabControl}" />
+                  </GroupBox.Resources>
+
+                  <TabControl Style="{StaticResource TabControlStyle}" ItemsSource="{Binding SelectedOnlineGame.AllFilesList}" SelectedItem="{Binding SelectedFileCollection}">
+                    <TabControl.ItemTemplate>
+                      <!--tab item header content-->
+                      <DataTemplate DataType="{x:Type vps:FileCollection}">
+                        <WrapPanel>
+                          <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Title}"
+                                     Foreground="{Binding IsNew, Converter={StaticResource TabItemToColorConverter}}" />
+                          <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0" Foreground="{StaticResource AccentLightBrush}"
+                                                   Visibility="{Binding IsNew, Converter={StaticResource ReverseBoolToHiddenConverter}}" />
+                        </WrapPanel>
+                      </DataTemplate>
+                    </TabControl.ItemTemplate>
+
+                    <TabControl.ContentTemplate>
+                      <DataTemplate>
+                        <!-- selected tab item contents (underneath) -->
+                        <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FilesTemplate}" />
+                      </DataTemplate>
+                    </TabControl.ContentTemplate>
+
+                    <TabControl.ItemContainerStyle>
+                      <!-- tab item header style, e.g. padding, disabled, etc -->
+                      <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MaterialDesignTabItem}" d:DataContext="{d:DesignInstance vps:FileCollection}">
+                        <Setter Property="IsEnabled" Value="{Binding Count}" />
+                        <Setter Property="Padding" Value="6,12" />
+                      </Style>
+                    </TabControl.ItemContainerStyle>
+                  </TabControl>
                 </GroupBox>
-
-                <ContentControl Content="{Binding SelectedOnlineGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" Margin="5,0" />
-
-                <GroupBox Header="Software: Virtualized Info">
-                  <StackPanel Margin="5,0">
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                                    controls:GenericAttached.String2="{Binding SelectedOnlineGame.Features, Converter={StaticResource ListToStringConverter}}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Designers"
-                                    controls:GenericAttached.String2="{Binding SelectedOnlineGame.Designers, Converter={StaticResource ListToStringConverter}}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created"
-                                    controls:GenericAttached.String2="{Binding SelectedOnlineGame.LastCreatedAt}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Broken}" />
-                  </StackPanel>
-                </GroupBox>
-              </UniformGrid>
-
-              <GroupBox Margin="0,10,0,0" Header="Files">
-                <GroupBox.Resources>
-                  <Style x:Key="TabControlStyle" TargetType="TabControl" BasedOn="{StaticResource MaterialDesignTabControl}" />
-                </GroupBox.Resources>
-
-                <TabControl Style="{StaticResource TabControlStyle}" ItemsSource="{Binding SelectedOnlineGame.AllFilesList}" SelectedItem="{Binding SelectedFileCollection}">
-                  <TabControl.ItemTemplate>
-                    <!--tab item header content-->
-                    <DataTemplate DataType="{x:Type vps:FileCollection}">
-                      <WrapPanel>
-                        <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Title}"
-                                   Foreground="{Binding IsNew, Converter={StaticResource TabItemToColorConverter}}" />
-                        <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0" Foreground="{StaticResource AccentLightBrush}"
-                                                 Visibility="{Binding IsNew, Converter={StaticResource ReverseBoolToHiddenConverter}}" />
-                      </WrapPanel>
-                    </DataTemplate>
-                  </TabControl.ItemTemplate>
-
-                  <TabControl.ContentTemplate>
-                    <DataTemplate>
-                      <!-- selected tab item contents (underneath) -->
-                      <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FilesTemplate}" />
-                    </DataTemplate>
-                  </TabControl.ContentTemplate>
-
-                  <TabControl.ItemContainerStyle>
-                    <!-- tab item header style, e.g. padding, disabled, etc -->
-                    <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MaterialDesignTabItem}" d:DataContext="{d:DesignInstance vps:FileCollection}">
-                      <Setter Property="IsEnabled" Value="{Binding Count}" />
-                      <Setter Property="Padding" Value="6,12" />
-                    </Style>
-                  </TabControl.ItemContainerStyle>
-                </TabControl>
-              </GroupBox>
+              </StackPanel>
             </StackPanel>
           </Grid>
         </DockPanel>
