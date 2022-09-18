@@ -48,8 +48,7 @@ namespace ClrVpin.Importer
             TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
             TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
             TableAvailabilityOptionsView = new ListCollectionView<FeatureType>(CreateTableAvailabilityOptions().ToList());
-
-            HideIfNoTableBackglassUpdatesFeature = CreateHideIfNoTableBackglassUpdatesFeature();
+            TableNewContentOptionsView = new ListCollectionView<FeatureType>(CreateTableNewContentOptions().ToList());
 
             // assign VM properties
             gameItems.ForEach(gameItem =>
@@ -100,8 +99,8 @@ namespace ClrVpin.Importer
                 // filter the table names list to reflect the various view filtering criteria
                 // - quickest checks placed first to short circuit evaluation of more complex checks
                 Filter = game =>
-                    (Settings.SelectedTableAvailabilityOption == TableAvailabilityOptionEnum.Both || Settings.SelectedTableAvailabilityOption == game.OnlineGame?.TableAvailability) &&
-                    (Settings.HideIfNoTableBackglassUpdatesOption == false || game.OnlineGame?.IsTableOrBackglassNew != false) &&
+                    (Settings.SelectedTableAvailabilityOption == TableAvailabilityOptionEnum.Both || game.OnlineGame?.TableAvailability == Settings.SelectedTableAvailabilityOption) &&
+                    (Settings.SelectedTableNewContentOption == TableNewContentOptionEnum.All || game.OnlineGame?.NewContentType == Settings.SelectedTableNewContentOption) &&
                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || Settings.SelectedTableMatchOption == game.TableMatchType) &&
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || Settings.SelectedTableStyleOption == game.TableStyleOption) &&
                     (YearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearBeginFilter, 0, 50) >= 0) &&
@@ -161,7 +160,8 @@ namespace ClrVpin.Importer
 
             NavigateToIpdbCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
-            UpdateIsNew();
+            // force an 'update filter time' change so that the correct 'IsNew' values are calculated
+            UpdatedFilterTimeChanged.Execute(null);
 
             BackupFolder = Model.Settings.BackupFolder;
             NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
@@ -199,7 +199,7 @@ namespace ClrVpin.Importer
         public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
         public ListCollectionView<FeatureType> TableAvailabilityOptionsView { get; }
-        public FeatureType HideIfNoTableBackglassUpdatesFeature { get; }
+        public ListCollectionView<FeatureType> TableNewContentOptionsView { get; }
 
         public string BackupFolder { get; }
         public ICommand NavigateToBackupFolderCommand { get; }
@@ -367,19 +367,19 @@ namespace ClrVpin.Importer
         private IEnumerable<FeatureType> CreateTableStyleOptions()
         {
             // all table style options
-            var featureTypes = StaticSettings.TableStyleOptions.Select(tableStyleOption =>
+            var featureTypes = StaticSettings.TableStyleOptions.Select(option =>
             {
-                var featureType = new FeatureType((int)tableStyleOption.Enum)
+                var featureType = new FeatureType((int)option.Enum)
                 {
                     Tag = "TableStyleOption",
-                    Description = tableStyleOption.Description,
-                    Tip = tableStyleOption.Tip,
+                    Description = option.Description,
+                    Tip = option.Tip,
                     IsSupported = true,
-                    IsActive = tableStyleOption.Enum == Model.Settings.Importer.SelectedTableStyleOption,
-                    IsHighlighted = tableStyleOption.Enum == TableStyleOptionEnum.Manufactured,
+                    IsActive = option.Enum == Model.Settings.Importer.SelectedTableStyleOption,
+                    IsHighlighted = option.Enum == TableStyleOptionEnum.Manufactured,
                     SelectedCommand = new ActionCommand(() =>
                     {
-                        Model.Settings.Importer.SelectedTableStyleOption = tableStyleOption.Enum;
+                        Model.Settings.Importer.SelectedTableStyleOption = option.Enum;
                         FilterChanged.Execute(null);
                     })
                 };
@@ -397,24 +397,24 @@ namespace ClrVpin.Importer
                 Model.Settings.Importer.SelectedTableMatchOption = TableMatchOptionEnum.OnlineOnly;
 
             // all table match options
-            var featureTypes = StaticSettings.TableMatchOptions.Select(tableMatchOption =>
+            var featureTypes = StaticSettings.TableMatchOptions.Select(option =>
             {
-                var featureType = new FeatureType((int)tableMatchOption.Enum)
+                var featureType = new FeatureType((int)option.Enum)
                 {
                     Tag = "TableMatchOption",
-                    Description = tableMatchOption.Description,
-                    Tip = tableMatchOption.Tip,
-                    IsSupported = tableMatchOption.Enum == TableMatchOptionEnum.OnlineOnly || IsMatchingEnabled,
-                    IsActive = tableMatchOption.Enum == Model.Settings.Importer.SelectedTableMatchOption,
-                    IsHighlighted = tableMatchOption.Enum == TableMatchOptionEnum.LocalAndOnline,
+                    Description = option.Description,
+                    Tip = option.Tip,
+                    IsSupported = option.Enum == TableMatchOptionEnum.OnlineOnly || IsMatchingEnabled,
+                    IsActive = option.Enum == Model.Settings.Importer.SelectedTableMatchOption,
+                    IsHighlighted = option.Enum == TableMatchOptionEnum.LocalAndOnline,
                     SelectedCommand = new ActionCommand(() =>
                     {
-                        Model.Settings.Importer.SelectedTableMatchOption = tableMatchOption.Enum;
+                        Model.Settings.Importer.SelectedTableMatchOption = option.Enum;
                         FilterChanged.Execute(null);
                     })
                 };
 
-                if (!IsMatchingEnabled && tableMatchOption.Enum != TableMatchOptionEnum.OnlineOnly)
+                if (!IsMatchingEnabled && option.Enum != TableMatchOptionEnum.OnlineOnly)
                     featureType.Tip += MatchingDisabledMessage;
 
                 return featureType;
@@ -426,19 +426,19 @@ namespace ClrVpin.Importer
         private IEnumerable<FeatureType> CreateTableAvailabilityOptions()
         {
             // all table style options
-            var featureTypes = StaticSettings.TableAvailabilityOptions.Select(tableAvailabilityOption =>
+            var featureTypes = StaticSettings.TableAvailabilityOptions.Select(option =>
             {
-                var featureType = new FeatureType((int)tableAvailabilityOption.Enum)
+                var featureType = new FeatureType((int)option.Enum)
                 {
                     Tag = "TableAvailability",
-                    Description = tableAvailabilityOption.Description,
-                    Tip = tableAvailabilityOption.Tip,
+                    Description = option.Description,
+                    Tip = option.Tip,
                     IsSupported = true,
-                    IsActive = tableAvailabilityOption.Enum == Model.Settings.Importer.SelectedTableAvailabilityOption,
-                    IsHighlighted = tableAvailabilityOption.Enum == TableAvailabilityOptionEnum.Both,
+                    IsActive = option.Enum == Model.Settings.Importer.SelectedTableAvailabilityOption,
+                    IsHighlighted = option.Enum == TableAvailabilityOptionEnum.Both,
                     SelectedCommand = new ActionCommand(() =>
                     {
-                        Model.Settings.Importer.SelectedTableAvailabilityOption = tableAvailabilityOption.Enum;
+                        Model.Settings.Importer.SelectedTableAvailabilityOption = option.Enum;
                         FilterChanged.Execute(null);
                     })
                 };
@@ -449,20 +449,30 @@ namespace ClrVpin.Importer
             return featureTypes;
         }
 
-        private FeatureType CreateHideIfNoTableBackglassUpdatesFeature()
+        private IEnumerable<FeatureType> CreateTableNewContentOptions()
         {
-            return new FeatureType(0)
+            // all table style options
+            var featureTypes = StaticSettings.TableNewContentOptions.Select(option =>
             {
-                Description = "Hide Non-Table/Backglass Updates",
-                Tip = "Hide tables that do not have any new table or backglass file update(s)",
-                IsSupported = true,
-                IsActive = Settings.HideIfNoTableBackglassUpdatesOption,
-                SelectedCommand = new ActionCommand(() =>
+                var featureType = new FeatureType((int)option.Enum)
                 {
-                    Settings.HideIfNoTableBackglassUpdatesOption = !Settings.HideIfNoTableBackglassUpdatesOption;
-                    FilterChanged?.Execute(null);
-                }),
-            };
+                    Tag = "NewContent",
+                    Description = option.Description,
+                    Tip = option.Tip,
+                    IsSupported = true,
+                    IsActive = option.Enum == Model.Settings.Importer.SelectedTableNewContentOption,
+                    IsHighlighted = option.Enum == TableNewContentOptionEnum.TableBackglassDmd,
+                    SelectedCommand = new ActionCommand(() =>
+                    {
+                        Model.Settings.Importer.SelectedTableNewContentOption = option.Enum;
+                        FilterChanged.Execute(null);
+                    })
+                };
+
+                return featureType;
+            }).ToList();
+
+            return featureTypes;
         }
 
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
@@ -471,22 +481,40 @@ namespace ClrVpin.Importer
         {
             // flag models if they satisfy the update time range
             var onlineGames = GetOnlineGames();
-            onlineGames.ForEach(onlineGame => onlineGame.AllFiles.ForEach(kv =>
+            onlineGames.ForEach(onlineGame =>
             {
-                var (type, files) = kv;
-                files.ForEach(file =>
+                onlineGame.AllFiles.ForEach(kv =>
                 {
-                    // flag file - if the update time range is satisfied
-                    file.IsNew = file.UpdatedAt >= (Settings.UpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.UpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
+                    var (type, files) = kv;
+                    files.ForEach(file =>
+                    {
+                        // flag file - if the update time range is satisfied
+                        file.IsNew = file.UpdatedAt >= (Settings.UpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.UpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
 
-                    // flag each url within the file - required to allow for simpler view binding
-                    file.Urls.ForEach(url => url.IsNew = file.IsNew);
+                        // flag each url within the file - required to allow for simpler view binding
+                        file.Urls.ForEach(url => url.IsNew = file.IsNew);
+                    });
+
+                    // flag file collection info
+                    files.IsNew = files.Any(file => file.IsNew);
+                    files.Title = type;
                 });
 
-                // flag file collection (e.g. backglasses)
-                files.IsNew = files.Any(file => file.IsNew);
-                files.Title = type;
-            }));
+                // assign a helper property to designate games 'new content type', i.e. avoid re-calculating this every time we have a non-update time filter change
+                if (onlineGame.AllFiles.Any(kv => kv.Value.IsNew))
+                {
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if (onlineGame.AllFiles.Where(kv => kv.Key.In("Tables", "Backglasses", "DMDs")).Any(kv => kv.Value.IsNew))
+                        onlineGame.NewContentType = TableNewContentOptionEnum.TableBackglassDmd;
+                    else
+                        onlineGame.NewContentType = TableNewContentOptionEnum.Other;
+                }
+                else
+                {
+                    // this game has no new content within the given time range
+                    onlineGame.NewContentType = null;
+                }
+            });
         }
 
         private static void NavigateToUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });

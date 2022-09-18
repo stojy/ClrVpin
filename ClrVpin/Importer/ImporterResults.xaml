@@ -398,7 +398,20 @@
 
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" BorderBrush="#848484" BorderThickness="2,0,0,0" Margin="7,5" />
 
-                <ContentControl Content="{Binding HideIfNoTableBackglassUpdatesFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+                <WrapPanel>
+                  <ItemsControl ItemsSource="{Binding TableNewContentOptionsView}">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <WrapPanel />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate DataType="shared:FeatureType">
+                        <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </WrapPanel>
               </WrapPanel>
             </StackPanel>
           </GroupBox>

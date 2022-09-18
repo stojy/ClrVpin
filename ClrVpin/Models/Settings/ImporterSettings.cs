@@ -10,16 +10,16 @@ namespace ClrVpin.Models.Settings;
 public class ImporterSettings
 {
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
-    public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new ObservableCollection<HitTypeEnum>();
+    public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new();
 
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
-    public ObservableCollection<FixFeedOptionEnum> SelectedFeedFixOptions { get; set; } = new ObservableCollection<FixFeedOptionEnum>();
+    public ObservableCollection<FixFeedOptionEnum> SelectedFeedFixOptions { get; set; } = new();
 
     // display result filtering criteria
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
     public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.LocalAndOnline;
     public TableAvailabilityOptionEnum SelectedTableAvailabilityOption { get; set; } = TableAvailabilityOptionEnum.Both;
+    public TableNewContentOptionEnum SelectedTableNewContentOption { get; set; } = TableNewContentOptionEnum.TableBackglassDmd;
     public DateTime? UpdatedAtDateBegin { get; set; }
     public DateTime? UpdatedAtDateEnd { get; set; }
-    public bool HideIfNoTableBackglassUpdatesOption { get; set; }  // tables that don't have any valid download url
 }
