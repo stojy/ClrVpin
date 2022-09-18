@@ -73,6 +73,21 @@
     </ListBox>
   </DataTemplate>
 
+  <DataTemplate x:Key="FeatureTypeTemplate">
+    <ItemsControl ItemsSource="{Binding}">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate DataType="shared:FeatureType">
+          <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </DataTemplate>
+
   <!--an insane attempt to use a control template..
       - failed because Command won't fire (for some reason) on the behaviour
       - kept here commented out as a reminder for future me not to try this again!
@@ -346,73 +361,39 @@
                 </DatePicker>
               </WrapPanel>
 
-              <WrapPanel Margin="0,10,0,0">
-                <WrapPanel>
-                  <ItemsControl ItemsSource="{Binding TableStyleOptionsView}">
-                    <ItemsControl.ItemsPanel>
-                      <ItemsPanelTemplate>
-                        <WrapPanel />
-                      </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate DataType="shared:FeatureType">
-                        <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </WrapPanel>
+              <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="1.1*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ContentControl Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Fuzzy" controls:GenericAttached.Double="50" controls:GenericAttached.Double2="14">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableMatchOptionsView}" />
+                </ContentControl>
 
-                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" BorderBrush="#848484" BorderThickness="2,0,0,0" Margin="7,5" />
+                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
+                
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Origin" controls:GenericAttached.Double="70" controls:GenericAttached.Double2="14">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableStyleOptionsView}" />
+                </ContentControl>
+              </Grid>
 
-                <WrapPanel>
-                  <ItemsControl ItemsSource="{Binding TableMatchOptionsView}">
-                    <ItemsControl.ItemsPanel>
-                      <ItemsPanelTemplate>
-                        <WrapPanel />
-                      </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate DataType="shared:FeatureType">
-                        <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </WrapPanel>
-              </WrapPanel>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="1.1*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ContentControl Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="New" controls:GenericAttached.Double="50" controls:GenericAttached.Double2="14">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableNewContentOptionsView}" />
+                </ContentControl>
 
-              <WrapPanel>
-                <WrapPanel>
-                  <ItemsControl ItemsSource="{Binding TableAvailabilityOptionsView}">
-                    <ItemsControl.ItemsPanel>
-                      <ItemsPanelTemplate>
-                        <WrapPanel />
-                      </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate DataType="shared:FeatureType">
-                        <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </WrapPanel>
+                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
-                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" BorderBrush="#848484" BorderThickness="2,0,0,0" Margin="7,5" />
-
-                <WrapPanel>
-                  <ItemsControl ItemsSource="{Binding TableNewContentOptionsView}">
-                    <ItemsControl.ItemsPanel>
-                      <ItemsPanelTemplate>
-                        <WrapPanel />
-                      </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate DataType="shared:FeatureType">
-                        <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </WrapPanel>
-              </WrapPanel>
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="URL" controls:GenericAttached.Double="70" controls:GenericAttached.Double2="14">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableAvailabilityOptionsView}" />
+                </ContentControl>
+              </Grid>
             </StackPanel>
           </GroupBox>
 

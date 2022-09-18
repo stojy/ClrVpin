@@ -28,6 +28,7 @@
   
   <SolidColorBrush x:Key="AlertBrush" Color="Coral" />
   <SolidColorBrush x:Key="ErrorBrush" Color="Red" />
+  <SolidColorBrush x:Key="SeparatorBrush" Color="#848484"/>
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml creates MainWindow.xaml -->
   <Style x:Key="MaterialWindowBaseStyle" TargetType="Window">
@@ -223,7 +224,9 @@
     <Setter Property="Width" Value="80" />
   </Style>
 
-  <Style x:Key="KeyTextBlockAutoStyle" TargetType="TextBlock" BasedOn="{StaticResource KeyTextBlockStyleBase}" />
+  <Style x:Key="KeyTextBlockAutoStyle" TargetType="TextBlock" BasedOn="{StaticResource KeyTextBlockStyleBase}">
+    <Setter Property="Margin" Value="0"/>
+  </Style>
 
   <Style x:Key="ValueTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
     <Setter Property="FontSize" Value="16" />
@@ -234,6 +237,12 @@
 
   <Style x:Key="{x:Type ToolTip}" TargetType="{x:Type ToolTip}">
     <Setter Property="FontSize" Value="17" />
+  </Style>
+
+  <Style x:Key="SeparatorStyle" TargetType="Separator" BasedOn="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}">
+    <Setter Property="BorderBrush" Value="{StaticResource SeparatorBrush}" />
+    <Setter Property="BorderThickness" Value="2,0,0,0" />
+    <Setter Property="Margin" Value="7,5,17,5" />
   </Style>
 
   <!--<Style TargetType="{x:Type ToolTipService}">
