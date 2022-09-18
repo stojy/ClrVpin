@@ -365,9 +365,7 @@ namespace ClrVpin.Importer
                 await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
         }
 
-
-        private ListCollectionView<FeatureType> CreateFeatureOptionsView<T>(IEnumerable<EnumOption<T>> enumOptions, T highlightedOption,
-            Expression<Func<T>> selectionExpression) where T : Enum
+        private ListCollectionView<FeatureType> CreateFeatureOptionsView<T>(IEnumerable<EnumOption<T>> enumOptions, T highlightedOption, Expression<Func<T>> selectionExpression) where T : Enum
         {
             var accessor = new Accessor<T>(selectionExpression);
 
