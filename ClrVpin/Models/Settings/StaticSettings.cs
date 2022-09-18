@@ -87,7 +87,7 @@ namespace ClrVpin.Models.Settings
         };
 
         // all possible table style options - to be used elsewhere (importer)
-        public static readonly TableStyleOption[] TableStyleOptions =
+        public static readonly EnumOption<TableStyleOptionEnum>[] TableStyleOptions =
         {
             new() {Enum = TableStyleOptionEnum.Manufactured, Tip = "A physical table has been manufactured"},
             new() {Enum = TableStyleOptionEnum.Original, Tip = "An original table creation that has not been manufactured"},
@@ -95,7 +95,7 @@ namespace ClrVpin.Models.Settings
         };
 
         // all possible table match options
-        public static readonly TableMatchOption[] TableMatchOptions =
+        public static readonly EnumOption<TableMatchOptionEnum>[] TableMatchOptions =
         {
             new() {Enum = TableMatchOptionEnum.LocalAndOnline, Tip = "Tables that exist in both local database and the online feed"},
             new() {Enum = TableMatchOptionEnum.OnlineOnly, Tip = "Tables that only exist in the online feed, i.e. tables missing from your collection"},
@@ -103,14 +103,14 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TableMatchOptionEnum.All, Tip = "All tables irrespective of whether they are matched, missing, or unmatched"}
         };
 
-        public static readonly TableDownloadOption[] TableAvailabilityOptions =
+        public static readonly EnumOption<TableAvailabilityOptionEnum>[] TableAvailabilityOptions =
         {
             new() {Enum = TableAvailabilityOptionEnum.Available, Tip = "Tables that are available for download, i.e. valid table URL(s) exist"},
             new() {Enum = TableAvailabilityOptionEnum.Unavailable, Tip = "Tables that are unavailable for download, i.e. no valid URL(s) exist"},
             new() {Enum = TableAvailabilityOptionEnum.Both, Tip = "Available and unavailable tables"}
         };
         
-        public static readonly TableNewContentOption[] TableNewContentOptions =
+        public static readonly EnumOption<TableNewContentOptionEnum>[] TableNewContentOptions =
         {
             new() {Enum = TableNewContentOptionEnum.TableBackglassDmd, Tip = "Tables with new content of type: Table, Backglass, or DMDs"},
             new() {Enum = TableNewContentOptionEnum.Other, Tip = "Tables with new content of type: Wheels, ROMs, Media Packs, Sounds, Toppers, PuP Packs, POVs, Alt. Sounds, or Rules"},
@@ -118,7 +118,7 @@ namespace ClrVpin.Models.Settings
         };
 
         // all possible file merge options - to be used elsewhere (importer)
-        public static readonly FixFeedOption[] FixFeedOptions =
+        public static readonly EnumOption<FixFeedOptionEnum>[] FixFeedOptions =
         {
             new() {Enum = FixFeedOptionEnum.InvalidCharacters, Tip = "Fix or remove any invalid characters (anything not supported by the windows file system)"},
             new() {Enum = FixFeedOptionEnum.Whitespace, Tip = "Remove excess whitespace from table and manufacturer descriptions"},

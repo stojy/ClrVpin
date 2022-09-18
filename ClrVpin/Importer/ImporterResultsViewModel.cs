@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -45,10 +46,10 @@ namespace ClrVpin.Importer
 
             IsMatchingEnabled = Model.Settings.Importer.SelectedMatchCriteriaOptions.Any();
 
-            TableStyleOptionsView = new ListCollectionView<FeatureType>(CreateTableStyleOptions().ToList());
-            TableMatchOptionsView = new ListCollectionView<FeatureType>(CreateTableMatchOptions().ToList());
-            TableAvailabilityOptionsView = new ListCollectionView<FeatureType>(CreateTableAvailabilityOptions().ToList());
-            TableNewContentOptionsView = new ListCollectionView<FeatureType>(CreateTableNewContentOptions().ToList());
+            TableStyleOptionsView = CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured, () => Model.Settings.Importer.SelectedTableStyleOption);
+            TableMatchOptionsView = CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All, () => Model.Settings.Importer.SelectedTableMatchOption);
+            TableAvailabilityOptionsView = CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Both, () => Model.Settings.Importer.SelectedTableAvailabilityOption);
+            TableNewContentOptionsView = CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.TableBackglassDmd, () => Model.Settings.Importer.SelectedTableNewContentOption);
 
             // assign VM properties
             gameItems.ForEach(gameItem =>
@@ -179,8 +180,8 @@ namespace ClrVpin.Importer
                 // - select the first tab item that has new file content, e.g. tables, backglasses, etc.
                 // - else, select the first tab that has file content
                 // - else, select the first tab
-                var selectedFileCollection = SelectedGameItem?.OnlineGame?.AllFilesList.FirstOrDefault(fileList => fileList.IsNew) ?? 
-                                             SelectedGameItem?.OnlineGame?.AllFilesList.FirstOrDefault(fileList => fileList.Count > 0) ?? 
+                var selectedFileCollection = SelectedGameItem?.OnlineGame?.AllFilesList.FirstOrDefault(fileList => fileList.IsNew) ??
+                                             SelectedGameItem?.OnlineGame?.AllFilesList.FirstOrDefault(fileList => fileList.Count > 0) ??
                                              SelectedGameItem?.OnlineGame?.AllFilesList.First();
 
                 // assign a convenience property to avoid a *lot* of nested referenced in the xaml
@@ -364,22 +365,26 @@ namespace ClrVpin.Importer
                 await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
         }
 
-        private IEnumerable<FeatureType> CreateTableStyleOptions()
+
+        private ListCollectionView<FeatureType> CreateFeatureOptionsView<T>(IEnumerable<EnumOption<T>> enumOptions, T highlightedOption,
+            Expression<Func<T>> selectionExpression) where T : Enum
         {
+            var accessor = new Accessor<T>(selectionExpression);
+
             // all table style options
-            var featureTypes = StaticSettings.TableStyleOptions.Select(option =>
+            var featureTypes = enumOptions.Select(option =>
             {
-                var featureType = new FeatureType((int)option.Enum)
+                var featureType = new FeatureType(Convert.ToInt32(option.Enum))
                 {
-                    Tag = "TableStyleOption",
+                    Tag = typeof(T).Name,
                     Description = option.Description,
                     Tip = option.Tip,
                     IsSupported = true,
-                    IsActive = option.Enum == Model.Settings.Importer.SelectedTableStyleOption,
-                    IsHighlighted = option.Enum == TableStyleOptionEnum.Manufactured,
+                    IsHighlighted = option.Enum.IsEqual(highlightedOption),
+                    IsActive = option.Enum.IsEqual(accessor.Get()),
                     SelectedCommand = new ActionCommand(() =>
                     {
-                        Model.Settings.Importer.SelectedTableStyleOption = option.Enum;
+                        accessor.Set(option.Enum);
                         FilterChanged.Execute(null);
                     })
                 };
@@ -387,92 +392,7 @@ namespace ClrVpin.Importer
                 return featureType;
             }).ToList();
 
-            return featureTypes;
-        }
-
-        private IEnumerable<FeatureType> CreateTableMatchOptions()
-        {
-            // because matching is disabled, all tables will be unmatched
-            if (!IsMatchingEnabled)
-                Model.Settings.Importer.SelectedTableMatchOption = TableMatchOptionEnum.OnlineOnly;
-
-            // all table match options
-            var featureTypes = StaticSettings.TableMatchOptions.Select(option =>
-            {
-                var featureType = new FeatureType((int)option.Enum)
-                {
-                    Tag = "TableMatchOption",
-                    Description = option.Description,
-                    Tip = option.Tip,
-                    IsSupported = option.Enum == TableMatchOptionEnum.OnlineOnly || IsMatchingEnabled,
-                    IsActive = option.Enum == Model.Settings.Importer.SelectedTableMatchOption,
-                    IsHighlighted = option.Enum == TableMatchOptionEnum.LocalAndOnline,
-                    SelectedCommand = new ActionCommand(() =>
-                    {
-                        Model.Settings.Importer.SelectedTableMatchOption = option.Enum;
-                        FilterChanged.Execute(null);
-                    })
-                };
-
-                if (!IsMatchingEnabled && option.Enum != TableMatchOptionEnum.OnlineOnly)
-                    featureType.Tip += MatchingDisabledMessage;
-
-                return featureType;
-            }).ToList();
-
-            return featureTypes;
-        }
-
-        private IEnumerable<FeatureType> CreateTableAvailabilityOptions()
-        {
-            // all table style options
-            var featureTypes = StaticSettings.TableAvailabilityOptions.Select(option =>
-            {
-                var featureType = new FeatureType((int)option.Enum)
-                {
-                    Tag = "TableAvailability",
-                    Description = option.Description,
-                    Tip = option.Tip,
-                    IsSupported = true,
-                    IsActive = option.Enum == Model.Settings.Importer.SelectedTableAvailabilityOption,
-                    IsHighlighted = option.Enum == TableAvailabilityOptionEnum.Both,
-                    SelectedCommand = new ActionCommand(() =>
-                    {
-                        Model.Settings.Importer.SelectedTableAvailabilityOption = option.Enum;
-                        FilterChanged.Execute(null);
-                    })
-                };
-
-                return featureType;
-            }).ToList();
-
-            return featureTypes;
-        }
-
-        private IEnumerable<FeatureType> CreateTableNewContentOptions()
-        {
-            // all table style options
-            var featureTypes = StaticSettings.TableNewContentOptions.Select(option =>
-            {
-                var featureType = new FeatureType((int)option.Enum)
-                {
-                    Tag = "NewContent",
-                    Description = option.Description,
-                    Tip = option.Tip,
-                    IsSupported = true,
-                    IsActive = option.Enum == Model.Settings.Importer.SelectedTableNewContentOption,
-                    IsHighlighted = option.Enum == TableNewContentOptionEnum.TableBackglassDmd,
-                    SelectedCommand = new ActionCommand(() =>
-                    {
-                        Model.Settings.Importer.SelectedTableNewContentOption = option.Enum;
-                        FilterChanged.Execute(null);
-                    })
-                };
-
-                return featureType;
-            }).ToList();
-
-            return featureTypes;
+            return new ListCollectionView<FeatureType>(featureTypes);
         }
 
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
