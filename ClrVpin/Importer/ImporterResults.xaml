@@ -246,7 +246,7 @@
                   </b:EventTrigger>
                 </b:Interaction.Triggers>
 
-                <Image Margin="15" Source="{Binding Url}" Stretch="Uniform">
+                <Image Margin="15" Source="{Binding Url}" Stretch="Uniform" MinWidth="1000" MinHeight="1000">
                   <Image.Effect>
                     <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance" />
                   </Image.Effect>
