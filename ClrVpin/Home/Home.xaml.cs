@@ -2,7 +2,6 @@
 using System.Text;
 using ClrVpin.Extensions;
 using MaterialDesignThemes.Wpf;
-using PropertyChanged;
 using Application = System.Windows.Application;
 
 namespace ClrVpin.Home;
@@ -15,7 +14,6 @@ namespace ClrVpin.Home;
 //      "causes the CLR to create a **strong reference** from the PropertyDescriptor to the object and in most cases the CLR will keep a reference to the PropertyDescriptor in a **global table**"
 //    - https: //stackoverflow.com/questions/18542940/can-bindings-create-memory-leaks-in-wpf
 
-[AddINotifyPropertyChangedInterface]
 // ReSharper disable once UnusedMember.Global
 public partial class MainWindow
 {
