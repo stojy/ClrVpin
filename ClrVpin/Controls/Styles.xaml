@@ -242,7 +242,7 @@
   <Style x:Key="SeparatorStyle" TargetType="Separator" BasedOn="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}">
     <Setter Property="BorderBrush" Value="{StaticResource SeparatorBrush}" />
     <Setter Property="BorderThickness" Value="2,0,0,0" />
-    <Setter Property="Margin" Value="7,5,17,5" />
+    <Setter Property="Margin" Value="2,5,12,5" />
   </Style>
 
   <!--<Style TargetType="{x:Type ToolTipService}">
