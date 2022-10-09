@@ -116,9 +116,8 @@
       </WrapPanel>
 
       <!-- trainer wheels -->
-      <WrapPanel Margin="0,10,10,10">
-        <ToggleButton ToolTip="When enabled, scanner will show what would be changed without making ANY actual changes. No files will be copied, moved, renamed, or deleted."
-                      IsChecked="{Binding Settings.TrainerWheels}" />
+      <WrapPanel Margin="0,10,10,10" ToolTip="When enabled, scanner will show what would be changed, but without making ANY actual changes. No files will be copied, moved, renamed, or deleted.">
+        <ToggleButton IsChecked="{Binding Settings.TrainerWheels}" />
         <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
       </WrapPanel>
 
