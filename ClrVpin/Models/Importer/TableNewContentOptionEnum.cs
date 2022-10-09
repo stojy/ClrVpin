@@ -4,7 +4,7 @@ namespace ClrVpin.Models.Importer;
 
 public enum TableNewContentOptionEnum
 {
-    [Description("Table, Backglass, DMDs")] TableBackglassDmd,
+    [Description("Table, Backglass, DMD")] TableBackglassDmd,
     [Description("Other")] Other,
     [Description("All")] All
 }

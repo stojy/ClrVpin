@@ -403,7 +403,7 @@
             <StackPanel Margin="5,0">
               <WrapPanel Margin="0,5,0,0">
                 <ContentControl Template="{StaticResource KeyValuePair}"
-                                controls:GenericAttached.String="All Tables"
+                                controls:GenericAttached.String="Existing Tables"
                                 controls:GenericAttached.Double="100"
                                 controls:GenericAttached.Double2="14">
                   <WrapPanel>
