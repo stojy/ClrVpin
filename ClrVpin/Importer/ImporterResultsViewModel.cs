@@ -106,10 +106,10 @@ namespace ClrVpin.Importer
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || Settings.SelectedTableStyleOption == game.TableStyleOption) &&
                     (YearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearBeginFilter, 0, 50) >= 0) &&
                     (YearEndFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearEndFilter, 0, 50) <= 0) &&
-                    (TypeFilter == null || string.CompareOrdinal(TypeFilter, 0, game.Type, 0, 50) == 0) &&
-                    (FormatFilter == null || game.OnlineGame?.TableFormats.Contains(FormatFilter) == true) &&
-                    (Settings.UpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedAtDateBegin) &&
-                    (Settings.UpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedAtDateEnd.Value.AddDays(1)) &&
+                    (Settings.SelectedTypeFilter == null || string.CompareOrdinal(Settings.SelectedTypeFilter, 0, game.Type, 0, 50) == 0) &&
+                    (Settings.SelectedFormatFilter == null || game.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
+                    (Settings.SelectedUpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
+                    (Settings.SelectedUpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
                     (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase))
             };
@@ -230,8 +230,6 @@ namespace ClrVpin.Importer
         public string ManufacturerFilter { get; set; }
         public string YearBeginFilter { get; set; }
         public string YearEndFilter { get; set; }
-        public string TypeFilter { get; set; }
-        public string FormatFilter { get; set; }
 
         public ObservableCollection<GameItem> GameItems { get; }
         public ListCollectionView<GameItem> GameItemsView { get; }
@@ -422,7 +420,7 @@ namespace ClrVpin.Importer
                     files.ForEach(file =>
                     {
                         // flag file - if the update time range is satisfied
-                        file.IsNew = file.UpdatedAt >= (Settings.UpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.UpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
+                        file.IsNew = file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
 
                         // flag each url within the file - required to allow for simpler view binding
                         file.Urls.ForEach(url => url.IsNew = file.IsNew);

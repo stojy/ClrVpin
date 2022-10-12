@@ -24,6 +24,8 @@ public class ImporterSettings
     public TableNewContentOptionEnum SelectedTableNewContentOption { get; set; } = TableNewContentOptionEnum.All;
     // ReSharper restore AutoPropertyCanBeMadeGetOnly.Global
     
-    public DateTime? UpdatedAtDateBegin { get; set; }
-    public DateTime? UpdatedAtDateEnd { get; set; }
+    public DateTime? SelectedUpdatedAtDateBegin { get; set; }
+    public DateTime? SelectedUpdatedAtDateEnd { get; set; }
+    public string SelectedTypeFilter { get; set; }
+    public string SelectedFormatFilter { get; set; }
 }

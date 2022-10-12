@@ -307,7 +307,7 @@
                 </WrapPanel.Resources>
 
                 <ComboBox ItemsSource="{Binding TypesFilterView}"
-                          SelectedItem="{Binding Path=TypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding Path=Settings.SelectedTypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Type"
                           Style="{StaticResource ComboBoxStyle}"
                           Width="65" Margin="0,0,0,0">
@@ -319,7 +319,7 @@
                 </ComboBox>
 
                 <ComboBox ItemsSource="{Binding FormatsFilterView}"
-                          SelectedItem="{Binding Path=FormatFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding Path=Settings.SelectedFormatFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Format"
                           Style="{StaticResource ComboBoxStyle}"
                           Width="90" Margin="10,0,0,0">
@@ -354,8 +354,8 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated From" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedAtDateBegin}"
-                            DisplayDateEnd="{Binding Settings.UpdatedAtDateEnd}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated From" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.SelectedUpdatedAtDateBegin}"
+                            DisplayDateEnd="{Binding Settings.SelectedUpdatedAtDateEnd}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding UpdatedFilterTimeChanged}" />
@@ -363,8 +363,8 @@
                   </b:Interaction.Triggers>
                 </DatePicker>
 
-                <DatePicker materialDesign:HintAssist.Hint="Updated To" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.UpdatedAtDateEnd}"
-                            DisplayDateStart="{Binding Settings.UpdatedAtDateBegin}">
+                <DatePicker materialDesign:HintAssist.Hint="Updated To" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.SelectedUpdatedAtDateEnd}"
+                            DisplayDateStart="{Binding Settings.SelectedUpdatedAtDateBegin}">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                       <b:InvokeCommandAction Command="{Binding UpdatedFilterTimeChanged}" />
