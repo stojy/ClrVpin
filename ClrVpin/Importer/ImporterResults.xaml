@@ -60,11 +60,14 @@
     </Button>
   </DataTemplate>
 
-  <!-- urls.. drawn with negative top margin so they appear in the same visual 'row' as the image -->
+  <!-- urls.. 
+       - drawn with negative top margin so they appear in the same visual 'row' as the image
+       - fixed listbox height of 72 (icon=40 + various margins added by windows & material) so the card items are drawn the same height whether download URLs exist or not
+  -->
   <DataTemplate x:Key="UrlsTemplate">
-    <ListBox DockPanel.Dock="Right" ItemsSource="{Binding}" ItemTemplate="{StaticResource UrlDetailTemplate}" Margin="0,-40,0,0"
-             materialDesign:ListBoxItemAssist.ShowSelection="False"
-             Style="{StaticResource RightAlignedHorizontalListBoxStyle}">
+    <ListBox DockPanel.Dock="Right" ItemsSource="{Binding}" materialDesign:ListBoxItemAssist.ShowSelection="False" 
+             Style="{StaticResource RightAlignedHorizontalListBoxStyle}"
+             ItemTemplate="{StaticResource UrlDetailTemplate}" Margin="0,-40,0,0" Height="72">
       <ListBox.ItemContainerStyle>
         <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource HighlightedListBoxItemEffectStyle}" d:DataContext="{d:DesignInstance vps:UrlDetail}">
           <Setter Property="IsEnabled" Value="{Binding Broken, Converter={StaticResource InvertBooleanConverter}}" />
