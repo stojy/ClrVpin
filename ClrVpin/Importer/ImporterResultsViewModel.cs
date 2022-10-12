@@ -306,8 +306,12 @@ namespace ClrVpin.Importer
             }
 
             // simplified summary of the ImporterStatisticsViewModel info
-            var matchedManufacturedCount = GameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.LocalAndOnline && !gameItem.IsOriginal);
-            var missingManufacturedCount = GameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.OnlineOnly && !gameItem.IsOriginal);
+            var restrictedGameItems = GameItems.Where(gameItem => 
+                !gameItem.IsOriginal && 
+                gameItem.OnlineGame?.TableFormats.Contains("VPX") == true && 
+                gameItem.OnlineGame?.TableAvailability == TableAvailabilityOptionEnum.Available).ToList();
+            var matchedManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.LocalAndOnline);
+            var missingManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.OnlineOnly);
 
             var detail = CreatePercentageStatistic("Missing Manufactured Tables", missingManufacturedCount, missingManufacturedCount + matchedManufacturedCount);
 
