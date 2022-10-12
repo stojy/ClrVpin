@@ -104,14 +104,14 @@ namespace ClrVpin.Importer
                     (Settings.SelectedTableNewContentOption == TableNewContentOptionEnum.All || game.OnlineGame?.NewContentType == Settings.SelectedTableNewContentOption) &&
                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || Settings.SelectedTableMatchOption == game.TableMatchType) &&
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || Settings.SelectedTableStyleOption == game.TableStyleOption) &&
-                    (YearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearBeginFilter, 0, 50) >= 0) &&
-                    (YearEndFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearEndFilter, 0, 50) <= 0) &&
+                    (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
+                    (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                     (Settings.SelectedTypeFilter == null || string.CompareOrdinal(Settings.SelectedTypeFilter, 0, game.Type, 0, 50) == 0) &&
                     (Settings.SelectedFormatFilter == null || game.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
                     (Settings.SelectedUpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
                     (Settings.SelectedUpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
-                    (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
-                    (ManufacturerFilter == null || game.Manufacturer.Contains(ManufacturerFilter, StringComparison.OrdinalIgnoreCase))
+                    (Settings.SelectedTableFilter == null || game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
+                    (Settings.SelectedManufacturerFilter == null || game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase))
             };
             GameItemsView.MoveCurrentToFirst();
 
@@ -225,11 +225,6 @@ namespace ClrVpin.Importer
         public ListCollectionView<string> YearsEndFilterView { get; }
         public ListCollectionView<string> TypesFilterView { get; }
         public ListCollectionView<string> FormatsFilterView { get; }
-
-        public string TableFilter { get; set; }
-        public string ManufacturerFilter { get; set; }
-        public string YearBeginFilter { get; set; }
-        public string YearEndFilter { get; set; }
 
         public ObservableCollection<GameItem> GameItems { get; }
         public ListCollectionView<GameItem> GameItemsView { get; }
