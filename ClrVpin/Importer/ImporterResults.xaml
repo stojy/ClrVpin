@@ -318,6 +318,18 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
+                <ComboBox ItemsSource="{Binding FormatsFilterView}"
+                          SelectedItem="{Binding Path=FormatFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          materialDesign:HintAssist.Hint="Format"
+                          Style="{StaticResource ComboBoxStyle}"
+                          Width="90" Margin="10,0,0,0">
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </ComboBox>
+
                 <ComboBox ItemsSource="{Binding YearsBeginFilterView}"
                           SelectedItem="{Binding Path=YearBeginFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Year From"

@@ -50,7 +50,7 @@ public sealed class ListCollectionView<T> : ListCollectionView, IEnumerable<T>
         Dispatcher.CurrentDispatcher.InvokeAsync(() => base.Refresh(), DispatcherPriority.ContextIdle);
     }
 
-    public void RefreshDebounce(int debounceMilliseconds = 100)
+    public void RefreshDebounce(int debounceMilliseconds = 200)
     {
         // delay processing text changed
         _refreshDebounceTimer.Interval = TimeSpan.FromMilliseconds(debounceMilliseconds);

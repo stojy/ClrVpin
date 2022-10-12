@@ -107,6 +107,7 @@ namespace ClrVpin.Importer
                     (YearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearBeginFilter, 0, 50) >= 0) &&
                     (YearEndFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, YearEndFilter, 0, 50) <= 0) &&
                     (TypeFilter == null || string.CompareOrdinal(TypeFilter, 0, game.Type, 0, 50) == 0) &&
+                    (FormatFilter == null || game.OnlineGame?.TableFormats.Contains(FormatFilter) == true) &&
                     (Settings.UpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.UpdatedAtDateBegin) &&
                     (Settings.UpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.UpdatedAtDateEnd.Value.AddDays(1)) &&
                     (TableFilter == null || game.Name.Contains(TableFilter, StringComparison.OrdinalIgnoreCase)) &&
@@ -141,8 +142,18 @@ namespace ClrVpin.Importer
                 Filter = yearString => GameItemsView.Any(x => x.Year == yearString)
             };
 
-            Types = gameItems.Select(x => x.Type).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
-            TypesFilterView = new ListCollectionView<string>(Types);
+            Types = gameItems.Select(x => x.Type).Distinct().Where(x => !string.IsNullOrWhiteSpace(x)).OrderBy(x => x).ToList();
+            TypesFilterView = new ListCollectionView<string>(Types)
+            {
+                Filter = type => GameItemsView.Any(x => x.Type == type)
+            };
+
+            // table formats - vpx, fp, etc
+            Formats = gameItems.SelectMany(x => x.OnlineGame?.TableFormats ?? new List<string>()).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            FormatsFilterView = new ListCollectionView<string>(Formats)
+            {
+                Filter = format => GameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true)
+            };
 
             Players = gameItems.Select(x => x.OnlineGame?.Players).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
             Roms = gameItems.Select(x => x.OnlineGame?.RomFiles?.FirstOrDefault()?.Name).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
@@ -213,12 +224,14 @@ namespace ClrVpin.Importer
         public ListCollectionView<string> YearsBeginFilterView { get; }
         public ListCollectionView<string> YearsEndFilterView { get; }
         public ListCollectionView<string> TypesFilterView { get; }
+        public ListCollectionView<string> FormatsFilterView { get; }
 
         public string TableFilter { get; set; }
         public string ManufacturerFilter { get; set; }
         public string YearBeginFilter { get; set; }
         public string YearEndFilter { get; set; }
         public string TypeFilter { get; set; }
+        public string FormatFilter { get; set; }
 
         public ObservableCollection<GameItem> GameItems { get; }
         public ListCollectionView<GameItem> GameItemsView { get; }
@@ -243,6 +256,7 @@ namespace ClrVpin.Importer
         // IOnlineGameCollections
         public List<string> Manufacturers { get; }
         public List<string> Types { get; }
+        private List<string> Formats { get; }
         public List<string> Years { get; }
         public List<int?> Players { get; }
         public List<string> Roms { get; }
@@ -287,6 +301,7 @@ namespace ClrVpin.Importer
             YearsBeginFilterView.RefreshDebounce();
             YearsEndFilterView.RefreshDebounce();
             TypesFilterView.RefreshDebounce();
+            FormatsFilterView.RefreshDebounce();
         }
 
         private async Task ShowSummary()

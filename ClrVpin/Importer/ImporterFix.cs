@@ -90,6 +90,7 @@ public static class ImporterFix
             game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToList();
 
             game.TableAvailability = game.TableFiles.Any(file => file.Urls.Any(url => !url.Broken)) ? TableAvailabilityOptionEnum.Available : TableAvailabilityOptionEnum.Unavailable;
+            game.TableFormats = game.TableFiles.Where(file => !string.IsNullOrWhiteSpace(file.TableFormat)).Select(x => x.TableFormat).Distinct().ToList();
         });
 
         Logger.Info($"Online database post-fix: count={onlineGames.Count} (manufactured={onlineGames.Count(onlineGame => !onlineGame.IsOriginal)}, original={onlineGames.Count(onlineGame => onlineGame.IsOriginal)})");
