@@ -16,8 +16,6 @@ namespace ClrVpin.Importer
     {
         public DatabaseItem(OnlineGame onlineGame, GameDetail originalGameDetail, IOnlineGameCollections onlineGameCollections, bool isExisting, TableMatchOptionEnum tableMatchType)
         {
-            TableMatchType = tableMatchType;
-
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
             // - allow object comparison for serialization (ignoring a few VM properties)
@@ -26,6 +24,14 @@ namespace ClrVpin.Importer
 
             GameDetail = originalGameDetail.Clone();
             GameDetail.Init();
+
+            ManufacturersView = new ListCollectionView<string>(onlineGameCollections.Manufacturers, GameDetail.Game.Manufacturer);
+            YearsView = new ListCollectionView<string>(onlineGameCollections.Years, GameDetail.Game.Year);
+            TypesView = new ListCollectionView<string>(onlineGameCollections.Types, GameDetail.Game.Type);
+            RomsView = new ListCollectionView<string>(onlineGameCollections.Roms, GameDetail.Game.Rom);
+            PlayersView = new ListCollectionView<string>(onlineGameCollections.Players, GameDetail.Game.Players);
+            ThemesView = new ListCollectionView<string>(onlineGameCollections.Themes, GameDetail.Game.Theme);
+            AuthorsView = new ListCollectionView<string>(onlineGameCollections.Authors, GameDetail.Game.Author);
 
             Title = tableMatchType switch
             {
@@ -38,14 +44,6 @@ namespace ClrVpin.Importer
             IsExisting = isExisting;
             IsItemChanged = false;
             CheckGameAgainstFeed(onlineGame);
-
-            ManufacturersView = new ListCollectionView<string>(onlineGameCollections.Manufacturers);
-            YearsView = new ListCollectionView<string>(onlineGameCollections.Years);
-            TypesView = new ListCollectionView<string>(onlineGameCollections.Types);
-            RomsView = new ListCollectionView<string>(onlineGameCollections.Roms);
-            PlayersView = new ListCollectionView<int?>(onlineGameCollections.Players);
-            ThemesView = new ListCollectionView<string>(onlineGameCollections.Themes);
-            AuthorsView = new ListCollectionView<string>(onlineGameCollections.Authors);
 
             MaxDateTime = DateTime.Today.AddDays(1);
 
@@ -63,7 +61,7 @@ namespace ClrVpin.Importer
 
             LoadedCommand = new ActionCommand(() => _loaded = true);
             UnloadedCommand = new ActionCommand(() => _loaded = false);
-            
+
             ChangedCommand = new ActionCommand(() =>
             {
                 // skip unnecessary changes that occur before control is loaded OR after the control has been unloaded
@@ -87,7 +85,7 @@ namespace ClrVpin.Importer
 
                 // update rounding
                 // - required because the underlying RatingsBar unfortunately doesn't bind the value to the 'ValueIncrements' used in the UI, e.g. bound value 1.456700001
-                // - if the rounding value is changed, the textbox will rebind and cause another ChangedCommand to fire
+                // - if the rounding value is changed, the TextBox will rebind and cause another ChangedCommand to fire
                 if (decimal.TryParse(GameDetail.Game.Rating, out var rating))
                     GameDetail.Game.Rating = (Math.Round(rating * 2) / 2).ToString();
 
@@ -100,23 +98,9 @@ namespace ClrVpin.Importer
                 CheckGameAgainstFeed(onlineGame);
             });
 
-            AddMissingInfoCommand = new ActionCommand(() =>
-            {
-                GameUpdater.UpdateProperties(onlineGame, GameDetail.Game, false);
-            });
+            AddMissingInfoCommand = new ActionCommand(() => { GameUpdater.UpdateProperties(onlineGame, GameDetail.Game, false); });
 
-            OverwriteAllInfoCommand = new ActionCommand(() =>
-            {
-                GameUpdater.UpdateProperties(onlineGame, GameDetail.Game, true);
-            });
-        }
-
-        private void CheckGameAgainstFeed(OnlineGame onlineGame)
-        {
-            // check if anything is different to the feed.. used to enable the update missing and update all buttons
-            // - if game is unmatched then onlineGame will be null.. which is explicitly ignored thus correctly returning false for both flags
-            IsItemInfoMissing = GameUpdater.CheckProperties(onlineGame, GameDetail.Game, false);
-            IsItemInfoDifferent = IsItemInfoMissing || GameUpdater.CheckProperties(onlineGame, GameDetail.Game, true);
+            OverwriteAllInfoCommand = new ActionCommand(() => { GameUpdater.UpdateProperties(onlineGame, GameDetail.Game, true); });
         }
 
         public GameDetail GameDetail { get; }
@@ -133,17 +117,11 @@ namespace ClrVpin.Importer
         public ActionCommand OverwriteAllInfoCommand { get; }
 
         public ListCollectionView<string> ManufacturersView { get; }
-
         public ListCollectionView<string> YearsView { get; }
-
         public ListCollectionView<string> TypesView { get; }
-
-        public ListCollectionView<int?> PlayersView { get; }
-
+        public ListCollectionView<string> PlayersView { get; }
         public ListCollectionView<string> RomsView { get; }
-
         public ListCollectionView<string> ThemesView { get; }
-
         public ListCollectionView<string> AuthorsView { get; }
 
         public DateTime MaxDateTime { get; set; }
@@ -157,8 +135,16 @@ namespace ClrVpin.Importer
 
         // date only portion to accommodate the DatePicker which resets the time portion when a date is selected
         public DateTime? DateAddedDateOnly { get; set; }
+        public string Title { get; }
+
+        private void CheckGameAgainstFeed(OnlineGame onlineGame)
+        {
+            // check if anything is different to the feed.. used to enable the update missing and update all buttons
+            // - if game is unmatched then onlineGame will be null.. which is explicitly ignored thus correctly returning false for both flags
+            IsItemInfoMissing = GameUpdater.CheckProperties(onlineGame, GameDetail.Game, false);
+            IsItemInfoDifferent = IsItemInfoMissing || GameUpdater.CheckProperties(onlineGame, GameDetail.Game, true);
+        }
+
         private bool _loaded;
-        public TableMatchOptionEnum TableMatchType { get; set; }
-        public string Title { get; set; }
     }
 }

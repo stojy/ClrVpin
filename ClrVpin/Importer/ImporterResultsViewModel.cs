@@ -28,7 +28,7 @@ namespace ClrVpin.Importer
         List<string> Manufacturers { get; }
         List<string> Types { get; }
         List<string> Years { get; }
-        List<int?> Players { get; }
+        List<string> Players { get; }
         List<string> Roms { get; }
         List<string> Themes { get; }
         List<string> Authors { get; }
@@ -155,7 +155,7 @@ namespace ClrVpin.Importer
                 Filter = format => GameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true)
             };
 
-            Players = gameItems.Select(x => x.OnlineGame?.Players).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            Players = gameItems.Select(x => x.OnlineGame?.Players).Distinct().Where(x => x != null).OrderBy(x => x).Select(x => x.ToString()).ToList();
             Roms = gameItems.Select(x => x.OnlineGame?.RomFiles?.FirstOrDefault()?.Name).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
             Themes = gameItems.Select(x => string.Join(", ", x.OnlineGame?.Themes ?? new[] { "" })).Distinct().Where(x => !string.IsNullOrEmpty(x)).OrderBy(x => x).ToList();
 
@@ -251,7 +251,7 @@ namespace ClrVpin.Importer
         public List<string> Types { get; }
         private List<string> Formats { get; }
         public List<string> Years { get; }
-        public List<int?> Players { get; }
+        public List<string> Players { get; }
         public List<string> Roms { get; }
         public List<string> Themes { get; }
         public List<string> Authors { get; }

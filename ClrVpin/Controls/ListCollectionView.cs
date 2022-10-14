@@ -9,6 +9,13 @@ namespace ClrVpin.Controls;
 public sealed class ListCollectionView<T> : ListCollectionView, IEnumerable<T>
 {
     //todo; add ctor that takes delegate to explicitly invoke during a refresh
+    
+    public ListCollectionView(IList<T> list, T selectedItem)
+        : this(list)
+    {
+        MoveCurrentTo(selectedItem);
+    }
+
     public ListCollectionView(IList<T> list)
         : base((IList)list)
     {

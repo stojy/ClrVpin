@@ -16,7 +16,7 @@
 
   </ResourceDictionary.MergedDictionaries>
 
-  <!-- x:Shared resources must be at the top level resource dictionary -->
+  <!-- x:Shared resources must be defined at the top level resource dictionary -->
   <controls:Triggers x:Key="TextChangedTriggers" x:Shared="False">
     <b:EventTrigger EventName="TextChanged">
       <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}" />
@@ -138,29 +138,29 @@
           </WrapPanel>
 
           <WrapPanel Margin="0,20,0,0">
-            <ComboBox ItemsSource="{Binding YearsView}"
+            <ComboBox ItemsSource="{Binding YearsView}" 
                       Text="{Binding Path=GameDetail.Game.Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Year"
                       Style="{StaticResource EditComboBoxStyle}"
                       Width="90" />
-            <ComboBox ItemsSource="{Binding TypesView}"
+            <ComboBox ItemsSource="{Binding TypesView}" 
                       Text="{Binding Path=GameDetail.Game.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Type" ToolTip="EM: electro-mechanical, SS: solid state, PM: purely mechanical"
                       Style="{StaticResource EditComboBoxStyle}"
                       Width="90" Margin="10,0,0,0" />
-            <ComboBox ItemsSource="{Binding PlayersView}"
+            <ComboBox ItemsSource="{Binding PlayersView}" 
                       Text="{Binding Path=GameDetail.Game.Players, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Players"
                       Style="{StaticResource EditComboBoxStyle}"
                       Width="110" Margin="10,0,0,0" />
-            <ComboBox ItemsSource="{Binding RomsView}"
+            <ComboBox ItemsSource="{Binding RomsView}" 
                       Text="{Binding Path=GameDetail.Game.Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
                       Style="{StaticResource EditComboBoxStyle}"
                       Width="140" Margin="10,0,0,0" />
           </WrapPanel>
 
-          <ComboBox ItemsSource="{Binding ThemesView}"
+          <ComboBox ItemsSource="{Binding ThemesView}" 
                     Text="{Binding Path=GameDetail.Game.Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     materialDesign:HintAssist.Hint="Theme(s)"
                     Style="{StaticResource EditComboBoxStyle}"
@@ -181,7 +181,7 @@
                      materialDesign:HintAssist.Hint="Version"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      Width="120" />
-            <ComboBox ItemsSource="{Binding AuthorsView}"
+            <ComboBox ItemsSource="{Binding AuthorsView}" 
                       Text="{Binding Path=GameDetail.Game.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Author(s)"
                       Style="{StaticResource EditComboBoxStyle}"
@@ -282,7 +282,10 @@
     </StackPanel>
   </DataTemplate>
 
-  <!-- database item (game) -->
+  <!-- database item (game) 
+       - the template is being re-used for subsequent rendering.. presumably(?) due to SharedDictionary which causes this template to only be loaded once
+         a. e.g. ComboBox.SelectedItem will persist between 2 different dialogs.. thus important to explicitly assign SelectedItem so the correct one is used
+  -->
   <DataTemplate DataType="{x:Type importer:DatabaseItem}">
     <!--explicit border with background and padding required to support usage within a DialogHost that has a transparent background, e.g. importer's image dialog-->
     <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" Width="500">
