@@ -14,6 +14,8 @@ namespace ClrVpin.Importer
 {
     public static class DatabaseItemManagement
     {
+        private static string DefaultDatabaseFile => Path.Combine(Model.Settings.GetDatabaseContentType().Folder, "ClrVpin.xml");
+
         public static async void UpdateDatabaseItem(IList<GameDetail> gameDetails, GameItem gameItem, IGameCollections gameCollections)
         {
             var item = new DatabaseItem(gameItem.OnlineGame, gameItem.GameDetail, gameCollections, true, gameItem.TableMatchType);
@@ -26,9 +28,7 @@ namespace ClrVpin.Importer
                 existingGameDetail.Game = item.GameDetail.Game;
                 existingGameDetail.Derived = item.GameDetail.Derived;
 
-                // update all games that reside in the same database file as the updated game
-                var gameDetailsInDatabaseFile = gameDetails.Where(gameDetail => gameDetail.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
-                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile.Select(x => x.Game), item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, false);
+                Write(gameDetails, gameCollections, item, false);
             }
         }
 
@@ -83,12 +83,16 @@ namespace ClrVpin.Importer
                 // insert the game
                 gameDetails.Add(gameDetail);
 
-                // update all games that belong to the newly created game (defaulting to 'ClrVpin.xml')
-                var gameDetailsInDatabaseFile = gameDetails.Where(gd => gd.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
-                TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile.Select(x => x.Game), item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, true);
+                Write(gameDetails, gameCollections, item, true);
             }
         }
 
-        private static string DefaultDatabaseFile => Path.Combine(Model.Settings.GetDatabaseContentType().Folder, "ClrVpin.xml");
+        private static void Write(IEnumerable<GameDetail> gameDetails, IGameCollections gameCollections, DatabaseItem item, bool isNewEntry)
+        {
+            // update all games that reside in the same database file as the updated game
+            var gameDetailsInDatabaseFile = gameDetails.Where(gameDetail => gameDetail.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
+            TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile.Select(x => x.Game), item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, isNewEntry);
+            gameCollections.UpdateCollections();
+        }
     }
 }

@@ -32,6 +32,8 @@ namespace ClrVpin.Importer
         IList<string> Roms { get; }
         IList<string> Themes { get; }
         IList<string> Authors { get; }
+
+        public void UpdateCollections();
     }
 
     [AddINotifyPropertyChangedInterface]
@@ -116,7 +118,7 @@ namespace ClrVpin.Importer
             GameItemsView.MoveCurrentToFirst();
 
             // create game collections (e.g. list of manufacturers) to be used by results and also externally by the database item dialogs
-            CreateGameCollections(gameItems);
+            UpdateCollections();
 
             FilterChanged = new ActionCommand(RefreshViews);
 
@@ -161,28 +163,28 @@ namespace ClrVpin.Importer
             GameItemSelectedCommand.Execute(null);
         }
 
-        private void CreateGameCollections(IList<GameItem> gameItems)
+        public void UpdateCollections()
         {
             // the collections consist of all the possible permutations from BOTH the online source and the local source
             // - this is to ensure the maximum possible options are presented AND that the active item (from the local DB in the case of the update dialog) is actually in the list,
             //   otherwise it will be assigned to null via the ListCollectionView when the SelectedItem is assigned (either explicitly or via binding)
 
             // filters views (drop down combo boxes) - uses the online AND unmatched local DB 
-            var tableNames = gameItems.Select(x => x.Names).SelectManyUnique();
+            var tableNames = GameItems.Select(x => x.Names).SelectManyUnique();
             TablesFilterView = new ListCollectionView<string>(tableNames)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = table => GameItemsView.Any(x => x.Name == table)
             };
 
-            Manufacturers = gameItems.Select(x => x.Manufacturers).SelectManyUnique();
+            Manufacturers = GameItems.Select(x => x.Manufacturers).SelectManyUnique();
             ManufacturersFilterView = new ListCollectionView<string>(Manufacturers)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
                 Filter = manufacturer => GameItemsView.Any(x => x.Manufacturer == manufacturer)
             };
 
-            Years = gameItems.Select(x => x.Years).SelectManyUnique();
+            Years = GameItems.Select(x => x.Years).SelectManyUnique();
             YearsBeginFilterView = new ListCollectionView<string>(Years)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
@@ -195,7 +197,7 @@ namespace ClrVpin.Importer
             };
 
             // table HW type, i.e. SS, EM, PM
-            Types = gameItems.Select(x => x.Types).SelectManyUnique();
+            Types = GameItems.Select(x => x.Types).SelectManyUnique();
             TypesFilterView = new ListCollectionView<string>(Types)
             {
                 Filter = type => GameItemsView.Any(x => x.Type == type)
@@ -205,16 +207,16 @@ namespace ClrVpin.Importer
 
             // table formats - vpx, fp, etc
             // - only available via online
-            Formats = gameItems.SelectMany(x => x.OnlineGame?.TableFormats ?? new List<string>()).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+            Formats = GameItems.SelectMany(x => x.OnlineGame?.TableFormats ?? new List<string>()).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
             FormatsFilterView = new ListCollectionView<string>(Formats)
             {
                 Filter = format => GameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true)
             };
 
-            Themes = gameItems.Select(x => x.Themes).SelectManyUnique();
-            Players = gameItems.Select(x => x.Players).SelectManyUnique();
-            Roms = gameItems.Select(x => x.Roms).SelectManyUnique();
-            Authors = gameItems.Select(x => x.Authors).SelectManyUnique();
+            Themes = GameItems.Select(x => x.Themes).SelectManyUnique();
+            Players = GameItems.Select(x => x.Players).SelectManyUnique();
+            Roms = GameItems.Select(x => x.Roms).SelectManyUnique();
+            Authors = GameItems.Select(x => x.Authors).SelectManyUnique();
         }
 
         public string AddMissingDatabaseInfoTip { get; }
