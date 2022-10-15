@@ -110,6 +110,7 @@
           </TextBox>
 
           <WrapPanel Margin="0,10,0,0">
+            <!-- ComboBox.. selectedItem is initialized in the VM, but deliberately not bound to avoid (potential) race condition with the Text binding -->
             <ComboBox ItemsSource="{Binding ManufacturersView}"
                       Text="{Binding Path=GameDetail.Game.Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Manufacturer"

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Utils.Extensions
 {
@@ -84,6 +85,16 @@ namespace Utils.Extensions
         public static string StringJoin<T>(this IEnumerable<T> items, string separator = ", ")
         {
             return string.Join(separator, items);
+        }
+
+        public static IList<T> SelectManyUnique<T>(this IEnumerable<IEnumerable<T>> items)
+        {
+            return items.SelectMany(x => x).Where(x => x != null).Distinct().OrderBy(x => x).ToList();
+        }
+        
+        public static IList<string> SelectManyUnique(this IEnumerable<IEnumerable<string>> items)
+        {
+            return items.SelectMany(x => x).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToList();
         }
     }
 }

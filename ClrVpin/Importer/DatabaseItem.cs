@@ -14,7 +14,7 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class DatabaseItem
     {
-        public DatabaseItem(OnlineGame onlineGame, GameDetail originalGameDetail, IOnlineGameCollections onlineGameCollections, bool isExisting, TableMatchOptionEnum tableMatchType)
+        public DatabaseItem(OnlineGame onlineGame, GameDetail originalGameDetail, IGameCollections gameCollections, bool isExisting, TableMatchOptionEnum tableMatchType)
         {
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
@@ -24,14 +24,18 @@ namespace ClrVpin.Importer
 
             GameDetail = originalGameDetail.Clone();
             GameDetail.Init();
-
-            ManufacturersView = new ListCollectionView<string>(onlineGameCollections.Manufacturers, GameDetail.Game.Manufacturer);
-            YearsView = new ListCollectionView<string>(onlineGameCollections.Years, GameDetail.Game.Year);
-            TypesView = new ListCollectionView<string>(onlineGameCollections.Types, GameDetail.Game.Type);
-            RomsView = new ListCollectionView<string>(onlineGameCollections.Roms, GameDetail.Game.Rom);
-            PlayersView = new ListCollectionView<string>(onlineGameCollections.Players, GameDetail.Game.Players);
-            ThemesView = new ListCollectionView<string>(onlineGameCollections.Themes, GameDetail.Game.Theme);
-            AuthorsView = new ListCollectionView<string>(onlineGameCollections.Authors, GameDetail.Game.Author);
+            
+            // LCV.SelectedItem is assigned in the VM here (versus binding in the view) to avoid (what appears to be) some race conditions with the ComboBox bindings.. SelectedItem and Text binding
+            // - the race condition causes the SelectedItem (e.g. GameDetail.Game.Manufacturer) to be 'randomly' assigned as an empty string from the async callback in Materialized's DialogHost.Show
+            // - not immediately obvious in the UI though as the ComboBox's display is bound to the Text binding.. which often appears correct, despite the underlying property being assigned to empty string :(
+            // - extra care is also required to ensure the collections do contain the desired default item, else this will cause the selected item to be assigned as null
+            ManufacturersView = new ListCollectionView<string>(gameCollections.Manufacturers, GameDetail.Game.Manufacturer);
+            YearsView = new ListCollectionView<string>(gameCollections.Years, GameDetail.Game.Year);
+            TypesView = new ListCollectionView<string>(gameCollections.Types, GameDetail.Game.Type);
+            RomsView = new ListCollectionView<string>(gameCollections.Roms, GameDetail.Game.Rom);
+            PlayersView = new ListCollectionView<string>(gameCollections.Players, GameDetail.Game.Players);
+            ThemesView = new ListCollectionView<string>(gameCollections.Themes, GameDetail.Game.Theme);
+            AuthorsView = new ListCollectionView<string>(gameCollections.Authors, GameDetail.Game.Author);
 
             Title = tableMatchType switch
             {

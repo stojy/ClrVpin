@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Input;
 using ClrVpin.Models.Importer.Vps;
 using ClrVpin.Models.Shared.Game;
@@ -22,10 +23,24 @@ public class GameItem
     }
 
     public int Index { get; set; }                                                                               // 1 based index of every game in the list
-    public string Name => OnlineGame != null ? OnlineGame.Name : GameDetail.Fuzzy.TableDetails.NameOriginalCase; // for unmatched, default to the fuzzy parsed table name
-    public string Manufacturer => OnlineGame != null ? OnlineGame.Manufacturer : GameDetail.Game.Manufacturer;
-    public string Year => OnlineGame != null ? OnlineGame.YearString : GameDetail.Game.Year;
-    public string Type => OnlineGame != null ? OnlineGame.Type : GameDetail.Game.Type;
+    
+    public string Name => Names.FirstOrDefault(x => x != null);
+    public string[] Names => new[] { OnlineGame?.Name, GameDetail?.Fuzzy.TableDetails.NameOriginalCase };        // for unmatched, default to the fuzzy parsed table name
+
+    public string Manufacturer => Manufacturers.FirstOrDefault(x => x != null);
+    public string[] Manufacturers => new[] { OnlineGame?.Manufacturer, GameDetail?.Game.Manufacturer };
+
+    public string Year => Years.FirstOrDefault(x => x != null);
+    public string[] Years => new[] { OnlineGame?.YearString, GameDetail?.Game.Year };
+
+    public string Type => Types.FirstOrDefault(x => x != null);
+    public string[] Types => new[] { OnlineGame?.Type, GameDetail?.Game.Type };
+
+    public string[] Themes => new[] { string.Join(", ", OnlineGame?.Themes ?? new[] { "" }), GameDetail?.Game.Theme };
+    public string[] Players => new[] { OnlineGame?.Players.ToString(), GameDetail?.Game.Players };
+    public string[] Roms => new[] { OnlineGame?.RomFiles.FirstOrDefault()?.Name, GameDetail?.Game.Rom };
+    public string[] Authors => new[] { string.Join(", ", OnlineGame?.TableFiles.FirstOrDefault()?.Authors ?? new [] {""}), GameDetail?.Game.Author };
+
     public DateTime? UpdatedAt => OnlineGame?.UpdatedAt; // not supported in local DB GameDetail
     public bool IsOriginal => OnlineGame?.IsOriginal ?? GameDetail.Derived.IsOriginal;
     public TableStyleOptionEnum TableStyleOption { get; private set; }
