@@ -193,7 +193,7 @@ namespace ClrVpin.Scanner
             var progress = new ProgressViewModel();
             progress.Show(_window);
 
-            List<GameDetail> games;
+            List<LocalGame> games;
             try
             {
                 progress.Update("Loading Database");
@@ -221,7 +221,7 @@ namespace ClrVpin.Scanner
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
-            _games = new ObservableCollection<GameDetail>(games);
+            _games = new ObservableCollection<LocalGame>(games);
 
             progress.Close();
 
@@ -270,7 +270,7 @@ namespace ClrVpin.Scanner
 
         private readonly IEnumerable<FeatureType> _fixHitTypes;
 
-        private ObservableCollection<GameDetail> _games;
+        private ObservableCollection<LocalGame> _games;
         private Window _window;
         private const int WindowMargin = 0;
     }

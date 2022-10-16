@@ -16,7 +16,7 @@ namespace ClrVpin.Rebuilder
     [AddINotifyPropertyChangedInterface]
     public class RebuilderResultsViewModel : ResultsViewModel
     {
-        public RebuilderResultsViewModel(ObservableCollection<GameDetail> games, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
+        public RebuilderResultsViewModel(ObservableCollection<LocalGame> games, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
         {
             Games = games;
             _unmatchedFiles = unmatchedFiles;

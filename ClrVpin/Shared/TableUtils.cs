@@ -19,7 +19,7 @@ namespace ClrVpin.Shared
 {
     public static class TableUtils
     {
-        public static async Task<List<GameDetail>> ReadGamesFromDatabases(IEnumerable<ContentType> contentTypes)
+        public static async Task<List<LocalGame>> ReadGamesFromDatabases(IEnumerable<ContentType> contentTypes)
         {
             try
             {
@@ -40,14 +40,14 @@ namespace ClrVpin.Shared
             }
         }
 
-        private static List<GameDetail> GetGamesFromDatabases(IEnumerable<ContentType> contentTypes)
+        private static List<LocalGame> GetGamesFromDatabases(IEnumerable<ContentType> contentTypes)
         {
             var databaseContentType = Model.Settings.GetDatabaseContentType();
 
             // scan through all the databases in the folder
             var files = Directory.EnumerateFiles(databaseContentType.Folder, databaseContentType.Extensions);
 
-            var gameDetails = new List<GameDetail>();
+            var localGames = new List<LocalGame>();
 
             files.ForEach(file =>
             {
@@ -83,25 +83,26 @@ namespace ClrVpin.Shared
                     throw new Exception($"Failed to deserialize database: '{file}'", e);
                 }
 
-                var databaseGameDetails = menu.Games.Select(g => new GameDetail { Game = g }).ToList();
+                var databaseLocalGames = menu.Games.Select(g => new LocalGame { Game = g }).ToList();
 
                 var number = 1;
-                databaseGameDetails.ForEach(gameDetail =>
+                databaseLocalGames.ForEach(localGame =>
                 {
-                    gameDetail.Init(number++);
+                    localGame.Init(number++);
 
-                    gameDetail.Game.DatabaseFile = file;
-                    gameDetail.ViewState.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(gameDetail.Derived.IpdbUrl));
-                    gameDetail.Content.Init(contentTypes);
+                    localGame.Game.DatabaseFile = file;
+                    localGame.ViewState.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(localGame.Derived.IpdbUrl));
+                    localGame.Content.Init(contentTypes);
 
                 });
 
-                gameDetails.AddRange(databaseGameDetails);
-                LogDatabaseStatistics(databaseGameDetails, file);
+                localGames.AddRange(databaseLocalGames);
+                LogDatabaseStatistics(databaseLocalGames, file);
             });
 
-            LogDatabaseStatistics(gameDetails);
-            return gameDetails;
+            LogDatabaseStatistics(localGames);
+
+            return localGames;
         }
 
         public static void WriteGamesToDatabase(IEnumerable<Game> games)
@@ -152,8 +153,8 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        public static IEnumerable<FileDetail> AddContentFilesToGames(IList<GameDetail> gameDetails, IEnumerable<string> contentFiles, ContentType contentType,
-            Func<GameDetail, ContentHits> getContentHits, Action<string, int> updateProgress)
+        public static IEnumerable<FileDetail> AddContentFilesToGames(IList<LocalGame> localGames, IEnumerable<string> contentFiles, ContentType contentType,
+            Func<LocalGame, ContentHits> getContentHits, Action<string, int> updateProgress)
         {
             var unknownSupportedFiles = new List<FileDetail>();
 
@@ -164,35 +165,35 @@ namespace ClrVpin.Shared
                 var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(contentFile);
                 updateProgress(fileNameWithoutExtension, i + 1);
 
-                GameDetail matchedGameDetail;
+                LocalGame matchedLocalGame;
 
                 // check for hit..
                 // - only 1 hit per file.. but a game DB entry can have multiple file hits.. with a maximum of 1 valid hit, i.e. the others considered as duplicate, wrong case, fuzzy matched, etc.
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
-                if ((matchedGameDetail = gameDetails.FirstOrDefault(game => Content.GetName(game, contentType.Category) == fileNameWithoutExtension)) != null)
+                if ((matchedLocalGame = localGames.FirstOrDefault(game => Content.GetName(game, contentType.Category) == fileNameWithoutExtension)) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
                     // - file extension order is important as it determines the priority of the preferred extension
-                    var contentHits = getContentHits(matchedGameDetail);
+                    var contentHits = getContentHits(matchedLocalGame);
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, contentFile);
                 }
-                else if ((matchedGameDetail = gameDetails.FirstOrDefault(game =>
-                             string.Equals(Content.GetName(game, contentType.Category), fileNameWithoutExtension, StringComparison.CurrentCultureIgnoreCase))) != null)
+                else if ((matchedLocalGame = localGames.FirstOrDefault(localGame =>
+                             string.Equals(Content.GetName(localGame, contentType.Category), fileNameWithoutExtension, StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
-                    getContentHits(matchedGameDetail).Add(HitTypeEnum.WrongCase, contentFile);
+                    getContentHits(matchedLocalGame).Add(HitTypeEnum.WrongCase, contentFile);
                 }
-                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedGameDetail = gameDetails.FirstOrDefault(gameDetail => gameDetail.Game.Name == fileNameWithoutExtension)) != null)
+                else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedLocalGame = localGames.FirstOrDefault(localGame => localGame.Game.Name == fileNameWithoutExtension)) != null)
                 {
-                    getContentHits(matchedGameDetail).Add(HitTypeEnum.TableName, contentFile);
+                    getContentHits(matchedLocalGame).Add(HitTypeEnum.TableName, contentFile);
                 }
                 // fuzzy matching
                 else
                 {
                     var fuzzyFileNameDetails = Fuzzy.Fuzzy.GetNameDetails(contentFile, true);
-                    (matchedGameDetail, var score, var isMatch) = gameDetails.MatchToLocalDatabase(fuzzyFileNameDetails);
+                    (matchedLocalGame, var score, var isMatch) = localGames.MatchToLocalDatabase(fuzzyFileNameDetails);
                     if (isMatch)
                     {
-                        getContentHits(matchedGameDetail).Add(HitTypeEnum.Fuzzy, contentFile, score);
+                        getContentHits(matchedLocalGame).Add(HitTypeEnum.Fuzzy, contentFile, score);
                     }
                     else
                     {
@@ -207,10 +208,10 @@ namespace ClrVpin.Shared
             return unknownSupportedFiles;
         }
 
-        private static void LogDatabaseStatistics(IReadOnlyCollection<GameDetail> gameDetails, string file = null)
+        private static void LogDatabaseStatistics(IReadOnlyCollection<LocalGame> localGames, string file = null)
         {
             Logger.Info(
-                $"Local database {(file == null ? "total" : "file")}: count={gameDetails.Count} (manufactured={gameDetails.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={gameDetails.Count(onlineGame => onlineGame.Derived.IsOriginal)})" +
+                $"Local database {(file == null ? "total" : "file")}: count={localGames.Count} (manufactured={localGames.Count(onlineGame => !onlineGame.Derived.IsOriginal)}, original={localGames.Count(onlineGame => onlineGame.Derived.IsOriginal)})" +
                 $"{(file == null ? "" : ", file: " + file)}");
         }
 

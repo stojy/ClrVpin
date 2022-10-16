@@ -39,11 +39,11 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class ImporterResultsViewModel : IGameCollections
     {
-        public ImporterResultsViewModel(IList<GameItem> gameItems, IList<GameDetail> localGames)
+        public ImporterResultsViewModel(IList<GameItem> gameItems, IList<LocalGame> localGames)
         {
             // use the supplied localGames list instead of extracting from gameItems to ensure the existing ordering in the DB file(s) is preserved
             // - we don't want to re-order based on the online feed (after the various importer fixes) as this makes it too difficult to track the differences
-            // - _localGames = gameItems.Where(item => item.GameDetail != null).Select(item => item.GameDetail).ToList();
+            // - _localGames = gameItems.Where(item => item.LocalGame != null).Select(item => item.LocalGame).ToList();
             _localGames = localGames;
 
             IsMatchingEnabled = Model.Settings.Importer.SelectedMatchCriteriaOptions.Any();
@@ -372,7 +372,7 @@ namespace ClrVpin.Importer
             var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(GetOnlineGames(), overwriteProperties);
 
             // write ALL local game entries back to the database
-            // - updated properties via OnlineGames.Hit.GameDetail are reflected in the local game entries
+            // - updated properties via OnlineGames.Hit.LocalGame are reflected in the local game entries
             // - write irrespective of whether matched or not so that no entries are lost
             if (updatedGameCount > 0)
                 TableUtils.WriteGamesToDatabase(_localGames.Select(x => x.Game));
@@ -476,7 +476,7 @@ namespace ClrVpin.Importer
         private IEnumerable<OnlineGame> GetOnlineGames() => GameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame);
 
         private readonly Regex _regexExtractIpdbId = new(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
-        private readonly IList<GameDetail> _localGames;
+        private readonly IList<LocalGame> _localGames;
         private const string DialogHostName = "ImporterResultsDialog";
 
         private const int WindowMargin = 0;

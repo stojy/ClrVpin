@@ -14,28 +14,28 @@ namespace ClrVpin.Importer
     [AddINotifyPropertyChangedInterface]
     public class DatabaseItem
     {
-        public DatabaseItem(OnlineGame onlineGame, GameDetail originalGameDetail, IGameCollections gameCollections, bool isExisting, TableMatchOptionEnum tableMatchType)
+        public DatabaseItem(OnlineGame onlineGame, LocalGame originalLocalGame, IGameCollections gameCollections, bool isExisting, TableMatchOptionEnum tableMatchType)
         {
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
             // - allow object comparison for serialization (ignoring a few VM properties)
-            // - clone GameDetail (instead of just GameDetail.Game) so the GameDetail.Derived object is available to the view (e.g. for 'is original')
-            var initialSerializedGame = JsonSerializer.Serialize(originalGameDetail.Clone());
+            // - clone LocalGame (instead of just LocalGame.Game) so the LocalGame.Derived object is available to the view (e.g. for 'is original')
+            var initialSerializedGame = JsonSerializer.Serialize(originalLocalGame.Clone());
 
-            GameDetail = originalGameDetail.Clone();
-            GameDetail.Init();
+            LocalGame = originalLocalGame.Clone();
+            LocalGame.Init();
             
             // LCV.SelectedItem is assigned in the VM here (versus binding in the view) to avoid (what appears to be) some race conditions with the ComboBox bindings.. SelectedItem and Text binding
-            // - the race condition causes the SelectedItem (e.g. GameDetail.Game.Manufacturer) to be 'randomly' assigned as an empty string from the async callback in Materialized's DialogHost.Show
+            // - the race condition causes the SelectedItem (e.g. LocalGame.Game.Manufacturer) to be 'randomly' assigned as an empty string from the async callback in Materialized's DialogHost.Show
             // - not immediately obvious in the UI though as the ComboBox's display is bound to the Text binding.. which often appears correct, despite the underlying property being assigned to empty string :(
             // - extra care is also required to ensure the collections do contain the desired default item, else this will cause the selected item to be assigned as null
-            ManufacturersView = new ListCollectionView<string>(gameCollections.Manufacturers, GameDetail.Game.Manufacturer);
-            YearsView = new ListCollectionView<string>(gameCollections.Years, GameDetail.Game.Year);
-            TypesView = new ListCollectionView<string>(gameCollections.Types, GameDetail.Game.Type);
-            RomsView = new ListCollectionView<string>(gameCollections.Roms, GameDetail.Game.Rom);
-            PlayersView = new ListCollectionView<string>(gameCollections.Players, GameDetail.Game.Players);
-            ThemesView = new ListCollectionView<string>(gameCollections.Themes, GameDetail.Game.Theme);
-            AuthorsView = new ListCollectionView<string>(gameCollections.Authors, GameDetail.Game.Author);
+            ManufacturersView = new ListCollectionView<string>(gameCollections.Manufacturers, LocalGame.Game.Manufacturer);
+            YearsView = new ListCollectionView<string>(gameCollections.Years, LocalGame.Game.Year);
+            TypesView = new ListCollectionView<string>(gameCollections.Types, LocalGame.Game.Type);
+            RomsView = new ListCollectionView<string>(gameCollections.Roms, LocalGame.Game.Rom);
+            PlayersView = new ListCollectionView<string>(gameCollections.Players, LocalGame.Game.Players);
+            ThemesView = new ListCollectionView<string>(gameCollections.Themes, LocalGame.Game.Theme);
+            AuthorsView = new ListCollectionView<string>(gameCollections.Authors, LocalGame.Game.Author);
 
             Title = tableMatchType switch
             {
@@ -51,13 +51,13 @@ namespace ClrVpin.Importer
 
             MaxDateTime = DateTime.Today.AddDays(1);
 
-            if (DateTime.TryParse(GameDetail.Game.DateAddedString, out var dateTime))
+            if (DateTime.TryParse(LocalGame.Game.DateAddedString, out var dateTime))
             {
                 DateAdded = dateTime;
                 DateAddedDateOnly = dateTime.Date;
             }
 
-            if (DateTime.TryParse(GameDetail.Game.DateModifiedString, out dateTime))
+            if (DateTime.TryParse(LocalGame.Game.DateModifiedString, out dateTime))
             {
                 DateModified = dateTime;
                 DateModifiedDateOnly = dateTime.Date;
@@ -78,36 +78,36 @@ namespace ClrVpin.Importer
                     DateAdded = DateAddedDateOnly + (DateAdded?.TimeOfDay ?? TimeSpan.Zero);
                 else
                     DateAdded = new DateTime(1900, 1, 1);
-                GameDetail.Game.DateAddedString = DateAdded?.ToString("yyyy-MM-dd HH:mm:ss");
+                LocalGame.Game.DateAddedString = DateAdded?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // update date/time preserving the time portion, which is unfortunately cleared by the DateTime picker
                 if (DateModifiedDateOnly != null)
                     DateModified = DateModifiedDateOnly + (DateModified?.TimeOfDay ?? TimeSpan.Zero);
                 else
                     DateModified = new DateTime(1900, 1, 1);
-                GameDetail.Game.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
+                LocalGame.Game.DateModifiedString = DateModified?.ToString("yyyy-MM-dd HH:mm:ss");
 
                 // update rounding
                 // - required because the underlying RatingsBar unfortunately doesn't bind the value to the 'ValueIncrements' used in the UI, e.g. bound value 1.456700001
                 // - if the rounding value is changed, the TextBox will rebind and cause another ChangedCommand to fire
-                if (decimal.TryParse(GameDetail.Game.Rating, out var rating))
-                    GameDetail.Game.Rating = (Math.Round(rating * 2) / 2).ToString();
+                if (decimal.TryParse(LocalGame.Game.Rating, out var rating))
+                    LocalGame.Game.Rating = (Math.Round(rating * 2) / 2).ToString();
 
                 // explicitly update dynamic game details to account for any updated properties, e.g. table name, ipdb, etc
-                GameDetail.Init();
+                LocalGame.Init();
 
                 // check if anything has changed.. used to enable the 'update' button
-                IsItemChanged = !GameDetail.IsEqual(initialSerializedGame) && !GameDetail.Game.Name.IsEmpty();
+                IsItemChanged = !LocalGame.IsEqual(initialSerializedGame) && !LocalGame.Game.Name.IsEmpty();
 
                 CheckGameAgainstFeed(onlineGame);
             });
 
-            AddMissingInfoCommand = new ActionCommand(() => { GameUpdater.UpdateProperties(onlineGame, GameDetail.Game, false); });
+            AddMissingInfoCommand = new ActionCommand(() => { GameUpdater.UpdateProperties(onlineGame, LocalGame.Game, false); });
 
-            OverwriteAllInfoCommand = new ActionCommand(() => { GameUpdater.UpdateProperties(onlineGame, GameDetail.Game, true); });
+            OverwriteAllInfoCommand = new ActionCommand(() => { GameUpdater.UpdateProperties(onlineGame, LocalGame.Game, true); });
         }
 
-        public GameDetail GameDetail { get; }
+        public LocalGame LocalGame { get; }
 
         public bool IsExisting { get; set; }
         public bool IsItemChanged { get; private set; }
@@ -145,8 +145,8 @@ namespace ClrVpin.Importer
         {
             // check if anything is different to the feed.. used to enable the update missing and update all buttons
             // - if game is unmatched then onlineGame will be null.. which is explicitly ignored thus correctly returning false for both flags
-            IsItemInfoMissing = GameUpdater.CheckProperties(onlineGame, GameDetail.Game, false);
-            IsItemInfoDifferent = IsItemInfoMissing || GameUpdater.CheckProperties(onlineGame, GameDetail.Game, true);
+            IsItemInfoMissing = GameUpdater.CheckProperties(onlineGame, LocalGame.Game, false);
+            IsItemInfoDifferent = IsItemInfoMissing || GameUpdater.CheckProperties(onlineGame, LocalGame.Game, true);
         }
 
         private bool _loaded;

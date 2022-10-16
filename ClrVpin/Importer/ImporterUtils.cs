@@ -26,12 +26,12 @@ public static class ImporterUtils
         };
     }
 
-    public static async Task MatchOnlineToLocalAsync(List<GameDetail> localGames, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+    public static async Task MatchOnlineToLocalAsync(List<LocalGame> localGames, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
     {
         await Task.Run(() => MatchOnlineToLocal(localGames, onlineGames, updateProgress));
     }
 
-    public static async Task<IList<GameItem>> MergeOnlineAndLocalGamesAsync(List<GameDetail> localGames, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+    public static async Task<IList<GameItem>> MergeOnlineAndLocalGamesAsync(List<LocalGame> localGames, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
     {
         return await Task.Run(() => MergeLocalAndOnlineGames(localGames, onlineGames, updateProgress));
     }
@@ -72,7 +72,7 @@ public static class ImporterUtils
         return uniqueGame;
     }
 
-    private static void MatchOnlineToLocal(IList<GameDetail> localGames, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+    private static void MatchOnlineToLocal(IList<LocalGame> localGames, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
     {
         onlineGames.ForEach((onlineGame, i) =>
         {
@@ -102,7 +102,7 @@ public static class ImporterUtils
                 // - BUT, it would require some reworking of Fuzzy.MatchToLocalDatabase() to accommodate
 
                 // check to see if the local game has already been matched to an online game
-                var existingMatchOnlineGame = onlineGames.FirstOrDefault(online => online.Hit?.GameDetail == localMatchedGame);
+                var existingMatchOnlineGame = onlineGames.FirstOrDefault(online => online.Hit?.LocalGame == localMatchedGame);
                 if (existingMatchOnlineGame != null)
                 {
                     var replaceExistingMatch = existingMatchOnlineGame.Hit.Score < score;
@@ -111,19 +111,19 @@ public static class ImporterUtils
                     var existingFullName = $"{existingMatchOnlineGame.Name} ({existingMatchOnlineGame.Manufacturer} {existingMatchOnlineGame.Year})";
 
                     var fuzzyLog = $"duplicate fuzzy match: replaceExisting={replaceExistingMatch}, isOriginal={isOriginal}\n" +
-                                   $"- db record:                      {Fuzzy.LogGameDetail(localMatchedGame.Game.Name, localMatchedGame.Game.Description, localMatchedGame.Game.Manufacturer, localMatchedGame.Game.Year)}\n" +
-                                   $"- existing feed match: score={$"{existingMatchOnlineGame.Hit.Score},",-4} {Fuzzy.LogGameDetail(existingFullName, null, existingMatchOnlineGame.Manufacturer, existingMatchOnlineGame.YearString)}\n" +
-                                   $"- new feed match:      score={$"{score},",-4} {Fuzzy.LogGameDetail(fuzzyNameDetails.ActualName, null, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}";
+                                   $"- db record:                      {Fuzzy.LogGameInfo(localMatchedGame.Game.Name, localMatchedGame.Game.Description, localMatchedGame.Game.Manufacturer, localMatchedGame.Game.Year)}\n" +
+                                   $"- existing feed match: score={$"{existingMatchOnlineGame.Hit.Score},",-4} {Fuzzy.LogGameInfo(existingFullName, null, existingMatchOnlineGame.Manufacturer, existingMatchOnlineGame.YearString)}\n" +
+                                   $"- new feed match:      score={$"{score},",-4} {Fuzzy.LogGameInfo(fuzzyNameDetails.ActualName, null, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}";
 
                     if (!(isOriginal && Model.Settings.SkipLoggingForOriginalTables))
                         Logger.Info(fuzzyLog, true);
 
                     // if the new match has a greater score..
                     // - Yes = remove the previous hit for the SAME game since it must be wrong
-                    //        e.g. onlineGame=Apache initially matches against localGame=Apache! because localDB does not have a 'Apache' game
+                    //        e.g. onlineGame=Apache initially matches against localLocalGame=Apache! because localDB does not have a 'Apache' game
                     //        .. but subsequently matches higher to onlineGame=Apache! as expected given this is the better (aka correct) match
                     // - No = ignore the match completely since a better match was already found
-                    //        e.g. onlineGame=Apache and onlineGame=Apache! should NOT both match to the SAME localGame
+                    //        e.g. onlineGame=Apache and onlineGame=Apache! should NOT both match to the SAME localLocalGame
                     if (replaceExistingMatch)
                     {
                         // remove match and adjust statistics
@@ -147,35 +147,35 @@ public static class ImporterUtils
         onlineGame.Hit = null;
     }
 
-    private static void AddMatch(OnlineGame onlineGame, GameDetail localMatchedGame, int? score)
+    private static void AddMatch(OnlineGame onlineGame, LocalGame localMatchedLocalGame, int? score)
     {
         // link both entities together so they can be referenced from all perspectives.. matched, unmatched, and missing (refer TableMatchOptionEnum)
         onlineGame.Hit = new GameHit
         {
-            GameDetail = localMatchedGame,
+            LocalGame = localMatchedLocalGame,
             Score = score
         };
 
-        localMatchedGame.OnlineGame = onlineGame;
+        localMatchedLocalGame.OnlineGame = onlineGame;
     }
 
-    private static List<GameItem> MergeLocalAndOnlineGames(IEnumerable<GameDetail> localGames, IList<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+    private static List<GameItem> MergeLocalAndOnlineGames(IEnumerable<LocalGame> localGames, IList<OnlineGame> onlineGames, Action<string, float?> updateProgress)
     {
-        var localOnlyGameDetails = localGames.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.GameDetail)).ToList();
+        var onlyLocalGames = localGames.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.LocalGame)).ToList();
 
         // the earlier 'online to local' matching has already determined the matches.. so need to redo it again
         // - deliberately NOT performing a 'reverse' fuzzy lookup to avoid scenario where x1 online game could have multiple local files
         // - e.g. online only has 1 AC/DC entry (which is a known issue).. whereas there are multiple local files each representing the unique IPDBs (which is correct)
-        localOnlyGameDetails.ForEach(localOnlyGameDetail =>
+        onlyLocalGames.ForEach(onlyLocalGame =>
         {
-            updateProgress(localOnlyGameDetail.Game.Name, null);
+            updateProgress(onlyLocalGame.Game.Name, null);
 
-            Logger.Debug($"Unmatched local table: '{localOnlyGameDetail.Game.Name}'", true);
+            Logger.Debug($"Unmatched local table: '{onlyLocalGame.Game.Name}'", true);
         });
 
         // merge online and local games into a single collection of GameItem
         var onlineGameItems = onlineGames.Select(onlineGame => new GameItem(onlineGame));
-        var localOnlyGameItems = localOnlyGameDetails.Select(localOnlyGameDetail => new GameItem(localOnlyGameDetail));
+        var localOnlyGameItems = onlyLocalGames.Select(localOnlyGameDetail => new GameItem(localOnlyGameDetail));
 
         var allGameItems = onlineGameItems.Concat(localOnlyGameItems).OrderBy(item => item.Name).ToList();
         allGameItems.ForEach((gameItem, index) => gameItem.Index = index + 1);

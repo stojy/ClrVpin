@@ -17,13 +17,13 @@ namespace ClrVpin.Scanner
     {
         private static readonly Models.Settings.Settings _settings = Model.Settings;
 
-        public static async Task<List<FileDetail>> CheckAsync(List<GameDetail> games, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> CheckAsync(List<LocalGame> games, Action<string, float> updateProgress)
         {
             var unmatchedFiles = await Task.Run(() => Check(games, updateProgress));
             return unmatchedFiles;
         }
 
-        private static List<FileDetail> Check(List<GameDetail> games, Action<string, float> updateProgress)
+        private static List<FileDetail> Check(List<LocalGame> games, Action<string, float> updateProgress)
         {
             var unmatchedFiles = new List<FileDetail>();
 
@@ -68,13 +68,13 @@ namespace ClrVpin.Scanner
             return unmatchedFiles;
         }
 
-        public static async Task<List<FileDetail>> FixAsync(List<GameDetail> games, string backupFolder, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> FixAsync(List<LocalGame> games, string backupFolder, Action<string, float> updateProgress)
         {
             var fixedFileDetails = await Task.Run(() => Fix(games, backupFolder, updateProgress));
             return fixedFileDetails;
         }
 
-        private static List<FileDetail> Fix(ICollection<GameDetail> gameDetail, string backupFolder, Action<string, float> updateProgress)
+        private static List<FileDetail> Fix(ICollection<LocalGame> localGames, string backupFolder, Action<string, float> updateProgress)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 
@@ -88,30 +88,30 @@ namespace ClrVpin.Scanner
             var gamesWithContentCount = 0;
             var gamesWithContentMaxCount = 0;
             
-            static bool GamesWithContentPredicate(GameDetail gameDetail, ContentType contentType) => gameDetail.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing));
+            static bool GamesWithContentPredicate(LocalGame localGame, ContentType contentType) => localGame.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing));
 
             selectedContentTypes.ForEach(contentType =>
             {
-                gamesWithContentMaxCount += gameDetail.Count(game => GamesWithContentPredicate(game, contentType));
+                gamesWithContentMaxCount += localGames.Count(game => GamesWithContentPredicate(game, contentType));
             });
 
             // iterate through each selected content type
             selectedContentTypes.ForEach(contentType =>
             {
-                // fixable gameDetail exclude following hit types..
-                // - missing - associated with gameDetail as the default entry
+                // fixable localGame exclude following hit types..
+                // - missing - associated with localGame as the default entry
                 //   - can be fixed if other (non-correct name) matches are available (e.g. fuzzy match( but can't be fixed.. requires file to be downloaded
                 //   - if no other matches exist, then the content can't be fixed as the content needs to be downloaded
-                // - unknown - not associated with a gameDetail (i.e. no need to check here).. handled elsewhere
+                // - unknown - not associated with a localGame (i.e. no need to check here).. handled elsewhere
                 // - unsupported - not associated with any known content type, e.g. Magic.ini
-                var fixableContentGameDetails = gameDetail.Where(fixableContentGameDetail => GamesWithContentPredicate(fixableContentGameDetail, contentType)).ToList();
+                var fixableContentLocalGames = localGames.Where(localGame => GamesWithContentPredicate(localGame, contentType)).ToList();
 
-                // fix files associated with gameDetail, if they satisfy the fix criteria
-                fixableContentGameDetails.ForEach(fixableContentGameDetail =>
+                // fix files associated with localGame, if they satisfy the fix criteria
+                fixableContentLocalGames.ForEach(fixableContentLocalGame =>
                 {
-                    updateProgress(fixableContentGameDetail.Game.Description, ++gamesWithContentCount / (float)gamesWithContentMaxCount);
+                    updateProgress(fixableContentLocalGame.Game.Description, ++gamesWithContentCount / (float)gamesWithContentMaxCount);
 
-                    var gameContentHits = fixableContentGameDetail.Content.ContentHitsCollection.First(contentHits => contentHits.ContentType == contentType);
+                    var gameContentHits = fixableContentLocalGame.Content.ContentHitsCollection.First(contentHits => contentHits.ContentType == contentType);
 
                     // the underlying HitTypeEnum is declared in descending priority order
                     var orderedByHitType = gameContentHits.Hits.OrderBy(hit => hit.Type);
@@ -120,13 +120,13 @@ namespace ClrVpin.Scanner
                     switch (_settings.Scanner.SelectedMultipleMatchOption)
                     {
                         case MultipleMatchOptionEnum.PreferCorrectName:
-                            FixOrderedHits(orderedByHitType.ToList(), gameFiles, fixableContentGameDetail);
+                            FixOrderedHits(orderedByHitType.ToList(), gameFiles, fixableContentLocalGame);
                             break;
                         case MultipleMatchOptionEnum.PreferLargestSize:
-                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo?.Length).ToList(), gameFiles, fixableContentGameDetail);
+                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo?.Length).ToList(), gameFiles, fixableContentLocalGame);
                             break;
                         case MultipleMatchOptionEnum.PreferMostRecent:
-                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo?.LastWriteTime).ToList(), gameFiles, fixableContentGameDetail);
+                            FixOrderedHits(orderedByHitType.OrderByDescending(hit => hit.FileInfo?.LastWriteTime).ToList(), gameFiles, fixableContentLocalGame);
                             break;
                         case MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold:
                             var orderedByMostRecent = orderedByHitType.OrderByDescending(hit => hit.FileInfo?.LastWriteTime).ToList();
@@ -139,7 +139,7 @@ namespace ClrVpin.Scanner
                                 orderedByMostRecent = orderedByMostRecent.OrderByDescending(hit => correctHitLength != 0 && hit.FileInfo?.Length / correctHitLength > sizeThreshold).ToList();
                             }
 
-                            FixOrderedHits(orderedByMostRecent.ToList(), gameFiles, fixableContentGameDetail);
+                            FixOrderedHits(orderedByMostRecent.ToList(), gameFiles, fixableContentLocalGame);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -150,7 +150,7 @@ namespace ClrVpin.Scanner
             return gameFiles;
         }
 
-        private static void FixOrderedHits(ICollection<Hit> orderedHits, List<FileDetail> gameFiles, GameDetail gameDetail)
+        private static void FixOrderedHits(ICollection<Hit> orderedHits, List<FileDetail> gameFiles, LocalGame localGame)
         {
             // first hit may be HitType.Missing.. i.e. no file info present
             // - this is filtered out during the file delete/rename/etc because..
@@ -171,7 +171,7 @@ namespace ClrVpin.Scanner
             // - e.g. preferred = wrong case, other=correct name (not selected)
             if (preferredHit.Type == HitTypeEnum.CorrectName && !nonPreferredHits.Any(hit => hit.Type.In(_settings.Scanner.SelectedFixHitTypes)))
             {
-                Logger.Info($"Skipping (fix criteria not selected).. table: {gameDetail.Game.Name}, description: {gameDetail.Game.Description}, " +
+                Logger.Info($"Skipping (fix criteria not selected).. table: {localGame.Game.Name}, description: {localGame.Game.Description}, " +
                             $"preferred type: {preferredHit.Type.GetDescription()}, required fix types (unselected): {string.Join('|', nonPreferredHits.Select(x => x.Type.GetDescription()).Distinct())}, " +
                             $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
@@ -181,14 +181,14 @@ namespace ClrVpin.Scanner
             // - e.g. correct name not selected
             if (preferredHit.Type != HitTypeEnum.CorrectName && !preferredHit.Type.In(_settings.Scanner.SelectedFixHitTypes))
             {
-                Logger.Info($"Skipping (fix criteria not selected).. table: {gameDetail.Game.Name}, description: {gameDetail.Game.Description}, " +
+                Logger.Info($"Skipping (fix criteria not selected).. table: {localGame.Game.Name}, description: {localGame.Game.Description}, " +
                             $"preferred type (unselected): {preferredHit.Type.GetDescription()}, " +
                             $"content: {preferredHit.ContentType}, multi option: {multiOptionDescription}");
                 return;
             }
 
             // delete all hit files except the first
-            Logger.Info($"Fixing.. table: {gameDetail.Game.Name}, description: {gameDetail.Game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}",
+            Logger.Info($"Fixing.. table: {localGame.Game.Name}, description: {localGame.Game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}",
                 isHighlight: true);
 
             var (description, warning) = Fuzzy.GetScoreDetail(preferredHit.Score);
@@ -202,7 +202,7 @@ namespace ClrVpin.Scanner
 
             // if the preferred hit file isn't 'CorrectName', then rename it
             if (preferredHit.Type != HitTypeEnum.CorrectName)
-                gameFiles.Add(FileUtils.Rename(preferredHit, gameDetail, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
+                gameFiles.Add(FileUtils.Rename(preferredHit, localGame, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
         }
 
         public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
@@ -212,7 +212,7 @@ namespace ClrVpin.Scanner
 
         private static void RemoveUnmatched(IEnumerable<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
         {
-            // delete files NOT associated with gameDetail, aka unmatched files
+            // delete files NOT associated with localGame, aka unmatched files
             var unmatchedFilesToDelete = unmatchedFiles.Where(unmatchedFile =>
                 unmatchedFile.HitType == HitTypeEnum.Unknown && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
                 unmatchedFile.HitType == HitTypeEnum.Unsupported && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported)).ToList();
@@ -229,7 +229,7 @@ namespace ClrVpin.Scanner
             });
         }
 
-        private static void AddMissingStatus(List<GameDetail> games)
+        private static void AddMissingStatus(List<LocalGame> games)
         {
             games.ForEach(game =>
             {

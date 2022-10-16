@@ -15,11 +15,11 @@ namespace ClrVpin.Shared
     public abstract class ResultsViewModel
     {
         // all games referenced in the DB.. irrespective of hits
-        public ObservableCollection<GameDetail> Games { get; protected init; }
+        public ObservableCollection<LocalGame> Games { get; protected init; }
 
         public ListCollectionView<FeatureType> AllContentFeatureTypesView { get; private set; }
         public ListCollectionView<FeatureType> AllHitFeatureTypesView { get; private set; }
-        public ListCollectionView<GameDetail> HitGamesView { get; private set; }
+        public ListCollectionView<LocalGame> HitGamesView { get; private set; }
 
         public ICommand ExpandGamesCommand { get; private set; }
         public string SearchText { get; set; } = "";
@@ -72,7 +72,7 @@ namespace ClrVpin.Shared
 
         private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
-        private void UpdateStatus(IEnumerable<GameDetail> games)
+        private void UpdateStatus(IEnumerable<LocalGame> games)
         {
             games.ForEach(game =>
             {
@@ -91,25 +91,25 @@ namespace ClrVpin.Shared
 
         private void InitView()
         {
-            _hitGames = new ObservableCollection<GameDetail>(Games.Where(game => game.Content.Hits.Count > 0));
-            HitGamesView = new ListCollectionView<GameDetail>(_hitGames);
+            _hitGames = new ObservableCollection<LocalGame>(Games.Where(game => game.Content.Hits.Count > 0));
+            HitGamesView = new ListCollectionView<LocalGame>(_hitGames);
 
             // text filter
-            HitGamesView.Filter += gameDetail =>
+            HitGamesView.Filter += localGame =>
             {
                 // only display games that have hits AND those hits haven't already been filtered out (e.g. filtered on content or hit type)
-                if (gameDetail.Content.HitsView.Count == 0)
+                if (localGame.Content.HitsView.Count == 0)
                     return false;
 
                 // return hits based on description match against the search text
-                return string.IsNullOrEmpty(SearchText) || gameDetail.Game.Description.ToLower().Contains(SearchText.ToLower());
+                return string.IsNullOrEmpty(SearchText) || localGame.Game.Description.ToLower().Contains(SearchText.ToLower());
             };
         }
 
         private void SearchTextChanged() => HitGamesView.RefreshDebounce();
 
         // games referenced in the DB that have hits
-        private ObservableCollection<GameDetail> _hitGames;
+        private ObservableCollection<LocalGame> _hitGames;
 
         private IEnumerable<FeatureType> _allContentFeatureTypes;
         private IEnumerable<FeatureType> _allHitFeatureTypes;

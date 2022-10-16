@@ -13,7 +13,7 @@ namespace ClrVpin.Scanner
 {
     public class ScannerStatisticsViewModel : StatisticsViewModel
     {
-        public ScannerStatisticsViewModel(ObservableCollection<GameDetail> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
+        public ScannerStatisticsViewModel(ObservableCollection<LocalGame> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
             : base(games, elapsedTime, fixedFiles, unmatchedFiles)
         {
             // hit type stats for all supported types only
@@ -28,7 +28,7 @@ namespace ClrVpin.Scanner
             SelectedCheckHitTypes = Settings.Scanner.SelectedCheckHitTypes.ToList();
             SelectedFixHitTypes = Settings.Scanner.SelectedFixHitTypes.ToList();
 
-            // unlike rebuilder, the total count represents the number of GameDetails
+            // unlike rebuilder, the total count represents the number of LocalGames
             TotalCount = Games.Count;
         }
 

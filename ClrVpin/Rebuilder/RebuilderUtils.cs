@@ -22,13 +22,13 @@ namespace ClrVpin.Rebuilder
             _settings = Model.Settings;
         }
 
-        public static async Task<List<FileDetail>> CheckAndMatchAsync(List<GameDetail> games, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> CheckAndMatchAsync(List<LocalGame> games, Action<string, float> updateProgress)
         {
             var unmatchedFiles = await Task.Run(() => CheckAndMatch(games, updateProgress));
             return unmatchedFiles;
         }
 
-        public static async Task<List<FileDetail>> MergeAsync(List<GameDetail> games, string backupFolder, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> MergeAsync(List<LocalGame> games, string backupFolder, Action<string, float> updateProgress)
         {
             var mergedFileDetails = await Task.Run(() => Merge(games, backupFolder, updateProgress));
             return mergedFileDetails;
@@ -39,7 +39,7 @@ namespace ClrVpin.Rebuilder
             await Task.Run(() => RemoveUnmatchedIgnored(unmatchedFiles, updateProgress));
         }
 
-        private static List<FileDetail> CheckAndMatch(IList<GameDetail> games, Action<string, float> updateProgress)
+        private static List<FileDetail> CheckAndMatch(IList<LocalGame> games, Action<string, float> updateProgress)
         {
             // determine the destination type
             var contentType = _settings.GetSelectedDestinationContentType();
@@ -56,7 +56,7 @@ namespace ClrVpin.Rebuilder
             return unmatchedContentFiles.Concat(nonContentFiles).ToList();
         }
 
-        private static List<FileDetail> Merge(IEnumerable<GameDetail> games, string backupFolder, Action<string, float> updateProgress)
+        private static List<FileDetail> Merge(IEnumerable<LocalGame> games, string backupFolder, Action<string, float> updateProgress)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 
@@ -88,7 +88,7 @@ namespace ClrVpin.Rebuilder
         }
 
         // ReSharper disable once UnusedParameter.Local
-        private static FileDetail Merge(Hit hit, GameDetail gameDetail, ICollection<HitTypeEnum> supportedHitTypes)
+        private static FileDetail Merge(Hit hit, LocalGame localGame, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var fixFileType = FixFileTypeEnum.Skipped;
             var sourceFileInfo = hit.FileInfo; // file to be copied, i.e. into the VP folder (potentially overriding)
@@ -101,7 +101,7 @@ namespace ClrVpin.Rebuilder
             // construct the correct destination file name - i.e. the file name that WILL be used when the scanner is eventually run (typically after the merge)
             // - calculated here the purpose of logging, i.e. so that the file details of the file that will potentially be overwritten (when scanning is run) is displayed
             // - selecting from the relevant hit.Type would likely be more efficient, but not done because full file paths are required/useful for logging
-            var correctDestinationFileName = FileUtils.GetCorrectFile(gameDetail, contentType.Category, contentType.Folder, hit.Extension);
+            var correctDestinationFileName = FileUtils.GetCorrectFile(localGame, contentType.Category, contentType.Folder, hit.Extension);
             var correctDestinationFileInfo = File.Exists(correctDestinationFileName) ? new FileInfo(correctDestinationFileName) : null;
 
             void LogFuzzyMatch()
@@ -126,14 +126,14 @@ namespace ClrVpin.Rebuilder
             {
                 fixFileType = FixFileTypeEnum.Ignored;
 
-                if (!ShouldIgnore(gameDetail.Game, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo, LogFuzzyMatch))
+                if (!ShouldIgnore(localGame.Game, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo, LogFuzzyMatch))
                 {
                     fixFileType = FixFileTypeEnum.Merged;
 
                     var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
                     var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
 
-                    Logger.Info($"Merging.. table: {gameDetail.Game.Name}, description: {gameDetail.Game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}", isHighlight: true);
+                    Logger.Info($"Merging.. table: {localGame.Game.Name}, description: {localGame.Game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}", isHighlight: true);
                     LogFuzzyMatch();
                     FileUtils.Merge(hit.Path, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified, contentType.KindredExtensionsList, backupFile => hit.Path = backupFile);
                 }

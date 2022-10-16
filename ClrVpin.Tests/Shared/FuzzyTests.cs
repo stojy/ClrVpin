@@ -255,84 +255,84 @@ public class FuzzyTests
     [Test]
     public void DatabaseMultipleGamesMatchTest()
     {
-        var gameDetails = new List<GameDetail>
+        var localGames = new List<LocalGame>
         {
-            new GameDetail { Game = new Game { IpdbId = "1", Name = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" }},
-            new GameDetail { Game = new Game {IpdbId = "2", Name = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
-            new GameDetail { Game = new Game {IpdbId = "3", Name = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
-            new GameDetail { Game = new Game {IpdbId = "4", Name = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
-            new GameDetail { Game = new Game {IpdbId = "5", Name = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" } },
-            new GameDetail { Game = new Game {IpdbId = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" } },
-            new GameDetail { Game = new Game {IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo"  }},
-            new GameDetail { Game = new Game {IpdbId = "8", Name = "X-Men LE (Stern 2012)", Description = "X-Men Wolverine LE (Stern 2012)"  }}
+            new() { Game = new Game { IpdbId = "1", Name = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" }},
+            new() { Game = new Game {IpdbId = "2", Name = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
+            new() { Game = new Game {IpdbId = "3", Name = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
+            new() { Game = new Game {IpdbId = "4", Name = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
+            new() { Game = new Game {IpdbId = "5", Name = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" } },
+            new() { Game = new Game {IpdbId = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" } },
+            new() { Game = new Game {IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo"  }},
+            new() { Game = new Game {IpdbId = "8", Name = "X-Men LE (Stern 2012)", Description = "X-Men Wolverine LE (Stern 2012)"  }}
         };
 
-        gameDetails.ForEach((gameDetail,index) =>
+        localGames.ForEach((localGame, index) =>
         {
-            GameDerived.Init(gameDetail, index);
-            gameDetail.Fuzzy.TableDetails = Fuzzy.GetNameDetails(gameDetail.Game.Name, false);
-            gameDetail.Fuzzy.DescriptionDetails = Fuzzy.GetNameDetails(gameDetail.Game.Description, false);
+            GameDerived.Init(localGame, index);
+            localGame.Fuzzy.TableDetails = Fuzzy.GetNameDetails(localGame.Game.Name, false);
+            localGame.Fuzzy.DescriptionDetails = Fuzzy.GetNameDetails(localGame.Game.Description, false);
         });
 
         // exact match #1
         var fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        var (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        var (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("1"));
         Assert.That(isMatch, Is.True);
 
         // exact match #2 - i.,e. not the first match
         fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("2"));
         Assert.That(isMatch, Is.True);
 
         // longest match chosen - i.e. not the first match
         fileDetails = Fuzzy.GetNameDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("4"));
         Assert.That(isMatch, Is.True);
 
         // partial match
         fileDetails = Fuzzy.GetNameDetails("Blah Cowboy Eight Ball blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
-        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("2"));
         Assert.That(isMatch, Is.True);
 
         // no match chosen - i.e. not the first match
         fileDetails = Fuzzy.GetNameDetails("what the heck is this file.f4v", true);
-        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game, Is.Not.Null);
         Assert.That(isMatch, Is.False);
 
         // partial match, but not long enough to score - 'wolverine' is 9 long, but 11 is required
         fileDetails = Fuzzy.GetNameDetails("Wolverine (Zen Studios 2013).vpx", true);
-        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game, Is.Not.Null);
         Assert.That(isMatch, Is.False);
 
         // partial match - extra score because file only has 1 match in the games DB
         fileDetails = Fuzzy.GetNameDetails("Frankenstein.vpx", true);
-        (game, _, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("5"));
         Assert.That(isMatch, Is.True);
 
         // partial match - NO extra score because file has multiple matches in the games DB
         fileDetails = Fuzzy.GetNameDetails("Ball.vpx", true);
-        (game, var score, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        (game, var score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.Not.Null);
         Assert.That(score, Is.EqualTo(15));
         Assert.That(isMatch, Is.False);
 
         // ??
         fileDetails = Fuzzy.GetNameDetails("Transformers Marcade Mod v1.2.vpx", true);
-        (game, score, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        (game, score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("6"));
         Assert.That(score, Is.EqualTo(152 + Fuzzy.ScoringNoWhiteSpaceBonus));
         Assert.That(isMatch, Is.True);
 
         // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw (non-cleaned) table name
         fileDetails = Fuzzy.GetNameDetails("V1 (IDSA 1986) Logo.png", true);
-        (game, score, isMatch) = gameDetails.MatchToLocalDatabase(fileDetails);
+        (game, score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
         Assert.That(score, Is.EqualTo(150));
         Assert.That(isMatch, Is.True);

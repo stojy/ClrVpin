@@ -30,7 +30,7 @@
     </Grid>
   </DataTemplate>
 
-  <DataTemplate x:Key="ContentTemplate" DataType="game:GameDetail">
+  <DataTemplate x:Key="ContentTemplate" DataType="game:LocalGame">
     <ListBox ItemsSource="{Binding Content.Hits}" ItemTemplate="{StaticResource HitTemplate}">
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
@@ -52,7 +52,7 @@
     </ListBox>
   </DataTemplate>
 
-  <DataTemplate x:Key="SmellyTemplate" DataType="game:GameDetail">
+  <DataTemplate x:Key="SmellyTemplate" DataType="game:LocalGame">
     <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Content.IsSmelly, Converter={StaticResource SmellyToIconConverter}}"
                              Height="40" Width="40" VerticalAlignment="Center" HorizontalAlignment="Center">
       <!-- just for giggles.. setting foreground by a style trigger instead of a converter.. it's rather large!-->
@@ -71,7 +71,7 @@
     </materialDesign:PackIcon>
   </DataTemplate>
 
-  <DataTemplate x:Key="IpdbTemplate" DataType="game:GameDetail">
+  <DataTemplate x:Key="IpdbTemplate" DataType="game:LocalGame">
     <TextBlock VerticalAlignment="Center" >
       <Hyperlink NavigateUri="{Binding Derived.IpdbUrl}" Command="{Binding ViewState.NavigateToIpdbCommand}">
         <TextBlock Text="{Binding Derived.Ipdb}" />
@@ -106,30 +106,30 @@
         </TextBox>
 
         <WrapPanel Margin="30,0,0,0" VerticalAlignment="Bottom" TextBlock.FontStyle="Italic" Opacity="0.6">
-          <TextBlock Text="{Binding GameDetailsView.Count}" />
+          <TextBlock Text="{Binding LocalGamesView.Count}" />
           <TextBlock Text=" / " />
-          <TextBlock Text="{Binding GameDetails.Count}" />
+          <TextBlock Text="{Binding LocalGames.Count}" />
         </WrapPanel>
       </WrapPanel>
 
-      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding GameDetailsView}" AutoGenerateColumns="False" CanUserAddRows="False"
+      <DataGrid DockPanel.Dock="Bottom" Name="ScannerResults" ItemsSource="{Binding LocalGamesView}" AutoGenerateColumns="False" CanUserAddRows="False"
                 materialDesign:DataGridAssist.CellPadding="15 5 5 8" materialDesign:DataGridAssist.ColumnHeaderPadding="15 5 5 8"
                 CellStyle="{StaticResource CellStyle}">
         <DataGrid.Columns>
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="#" Binding="{Binding Derived.Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="#" Binding="{Binding Derived.Number}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Valid" CellTemplate="{StaticResource SmellyTemplate}" SortMemberPath="Content.IsSmelly"
                                   CanUserSort="True" />
-          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Table" Binding="{Binding Derived.TableFileWithExtension}" Width="280" IsReadOnly="True"
+          <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Table" Binding="{Binding Derived.TableFileWithExtension}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Description" Binding="{Binding Game.Description}" Width="280" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Description" Binding="{Binding Game.Description}" Width="280" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Manufacturer" Binding="{Binding Game.Manufacturer}" Width="150" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufacturer" Binding="{Binding Game.Manufacturer}" Width="150" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Year" Binding="{Binding Game.Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Rating" Binding="{Binding Game.Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Year" Binding="{Binding Game.Year}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Rating" Binding="{Binding Game.Rating}" IsReadOnly="True" ElementStyle="{StaticResource TextCellStyle}" />
           <!--<DataGridTextColumn Header="Modified" Binding="{Binding DateModified}" />-->
-          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameDetail}" Header="Author(s)" Binding="{Binding Game.Author}" Width="200" IsReadOnly="True"
+          <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Author(s)" Binding="{Binding Game.Author}" Width="200" IsReadOnly="True"
                               ElementStyle="{StaticResource TextCellStyle}" />
 
           <DataGridTemplateColumn Header="Content" CellTemplate="{StaticResource ContentTemplate}" />

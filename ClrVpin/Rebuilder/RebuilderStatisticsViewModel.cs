@@ -13,7 +13,7 @@ namespace ClrVpin.Rebuilder
 {
     public sealed class RebuilderStatisticsViewModel : StatisticsViewModel
     {
-        public RebuilderStatisticsViewModel(ObservableCollection<GameDetail> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
+        public RebuilderStatisticsViewModel(ObservableCollection<LocalGame> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
             : base(games, elapsedTime, fixedFiles, unmatchedFiles)
         {
             // hit type stats for all supported types only

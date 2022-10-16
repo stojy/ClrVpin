@@ -12,13 +12,13 @@ namespace ClrVpin.Importer
     {
         public static (Dictionary<string, int> propertyStatistics, int updatedGameCount, int matchedGameCount) UpdateProperties(IEnumerable<OnlineGame> onlineGames, bool overwriteProperties)
         {
-            var matchedOnlineGames = onlineGames.Where(x => x.Hit?.GameDetail != null).ToList();
+            var matchedOnlineGames = onlineGames.Where(x => x.Hit?.LocalGame != null).ToList();
             var propertyStatistics = CreatePropertyStatistics();
             var updatedGameCount = 0;
 
             matchedOnlineGames.ForEach(matchedOnlineGame =>
             {
-                var updated = CheckAndFix(matchedOnlineGame, matchedOnlineGame.Hit.GameDetail.Game, overwriteProperties, propertyStatistics);
+                var updated = CheckAndFix(matchedOnlineGame, matchedOnlineGame.Hit.LocalGame.Game, overwriteProperties, propertyStatistics);
 
                 updatedGameCount += updated ? 1 : 0;
             });

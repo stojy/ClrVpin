@@ -22,9 +22,9 @@ public class Content
     // true if game contains any hits types that are not valid
     public bool IsSmelly { get; set; }
 
-    public static string GetName(GameDetail gameDetail, ContentTypeCategoryEnum category) =>
+    public static string GetName(LocalGame localGame, ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball
-        category == ContentTypeCategoryEnum.Media ? gameDetail.Game.Description : gameDetail.Game.Name;
+        category == ContentTypeCategoryEnum.Media ? localGame.Game.Description : localGame.Game.Name;
 
     public void Init(IEnumerable<ContentType> contentTypes)
     {

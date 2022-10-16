@@ -11,23 +11,23 @@ namespace ClrVpin.Scanner
     [AddINotifyPropertyChangedInterface]
     public class ScannerExplorerViewModel
     {
-        public ScannerExplorerViewModel(ObservableCollection<GameDetail> gameDetails)
+        public ScannerExplorerViewModel(ObservableCollection<LocalGame> localGames)
         {
-            GameDetails = gameDetails;
-            GameDetailsView = new ListCollectionView<GameDetail>(gameDetails);
+            LocalGames = localGames;
+            LocalGamesView = new ListCollectionView<LocalGame>(localGames);
 
             // text filter
-            GameDetailsView.Filter += gameDetail => string.IsNullOrEmpty(SearchText) || gameDetail.Game.Description.ToLower().Contains(SearchText.ToLower());
+            LocalGamesView.Filter += localGame => string.IsNullOrEmpty(SearchText) || localGame.Game.Description.ToLower().Contains(SearchText.ToLower());
 
             SearchTextCommand = new ActionCommand(SearchTextChanged);
         }
 
-        public ListCollectionView<GameDetail> GameDetailsView { get; }
+        public ListCollectionView<LocalGame> LocalGamesView { get; }
 
         public Window Window { get; private set; }
         public string SearchText { get; set; } = "";
         public ICommand SearchTextCommand { get; set; }
-        public ObservableCollection<GameDetail> GameDetails { get; }
+        public ObservableCollection<LocalGame> LocalGames { get; }
 
         public void Show(Window parentWindow, double left, double top, double width)
         {
@@ -50,7 +50,7 @@ namespace ClrVpin.Scanner
 
         public void Close() => Window.Close();
 
-        private void SearchTextChanged() => GameDetailsView.RefreshDebounce();
+        private void SearchTextChanged() => LocalGamesView.RefreshDebounce();
 
         private const int WindowMargin = 0;
     }

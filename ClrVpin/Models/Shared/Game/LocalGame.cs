@@ -7,7 +7,7 @@ using PropertyChanged;
 namespace ClrVpin.Models.Shared.Game;
 
 [AddINotifyPropertyChangedInterface]
-public class GameDetail
+public class LocalGame
 {
     public void Init(int? number = null)
     {
@@ -21,17 +21,17 @@ public class GameDetail
     public Database.Game Game { get; set; }
 
     [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
-    public GameDerived Derived { get; set; } = new GameDerived();
+    public GameDerived Derived { get; set; } = new();
 
     [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
-    public FuzzyDetails Fuzzy { get; } = new FuzzyDetails();
+    public FuzzyDetails Fuzzy { get; } = new();
 
     [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
     // Content contains 1 or more content hits (e.g. launch audio, wheel, etc), each of which can contain multiple media file hits (e.g. wrong case, valid, etc)
-    public Content Content { get; } = new Content();
+    public Content Content { get; } = new();
 
     [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
-    public ViewState ViewState { get; } = new ViewState();
+    public ViewState ViewState { get; } = new();
 
     [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
     // ReSharper disable once UnusedAutoPropertyAccessor.Global - keeping for future use

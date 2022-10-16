@@ -225,7 +225,7 @@ namespace ClrVpin.Rebuilder
             progress.Show(_window);
 
 
-            List<GameDetail> games;
+            List<LocalGame> games;
             try
             {
                 progress.Update("Loading Database");
@@ -253,7 +253,7 @@ namespace ClrVpin.Rebuilder
 
             progress.Update("Preparing Results");
             await Task.Delay(1);
-            _games = new ObservableCollection<GameDetail>(games);
+            _games = new ObservableCollection<LocalGame>(games);
 
             progress.Close();
 
@@ -296,7 +296,7 @@ namespace ClrVpin.Rebuilder
 
 
         private readonly IEnumerable<string> _destinationContentTypes;
-        private ObservableCollection<GameDetail> _games;
+        private ObservableCollection<LocalGame> _games;
         private Window _window;
 
         private const int WindowMargin = 0;

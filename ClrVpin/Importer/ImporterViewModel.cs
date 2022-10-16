@@ -163,7 +163,7 @@ namespace ClrVpin.Importer
             var progress = new ProgressViewModel();
             progress.Show(_window);
 
-            var localGames = new List<GameDetail>();
+            var localGames = new List<LocalGame>();
             if (MatchFuzzy.IsActive)
             {
                 try
@@ -204,7 +204,7 @@ namespace ClrVpin.Importer
             void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
 
-        private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, IList<GameDetail> localGames, Dictionary<string, int> fixStatistics)
+        private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, IList<LocalGame> localGames, Dictionary<string, int> fixStatistics)
         {
             var screenPosition = _window.GetCurrentScreenPosition();
 

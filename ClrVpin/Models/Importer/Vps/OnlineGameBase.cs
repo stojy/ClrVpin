@@ -54,7 +54,7 @@ public class OnlineGameBase
 public class GameHit
 {
     // ReSharper disable once PropertyCanBeMadeInitOnly.Global
-    public GameDetail GameDetail { get; set; }
+    public LocalGame LocalGame { get; set; }
     // ReSharper disable once PropertyCanBeMadeInitOnly.Global
     public int? Score { get; set; }
 }
