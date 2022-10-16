@@ -4,5 +4,6 @@ public enum DatabaseItemAction
 {
     Update = 1,
     Insert = 2,
-    Cancel = 3
+    Delete = 3,
+    Cancel = 4
 }

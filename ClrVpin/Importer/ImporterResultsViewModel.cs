@@ -59,7 +59,7 @@ namespace ClrVpin.Importer
                 // local database show/add commands
                 gameItem.IsMatchingEnabled = IsMatchingEnabled;
                 gameItem.UpdateDatabaseEntryCommand = new ActionCommand(() =>
-                    DatabaseItemManagement.UpdateDatabaseItem(_localGames, gameItem, this));
+                    DatabaseItemManagement.UpdateDatabaseItem(_localGames, gameItem, this, () => GameItems.Remove(gameItem)));
                 gameItem.CreateDatabaseEntryCommand = new ActionCommand(() =>
                     DatabaseItemManagement.CreateDatabaseItem(_localGames, gameItem, this));
                 gameItem.UpdateDatabaseMatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;

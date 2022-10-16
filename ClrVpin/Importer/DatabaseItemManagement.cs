@@ -16,7 +16,7 @@ namespace ClrVpin.Importer
     {
         private static string DefaultDatabaseFile => Path.Combine(Model.Settings.GetDatabaseContentType().Folder, "ClrVpin.xml");
 
-        public static async void UpdateDatabaseItem(IList<GameDetail> gameDetails, GameItem gameItem, IGameCollections gameCollections)
+        public static async void UpdateDatabaseItem(IList<GameDetail> gameDetails, GameItem gameItem, IGameCollections gameCollections, Action removeGameItem)
         {
             var item = new DatabaseItem(gameItem.OnlineGame, gameItem.GameDetail, gameCollections, true, gameItem.TableMatchType);
 
@@ -28,7 +28,26 @@ namespace ClrVpin.Importer
                 existingGameDetail.Game = item.GameDetail.Game;
                 existingGameDetail.Derived = item.GameDetail.Derived;
 
-                Write(gameDetails, gameCollections, item, false);
+                Update(gameDetails, gameCollections, item, false);
+            }
+            else if (result == DatabaseItemAction.Delete)
+            {
+                // remove the local game from the local DB
+                gameDetails.Remove(gameItem.GameDetail);
+                Update(gameDetails, gameCollections, item, false);
+
+                // remove the local game from the game item list
+                if (gameItem.OnlineGame != null)
+                {
+                    // matched item - keep GameItem in the list, but remove the hit (matching reference)
+                    gameItem.OnlineGame.Hit = null;
+                    gameItem.UpdateGameDetail(null);
+                }
+                else
+                {
+                    // unmatched item - remove GameItem from the list, i.e. since there's no longer any reference (online or local) to the game
+                    removeGameItem();
+                }
             }
         }
 
@@ -80,18 +99,19 @@ namespace ClrVpin.Importer
                 onlineGame.Hit = new GameHit { GameDetail = gameDetail };
                 gameItem.UpdateGameDetail(gameDetail);
 
-                // insert the game
+                // add the new game to the local DB
                 gameDetails.Add(gameDetail);
 
-                Write(gameDetails, gameCollections, item, true);
+                Update(gameDetails, gameCollections, item, true);
             }
         }
 
-        private static void Write(IEnumerable<GameDetail> gameDetails, IGameCollections gameCollections, DatabaseItem item, bool isNewEntry)
+        private static void Update(IEnumerable<GameDetail> gameDetails, IGameCollections gameCollections, DatabaseItem item, bool isNewEntry)
         {
             // update all games that reside in the same database file as the updated game
             var gameDetailsInDatabaseFile = gameDetails.Where(gameDetail => gameDetail.Game.DatabaseFile == item.GameDetail.Game.DatabaseFile);
             TableUtils.WriteGamesToDatabase(gameDetailsInDatabaseFile.Select(x => x.Game), item.GameDetail.Game.DatabaseFile, item.GameDetail.Game.Name, isNewEntry);
+            
             gameCollections.UpdateCollections();
         }
     }

@@ -99,7 +99,7 @@
         <StackPanel Margin="5,0">
           <TextBox materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding GameDetail.Derived.TableFileWithExtension}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                   Width="460" Margin="0,5,0,10">
+                   Width="560" Margin="0,5,0,10">
             <TextBox.Text>
               <Binding Path="GameDetail.Game.Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                 <Binding.ValidationRules>
@@ -114,7 +114,7 @@
             <ComboBox ItemsSource="{Binding ManufacturersView}"
                       Text="{Binding Path=GameDetail.Game.Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Manufacturer"
-                      Width="250">
+                      Width="350">
               <ComboBox.Style>
                 <!-- dynamic helper text based on the manufacturer type 
                      - using style trigger instead of a WrapPanel of TextBlocks with visibility trigger.. because HintAssist.HelperText is hardcoded to TextBlock and not a generic control :( -->
@@ -153,19 +153,19 @@
                       Text="{Binding Path=GameDetail.Game.Players, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Players"
                       Style="{StaticResource EditComboBoxStyle}"
-                      Width="110" Margin="10,0,0,0" />
+                      Width="90" Margin="10,0,0,0" />
             <ComboBox ItemsSource="{Binding RomsView}" 
                       Text="{Binding Path=GameDetail.Game.Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
                       Style="{StaticResource EditComboBoxStyle}"
-                      Width="140" Margin="10,0,0,0" />
+                      Width="260" Margin="10,0,0,0" />
           </WrapPanel>
 
           <ComboBox ItemsSource="{Binding ThemesView}" 
                     Text="{Binding Path=GameDetail.Game.Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     materialDesign:HintAssist.Hint="Theme(s)"
                     Style="{StaticResource EditComboBoxStyle}"
-                    Width="460" Margin="0,10,0,10" />
+                    Width="560" Margin="0,10,0,10" />
         </StackPanel>
       </GroupBox>
 
@@ -175,7 +175,7 @@
           <TextBox materialDesign:HintAssist.Hint="Description"
                    Text="{Binding GameDetail.Game.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                   Width="460" Margin="0,5,0,10" />
+                   Width="560" Margin="0,5,0,10" />
 
           <WrapPanel>
             <TextBox Text="{Binding GameDetail.Game.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -186,7 +186,7 @@
                       Text="{Binding Path=GameDetail.Game.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Author(s)"
                       Style="{StaticResource EditComboBoxStyle}"
-                      Width="335" Margin="5,10,0,10" />
+                      Width="430" Margin="10,10,0,10" />
           </WrapPanel>
 
           <WrapPanel>
@@ -222,7 +222,7 @@
             <TextBox Text="{Binding GameDetail.Game.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Comment(s)"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                     Width="228" Margin="10,10,0,10" />
+                     Width="328" Margin="10,10,0,10" />
           </WrapPanel>
 
           <WrapPanel>
@@ -230,7 +230,7 @@
               <Style x:Key="DatePickerStyle" TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignFloatingHintDatePicker}">
                 <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="False" />
                 <Setter Property="Margin" Value="0,10,0,15" />
-                <Setter Property="Width" Value="122" />
+                <Setter Property="Width" Value="147" />
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="SelectedDateFormat" Value="Short" />
                 <Setter Property="DisplayDateEnd" Value="{Binding MaxDateTime}" />
@@ -240,7 +240,7 @@
               <Style x:Key="TimePickerStyle" TargetType="materialDesign:TimePicker" BasedOn="{StaticResource MaterialDesignFloatingHintTimePicker}">
                 <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="False" />
                 <Setter Property="Margin" Value="3,10,0,15" />
-                <Setter Property="Width" Value="100" />
+                <Setter Property="Width" Value="125" />
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="Is24Hours" Value="True" />
                 <Setter Property="WithSeconds" Value="True" />
@@ -289,7 +289,7 @@
   -->
   <DataTemplate DataType="{x:Type importer:DatabaseItem}">
     <!--explicit border with background and padding required to support usage within a DialogHost that has a transparent background, e.g. importer's image dialog-->
-    <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" Width="500">
+    <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" Width="600">
       <StackPanel>
 
         <ContentControl ContentTemplate="{StaticResource GameDetails}" Content="{Binding}" />
@@ -307,24 +307,29 @@
             </Style>
           </WrapPanel.Resources>
 
-          <Button Content="Add Missing Info" Width="140" Style="{StaticResource FlatButtonStyle}"
+          <Button Content="Add Missing Info" Width="Auto" Style="{StaticResource DialogButtonStyle}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemInfoMissing, Mode=OneWay}"
                   Command="{Binding AddMissingInfoCommand}"
                   ToolTip="Add any missing info for this table to your local database from online sources" />
-          <Button Content="Overwrite All Info" Width="140" Style="{StaticResource FlatButtonStyle}"
+          <Button Content="Overwrite All Info" Width="Auto" Style="{StaticResource DialogButtonStyle}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemInfoDifferent, Mode=OneWay}"
                   Command="{Binding OverwriteAllInfoCommand}"
                   ToolTip="Overwrite all info for this table to your local database from online sources. Information that doesn't exist from online sources will not be overwritten (e.g. ratings)." />
 
-          <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Insert}"
-                  Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
-                  ToolTip="Add a new table entry entry to your local database" />
           <Button Content="Update" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
                   ToolTip="Update changed info for this table to your local database" />
+          <Button Content="Delete" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Delete}"
+                  Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                  Foreground="{StaticResource AlertBrush}"
+                  ToolTip="Delete this table from your local database" />
+
+          <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Insert}"
+                  Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
+                  ToolTip="Add a new table entry entry to your local database" />
 
           <Button Content="Cancel" IsCancel="True" Width="100" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Cancel}"
                   ToolTip="Exit without updating/inserting an entry in your local database" />
