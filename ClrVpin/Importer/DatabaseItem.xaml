@@ -99,7 +99,7 @@
         <StackPanel Margin="5,0">
           <TextBox materialDesign:HintAssist.Hint="Name" materialDesign:HintAssist.HelperText="{Binding LocalGame.Derived.TableFileWithExtension}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                   Width="560" Margin="0,5,0,10">
+                   Width="600" Margin="0,5,0,10">
             <TextBox.Text>
               <Binding Path="LocalGame.Game.Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                 <Binding.ValidationRules>
@@ -114,7 +114,7 @@
             <ComboBox ItemsSource="{Binding ManufacturersView}"
                       Text="{Binding Path=LocalGame.Game.Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Manufacturer"
-                      Width="350">
+                      Width="390">
               <ComboBox.Style>
                 <!-- dynamic helper text based on the manufacturer type 
                      - using style trigger instead of a WrapPanel of TextBlocks with visibility trigger.. because HintAssist.HelperText is hardcoded to TextBlock and not a generic control :( -->
@@ -158,14 +158,14 @@
                       Text="{Binding Path=LocalGame.Game.Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
                       Style="{StaticResource EditComboBoxStyle}"
-                      Width="260" Margin="10,0,0,0" />
+                      Width="300" Margin="10,0,0,0" />
           </WrapPanel>
 
           <ComboBox ItemsSource="{Binding ThemesView}" 
                     Text="{Binding Path=LocalGame.Game.Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     materialDesign:HintAssist.Hint="Theme(s)"
                     Style="{StaticResource EditComboBoxStyle}"
-                    Width="560" Margin="0,10,0,10" />
+                    Width="600" Margin="0,10,0,10" />
         </StackPanel>
       </GroupBox>
 
@@ -175,18 +175,18 @@
           <TextBox materialDesign:HintAssist.Hint="Description"
                    Text="{Binding LocalGame.Game.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                   Width="560" Margin="0,5,0,10" />
+                   Width="600" Margin="0,5,0,10" />
 
           <WrapPanel>
             <TextBox Text="{Binding LocalGame.Game.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Version"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                     Width="120" />
+                     Width="140" />
             <ComboBox ItemsSource="{Binding AuthorsView}" 
                       Text="{Binding Path=LocalGame.Game.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Author(s)"
                       Style="{StaticResource EditComboBoxStyle}"
-                      Width="430" Margin="10,10,0,10" />
+                      Width="450" Margin="10,10,0,10" />
           </WrapPanel>
 
           <WrapPanel>
@@ -222,7 +222,7 @@
             <TextBox Text="{Binding LocalGame.Game.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="Comment(s)"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
-                     Width="328" Margin="10,10,0,10" />
+                     Width="368" Margin="10,10,0,10" />
           </WrapPanel>
 
           <WrapPanel>
@@ -230,7 +230,7 @@
               <Style x:Key="DatePickerStyle" TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignFloatingHintDatePicker}">
                 <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="False" />
                 <Setter Property="Margin" Value="0,10,0,15" />
-                <Setter Property="Width" Value="147" />
+                <Setter Property="Width" Value="157" />
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="SelectedDateFormat" Value="Short" />
                 <Setter Property="DisplayDateEnd" Value="{Binding MaxDateTime}" />
@@ -240,7 +240,7 @@
               <Style x:Key="TimePickerStyle" TargetType="materialDesign:TimePicker" BasedOn="{StaticResource MaterialDesignFloatingHintTimePicker}">
                 <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="False" />
                 <Setter Property="Margin" Value="3,10,0,15" />
-                <Setter Property="Width" Value="125" />
+                <Setter Property="Width" Value="135" />
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="Is24Hours" Value="True" />
                 <Setter Property="WithSeconds" Value="True" />
@@ -289,7 +289,7 @@
   -->
   <DataTemplate DataType="{x:Type importer:DatabaseItem}">
     <!--explicit border with background and padding required to support usage within a DialogHost that has a transparent background, e.g. importer's image dialog-->
-    <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" Width="600">
+    <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" Width="640">
       <StackPanel>
 
         <ContentControl ContentTemplate="{StaticResource DatabaseItemDetails}" Content="{Binding}" />

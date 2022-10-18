@@ -53,7 +53,7 @@ namespace ClrVpin.About
 
         private async void CheckAndHandleUpdate()
         {
-            await VersionManagementView.CheckAndHandle(_window, true);
+            await VersionManagementService.CheckAndHandle(_window, true);
         }
 
         private MaterialWindowEx _window;

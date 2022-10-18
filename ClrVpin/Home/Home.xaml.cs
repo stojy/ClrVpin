@@ -50,8 +50,8 @@ public partial class MainWindow
 
         Loaded += async (_, _) =>
         {
-            if (VersionManagementView.ShouldCheck()) 
-                await VersionManagementView.CheckAndHandle();
+            if (VersionManagementService.ShouldCheck()) 
+                await VersionManagementService.CheckAndHandle();
         };
     }
 

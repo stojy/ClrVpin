@@ -8,7 +8,7 @@
     <Company>Stoj</Company>
     <ApplicationIcon>ClrVpin.ico</ApplicationIcon>
     <AssemblyVersion></AssemblyVersion>
-    <Version>1.0.0.0</Version> <!-- nuget package version = $(Version).. default value is overrriden by pipeline, e.g. msbuild -p:Version='1.2.3.4' -->
+    <Version>4.0.0-alpha</Version> <!-- nuget package version = $(Version).. default value is overrriden by pipeline, e.g. msbuild -p:Version='1.2.3.4' -->
     <Copyright>Stoj</Copyright>
     <PackageProjectUrl>https://github.com/stojy/ClrVpin</PackageProjectUrl>
     <PackageIcon>ClrVpin.png</PackageIcon>
@@ -63,6 +63,7 @@
     <PackageReference Include="PropertyChanged.Fody" Version="4.0.3">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Semver" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>

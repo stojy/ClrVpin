@@ -20,7 +20,7 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <controls:SharedResourceDictionary Source="..\Controls\Styles.xaml" />
-        
+
         <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
 
         <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
@@ -68,15 +68,19 @@
                 <!--new version available dialog-->
                 <DataTemplate DataType="{x:Type home:VersionManagementView}">
                   <StackPanel Margin="10">
-                    <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="{Binding Title}" Margin="0,0,0,20" HorizontalAlignment="Center" />
+                    <TextBlock Style="{DynamicResource MaterialDesignHeadline5TextBlock}" Text="A new version is available" Margin="0,0,0,20" HorizontalAlignment="Center" />
 
                     <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Existing" controls:GenericAttached.String2="{Binding ExistingVersion}" />
-                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="New" controls:GenericAttached.String2="{Binding NewVersion}" />
+                    <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="New" controls:GenericAttached.String2="{Binding LatestVersion}" />
 
                     <Separator Margin="0,15" />
 
-                    <mdXaml:MarkdownScrollViewer MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" VerticalScrollBarVisibility="Auto" MaxHeight="1000" Width="800"
-                                                 Markdown="{Binding ReleaseNotes}" />
+                    <StackPanel Margin="0">
+                      <TextBlock Text="{Binding SelectedRelease.TagName, StringFormat={}v{0}}" FontFamily="Arial" Margin="0,0,0,10" FontSize="20" />
+                      <mdXaml:MarkdownScrollViewer MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" 
+                                                   Height="1000" Width="800" VerticalScrollBarVisibility="Auto"
+                                                   Markdown="{Binding SelectedRelease.Body}" />
+                    </StackPanel>
 
                     <WrapPanel Margin="0,20, 0, 0" HorizontalAlignment="Center">
                       <WrapPanel.Resources>
@@ -90,10 +94,23 @@
                         </Style>
                       </WrapPanel.Resources>
 
+                      <WrapPanel>
+                        <Button Margin="10,0" Style="{StaticResource MaterialDesignIconButton}" 
+                                Command="{Binding SelectOlderReleaseCommand}" 
+                                IsEnabled="{Binding IsOlderReleaseEnabled}">
+                          <materialDesign:PackIcon Kind="ArrowBack" Height="30" Width="30" HorizontalAlignment="Center" />
+                        </Button>
+                        <Button Margin="10,0" Style="{StaticResource MaterialDesignIconButton}" 
+                                Command="{Binding SelectNewerReleaseCommand}"
+                                IsEnabled="{Binding IsNewerReleaseEnabled}">
+                          <materialDesign:PackIcon Kind="ArrowForward" Height="30" Width="30" HorizontalAlignment="Center" />
+                        </Button>
+                      </WrapPanel>
+
+                      <Button Content="View" Command="{Binding ViewLatestReleaseCommand}" Style="{StaticResource ButtonStyle}"
+                              ToolTip="View the release in your web browser" />
                       <Button Content="Install" CommandParameter="{x:Static utils:VersionManagementAction.Install}" Style="{StaticResource HighlightButtonStyle}"
                               ToolTip="Download and install the windows msi" />
-                      <Button Content="View" Command="{Binding ViewNewVersionCommand}" Style="{StaticResource ButtonStyle}"
-                              ToolTip="View the release in your web browser" />
                       <Button Content="Later" CommandParameter="{x:Static utils:VersionManagementAction.Later}" Style="{StaticResource ButtonStyle}"
                               ToolTip="Don't check or prompt again for 24hrs" />
                       <!--non-visible button marked with IsCancel to support the escape key-->
