@@ -24,7 +24,7 @@ namespace Utils
         public static DateTime GetBuildTime()
         {
             // product version is a string, i.e. capable of storing as SemVer
-            return _buildTime ??= File.GetCreationTime(Assembly.GetEntryAssembly()?.Location!);
+            return _buildTime ??= File.GetLastWriteTime(Assembly.GetEntryAssembly()?.Location!);
         }
 
         public static async Task<List<Release>> Check(string guid, string author, string repository, Action<string> logAction)
