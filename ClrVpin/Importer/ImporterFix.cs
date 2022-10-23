@@ -116,7 +116,8 @@ public static class ImporterFix
         FixTableWhitespace(onlineGame);
         FixManufacturerWhitespace(onlineGame);
 
-        // assign (not fix) is original game state
+        // assign a flag to indicate the  original game state
+        // - this isn't technically a fix, but is done here (i.e. instead of ImporterResultsVM) as the information is required for subsequent fixes
         onlineGame.IsOriginal = GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name);
 
         FixManufacturedIncludesAuthor(onlineGame);

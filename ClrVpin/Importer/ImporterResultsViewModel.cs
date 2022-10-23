@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
@@ -91,6 +92,11 @@ namespace ClrVpin.Importer
                 if (match.Success)
                     onlineGame.IpdbId = match.Groups["ipdbId"].Value;
 
+                // create the VPS URL
+                // assign VPS Url (not a fix)
+                onlineGame.VpsUrl = $@"https://virtual-pinball-spreadsheet.web.app/game/{onlineGame.Id}";
+
+
                 // navigate to url
                 onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
             });
@@ -128,7 +134,7 @@ namespace ClrVpin.Importer
                 FilterChanged.Execute(null);
             });
 
-            NavigateToIpdbCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
+            NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
             // force an 'update filter time' change so that the correct 'IsNew' values are calculated
             UpdatedFilterTimeChanged.Execute(null);
@@ -251,7 +257,7 @@ namespace ClrVpin.Importer
         public ICommand FilterChanged { get; set; }
         public ICommand UpdatedFilterTimeChanged { get; set; }
 
-        public ICommand NavigateToIpdbCommand { get; }
+        public ICommand NavigateToUrlCommand { get; }
         public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
         public ICommand AllTableOverwriteDatabaseInfoCommand { get; }
         public ICommand GameItemSelectedCommand { get; }

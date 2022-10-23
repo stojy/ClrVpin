@@ -560,7 +560,7 @@
                       <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
                                       controls:GenericAttached.String2="{Binding SelectedOnlineGame.Themes, Converter={StaticResource ListToStringConverter}}" />
                       <ContentControl Template="{StaticResource KeyValuePair}" controls:GenericAttached.String="IPDB">
-                        <Hyperlink Command="{Binding NavigateToIpdbCommand}" CommandParameter="{Binding SelectedOnlineGame.IpdbUrl}">
+                        <Hyperlink Command="{Binding NavigateToUrlCommand}" CommandParameter="{Binding SelectedOnlineGame.IpdbUrl}">
                           <TextBlock Text="{Binding SelectedOnlineGame.IpdbUrl}" Style="{StaticResource ValueTextBlockStyle}" />
                         </Hyperlink>
                       </ContentControl>
@@ -582,6 +582,11 @@
                       <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated"
                                       controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
                       <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Broken" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Broken}" />
+                      <ContentControl Template="{StaticResource KeyValuePair}" controls:GenericAttached.String="VPS">
+                        <Hyperlink Command="{Binding NavigateToUrlCommand}" CommandParameter="{Binding SelectedOnlineGame.VpsUrl}">
+                          <TextBlock Text="{Binding SelectedOnlineGame.VpsUrl}" Style="{StaticResource ValueTextBlockStyle}" />
+                        </Hyperlink>
+                      </ContentControl>
                     </StackPanel>
                   </GroupBox>
                 </UniformGrid>

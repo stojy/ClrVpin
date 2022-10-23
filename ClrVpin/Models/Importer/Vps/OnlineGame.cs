@@ -23,6 +23,8 @@ public class OnlineGame : OnlineGameBase
     public string IpdbId { get; set; } = string.Empty;
     public string Description { get; set; }
 
+    public string VpsUrl { get; set; }
+
     // reference to the highest fuzzy ranked DB match
     public GameHit Hit { get; set; }
 
