@@ -18,6 +18,7 @@
 
     <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Blue" SecondaryColor="Green" />
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.popupbox.xaml" />
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/generic.xaml" /> <!-- e.g. TabControlTemplates -->
   </ResourceDictionary.MergedDictionaries>
 
