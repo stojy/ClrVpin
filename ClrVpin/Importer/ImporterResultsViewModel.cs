@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
@@ -53,6 +52,7 @@ namespace ClrVpin.Importer
             TableMatchOptionsView = CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All, () => Model.Settings.Importer.SelectedTableMatchOption);
             TableAvailabilityOptionsView = CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Both, () => Model.Settings.Importer.SelectedTableAvailabilityOption);
             TableNewContentOptionsView = CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.All, () => Model.Settings.Importer.SelectedTableNewContentOption);
+            PresetDateOptionsView = CreatePresetDateOptionsView(StaticSettings.PresetDateOptions);
 
             // assign VM properties
             gameItems.ForEach(gameItem =>
@@ -232,6 +232,7 @@ namespace ClrVpin.Importer
         public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
         public ListCollectionView<FeatureType> TableAvailabilityOptionsView { get; }
         public ListCollectionView<FeatureType> TableNewContentOptionsView { get; }
+        public ListCollectionView<FeatureType> PresetDateOptionsView { get; }
 
         public string BackupFolder { get; }
         public ICommand NavigateToBackupFolderCommand { get; }
@@ -261,7 +262,7 @@ namespace ClrVpin.Importer
         public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
         public ICommand AllTableOverwriteDatabaseInfoCommand { get; }
         public ICommand GameItemSelectedCommand { get; }
-
+        
         public bool IsMatchingEnabled { get; }
         public FileCollection SelectedFileCollection { get; set; }
 
@@ -418,6 +419,42 @@ namespace ClrVpin.Importer
                     })
                 };
 
+                return featureType;
+            }).ToList();
+
+            return new ListCollectionView<FeatureType>(featureTypes);
+        }
+        
+        private ListCollectionView<FeatureType> CreatePresetDateOptionsView(IEnumerable<EnumOption<PresetDateOptionEnum>> enumOptions)
+        {
+            // all preset date options
+            var featureTypes = enumOptions.Select(option =>
+            {
+                var featureType = new FeatureType(Convert.ToInt32(option.Enum))
+                {
+                    Tag = nameof(PresetDateOptionEnum),
+                    Description = option.Description,
+                    Tip = option.Tip,
+                    IsSupported = true,
+                    SelectedCommand = new ActionCommand(() =>
+                    {
+                        // assign the updated at from begin date
+                        var offset = option.Enum switch
+                        {
+                            PresetDateOptionEnum.Today => (0, 0),
+                            PresetDateOptionEnum.Yesterday => (1, 5),
+                            PresetDateOptionEnum.LastThreeDays => (3,0),
+                            PresetDateOptionEnum.LastWeek => (7, 0),
+                            PresetDateOptionEnum.LastMonth => (0,1),
+                            PresetDateOptionEnum.LastThreeMonths => (0,3),
+                            PresetDateOptionEnum.LastYear => (0,12),
+                            _ => (0,0)
+                        };
+                        Settings.SelectedUpdatedAtDateBegin = DateTime.Today.AddDays(-offset.Item1).AddMonths(-offset.Item2);
+
+                        FilterChanged.Execute(null);
+                    })
+                };
                 return featureType;
             }).ToList();
 

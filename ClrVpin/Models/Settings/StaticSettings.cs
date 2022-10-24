@@ -29,6 +29,7 @@ namespace ClrVpin.Models.Settings
             TableAvailabilityOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableNewContentOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
         // hit types in priority order as determined by matching algorithm - refer AddContentFilesToGames
@@ -135,6 +136,17 @@ namespace ClrVpin.Models.Settings
             new() {Enum = FixFeedOptionEnum.WrongName, Tip = "Fix table name"},
             new() {Enum = FixFeedOptionEnum.WrongManufacturerYear, Tip = "Fix manufacturer name"},
             new() {Enum = FixFeedOptionEnum.DuplicateTable, Tip = "Merge duplicate table entries based on the IPDB URL (n/a for original tables)"},
+        };
+
+        public static readonly EnumOption<PresetDateOptionEnum>[] PresetDateOptions =
+        {
+            new() {Enum = PresetDateOptionEnum.Today},
+            new() {Enum = PresetDateOptionEnum.Yesterday},
+            new() {Enum = PresetDateOptionEnum.LastThreeDays},
+            new() {Enum = PresetDateOptionEnum.LastWeek},
+            new() {Enum = PresetDateOptionEnum.LastMonth},
+            new() {Enum = PresetDateOptionEnum.LastThreeMonths},
+            new() {Enum = PresetDateOptionEnum.LastYear}
         };
     }
 }
