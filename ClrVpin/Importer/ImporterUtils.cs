@@ -82,7 +82,7 @@ public static class ImporterUtils
             // - similar to TableUtils.AddContentFilesToGames() uses since VPX/PBY mandates that the entries must be the same!
             // - a LOT faster!!
 
-            
+
             // unlike rebuilder matching, only fuzzy is used
 
             // unlike scanner/rebuilder..
@@ -92,7 +92,7 @@ public static class ImporterUtils
             var fuzzyNameDetails = Fuzzy.GetNameDetails(fullName, false);
             fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
             fuzzyNameDetails.Year = onlineGame.Year;
-            
+
             var (localMatchedGame, score, isMatch) = localGames.MatchToLocalDatabase(fuzzyNameDetails, false);
             if (isMatch)
             {
@@ -159,27 +159,36 @@ public static class ImporterUtils
         localMatchedLocalGame.OnlineGame = onlineGame;
     }
 
-    private static List<GameItem> MergeLocalAndOnlineGames(IEnumerable<LocalGame> localGames, IList<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+    private static List<GameItem> MergeLocalAndOnlineGames(IEnumerable<LocalGame> localGames, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
     {
-        var onlyLocalGames = localGames.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.LocalGame)).ToList();
-
-        // the earlier 'online to local' matching has already determined the matches.. so need to redo it again
+        // the earlier 'online to local' matching has already determined the matches.. so no need to redo it again
         // - deliberately NOT performing a 'reverse' fuzzy lookup to avoid scenario where x1 online game could have multiple local files
         // - e.g. online only has 1 AC/DC entry (which is a known issue).. whereas there are multiple local files each representing the unique IPDBs (which is correct)
-        onlyLocalGames.ForEach(onlyLocalGame =>
-        {
-            updateProgress(onlyLocalGame.Game.Name, null);
-
-            Logger.Debug($"Unmatched local table: '{onlyLocalGame.Game.Name}'", true);
-        });
+        var localOnlyGames = localGames.Except(onlineGames.Where(onlineGame => onlineGame.Hit != null).Select(onlineGame => onlineGame.Hit.LocalGame)).ToList();
 
         // merge online and local games into a single collection of GameItem
         var onlineGameItems = onlineGames.Select(onlineGame => new GameItem(onlineGame));
-        var localOnlyGameItems = onlyLocalGames.Select(localOnlyGameDetail => new GameItem(localOnlyGameDetail));
+        var localOnlyGameItems = localOnlyGames.Select(localOnlyGameDetail => new GameItem(localOnlyGameDetail));
 
         var allGameItems = onlineGameItems.Concat(localOnlyGameItems).OrderBy(item => item.Name).ToList();
         allGameItems.ForEach((gameItem, index) => gameItem.Index = index + 1);
 
+        // logging - unmatched games
+        Logger.Info($"Fuzzy matching: unmatched table count={localOnlyGames.Count} (only exists in the local database.. unrestricted to include manufactured and original tables)");
+        localOnlyGames.OrderBy(localGame => localGame.Game.Name).ForEach(onlyLocalGame =>
+        {
+            updateProgress(onlyLocalGame.Game.Name, null);
+            Logger.Debug($"- unmatched table: '{onlyLocalGame.Game.Name}'");
+        });
+
+        // logging - missing games
+        var missingGames = onlineGames
+            .Where(onlineGame => !onlineGame.IsOriginal && onlineGame.TableFormats.Contains("VPX") && onlineGame.TableAvailability == TableAvailabilityOptionEnum.Available && onlineGame.Hit == null)
+            .OrderBy(onlineGame => onlineGame.Name)
+            .ToList();
+        Logger.Info($"Fuzzy matching: missing table count={missingGames.Count()} (only exists in the online feed.. restricted to tables that are manufactured, VPX, and available for download)");
+        missingGames.ForEach(missingGame => Logger.Debug($"- missing table: '{missingGame.Name}'"));
+        
         return allGameItems;
     }
 
