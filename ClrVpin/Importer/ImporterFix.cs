@@ -341,6 +341,12 @@ public static class ImporterFix
             case "Star Wars - The Empire Strikes Back (Hankin 1980)":
                 WrongName(onlineGame, "The Empire Strikes Back");
                 break;
+            case "The Walking Dead (Stern 2014)":
+                WrongName(onlineGame, "The Walking Dead (Limited Edition)");
+                break;
+            case "JP's The Walking Dead (Stern 2014)":
+                WrongName(onlineGame, "The Walking Dead (Pro)");
+                break;
         }
     }
 

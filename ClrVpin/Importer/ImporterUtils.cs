@@ -173,6 +173,14 @@ public static class ImporterUtils
         var allGameItems = onlineGameItems.Concat(localOnlyGameItems).OrderBy(item => item.Name).ToList();
         allGameItems.ForEach((gameItem, index) => gameItem.Index = index + 1);
 
+        // logging - missing games
+        var missingGames = onlineGames
+            .Where(onlineGame => !onlineGame.IsOriginal && onlineGame.TableFormats.Contains("VPX") && onlineGame.TableAvailability == TableAvailabilityOptionEnum.Available && onlineGame.Hit == null)
+            .OrderBy(onlineGame => onlineGame.Name)
+            .ToList();
+        Logger.Info($"Fuzzy matching: missing table count={missingGames.Count} (only exists in the online feed.. restricted to tables that are manufactured, VPX, and available for download)");
+        missingGames.ForEach(missingGame => Logger.Debug($"- missing table: '{missingGame.Description}'"));
+
         // logging - unmatched games
         Logger.Info($"Fuzzy matching: unmatched table count={localOnlyGames.Count} (only exists in the local database.. unrestricted to include manufactured and original tables)");
         localOnlyGames.OrderBy(localGame => localGame.Game.Name).ForEach(onlyLocalGame =>
@@ -180,14 +188,6 @@ public static class ImporterUtils
             updateProgress(onlyLocalGame.Game.Name, null);
             Logger.Debug($"- unmatched table: '{onlyLocalGame.Game.Name}'");
         });
-
-        // logging - missing games
-        var missingGames = onlineGames
-            .Where(onlineGame => !onlineGame.IsOriginal && onlineGame.TableFormats.Contains("VPX") && onlineGame.TableAvailability == TableAvailabilityOptionEnum.Available && onlineGame.Hit == null)
-            .OrderBy(onlineGame => onlineGame.Name)
-            .ToList();
-        Logger.Info($"Fuzzy matching: missing table count={missingGames.Count()} (only exists in the online feed.. restricted to tables that are manufactured, VPX, and available for download)");
-        missingGames.ForEach(missingGame => Logger.Debug($"- missing table: '{missingGame.Name}'"));
         
         return allGameItems;
     }
