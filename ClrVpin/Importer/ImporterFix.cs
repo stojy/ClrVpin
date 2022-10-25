@@ -172,7 +172,7 @@ public static class ImporterFix
             });
         });
 
-        Logger.Debug($"Merged duplicate tables: count={duplicateGamesGrouping.Sum(grouping => grouping.Count() - 1)} (enable diagnostic logging for the table details)");
+        Logger.Debug($"- Merged duplicate tables: count={duplicateGamesGrouping.Sum(grouping => grouping.Count() - 1)} (enable diagnostic logging for the table details)");
     }
 
     private static void PostMerge(OnlineGame onlineGame)
