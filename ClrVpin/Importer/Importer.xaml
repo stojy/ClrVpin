@@ -19,7 +19,7 @@
         <StackPanel Margin="5" HorizontalAlignment="Left">
           <!-- not using an ItemsControl for the LCV (e.g. similar to scanner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
           <WrapPanel>
-            <WrapPanel Width="230">
+            <WrapPanel>
               <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
               <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
                       Style="{StaticResource MaterialDesignIconButton}" 
@@ -29,7 +29,25 @@
                 <materialDesign:PackIcon Kind="InformationOutline" />
               </Button>
             </WrapPanel>
-            <Slider Margin="5,0" Width="390" HorizontalAlignment="Left"
+
+            <WrapPanel IsEnabled="{Binding MatchFuzzy.IsActive}"
+                       Margin="10,2,0,4">
+              <TextBox materialDesign:HintAssist.Hint="Confidence" IsReadOnly="True" IsEnabled="False" Width="75" Padding="0"
+                       materialDesign:TextFieldAssist.SuffixText="%"
+                       Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                       Text="{Binding Settings.MatchFuzzyMinimumPercentage}" />
+              <Slider Margin="10,1,0,0" Width="390" HorizontalAlignment="Left"
+                      Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
+                      Value="{Binding Settings.MatchFuzzyMinimumPercentage}"
+                      ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
+                <Slider.Resources>
+                  <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
+                </Slider.Resources>
+              </Slider>
+            </WrapPanel>
+
+
+            <!--<Slider Margin="5,0" Width="390" HorizontalAlignment="Left"
                     Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
                     Value="{Binding Settings.MatchFuzzyMinimumPercentage}"
                     IsEnabled="{Binding MatchFuzzy.IsActive}"
@@ -37,7 +55,7 @@
               <Slider.Resources>
                 <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
               </Slider.Resources>
-            </Slider>
+            </Slider>-->
           </WrapPanel>
         </StackPanel>
       </GroupBox>

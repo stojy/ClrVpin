@@ -47,23 +47,30 @@
           <ContentControl Content="{Binding MatchDuplicate}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
           <ContentControl Content="{Binding MatchTableName}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
           <WrapPanel>
-            <WrapPanel Width="230">
-              <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
-              <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
-                      Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
-                      Foreground="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
-                <materialDesign:PackIcon Kind="InformationOutline" />
-              </Button>
-            </WrapPanel>
-            <Slider Margin="5,0" Width="390" HorizontalAlignment="Left"
-                    Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
-                    Value="{Binding Settings.MatchFuzzyMinimumPercentage}"
-                    IsEnabled="{Binding MatchFuzzy.IsActive}"
-                    ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
-              <Slider.Resources>
-                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
-              </Slider.Resources>
-            </Slider>
+              <WrapPanel Width="160" HorizontalAlignment="Left">
+                <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+                <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
+                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
+                        Foreground="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
+                  <materialDesign:PackIcon Kind="InformationOutline" />
+                </Button>
+              </WrapPanel>
+
+              <WrapPanel IsEnabled="{Binding MatchFuzzy.IsActive}"
+                         Margin="10,2,0,4">
+                <TextBox materialDesign:HintAssist.Hint="Confidence" IsReadOnly="True" IsEnabled="False" Width="75" Padding="0"
+                         materialDesign:TextFieldAssist.SuffixText="%"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Text="{Binding Settings.MatchFuzzyMinimumPercentage}" />
+                <Slider Margin="10,1,0,0" Width="370" HorizontalAlignment="Left"
+                        Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
+                        Value="{Binding Settings.MatchFuzzyMinimumPercentage}"
+                        ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
+                  <Slider.Resources>
+                    <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
+                  </Slider.Resources>
+                </Slider>
+              </WrapPanel>
           </WrapPanel>
 
           <ContentControl Content="{Binding MatchSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Width="230" HorizontalAlignment="Left" />
@@ -77,7 +84,7 @@
           <WrapPanel>
             <ContentControl Content="{Binding IgnoreIfContainsWordsFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Width="230" />
 
-            <TextBox Margin="5,0,0,0" Width="390" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
+            <TextBox Margin="6,0,0,0" Width="390" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
                      IsEnabled="{Binding IgnoreIfContainsWordsFeature.IsActive}"
                      ToolTip="Ignore if file contain the following words (case insensitive, comma delimited)"
                      Text="{Binding IgnoreWordsString, UpdateSourceTrigger=PropertyChanged}">
@@ -89,11 +96,19 @@
             </TextBox>
           </WrapPanel>
 
-          <WrapPanel Margin="0,5,0,0">
-            <ContentControl Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Width="230" />
-            <Slider Margin="5,0" Width="390" HorizontalAlignment="Left" Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}"
-                    IsEnabled="{Binding IgnoreIfSmallerFeature.IsActive}"
-                    ToolTip="Ignore if file is smaller than the specified percentage" />
+          <WrapPanel Margin="0,10,0,0">
+            <ContentControl Width="230" VerticalAlignment="Top" 
+                            Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+          
+            <WrapPanel IsEnabled="{Binding IgnoreIfSmallerFeature.IsActive}" Margin="5,0,0,8">
+              <TextBox materialDesign:HintAssist.Hint="Threshold" IsReadOnly="True" IsEnabled="False" Padding="0"
+                       materialDesign:TextFieldAssist.SuffixText="%"
+                       Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                       Text="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}" />
+              <Slider Margin="10,-1,0,0" Width="316" HorizontalAlignment="Left"
+                      Value="{Binding Settings.Rebuilder.IgnoreIfSmallerPercentage}" 
+                      ToolTip="Ignore if file is smaller than the specified percentage" />
+            </WrapPanel>
           </WrapPanel>
 
           <ContentControl Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" HorizontalAlignment="Left" Width="230" />

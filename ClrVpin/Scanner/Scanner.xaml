@@ -50,25 +50,33 @@
               <DataTemplate DataType="shared:FeatureType">
                 <!-- fixed width to have items align nicely -->
 
-                <WrapPanel Width="400">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
+                <StackPanel Width="400">
+                  <WrapPanel>
+                    <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
+                    <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding HelpAction}"
+                            Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
+                            Foreground="{Binding IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
+                      <materialDesign:PackIcon Kind="InformationOutline" />
+                    </Button>
+                  </WrapPanel>
 
-                  <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding HelpAction}"
-                          Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
-                          Foreground="{Binding IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
-                    <materialDesign:PackIcon Kind="InformationOutline" />
-                  </Button>
-                  <Slider Visibility="{Binding Id, Converter={StaticResource HitTypeFuzzyToVisibilityConverter}}"
-                          Margin="10,0,4,0" Width="250" HorizontalAlignment="Left"
-                          Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
-                          Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Settings.MatchFuzzyMinimumPercentage}"
-                          IsEnabled="{Binding IsActive}"
-                          ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
-                    <Slider.Resources>
-                      <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
-                    </Slider.Resources>
-                  </Slider>
-                </WrapPanel>
+                  <WrapPanel Visibility="{Binding Id, Converter={StaticResource HitTypeFuzzyToVisibilityConverter}}"
+                             IsEnabled="{Binding IsActive}"
+                             Margin="22,2,0,4">
+                    <TextBox materialDesign:HintAssist.Hint="Confidence" IsReadOnly="True" IsEnabled="False" Width="75" Padding="0"
+                             materialDesign:TextFieldAssist.SuffixText="%"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Settings.MatchFuzzyMinimumPercentage}" />
+                    <Slider Margin="10,1,0,0" Width="290" HorizontalAlignment="Left"
+                            Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
+                            Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Settings.MatchFuzzyMinimumPercentage}"
+                            ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
+                      <Slider.Resources>
+                        <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
+                      </Slider.Resources>
+                    </Slider>
+                  </WrapPanel>
+                </StackPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
@@ -97,9 +105,9 @@
       <!-- fix options -->
       <TextBlock Style="{StaticResource TitleStyle}">Options</TextBlock>
       <WrapPanel>
-        <GroupBox Header="Multiple Match Preference">
+        <GroupBox Header="Multiple Match Preference" Width="420">
           <StackPanel>
-            <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5">
+            <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5" HorizontalAlignment="Left">
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="shared:FeatureType">
                   <RadioButton Width="330" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTip="{Binding Tip}"
@@ -109,8 +117,15 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Slider Margin="27,0,10,10" Width="300" HorizontalAlignment="Left" Value="{Binding Settings.Scanner.MultipleMatchExceedSizeThresholdPercentage}"
-                    IsEnabled="{Binding ExceedSizeThresholdSelected}" />
+            <WrapPanel IsEnabled="{Binding ExceedSizeThresholdSelected}" Margin="25,0,0,8">
+              <TextBox materialDesign:HintAssist.Hint="Threshold" IsReadOnly="True" IsEnabled="False" Width="75" Padding="0"
+                       materialDesign:TextFieldAssist.SuffixText="%"
+                       Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                       Text="{Binding Settings.Scanner.MultipleMatchExceedSizeThresholdPercentage}" />
+              <Slider Margin="10,-1,0,0" Width="290" HorizontalAlignment="Left"
+                      Value="{Binding Settings.Scanner.MultipleMatchExceedSizeThresholdPercentage}" 
+                      ToolTip="Ignore if file is smaller than the specified percentage" />
+            </WrapPanel>
           </StackPanel>
         </GroupBox>
       </WrapPanel>
