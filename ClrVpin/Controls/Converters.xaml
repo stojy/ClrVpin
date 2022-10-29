@@ -20,10 +20,9 @@
   <converters:NegativeToVisibilityConverter x:Key="NegativeToVisibilityConverter" />
   <converters:NegativeToVisibilityConverter x:Key="PositiveToVisibilityConverter" True="Collapsed" False="Visible" />
   <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroToBoolConverter" TrueValue="true" FalseValue="false" />
-  
-  
   <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
-  
+  <converters:NullToUnsetConverter x:Key="NullToUnsetConverter" />
+
   <converters:ValueConverterGroup x:Key="EnumToVisibilityConverter">
     <converters:EnumToBoolConverter />
     <converters:BoolToVisibilityConverter />

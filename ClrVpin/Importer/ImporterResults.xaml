@@ -126,9 +126,9 @@
       <Grid Visibility="{Binding Url, Converter={StaticResource ReverseNullToVisibilityConverter}}">
 
         <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
-        <!-- converter required because template binding doesn't convert to Uri automatically.. second class binding!! 
-              - refer https://stackoverflow.com/questions/1935919/wpf-custom-control-templatebinding-to-image-->
-        <Image Source="{Binding Url}" Stretch="UniformToFill" Cursor="Hand">
+        
+        <!--converter used to ensure image does not bind to null (which it can't handle).. this seems like a WPF bug though since the parent Grid control is collapsed when Url is null-->
+        <Image Source="{Binding Url, Converter={StaticResource NullToUnsetConverter}}" Stretch="UniformToFill" Cursor="Hand">
           <b:Interaction.Triggers>
             <b:EventTrigger EventName="MouseUp">
               <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
@@ -249,11 +249,12 @@
                   </b:EventTrigger>
                 </b:Interaction.Triggers>
 
-                <Image Margin="15" Source="{Binding Url}" Stretch="Uniform" MinWidth="1000" MinHeight="1000">
+                <Image Margin="15" Source="{Binding Url, Converter={StaticResource NullToUnsetConverter}}" Stretch="Uniform" MinWidth="1000" MinHeight="1000">
                   <Image.Effect>
                     <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance" />
                   </Image.Effect>
                 </Image>
+
                 <!--non-visible button marked with IsCancel to support the escape key-->
                 <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
               </StackPanel>
