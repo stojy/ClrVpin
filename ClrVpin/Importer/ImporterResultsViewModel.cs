@@ -505,7 +505,7 @@ namespace ClrVpin.Importer
 
         private static void NavigateToUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 
-        private static void ShowImage(string tableImgUrl)
+        private static async void ShowImage(string tableImgUrl)
         {
             var imageUrlSelection = new UrlSelection
             {
@@ -518,7 +518,7 @@ namespace ClrVpin.Importer
             };
             
             if (!DialogHost.IsDialogOpen(DialogHostName))
-                DialogHost.Show(imageUrlSelection, DialogHostName);
+                await DialogHost.Show(imageUrlSelection, DialogHostName);
         }
 
         private IEnumerable<OnlineGame> GetOnlineGames() => GameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame);
