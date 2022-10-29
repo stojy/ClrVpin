@@ -259,8 +259,7 @@
               </StackPanel>
             </DataTemplate>
 
-            <!-- notification and database item (game) templates imported at global file scope - refer (top of file) -->
-
+            <!-- notification and database item (game) templates are imported at global file scope - refer (top of file) -->
           </DataTemplate.Resources>
 
           <!--render the appropriate template-->

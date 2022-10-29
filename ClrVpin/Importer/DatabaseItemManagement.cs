@@ -20,7 +20,7 @@ public static class DatabaseItemManagement
     {
         var item = new DatabaseItem(gameItem.OnlineGame, gameItem.LocalGame, gameCollections, true, gameItem.TableMatchType);
 
-        var result = await DialogHost.Show(item, "ImporterResultsDialog") as DatabaseItemAction?;
+        var result = await DialogHost.Show(item, ImporterResultsViewModel.DialogHostName) as DatabaseItemAction?;
         if (result == DatabaseItemAction.Update)
         {
             // replace the existing game details with the updated details
@@ -88,7 +88,7 @@ public static class DatabaseItemManagement
 
         var item = new DatabaseItem(onlineGame, localGame, gameCollections, false, gameItem.TableMatchType);
 
-        var result = await DialogHost.Show(item, "ImporterResultsDialog") as DatabaseItemAction?;
+        var result = await DialogHost.Show(item, ImporterResultsViewModel.DialogHostName) as DatabaseItemAction?;
         if (result == DatabaseItemAction.Insert)
         {
             localGame.Game = item.LocalGame.Game;

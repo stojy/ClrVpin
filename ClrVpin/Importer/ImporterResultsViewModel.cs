@@ -510,17 +510,17 @@ namespace ClrVpin.Importer
             var imageUrlSelection = new UrlSelection
             {
                 Url = tableImgUrl,
-                SelectedCommand = new ActionCommand(() => DialogHost.Close("ImporterResultsDialog"))
+                SelectedCommand = new ActionCommand(() => DialogHost.Close(DialogHostName))
             };
 
-            DialogHost.Show(imageUrlSelection, "ImporterResultsDialog");
+            DialogHost.Show(imageUrlSelection, DialogHostName);
         }
 
         private IEnumerable<OnlineGame> GetOnlineGames() => GameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame);
 
         private readonly Regex _regexExtractIpdbId = new(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
         private readonly IList<LocalGame> _localGames;
-        private const string DialogHostName = "ImporterResultsDialog";
+        public const string DialogHostName = "ImporterResultsDialog";
 
         private const int WindowMargin = 0;
         private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T ENABLED";
