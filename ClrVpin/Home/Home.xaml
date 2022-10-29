@@ -19,8 +19,11 @@
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
+        <!-- all the resource dictionaries included here will be walked through during application startup
+             - refer Home.xaml.cs code behind
+        -->
         <controls:SharedResourceDictionary Source="..\Controls\Styles.xaml" />
-
+        
         <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
 
         <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />

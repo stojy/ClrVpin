@@ -45,6 +45,7 @@
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml crates MainWindow.xaml -->
   <Style x:Key="MaterialWindowStyle" TargetType="controls:MaterialWindowEx" BasedOn="{StaticResource MaterialWindowBaseStyle}">
     <Setter Property="BorderBackgroundBrush" Value="{DynamicResource MaterialDesignPaper}" />
+    <Setter Property="FadeContentIfInactive" Value="False" />
   </Style>
 
   <!--un-keyed style required by windows created in code, e.g. XxxWindow.Show()-->

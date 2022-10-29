@@ -9,10 +9,10 @@ using System.Windows.Markup;
 namespace ClrVpin.Controls;
 
 // Ensure resource dictionary is only loaded once
-// - used because WPF creates a separate resource dictionary instance EVERY time it is loaded :(
+// - used because WPF creates a separate resource dictionary instance EVERY time a resource dictionary file is loaded :(
 // - solutions..
-//   a. load only once somewhere common, e.g. within app.xaml --> a bit naff
-//   b. cache the dictionary - as per below.
+//   a. load EVERY resource dictionary file only once somewhere common, e.g. within app.xaml --> a bit naff
+//   b. cache the resource dictionary when it's first loaded and then return the cached copy the next time it's requested - as implemented below :)
 // - results in significant performance improvements..
 //   a. control/template loading
 //   b. control/template usage.. presumably because there are less resources to lookup (unconfirmed)
