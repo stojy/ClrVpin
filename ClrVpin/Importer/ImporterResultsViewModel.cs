@@ -442,7 +442,7 @@ namespace ClrVpin.Importer
                         var offset = option.Enum switch
                         {
                             PresetDateOptionEnum.Today => (0, 0),
-                            PresetDateOptionEnum.Yesterday => (1, 5),
+                            PresetDateOptionEnum.Yesterday => (1, 0),
                             PresetDateOptionEnum.LastThreeDays => (3,0),
                             PresetDateOptionEnum.LastWeek => (7, 0),
                             PresetDateOptionEnum.LastMonth => (0,1),
