@@ -510,10 +510,15 @@ namespace ClrVpin.Importer
             var imageUrlSelection = new UrlSelection
             {
                 Url = tableImgUrl,
-                SelectedCommand = new ActionCommand(() => DialogHost.Close(DialogHostName))
+                SelectedCommand = new ActionCommand(() =>
+                {
+                    if (DialogHost.IsDialogOpen(DialogHostName))
+                        DialogHost.Close(DialogHostName);
+                })
             };
-
-            DialogHost.Show(imageUrlSelection, DialogHostName);
+            
+            if (!DialogHost.IsDialogOpen(DialogHostName))
+                DialogHost.Show(imageUrlSelection, DialogHostName);
         }
 
         private IEnumerable<OnlineGame> GetOnlineGames() => GameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame);
