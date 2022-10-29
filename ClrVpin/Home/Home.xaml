@@ -45,6 +45,9 @@
         <controls:SharedResourceDictionary Source="../About/Donate.xaml" />
 
         <controls:SharedResourceDictionary Source="../Logging/Logging.xaml" />
+
+        <controls:SharedResourceDictionary Source="\Shared\Notification.xaml" />
+
       </ResourceDictionary.MergedDictionaries>
 
 
@@ -118,6 +121,8 @@
                     </WrapPanel>
                   </StackPanel>
                 </DataTemplate>
+
+                <!--other dialog templates imported at top of file, e.g. Notification.xaml-->
               </DataTemplate.Resources>
 
               <!--render the appropriate template-->

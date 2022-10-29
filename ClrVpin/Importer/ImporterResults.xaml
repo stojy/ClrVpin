@@ -126,7 +126,7 @@
       <Grid Visibility="{Binding Url, Converter={StaticResource ReverseNullToVisibilityConverter}}">
 
         <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
-        
+
         <!--converter used to ensure image does not bind to null (which it can't handle).. this seems like a WPF bug though since the parent Grid control is collapsed when Url is null-->
         <Image Source="{Binding Url, Converter={StaticResource NullToUnsetConverter}}" Stretch="UniformToFill" Cursor="Hand">
           <b:Interaction.Triggers>
@@ -248,12 +248,32 @@
                     <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
                   </b:EventTrigger>
                 </b:Interaction.Triggers>
+               
+                <Grid Name="container">
+                  <Image Margin="20" Source="{Binding Url, Converter={StaticResource NullToUnsetConverter}}" Stretch="Uniform" Height="1100" />
 
-                <Image Margin="15" Source="{Binding Url, Converter={StaticResource NullToUnsetConverter}}" Stretch="Uniform" MinWidth="1000" MinHeight="1000">
-                  <Image.Effect>
-                    <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" RenderingBias="Performance" />
-                  </Image.Effect>
-                </Image>
+                  <!-- apply opacity mask to the grid for the rounded edges
+                       - would prefer to apply CornerRadius directly to the Image, but unfortunately it's not supported.. so instead house Image within Grid and apply an opacity mask
+                       - border is dynamically sized to the grid (which is dynamically sized by the child Image content) to support Image stretch which results in a dynamic width (with fixed height
+                       - Image must be defined before the opacity mask definition.. presumably to ensure the grid size has been calculated prior to binding
+                       - the Border for the opacity mask can be anything, so long as it's defined
+                       - fortunately, the effect is applied AFTER the opacity mask.. hence the 'glow' (correctly) surrounds the image and not the outer grid
+                         - but does require the Image to contain a margin to house the effect
+                       - refer https://stackoverflow.com/a/70214574/227110
+                  -->
+                  <Grid.OpacityMask>
+                    <VisualBrush>
+                      <VisualBrush.Visual>
+                        <Border Height="{Binding ElementName=container, Path=ActualHeight}"
+                                Width="{Binding ElementName=container, Path=ActualWidth}"
+                                Background="Yellow" CornerRadius="20" />
+                      </VisualBrush.Visual>
+                    </VisualBrush>
+                  </Grid.OpacityMask>
+                  <Grid.Effect>
+                    <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="20" RenderingBias="Performance" />
+                  </Grid.Effect>
+                </Grid>
 
                 <!--non-visible button marked with IsCancel to support the escape key-->
                 <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
