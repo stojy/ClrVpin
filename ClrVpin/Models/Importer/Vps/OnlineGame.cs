@@ -13,7 +13,9 @@ public class OnlineGame : OnlineGameBase
     public IEnumerable<File> AllFilesFlattenedList { get; set; }
     public List<ImageFile> ImageFiles { get; set; }
 
+    // main image url - shown between the HW and SW info panels
     public UrlSelection ImageUrlSelection { get; set; }
+
     public string YearString { get; set; }
     public TableAvailabilityOptionEnum TableAvailability { get; set; }
     public List<string> TableFormats { get; set; }

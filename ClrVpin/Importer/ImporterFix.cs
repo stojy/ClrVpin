@@ -471,8 +471,8 @@ public static class ImporterFix
 
     private static void FixMissingImage(OnlineGameBase onlineGame)
     {
-        // fix image url - assign to the first available image url.. B2S then table
-        if (!IsActive(FixFeedOptionEnum.MissingImageUrl) || onlineGame.ImgUrl != null)
+        // fix main image url - assign to the first available image url.. B2S then table
+        if (!IsActive(FixFeedOptionEnum.MissingImageUrl) || !onlineGame.ImgUrl.IsEmpty())
             return;
 
         var imageUrl = onlineGame.B2SFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl ?? onlineGame.TableFiles.FirstOrDefault(x => x.ImgUrl != null)?.ImgUrl;
