@@ -128,7 +128,7 @@
         <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
 
         <!--converter used to ensure image does not bind to null (which it can't handle).. this seems like a WPF bug though since the parent Grid control is collapsed when Url is null-->
-        <Image Source="{Binding Url, Converter={StaticResource NullToUnsetConverter}}" Stretch="UniformToFill" Cursor="Hand">
+        <Image Source="{Binding Url, Converter={StaticResource NullOrEmptyToUnsetConverter}}" Stretch="UniformToFill" Cursor="Hand">
           <b:Interaction.Triggers>
             <b:EventTrigger EventName="MouseUp">
               <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
@@ -250,7 +250,7 @@
                 </b:Interaction.Triggers>
                
                 <Grid Name="container">
-                  <Image Margin="20" Source="{Binding Url, Converter={StaticResource NullToUnsetConverter}}" Stretch="Uniform" Height="1100" />
+                  <Image Margin="20" Source="{Binding Url, Converter={StaticResource NullOrEmptyToUnsetConverter}}" Stretch="Uniform" Height="1100" />
 
                   <!-- apply opacity mask to the grid for the rounded edges
                        - would prefer to apply CornerRadius directly to the Image, but unfortunately it's not supported.. so instead house Image within Grid and apply an opacity mask

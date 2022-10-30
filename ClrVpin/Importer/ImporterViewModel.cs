@@ -195,9 +195,10 @@ namespace ClrVpin.Importer
             var gameItems = await ImporterUtils.MergeOnlineAndLocalGamesAsync(localGames, onlineGames, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
+            progress.Update("Preparing Results");
+            
             progress.Close();
 
-            progress.Update("Preparing Results");
             await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics);
             Logger.Info($"Importer rendered, duration={progress.Duration}", true);
 
