@@ -45,7 +45,7 @@ namespace ClrVpin.Importer
 
         public FeatureType MatchFuzzy { get; private set; }
 
-        public Window Show(Window parent)
+        public Window Show(MaterialWindowEx parent)
         {
             _window = new MaterialWindowEx
             {
@@ -172,7 +172,7 @@ namespace ClrVpin.Importer
                 catch (Exception)
                 {
                     progress.Close();
-                    _window.Show();
+                    _window.TryShow();
                     return;
                 }
             }
@@ -227,7 +227,7 @@ namespace ClrVpin.Importer
                     results.Close();
                     statistics.Close();
                     logging.Close();
-                    _window.Show();
+                    _window.TryShow();
                 };
             }
 

@@ -20,7 +20,7 @@ namespace ClrVpin.About
 
         public ICommand NavigateToPayPalCommand { get; }
 
-        public void Show(Window parent)
+        public void Show(MaterialWindowEx parent)
         {
             var window = new MaterialWindowEx
             {
@@ -36,7 +36,8 @@ namespace ClrVpin.About
 
             window.Show();
             parent.Hide();
-            window.Closed += (_, _) => parent.Show();
+
+            window.Closed += (_, _) => parent.TryShow();
         }
     }
 }

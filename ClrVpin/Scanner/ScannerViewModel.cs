@@ -54,7 +54,7 @@ namespace ClrVpin.Scanner
 
         public bool ExceedSizeThresholdSelected { get; set; }
 
-        public Window Show(Window parent)
+        public Window Show(MaterialWindowEx parent)
         {
             _window = new MaterialWindowEx
             {
@@ -199,7 +199,7 @@ namespace ClrVpin.Scanner
             catch (Exception)
             {
                 progress.Close();
-                _window.Show();
+                _window.TryShow();
                 return;
             }
 
@@ -257,7 +257,7 @@ namespace ClrVpin.Scanner
                     explorer.Close();
                     logging.Close();
 
-                    _window.Show();
+                    _window.TryShow();
                 };
             }
 
@@ -267,7 +267,7 @@ namespace ClrVpin.Scanner
         private readonly IEnumerable<FeatureType> _fixHitTypes;
 
         private ObservableCollection<LocalGame> _games;
-        private Window _window;
+        private MaterialWindowEx _window;
         private const int WindowMargin = 0;
     }
 }

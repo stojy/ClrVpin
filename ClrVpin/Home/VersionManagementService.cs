@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
+using ClrVpin.Controls;
 using ClrVpin.Logging;
 using Utils;
 using Notification = ClrVpin.Shared.Notification;
@@ -21,7 +21,7 @@ public static class VersionManagementService
         return shouldCheckForUpdate;
     }
 
-    public static async Task CheckAndHandle(Window parent = null, bool showIfNoUpdateExists = false)
+    public static async Task CheckAndHandle(MaterialWindowEx parent = null, bool showIfNoUpdateExists = false)
     {
         var releases = await VersionManagement.Check(Model.SettingsManager.Settings.Guid, "stojy", "ClrVpin", msg => Logger.Info($"Version checking: {msg}"));
 

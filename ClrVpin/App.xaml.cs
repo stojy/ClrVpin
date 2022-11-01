@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
+using ClrVpin.Controls;
 using ClrVpin.Models.Settings;
 using Notification = ClrVpin.Shared.Notification;
 
@@ -75,7 +76,8 @@ namespace ClrVpin
             {
                 Logging.Logger.Error(exception, $"{title}\n{detail}");
 
-                Current.MainWindow!.Show();
+                if (Current.MainWindow is MaterialWindowEx window)
+                    window.TryShow();
 
                 Notification.ShowError("HomeDialog", title, subTitle, detail, true, true).ContinueWith(_ => SubmitBugAndExit());
             }

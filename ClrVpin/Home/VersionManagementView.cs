@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
+using ClrVpin.Controls;
 using MaterialDesignThemes.Wpf;
 using Octokit;
 using PropertyChanged;
@@ -29,13 +29,13 @@ public class VersionManagementView
     public bool IsNewerReleaseEnabled { get; set; }
     public bool IsOlderReleaseEnabled { get; set; }
 
-    public static async Task Show(List<Release> releases, Window parent = null)
+    public static async Task Show(List<Release> releases, MaterialWindowEx parent = null)
     {
         var instance = new VersionManagementView();
         await instance.ShowInternal(releases, parent);
     }
 
-    private async Task ShowInternal(List<Release> releases, Window parent = null)
+    private async Task ShowInternal(List<Release> releases, MaterialWindowEx parent = null)
     {
         _releases = releases;
 
@@ -66,7 +66,7 @@ public class VersionManagementView
         // install or view release
         await VersionManagement.Process(latestRelease, result);
 
-        parent?.Show();
+        parent?.TryShow();
 
         // update last check AFTER processing to ensure the msi installer (if invoked) doesn't update the version (since it causes the process to exit before it reaches here)
         // - intention is that the new version when it starts up will perform another version check to ensure everything is up to date (which it should be!)

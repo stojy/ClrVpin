@@ -81,7 +81,7 @@ namespace ClrVpin.Rebuilder
         public FeatureType MatchWrongCase { get; private set; }
         public FeatureType MatchSelectClearAllFeature { get; private set; }
 
-        public Window Show(Window parent)
+        public Window Show(MaterialWindowEx parent)
         {
             _window = new MaterialWindowEx
             {
@@ -232,7 +232,7 @@ namespace ClrVpin.Rebuilder
             catch (Exception)
             {
                 progress.Close();
-                _window.Show();
+                _window.TryShow();
                 return;
             }
 
@@ -284,7 +284,7 @@ namespace ClrVpin.Rebuilder
                     rebuilderResults.Close();
                     statistics.Window.Close();
                     logging.Close();
-                    _window.Show();
+                    _window.TryShow();
                 };
             }
 
@@ -294,7 +294,7 @@ namespace ClrVpin.Rebuilder
 
         private readonly IEnumerable<string> _destinationContentTypes;
         private ObservableCollection<LocalGame> _games;
-        private Window _window;
+        private MaterialWindowEx _window;
 
         private const int WindowMargin = 0;
     }

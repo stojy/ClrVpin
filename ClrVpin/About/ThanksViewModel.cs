@@ -18,7 +18,7 @@ namespace ClrVpin.About
 
         public ICommand NavigateToPage { get; }
 
-        public List<Contributor> Contributors { get; } = new List<Contributor>
+        public List<Contributor> Contributors { get; } = new()
         {
             new Contributor("https://virtual-pinball-spreadsheet.web.app", "VPS Web App: an excellent web page rendering of the traditional google sheets spreadsheet (beta)"),
             new Contributor("https://www.facebook.com/VPSheet", "VPS: maintainers of the google sheets spreadsheet (now a json file) used as the source of truth for the 'importer' feature"),
@@ -28,7 +28,7 @@ namespace ClrVpin.About
             new Contributor("https://vpdb.io", "vpdb: download repository for everything VP."),
         };
 
-        public void Show(Window parent)
+        public void Show(MaterialWindowEx parent)
         {
             var window = new MaterialWindowEx
             {
@@ -44,7 +44,8 @@ namespace ClrVpin.About
 
             window.Show();
             parent.Hide();
-            window.Closed += (_, _) => parent.Show();
+
+            window.Closed += (_, _) => parent.TryShow();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace ClrVpin.About
         public ICommand UpdateCommand { get; }
         public ICommand DonateCommand { get; }
 
-        public Window Show(Window parent)
+        public Window Show(MaterialWindowEx parent)
         {
             _window = new MaterialWindowEx
             {
@@ -46,9 +46,8 @@ namespace ClrVpin.About
                 ResizeMode = ResizeMode.NoResize,
                 Title = "About"
             };
-
+            
             _window.Show();
-            _window.Closed += (_, _) => parent.Show();
 
             return _window;
         }

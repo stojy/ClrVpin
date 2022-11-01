@@ -47,7 +47,7 @@ namespace ClrVpin.Settings
 
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
-        public Window Show(Window parent)
+        public Window Show(MaterialWindowEx parent)
         {
             _window = new MaterialWindowEx
             {

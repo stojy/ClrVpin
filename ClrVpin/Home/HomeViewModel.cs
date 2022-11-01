@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using ClrVpin.About;
+using ClrVpin.Controls;
 using ClrVpin.Importer;
 using ClrVpin.Models.Settings;
 using ClrVpin.Rebuilder;
@@ -16,7 +17,7 @@ public class HomeViewModel
 {
     public static SettingsManager SettingsManager { get; private set; }
 
-    public HomeViewModel(Window mainWindow)
+    public HomeViewModel(MaterialWindowEx mainWindow)
     {
         _mainWindow = mainWindow;
             
@@ -51,13 +52,26 @@ public class HomeViewModel
         //   a. MaterialDesignExtensions - requires main window to NOT be hidden/collapsed or minimized to the task bar
         //   b. MaterialDesign without MDE - main window can be collapsed.. but can't be hidden.  weird!!
         // - examples.. UAC prompt, git extensions push, chrome file download, windows lock screen, windows screensaver(?), etc.
-        _mainWindow.IsEnabled = false;
+        IsChildWindowActive = true;
 
         var viewModel = new T();
         var childWindow = viewModel.Show(_mainWindow);
+
+        // remove the title bar to remove confusion bout which window is the active winow
+        _mainWindow.WindowStyle = WindowStyle.None;
             
-        childWindow.Closed += (_, _) => _mainWindow.IsEnabled = true;
+        childWindow.Closed += (_, _) =>
+        {
+            _mainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
+            IsChildWindowActive = false;
+
+            // hide then show to ensure the window is brought to the foreground
+            _mainWindow.Hide();
+            _mainWindow.TryShow();
+        };
     }
 
-    private readonly Window _mainWindow;
+    public bool IsChildWindowActive { get; set; }
+
+    private readonly MaterialWindowEx _mainWindow;
 }
