@@ -23,7 +23,7 @@ using Utils.Extensions;
 namespace ClrVpin.Scanner
 {
     [AddINotifyPropertyChangedInterface]
-    public class ScannerViewModel
+    public class ScannerViewModel : IShowViewModel
     {
         public ScannerViewModel()
         {
@@ -54,7 +54,7 @@ namespace ClrVpin.Scanner
 
         public bool ExceedSizeThresholdSelected { get; set; }
 
-        public void Show(Window parent)
+        public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
             {
@@ -69,13 +69,9 @@ namespace ClrVpin.Scanner
             };
 
             _window.Show();
-            parent.Hide();
+            _window.Closed += (_, _) => Model.SettingsManager.Write();
 
-            _window.Closed += (_, _) =>
-            {
-                Model.SettingsManager.Write();
-                parent.Show();
-            };
+            return _window;
         }
 
         private void UpdateIsValid() => IsValid = Settings.Scanner.SelectedCheckContentTypes.Any();

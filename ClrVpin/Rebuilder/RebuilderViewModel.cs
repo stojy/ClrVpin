@@ -15,6 +15,7 @@ using ClrVpin.Logging;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
+using ClrVpin.Scanner;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
@@ -23,9 +24,9 @@ using Utils.Extensions;
 namespace ClrVpin.Rebuilder
 {
     [AddINotifyPropertyChangedInterface]
-    public class RebuilderViewModel
+    public class RebuilderViewModel : IShowViewModel
     {
-        public RebuilderViewModel()
+        public RebuilderViewModel() 
         {
             StartCommand = new ActionCommand(Start);
             DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
@@ -80,7 +81,7 @@ namespace ClrVpin.Rebuilder
         public FeatureType MatchWrongCase { get; private set; }
         public FeatureType MatchSelectClearAllFeature { get; private set; }
 
-        public void Show(Window parent)
+        public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
             {
@@ -95,13 +96,9 @@ namespace ClrVpin.Rebuilder
             };
 
             _window.Show();
-            parent.Hide();
+            _window.Closed += (_, _) => Model.SettingsManager.Write();
 
-            _window.Closed += (_, _) =>
-            {
-                Model.SettingsManager.Write();
-                parent.Show();
-            };
+            return _window;
         }
 
         private FeatureType CreateDeleteIgnoredFilesOption()

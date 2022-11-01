@@ -14,6 +14,7 @@ using ClrVpin.Models.Importer;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
+using ClrVpin.Scanner;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
@@ -22,7 +23,7 @@ using Utils.Extensions;
 namespace ClrVpin.Importer
 {
     [AddINotifyPropertyChangedInterface]
-    public class ImporterViewModel
+    public class ImporterViewModel : IShowViewModel
     {
         public ImporterViewModel()
         {
@@ -44,7 +45,7 @@ namespace ClrVpin.Importer
 
         public FeatureType MatchFuzzy { get; private set; }
 
-        public void Show(Window parent)
+        public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
             {
@@ -59,13 +60,9 @@ namespace ClrVpin.Importer
             };
 
             _window.Show();
-            parent.Hide();
+            _window.Closed += (_, _) => Model.SettingsManager.Write();
 
-            _window.Closed += (_, _) =>
-            {
-                Model.SettingsManager.Write();
-                parent.Show();
-            };
+            return _window;
         }
 
         private void UpdateIsValid() => IsValid = true;
@@ -238,7 +235,7 @@ namespace ClrVpin.Importer
         }
 
         //private readonly IEnumerable<string> _destinationContentTypes;
-        private Window _window;
+        private MaterialWindowEx _window;
         private FeatureType _feedFixDuplicateTableOption;
         private const int WindowMargin = 0;
     }

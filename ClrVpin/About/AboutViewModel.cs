@@ -3,13 +3,14 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Home;
+using ClrVpin.Scanner;
 using PropertyChanged;
 using Utils;
 
 namespace ClrVpin.About
 {
     [AddINotifyPropertyChangedInterface]
-    public class AboutViewModel
+    public class AboutViewModel : IShowViewModel
     {
         public AboutViewModel()
         {
@@ -32,7 +33,7 @@ namespace ClrVpin.About
         public ICommand UpdateCommand { get; }
         public ICommand DonateCommand { get; }
 
-        public void Show(Window parent)
+        public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
             {
@@ -47,8 +48,9 @@ namespace ClrVpin.About
             };
 
             _window.Show();
-            parent.Hide();
             _window.Closed += (_, _) => parent.Show();
+
+            return _window;
         }
 
         private async void CheckAndHandleUpdate()

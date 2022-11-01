@@ -5,13 +5,14 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models.Shared;
+using ClrVpin.Scanner;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
 
 namespace ClrVpin.Settings
 {
     [AddINotifyPropertyChangedInterface]
-    public class SettingsViewModel
+    public class SettingsViewModel : IShowViewModel
     {
         public SettingsViewModel()
         {
@@ -46,7 +47,7 @@ namespace ClrVpin.Settings
 
         public Models.Settings.Settings Settings { get; } = Model.Settings;
 
-        public void Show(Window parent)
+        public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
             {
@@ -62,14 +63,11 @@ namespace ClrVpin.Settings
                 // limit height to activate the scroll bar, e.g. for use on lower resolution screens (aka full hd 1080px height)
                 MaxHeight = Model.ScreenWorkArea.Height
             };
+            
             _window.Show();
-            parent.Hide();
+            _window.Closed += (_, _) => Model.SettingsManager.Write();
 
-            _window.Closed += (_, _) =>
-            {
-                Model.SettingsManager.Write();
-                parent.Show();
-            };
+            return _window;
         }
 
         private void Close()
