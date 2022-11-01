@@ -83,7 +83,7 @@ namespace ClrVpin
             }
             catch (Exception ex)
             {
-                // if the material window fails (e.g. MainWindow doesn't have a DialogHost available yet) then default back to the trusty windows message box
+                // if the material window fails (e.g. HomeWindow doesn't have a DialogHost available yet) then default back to the trusty windows message box
                 MessageBox.Show(Current.MainWindow!, $"{title}\n\n{subTitle}\n\n{exception}", "An Error Has Occurred.  ClrVpin will be shutdown.", MessageBoxButton.OK, MessageBoxImage.Error);
                 Logging.Logger.Error(ex, "Exception in HandleError");
                 Environment.Exit(-2);

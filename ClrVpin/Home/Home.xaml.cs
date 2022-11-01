@@ -15,9 +15,9 @@ namespace ClrVpin.Home;
 //    - https: //stackoverflow.com/questions/18542940/can-bindings-create-memory-leaks-in-wpf
 
 // ReSharper disable once UnusedMember.Global
-public partial class MainWindow
+public partial class HomeWindow
 {
-    public MainWindow()
+    public HomeWindow()
     {
         // initialise encoding to workaround the error "Windows -1252 is not supported encoding name"
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
