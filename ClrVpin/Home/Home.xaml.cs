@@ -22,7 +22,7 @@ public partial class MainWindow
         // initialise encoding to workaround the error "Windows -1252 is not supported encoding name"
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-        DataContext = new Model(this);
+        DataContext = new HomeViewModel(this);
 
         InitializeComponent();
 
