@@ -1,9 +1,13 @@
 ﻿<Application x:Class="ClrVpin.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:ClrVpin.Converters"
              StartupUri="Home/Home.xaml">
 
   <Application.Resources>
+    <!-- hard coded MaterialDesignPaper color to avoid performance impacts (read below) when reference external resources files (e.g. styles.xaml or MaterialDesignTheme.Defaults.xaml) -->
+    <converters:BoolToBrushConverter x:Key="BoolToBackgroundTransparentBrush" TrueBrush="Transparent" FalseBrush="#FF303030" />
+    
     <!-- windows created in code and xaml inherit this resource dictionary - i.e. they are not required to import the resources explicitly.. i.e. it's like a 'global resource definition' -->
     <!-- using home.xaml instead because (for reasons unknown!) the windows (e.g. settings.xaml) are approximately twice as slow to render if resources are defined here!!
          - perhaps related somehow to how WPF manages resources in app.xaml differently to other xaml files, e.g. affecting the need for referencing files (refer above)

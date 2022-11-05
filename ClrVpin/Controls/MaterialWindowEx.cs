@@ -14,7 +14,7 @@ public class MaterialWindowEx : MaterialWindow
     {
         // removes unnecessary pixels in window: header, right, and bottom
         UseLayoutRounding = true;
-        
+
         ContentRendered += (_, _) =>
         {
             if (SizeToContent != SizeToContent.Manual)
@@ -27,18 +27,18 @@ public class MaterialWindowEx : MaterialWindow
         };
     }
 
-    public bool IsClosing { get; set; }
-
     public void TryShow()
     {
         // don't attempt to show a window if it's being closed as this causes WPF to throw InvalidOperationException
-        if (!IsClosing)
+        if (!_isClosing)
             Show();
     }
 
     protected override void OnClosing(CancelEventArgs e)
     {
-        IsClosing = true;
+        _isClosing = true;
         base.OnClosing(e);
     }
+
+    private bool _isClosing;
 }

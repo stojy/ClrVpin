@@ -33,7 +33,7 @@ namespace ClrVpin.About
         public ICommand UpdateCommand { get; }
         public ICommand DonateCommand { get; }
 
-        public Window Show(MaterialWindowEx parent)
+        public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
             {

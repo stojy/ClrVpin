@@ -54,7 +54,7 @@ namespace ClrVpin.Scanner
 
         public bool ExceedSizeThresholdSelected { get; set; }
 
-        public Window Show(MaterialWindowEx parent)
+        public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
             {

@@ -12,7 +12,7 @@
          - https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Brush-Name
          - e.g. PrimaryHueDarkBrush, PrimaryHueLightBrush, PrimaryHueMidBrush  = blue shades
                 SecondaryHueDarkBrush, SecondaryHueLightBrush, SecondaryHueMidBrush  = green shades
-                MaterialDesignPaper = light grey
+                MaterialDesignPaper = light grey (background.. #FF303030)
                 MaterialDesignBody = white
     -->
 
@@ -58,7 +58,17 @@
     <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4" />
   </Style>
 
+  <Style x:Key="TransparentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
   <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButton}" />
+
+  <Style x:Key="RaisedMidButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedDarkButton}">
+    <Setter Property="Background" Value="{DynamicResource PrimaryHueMidBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueMidBrush}" />
+  </Style>
 
   <Style x:Key="RaisedAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
     <Setter Property="Margin" Value="5,0" />

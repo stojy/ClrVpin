@@ -9,12 +9,17 @@
                            xmlns:utils="clr-namespace:Utils;assembly=Utils"
                            xmlns:mdXaml="clr-namespace:MdXaml;assembly=MdXaml"
                            mc:Ignorable="d"
-                           d:DataContext="{d:DesignData}"
+                           d:DataContext="{d:DesignInstance Type=home:HomeViewModel}"
                            ResizeMode="NoResize"
                            WindowStartupLocation="CenterScreen"
                            SizeToContent="WidthAndHeight"
-                           Title="ClrVpin" WindowState="Normal"
-                           Style="{DynamicResource MaterialWindowStyle}">
+                           Title="ClrVpin"
+                           WindowStyle="None"
+                           AllowsTransparency="True"
+                           Style="{DynamicResource MaterialWindowStyle}"
+                           BorderBackgroundBrush="{Binding IsChildWindowActive, Converter={StaticResource BoolToBackgroundTransparentBrush}}"
+                           Background="{Binding IsChildWindowActive, Converter={StaticResource BoolToBackgroundTransparentBrush}}">
+  
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
@@ -22,7 +27,7 @@
              - refer Home.xaml.cs code behind
         -->
         <controls:SharedResourceDictionary Source="..\Controls\Styles.xaml" />
-        
+
         <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
 
         <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
@@ -82,7 +87,7 @@
 
                     <StackPanel Margin="0">
                       <TextBlock Text="{Binding SelectedRelease.TagName, StringFormat={}v{0}}" FontFamily="Arial" Margin="0,0,0,10" FontSize="20" />
-                      <mdXaml:MarkdownScrollViewer MarkdownStyleName="Sasabune" ClickAction="OpenBrowser" 
+                      <mdXaml:MarkdownScrollViewer MarkdownStyleName="Sasabune" ClickAction="OpenBrowser"
                                                    Height="1000" Width="800" VerticalScrollBarVisibility="Auto"
                                                    Markdown="{Binding SelectedRelease.Body}" />
                     </StackPanel>
@@ -100,12 +105,12 @@
                       </WrapPanel.Resources>
 
                       <WrapPanel>
-                        <Button Margin="10,0" Style="{StaticResource MaterialDesignIconButton}" 
-                                Command="{Binding SelectOlderReleaseCommand}" 
+                        <Button Margin="10,0" Style="{StaticResource MaterialDesignIconButton}"
+                                Command="{Binding SelectOlderReleaseCommand}"
                                 IsEnabled="{Binding IsOlderReleaseEnabled}">
                           <materialDesign:PackIcon Kind="ArrowBack" Height="30" Width="30" HorizontalAlignment="Center" />
                         </Button>
-                        <Button Margin="10,0" Style="{StaticResource MaterialDesignIconButton}" 
+                        <Button Margin="10,0" Style="{StaticResource MaterialDesignIconButton}"
                                 Command="{Binding SelectNewerReleaseCommand}"
                                 IsEnabled="{Binding IsNewerReleaseEnabled}">
                           <materialDesign:PackIcon Kind="ArrowForward" Height="30" Width="30" HorizontalAlignment="Center" />
@@ -133,10 +138,15 @@
             </DataTemplate>
           </materialDesign:DialogHost.DialogContentTemplate>
 
+          <!-- MaterialDesignExtension workaround
+               - MDE doesn't correctly handle WindowStyle=None and unfortunately still allocates a hidden title bar :(
+               - a top margin equal to the windows title bar height so our custom close button IS clickable, right click context menu is inaccessible, drag to move disabled, etc
+               - child window must be on the same monitor as the main window.. even after a UI issue just dragging window back to the same monitor is sufficient to fix it!
+          -->
           <StackPanel>
-            <Image Source="/Resources/ClrVpin.png" Height="300" Margin="10" />
+            <Image Source="/Resources/ClrVpin.png" Height="350" Margin="5" />
 
-            <WrapPanel Margin="5,5,5,10" Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
+            <WrapPanel Margin="5" Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
               <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentDarkButtonStyle}"
                       ToolTip="{Binding ScannerToolTip}">
                 <StackPanel>
@@ -168,6 +178,12 @@
                 <StackPanel>
                   <TextBlock Text="About" HorizontalAlignment="Center" />
                   <materialDesign:PackIcon Kind="AboutOutline" Height="40" Width="40" />
+                </StackPanel>
+              </Button>
+              <Button Command="{Binding CloseCommand}" Width="70" ToolTip="Close ClrVpin" Style="{StaticResource RaisedMidButtonStyle}">
+                <StackPanel>
+                  <TextBlock Text="Close" HorizontalAlignment="Center" />
+                  <materialDesign:PackIcon Kind="Close" Height="40" Width="40" />
                 </StackPanel>
               </Button>
             </WrapPanel>

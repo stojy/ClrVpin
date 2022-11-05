@@ -45,7 +45,7 @@ namespace ClrVpin.Importer
 
         public FeatureType MatchFuzzy { get; private set; }
 
-        public Window Show(MaterialWindowEx parent)
+        public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
             {

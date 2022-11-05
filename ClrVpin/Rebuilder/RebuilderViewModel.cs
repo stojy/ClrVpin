@@ -81,7 +81,7 @@ namespace ClrVpin.Rebuilder
         public FeatureType MatchWrongCase { get; private set; }
         public FeatureType MatchSelectClearAllFeature { get; private set; }
 
-        public Window Show(MaterialWindowEx parent)
+        public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
             {

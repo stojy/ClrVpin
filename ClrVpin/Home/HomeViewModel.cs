@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using ClrVpin.About;
 using ClrVpin.Controls;
 using ClrVpin.Importer;
@@ -15,12 +14,10 @@ namespace ClrVpin.Home;
 [AddINotifyPropertyChangedInterface]
 public class HomeViewModel
 {
-    public static SettingsManager SettingsManager { get; private set; }
-
     public HomeViewModel(MaterialWindowEx mainWindow)
     {
         _mainWindow = mainWindow;
-            
+
         // static instances of SettingsManager and Settings for convenience/simplicity
         SettingsManager = Model.SettingsManager = SettingsManager.Create();
         Model.Settings = Model.SettingsManager.Settings;
@@ -30,10 +27,13 @@ public class HomeViewModel
         ImporterCommand = new ActionCommand(Show<ImporterViewModel>);
         SettingsCommand = new ActionCommand(Show<SettingsViewModel>);
         AboutCommand = new ActionCommand(Show<AboutViewModel>);
+        CloseCommand = new ActionCommand(_mainWindow.Close);
 
         ScannerToolTip = "Scan existing content and optionally fix" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
         RebuilderToolTip = "Rebuild existing library by merging new content from alternate folders" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
     }
+
+    public static SettingsManager SettingsManager { get; private set; }
 
     public string ScannerToolTip { get; }
     public string RebuilderToolTip { get; }
@@ -43,6 +43,9 @@ public class HomeViewModel
     public ICommand ImporterCommand { get; }
     public ICommand SettingsCommand { get; }
     public ICommand AboutCommand { get; }
+    public ICommand CloseCommand { get; }
+
+    public bool IsChildWindowActive { get; set; }
 
     private void Show<T>() where T : IShowViewModel, new()
     {
@@ -51,27 +54,22 @@ public class HomeViewModel
         // - suspected, but not proven, to be an issue with the top level overlay..
         //   a. MaterialDesignExtensions - requires main window to NOT be hidden/collapsed or minimized to the task bar
         //   b. MaterialDesign without MDE - main window can be collapsed.. but can't be hidden.  weird!!
+        //   c. root window (HomeView) - MUST be a MaterialDesignExtensions window, i.e. can't use a regular Window (as root at any rate) with MDE window :(
         // - examples.. UAC prompt, git extensions push, chrome file download, windows lock screen, windows screensaver(?), etc.
         IsChildWindowActive = true;
 
         var viewModel = new T();
         var childWindow = viewModel.Show(_mainWindow);
 
-        // remove the title bar to remove confusion bout which window is the active winow
-        _mainWindow.WindowStyle = WindowStyle.None;
-            
         childWindow.Closed += (_, _) =>
         {
-            _mainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
             IsChildWindowActive = false;
 
             // hide then show to ensure the window is brought to the foreground
-            _mainWindow.Hide();
+            //_mainWindow.Hide();
             _mainWindow.TryShow();
         };
     }
-
-    public bool IsChildWindowActive { get; set; }
 
     private readonly MaterialWindowEx _mainWindow;
 }

@@ -9,6 +9,7 @@
   </ResourceDictionary.MergedDictionaries>
 
   <!--commonly used converter resources-->
+  <converters:ReverseBoolConverter x:Key="ReverseBoolConverter" />
   <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
   <converters:BoolToVisibilityConverter x:Key="ReverseBoolToHiddenConverter" True="Visible" False="Hidden" />
   <converters:BoolToVisibilityConverter x:Key="ReverseBoolToVisibilityConverter" True="Collapsed" False="Visible" />
