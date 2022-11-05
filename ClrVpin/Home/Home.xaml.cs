@@ -32,9 +32,10 @@ public partial class HomeWindow
             {
                 _activated = true;
                 Resources.WalkDictionary();
-            }
 
-            Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
+                Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
+
+            }
 
             // guard against multiple window activations
             if (Model.SettingsManager.WasReset && !_wasConfigResetHandled)
@@ -57,7 +58,7 @@ public partial class HomeWindow
 
     private static void Restart()
     {
-        Process.Start(Process.GetCurrentProcess().MainModule!.FileName!);
+        Process.Start(System.Environment.ProcessPath!);
         Application.Current.Shutdown();
     }
 

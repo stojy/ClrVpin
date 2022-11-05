@@ -58,7 +58,7 @@ namespace ClrVpin.Importer
                 ResizeMode = ResizeMode.NoResize,
                 Title = "Importer"
             };
-
+            
             _window.Show();
             _window.Closed += (_, _) => Model.SettingsManager.Write();
 

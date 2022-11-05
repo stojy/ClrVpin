@@ -28,8 +28,6 @@
         -->
         <controls:SharedResourceDictionary Source="..\Controls\Styles.xaml" />
 
-        <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-
         <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
 
         <controls:SharedResourceDictionary Source="../Scanner/Scanner.xaml" />
@@ -138,10 +136,8 @@
             </DataTemplate>
           </materialDesign:DialogHost.DialogContentTemplate>
 
-          <!-- MaterialDesignExtension workaround
-               - MDE doesn't correctly handle WindowStyle=None and unfortunately still allocates a hidden title bar :(
-               - a top margin equal to the windows title bar height so our custom close button IS clickable, right click context menu is inaccessible, drag to move disabled, etc
-               - child window must be on the same monitor as the main window.. even after a UI issue just dragging window back to the same monitor is sufficient to fix it!
+          <!-- MaterialDesignExtension does NOT correctly handle WindowStyle=None and unfortunately still allocates a hidden title bar :(
+               - this is the main reason why the 'close' button has been shifted from the top right (i.e. simulating the title bar close button) to the bottom buttons
           -->
           <StackPanel>
             <Image Source="/Resources/ClrVpin.png" Height="350" Margin="5" />

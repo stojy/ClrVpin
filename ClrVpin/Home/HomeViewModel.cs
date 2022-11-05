@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using ClrVpin.About;
 using ClrVpin.Controls;
 using ClrVpin.Importer;
@@ -49,24 +51,28 @@ public class HomeViewModel
 
     private void Show<T>() where T : IShowViewModel, new()
     {
-        // the main window MUST remain visible as a workaround a known 'feature' where the UI stops updating when windows performs a 'global window update'
+        // the main window MUST remain visible as a workaround a 'feature' where the UI stops updating when windows performs a 'global window update'
         // - 'UI stops updating' has the input working (e.g. mouse clicks), but no visual updates are made (e.g. checkbox state not visually updated)
+        // - the window will sometimes resume working (including any previous clicks) if it's dragged to the same window as the home window
         // - suspected, but not proven, to be an issue with the top level overlay..
         //   a. MaterialDesignExtensions - requires main window to NOT be hidden/collapsed or minimized to the task bar
         //   b. MaterialDesign without MDE - main window can be collapsed.. but can't be hidden.  weird!!
         //   c. root window (HomeView) - MUST be a MaterialDesignExtensions window, i.e. can't use a regular Window (as root at any rate) with MDE window :(
         // - examples.. UAC prompt, git extensions push, chrome file download, windows lock screen, windows screensaver(?), etc.
-        IsChildWindowActive = true;
 
         var viewModel = new T();
         var childWindow = viewModel.Show(_mainWindow);
+
+        // delay the child window active notification to avoid unnecessary screen flickering whilst the child window becomes 'truly active'
+        childWindow.ContentRendered += (_, _) => Task.Delay(500).ContinueWith(_ => Application.Current.Dispatcher.BeginInvoke(() => IsChildWindowActive = true));
 
         childWindow.Closed += (_, _) =>
         {
             IsChildWindowActive = false;
 
             // hide then show to ensure the window is brought to the foreground
-            //_mainWindow.Hide();
+            // - it's a workaround required in case other non-ClrVpin windows were active, e.g. browser
+            _mainWindow.Hide();
             _mainWindow.TryShow();
         };
     }
