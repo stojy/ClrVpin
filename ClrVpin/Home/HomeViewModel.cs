@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.About;
 using ClrVpin.Controls;
+using ClrVpin.Extensions;
 using ClrVpin.Importer;
 using ClrVpin.Models.Settings;
 using ClrVpin.Rebuilder;
@@ -63,12 +64,31 @@ public class HomeViewModel
         var viewModel = new T();
         var childWindow = viewModel.Show(_mainWindow);
 
+        var originalPositionLeft = _mainWindow.Left;
+        var originalPositionTop = _mainWindow.Top;
+
+
         // delay the child window active notification to avoid unnecessary screen flickering whilst the child window becomes 'truly active'
-        childWindow.ContentRendered += (_, _) => Task.Delay(500).ContinueWith(_ => Application.Current.Dispatcher.BeginInvoke(() => IsChildWindowActive = true));
+        childWindow.ContentRendered += (_, _) => Task.Delay(200).ContinueWith(_ => Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            IsChildWindowActive = true;
+
+            // reposition main window to maintain centering whilst accounting for the larger size
+            // - note, this is only done automatically during the first window load, not for any subsequent window resizing
+            // - https://stackoverflow.com/questions/4019831/how-do-you-center-your-main-window-in-wpf
+            var screenPosition = _mainWindow.GetCurrentScreenPosition();
+            var screenWorkArea = _mainWindow.GetCurrentScreenWorkArea();
+            _mainWindow.Left = screenPosition.X + (screenWorkArea.Width - 1000) / 2;
+            _mainWindow.Top = screenPosition.Y + (screenWorkArea.Height - 1200) / 2;
+        }));
 
         childWindow.Closed += (_, _) =>
         {
             IsChildWindowActive = false;
+
+            // restore the original main window location
+            _mainWindow.Left = originalPositionLeft;
+            _mainWindow.Top = originalPositionTop;
 
             // hide then show to ensure the window is brought to the foreground
             // - it's a workaround required in case other non-ClrVpin windows were active, e.g. browser

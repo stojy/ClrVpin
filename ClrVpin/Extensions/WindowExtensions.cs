@@ -44,7 +44,12 @@ public static class WindowExtensions
         //   - e.g. 3840 pixel monitor at 100% scaling --> WPF max width = 3840 / 1 = 3840diu
         //   - e.g. 1920 pixel monitor at 100% scaling --> WPF max width = 1920 / 1 = 1920diu
         //   --> so a WPF window.Width=1000px on 1920 @ 100% scaling (max width=1920) will be physically LARGER vs 3840 @ 150% scaling (max width=2560)
-        return new Rect { Width = screen.WorkingArea.Width / dpiScale.DpiScaleX, Height = screen.WorkingArea.Height / dpiScale.DpiScaleY };
+        return new Rect
+        {
+            // todo; other properties
+            Width = screen.WorkingArea.Width / dpiScale.DpiScaleX, 
+            Height = screen.WorkingArea.Height / dpiScale.DpiScaleY
+        };
     }
 
     public static Point GetCurrentScreenPosition(this Window window)

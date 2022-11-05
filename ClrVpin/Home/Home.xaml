@@ -8,6 +8,7 @@
                            xmlns:home="clr-namespace:ClrVpin.Home"
                            xmlns:utils="clr-namespace:Utils;assembly=Utils"
                            xmlns:mdXaml="clr-namespace:MdXaml;assembly=MdXaml"
+                           xmlns:converters="clr-namespace:ClrVpin.Converters"
                            mc:Ignorable="d"
                            d:DataContext="{d:DesignInstance Type=home:HomeViewModel}"
                            ResizeMode="NoResize"
@@ -140,7 +141,10 @@
                - this is the main reason why the 'close' button has been shifted from the top right (i.e. simulating the title bar close button) to the bottom buttons
           -->
           <StackPanel>
-            <Image Source="/Resources/ClrVpin.png" Height="350" Margin="5" />
+            <StackPanel.Resources>
+              <converters:BoolToStringConverter x:Key="ImageSizeConverter" False="350" True="1200"/>
+            </StackPanel.Resources>
+            <Image Source="/Resources/ClrVpin.png" Height="{Binding IsChildWindowActive, Converter={StaticResource ImageSizeConverter}}" Margin="5" />
 
             <WrapPanel Margin="5" Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
               <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentDarkButtonStyle}"
