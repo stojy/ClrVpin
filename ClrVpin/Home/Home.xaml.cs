@@ -34,7 +34,6 @@ public partial class HomeWindow
                 Resources.WalkDictionary();
 
                 Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
-
             }
 
             // guard against multiple window activations

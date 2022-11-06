@@ -7,7 +7,7 @@ namespace ClrVpin.Extensions;
 
 public static class WindowExtensions
 {
-    public static Rect GetCurrentScreenWorkArea(this Window window)
+    public static Size GetCurrentScreenWorkArea(this Window window)
     {
         // DIU/pixel
         // - background info
@@ -44,9 +44,8 @@ public static class WindowExtensions
         //   - e.g. 3840 pixel monitor at 100% scaling --> WPF max width = 3840 / 1 = 3840diu
         //   - e.g. 1920 pixel monitor at 100% scaling --> WPF max width = 1920 / 1 = 1920diu
         //   --> so a WPF window.Width=1000px on 1920 @ 100% scaling (max width=1920) will be physically LARGER vs 3840 @ 150% scaling (max width=2560)
-        return new Rect
+        return new Size
         {
-            // todo; other properties
             Width = screen.WorkingArea.Width / dpiScale.DpiScaleX, 
             Height = screen.WorkingArea.Height / dpiScale.DpiScaleY
         };
@@ -61,5 +60,17 @@ public static class WindowExtensions
         var dpiScale = VisualTreeHelper.GetDpi(window);
 
         return new Point { X = (int)(screen.WorkingArea.X / dpiScale.DpiScaleX), Y = (int)(screen.WorkingArea.Y / dpiScale.DpiScaleY) };
+    }
+
+    public static void CentreWindowInCurrentScreen(this Window window, Size newSize)
+    {
+        // reposition main window to maintain centering when the window size changes
+        // - this is only done automatically by WPF during the first window load, not for any subsequent window resizing (e.g. collapsed content, larger images, etc)
+        // - https://stackoverflow.com/questions/4019831/how-do-you-center-your-main-window-in-wpf
+        var screenPosition = window.GetCurrentScreenPosition();
+        var screenWorkArea = window.GetCurrentScreenWorkArea();
+        window.Left = screenPosition.X + (screenWorkArea.Width - newSize.Width) / 2;
+        window.Top = screenPosition.Y + (screenWorkArea.Height - newSize.Height) / 2;
+
     }
 }

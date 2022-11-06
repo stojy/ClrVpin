@@ -34,6 +34,8 @@ public class HomeViewModel
 
         ScannerToolTip = "Scan existing content and optionally fix" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
         RebuilderToolTip = "Rebuild existing library by merging new content from alternate folders" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
+
+        _mainWindow.SizeChanged += SizeChanged;
     }
 
     public static SettingsManager SettingsManager { get; private set; }
@@ -49,6 +51,11 @@ public class HomeViewModel
     public ICommand CloseCommand { get; }
 
     public bool IsChildWindowActive { get; set; }
+
+    private void SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        _mainWindow.CentreWindowInCurrentScreen(e.NewSize);
+    }
 
     private void Show<T>() where T : IShowViewModel, new()
     {
@@ -67,19 +74,10 @@ public class HomeViewModel
         var originalPositionLeft = _mainWindow.Left;
         var originalPositionTop = _mainWindow.Top;
 
-
         // delay the child window active notification to avoid unnecessary screen flickering whilst the child window becomes 'truly active'
         childWindow.ContentRendered += (_, _) => Task.Delay(200).ContinueWith(_ => Application.Current.Dispatcher.BeginInvoke(() =>
         {
             IsChildWindowActive = true;
-
-            // reposition main window to maintain centering whilst accounting for the larger size
-            // - note, this is only done automatically during the first window load, not for any subsequent window resizing
-            // - https://stackoverflow.com/questions/4019831/how-do-you-center-your-main-window-in-wpf
-            var screenPosition = _mainWindow.GetCurrentScreenPosition();
-            var screenWorkArea = _mainWindow.GetCurrentScreenWorkArea();
-            _mainWindow.Left = screenPosition.X + (screenWorkArea.Width - 1000) / 2;
-            _mainWindow.Top = screenPosition.Y + (screenWorkArea.Height - 1200) / 2;
         }));
 
         childWindow.Closed += (_, _) =>
