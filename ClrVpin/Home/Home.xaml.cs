@@ -33,7 +33,7 @@ public partial class HomeWindow
                 _activated = true;
                 Resources.WalkDictionary();
 
-                Model.ScreenWorkArea = this.GetCurrentScreenWorkArea();
+                Model.ScreenWorkArea = this.GetCurrentScreenSize();
             }
 
             // guard against multiple window activations

@@ -54,7 +54,7 @@ public class HomeViewModel
 
     private void SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        _mainWindow.CentreWindowInCurrentScreen(e.NewSize);
+        _mainWindow.CentreInCurrentScreen(e.NewSize);
     }
 
     private void Show<T>() where T : IShowViewModel, new()
