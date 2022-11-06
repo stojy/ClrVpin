@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -53,22 +54,24 @@ namespace ClrVpin.Settings
             {
                 Owner = parent,
                 Content = this,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("SettingsTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,
                 Title = "Settings",
-                
+
                 // limit height to activate the scroll bar, e.g. for use on lower resolution screens (aka full hd 1080px height)
                 MaxHeight = Model.ScreenWorkArea.Height
             };
-            
+
             _window.Show();
             _window.Closed += (_, _) => Model.SettingsManager.Write();
 
             return _window;
         }
+
+        public Action<bool> ProgressChanged { get; set; }
 
         private void Close()
         {
@@ -117,6 +120,7 @@ namespace ClrVpin.Settings
                                 x.ContentType.Folder = $@"{Settings.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
                                 break;
                         }
+
                         break;
                 }
 

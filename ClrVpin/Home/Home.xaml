@@ -142,9 +142,9 @@
           -->
           <StackPanel>
             <StackPanel.Resources>
-              <converters:BoolToStringConverter x:Key="ImageSizeConverter" False="350" True="1200"/>
+              <converters:BoolToStringConverter x:Key="ImageSizeConverter" False="350" True="350"/>
             </StackPanel.Resources>
-            <Image Source="/Resources/ClrVpin.png" Height="{Binding IsChildWindowActive, Converter={StaticResource ImageSizeConverter}}" Margin="5" />
+            <Image Source="/Resources/ClrVpin.png" Height="{Binding IsProgressWindowActive, Converter={StaticResource ImageSizeConverter}}" Margin="5" />
 
             <WrapPanel Margin="5" Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
               <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentDarkButtonStyle}"

@@ -51,6 +51,7 @@ public class HomeViewModel
     public ICommand CloseCommand { get; }
 
     public bool IsChildWindowActive { get; set; }
+    public bool IsProgressWindowActive { get; set; }
 
     private void SizeChanged(object sender, SizeChangedEventArgs e)
     {
@@ -59,6 +60,9 @@ public class HomeViewModel
 
     private void Show<T>() where T : IShowViewModel, new()
     {
+        var originalPositionLeft = _mainWindow.Left;
+        var originalPositionTop = _mainWindow.Top;
+
         // the main window MUST remain visible as a workaround a 'feature' where the UI stops updating when windows performs a 'global window update'
         // - 'UI stops updating' has the input working (e.g. mouse clicks), but no visual updates are made (e.g. checkbox state not visually updated)
         // - the window will sometimes resume working (including any previous clicks) if it's dragged to the same window as the home window
@@ -69,16 +73,12 @@ public class HomeViewModel
         // - examples.. UAC prompt, git extensions push, chrome file download, windows lock screen, windows screensaver(?), etc.
 
         var viewModel = new T();
+        viewModel.ProgressChanged += isActive => IsProgressWindowActive = isActive;
+        
         var childWindow = viewModel.Show(_mainWindow);
 
-        var originalPositionLeft = _mainWindow.Left;
-        var originalPositionTop = _mainWindow.Top;
-
         // delay the child window active notification to avoid unnecessary screen flickering whilst the child window becomes 'truly active'
-        childWindow.ContentRendered += (_, _) => Task.Delay(200).ContinueWith(_ => Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            IsChildWindowActive = true;
-        }));
+        childWindow.ContentRendered += (_, _) => Task.Delay(200).ContinueWith(_ => Application.Current.Dispatcher.BeginInvoke(() => { IsChildWindowActive = true; }));
 
         childWindow.Closed += (_, _) =>
         {

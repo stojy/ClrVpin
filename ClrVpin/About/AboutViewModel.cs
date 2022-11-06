@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
@@ -39,18 +40,20 @@ namespace ClrVpin.About
             {
                 Owner = parent,
                 Content = this,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Resources = parent.Resources,
                 ContentTemplate = parent.FindResource("AboutTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,
                 Title = "About"
             };
-            
+
             _window.Show();
 
             return _window;
         }
+
+        public Action<bool> ProgressChanged { get; set; }
 
         private async void CheckAndHandleUpdate()
         {

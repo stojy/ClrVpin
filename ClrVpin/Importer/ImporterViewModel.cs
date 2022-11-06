@@ -50,7 +50,7 @@ namespace ClrVpin.Importer
             _window = new MaterialWindowEx
             {
                 Owner = parent,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parent.Resources,
@@ -58,12 +58,14 @@ namespace ClrVpin.Importer
                 ResizeMode = ResizeMode.NoResize,
                 Title = "Importer"
             };
-            
+
             _window.Show();
             _window.Closed += (_, _) => Model.SettingsManager.Write();
 
             return _window;
         }
+
+        public Action<bool> ProgressChanged { get; set; }
 
         private void UpdateIsValid() => IsValid = true;
 
@@ -159,6 +161,7 @@ namespace ClrVpin.Importer
 
             var progress = new ProgressViewModel();
             progress.Show(_window);
+            ProgressChanged?.Invoke(true);
 
             var localGames = new List<LocalGame>();
             if (MatchFuzzy.IsActive)
@@ -193,7 +196,8 @@ namespace ClrVpin.Importer
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Update("Preparing Results");
-            
+
+            ProgressChanged?.Invoke(false);
             progress.Close();
 
             await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics);
@@ -210,7 +214,7 @@ namespace ClrVpin.Importer
             var showTask = results.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
 
             var statistics = new ImporterStatisticsViewModel(gameItems, duration, fixStatistics);
-            statistics.Show(_window, screenPosition.X  + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
+            statistics.Show(_window, screenPosition.X + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
             var logging = new LoggingViewModel();
             logging.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin,

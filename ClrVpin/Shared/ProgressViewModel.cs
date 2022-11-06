@@ -6,90 +6,82 @@ using System.Windows.Input;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Shared
+namespace ClrVpin.Shared;
+
+[AddINotifyPropertyChangedInterface]
+internal class ProgressViewModel
 {
-    [AddINotifyPropertyChangedInterface]
-    internal class ProgressViewModel
+    public ProgressViewModel()
     {
-        public ProgressViewModel()
-        {
-            _cancellationTokenSource = new CancellationTokenSource();
-            CancellationToken = _cancellationTokenSource.Token;
-            
-            CancelCommand = new ActionCommand(Cancel);
-        }
+        _cancellationTokenSource = new CancellationTokenSource();
 
-        public CancellationToken CancellationToken { get; set; }
-
-        public bool IsCancelled { get; set; }
-
-        public TimeSpan Duration => _durationStopwatch.Elapsed;
-        public TimeSpan DisplayDuration { get; set; }
-        public double DisplayDurationTotalSeconds => DisplayDuration.TotalSeconds;
-        public string Status { get; set; }
-        public string Detail { get; set; }
-        public int Percentage { get; set; }
-
-        public ICommand CancelCommand { get; set; }
-
-        public event Action Cancelled;
-
-        public void Cancel()
-        {
-            IsCancelled = true;
-            
-            Cancelled?.Invoke();
-            _cancellationTokenSource.Cancel();
-
-            Environment.Exit(-1);
-        }
-
-        public void Show(Window parentWindow)
-        {
-            IsCancelled = false;
-
-            _window = new Window
-            {
-                Owner = parentWindow,
-                Title = "Progress",
-                WindowStyle = WindowStyle.None,
-                ResizeMode = ResizeMode.NoResize,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                SizeToContent = SizeToContent.WidthAndHeight,
-                Content = this,
-                Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("ProgressTemplate") as DataTemplate
-            };
-            _window.Show();
-
-            _durationStopwatch = Stopwatch.StartNew();
-            _timer = new Timer(_ => DisplayDuration = _durationStopwatch.Elapsed);
-
-            _timer.Change(1000, 1000);
-        }
-
-        public void Close()
-        {
-            _window.Close();
-            _durationStopwatch.Stop();
-            _timer.Change(0, 0);
-        }
-
-        public void Update(string status, float? ratioComplete = null, string detail = null)
-        {
-            if (status != null)
-                Status = status;
-
-            if (ratioComplete != null)
-                Percentage = (int)(100 * ratioComplete.Value);
-
-            Detail = detail;
-        }
-
-        private Timer _timer;
-
-        private Window _window;
-        private Stopwatch _durationStopwatch;
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        CancelCommand = new ActionCommand(Cancel);
     }
+
+    public TimeSpan Duration => _durationStopwatch.Elapsed;
+    public double DisplayDurationTotalSeconds => _displayDuration.TotalSeconds;
+    public string Status { get; private set; }
+    public string Detail { get; private set; }
+    public int Percentage { get; set; }
+
+    public ICommand CancelCommand { get; }
+
+    // ReSharper disable once EventNeverSubscribedTo.Global
+    public event Action Cancelled;
+
+    private void Cancel()
+    {
+        Cancelled?.Invoke();
+        _cancellationTokenSource.Cancel();
+
+        Environment.Exit(-1);
+    }
+
+    public void Show(Window parentWindow)
+    {
+        _window = new Window
+        {
+            Owner = parentWindow,
+            Title = "Progress",
+            WindowStyle = WindowStyle.None,
+            ResizeMode = ResizeMode.NoResize,
+            WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            SizeToContent = SizeToContent.WidthAndHeight,
+            Content = this,
+            Resources = parentWindow.Resources,
+            ContentTemplate = parentWindow.FindResource("ProgressTemplate") as DataTemplate
+        };
+        _window.Show();
+
+        _durationStopwatch = Stopwatch.StartNew();
+        _timer = new Timer(_ => _displayDuration = _durationStopwatch.Elapsed);
+
+        _timer.Change(1000, 1000);
+    }
+
+    public void Close()
+    {
+        _window.Close();
+        _durationStopwatch.Stop();
+        _timer.Change(0, 0);
+    }
+
+    public void Update(string status, float? ratioComplete = null, string detail = null)
+    {
+        if (status != null)
+            Status = status;
+
+        if (ratioComplete != null)
+            Percentage = (int)(100 * ratioComplete.Value);
+
+        Detail = detail;
+    }
+
+    private readonly CancellationTokenSource _cancellationTokenSource;
+    private TimeSpan _displayDuration;
+
+    private Timer _timer;
+
+    private Window _window;
+    private Stopwatch _durationStopwatch;
 }

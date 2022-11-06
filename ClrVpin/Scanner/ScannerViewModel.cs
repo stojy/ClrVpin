@@ -59,7 +59,7 @@ namespace ClrVpin.Scanner
             _window = new MaterialWindowEx
             {
                 Owner = parent,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parent.Resources,
@@ -73,6 +73,8 @@ namespace ClrVpin.Scanner
 
             return _window;
         }
+
+        public Action<bool> ProgressChanged { get; set; }
 
         private void UpdateIsValid() => IsValid = Settings.Scanner.SelectedCheckContentTypes.Any();
 

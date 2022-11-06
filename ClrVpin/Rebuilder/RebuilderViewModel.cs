@@ -86,7 +86,7 @@ namespace ClrVpin.Rebuilder
             _window = new MaterialWindowEx
             {
                 Owner = parent,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parent.Resources,
@@ -100,6 +100,8 @@ namespace ClrVpin.Rebuilder
 
             return _window;
         }
+
+        public Action<bool> ProgressChanged { get; set; }
 
         private FeatureType CreateDeleteIgnoredFilesOption()
         {
