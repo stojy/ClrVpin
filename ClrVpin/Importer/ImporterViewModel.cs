@@ -65,8 +65,6 @@ namespace ClrVpin.Importer
             return _window;
         }
 
-        public Action<bool> ProgressChanged { get; set; }
-
         private void UpdateIsValid() => IsValid = true;
 
         private void CreateMatchCriteriaTypes()
@@ -161,7 +159,6 @@ namespace ClrVpin.Importer
 
             var progress = new ProgressViewModel();
             progress.Show(_window);
-            ProgressChanged?.Invoke(true);
 
             var localGames = new List<LocalGame>();
             if (MatchFuzzy.IsActive)
@@ -197,7 +194,6 @@ namespace ClrVpin.Importer
 
             progress.Update("Preparing Results");
 
-            ProgressChanged?.Invoke(false);
             progress.Close();
 
             await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics);

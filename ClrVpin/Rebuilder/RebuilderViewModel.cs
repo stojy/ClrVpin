@@ -101,8 +101,6 @@ namespace ClrVpin.Rebuilder
             return _window;
         }
 
-        public Action<bool> ProgressChanged { get; set; }
-
         private FeatureType CreateDeleteIgnoredFilesOption()
         {
             var feature = new FeatureType(-1)

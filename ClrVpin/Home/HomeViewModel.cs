@@ -51,7 +51,6 @@ public class HomeViewModel
     public ICommand CloseCommand { get; }
 
     public bool IsChildWindowActive { get; set; }
-    public bool IsProgressWindowActive { get; set; }
 
     private void SizeChanged(object sender, SizeChangedEventArgs e)
     {
@@ -73,7 +72,6 @@ public class HomeViewModel
         // - examples.. UAC prompt, git extensions push, chrome file download, windows lock screen, windows screensaver(?), etc.
 
         var viewModel = new T();
-        viewModel.ProgressChanged += isActive => IsProgressWindowActive = isActive;
         
         var childWindow = viewModel.Show(_mainWindow);
 

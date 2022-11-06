@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -70,8 +69,6 @@ namespace ClrVpin.Settings
 
             return _window;
         }
-
-        public Action<bool> ProgressChanged { get; set; }
 
         private void Close()
         {

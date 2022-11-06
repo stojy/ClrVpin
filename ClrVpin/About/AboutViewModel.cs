@@ -53,8 +53,6 @@ namespace ClrVpin.About
             return _window;
         }
 
-        public Action<bool> ProgressChanged { get; set; }
-
         private async void CheckAndHandleUpdate()
         {
             await VersionManagementService.CheckAndHandle(_window, true);

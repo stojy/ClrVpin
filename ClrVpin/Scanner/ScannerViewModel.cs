@@ -74,8 +74,6 @@ namespace ClrVpin.Scanner
             return _window;
         }
 
-        public Action<bool> ProgressChanged { get; set; }
-
         private void UpdateIsValid() => IsValid = Settings.Scanner.SelectedCheckContentTypes.Any();
 
         private IEnumerable<FeatureType> CreateCheckContentTypes(IEnumerable<ContentType> contentTypes)
