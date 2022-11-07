@@ -19,7 +19,7 @@ internal class ProgressViewModel
     }
 
     public TimeSpan Duration => _durationStopwatch.Elapsed;
-    public double DisplayDurationTotalSeconds => _displayDuration.TotalSeconds;
+    public double DisplayDurationInSeconds { get; private set; }
     public string Status { get; private set; }
     public string Detail { get; private set; }
     public int Percentage { get; set; }
@@ -54,7 +54,7 @@ internal class ProgressViewModel
         _window.Show();
 
         _durationStopwatch = Stopwatch.StartNew();
-        _timer = new Timer(_ => _displayDuration = _durationStopwatch.Elapsed);
+        _timer = new Timer(_ => DisplayDurationInSeconds = _durationStopwatch.Elapsed.TotalSeconds);
 
         _timer.Change(1000, 1000);
     }
@@ -78,7 +78,6 @@ internal class ProgressViewModel
     }
 
     private readonly CancellationTokenSource _cancellationTokenSource;
-    private TimeSpan _displayDuration;
 
     private Timer _timer;
 

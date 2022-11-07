@@ -11,7 +11,7 @@
     <StackPanel Margin="10" Width="600" >
       <ProgressBar Value="{Binding Percentage}"  Height="20" />
       <DockPanel Margin="0, 10, 0, 0" LastChildFill="True">
-        <TextBlock DockPanel.Dock="Right" Text="{Binding DisplayDurationTotalSeconds, StringFormat={}{0:f0}s}"/>
+        <TextBlock DockPanel.Dock="Right" Text="{Binding DisplayDurationInSeconds, StringFormat={}{0:f0}s}"/>
         <TextBlock Text="{Binding Status}" />
       </DockPanel>
       <TextBlock HorizontalAlignment="Left" Text="{Binding Detail}" TextTrimming="CharacterEllipsis"/>
