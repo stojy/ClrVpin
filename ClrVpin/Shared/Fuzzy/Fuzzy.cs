@@ -88,7 +88,8 @@ namespace ClrVpin.Shared.Fuzzy
             // - e.g. Big Injun --> Big Indian
             _aliases = new Dictionary<string, string>
             {
-                new("big injun", "big indian")
+                new("big injun", "big indian"),
+                new("caddie (playmatic 1970)", "caddie (playmatic 1976)") // very special alias where the 1970 and 1975 version are indistinguishable according to IPDB
             };
         }
 
@@ -107,9 +108,6 @@ namespace ClrVpin.Shared.Fuzzy
 
             // easier comparison when everything is in the same case
             cleanName = cleanName.ToLowerAndTrim();
-
-            // replace any known word aliases
-            cleanName = SubstituteAliases(cleanName);
 
             // trim (whole) words
             cleanName = _wholeWordRegex.Replace(cleanName, "");
@@ -170,6 +168,9 @@ namespace ClrVpin.Shared.Fuzzy
             // only strip the extension if it exists, i.e. a real file and not a DB entry
             if (isFileName)
                 sourceName = Path.GetFileNameWithoutExtension(sourceName);
+
+            // replace any known word aliases
+            sourceName = SubstituteAliases(sourceName.ToLower());
 
             var result = _fileNameInfoRegex.Match(sourceName);
 
