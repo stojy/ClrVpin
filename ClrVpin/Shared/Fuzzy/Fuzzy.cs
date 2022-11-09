@@ -85,11 +85,13 @@ namespace ClrVpin.Shared.Fuzzy
 
             // aliases
             // - replace specific word(s)
+            // - check key: case insensitive check
+            // - substitution value: the specified case is respected to ensure any post-alias case sensitive comparisons/fixes can be made
             // - e.g. Big Injun --> Big Indian
             _aliases = new Dictionary<string, string>
             {
-                new("big injun", "big indian"),
-                new("caddie (playmatic 1970)", "caddie (playmatic 1976)") // very special alias where the 1970 and 1975 version are indistinguishable according to IPDB
+                new("big injun", "Big Indian"),
+                new("caddie (playmatic 1970)", "Caddie (Playmatic 1976)") // very special alias where the 1970 and 1975 version are indistinguishable according to IPDB
             };
         }
 
@@ -170,7 +172,7 @@ namespace ClrVpin.Shared.Fuzzy
                 sourceName = Path.GetFileNameWithoutExtension(sourceName);
 
             // replace any known word aliases
-            sourceName = SubstituteAliases(sourceName.ToLower());
+            sourceName = SubstituteAliases(sourceName);
 
             var result = _fileNameInfoRegex.Match(sourceName);
 
@@ -306,8 +308,9 @@ namespace ClrVpin.Shared.Fuzzy
         {
             _aliases.ForEach(alias =>
             {
-                if (cleanName.Contains(alias.Key))
-                    cleanName = cleanName.Replace(alias.Key, alias.Value);
+                // case insensitive comparisons perofrmed
+                if (cleanName.Contains(alias.Key, StringComparison.OrdinalIgnoreCase))
+                    cleanName = cleanName.Replace(alias.Key, alias.Value, StringComparison.OrdinalIgnoreCase);
             });
 
             return cleanName;
