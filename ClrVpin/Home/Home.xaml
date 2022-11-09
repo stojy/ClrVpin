@@ -8,7 +8,6 @@
                            xmlns:home="clr-namespace:ClrVpin.Home"
                            xmlns:utils="clr-namespace:Utils;assembly=Utils"
                            xmlns:mdXaml="clr-namespace:MdXaml;assembly=MdXaml"
-                           xmlns:converters="clr-namespace:ClrVpin.Converters"
                            mc:Ignorable="d"
                            d:DataContext="{d:DesignInstance Type=home:HomeViewModel}"
                            ResizeMode="NoResize"
