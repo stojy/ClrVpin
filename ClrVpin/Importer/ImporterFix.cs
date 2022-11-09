@@ -350,6 +350,9 @@ public static class ImporterFix
             case "Big Indian (Gottlieb 1974)":
                 FixWrongUrlIpdb(onlineGame, "https://www.ipdb.org/machine.cgi?id=257");
                 break;
+            case "JP's Captain Fantastic (Bally 1976)":
+                WrongName(onlineGame, "Capt. Fantastic and The Brown Dirt Cowboy");
+                break;
         }
     }
 
