@@ -33,5 +33,5 @@ public class OnlineGame : OnlineGameBase
     public TableNewContentOptionEnum? NewContentType {get; set; }
     //public ContentTypeEnum[] NewContentTypes { get; set; }
     
-    public string CreateDescription() => $"{Name} ({Manufacturer} {Year})";
+    public string CreateDescription() => $"{Name?.Trim()} ({Manufacturer?.Trim()} {Year})";
 }
