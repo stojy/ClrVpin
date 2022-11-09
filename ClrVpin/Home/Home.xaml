@@ -17,8 +17,8 @@
                            WindowStyle="None"
                            AllowsTransparency="True"
                            Style="{DynamicResource MaterialWindowStyle}"
-                           BorderBackgroundBrush="{Binding IsChildWindowActive, Converter={StaticResource BoolToBackgroundTransparentBrush}}"
-                           Background="{Binding IsChildWindowActive, Converter={StaticResource BoolToBackgroundTransparentBrush}}">
+                           BorderBackgroundBrush="Transparent"
+                           Background="Transparent">
   
   <Window.Resources>
     <ResourceDictionary>
