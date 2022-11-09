@@ -82,7 +82,18 @@ namespace ClrVpin.Shared.Fuzzy
             pattern = string.Join('|', manufacturers);
             // todo; support year (in addition to manufacturer?)
             _nonStandardFileNameInfoRegex = new Regex($@".*(?<manufacturer>{pattern}).*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            // aliases
+            // - replace specific word(s)
+            // - e.g. Big Injun --> Big Indian
+            _aliases = new Dictionary<string, string>
+            {
+                new("big injun", "big indian")
+            };
         }
+
+        private static decimal MinMatchScore => Model.Settings.MatchFuzzyMinimumPercentage;
+        private static decimal MinMatchWarningScore => MinMatchScore * 1.2m;
 
         public static string Clean(string name, bool removeAllWhiteSpace)
         {
@@ -97,6 +108,9 @@ namespace ClrVpin.Shared.Fuzzy
             // easier comparison when everything is in the same case
             cleanName = cleanName.ToLowerAndTrim();
 
+            // replace any known word aliases
+            cleanName = SubstituteAliases(cleanName);
+
             // trim (whole) words
             cleanName = _wholeWordRegex.Replace(cleanName, "");
 
@@ -108,7 +122,7 @@ namespace ClrVpin.Shared.Fuzzy
             // - only if there are NOT 3 (or more) trailing periods, e.g. to cater for some tables like '1-2-3...' which use the trailing periods as part of their table name
             if (!cleanName.EndsWith("..."))
                 cleanName = _trimLastPeriodRegex.Replace(cleanName, "");
-            
+
             // add whitespace - first pass
             cleanName = _addSpacingFirstPassRegex.Replace(cleanName, " ");
 
@@ -232,8 +246,8 @@ namespace ClrVpin.Shared.Fuzzy
             var isOriginal = preferredMatch?.LocalGame.Derived.IsOriginal == true || fuzzyNameDetails.IsOriginal;
 
             var fuzzyLog = $"fuzzy table match: success={isMatch}, score={$"{preferredMatch?.MatchResult.score},",-4} isUniqueMatch(second chance)={isUniqueMatch}, isOriginal={isOriginal}\n" +
-                               $"- source {(isFile ? "file" : "feed")}:      {LogGameInfo(fuzzyNameDetails.ActualName, null, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
-                               $"- matched db table: {LogGameInfo(preferredMatch?.LocalGame.Game.Name, preferredMatch?.LocalGame.Game.Description, preferredMatch?.LocalGame.Game.Manufacturer, preferredMatch?.LocalGame.Game.Year)}";
+                           $"- source {(isFile ? "file" : "feed")}:      {LogGameInfo(fuzzyNameDetails.ActualName, null, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}\n" +
+                           $"- matched db table: {LogGameInfo(preferredMatch?.LocalGame.Game.Name, preferredMatch?.LocalGame.Game.Description, preferredMatch?.LocalGame.Game.Manufacturer, preferredMatch?.LocalGame.Game.Year)}";
 
             if (!(isOriginal && Model.Settings.SkipLoggingForOriginalTables))
             {
@@ -246,28 +260,17 @@ namespace ClrVpin.Shared.Fuzzy
             return (preferredMatch?.LocalGame, preferredMatch?.MatchResult.score, isMatch);
         }
 
-        private static bool ChangeMatchAndChangeScore(out MatchDetail preferredMatch, MatchDetail secondChanceMatch, int scoreAdjustment)
-        {
-            secondChanceMatch.MatchResult.score += scoreAdjustment;
-            preferredMatch = secondChanceMatch;
-            
-            return true;
-        }
-
-        public static string LogGameInfo(string name, string description, string manufacturer, string year)
-        {
-            return $"name={$"'{name}',",-55} description={$"'{description}',",-55} manufacturer={$"'{manufacturer}',",-20} year={$"{year}",-5}";
-        }
+        public static string LogGameInfo(string name, string description, string manufacturer, string year) => $"name={$"'{name}',",-55} description={$"'{description}',",-55} manufacturer={$"'{manufacturer}',",-20} year={$"{year}",-5}";
 
         public static (bool success, int score) Match(FuzzyNameDetails localGameFuzzyDetails, FuzzyNameDetails fileFuzzyDetails)
         {
             var nameMatchScore = GetNameMatchScore(localGameFuzzyDetails.Name, localGameFuzzyDetails.NameNoWhiteSpace, fileFuzzyDetails.Name, fileFuzzyDetails.NameNoWhiteSpace, true);
-            
+
             // manufacturer matching is the EXACT same as name matching, but the result is scaled back to 10% to reflect it's lesser importance
             // - the additional scoring though is important to distinguish between games that match exactly but only 1 has the correct manufacturer 
             var manufacturerScore = GetNameMatchScore(localGameFuzzyDetails.Manufacturer, localGameFuzzyDetails.ManufacturerNoWhiteSpace,
                 fileFuzzyDetails.Manufacturer, fileFuzzyDetails.ManufacturerNoWhiteSpace, true) / 10;
-            
+
             var yearMatchScore = GetYearMatchScore(localGameFuzzyDetails.Year, fileFuzzyDetails.Year);
             var lengthScore = GetLengthMatchScore(localGameFuzzyDetails);
 
@@ -296,6 +299,25 @@ namespace ClrVpin.Shared.Fuzzy
                 message = $"low {message}";
 
             return (message, warning);
+        }
+
+        private static string SubstituteAliases(string cleanName)
+        {
+            _aliases.ForEach(alias =>
+            {
+                if (cleanName.Contains(alias.Key))
+                    cleanName = cleanName.Replace(alias.Key, alias.Value);
+            });
+
+            return cleanName;
+        }
+
+        private static bool ChangeMatchAndChangeScore(out MatchDetail preferredMatch, MatchDetail secondChanceMatch, int scoreAdjustment)
+        {
+            secondChanceMatch.MatchResult.score += scoreAdjustment;
+            preferredMatch = secondChanceMatch;
+
+            return true;
         }
 
         private static MatchDetail GetUniqueMatch(IEnumerable<MatchDetail> orderedMatches, string name, string nameNoWhiteSpace)
@@ -452,8 +474,6 @@ namespace ClrVpin.Shared.Fuzzy
             public (bool success, int score) MatchResult;
         }
 
-        private static decimal MinMatchScore => Model.Settings.MatchFuzzyMinimumPercentage;
-        private static decimal MinMatchWarningScore => MinMatchScore * 1.2m;
         public const int ScoringNoWhiteSpaceBonus = 5;
 
         private static readonly Regex _fileNameInfoRegex;
@@ -468,5 +488,6 @@ namespace ClrVpin.Shared.Fuzzy
         private static readonly string[] _titleCaseWordExceptions;
         public static readonly string[] Authors;
         private static readonly Regex _nonStandardFileNameInfoRegex;
+        private static readonly Dictionary<string, string> _aliases;
     }
 }

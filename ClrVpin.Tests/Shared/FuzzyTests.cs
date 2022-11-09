@@ -230,6 +230,7 @@ public class FuzzyTests
     [TestCase("Avatar, James Cameron's (Stern 2010)", "James Camerons Avatar (Limited Edition) (Stern 2010)", true, 141, TestName = "online matching scenario - online to database desc (reverse.. does not happen).. unexpected(?) lower score")]
     [TestCase("Avatar, James Cameron's (Stern 2010)", "Avatar (Stern 2010).vpx", false, 76, TestName = "online matching scenario - after DB name & desc sync'd.. unable to match existing file (same as name)")]
     [TestCase("Batman (Data East 1991)", "Batman Balutito MOD.directb2s", true, 155, TestName = "author + mod file description")]
+    [TestCase("Big Indian (Gottlieb 1974)", "Big injun.directb2s", true, 156, TestName = "name alias #1")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
