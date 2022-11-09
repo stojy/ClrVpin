@@ -347,6 +347,9 @@ public static class ImporterFix
             case "JP's The Walking Dead (Stern 2014)":
                 WrongName(onlineGame, "The Walking Dead (Pro)");
                 break;
+            case "Big Indian (Gottlieb 1974)":
+                FixWrongUrlIpdb(onlineGame, "https://www.ipdb.org/machine.cgi?id=257");
+                break;
         }
     }
 
