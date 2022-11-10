@@ -233,6 +233,8 @@ public class FuzzyTests
     [TestCase("Big Indian (Gottlieb 1974)", "Big injun.directb2s", true, 156, TestName = "name alias #1 - table with dual names")]
     [TestCase("Caddie (Playmatic 1975)", "Caddie (Playmatic 1970).directb2s", true, 210, TestName = "name alias #2 - very special case where 1970 and 1975 tables are indistinguishable as per IPDB")]
     [TestCase("Heavy Metal (Rowamet 1981)", "Heavy_Metal_No LEDs.directb2s", true, 157, TestName = "description - no LEDs")]
+    [TestCase("Kiss (Stern 2015)", "KISS Stern 2015.directb2s", true, 220, TestName = "non-standard file format - manufacturer and year not in parenthesis")]
+    //[TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS Stern 2015.directb2s", true, 157, TestName = "database record as double parenthesis and file uses no parenthesis")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation

@@ -78,12 +78,13 @@ namespace ClrVpin.Shared.Fuzzy
 
             // non-standard file name info parsing
             // - intended as a second chance match, i.e. only invoked if the standard (above) fails
-            // - e.g. Bally Roller Derby 2.0.vpx --> manufacturer included in the table name without any parenthesis
+            // - supports mandatory manufacturer and optional year
+            // - e.g. Bally Roller Derby 2.0.vpx --> manufacturer included in the table name without any parenthesis, but year is missing
+            // - e.g. KISS Stern 2015 --> manufacturer and year both included
             // - https://regex101.com/r/AYTJbL/1
             string[] manufacturers = { "bally", "williams", "stern" };
             pattern = string.Join('|', manufacturers);
-            // todo; support year (in addition to manufacturer?)
-            _nonStandardFileNameInfoRegex = new Regex($@".*(?<manufacturer>{pattern}).*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            _nonStandardFileNameInfoRegex = new Regex($@".*(?<manufacturer>{pattern}bally|Williams|Stern)\W+(?<year>\d\d\d\d)?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             // aliases
             // - replace specific word(s)
@@ -190,13 +191,21 @@ namespace ClrVpin.Shared.Fuzzy
             }
             else
             {
-                // try a non-standard naming variant
+                // try non-standard naming variants
+
+                // #1 manufacturer appended towards the end
                 // - e.g. Bally Roller Derby 2.0.vpx --> manufacturer included in the table name without any parenthesis
                 result = _nonStandardFileNameInfoRegex.Match(sourceName);
                 if (result.Success)
                 {
                     manufacturer = result.Groups["manufacturer"].Value.ToNull();
                     name = sourceName.Replace(manufacturer, "");
+
+                    if (int.TryParse(result.Groups["year"].Value, out var parsedYear))
+                    {
+                        year = parsedYear;
+                        name = name.Replace(year.ToString(), "");
+                    }
                 }
                 else
                 {
