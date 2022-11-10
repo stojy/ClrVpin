@@ -353,6 +353,9 @@ public static class ImporterFix
             case "JP's Captain Fantastic (Bally 1976)":
                 WrongName(onlineGame, "Capt. Fantastic and The Brown Dirt Cowboy");
                 break;
+            case "Captain NEMO Dives Again (Quetzal Pinball 2015)":
+                WrongName(onlineGame, "Captain Nemo");
+                break;
         }
     }
 
