@@ -26,19 +26,21 @@ namespace ClrVpin.Shared.Fuzzy
             pattern = string.Join('|', trailingPeriod);
             _trimLastPeriodRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
-            // words
+            // words that are to be ignored during the title case word expansion
             _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
+
+            // captures word match
+            // - word(s) can exist anywhere at any position, so long as it's separated by a non-letter
+            // - words must be defined as lower case
+            // - used with Regex.Replace will capture multiple matches at once.. same word or other words
+            // - lookahead match without capture: https://stackoverflow.com/a/3926546/227110
+            // - https://regex101.com/r/DoztL5/1
             Authors = new[] { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99", "balutito" };
             string[] language = { "a", "and", "n'", "'n", "the", "premium", "en" };
             string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
             string[] types = { "em", "ss", "pm" };
-            pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(types));
-
-            // captures first word match
-            // - handles start and end of string
-            // - used with Regex.Replace will capture multiple matches at once.. same word or other other words
-            // - lookahead match without capture: https://stackoverflow.com/a/3926546/227110
-            // - https://regex101.com/r/DoztL5/1
+            string[] descriptions = { "no leds" };
+            pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(types).Concat(descriptions));
             _wholeWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
 
             // first pass single whitespace
