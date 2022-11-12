@@ -189,7 +189,7 @@ namespace ClrVpin.Shared
                 // fuzzy matching
                 else
                 {
-                    var fuzzyFileNameDetails = Fuzzy.Fuzzy.GetNameDetails(contentFile, true);
+                    var fuzzyFileNameDetails = Fuzzy.Fuzzy.GetTableDetails(contentFile, true);
                     (matchedLocalGame, var score, var isMatch) = localGames.MatchToLocalDatabase(fuzzyFileNameDetails);
                     if (isMatch)
                     {

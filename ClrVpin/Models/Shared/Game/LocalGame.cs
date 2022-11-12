@@ -14,7 +14,7 @@ public class LocalGame
         GameDerived.Init(this, number);
         
         // assign fuzzy name details before they are used to to avoid need for re-calculate multiple times later on, e.g. when comparing against EACH of the file matches
-        FuzzyDetails.Init(this);
+        FuzzyDetails.UpdateLocalGameFuzzyDetails(this);
     }
 
     // raw deserialized database entry

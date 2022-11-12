@@ -87,9 +87,9 @@ public static class ImporterUtils
 
             // unlike scanner/rebuilder..
             // - we already have the manufacturer and year breakdowns, so we can skip the parsing step and assign them directly instead
-            // - use GetNameDetails for consistency and assign some properties, but then override with the known values (from the feed) directly
+            // - use GetTableDetails for consistency and assign some properties, but then override with the known values (from the feed) directly
             var fullName = $"{onlineGame.Name} ({onlineGame.Manufacturer} {onlineGame.Year})";
-            var fuzzyNameDetails = Fuzzy.GetNameDetails(fullName, false);
+            var fuzzyNameDetails = Fuzzy.GetTableDetails(fullName, false);
             fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
             fuzzyNameDetails.Year = onlineGame.Year;
 

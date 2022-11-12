@@ -7,9 +7,9 @@ public class FuzzyDetails
     public FuzzyNameDetails TableDetails { get; set; }
     public FuzzyNameDetails DescriptionDetails { get; set; }
 
-    public static void Init(LocalGame localGame)
+    public static void UpdateLocalGameFuzzyDetails(LocalGame localGame)
     {
-        localGame.Fuzzy.TableDetails = Fuzzy.GetNameDetails(localGame.Game.Name, false);
-        localGame.Fuzzy.DescriptionDetails = Fuzzy.GetNameDetails(localGame.Game.Description, false);
+        localGame.Fuzzy.TableDetails = Fuzzy.GetTableDetails(localGame.Game.Name, false);
+        localGame.Fuzzy.DescriptionDetails = Fuzzy.GetTableDetails(localGame.Game.Description, false);
     }
 }
