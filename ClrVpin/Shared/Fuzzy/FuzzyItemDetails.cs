@@ -2,9 +2,9 @@
 
 namespace ClrVpin.Shared.Fuzzy;
 
-public class FuzzyNameDetails
+public class FuzzyItemDetails
 {
-    public FuzzyNameDetails(string actualName, string nameOriginalCase, string name, string nameWithoutWhiteSpace, string nameWithoutParenthesis, string manufacturer, string manufacturerNoWhiteSpace, int? year)
+    public FuzzyItemDetails(string actualName, string nameOriginalCase, string name, string nameWithoutWhiteSpace, string nameWithoutParenthesis, string manufacturer, string manufacturerNoWhiteSpace, int? year)
     {
         ActualName = actualName;
         NameOriginalCase = nameOriginalCase;
