@@ -4,8 +4,8 @@ namespace ClrVpin.Shared.Fuzzy;
 
 public class FuzzyDetails
 {
-    public FuzzyNameDetails TableDetails { get; set; }
-    public FuzzyNameDetails DescriptionDetails { get; set; }
+    public FuzzyItemDetails TableDetails { get; set; }
+    public FuzzyItemDetails DescriptionDetails { get; set; }
 
     public static void UpdateLocalGameFuzzyDetails(LocalGame localGame)
     {
