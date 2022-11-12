@@ -94,6 +94,10 @@ namespace ClrVpin.Shared.Fuzzy
                 new("big injun", "Big Indian"),
                 new("caddie (playmatic 1970)", "Caddie (Playmatic 1976)") // very special alias where the 1970 and 1975 version are indistinguishable according to IPDB
             };
+
+            // remove parenthesis and contents
+            // - https://regex101.com/r/caByQm/1
+            _removeParenthesisAndContentsRegex = new Regex(@"\(.*?\)", RegexOptions.Compiled);
         }
 
         private static decimal MinMatchScore => Model.Settings.MatchFuzzyMinimumPercentage;
@@ -110,7 +114,7 @@ namespace ClrVpin.Shared.Fuzzy
             var cleanName = name.FromCamelCase(_titleCaseWordExceptions);
 
             // easier comparison when everything is in the same case
-            cleanName = cleanName.ToLowerAndTrim();
+            cleanName = cleanName.ToNullLowerAndTrim() ?? "";
 
             // trim (whole) words
             cleanName = _wholeWordRegex.Replace(cleanName, "");
@@ -211,15 +215,20 @@ namespace ClrVpin.Shared.Fuzzy
             }
 
             // fuzzy clean the name field
+            // - name keeping white space
             var cleanName = Clean(name, false);
-            var cleanNameNoWhiteSpace = Clean(name, true);
+            // - name without white space
+            var cleanNameWithoutWhiteSpace = Clean(name, true);
+            // - name without parenthesis, e.g. "kiss (limited edition) (stern 2015)"
+            var nameWithoutParenthesis = _removeParenthesisAndContentsRegex.Replace(name ?? "", "");
+            var cleanNameWithoutParenthesis = Clean(nameWithoutParenthesis, false);
 
             // fuzzy clean the manufacturer field
             var cleanManufacturer = Clean(manufacturer, false);
             var cleanManufacturerNoWhiteSpace = Clean(manufacturer, true);
 
-            return new FuzzyNameDetails(sourceName, name?.Trim() ?? "", cleanName.ToLowerAndTrim(), cleanNameNoWhiteSpace.ToLowerAndTrim(),
-                cleanManufacturer.ToLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToLowerAndTrim(), year);
+            return new FuzzyNameDetails(sourceName, name?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
+                cleanManufacturer.ToNullLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToNullLowerAndTrim(), year);
         }
 
         // fuzzy match against all games
@@ -245,7 +254,7 @@ namespace ClrVpin.Shared.Fuzzy
             // - if the second chance match is the same as the preferred match, then manually adjust score
             var isUniqueMatch = false;
             MatchDetail uniqueMatch;
-            if (preferredMatch?.MatchResult.score < MinMatchScore && (uniqueMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, fuzzyNameDetails.NameNoWhiteSpace)) != null)
+            if (preferredMatch?.MatchResult.score < MinMatchScore && (uniqueMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, fuzzyNameDetails.NameWithoutWhiteSpace)) != null)
                 isUniqueMatch = ChangeMatchAndChangeScore(out preferredMatch, uniqueMatch, 85);
 
             // third chance
@@ -276,7 +285,7 @@ namespace ClrVpin.Shared.Fuzzy
 
         public static (bool success, int score) Match(FuzzyNameDetails localGameFuzzyDetails, FuzzyNameDetails fileFuzzyDetails)
         {
-            var nameMatchScore = GetNameMatchScore(localGameFuzzyDetails.Name, localGameFuzzyDetails.NameNoWhiteSpace, fileFuzzyDetails.Name, fileFuzzyDetails.NameNoWhiteSpace, true);
+            var nameMatchScore = GetNameMatchScore(localGameFuzzyDetails.Name, localGameFuzzyDetails.NameWithoutWhiteSpace, fileFuzzyDetails.Name, fileFuzzyDetails.NameWithoutWhiteSpace, true);
 
             // manufacturer matching is the EXACT same as name matching, but the result is scaled back to 10% to reflect it's lesser importance
             // - the additional scoring though is important to distinguish between games that match exactly but only 1 has the correct manufacturer 
@@ -297,7 +306,7 @@ namespace ClrVpin.Shared.Fuzzy
             // score the match length of the underlying game database entry (i.e. not the file!!)
             // - use the sanitized name to avoid white space, manufacturer, year, etc
             // - 1 for every character beyond 8 characters.. to a maximum of 15pts
-            var lengthScore = (localGameFuzzyDetails.NameNoWhiteSpace?.Length ?? 0) - 8;
+            var lengthScore = (localGameFuzzyDetails.NameWithoutWhiteSpace?.Length ?? 0) - 8;
 
             return Math.Max(0, Math.Min(15, lengthScore));
         }
@@ -425,7 +434,7 @@ namespace ClrVpin.Shared.Fuzzy
         }
 
         private static string ToNull(this string name) => string.IsNullOrWhiteSpace(name) ? null : name;
-        private static string ToLowerAndTrim(this string name) => string.IsNullOrWhiteSpace(name) ? null : name.ToLower().Trim();
+        private static string ToNullLowerAndTrim(this string name) => string.IsNullOrWhiteSpace(name) ? null : name.ToLower().Trim();
 
         private static bool IsExactMatch(string first, string second)
         {
@@ -502,5 +511,6 @@ namespace ClrVpin.Shared.Fuzzy
         public static readonly string[] Authors;
         private static readonly Regex _nonStandardFileNameInfoRegex;
         private static readonly Dictionary<string, string> _aliases;
+        private static readonly Regex _removeParenthesisAndContentsRegex;
     }
 }

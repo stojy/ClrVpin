@@ -4,12 +4,13 @@ namespace ClrVpin.Shared.Fuzzy;
 
 public class FuzzyNameDetails
 {
-    public FuzzyNameDetails(string actualName, string nameOriginalCase, string name, string nameNoWhiteSpace, string manufacturer, string manufacturerNoWhiteSpace, int? year)
+    public FuzzyNameDetails(string actualName, string nameOriginalCase, string name, string nameWithoutWhiteSpace, string nameWithoutParenthesis, string manufacturer, string manufacturerNoWhiteSpace, int? year)
     {
         ActualName = actualName;
         NameOriginalCase = nameOriginalCase;
         Name = name;
-        NameNoWhiteSpace = nameNoWhiteSpace;
+        NameWithoutWhiteSpace = nameWithoutWhiteSpace;
+        NameWithoutParenthesis = nameWithoutParenthesis;
 
         Manufacturer = manufacturer;
         ManufacturerNoWhiteSpace = manufacturerNoWhiteSpace;
@@ -20,7 +21,8 @@ public class FuzzyNameDetails
 
     public string Name { get; }
     public string NameOriginalCase { get; }
-    public string NameNoWhiteSpace { get; }
+    public string NameWithoutWhiteSpace { get; }
+    public string NameWithoutParenthesis { get; }
     public string Manufacturer { get; set; }
     public string ManufacturerNoWhiteSpace { get; }
     public int? Year { get; set; }
