@@ -17,40 +17,45 @@ public class FuzzyTests
     }
 
     [Test]
-    [TestCase("Indiana Jones (Williams 1993) blah.directb2s", true, "indiana jones", "indianajones", "williams", "williams", 1993)]
-    [TestCase("Indiana Jones (Williams 1993 blah) blah.directb2s", true, "indiana jones", "indianajones", "williams", "williams", 1993, TestName = "year doesn't need to be at the end of the parenthesis")]
-    [TestCase("Indiana Jones (Williams) blah.directb2s", true, "indiana jones", "indianajones", "williams", "williams", null)]
-    [TestCase("Indiana Jones (1993) blah.directb2s", true, "indiana jones", "indianajones", null, null, 1993)]
-    [TestCase("Indiana Jones.directb2s", true, "indiana jones", "indianajones", null, null, null)]
-    [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", true, "indiana jones blah", "indianajonesblah", "williams", "williams", 1993, TestName = "first parenthesis is used #1 - and parenthesis stripped")]
-    [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012).directb2s", true, "c dc let there be rock limited edition", "cdcletthereberocklimitededition", "stern", "stern", 2012, TestName = "first parenthesis is used #1 - and parenthesis stripped, also - becomes space")]
-    [TestCase("Batman (66 Limited Edition) (Stern 2016)", true, "batman 66 limited edition", "batman66limitededition", "stern", "stern", 2016, TestName = "first parenthesis is used #3 - and parenthesis stripped")]
-    [TestCase("", true, null, null, null, null, null, TestName = "empty string")]
-    [TestCase(null, true, null, null, null, null, null, TestName = "null string")]
-    [TestCase("123", true, "123", "123", null, null, null, TestName = "number title")]
-    [TestCase("123 (Williams 1993)", true, "123", "123", "williams", "williams",1993, TestName = "number title with manufacturer and year")]
-    [TestCase("123 (Williams)", true, "123", "123", "williams", "williams",null, TestName = "number title with manufacturer only")]
-    [TestCase("123 (1993)", true, "123", "123", null, null, 1993, TestName = "number titleand with year only")]
-    [TestCase("123 blah (Williams 1993)", true, "123 blah", "123blah", "williams", "williams",1993, TestName = "number and word title with manufacturer and year")]
-    [TestCase("123 blah (1993)", true, "123 blah", "123blah", null, null, 1993, TestName = "number title with word and year only")]
-    [TestCase("1-2-3 (1971)", true, "1 2 3", "123", null, null, 1971, TestName = "dashes removed.. white space and no white space")]
-    [TestCase("Mr. and Mrs. Pac-Man (Bally 1982) 1.0.vpx", true, "mr mrs pac man", "mrmrspacman", "bally", "bally",1982, TestName = "file name with internal periods")]
-    [TestCase("Mr. and Mrs. Pac-Man (Bally 1982) 1.0", false, "mr mrs pac man", "mrmrspacman", "bally", "bally",1982, TestName = "game name with internal periods")]
-    [TestCase("1462262523_TheFlintstones(Williams1994)v1.26.vpx", true, "flintstones", "flintstones", "williams", "williams", 1994, TestName = "file name with camelcase instead of whitespace")]
-    [TestCase("1462262523_The Flintstones(Williams1994)v1.26.vpx", true, "flintstones", "flintstones", "williams", "williams", 1994, TestName = "file name starts with 'the' keyword")]
-    [TestCase("Twilight Zone SG1bsoN Mod V3.vpx", true, "twilight zone", "twilightzone", null, null, null, TestName = "file name with special author camelcase SG1bsoN")]
-    [TestCase("Whirlwind 4K 1.1.vpx", true, "whirlwind", "whirlwind", null, null, null, TestName = "ignore word: 4k")]
-    [TestCase(@"C:\vp\_downloaded\wheel images\V1 (IDSA 1986) Logo.png", true, null, null, "idsa", "idsa", 1986, TestName = "name stripped completely: empty string converted to null")]
-    [TestCase(@"1-2-3... (Automaticos 1973)", false, "1 2 3", "123", "automaticos", "automaticos", 1973, TestName = "name has trailing periods")]
-    [TestCase(@"1-2-3... (Automaticos 1973).vpx", true, "1 2 3", "123", "automaticos", "automaticos", 1973, TestName = "name has trailing periods")]
-    [TestCase(@"1-2-3... (My MANufacturer   is me 1973).vpx", true, "1 2 3", "123", "my manufacturer is me", "mymanufacturerisme", 1973, TestName = "manufacturer variant - multiple spaces and capitilisation")]
-    [TestCase(@"1-2-3... (My.Manufacturer Is.&Me 1973).vpx", true, "1 2 3", "123", "my manufacturer is me", "mymanufacturerisme", 1973, TestName = "manufacturer variant - period and &.. both chars stripped")]
-    public void GetNameDetailsTest(string sourceName, bool isFileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, string expectedManufacturerNoWhiteSpace, int? expectedYear)
+    [TestCase("Indiana Jones (Williams 1993) blah.directb2s", true, "indiana jones", "indianajones", "indiana jones", "williams", "williams", 1993)]
+    [TestCase("Indiana Jones (Williams 1993 blah) blah.directb2s", true, "indiana jones", "indianajones", "indiana jones", "williams", "williams", 1993, TestName = "year doesn't need to be at the end of the parenthesis")]
+    [TestCase("Indiana Jones (Williams) blah.directb2s", true, "indiana jones", "indianajones", "indiana jones", "williams", "williams", null)]
+    [TestCase("Indiana Jones (1993) blah.directb2s", true, "indiana jones", "indianajones", "indiana jones", null, null, 1993)]
+    [TestCase("Indiana Jones.directb2s", true, "indiana jones", "indianajones", "indiana jones", null, null, null)]
+    [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", true, "indiana jones blah", "indianajonesblah", "indiana jones", "williams", "williams", 1993, TestName = "double parenthesis - first parenthesis is used #1 - and parenthesis stripped")]
+    [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012).directb2s", true, "c dc let there be rock limited edition", "cdcletthereberocklimitededition", "c dc", "stern", "stern", 2012,
+        TestName = "double parenthesis - first parenthesis is used #1 - and parenthesis stripped, also - becomes space")]
+    [TestCase("Batman (66 Limited Edition) (Stern 2016)", true, "batman 66 limited edition", "batman66limitededition", "batman", "stern", "stern", 2016, TestName = "double parenthesis - first parenthesis is used #3 - and parenthesis stripped")]
+    [TestCase("", true, null, null, null, null, null, null, TestName = "empty string")]
+    [TestCase(null, true, null, null, null, null, null, null, TestName = "null string")]
+    [TestCase("123", true, "123", "123", "123", null, null, null, TestName = "number title")]
+    [TestCase("123 (Williams 1993)", true, "123", "123", "123", "williams", "williams", 1993, TestName = "number title with manufacturer and year")]
+    [TestCase("123 (Williams)", true, "123", "123", "123", "williams", "williams", null, TestName = "number title with manufacturer only")]
+    [TestCase("123 (1993)", true, "123", "123", "123", null, null, 1993, TestName = "number titleand with year only")]
+    [TestCase("123 blah (Williams 1993)", true, "123 blah", "123blah", "123 blah", "williams", "williams", 1993, TestName = "number and word title with manufacturer and year")]
+    [TestCase("123 blah (1993)", true, "123 blah", "123blah", "123 blah", null, null, 1993, TestName = "number title with word and year only")]
+    [TestCase("1-2-3 (1971)", true, "1 2 3", "123", "1 2 3", null, null, 1971, TestName = "dashes removed.. white space and no white space")]
+    [TestCase("Mr. and Mrs. Pac-Man (Bally 1982) 1.0.vpx", true, "mr mrs pac man", "mrmrspacman", "mr mrs pac man", "bally", "bally", 1982, TestName = "file name with internal periods")]
+    [TestCase("Mr. and Mrs. Pac-Man (Bally 1982) 1.0", false, "mr mrs pac man", "mrmrspacman", "mr mrs pac man", "bally", "bally", 1982, TestName = "game name with internal periods")]
+    [TestCase("1462262523_TheFlintstones(Williams1994)v1.26.vpx", true, "flintstones", "flintstones", "flintstones", "williams", "williams", 1994, TestName = "file name with camelcase instead of whitespace")]
+    [TestCase("1462262523_The Flintstones(Williams1994)v1.26.vpx", true, "flintstones", "flintstones", "flintstones", "williams", "williams", 1994, TestName = "file name starts with 'the' keyword")]
+    [TestCase("Twilight Zone SG1bsoN Mod V3.vpx", true, "twilight zone", "twilightzone", "twilight zone",null, null, null, TestName = "file name with special author camelcase SG1bsoN")]
+    [TestCase("Whirlwind 4K 1.1.vpx", true, "whirlwind", "whirlwind", "whirlwind", null, null, null, TestName = "ignore word: 4k")]
+    [TestCase(@"C:\vp\_downloaded\wheel images\V1 (IDSA 1986) Logo.png", true, null, null, null, "idsa", "idsa", 1986, TestName = "name stripped completely: empty string converted to null")]
+    [TestCase(@"1-2-3... (Automaticos 1973)", false, "1 2 3", "123", "1 2 3", "automaticos", "automaticos", 1973, TestName = "name has trailing periods")]
+    [TestCase(@"1-2-3... (Automaticos 1973).vpx", true, "1 2 3", "123", "1 2 3", "automaticos", "automaticos", 1973, TestName = "name has trailing periods")]
+    [TestCase(@"1-2-3... (My MANufacturer   is me 1973).vpx", true, "1 2 3", "123", "1 2 3", "my manufacturer is me", "mymanufacturerisme", 1973, TestName = "manufacturer variant - multiple spaces and capitilisation")]
+    [TestCase(@"1-2-3... (My.Manufacturer Is.&Me 1973).vpx", true, "1 2 3", "123", "1 2 3", "my manufacturer is me", "mymanufacturerisme", 1973, TestName = "manufacturer variant - period and &.. both chars stripped")]
+    [TestCase("Kiss (Limited Edition) (Stern 2015)", false, "kiss limited edition", "kisslimitededition", "kiss", "stern", "stern", 2015, TestName = "double parenthesis - table variant and manufacturer/year")]
+    [TestCase("Kiss (Limited Edition) (gold) (Stern 2015)", false, "kiss limited edition gold", "kisslimitededitiongold", "kiss", "stern", "stern", 2015, TestName = "tripple parenthesis - table variant and manufacturer/year")]
+    public void GetTableDetailsTest(string sourceName, bool isFileName, string expectedName, string expectedNameWithoutWhiteSpace, string expectedNameWithoutParenthesis, string expectedManufacturer, string expectedManufacturerNoWhiteSpace,
+        int? expectedYear)
     {
         var fuzzyDetails = Fuzzy.GetTableDetails(sourceName, isFileName);
 
         Assert.That(fuzzyDetails.Name, Is.EqualTo(expectedName));
-        Assert.That(fuzzyDetails.NameNoWhiteSpace, Is.EqualTo(expectedNameNoWhiteSpace));
+        Assert.That(fuzzyDetails.NameWithoutWhiteSpace, Is.EqualTo(expectedNameWithoutWhiteSpace));
+        Assert.That(fuzzyDetails.NameWithoutParenthesis, Is.EqualTo(expectedNameWithoutParenthesis));
         Assert.That(fuzzyDetails.Manufacturer, Is.EqualTo(expectedManufacturer));
         Assert.That(fuzzyDetails.ManufacturerNoWhiteSpace, Is.EqualTo(expectedManufacturerNoWhiteSpace));
         Assert.That(fuzzyDetails.Year, Is.EqualTo(expectedYear));
@@ -227,7 +232,8 @@ public class FuzzyTests
     // - scanner:  fails to match existing file to the updated database description *or name* --> because online name is too different to the original database name (which is same as file name)
     [TestCase("Avatar (Stern 2010)", "Avatar, James Cameron's (Stern 2010)", false, 65, TestName = "online matching scenario - database name to online (forward).. expected failure")]
     [TestCase("James Camerons Avatar (Limited Edition) (Stern 2010)", "Avatar, James Cameron's (Stern 2010)", true, 145, TestName = "online matching scenario - database desc to online (forward).. expected hit against 'james cameron'")]
-    [TestCase("Avatar, James Cameron's (Stern 2010)", "James Camerons Avatar (Limited Edition) (Stern 2010)", true, 141, TestName = "online matching scenario - online to database desc (reverse.. does not happen).. unexpected(?) lower score")]
+    [TestCase("Avatar, James Cameron's (Stern 2010)", "James Camerons Avatar (Limited Edition) (Stern 2010)", true, 141,
+        TestName = "online matching scenario - online to database desc (reverse.. does not happen).. unexpected(?) lower score")]
     [TestCase("Avatar, James Cameron's (Stern 2010)", "Avatar (Stern 2010).vpx", false, 76, TestName = "online matching scenario - after DB name & desc sync'd.. unable to match existing file (same as name)")]
     [TestCase("Batman (Data East 1991)", "Batman Balutito MOD.directb2s", true, 155, TestName = "author + mod file description")]
     [TestCase("Big Indian (Gottlieb 1974)", "Big injun.directb2s", true, 156, TestName = "name alias #1 - table with dual names")]
@@ -262,15 +268,15 @@ public class FuzzyTests
     {
         var localGames = new List<LocalGame>
         {
-            new() { Game = new Game { IpdbId = "1", Name = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" }},
-            new() { Game = new Game {IpdbId = "2", Name = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
-            new() { Game = new Game {IpdbId = "3", Name = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
-            new() { Game = new Game {IpdbId = "4", Name = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
-            new() { Game = new Game {IpdbId = "5", Name = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" } },
-            new() { Game = new Game {IpdbId = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" } },
-            new() { Game = new Game {IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo"  }},
-            new() { Game = new Game {IpdbId = "8", Name = "X-Men LE (Stern 2012)", Description = "X-Men Wolverine LE (Stern 2012)" }},
-            new() { Game = new Game {IpdbId = "9", Name = "Kiss (Limited Edition) (Stern 2015)", Description = "Kiss (Limited Edition) (Stern 2015)" }}
+            new() { Game = new Game { IpdbId = "1", Name = "Cowboy Eight Ball (LTD 1981)", Description = "Cowboy Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
+            new() { Game = new Game { IpdbId = "2", Name = "Cowboy Eight Ball 2 (LTD 1981)", Description = "Cowboy Eight Ball 2 (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
+            new() { Game = new Game { IpdbId = "3", Name = "Eight Ball (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
+            new() { Game = new Game { IpdbId = "4", Name = "Eight Ball 2 (LTD 1981)", Description = "Eight Ball (LTD do Brasil Divers�es Eletr�nicas Ltda 1981)" } },
+            new() { Game = new Game { IpdbId = "5", Name = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" } },
+            new() { Game = new Game { IpdbId = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" } },
+            new() { Game = new Game { IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo" } },
+            new() { Game = new Game { IpdbId = "8", Name = "X-Men LE (Stern 2012)", Description = "X-Men Wolverine LE (Stern 2012)" } },
+            new() { Game = new Game { IpdbId = "9", Name = "Kiss (Limited Edition) (Stern 2015)", Description = "Kiss (Limited Edition) (Stern 2015)" } }
         };
 
         localGames.ForEach((localGame, index) =>
