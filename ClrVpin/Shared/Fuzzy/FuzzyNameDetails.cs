@@ -22,8 +22,8 @@ public class FuzzyNameDetails
     public string NameOriginalCase { get; }
     public string NameNoWhiteSpace { get; }
     public string Manufacturer { get; set; }
-    public string ManufacturerNoWhiteSpace { get; set; }
+    public string ManufacturerNoWhiteSpace { get; }
     public int? Year { get; set; }
-    public string ActualName { get; set; }
+    public string ActualName { get; }
     public bool IsOriginal { get; }
 }

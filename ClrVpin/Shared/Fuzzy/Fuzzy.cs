@@ -79,8 +79,6 @@ namespace ClrVpin.Shared.Fuzzy
             // non-standard file name info parsing
             // - intended as a second chance match, i.e. only invoked if the standard (above) fails
             // - supports mandatory manufacturer and optional year
-            // - e.g. Bally Roller Derby 2.0.vpx --> manufacturer included in the table name without any parenthesis, but year is missing
-            // - e.g. KISS Stern 2015 --> manufacturer and year both included
             // - https://regex101.com/r/AYTJbL/1
             string[] manufacturers = { "bally", "williams", "stern" };
             pattern = string.Join('|', manufacturers);
@@ -156,7 +154,7 @@ namespace ClrVpin.Shared.Fuzzy
             return cleanName;
         }
 
-        public static FuzzyNameDetails GetNameDetails(string sourceName, bool isFileName)
+        public static FuzzyNameDetails GetTableDetails(string sourceName, bool isFileName)
         {
             // cater for no source name, e.g. Game.Description null value.. which should no longer be possible as it's now initialized to empty string when deserialized
             sourceName ??= "";
@@ -192,9 +190,8 @@ namespace ClrVpin.Shared.Fuzzy
             else
             {
                 // try non-standard naming variants
-
-                // #1 manufacturer appended towards the end
-                // - e.g. Bally Roller Derby 2.0.vpx --> manufacturer included in the table name without any parenthesis
+                // 1. manufacturer must exist, but not necessarily contained with parenthesis
+                // 2. year may optionally exist, similarly not necessarily contained within parenthesis
                 result = _nonStandardFileNameInfoRegex.Match(sourceName);
                 if (result.Success)
                 {
@@ -228,7 +225,8 @@ namespace ClrVpin.Shared.Fuzzy
         // fuzzy match against all games
         public static (LocalGame game, int? score, bool isMatch) MatchToLocalDatabase(this IList<LocalGame> games, FuzzyNameDetails fuzzyNameDetails, bool isFile = true)
         {
-            // check EVERY DB game entry against the fuzzy name details (which can be a file file for scanner/rebuilder OR online game entry for importer(file to look for the best match)
+            // first chance = 
+            // - check EVERY DB game entry against the fuzzy name details (which can be a file file for scanner/rebuilder OR online game entry for importer(file to look for the best match)
             // - Match will create a fuzzy version (aka cleaned) of each game DB entry so it can be compared against the fuzzy file details (already cleaned)
             // - Match table name (non-media) OR description (media)
             var tableFileMatches = games.Select(game => new MatchDetail { LocalGame = game, MatchResult = Match(game.Fuzzy.TableDetails, fuzzyNameDetails) });
@@ -244,15 +242,15 @@ namespace ClrVpin.Shared.Fuzzy
 
             // second chance
             // - if there's still no match, check if the fuzzy name (i.e. after processing) has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
-            // - if the second chance match is the same as the preferred match, then 
+            // - if the second chance match is the same as the preferred match, then manually adjust score
             var isUniqueMatch = false;
             MatchDetail uniqueMatch;
             if (preferredMatch?.MatchResult.score < MinMatchScore && (uniqueMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.Name, fuzzyNameDetails.NameNoWhiteSpace)) != null)
                 isUniqueMatch = ChangeMatchAndChangeScore(out preferredMatch, uniqueMatch, 85);
 
             // third chance
-            // - only applied if no unique match was found, i.e. irrespective of whether score was sufficient
             // - check if the non-fuzzy name (i.e. before processing) has a UNIQUE match within in the game DB (using a simple 'to lowercase' check)
+            // - only applied if NO unique match was found.. aka 2nd chance above, i.e. irrespective of whether score was sufficient
             if (!isUniqueMatch && preferredMatch?.MatchResult.score < MinMatchScore && (uniqueMatch = GetUniqueMatch(orderedMatches, fuzzyNameDetails.ActualName, null)) != null)
                 isUniqueMatch = ChangeMatchAndChangeScore(out preferredMatch, uniqueMatch, 85);
 

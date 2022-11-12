@@ -47,7 +47,7 @@ public class FuzzyTests
     [TestCase(@"1-2-3... (My.Manufacturer Is.&Me 1973).vpx", true, "1 2 3", "123", "my manufacturer is me", "mymanufacturerisme", 1973, TestName = "manufacturer variant - period and &.. both chars stripped")]
     public void GetNameDetailsTest(string sourceName, bool isFileName, string expectedName, string expectedNameNoWhiteSpace, string expectedManufacturer, string expectedManufacturerNoWhiteSpace, int? expectedYear)
     {
-        var fuzzyDetails = Fuzzy.GetNameDetails(sourceName, isFileName);
+        var fuzzyDetails = Fuzzy.GetTableDetails(sourceName, isFileName);
 
         Assert.That(fuzzyDetails.Name, Is.EqualTo(expectedName));
         Assert.That(fuzzyDetails.NameNoWhiteSpace, Is.EqualTo(expectedNameNoWhiteSpace));
@@ -159,7 +159,7 @@ public class FuzzyTests
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
         // confirm match is successful, i.e. does NOT require an exact clean match
-        var isMatch = Fuzzy.Match(Fuzzy.GetNameDetails(gameName, false), Fuzzy.GetNameDetails(fileName, true)).success;
+        var isMatch = Fuzzy.Match(Fuzzy.GetTableDetails(gameName, false), Fuzzy.GetTableDetails(fileName, true)).success;
 
         Assert.That(isMatch, Is.EqualTo(expectedSuccess));
     }
@@ -234,11 +234,10 @@ public class FuzzyTests
     [TestCase("Caddie (Playmatic 1975)", "Caddie (Playmatic 1970).directb2s", true, 210, TestName = "name alias #2 - very special case where 1970 and 1975 tables are indistinguishable as per IPDB")]
     [TestCase("Heavy Metal (Rowamet 1981)", "Heavy_Metal_No LEDs.directb2s", true, 157, TestName = "description - no LEDs")]
     [TestCase("Kiss (Stern 2015)", "KISS Stern 2015.directb2s", true, 220, TestName = "non-standard file format - manufacturer and year not in parenthesis")]
-    //[TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS Stern 2015.directb2s", true, 157, TestName = "database record as double parenthesis and file uses no parenthesis")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
-        var (success, score) = Fuzzy.Match(Fuzzy.GetNameDetails(databaseName, false), Fuzzy.GetNameDetails(fileOrFeedName, true));
+        var (success, score) = Fuzzy.Match(Fuzzy.GetTableDetails(databaseName, false), Fuzzy.GetTableDetails(fileOrFeedName, true));
 
         Assert.That(score, Is.EqualTo(expectedScore));
         Assert.That(success, Is.EqualTo(expectedSuccess));
@@ -252,7 +251,7 @@ public class FuzzyTests
     [TestCase("this one maxes out the upper size limit", 15)]
     public void MatchLengthTest(string name, int expectedScore)
     {
-        var fuzzyNameFileDetails = Fuzzy.GetNameDetails(name, true);
+        var fuzzyNameFileDetails = Fuzzy.GetTableDetails(name, true);
         var score = Fuzzy.GetLengthMatchScore(fuzzyNameFileDetails);
 
         Assert.That(score, Is.EqualTo(expectedScore));
@@ -270,77 +269,85 @@ public class FuzzyTests
             new() { Game = new Game {IpdbId = "5", Name = "Mary Shelley's Frankenstein (Sega 1995)", Description = "Mary Shelley's Frankenstein (Sega 1995)" } },
             new() { Game = new Game {IpdbId = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" } },
             new() { Game = new Game {IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo"  }},
-            new() { Game = new Game {IpdbId = "8", Name = "X-Men LE (Stern 2012)", Description = "X-Men Wolverine LE (Stern 2012)"  }}
+            new() { Game = new Game {IpdbId = "8", Name = "X-Men LE (Stern 2012)", Description = "X-Men Wolverine LE (Stern 2012)" }},
+            new() { Game = new Game {IpdbId = "9", Name = "Kiss (Limited Edition) (Stern 2015)", Description = "Kiss (Limited Edition) (Stern 2015)" }}
         };
 
         localGames.ForEach((localGame, index) =>
         {
             GameDerived.Init(localGame, index);
-            localGame.Fuzzy.TableDetails = Fuzzy.GetNameDetails(localGame.Game.Name, false);
-            localGame.Fuzzy.DescriptionDetails = Fuzzy.GetNameDetails(localGame.Game.Description, false);
+            localGame.Fuzzy.TableDetails = Fuzzy.GetTableDetails(localGame.Game.Name, false);
+            localGame.Fuzzy.DescriptionDetails = Fuzzy.GetTableDetails(localGame.Game.Description, false);
         });
 
         // exact match #1
-        var fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
+        var fileDetails = Fuzzy.GetTableDetails("Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         var (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("1"));
         Assert.That(isMatch, Is.True);
 
-        // exact match #2 - i.,e. not the first match
-        fileDetails = Fuzzy.GetNameDetails("Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
+        // exact match #2 - i.e. not the first match
+        fileDetails = Fuzzy.GetTableDetails("Cowboy Eight Ball 2 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("2"));
         Assert.That(isMatch, Is.True);
 
         // longest match chosen - i.e. not the first match
-        fileDetails = Fuzzy.GetNameDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
+        fileDetails = Fuzzy.GetTableDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("4"));
         Assert.That(isMatch, Is.True);
 
         // partial match
-        fileDetails = Fuzzy.GetNameDetails("Blah Cowboy Eight Ball blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
+        fileDetails = Fuzzy.GetTableDetails("Blah Cowboy Eight Ball blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("2"));
         Assert.That(isMatch, Is.True);
 
         // no match chosen - i.e. not the first match
-        fileDetails = Fuzzy.GetNameDetails("what the heck is this file.f4v", true);
+        fileDetails = Fuzzy.GetTableDetails("what the heck is this file.f4v", true);
         (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game, Is.Not.Null);
         Assert.That(isMatch, Is.False);
 
         // partial match, but not long enough to score - 'wolverine' is 9 long, but 11 is required
-        fileDetails = Fuzzy.GetNameDetails("Wolverine (Zen Studios 2013).vpx", true);
+        fileDetails = Fuzzy.GetTableDetails("Wolverine (Zen Studios 2013).vpx", true);
         (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game, Is.Not.Null);
         Assert.That(isMatch, Is.False);
 
         // partial match - extra score because file only has 1 match in the games DB
-        fileDetails = Fuzzy.GetNameDetails("Frankenstein.vpx", true);
+        fileDetails = Fuzzy.GetTableDetails("Frankenstein.vpx", true);
         (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("5"));
         Assert.That(isMatch, Is.True);
 
         // partial match - NO extra score because file has multiple matches in the games DB
-        fileDetails = Fuzzy.GetNameDetails("Ball.vpx", true);
+        fileDetails = Fuzzy.GetTableDetails("Ball.vpx", true);
         (game, var score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.Not.Null);
         Assert.That(score, Is.EqualTo(15));
         Assert.That(isMatch, Is.False);
 
         // ??
-        fileDetails = Fuzzy.GetNameDetails("Transformers Marcade Mod v1.2.vpx", true);
+        fileDetails = Fuzzy.GetTableDetails("Transformers Marcade Mod v1.2.vpx", true);
         (game, score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("6"));
         Assert.That(score, Is.EqualTo(152 + Fuzzy.ScoringNoWhiteSpaceBonus));
         Assert.That(isMatch, Is.True);
 
         // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw (non-cleaned) table name
-        fileDetails = Fuzzy.GetNameDetails("V1 (IDSA 1986) Logo.png", true);
+        fileDetails = Fuzzy.GetTableDetails("V1 (IDSA 1986) Logo.png", true);
         (game, score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
         Assert.That(score, Is.EqualTo(150));
         Assert.That(isMatch, Is.True);
+
+        //[TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS Stern 2015.directb2s", true, 157, TestName = "database record as double parenthesis and file uses no parenthesis")]
+        //fileDetails = Fuzzy.GetTableDetails("KISS Stern 2015.directb2s", true);
+        //(game, score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
+        //Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
+        //Assert.That(score, Is.EqualTo(150));
+        //Assert.That(isMatch, Is.True);
     }
 }
