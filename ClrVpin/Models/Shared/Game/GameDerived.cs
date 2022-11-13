@@ -11,6 +11,7 @@ namespace ClrVpin.Models.Shared.Game
         public string Ipdb { get; set; }
         public string IpdbUrl { get; set; }
         public string NameLowerCase { get; set; }
+        public string NameWithoutParenthesis { get; set; }
         public string DescriptionLowerCase { get; set; }
         public bool IsOriginal { get; set; }
         public string TableFileWithExtension { get; set; }
@@ -42,7 +43,6 @@ namespace ClrVpin.Models.Shared.Game
             // - null check to cater for scenario where the value can be null, e.g. when cleared via importer's database update dialog
             derived.NameLowerCase = localGame.Game.Name?.ToLower();
             derived.DescriptionLowerCase = localGame.Game.Description?.ToLower();
-
             derived.TableFileWithExtension = localGame.Game.Name  + ".vpx";
         }
 
