@@ -16,10 +16,16 @@ public static class Fuzzy
     {
         // compile and store regex to improve performance
 
+        // words to remove during the clean pre-parse stage
+        // - https://regex101.com/r/XpvyjP/1
+        string[] preParseWordRemovals = { @"\(mod\)" };
+        var pattern = string.Join('|', preParseWordRemovals);
+        _preParseWordRemovalRegex = new Regex($@"{pattern}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         // chars
         // - special consideration for non-ascii characters (i.e. 8 bit chars) as handling of these between IPDB, XML DB, and file names is often inconsistent
         string[] specialChars = { "&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"[^\x00-\x7F]", "&", @"\(", @"\)" };
-        var pattern = string.Join('|', specialChars);
+        pattern = string.Join('|', specialChars);
         _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
         string[] trailingPeriod = { @"\.{1}$" };
@@ -103,7 +109,56 @@ public static class Fuzzy
     private static decimal MinMatchScore => Model.Settings.MatchFuzzyMinimumPercentage;
     private static decimal MinMatchWarningScore => MinMatchScore * 1.2m;
 
-    public static string Clean(string name, bool removeAllWhiteSpace)
+    public static FuzzyItemDetails GetTableDetails(string sourceName, bool isFileName)
+    {
+        // clean source name prior to splitting, i.e. to make it more suitable for splitting into name/manufacturer/year
+        sourceName = CleanPreSplit(sourceName, isFileName);
+
+        // split sourceName into table name, manufacturer, and year
+        var (name, manufacturer, year) = Split(sourceName);
+
+        // fuzzy clean the name field
+        // - name keeping white space
+        var cleanName = CleanPostSplit(name, false);
+        // - name without white space
+        var cleanNameWithoutWhiteSpace = CleanPostSplit(name, true);
+        // - name without parenthesis, e.g. "kiss (limited edition) (stern 2015)"
+        var nameWithoutParenthesis = _removeParenthesisAndContentsRegex.Replace(name ?? "", "");
+        var cleanNameWithoutParenthesis = CleanPostSplit(nameWithoutParenthesis, false);
+
+        // fuzzy clean the manufacturer field
+        var cleanManufacturer = CleanPostSplit(manufacturer, false);
+        var cleanManufacturerNoWhiteSpace = CleanPostSplit(manufacturer, true);
+
+        return new FuzzyItemDetails(sourceName, name?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
+            cleanManufacturer.ToNullLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToNullLowerAndTrim(), year);
+    }
+
+    // clean the source name to maximize the chance of success for the subsequent splitting into table name, manufacturer, and year
+    public static string CleanPreSplit(string sourceName, bool isFileName)
+    {
+        // cater for no source name, e.g. Game.Description null value.. which should no longer be possible as it's now initialized to empty string when deserialized
+        sourceName ??= "";
+
+        // only strip the extension if it exists, i.e. a real file and not a DB entry
+        if (isFileName)
+            sourceName = Path.GetFileNameWithoutExtension(sourceName);
+
+        // remove any problem words
+        sourceName = _preParseWordRemovalRegex.Replace(sourceName, "");
+
+        // replace any known word aliases
+        _aliases.ForEach(alias =>
+        {
+            // case insensitive comparisons performed
+            if (sourceName.Contains(alias.Key, StringComparison.OrdinalIgnoreCase))
+                sourceName = sourceName.Replace(alias.Key, alias.Value, StringComparison.OrdinalIgnoreCase);
+        });
+
+        return sourceName;
+    }
+
+    public static string CleanPostSplit(string name, bool removeAllWhiteSpace)
     {
         if (name == null)
             return null;
@@ -156,79 +211,6 @@ public static class Fuzzy
             cleanName = cleanName.Replace(" ", "");
 
         return cleanName;
-    }
-
-    public static FuzzyItemDetails GetTableDetails(string sourceName, bool isFileName)
-    {
-        // cater for no source name, e.g. Game.Description null value.. which should no longer be possible as it's now initialized to empty string when deserialized
-        sourceName ??= "";
-
-        // return the fuzzy portion of the filename..
-        // - no file extensions
-        // - name: up to last opening parenthesis (if it exists!)
-        // - manufacturer: words up to the first year (if it exists!)
-        // - year: digits up to the first closing parenthesis (if it exists!)
-        string name;
-        string manufacturer = null;
-        int? year = null;
-
-        // only strip the extension if it exists, i.e. a real file and not a DB entry
-        if (isFileName)
-            sourceName = Path.GetFileNameWithoutExtension(sourceName);
-
-        // replace any known word aliases
-        sourceName = SubstituteAliases(sourceName);
-
-        var result = _fileNameInfoRegex.Match(sourceName);
-
-        if (result.Success)
-        {
-            // strip any additional parenthesis content out
-            name = result.Groups["name"].Value.ToNull();
-
-            manufacturer = result.Groups["manufacturer"].Value.Split("(").Last().ToNull();
-
-            if (int.TryParse(result.Groups["year"].Value, out var parsedYear))
-                year = parsedYear;
-        }
-        else
-        {
-            // try non-standard naming variants
-            // 1. manufacturer must exist, but not necessarily contained with parenthesis
-            // 2. year may optionally exist, similarly not necessarily contained within parenthesis
-            result = _nonStandardFileNameInfoRegex.Match(sourceName);
-            if (result.Success)
-            {
-                manufacturer = result.Groups["manufacturer"].Value.ToNull();
-                name = sourceName.Replace(manufacturer, "");
-
-                if (int.TryParse(result.Groups["year"].Value, out var parsedYear))
-                {
-                    year = parsedYear;
-                    name = name.Replace(year.ToString(), "");
-                }
-            }
-            else
-            {
-                name = sourceName.ToNull();
-            }
-        }
-
-        // fuzzy clean the name field
-        // - name keeping white space
-        var cleanName = Clean(name, false);
-        // - name without white space
-        var cleanNameWithoutWhiteSpace = Clean(name, true);
-        // - name without parenthesis, e.g. "kiss (limited edition) (stern 2015)"
-        var nameWithoutParenthesis = _removeParenthesisAndContentsRegex.Replace(name ?? "", "");
-        var cleanNameWithoutParenthesis = Clean(nameWithoutParenthesis, false);
-
-        // fuzzy clean the manufacturer field
-        var cleanManufacturer = Clean(manufacturer, false);
-        var cleanManufacturerNoWhiteSpace = Clean(manufacturer, true);
-
-        return new FuzzyItemDetails(sourceName, name?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
-            cleanManufacturer.ToNullLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToNullLowerAndTrim(), year);
     }
 
     // fuzzy match against all games
@@ -334,16 +316,52 @@ public static class Fuzzy
         return (message, warning);
     }
 
-    private static string SubstituteAliases(string cleanName)
+    private static (string name, string manufacturer, int? year) Split(string sourceName)
     {
-        _aliases.ForEach(alias =>
-        {
-            // case insensitive comparisons performed
-            if (cleanName.Contains(alias.Key, StringComparison.OrdinalIgnoreCase))
-                cleanName = cleanName.Replace(alias.Key, alias.Value, StringComparison.OrdinalIgnoreCase);
-        });
+        // return the fuzzy portion of the filename..
+        // - no file extensions
+        // - name: up to last opening parenthesis (if it exists!)
+        // - manufacturer: words up to the first year (if it exists!)
+        // - year: digits up to the first closing parenthesis (if it exists!)
+        string name;
+        string manufacturer = null;
+        int? year = null;
 
-        return cleanName;
+        var result = _fileNameInfoRegex.Match(sourceName);
+        if (result.Success)
+        {
+            // strip any additional parenthesis content out
+            name = result.Groups["name"].Value.ToNull();
+
+            manufacturer = result.Groups["manufacturer"].Value.Split("(").Last().ToNull();
+
+            if (int.TryParse(result.Groups["year"].Value, out var parsedYear))
+                year = parsedYear;
+        }
+        else
+        {
+            // try non-standard naming variants
+            // 1. manufacturer must exist, but not necessarily contained with parenthesis
+            // 2. year may optionally exist, similarly not necessarily contained within parenthesis
+            result = _nonStandardFileNameInfoRegex.Match(sourceName);
+            if (result.Success)
+            {
+                manufacturer = result.Groups["manufacturer"].Value.ToNull();
+                name = sourceName.Replace(manufacturer, "");
+
+                if (int.TryParse(result.Groups["year"].Value, out var parsedYear))
+                {
+                    year = parsedYear;
+                    name = name.Replace(year.ToString(), "");
+                }
+            }
+            else
+            {
+                name = sourceName.ToNull();
+            }
+        }
+
+        return (name, manufacturer, year);
     }
 
     private static bool ChangeMatchAndChangeScore(out MatchDetail preferredMatch, MatchDetail secondChanceMatch, int scoreAdjustment)
@@ -539,6 +557,7 @@ public static class Fuzzy
 
     private const int ScoringNoWhiteSpaceBonus = 5;
 
+    private static readonly Regex _preParseWordRemovalRegex;
     private static readonly Regex _fileNameInfoRegex;
     private static readonly Regex _trimCharRegex;
     private static readonly Regex _trimLastPeriodRegex;
