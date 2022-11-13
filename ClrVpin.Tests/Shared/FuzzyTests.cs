@@ -111,10 +111,25 @@ public class FuzzyTests
     [TestCase("12345 blah", false, "blah", TestName = "trim number preamble")]
     [TestCase("Vp10-The Walking Dead 1.1.vpx", false, "walking dead", TestName = "remove vp10")]
     [TestCase("24™ Pin·bot Motörhead (Electromecánica)", false, "24 pinbot motrhead electromecnica", TestName = "remove non-ascii characters")]
-    public void CleanTest(string fileName, bool removeAllWhiteSpace, string expectedName)
+    public void CleanPostSplitTest(string fileName, bool removeAllWhiteSpace, string expectedName)
     {
-        // confirm Clean provides exact results - i.e. ignore scoring
-        var cleanName = Fuzzy.Clean(fileName, removeAllWhiteSpace);
+        // confirm CleanPostSplit provides exact results - i.e. ignore scoring
+        var cleanName = Fuzzy.CleanPostSplit(fileName, removeAllWhiteSpace);
+
+        Assert.That(cleanName, Is.EqualTo(expectedName));
+    }
+    
+    [Test]
+    [TestCase(null, false, "", TestName = "handle null")]
+    [TestCase("1826898402_Shrek1.0", false, "1826898402_Shrek1.0", TestName = "no change #1 - file extensions n/a")]
+    [TestCase("1826898402_Shrek1.0.vpx", false, "1826898402_Shrek1.0.vpx", TestName = "no change #2 - keep file extension")]
+    [TestCase("1826898402_Shrek1.0.vpx", true, "1826898402_Shrek1.0", TestName = "drop file extension")]
+    [TestCase("1826898402_Shrek(Stern2008)(MOD)1.0.vpx", true, "1826898402_Shrek(Stern2008)1.0", TestName = "remove '(MOD)'")]
+    [TestCase("13Big INjun123.vpx", true, "13Big Indian123", TestName = "substitute alias #1 - big injun")]
+    public void CleanPreSplitTest(string fileName, bool isFileName, string expectedName)
+    {
+        // confirm CleanPreSplit provides exact results - i.e. ignore scoring
+        var cleanName = Fuzzy.CleanPreSplit(fileName, isFileName);
 
         Assert.That(cleanName, Is.EqualTo(expectedName));
     }
@@ -250,6 +265,7 @@ public class FuzzyTests
     [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) (Stern 2015).directb2s", 230, 
         TestName = "double parenthesis.. db and file both match, hence very high score")]
     [TestCase("NFL (Stern 2001)", "NFL (Vikings) (Stern 2001).directb2s", 100, TestName = "double parenthesis - match without parenthesis, without any bonus score for the tilte length")]
+    [TestCase("Shrek (Stern 2008)", "1826898402_Shrek(Stern2008)(MOD)1.0.vpx", 220, TestName = "pre-parsing should remove '(MOD)' so that the file name can be properly split")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
