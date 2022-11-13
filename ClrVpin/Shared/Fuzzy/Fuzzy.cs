@@ -467,8 +467,9 @@ public static class Fuzzy
         if (score == 0)
             score = IsExactMatch(firstNoParenthesis, secondNoParenthesis) ? 35 : 0;
 
-        //if (score == 0)
-        //    score += noMatchScore;
+        // no match could represent either missing data (e.g. no manufacturer) or a mismatch (e.g. wrong manufacturer)
+        if (score == 0)
+            score += noMatchScore;
 
         return score;
     }
