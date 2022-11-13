@@ -2,7 +2,16 @@
 
 namespace ClrVpin.Shared.Fuzzy;
 
-public class FuzzyItemDetails
+public class FuzzyItemNameDetails
+{
+    public string ActualName { get; protected init; }
+    public string Name { get; protected init;}
+    public string NameOriginalCase { get; protected init;}
+    public string NameWithoutWhiteSpace { get; protected init;}
+    public string NameWithoutParenthesis { get; protected init;}
+}
+
+public class FuzzyItemDetails : FuzzyItemNameDetails
 {
     public FuzzyItemDetails(string actualName, string nameOriginalCase, string name, string nameWithoutWhiteSpace, string nameWithoutParenthesis, string manufacturer, string manufacturerNoWhiteSpace, int? year)
     {
@@ -14,18 +23,14 @@ public class FuzzyItemDetails
 
         Manufacturer = manufacturer;
         ManufacturerNoWhiteSpace = manufacturerNoWhiteSpace;
+        
         IsOriginal = GameDerived.CheckIsOriginal(manufacturer, name);
 
         Year = year;
     }
 
-    public string Name { get; }
-    public string NameOriginalCase { get; }
-    public string NameWithoutWhiteSpace { get; }
-    public string NameWithoutParenthesis { get; }
     public string Manufacturer { get; set; }
     public string ManufacturerNoWhiteSpace { get; }
     public int? Year { get; set; }
-    public string ActualName { get; }
     public bool IsOriginal { get; }
 }

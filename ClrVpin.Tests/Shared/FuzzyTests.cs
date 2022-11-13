@@ -22,10 +22,12 @@ public class FuzzyTests
     [TestCase("Indiana Jones (Williams) blah.directb2s", true, "indiana jones", "indianajones", "indiana jones", "williams", "williams", null)]
     [TestCase("Indiana Jones (1993) blah.directb2s", true, "indiana jones", "indianajones", "indiana jones", null, null, 1993)]
     [TestCase("Indiana Jones.directb2s", true, "indiana jones", "indianajones", "indiana jones", null, null, null)]
-    [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", true, "indiana jones blah", "indianajonesblah", "indiana jones", "williams", "williams", 1993, TestName = "double parenthesis - first parenthesis is used #1 - and parenthesis stripped")]
+    [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", true, "indiana jones blah", "indianajonesblah", "indiana jones", "williams", "williams", 1993,
+        TestName = "double parenthesis - first parenthesis is used #1 - and parenthesis stripped")]
     [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012).directb2s", true, "c dc let there be rock limited edition", "cdcletthereberocklimitededition", "c dc", "stern", "stern", 2012,
         TestName = "double parenthesis - first parenthesis is used #1 - and parenthesis stripped, also - becomes space")]
-    [TestCase("Batman (66 Limited Edition) (Stern 2016)", true, "batman 66 limited edition", "batman66limitededition", "batman", "stern", "stern", 2016, TestName = "double parenthesis - first parenthesis is used #3 - and parenthesis stripped")]
+    [TestCase("Batman (66 Limited Edition) (Stern 2016)", true, "batman 66 limited edition", "batman66limitededition", "batman", "stern", "stern", 2016,
+        TestName = "double parenthesis - first parenthesis is used #3 - and parenthesis stripped")]
     [TestCase("", true, null, null, null, null, null, null, TestName = "empty string")]
     [TestCase(null, true, null, null, null, null, null, null, TestName = "null string")]
     [TestCase("123", true, "123", "123", "123", null, null, null, TestName = "number title")]
@@ -39,7 +41,7 @@ public class FuzzyTests
     [TestCase("Mr. and Mrs. Pac-Man (Bally 1982) 1.0", false, "mr mrs pac man", "mrmrspacman", "mr mrs pac man", "bally", "bally", 1982, TestName = "game name with internal periods")]
     [TestCase("1462262523_TheFlintstones(Williams1994)v1.26.vpx", true, "flintstones", "flintstones", "flintstones", "williams", "williams", 1994, TestName = "file name with camelcase instead of whitespace")]
     [TestCase("1462262523_The Flintstones(Williams1994)v1.26.vpx", true, "flintstones", "flintstones", "flintstones", "williams", "williams", 1994, TestName = "file name starts with 'the' keyword")]
-    [TestCase("Twilight Zone SG1bsoN Mod V3.vpx", true, "twilight zone", "twilightzone", "twilight zone",null, null, null, TestName = "file name with special author camelcase SG1bsoN")]
+    [TestCase("Twilight Zone SG1bsoN Mod V3.vpx", true, "twilight zone", "twilightzone", "twilight zone", null, null, null, TestName = "file name with special author camelcase SG1bsoN")]
     [TestCase("Whirlwind 4K 1.1.vpx", true, "whirlwind", "whirlwind", "whirlwind", null, null, null, TestName = "ignore word: 4k")]
     [TestCase(@"C:\vp\_downloaded\wheel images\V1 (IDSA 1986) Logo.png", true, null, null, null, "idsa", "idsa", 1986, TestName = "name stripped completely: empty string converted to null")]
     [TestCase(@"1-2-3... (Automaticos 1973)", false, "1 2 3", "123", "1 2 3", "automaticos", "automaticos", 1973, TestName = "name has trailing periods")]
@@ -218,7 +220,7 @@ public class FuzzyTests
     [TestCase("Aces & Kings (Williams 1970)", "Aces and Kings (Williams 1970).vpx", true, 221, TestName = "And vs &.. both should be stripped to ensure a strong match")]
     [TestCase("Guns N' Roses (Data East 1994)", "Guns and Roses (Data East 1994).vpx", true, 221, TestName = "N' abbreviation for 'and'.. should be stripped")]
     [TestCase("Surf 'n Safari (Gottlieb 1991)", "Surf and Safari (Gottlieb 1992).vpx", true, 212, TestName = "'n abbreviation for 'and'.. should be stripped")]
-    [TestCase("Batman (66 Limited Edition) (Stern 2016)", "The Batman (Original 2022)", false, -986, TestName = "low match - double parenthesis.. the first being part of the title")]
+    [TestCase("Batman (66 Limited Edition) (Stern 2016)", "The Batman (Original 2022)", false, -956, TestName = "low match - double parenthesis.. the first being part of the title")]
     [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012)", "AC-DC Let There Be Rock (Stern 2013).vpx", true, 175, TestName = "double parethensis - name contents exist in the first set")]
     [TestCase("Pinball (Stern 1977)", "Pinball EM (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - EM")]
     [TestCase("Pinball (Stern 1977)", "Pinball SS (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - SS")]
@@ -240,6 +242,14 @@ public class FuzzyTests
     [TestCase("Caddie (Playmatic 1975)", "Caddie (Playmatic 1970).directb2s", true, 210, TestName = "name alias #2 - very special case where 1970 and 1975 tables are indistinguishable as per IPDB")]
     [TestCase("Heavy Metal (Rowamet 1981)", "Heavy_Metal_No LEDs.directb2s", true, 157, TestName = "description - no LEDs")]
     [TestCase("Kiss (Stern 2015)", "KISS Stern 2015.directb2s", true, 220, TestName = "non-standard file format - manufacturer and year not in parenthesis")]
+    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS Stern 2015.directb2s", true, 105,
+        TestName = "double parenthesis.. the first is the table variant and considered part of name & hence lower match score despite manufacturer/year match")]
+    [TestCase("Kiss (Limited Edition)", "KISS Stern 2015.directb2s", true, 155, TestName = "single parenthesis #1.. 'limited edition' is interpreted as the manufacturer, hence an exact match on title")]
+    [TestCase("Kiss (Stern 2015)", "KISS (Limited Edition) Stern 2015.directb2s", true, 155, TestName = "single parenthesis #2.. 'limited edition' is interpreted as the manufacturer, hence an exact match on title")]
+    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) Stern 2015.directb2s", false, 40, 
+        TestName = "double parenthesis.. db first parenthesis part of table name, file parenthesis considered part of manufacturer/year (which is incorrect).. hence very low match")]
+    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) (Stern 2015).directb2s", true, 230, 
+        TestName = "double parenthesis.. db and file both match, hence very high score")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
@@ -248,7 +258,6 @@ public class FuzzyTests
         Assert.That(score, Is.EqualTo(expectedScore));
         Assert.That(success, Is.EqualTo(expectedSuccess));
     }
-
     [Test]
     [TestCase("too small", 0)]
     [TestCase("a little bigger", 4)]
@@ -276,7 +285,8 @@ public class FuzzyTests
             new() { Game = new Game { IpdbId = "6", Name = "Transformers (Stern 2011)", Description = "Transformers (Pro) (Stern 2011)" } },
             new() { Game = new Game { IpdbId = "7", Name = "V1 (IDSA 1986)", Description = "V1 (IDSA 1986) Logo" } },
             new() { Game = new Game { IpdbId = "8", Name = "X-Men LE (Stern 2012)", Description = "X-Men Wolverine LE (Stern 2012)" } },
-            new() { Game = new Game { IpdbId = "9", Name = "Kiss (Limited Edition) (Stern 2015)", Description = "Kiss (Limited Edition) (Stern 2015)" } }
+            new() { Game = new Game { IpdbId = "9", Name = "Kiss (Limited Edition) (Stern 2015)", Description = "Kiss (Limited Edition) (Stern 2015)" } },
+            new() { Game = new Game { IpdbId = "10", Name = "Kiss (Bally 1979)", Description = "Kiss (Bally 1979)" } }
         };
 
         localGames.ForEach((localGame, index) =>
@@ -348,12 +358,5 @@ public class FuzzyTests
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
         Assert.That(score, Is.EqualTo(150));
         Assert.That(isMatch, Is.True);
-
-        //[TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS Stern 2015.directb2s", true, 157, TestName = "database record as double parenthesis and file uses no parenthesis")]
-        //fileDetails = Fuzzy.GetTableDetails("KISS Stern 2015.directb2s", true);
-        //(game, score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
-        //Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
-        //Assert.That(score, Is.EqualTo(150));
-        //Assert.That(isMatch, Is.True);
     }
 }
