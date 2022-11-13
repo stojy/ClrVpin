@@ -172,36 +172,36 @@ public class FuzzyTests
     }
 
     [Test]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern)", true, 174 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "exact name and missing year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 224 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "exact name and exact year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1994)", true, 214 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "exact name and +/-1 year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1995)", true, 124 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "exact name and +/-2 year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1996)", false, 74 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "exact name and +/-3 year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1997)", false, -826 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "exact name and +/-3 year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern)", true, 124 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "starts name 15char and missing year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1993)", true, 174 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "starts name 15char and exact year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1995)", false, 74 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "starts name 15char and +/-2 year")]
-    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern)", false, 79 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "starts name 10char and missing year")]
-    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 129 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "starts name 10char and exact year")]
-    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1992)", true, 119 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "starts name 10char and +/-1 year")]
-    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1991)", false, 29 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "starts name 10char and +/-1 year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern)", true, 179, TestName = "exact name and missing year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 229, TestName = "exact name and exact year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1994)", true, 219, TestName = "exact name and +/-1 year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1995)", true, 129, TestName = "exact name and +/-2 year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1996)", false, 79, TestName = "exact name and +/-3 year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1997)", false, -821, TestName = "exact name and +/-3 year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern)", true, 129, TestName = "starts name 15char and missing year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1993)", true, 179, TestName = "starts name 15char and exact year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1995)", false, 79, TestName = "starts name 15char and +/-2 year")]
+    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern)", false, 84, TestName = "starts name 10char and missing year")]
+    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", true, 134, TestName = "starts name 10char and exact year")]
+    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1992)", true, 124, TestName = "starts name 10char and +/-1 year")]
+    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1991)", false, 34, TestName = "starts name 10char and +/-1 year")]
     [TestCase("CARtoon baby (Stern 1993)", "CARtoon (Stern 1993)", false, 68, TestName = "starts name 7 char and exact year")]
-    [TestCase("CARtoons baby (Stern 1993)", "CARtoons (Stern 1993)", true, 119 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "starts name 8 char and exact year")]
-    [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern)", true, 128 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 20char and missing year")]
-    [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1993)", true, 178 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 20char and exact year")]
-    [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1994)", true, 168 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 20char and +/-1 year")]
-    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", false, 80 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 13char and missing year")]
-    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 130 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 13char and exact year")]
-    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 120 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 13char and +/-1 year")]
-    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 30 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 13char and +/-2 year")]
-    [TestCase("Back To The Future Starlion MoD 1.0.directb2s", "Back To The Future (Data East 1990)", true, 115 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "contains name 13char and +/-2 year")]
-    [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 207 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "after chars removed - perfect match")]
-    [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 213 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 157 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "after chars removed - partial match")]
-    [TestCase("Junkyard Cats (Bailey 2012)", "Junkyard Cats_1.07 (3 Screen).directB2S", true, 154 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "single digit in parethensis - don't mistake for year")]
-    [TestCase("Junkya blah blah Cats Dogs (Bailey 2012)", "Junkya whatever whatever Cats Dogs.vpx", false, 74 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "match start and end - start: 7chars, end: 8chars")]
-    [TestCase("Dirty Harry (Williams 1995)", "Dirty Harry 2.0 shiny mod.vpx", false, 62 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "10 char name match, but not manufacturer or year match")]
-    [TestCase("Blahblah (Williams 1990)", "Blahblah 4K 1.1.vpx", true, 150 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "ignore word: 4k")]
-    [TestCase("Whirlwind (Williams 1990)", "Whirlwind 4K 1.1.vpx", true, 151 + Fuzzy.ScoringNoWhiteSpaceBonus, TestName = "match without white space (no hyphen): should score higher")]
+    [TestCase("CARtoons baby (Stern 1993)", "CARtoons (Stern 1993)", true, 124, TestName = "starts name 8 char and exact year")]
+    [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern)", true, 133, TestName = "contains name 20char and missing year")]
+    [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1993)", true, 183, TestName = "contains name 20char and exact year")]
+    [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1994)", true, 173, TestName = "contains name 20char and +/-1 year")]
+    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", false, 85, TestName = "contains name 13char and missing year")]
+    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", true, 135, TestName = "contains name 13char and exact year")]
+    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", true, 125, TestName = "contains name 13char and +/-1 year")]
+    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", false, 35, TestName = "contains name 13char and +/-2 year")]
+    [TestCase("Back To The Future (Data East 1990)", "Back To The Future Starlion MoD 1.0.directb2s", true, 159, TestName = "manufacturer and year missing")]
+    [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 212, TestName = "after chars removed - perfect match")]
+    [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 213 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true, 162, TestName = "after chars removed - partial match")]
+    [TestCase("Junkyard Cats (Bailey 2012)", "Junkyard Cats_1.07 (3 Screen).directB2S", true, 159, TestName = "single digit in parethensis - don't mistake for year")]
+    [TestCase("Junkya blah blah Cats Dogs (Bailey 2012)", "Junkya whatever whatever Cats Dogs.vpx", false, 79, TestName = "match start and end - start: 7chars, end: 8chars")]
+    [TestCase("Dirty Harry (Williams 1995)", "Dirty Harry 2.0 shiny mod.vpx", false, 67, TestName = "10 char name match, but not manufacturer or year match")]
+    [TestCase("Blahblah (Williams 1990)", "Blahblah 4K 1.1.vpx", true, 155, TestName = "ignore word: 4k")]
+    [TestCase("Whirlwind (Williams 1990)", "Whirlwind 4K 1.1.vpx", true, 156, TestName = "match without white space (no hyphen): should score higher")]
     [TestCase("Whirl-Wind (Gottlieb 1958)", "Whirlwind 4K 1.1.vpx", true, 151, TestName = "match with whitespace (hyphen converts to whitespace): should match lower")]
     [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Americs Most Haunted (spooky 2014) b2s v3.directb2s", true, 186, TestName = "match with Levenshtein distance")]
     [TestCase("V1 (IDSA 1986) Logo", "V1 (IDSA 1986) Logo.png", false, 65, TestName = "perfect match: but no name match score because the cleansed names are null.. since 'v1' is stripped")]
@@ -220,7 +220,7 @@ public class FuzzyTests
     [TestCase("Aces & Kings (Williams 1970)", "Aces and Kings (Williams 1970).vpx", true, 221, TestName = "And vs &.. both should be stripped to ensure a strong match")]
     [TestCase("Guns N' Roses (Data East 1994)", "Guns and Roses (Data East 1994).vpx", true, 221, TestName = "N' abbreviation for 'and'.. should be stripped")]
     [TestCase("Surf 'n Safari (Gottlieb 1991)", "Surf and Safari (Gottlieb 1992).vpx", true, 212, TestName = "'n abbreviation for 'and'.. should be stripped")]
-    [TestCase("Batman (66 Limited Edition) (Stern 2016)", "The Batman (Original 2022)", false, -956, TestName = "low match - double parenthesis.. the first being part of the title")]
+    [TestCase("Batman (66 Limited Edition) (Stern 2016)", "The Batman (Original 2022)", false, -951, TestName = "low match - double parenthesis.. the first being part of the title")]
     [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012)", "AC-DC Let There Be Rock (Stern 2013).vpx", true, 175, TestName = "double parethensis - name contents exist in the first set")]
     [TestCase("Pinball (Stern 1977)", "Pinball EM (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - EM")]
     [TestCase("Pinball (Stern 1977)", "Pinball SS (Stern 1977).vpx", true, 220, TestName = "strip pinball type from name - SS")]
@@ -242,14 +242,14 @@ public class FuzzyTests
     [TestCase("Caddie (Playmatic 1975)", "Caddie (Playmatic 1970).directb2s", true, 210, TestName = "name alias #2 - very special case where 1970 and 1975 tables are indistinguishable as per IPDB")]
     [TestCase("Heavy Metal (Rowamet 1981)", "Heavy_Metal_No LEDs.directb2s", true, 157, TestName = "description - no LEDs")]
     [TestCase("Kiss (Stern 2015)", "KISS Stern 2015.directb2s", true, 220, TestName = "non-standard file format - manufacturer and year not in parenthesis")]
-    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS Stern 2015.directb2s", true, 105,
-        TestName = "double parenthesis.. the first is the table variant and considered part of name & hence lower match score despite manufacturer/year match")]
+    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS Stern 2015.directb2s", true, 110, TestName = "double parenthesis.. the first is the table variant and considered part of name & hence lower match score despite manufacturer/year match")]
     [TestCase("Kiss (Limited Edition)", "KISS Stern 2015.directb2s", true, 155, TestName = "single parenthesis #1.. 'limited edition' is interpreted as the manufacturer, hence an exact match on title")]
     [TestCase("Kiss (Stern 2015)", "KISS (Limited Edition) Stern 2015.directb2s", true, 155, TestName = "single parenthesis #2.. 'limited edition' is interpreted as the manufacturer, hence an exact match on title")]
-    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) Stern 2015.directb2s", false, 40, 
+    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) Stern 2015.directb2s", false, 45, 
         TestName = "double parenthesis.. db first parenthesis part of table name, file parenthesis considered part of manufacturer/year (which is incorrect).. hence very low match")]
     [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) (Stern 2015).directb2s", true, 230, 
         TestName = "double parenthesis.. db and file both match, hence very high score")]
+    [TestCase("NFL (Stern 2001)", "NFL (Vikings) (Stern 2001).directb2s", true, 100, TestName = "double parenthesis - match without parenthesis, without any bonus score for the tilte length")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, bool expectedSuccess, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
@@ -349,7 +349,7 @@ public class FuzzyTests
         fileDetails = Fuzzy.GetTableDetails("Transformers Marcade Mod v1.2.vpx", true);
         (game, score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("6"));
-        Assert.That(score, Is.EqualTo(152 + Fuzzy.ScoringNoWhiteSpaceBonus));
+        Assert.That(score, Is.EqualTo(157));
         Assert.That(isMatch, Is.True);
 
         // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw (non-cleaned) table name

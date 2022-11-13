@@ -299,8 +299,10 @@ public static class Fuzzy
 
         // manufacturer matching is the EXACT same as name matching, but the result is scaled back to 10% to reflect it's lesser importance
         // - the additional scoring though is important to distinguish between games that match exactly but only 1 has the correct manufacturer 
+        // - files that don't have a manufacturer match are given a slight negative score
+        //   e.g. DB 'Kiss (Stern 2015)' matching against file 'kiss'
         var manufacturerScore = GetNameMatchScore(localGameFuzzyDetails.Manufacturer, localGameFuzzyDetails.ManufacturerNoWhiteSpace, null,
-            fileFuzzyDetails.Manufacturer, fileFuzzyDetails.ManufacturerNoWhiteSpace, null, true) / 10;
+            fileFuzzyDetails.Manufacturer, fileFuzzyDetails.ManufacturerNoWhiteSpace, null, true, -100) / 10;
 
         var yearMatchScore = GetYearMatchScore(localGameFuzzyDetails.Year, fileFuzzyDetails.Year);
         var lengthScore = GetLengthMatchScore(localGameFuzzyDetails);
@@ -414,7 +416,7 @@ public static class Fuzzy
     private static int GetNameMatchScore(FuzzyItemNameDetails first, FuzzyItemNameDetails second, bool isLevenshteinEnabled) => GetNameMatchScore(first.Name, first.NameWithoutWhiteSpace, first.NameWithoutParenthesis, second.Name,
         second.NameWithoutWhiteSpace, second.NameWithoutParenthesis, isLevenshteinEnabled);
 
-    private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string firstNoParenthesis, string second, string secondNoWhiteSpace, string secondNoParenthesis, bool isLevenshteinEnabled)
+    private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string firstNoParenthesis, string second, string secondNoWhiteSpace, string secondNoParenthesis, bool isLevenshteinEnabled, int noMatchScore = 0)
     {
         // matching order is important.. highest priority matches must be first!
         var score = IsExactMatch(first, second) ? 150 + ScoringNoWhiteSpaceBonus : 0;
@@ -463,7 +465,10 @@ public static class Fuzzy
             score = IsStartsAndEndsMatch(7, 8, secondNoWhiteSpace, firstNoWhiteSpace) ? 60 : 0;
 
         if (score == 0)
-            score = IsExactMatch(firstNoParenthesis, secondNoParenthesis) ? 30 : 0;
+            score = IsExactMatch(firstNoParenthesis, secondNoParenthesis) ? 35 : 0;
+
+        //if (score == 0)
+        //    score += noMatchScore;
 
         return score;
     }
@@ -531,7 +536,7 @@ public static class Fuzzy
         public (bool success, int score) MatchResult;
     }
 
-    public const int ScoringNoWhiteSpaceBonus = 5;
+    private const int ScoringNoWhiteSpaceBonus = 5;
 
     private static readonly Regex _fileNameInfoRegex;
     private static readonly Regex _trimCharRegex;
