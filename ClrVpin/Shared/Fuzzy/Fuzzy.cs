@@ -101,6 +101,7 @@ public static class Fuzzy
             new("caddie (playmatic 1970)", "Caddie (Playmatic 1976)"), // very special alias where the 1970 and 1975 version are indistinguishable according to IPDB
             new("GOTG", "Guardians Of The Galaxy"),
             new("Dale Jr Nascar", "Dale Jr"), // special case.. 'nascar' refers to the table used as a basis, 'dale jr' is a limited run of 'nascar'
+            new("Nascar Race", "Nascar"), // special case.. 'race' is not part of the title
         };
 
         // remove parenthesis and contents

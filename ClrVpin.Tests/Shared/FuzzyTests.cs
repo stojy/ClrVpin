@@ -270,6 +270,7 @@ public class FuzzyTests
     [TestCase("Guardians Of The Galaxy (Stern 2017)", "GOTG_2.0.0.vpx", 154, TestName = "alias #3: regular substitution")]
     [TestCase("Guns N' Roses (Data East 1994)", "Guns N Roses (Data East 1994)_Bigus(MOD)3.0.vpx", 221, TestName = "language word: treat N same as 'N and N'")]
     [TestCase("Dale Jr. (Stern 2007)", "JP's Dale Jr Nascar v4.vpx", 145, TestName = "alias #4: special case for 'dale jr nascar'")]
+    [TestCase("Nascar (Stern 2005)", "JP's Nascar Race v4.vpx", 145, TestName = "alias #5: special case for 'nascar race'")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
