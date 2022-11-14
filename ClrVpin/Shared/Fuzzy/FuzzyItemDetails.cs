@@ -5,7 +5,7 @@ namespace ClrVpin.Shared.Fuzzy;
 public class FuzzyItemNameDetails
 {
     public string ActualName { get; protected init; }
-    public string Name { get; protected init;}
+    public string Name { get; protected init;} // lower case
     public string NameOriginalCase { get; protected init;}
     public string NameWithoutWhiteSpace { get; protected init;}
     public string NameWithoutParenthesis { get; protected init;}
@@ -29,7 +29,7 @@ public class FuzzyItemDetails : FuzzyItemNameDetails
         Year = year;
     }
 
-    public string Manufacturer { get; set; }
+    public string Manufacturer { get; set; } // lower case
     public string ManufacturerNoWhiteSpace { get; }
     public int? Year { get; set; }
     public bool IsOriginal { get; }
