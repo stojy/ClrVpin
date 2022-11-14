@@ -98,7 +98,8 @@ public static class Fuzzy
         _aliases = new Dictionary<string, string>
         {
             new("big injun", "Big Indian"),
-            new("caddie (playmatic 1970)", "Caddie (Playmatic 1976)") // very special alias where the 1970 and 1975 version are indistinguishable according to IPDB
+            new("caddie (playmatic 1970)", "Caddie (Playmatic 1976)"), // very special alias where the 1970 and 1975 version are indistinguishable according to IPDB
+            new("GOTG", "Guardians Of The Galaxy") 
         };
 
         // remove parenthesis and contents
