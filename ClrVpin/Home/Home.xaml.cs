@@ -1,8 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Text;
+using System.Windows;
+using System.Windows.Input;
 using ClrVpin.Extensions;
 using MaterialDesignThemes.Wpf;
-using Application = System.Windows.Application;
 
 namespace ClrVpin.Home;
 
@@ -50,14 +52,23 @@ public partial class HomeWindow
 
         Loaded += async (_, _) =>
         {
-            if (VersionManagementService.ShouldCheck()) 
+            if (VersionManagementService.ShouldCheck())
                 await VersionManagementService.CheckAndHandle();
         };
     }
 
+    private void ImageMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        // drag the entire window when the image is dragged
+        // - deliberately not applied to the entire window to avoid other draggable content, e.g. padding on buttons, misc text, etc
+        // - https://stackoverflow.com/questions/7417739/make-wpf-window-draggable-no-matter-what-element-is-clicked
+        if (e.LeftButton == MouseButtonState.Pressed)
+            DragMove();
+    }
+
     private static void Restart()
     {
-        Process.Start(System.Environment.ProcessPath!);
+        Process.Start(Environment.ProcessPath!);
         Application.Current.Shutdown();
     }
 

@@ -140,7 +140,7 @@
                - this is the main reason why the 'close' button has been shifted from the top right (i.e. simulating the title bar close button) to the bottom buttons
           -->
           <StackPanel>
-            <Image Source="/Resources/ClrVpin.png" Height="350" Margin="5" />
+            <Image Source="/Resources/ClrVpin.png" Height="350" Margin="5" MouseDown="ImageMouseDown" />
 
             <WrapPanel Margin="5" Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
               <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentDarkButtonStyle}"
