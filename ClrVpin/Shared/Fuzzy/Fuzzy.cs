@@ -26,11 +26,11 @@ public static class Fuzzy
         // - special consideration for non-ascii characters (i.e. 8 bit chars) as handling of these between IPDB, XML DB, and file names is often inconsistent
         string[] specialChars = { "&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"[^\x00-\x7F]", "&", @"\(", @"\)" };
         pattern = string.Join('|', specialChars);
-        _trimCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
+        _trimSpecialCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
         string[] trailingPeriod = { @"\.{1}$" };
         pattern = string.Join('|', trailingPeriod);
-        _trimLastPeriodRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
+        _trimTrailingPeriodRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
 
         // words that are to be ignored during the title case word expansion
         _titleCaseWordExceptions = new[] { "MoD", "SG1bsoN" };
@@ -131,7 +131,7 @@ public static class Fuzzy
         var cleanManufacturer = CleanPostSplit(manufacturer, false);
         var cleanManufacturerNoWhiteSpace = CleanPostSplit(manufacturer, true);
 
-        return new FuzzyItemDetails(sourceName, name?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
+        return new FuzzyItemDetails(sourceName, cleanName?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
             cleanManufacturer.ToNullLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToNullLowerAndTrim(), year);
     }
 
@@ -176,13 +176,13 @@ public static class Fuzzy
         cleanName = _wholeWordRegex.Replace(cleanName, "");
 
         // trim chars - must trim extension period for version to work correctly!
-        cleanName = _trimCharRegex.Replace(cleanName, "");
+        cleanName = _trimSpecialCharRegex.Replace(cleanName, "");
 
         // trim last period
         // - required for version to work correctly
         // - only if there are NOT 3 (or more) trailing periods, e.g. to cater for some tables like '1-2-3...' which use the trailing periods as part of their table name
         if (!cleanName.EndsWith("..."))
-            cleanName = _trimLastPeriodRegex.Replace(cleanName, "");
+            cleanName = _trimTrailingPeriodRegex.Replace(cleanName, "");
 
         // add whitespace - first pass
         cleanName = _addSpacingFirstPassRegex.Replace(cleanName, " ");
@@ -560,8 +560,8 @@ public static class Fuzzy
 
     private static readonly Regex _preParseWordRemovalRegex;
     private static readonly Regex _fileNameInfoRegex;
-    private static readonly Regex _trimCharRegex;
-    private static readonly Regex _trimLastPeriodRegex;
+    private static readonly Regex _trimSpecialCharRegex;
+    private static readonly Regex _trimTrailingPeriodRegex;
     private static readonly Regex _wholeWordRegex;
     private static readonly Regex _addSpacingFirstPassRegex;
     private static readonly Regex _addSpacingSecondPassRegex;
