@@ -42,10 +42,10 @@ public static class Fuzzy
         // - lookahead match without capture: https://stackoverflow.com/a/3926546/227110
         // - https://regex101.com/r/DoztL5/1
         Authors = new[] { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99", "balutito" };
-        string[] language = { "a", "and", "n'", "'n", "the", "premium", "en" };
+        string[] language = { "a", "and", "n'", "'n", "n", "the", "en" };
         string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
         string[] types = { "em", "ss", "pm" };
-        string[] descriptions = { "no leds", "upgrade" };
+        string[] descriptions = { "no leds", "upgrade", "premium" };
         pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(types).Concat(descriptions));
         _wholeWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
 
@@ -113,10 +113,10 @@ public static class Fuzzy
     public static FuzzyItemDetails GetTableDetails(string sourceName, bool isFileName)
     {
         // clean source name prior to splitting, i.e. to make it more suitable for splitting into name/manufacturer/year
-        sourceName = CleanPreSplit(sourceName, isFileName);
+        var cleansedName = CleanPreSplit(sourceName, isFileName);
 
         // split sourceName into table name, manufacturer, and year
-        var (name, manufacturer, year) = Split(sourceName);
+        var (name, manufacturer, year) = Split(cleansedName);
 
         // fuzzy clean the name field
         // - name keeping white space
