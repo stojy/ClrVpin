@@ -253,8 +253,8 @@ public class FuzzyTests
         TestName = "online matching scenario - online to database desc (reverse.. does not happen).. unexpected(?) lower score")]
     [TestCase("Avatar, James Cameron's (Stern 2010)", "Avatar (Stern 2010).vpx", 76, TestName = "online matching scenario - after DB name & desc sync'd.. unable to match existing file (same as name)")]
     [TestCase("Batman (Data East 1991)", "Batman Balutito MOD.directb2s", 145, TestName = "author + mod file description, no manufacturer/year")]
-    [TestCase("Big Indian (Gottlieb 1974)", "Big injun.directb2s", 146, TestName = "name alias #1 - table with dual names, no manufacturer/year")]
-    [TestCase("Caddie (Playmatic 1975)", "Caddie (Playmatic 1970).directb2s", 210, TestName = "name alias #2 - very special case where 1970 and 1975 tables are indistinguishable as per IPDB")]
+    [TestCase("Big Indian (Gottlieb 1974)", "Big injun.directb2s", 146, TestName = "alias #1 - table with dual names, no manufacturer/year")]
+    [TestCase("Caddie (Playmatic 1975)", "Caddie (Playmatic 1970).directb2s", 210, TestName = "alias #2 - very special case where 1970 and 1975 tables are indistinguishable as per IPDB")]
     [TestCase("Heavy Metal (Rowamet 1981)", "Heavy_Metal_No LEDs.directb2s", 147, TestName = "description - no LEDs, no manufacturer/year")]
     [TestCase("Kiss (Stern 2015)", "KISS Stern 2015.directb2s", 220, TestName = "non-standard file format - manufacturer and year not in parenthesis")]
     [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS Stern 2015.directb2s", 110, TestName = "double parenthesis.. the first is the table variant and considered part of name & hence lower match score despite manufacturer/year match")]
@@ -267,6 +267,7 @@ public class FuzzyTests
     [TestCase("NFL (Stern 2001)", "NFL (Vikings) (Stern 2001).directb2s", 100, TestName = "double parenthesis - match without parenthesis, without any bonus score for the tilte length")]
     [TestCase("Shrek (Stern 2008)", "1826898402_Shrek(Stern2008)(MOD)1.0.vpx", 220, TestName = "pre-parsing should remove '(MOD)' so that the file name can be properly split")]
     [TestCase("Fire! (Williams 1987)", "Fire!_Upgrade.vpx", 145, TestName = "keyword: upgrade")]
+    [TestCase("Guardians Of The Galaxy (Stern 2017)", "GOTG_2.0.0.vpx", 154, TestName = "alias #3: regular substitution")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
