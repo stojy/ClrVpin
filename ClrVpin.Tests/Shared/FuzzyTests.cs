@@ -268,6 +268,7 @@ public class FuzzyTests
     [TestCase("Shrek (Stern 2008)", "1826898402_Shrek(Stern2008)(MOD)1.0.vpx", 220, TestName = "pre-parsing should remove '(MOD)' so that the file name can be properly split")]
     [TestCase("Fire! (Williams 1987)", "Fire!_Upgrade.vpx", 145, TestName = "keyword: upgrade")]
     [TestCase("Guardians Of The Galaxy (Stern 2017)", "GOTG_2.0.0.vpx", 154, TestName = "alias #3: regular substitution")]
+    [TestCase("Guns N' Roses (Data East 1994)", "Guns N Roses (Data East 1994)_Bigus(MOD)3.0.vpx", 221, TestName = "language word: treat N same as 'N and N'")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
