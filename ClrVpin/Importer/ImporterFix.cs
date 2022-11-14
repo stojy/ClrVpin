@@ -274,7 +274,7 @@ public static class ImporterFix
             case "Austin Powers (Stern 2001)":
                 FixWrongUrlIpdb(onlineGame, "https://www.ipdb.org/machine.cgi?id=4504");
                 break;
-            case "JP's Dale Jr. Nascar (Original 2020)":
+            case "JP's Dale Jr. Nascar (Original 2020)": // Limited Edition run of Stern's 2005 'NASCAR'
                 FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5292", "Stern", 2007, "Dale Jr.");
                 break;
             case "JP'S Nascar Race (Original 2005)":
