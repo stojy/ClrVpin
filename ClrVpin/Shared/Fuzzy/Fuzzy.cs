@@ -45,7 +45,7 @@ public static class Fuzzy
         string[] language = { "a", "and", "n'", "'n", "the", "premium", "en" };
         string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
         string[] types = { "em", "ss", "pm" };
-        string[] descriptions = { "no leds" };
+        string[] descriptions = { "no leds", "upgrade" };
         pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(types).Concat(descriptions));
         _wholeWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
 

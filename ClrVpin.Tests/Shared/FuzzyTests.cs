@@ -266,6 +266,7 @@ public class FuzzyTests
         TestName = "double parenthesis.. db and file both match, hence very high score")]
     [TestCase("NFL (Stern 2001)", "NFL (Vikings) (Stern 2001).directb2s", 100, TestName = "double parenthesis - match without parenthesis, without any bonus score for the tilte length")]
     [TestCase("Shrek (Stern 2008)", "1826898402_Shrek(Stern2008)(MOD)1.0.vpx", 220, TestName = "pre-parsing should remove '(MOD)' so that the file name can be properly split")]
+    [TestCase("Fire! (Williams 1987)", "Fire!_Upgrade.vpx", 145, TestName = "keyword: upgrade")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
