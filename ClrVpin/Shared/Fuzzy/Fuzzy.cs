@@ -99,7 +99,8 @@ public static class Fuzzy
         {
             new("big injun", "Big Indian"),
             new("caddie (playmatic 1970)", "Caddie (Playmatic 1976)"), // very special alias where the 1970 and 1975 version are indistinguishable according to IPDB
-            new("GOTG", "Guardians Of The Galaxy") 
+            new("GOTG", "Guardians Of The Galaxy"),
+            new("Dale Jr Nascar", "Dale Jr"), // special case.. 'nascar' refers to the table used as a basis, 'dale jr' is a limited run of 'nascar'
         };
 
         // remove parenthesis and contents
@@ -432,8 +433,10 @@ public static class Fuzzy
         return yearMatchScore;
     }
 
-    private static int GetNameMatchScore(FuzzyItemNameDetails first, FuzzyItemNameDetails second, bool isLevenshteinEnabled) => GetNameMatchScore(first.Name, first.NameWithoutWhiteSpace, first.NameWithoutParenthesis, second.Name,
-        second.NameWithoutWhiteSpace, second.NameWithoutParenthesis, isLevenshteinEnabled);
+    private static int GetNameMatchScore(FuzzyItemNameDetails first, FuzzyItemNameDetails second, bool isLevenshteinEnabled)
+    {
+        return GetNameMatchScore(first.Name, first.NameWithoutWhiteSpace, first.NameWithoutParenthesis, second.Name, second.NameWithoutWhiteSpace, second.NameWithoutParenthesis, isLevenshteinEnabled);
+    }
 
     private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string firstNoParenthesis, string second, string secondNoWhiteSpace, string secondNoParenthesis, bool isLevenshteinEnabled, int noMatchScore = 0)
     {
