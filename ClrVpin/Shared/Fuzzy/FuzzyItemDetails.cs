@@ -6,17 +6,17 @@ public class FuzzyItemNameDetails
 {
     public string ActualName { get; protected init; }
     public string Name { get; protected init;} // lower case
-    public string NameOriginalCase { get; protected init;}
+    public string ActualNameTrimmed { get; protected init;}
     public string NameWithoutWhiteSpace { get; protected init;}
     public string NameWithoutParenthesis { get; protected init;}
 }
 
 public class FuzzyItemDetails : FuzzyItemNameDetails
 {
-    public FuzzyItemDetails(string actualName, string nameOriginalCase, string name, string nameWithoutWhiteSpace, string nameWithoutParenthesis, string manufacturer, string manufacturerNoWhiteSpace, int? year)
+    public FuzzyItemDetails(string actualName, string actualNameTrimmed, string name, string nameWithoutWhiteSpace, string nameWithoutParenthesis, string manufacturer, string manufacturerNoWhiteSpace, int? year)
     {
         ActualName = actualName;
-        NameOriginalCase = nameOriginalCase;
+        ActualNameTrimmed = actualNameTrimmed;
         Name = name;
         NameWithoutWhiteSpace = nameWithoutWhiteSpace;
         NameWithoutParenthesis = nameWithoutParenthesis;

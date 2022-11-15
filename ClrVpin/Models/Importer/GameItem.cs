@@ -25,7 +25,7 @@ public class GameItem
     public int Index { get; set; }                                                                               // 1 based index of every game in the list
     
     public string Name => Names.FirstOrDefault(x => x != null);
-    public string[] Names => new[] { OnlineGame?.Name, LocalGame?.Fuzzy.TableDetails?.NameOriginalCase };        // for unmatched, default to the fuzzy parsed table name
+    public string[] Names => new[] { OnlineGame?.Name, LocalGame?.Fuzzy.TableDetails?.ActualNameTrimmed };        // for unmatched, default to the fuzzy parsed table name
 
     public string Manufacturer => Manufacturers.FirstOrDefault(x => x != null);
     public string[] Manufacturers => new[] { OnlineGame?.Manufacturer, LocalGame?.Game.Manufacturer };

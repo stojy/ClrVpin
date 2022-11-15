@@ -133,7 +133,7 @@ public static class Fuzzy
         var cleanManufacturer = CleanPostSplit(manufacturer, false);
         var cleanManufacturerNoWhiteSpace = CleanPostSplit(manufacturer, true);
 
-        return new FuzzyItemDetails(sourceName, cleanName?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
+        return new FuzzyItemDetails(sourceName, sourceName?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
             cleanManufacturer.ToNullLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToNullLowerAndTrim(), year);
     }
 
