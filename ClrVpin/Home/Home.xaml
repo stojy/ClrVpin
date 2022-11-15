@@ -19,7 +19,7 @@
                            Style="{DynamicResource MaterialWindowStyle}"
                            BorderBackgroundBrush="Transparent"
                            Background="Transparent">
-  
+
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
@@ -136,11 +136,22 @@
             </DataTemplate>
           </materialDesign:DialogHost.DialogContentTemplate>
 
-          <!-- MaterialDesignExtension does NOT correctly handle WindowStyle=None and unfortunately still allocates a hidden title bar :(
+          <!-- MaterialDesignExtension does NOT correctly handle WindowStyle=None and unfortunately still allocates a hidden title bar that is clickable :(
                - this is the main reason why the 'close' button has been shifted from the top right (i.e. simulating the title bar close button) to the bottom buttons
+               - the 25 height margin is to ensure the application sits below the title bar so the right click menu isn't available
           -->
-          <StackPanel>
-            <Image Source="/Resources/ClrVpin.png" Height="350" Margin="5" MouseDown="ImageMouseDown" />
+          <StackPanel Margin="0,25">
+            <Grid>
+              <Image Source="/Resources/ClrVpin.png" Height="400" Margin="5" MouseDown="ImageMouseDown" />
+              <!--<Button Command="{Binding CloseCommand}"
+                      Style="{StaticResource RaisedAccentDarkButtonStyle}"
+                      Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}" 
+                      Width="50" Height="50"
+                      HorizontalAlignment="Right" VerticalAlignment="Top"
+                      ToolTip="Close ClrVpin">
+                <materialDesign:PackIcon Kind="Close" Height="40" Width="40" HorizontalAlignment="Center" />
+              </Button>-->
+            </Grid>
 
             <WrapPanel Margin="5" Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
               <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentDarkButtonStyle}"
