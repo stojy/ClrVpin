@@ -48,9 +48,9 @@ public static class ImporterFix
             {
                 { "Tables", new FileCollection(game.TableFiles) },
                 { "Backglasses", new FileCollection(game.B2SFiles) },
+                { "DMDs", new FileCollection(game.AltColorFiles) },
                 { "Wheels", new FileCollection(game.WheelArtFiles) },
                 { "ROMs", new FileCollection(game.RomFiles) },
-                { "DMDs", new FileCollection(game.AltColorFiles) },
                 { "Media Packs", new FileCollection(game.MediaPackFiles) },
                 { "Sounds", new FileCollection(game.SoundFiles) },
                 { "Toppers", new FileCollection(game.TopperFiles) },
