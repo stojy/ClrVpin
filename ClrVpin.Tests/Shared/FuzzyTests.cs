@@ -118,7 +118,7 @@ public class FuzzyTests
 
         Assert.That(cleanName, Is.EqualTo(expectedName));
     }
-    
+
     [Test]
     [TestCase(null, false, "", TestName = "handle null")]
     [TestCase("1826898402_Shrek1.0", false, "1826898402_Shrek1.0", TestName = "no change #1 - file extensions n/a")]
@@ -187,28 +187,38 @@ public class FuzzyTests
     }
 
     [Test]
+    // exact match
     [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern)", 179, TestName = "exact name and missing year")]
     [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", 229, TestName = "exact name and exact year")]
     [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1994)", 219, TestName = "exact name and +/-1 year")]
     [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1995)", 129, TestName = "exact name and +/-2 year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1996)",  79, TestName = "exact name and +/-3 year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1997)",  -821, TestName = "exact name and +/-3 year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1996)", 79, TestName = "exact name and +/-3 year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks (Stern 1997)", -821, TestName = "exact name and +/-3 year")]
+    // starts with
     [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern)", 129, TestName = "starts name 15char and missing year")]
     [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1993)", 179, TestName = "starts name 15char and exact year")]
-    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1995)",  79, TestName = "starts name 15char and +/-2 year")]
+    [TestCase("Indiana Jones Rocks (Stern 1993)", "Indiana Jones Rocks Baby (Stern 1995)", 79, TestName = "starts name 15char and +/-2 year")]
     [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern)", 84, TestName = "starts name 10char and missing year")]
     [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1993)", 134, TestName = "starts name 10char and exact year")]
     [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1992)", 124, TestName = "starts name 10char and +/-1 year")]
-    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1991)",  34, TestName = "starts name 10char and +/-1 year")]
-    [TestCase("CARtoon baby (Stern 1993)", "CARtoon (Stern 1993)", 68, TestName = "starts name 7 char and exact year")]
+    [TestCase("Indiana Jones (Stern 1993)", "Indiana Jones Rocks (Stern 1991)", 34, TestName = "starts name 10char and +/-1 year")]
+    [TestCase("CARtoon baby (Stern 1993)", "CARtoons (Stern 1993)", 68, TestName = "starts name 7 char and exact year - no match")]
     [TestCase("CARtoons baby (Stern 1993)", "CARtoons (Stern 1993)", 124, TestName = "starts name 8 char and exact year")]
+    [TestCase("CARty baby (Stern 1993)", "CARty (Stern 1993)", 101, TestName = "starts name match #1 - correct manufacturer/year")]
+    [TestCase("The Getaway High Speed II (Williams 1992)", "Getaway_(Williams 1992)_mod_1.0.vpx", 109, TestName = "starts name match #1 - clean name matches and correct manufacturer/year")]
+    [TestCase("The Getaway High Speed II (Williams 1992)", "Getawayii_(Williams 1992)_mod_1.0.vpx", 74, TestName = "starts name match #2 - no name name match and correct manufacturer/year")]
+    [TestCase("The awesome Getaway High Speed II (Williams 1992)", "Getaway_(Williams 1992)_mod_1.0.vpx", 80, TestName = "starts name match #3 - no name name match and correct manufacturer/year")]
+    [TestCase("Getaway (Williams 1992)", "the getaway high speed ii (Williams 1992)_mod_1.0.vpx", 100, TestName = "starts name match #4 - clean file name matches and correct manufacturer/year with lesser length")]
+    [TestCase("Avatar (Stern 2010)", "Avatar, James Cameron's (Stern 2010)", 100, TestName = "starts name match #5 - name has starts with match, manufacturer is exact match")]
+    [TestCase("Avatar (Stern 2010)", "Avatar, James Cameron's (Sterny 2010)", 75, TestName = "starts name match #6 - name has starts with match, but manufacturer does not because manufacturer is deliberatley not supported")]
+    // contains
     [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern)", 133, TestName = "contains name 20char and missing year")]
     [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1993)", 183, TestName = "contains name 20char and exact year")]
     [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1994)", 173, TestName = "contains name 20char and +/-1 year")]
     [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", 85, TestName = "contains name 13char and missing year")]
     [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", 135, TestName = "contains name 13char and exact year")]
     [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", 125, TestName = "contains name 13char and +/-1 year")]
-    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)",  35, TestName = "contains name 13char and +/-2 year")]
+    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", 35, TestName = "contains name 13char and +/-2 year")]
     [TestCase("Back To The Future (Data East 1990)", "Back To The Future Starlion MoD 1.0.directb2s", 149, TestName = "manufacturer and year missing")]
     [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", 202, TestName = "after chars removed - perfect match, no manufacturer/year")]
     [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 213 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", 152, TestName = "after chars removed - partial match, no manufacturer/year")]
@@ -227,9 +237,9 @@ public class FuzzyTests
     [TestCase(@"The Walking Dead (Stern 2014)", @"'The Walking Dead (Stirn 2014)", 198, TestName = "manufacturer - misspelt name 1 char but manufacturer too small, manufacturer name wrong by 1 char")]
     [TestCase(@"Whoa Nellie Big Juicy Melons (Stern 2015)", @"Whoa Nellie! Big Juicy Melons (WhizBang Pinball 2011)", -840, TestName = "manufacturer - incorrect, also year wrong")]
     [TestCase(@"Whoa Nellie Big Juicy Melons (Stern 2015)", @"Whoa Nellie! Big Juicy Melons (Stern 2015)", 235, TestName = "manufacturer - correct")]
-    [TestCase(@"X-Men LE (Stern 2012)", "X-Men (Stern 2012)", 65, TestName = "name - too short to get decent match")]
+    [TestCase(@"X-Men LE (Stern 2012)", "X-Men (Stern 2012)", 100, TestName = "name - too short to get decent match, but matches completely with a 'starts with'")]
     [TestCase(@"X-Men (Stern 2012)", "X-Men (Stern 2012)", 220, TestName = "name - short name exact match")]
-    [TestCase("Batman 66 (Stern 2016)", "The Batman (Original 2022)", -1010, TestName = "low match - database to feed #2, manufacturer mismatch")]
+    [TestCase("Batman 66 (Stern 2016)", "The Batman (Original 2022)", -975, TestName = "low match - database to feed #2, manufacturer mismatch")]
     [TestCase("Batman 66 (Stern 2016)", "Batman 66 (Original 2018)", 95, TestName = "low match - database to feed #1, manufacturer mismatch")]
     [TestCase("Batman 66 (Original 2018)", "Batman 66 (Stern 2016).vpx", 95, TestName = "low match - database (after feed update) to file, no manufacturer/year")]
     [TestCase("Aces & Kings (Williams 1970)", "Aces and Kings (Williams 1970).vpx", 221, TestName = "And vs &.. both should be stripped to ensure a strong match")]
@@ -243,15 +253,10 @@ public class FuzzyTests
     [TestCase("Roller Derby (Bally 1960)", "Bally Roller Derby 2.0.vpx", 173, TestName = "non-standard naming.. extract manufacturer from name")]
     [TestCase("Wolverine (Zen Studios 2013)", "X-Men Wolverine LE (Stern 2012).vpx", 31, TestName = "partial name match and no manufacturer/year.. expected to fail")]
     [TestCase("Mac's Galaxy (MAC S.A. 1986)", "Mac Galaxy (MAC 1986).vpx", 42, TestName = "similar match, but 's' preventing a better score")]
-    // interesting example..
-    // - importer: database description (not name!) matches online
-    // - importer: database updated description *and name* --> via 'overwrite all properties'
-    // - scanner:  fails to match existing file to the updated database description *or name* --> because online name is too different to the original database name (which is same as file name)
-    [TestCase("Avatar (Stern 2010)", "Avatar, James Cameron's (Stern 2010)", 65, TestName = "online matching scenario - database name to online (forward).. expected failure")]
     [TestCase("James Camerons Avatar (Limited Edition) (Stern 2010)", "Avatar, James Cameron's (Stern 2010)", 145, TestName = "online matching scenario - database desc to online (forward).. expected hit against 'james cameron'")]
     [TestCase("Avatar, James Cameron's (Stern 2010)", "James Camerons Avatar (Limited Edition) (Stern 2010)", 141,
         TestName = "online matching scenario - online to database desc (reverse.. does not happen).. unexpected(?) lower score")]
-    [TestCase("Avatar, James Cameron's (Stern 2010)", "Avatar (Stern 2010).vpx", 76, TestName = "online matching scenario - after DB name & desc sync'd.. unable to match existing file (same as name)")]
+    [TestCase("Avatar, James Cameron's (Stern 2010)", "Avatar (Stern 2010).vpx", 111, TestName = "online matching scenario - has 'starts with' match, after DB name & desc sync'd.. unable to match existing file (same as name)")]
     [TestCase("Batman (Data East 1991)", "Batman Balutito MOD.directb2s", 145, TestName = "author + mod file description, no manufacturer/year")]
     [TestCase("Big Indian (Gottlieb 1974)", "Big injun.directb2s", 146, TestName = "alias #1 - table with dual names, no manufacturer/year")]
     [TestCase("Caddie (Playmatic 1975)", "Caddie (Playmatic 1970).directb2s", 210, TestName = "alias #2 - very special case where 1970 and 1975 tables are indistinguishable as per IPDB")]
@@ -260,9 +265,9 @@ public class FuzzyTests
     [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS Stern 2015.directb2s", 110, TestName = "double parenthesis.. the first is the table variant and considered part of name & hence lower match score despite manufacturer/year match")]
     [TestCase("Kiss (Limited Edition)", "KISS Stern 2015.directb2s", 145, TestName = "single parenthesis #1.. 'limited edition' is interpreted as the manufacturer, hence an exact match on title")]
     [TestCase("Kiss (Stern 2015)", "KISS (Limited Edition) Stern 2015.directb2s", 145, TestName = "single parenthesis #2.. 'limited edition' is interpreted as the manufacturer, hence an exact match on title")]
-    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) Stern 2015.directb2s", 35, 
+    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) Stern 2015.directb2s", 35,
         TestName = "double parenthesis.. db first parenthesis part of table name, file parenthesis considered part of manufacturer/year (which is incorrect).. hence very low match")]
-    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) (Stern 2015).directb2s", 230, 
+    [TestCase("Kiss (Limited Edition) (Stern 2015)", "KISS (Limited Edition) (Stern 2015).directb2s", 230,
         TestName = "double parenthesis.. db and file both match, hence very high score")]
     [TestCase("NFL (Stern 2001)", "NFL (Vikings) (Stern 2001).directb2s", 100, TestName = "double parenthesis - match without parenthesis, without any bonus score for the tilte length")]
     [TestCase("Shrek (Stern 2008)", "1826898402_Shrek(Stern2008)(MOD)1.0.vpx", 220, TestName = "pre-parsing should remove '(MOD)' so that the file name can be properly split")]
@@ -279,6 +284,7 @@ public class FuzzyTests
         Assert.That(score, Is.EqualTo(expectedScore));
         Assert.That(success, Is.EqualTo(expectedScore >= 100));
     }
+
     [Test]
     [TestCase("too small", 0)]
     [TestCase("a little bigger", 4)]

@@ -386,8 +386,8 @@ public static class Fuzzy
         //   e.g. ~1k missing tables x ~1k database entries = ~1M calculations taking about 120s (on my i7 10th gen rig)
         // - any positive score is deemed ok at this stage
         var matchesContainingFileName = orderedMatches.Where(match =>
-            GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Name, match.LocalGame.Derived.NameLowerCase, null, false) > 0 ||
-            GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Description, match.LocalGame.Derived.DescriptionLowerCase, null, false) > 0).ToList();
+            GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Name, match.LocalGame.Derived.NameLowerCase, null, false, 0 , true) > 0 ||
+            GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Description, match.LocalGame.Derived.DescriptionLowerCase, null, false, 0 , true) > 0).ToList();
 
         // only considered a 'unique match' if it matches EXACTLY twice.. one for table and description
         return matchesContainingFileName.Count == 2 ? matchesContainingFileName.First() : null;
@@ -436,12 +436,15 @@ public static class Fuzzy
 
     private static int GetNameMatchScore(FuzzyItemNameDetails first, FuzzyItemNameDetails second, bool isLevenshteinEnabled)
     {
-        return GetNameMatchScore(first.Name, first.NameWithoutWhiteSpace, first.NameWithoutParenthesis, second.Name, second.NameWithoutWhiteSpace, second.NameWithoutParenthesis, isLevenshteinEnabled);
+        return GetNameMatchScore(first.Name, first.NameWithoutWhiteSpace, first.NameWithoutParenthesis, second.Name, second.NameWithoutWhiteSpace, second.NameWithoutParenthesis, isLevenshteinEnabled, 0, true);
     }
 
-    private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string firstNoParenthesis, string second, string secondNoWhiteSpace, string secondNoParenthesis, bool isLevenshteinEnabled, int noMatchScore = 0)
+    private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string firstNoParenthesis, string second, string secondNoWhiteSpace, string secondNoParenthesis, 
+        bool isLevenshteinEnabled, int noMatchScore = 0, bool isTitle = false)
     {
         // matching order is important.. highest priority matches must be first!
+        
+        // exact match
         var score = IsExactMatch(first, second) ? 150 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
             score = IsExactMatch(firstNoWhiteSpace, secondNoWhiteSpace) ? 150 : 0;
@@ -452,6 +455,7 @@ public static class Fuzzy
         if (score == 0 && isLevenshteinEnabled)
             score = IsLevenshteinMatch(14, 2, secondNoWhiteSpace, firstNoWhiteSpace) ? 120 : 0;
 
+        // starts with
         if (score == 0)
             score = IsStartsMatch(14, first, second) ? 100 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
@@ -467,6 +471,7 @@ public static class Fuzzy
         if (score == 0)
             score = IsStartsMatch(8, secondNoWhiteSpace, firstNoWhiteSpace) ? 50 : 0;
 
+        // contains
         if (score == 0)
             score = IsContainsMatch(17, first, second) ? 100 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
@@ -482,13 +487,25 @@ public static class Fuzzy
         if (score == 0)
             score = IsContainsMatch(11, secondNoWhiteSpace, firstNoWhiteSpace) ? 30 : 0;
 
+        // starts and ends
         if (score == 0)
             score = IsStartsAndEndsMatch(7, 8, first, second) ? 60 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
             score = IsStartsAndEndsMatch(7, 8, secondNoWhiteSpace, firstNoWhiteSpace) ? 60 : 0;
 
+        // exact match - without parenthesis
         if (score == 0)
             score = IsExactMatch(firstNoParenthesis, secondNoParenthesis) ? 35 : 0;
+
+        // title specific matching
+        if (isTitle)
+        {
+            // starts with - limited to source length of strings, i.e. which can be less than the earlier prescribed length breakpoints of 14, 10, and 8
+            if (score == 0)
+                score = IsStartsMatch(first, second) ? 30 + ScoringNoWhiteSpaceBonus : 0;
+            if (score == 0)
+                score = IsStartsMatch(secondNoWhiteSpace, firstNoWhiteSpace) ? 30 : 0;
+        }
 
         // no match could represent either missing data (e.g. no manufacturer) or a mismatch (e.g. wrong manufacturer)
         if (score == 0)
@@ -528,6 +545,15 @@ public static class Fuzzy
             return false;
 
         return first.StartsWith(second.Remove(minStringLength)) || second.StartsWith(first.Remove(minStringLength));
+    }
+
+    private static bool IsStartsMatch(string first, string second)
+    {
+        if (first == null || second == null)
+            return false;
+
+        // does either string start with the other string
+        return first.StartsWith(second) || second.StartsWith(first);
     }
 
     private static bool IsContainsMatch(int minStringLength, string first, string second)
