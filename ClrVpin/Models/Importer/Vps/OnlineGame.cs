@@ -31,7 +31,6 @@ public class OnlineGame : OnlineGameBase
     public GameHit Hit { get; set; }
 
     public TableNewContentOptionEnum? NewContentType {get; set; }
-    //public ContentTypeEnum[] NewContentTypes { get; set; }
     
     public string CreateDescription() => $"{Name?.Trim()} ({Manufacturer?.Trim()} {Year})";
 }

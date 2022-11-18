@@ -110,11 +110,11 @@ namespace ClrVpin.Importer
                 Filter = game =>
                     (Settings.SelectedTableAvailabilityOption == TableAvailabilityOptionEnum.Both || game.OnlineGame?.TableAvailability == Settings.SelectedTableAvailabilityOption) &&
                     (Settings.SelectedTableNewContentOption == TableNewContentOptionEnum.All || game.OnlineGame?.NewContentType == Settings.SelectedTableNewContentOption) &&
-                    (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || Settings.SelectedTableMatchOption == game.TableMatchType) &&
-                    (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || Settings.SelectedTableStyleOption == game.TableStyleOption) &&
-                    (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
-                    (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.OnlineGame?.YearString, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
-                    (Settings.SelectedTypeFilter == null || string.CompareOrdinal(Settings.SelectedTypeFilter, 0, game.Type, 0, 50) == 0) &&
+                    (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || game.TableMatchType == Settings.SelectedTableMatchOption) &&
+                    (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || game.TableStyleOption == Settings.SelectedTableStyleOption) &&
+                    (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
+                    (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
+                    (Settings.SelectedTypeFilter == null || string.CompareOrdinal(game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
                     (Settings.SelectedFormatFilter == null || game.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
                     (Settings.SelectedUpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
                     (Settings.SelectedUpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
