@@ -299,10 +299,10 @@
                           Text="{Binding Path=Settings.SelectedTableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Table"
                           Style="{StaticResource EditComboBoxStyle}"
-                          Width="363" Margin="0,0,5,0">
+                          Width="265" Margin="0,0,10,0">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
-                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                      <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
                     </controls:RoutedEventTrigger>
                   </b:Interaction.Triggers>
                 </ComboBox>
@@ -311,13 +311,19 @@
                           Text="{Binding Path=Settings.SelectedManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Manufacturer"
                           Style="{StaticResource EditComboBoxStyle}"
-                          Width="307" Margin="0">
+                          Width="230" Margin="0">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
-                      <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                      <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
                     </controls:RoutedEventTrigger>
                   </b:Interaction.Triggers>
                 </ComboBox>
+
+                <WrapPanel Margin="20,10,0,0" VerticalAlignment="Center"
+                           ToolTip="When enabled, the drop down filtering options are dynamically updated to only include values from the filtered list of displayed tables.">
+                  <ToggleButton IsChecked="{Binding Settings.IsDynamicFiltering}" Command="{Binding DynamicFilteringCommand}" />
+                  <TextBlock Margin="5,0,0,0" Text="Dynamic Filtering" />
+                </WrapPanel>
               </WrapPanel>
 
               <Grid Margin="0,10,0,0">
@@ -335,7 +341,7 @@
                             Width="65" Margin="0,0,0,0">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                        <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
                       </controls:RoutedEventTrigger>
                     </b:Interaction.Triggers>
                   </ComboBox>
@@ -347,7 +353,7 @@
                             Width="80" Margin="10,0,0,0">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                        <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
                       </controls:RoutedEventTrigger>
                     </b:Interaction.Triggers>
                   </ComboBox>
@@ -359,7 +365,7 @@
                             Width="100" Margin="10,0,0,0">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                        <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
                       </controls:RoutedEventTrigger>
                     </b:Interaction.Triggers>
                   </ComboBox>
@@ -371,7 +377,7 @@
                             Width="80" Margin="10,0,0,0">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding FilterChanged}" />
+                        <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
                       </controls:RoutedEventTrigger>
                     </b:Interaction.Triggers>
                   </ComboBox>

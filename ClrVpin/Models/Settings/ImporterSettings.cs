@@ -24,6 +24,8 @@ public class ImporterSettings
     public TableNewContentOptionEnum SelectedTableNewContentOption { get; set; } = TableNewContentOptionEnum.All;
     // ReSharper restore AutoPropertyCanBeMadeGetOnly.Global
     
+    public bool IsDynamicFiltering { get; set; }
+
     public string SelectedTableFilter { get; set; }
     public string SelectedManufacturerFilter { get; set; }
 

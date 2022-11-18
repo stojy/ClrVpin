@@ -126,12 +126,13 @@ namespace ClrVpin.Importer
             // create game collections (e.g. list of manufacturers) to be used by results and also externally by the database item dialogs
             UpdateCollections();
 
-            FilterChanged = new ActionCommand(RefreshViews);
+            DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
+            FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
 
             UpdatedFilterTimeChanged = new ActionCommand(() =>
             {
                 UpdateIsNew();
-                FilterChanged.Execute(null);
+                FilterChangedCommand.Execute(null);
             });
 
             NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
@@ -180,49 +181,53 @@ namespace ClrVpin.Importer
             TablesFilterView = new ListCollectionView<string>(tableNames)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = table => GameItemsView.Any(x => x.Name == table)
+                Filter = table => Filter(() => GameItemsView.Any(x => x.Name == table))
             };
 
             Manufacturers = GameItems.Select(x => x.Manufacturers).SelectManyUnique();
             ManufacturersFilterView = new ListCollectionView<string>(Manufacturers)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = manufacturer => GameItemsView.Any(x => x.Manufacturer == manufacturer)
+                Filter = manufacturer => Filter(() => GameItemsView.Any(x => x.Manufacturer == manufacturer))
             };
 
             Years = GameItems.Select(x => x.Years).SelectManyUnique();
             YearsBeginFilterView = new ListCollectionView<string>(Years)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = yearString => GameItemsView.Any(x => x.Year == yearString)
+                Filter = yearString => Filter(() => GameItemsView.Any(x => x.Year == yearString))
             };
             YearsEndFilterView = new ListCollectionView<string>(Years)
             {
                 // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-                Filter = yearString => GameItemsView.Any(x => x.Year == yearString)
+                Filter = yearString => Filter(() => GameItemsView.Any(x => x.Year == yearString))
             };
 
             // table HW type, i.e. SS, EM, PM
             Types = GameItems.Select(x => x.Types).SelectManyUnique();
             TypesFilterView = new ListCollectionView<string>(Types)
             {
-                Filter = type => GameItemsView.Any(x => x.Type == type)
+                Filter = type => Filter(() => GameItemsView.Any(x => x.Type == type))
             };
-
-            //todo - test Themes!
 
             // table formats - vpx, fp, etc
             // - only available via online
             Formats = GameItems.SelectMany(x => x.OnlineGame?.TableFormats ?? new List<string>()).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
             FormatsFilterView = new ListCollectionView<string>(Formats)
             {
-                Filter = format => GameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true)
+                Filter = format => Filter(() => GameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true))
             };
 
             Themes = GameItems.Select(x => x.Themes).SelectManyUnique();
             Players = GameItems.Select(x => x.Players).SelectManyUnique();
             Roms = GameItems.Select(x => x.Roms).SelectManyUnique();
             Authors = GameItems.Select(x => x.Authors).SelectManyUnique();
+        }
+
+        private bool Filter(Func<bool> dynamicFilteringFunc)
+        {
+            // only evaluate the func if dynamic filtering is enabled
+            return !Settings.IsDynamicFiltering || dynamicFilteringFunc();
         }
 
         public string AddMissingDatabaseInfoTip { get; }
@@ -255,7 +260,8 @@ namespace ClrVpin.Importer
         public GameItem SelectedGameItem { get; set; }
         public OnlineGame SelectedOnlineGame { get; private set; }
 
-        public ICommand FilterChanged { get; set; }
+        public ICommand DynamicFilteringCommand { get; }
+        public ICommand FilterChangedCommand { get; set; }
         public ICommand UpdatedFilterTimeChanged { get; set; }
 
         public ICommand NavigateToUrlCommand { get; }
@@ -303,18 +309,21 @@ namespace ClrVpin.Importer
             Window.Close();
         }
 
-        private void RefreshViews()
+        private void RefreshViews(bool refreshFilters)
         {
             // update main list
             GameItemsView.RefreshDebounce();
 
             // update filters based on what is shown in the main list
-            TablesFilterView.RefreshDebounce();
-            ManufacturersFilterView.RefreshDebounce();
-            YearsBeginFilterView.RefreshDebounce();
-            YearsEndFilterView.RefreshDebounce();
-            TypesFilterView.RefreshDebounce();
-            FormatsFilterView.RefreshDebounce();
+            if (refreshFilters)
+            {
+                TablesFilterView.RefreshDebounce();
+                ManufacturersFilterView.RefreshDebounce();
+                YearsBeginFilterView.RefreshDebounce();
+                YearsEndFilterView.RefreshDebounce();
+                TypesFilterView.RefreshDebounce();
+                FormatsFilterView.RefreshDebounce();
+            }
         }
 
         private async Task ShowSummary()
@@ -415,7 +424,7 @@ namespace ClrVpin.Importer
                     SelectedCommand = new ActionCommand(() =>
                     {
                         accessor.Set(option.Enum);
-                        FilterChanged.Execute(null);
+                        FilterChangedCommand.Execute(null);
                     })
                 };
 
@@ -452,7 +461,7 @@ namespace ClrVpin.Importer
                         };
                         Settings.SelectedUpdatedAtDateBegin = DateTime.Today.AddDays(-offset.Item1).AddMonths(-offset.Item2);
 
-                        FilterChanged.Execute(null);
+                        FilterChangedCommand.Execute(null);
                     })
                 };
                 return featureType;
