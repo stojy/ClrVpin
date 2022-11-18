@@ -118,22 +118,23 @@ public static class Fuzzy
         var cleansedName = CleanPreSplit(sourceName, isFileName);
 
         // split sourceName into table name, manufacturer, and year
-        var (name, manufacturer, year) = Split(cleansedName);
+        var (nameWithoutManufacturerOrYear, manufacturer, year) = Split(cleansedName);
 
         // fuzzy clean the name field
         // - name keeping white space
-        var cleanName = CleanPostSplit(name, false);
+        var cleanName = CleanPostSplit(nameWithoutManufacturerOrYear, false);
         // - name without white space
-        var cleanNameWithoutWhiteSpace = CleanPostSplit(name, true);
+        var cleanNameWithoutWhiteSpace = CleanPostSplit(nameWithoutManufacturerOrYear, true);
         // - name without parenthesis, e.g. "kiss (limited edition) (stern 2015)"
-        var nameWithoutParenthesis = _removeParenthesisAndContentsRegex.Replace(name ?? "", "");
+        var nameWithoutParenthesis = _removeParenthesisAndContentsRegex.Replace(nameWithoutManufacturerOrYear ?? "", "");
         var cleanNameWithoutParenthesis = CleanPostSplit(nameWithoutParenthesis, false);
 
         // fuzzy clean the manufacturer field
         var cleanManufacturer = CleanPostSplit(manufacturer, false);
         var cleanManufacturerNoWhiteSpace = CleanPostSplit(manufacturer, true);
 
-        return new FuzzyItemDetails(sourceName, sourceName?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
+        return new FuzzyItemDetails(sourceName, sourceName?.Trim() ?? "", nameWithoutManufacturerOrYear?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), 
+            cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
             cleanManufacturer.ToNullLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToNullLowerAndTrim(), year);
     }
 

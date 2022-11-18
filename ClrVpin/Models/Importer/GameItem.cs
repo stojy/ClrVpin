@@ -22,10 +22,10 @@ public class GameItem
         Update(localLocalGame);
     }
 
-    public int Index { get; set; }                                                                               // 1 based index of every game in the list
+    public int Index { get; set; } // 1 based index of every game in the list
     
     public string Name => Names.FirstOrDefault(x => x != null);
-    public string[] Names => new[] { OnlineGame?.Name, LocalGame?.Fuzzy.TableDetails?.ActualNameTrimmed };        // for unmatched, default to the fuzzy parsed table name
+    public string[] Names => new[] { OnlineGame?.Name, LocalGame?.Fuzzy.TableDetails?.ActualNameWithoutManufacturerOrYear }; // for unmatched, default to the fuzzy split table name to avoid manufacturer/year info
 
     public string Manufacturer => Manufacturers.FirstOrDefault(x => x != null);
     public string[] Manufacturers => new[] { OnlineGame?.Manufacturer, LocalGame?.Game.Manufacturer };
