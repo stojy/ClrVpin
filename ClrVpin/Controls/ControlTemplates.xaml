@@ -24,7 +24,8 @@
       <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" 
                  MinWidth="{TemplateBinding controls:GenericAttached.Double}" 
                  FontSize="{TemplateBinding controls:GenericAttached.Double2}"
-                 Style="{StaticResource KeyTextBlockAutoStyle}" />
+                 Style="{StaticResource KeyTextBlockAutoStyle}"
+                 ToolTip="{TemplateBinding controls:GenericAttached.String2}"/>
       <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" />
     </WrapPanel>
   </ControlTemplate>

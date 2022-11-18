@@ -6,5 +6,5 @@ public enum TableNewContentOptionEnum
 {
     [Description("Table, Backglass, DMD")] TableBackglassDmd,
     [Description("Other")] Other,
-    [Description("All")] All
+    [Description("Any")] Any
 }

@@ -6,6 +6,6 @@ namespace ClrVpin.Models.Importer
     {
         [Description("Available")] Available,
         [Description("Unavailable")] Unavailable,
-        [Description("Both")] Both
+        [Description("Any")] Any
     }
 }

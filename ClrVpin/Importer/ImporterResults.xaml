@@ -299,7 +299,8 @@
                           Text="{Binding Path=Settings.SelectedTableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Table"
                           Style="{StaticResource EditComboBoxStyle}"
-                          Width="265" Margin="0,0,10,0">
+                          Width="265" Margin="0,0,10,0"
+                          ToolTip="Filter the tables based on the table name.">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -311,7 +312,8 @@
                           Text="{Binding Path=Settings.SelectedManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Manufacturer"
                           Style="{StaticResource EditComboBoxStyle}"
-                          Width="230" Margin="0">
+                          Width="230" Margin="0"
+                          ToolTip="Filter the tables based on the manufacturer.">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -338,7 +340,8 @@
                             SelectedItem="{Binding Path=Settings.SelectedTypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             materialDesign:HintAssist.Hint="Type"
                             Style="{StaticResource ComboBoxStyle}"
-                            Width="65" Margin="0,0,0,0">
+                            Width="65" Margin="0,0,0,0" 
+                            ToolTip="Filter the tables based on the table construction type.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -350,7 +353,8 @@
                             SelectedItem="{Binding Path=Settings.SelectedFormatFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             materialDesign:HintAssist.Hint="Format"
                             Style="{StaticResource ComboBoxStyle}"
-                            Width="80" Margin="10,0,0,0">
+                            Width="80" Margin="10,0,0,0"
+                            ToolTip="Filter the tables based on the emulator. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -362,7 +366,8 @@
                             SelectedItem="{Binding Path=Settings.SelectedYearBeginFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             materialDesign:HintAssist.Hint="Year From"
                             Style="{StaticResource ComboBoxStyle}"
-                            Width="100" Margin="10,0,0,0">
+                            Width="100" Margin="10,0,0,0"
+                            ToolTip="Filter the tables based on the earliest manufacture year.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -374,7 +379,8 @@
                             SelectedItem="{Binding Path=Settings.SelectedYearEndFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             materialDesign:HintAssist.Hint="Year To"
                             Style="{StaticResource ComboBoxStyle}"
-                            Width="80" Margin="10,0,0,0">
+                            Width="80" Margin="10,0,0,0"
+                            ToolTip="Filter the tables based on the latest manufacture year.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -395,8 +401,12 @@
                     </Style>
                   </WrapPanel.Resources>
 
-                  <DatePicker materialDesign:HintAssist.Hint="Updated From" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.SelectedUpdatedAtDateBegin}"
-                              DisplayDateEnd="{Binding Settings.SelectedUpdatedAtDateEnd}" Margin="0">
+                  <DatePicker materialDesign:HintAssist.Hint="Updated From" 
+                              Style="{StaticResource DatePickerStyle}" 
+                              SelectedDate="{Binding Settings.SelectedUpdatedAtDateBegin}"
+                              DisplayDateEnd="{Binding Settings.SelectedUpdatedAtDateEnd}" 
+                              Margin="0"
+                              ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                         <b:InvokeCommandAction Command="{Binding UpdatedFilterTimeChanged}" />
@@ -404,8 +414,11 @@
                     </b:Interaction.Triggers>
                   </DatePicker>
 
-                  <DatePicker materialDesign:HintAssist.Hint="Updated To" Style="{StaticResource DatePickerStyle}" SelectedDate="{Binding Settings.SelectedUpdatedAtDateEnd}"
-                              DisplayDateStart="{Binding Settings.SelectedUpdatedAtDateBegin}">
+                  <DatePicker materialDesign:HintAssist.Hint="Updated To" 
+                              Style="{StaticResource DatePickerStyle}" 
+                              SelectedDate="{Binding Settings.SelectedUpdatedAtDateEnd}"
+                              DisplayDateStart="{Binding Settings.SelectedUpdatedAtDateBegin}"
+                              ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                         <b:InvokeCommandAction Command="{Binding UpdatedFilterTimeChanged}" />
@@ -418,7 +431,7 @@
                                            PopupMode="Click"
                                            PopupUniformCornerRadius="5"
                                            Width="30"
-                                           ToolTip="Preset Dates">
+                                           ToolTip="Filter the tables based on when the table was last updated via the preset dates. Ignored for unmatched tables.">
                     <ItemsControl ItemsSource="{Binding PresetDateOptionsView}">
                       <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -441,13 +454,19 @@
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ContentControl Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Fuzzy" controls:GenericAttached.Double="60" controls:GenericAttached.Double2="14">
+                <ContentControl Template="{StaticResource KeyValueAutoPair}" 
+                                controls:GenericAttached.String="Fuzzy"
+                                controls:GenericAttached.String2="Filter the tables based on whether the fuzzy matching was successful."
+                                controls:GenericAttached.Double="60" controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableMatchOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Style" controls:GenericAttached.Double="60"
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" 
+                                controls:GenericAttached.String="Style" 
+                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
+                                controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableStyleOptionsView}" />
                 </ContentControl>
@@ -459,13 +478,20 @@
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ContentControl Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.Double="60" controls:GenericAttached.Double2="14">
+                <ContentControl Template="{StaticResource KeyValueAutoPair}" 
+                                controls:GenericAttached.String="Updated" 
+                                controls:GenericAttached.String2="Filter the tables based on the type of content that was updated. Not applicable for unmatched tables."
+                                controls:GenericAttached.Double="60" 
+                                controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableNewContentOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" controls:GenericAttached.String="Table" controls:GenericAttached.Double="60"
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" 
+                                controls:GenericAttached.String="Table" 
+                                controls:GenericAttached.String2="Filter the tables based on whether the table can be downloaded. Not applicable for unmatched tables."
+                                controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableAvailabilityOptionsView}" />
                 </ContentControl>
@@ -478,6 +504,7 @@
               <WrapPanel Margin="0,5,0,0">
                 <ContentControl Template="{StaticResource KeyValuePair}"
                                 controls:GenericAttached.String="Existing Tables"
+                                controls:GenericAttached.String2="tba"
                                 controls:GenericAttached.Double="100"
                                 controls:GenericAttached.Double2="14">
                   <WrapPanel>

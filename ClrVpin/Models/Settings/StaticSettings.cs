@@ -108,14 +108,14 @@ namespace ClrVpin.Models.Settings
         {
             new() {Enum = TableAvailabilityOptionEnum.Available, Tip = "Tables that are available for download, i.e. valid table URL(s) exist"},
             new() {Enum = TableAvailabilityOptionEnum.Unavailable, Tip = "Tables that are unavailable for download, i.e. no valid URL(s) exist"},
-            new() {Enum = TableAvailabilityOptionEnum.Both, Tip = "Available and unavailable tables"}
+            new() {Enum = TableAvailabilityOptionEnum.Any, Tip = "Available and unavailable tables"}
         };
         
         public static readonly EnumOption<TableNewContentOptionEnum>[] TableNewContentOptions =
         {
             new() {Enum = TableNewContentOptionEnum.TableBackglassDmd, Tip = "Tables with new content of type: Table, Backglass, or DMDs"},
             new() {Enum = TableNewContentOptionEnum.Other, Tip = "Tables with new content of type: Wheels, ROMs, Media Packs, Sounds, Toppers, PuP Packs, POVs, Alt. Sounds, or Rules"},
-            new() {Enum = TableNewContentOptionEnum.All, Tip = "Tables with new content of any type, including any unmatched tables where new content is n/a"}
+            new() {Enum = TableNewContentOptionEnum.Any, Tip = "Tables with new content of any type, including any unmatched tables where new content is n/a"}
         };
 
         // all possible file merge options - to be used elsewhere (importer)

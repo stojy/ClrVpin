@@ -20,8 +20,8 @@ public class ImporterSettings
     // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global - setter is assigned member expression, refer Accessor.cs
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
     public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.All;
-    public TableAvailabilityOptionEnum SelectedTableAvailabilityOption { get; set; } = TableAvailabilityOptionEnum.Both;
-    public TableNewContentOptionEnum SelectedTableNewContentOption { get; set; } = TableNewContentOptionEnum.All;
+    public TableAvailabilityOptionEnum SelectedTableAvailabilityOption { get; set; } = TableAvailabilityOptionEnum.Any;
+    public TableNewContentOptionEnum SelectedTableNewContentOption { get; set; } = TableNewContentOptionEnum.Any;
     // ReSharper restore AutoPropertyCanBeMadeGetOnly.Global
     
     public bool IsDynamicFiltering { get; set; }

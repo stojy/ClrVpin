@@ -50,8 +50,8 @@ namespace ClrVpin.Importer
 
             TableStyleOptionsView = CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured, () => Model.Settings.Importer.SelectedTableStyleOption);
             TableMatchOptionsView = CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All, () => Model.Settings.Importer.SelectedTableMatchOption);
-            TableAvailabilityOptionsView = CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Both, () => Model.Settings.Importer.SelectedTableAvailabilityOption);
-            TableNewContentOptionsView = CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.All, () => Model.Settings.Importer.SelectedTableNewContentOption);
+            TableAvailabilityOptionsView = CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any, () => Model.Settings.Importer.SelectedTableAvailabilityOption);
+            TableNewContentOptionsView = CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any, () => Model.Settings.Importer.SelectedTableNewContentOption);
             PresetDateOptionsView = CreatePresetDateOptionsView(StaticSettings.PresetDateOptions);
 
             // assign VM properties
@@ -108,8 +108,8 @@ namespace ClrVpin.Importer
                 // filter the table names list to reflect the various view filtering criteria
                 // - quickest checks placed first to short circuit evaluation of more complex checks
                 Filter = game =>
-                    (Settings.SelectedTableAvailabilityOption == TableAvailabilityOptionEnum.Both || game.OnlineGame?.TableAvailability == Settings.SelectedTableAvailabilityOption) &&
-                    (Settings.SelectedTableNewContentOption == TableNewContentOptionEnum.All || game.OnlineGame?.NewContentType == Settings.SelectedTableNewContentOption) &&
+                    (Settings.SelectedTableAvailabilityOption == TableAvailabilityOptionEnum.Any || game.OnlineGame?.TableAvailability == Settings.SelectedTableAvailabilityOption) &&
+                    (Settings.SelectedTableNewContentOption == TableNewContentOptionEnum.Any || game.OnlineGame?.NewContentType == Settings.SelectedTableNewContentOption) &&
                     (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || game.TableMatchType == Settings.SelectedTableMatchOption) &&
                     (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || game.TableStyleOption == Settings.SelectedTableStyleOption) &&
                     (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
