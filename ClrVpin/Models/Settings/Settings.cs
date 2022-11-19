@@ -57,11 +57,11 @@ namespace ClrVpin.Models.Settings
             Scanner.SelectedCheckHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
             Scanner.SelectedFixHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
 
-            Rebuilder = new RebuilderSettings();
-            Rebuilder.SelectedMatchTypes.AddRange(StaticSettings.MatchTypes.Select(x => x.Enum).ToList());
-            Rebuilder.SelectedIgnoreCriteria.AddRange(StaticSettings.IgnoreCriteria.Select(x => x.Enum).ToList());
-            Rebuilder.SelectedMergeOptions.AddRange(StaticSettings.MergeOptions.Select(x => x.Enum).ToList());
-            Rebuilder.DeleteIgnoredFiles = true;
+            Merger = new MergerSettings();
+            Merger.SelectedMatchTypes.AddRange(StaticSettings.MatchTypes.Select(x => x.Enum).ToList());
+            Merger.SelectedIgnoreCriteria.AddRange(StaticSettings.IgnoreCriteria.Select(x => x.Enum).ToList());
+            Merger.SelectedMergeOptions.AddRange(StaticSettings.MergeOptions.Select(x => x.Enum).ToList());
+            Merger.DeleteIgnoredFiles = true;
 
             Importer = new ImporterSettings();
             Importer.SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
@@ -110,7 +110,7 @@ namespace ClrVpin.Models.Settings
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
         public ScannerSettings Scanner { get; set; }
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
-        public RebuilderSettings Rebuilder { get; set; }
+        public MergerSettings Merger { get; set; }
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
         public ImporterSettings Importer { get; set; }
 
@@ -137,7 +137,7 @@ namespace ClrVpin.Models.Settings
         // - refer ctor
         public ContentType[] GetSelectedCheckContentTypes() => GetFixableContentTypes().Where(type => Scanner.SelectedCheckContentTypes.Contains(type.Description)).ToArray();
 
-        public ContentType GetSelectedDestinationContentType() => AllContentTypes.First(x => x.Description == Rebuilder.DestinationContentType);
+        public ContentType GetSelectedDestinationContentType() => AllContentTypes.First(x => x.Description == Merger.DestinationContentType);
         public ContentType GetContentType(ContentTypeEnum contentTypeEnum) => AllContentTypes.First(x => x.Enum == contentTypeEnum);
 
         private DefaultSettings _defaultSettings;

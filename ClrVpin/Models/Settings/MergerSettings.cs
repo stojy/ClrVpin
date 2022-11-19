@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ClrVpin.Models.Rebuilder;
+using ClrVpin.Models.Merger;
 using ClrVpin.Models.Shared;
 using PropertyChanged;
 using Utils;
@@ -8,9 +8,9 @@ using Utils;
 namespace ClrVpin.Models.Settings
 {
     [AddINotifyPropertyChangedInterface]
-    public class RebuilderSettings
+    public class MergerSettings
     {
-        public RebuilderSettings()
+        public MergerSettings()
         {
             SourceFolder = SpecialFolder.Downloads;
             

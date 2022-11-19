@@ -24,11 +24,11 @@ namespace ClrVpin.Scanner
 
             SelectedCheckContentTypes = Settings.Scanner.SelectedCheckContentTypes;
 
-            // rebuilder doesn't support check and fix separately
+            // merger doesn't support check and fix separately
             SelectedCheckHitTypes = Settings.Scanner.SelectedCheckHitTypes.ToList();
             SelectedFixHitTypes = Settings.Scanner.SelectedFixHitTypes.ToList();
 
-            // unlike rebuilder, the total count represents the number of LocalGames
+            // unlike merger, the total count represents the number of LocalGames
             TotalCount = Games.Count;
         }
 

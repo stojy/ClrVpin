@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:rebuilder="clr-namespace:ClrVpin.Rebuilder">
+                    xmlns:merger="clr-namespace:ClrVpin.Merger">
 
-  <DataTemplate x:Key="RebuilderStatisticsTemplate" DataType="{x:Type rebuilder:RebuilderStatisticsViewModel}">
+  <DataTemplate x:Key="MergerStatisticsTemplate" DataType="{x:Type merger:MergerStatisticsViewModel}">
     <DockPanel>
       <TextBox Margin="5" Text="{Binding Result}" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0"/>
     </DockPanel>

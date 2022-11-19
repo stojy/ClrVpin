@@ -9,11 +9,11 @@ using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 
-namespace ClrVpin.Rebuilder
+namespace ClrVpin.Merger
 {
-    public sealed class RebuilderStatisticsViewModel : StatisticsViewModel
+    public sealed class MergerStatisticsViewModel : StatisticsViewModel
     {
-        public RebuilderStatisticsViewModel(ObservableCollection<LocalGame> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
+        public MergerStatisticsViewModel(ObservableCollection<LocalGame> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
             : base(games, elapsedTime, fixedFiles, unmatchedFiles)
         {
             // hit type stats for all supported types only
@@ -23,14 +23,14 @@ namespace ClrVpin.Rebuilder
             // content type stats for the single content type being rebuilt
             SupportedContentTypes = new List<ContentType> { Settings.GetSelectedDestinationContentType() };
 
-            // rebuilder only supports a single selected content type
-            SelectedCheckContentTypes = new List<string> { Settings.Rebuilder.DestinationContentType };
+            // merger only supports a single selected content type
+            SelectedCheckContentTypes = new List<string> { Settings.Merger.DestinationContentType };
 
-            // rebuilder doesn't support check and fix separately
-            SelectedCheckHitTypes = Settings.Rebuilder.SelectedMatchTypes.ToList();
+            // merger doesn't support check and fix separately
+            SelectedCheckHitTypes = Settings.Merger.SelectedMatchTypes.ToList();
             SelectedFixHitTypes = SelectedCheckHitTypes;
 
-            // unlike scanner, the total count represents the number of files that were analyzed
+            // unlike cleaner, the total count represents the number of files that were analyzed
             TotalCount = FixedFiles.Count + UnmatchedFiles.Count;
         }
 
@@ -39,14 +39,14 @@ namespace ClrVpin.Rebuilder
             Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
-                Title = "Rebuilder Statistics",
+                Title = "Statistics",
                 Left = left,
                 Top = top,
                 Width = 750,
                 Height = Model.ScreenWorkArea.Height - WindowMargin - WindowMargin,
                 Content = this,
                 Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("RebuilderStatisticsTemplate") as DataTemplate
+                ContentTemplate = parentWindow.FindResource("MergerStatisticsTemplate") as DataTemplate
             };
             Window.Show();
 

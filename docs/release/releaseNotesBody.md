@@ -1,11 +1,11 @@
 ## General
 - 
  
-## Scanner
+## Cleaner
 - 
 
-## Rebuilder
+## Merger
 - 
 
-## Importer
+## Feeder
 - 

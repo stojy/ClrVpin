@@ -5,8 +5,8 @@ using ClrVpin.About;
 using ClrVpin.Controls;
 using ClrVpin.Extensions;
 using ClrVpin.Importer;
+using ClrVpin.Merger;
 using ClrVpin.Models.Settings;
-using ClrVpin.Rebuilder;
 using ClrVpin.Scanner;
 using ClrVpin.Settings;
 using PropertyChanged;
@@ -26,14 +26,14 @@ public class HomeViewModel
         Model.Settings = Model.SettingsManager.Settings;
 
         ScannerCommand = new ActionCommand(Show<ScannerViewModel>);
-        RebuilderCommand = new ActionCommand(Show<RebuilderViewModel>);
+        MergerCommand = new ActionCommand(Show<MergerViewModel>);
         ImporterCommand = new ActionCommand(Show<ImporterViewModel>);
         SettingsCommand = new ActionCommand(Show<SettingsViewModel>);
         AboutCommand = new ActionCommand(Show<AboutViewModel>);
         CloseCommand = new ActionCommand(_mainWindow.Close);
 
         ScannerToolTip = "Scan existing content and optionally fix" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
-        RebuilderToolTip = "Rebuild existing library by merging new content from alternate folders" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
+        MergerToolTip = "Rebuild existing library by merging new content from alternate folders" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
 
         _mainWindow.SizeChanged += SizeChanged;
     }
@@ -41,10 +41,10 @@ public class HomeViewModel
     public static SettingsManager SettingsManager { get; private set; }
 
     public string ScannerToolTip { get; }
-    public string RebuilderToolTip { get; }
+    public string MergerToolTip { get; }
 
     public ICommand ScannerCommand { get; }
-    public ICommand RebuilderCommand { get; }
+    public ICommand MergerCommand { get; }
     public ICommand ImporterCommand { get; }
     public ICommand SettingsCommand { get; }
     public ICommand AboutCommand { get; }

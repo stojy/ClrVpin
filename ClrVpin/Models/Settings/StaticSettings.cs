@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using ClrVpin.Models.Importer;
-using ClrVpin.Models.Rebuilder;
+using ClrVpin.Models.Merger;
 using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Shared;
 using Utils.Extensions;
@@ -17,7 +17,7 @@ namespace ClrVpin.Models.Settings
 
             MultipleMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
-            // rebuilder
+            // merge
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreCriteria.ForEach(x => x.Description = x.Enum.GetDescription());
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
@@ -51,10 +51,10 @@ namespace ClrVpin.Models.Settings
                 "Files that don't match the configured file extension types - ONLY APPLICABLE FOR MEDIA CONTENT, since unsupported files are EXPECTED to exist in the tables folder (e.g. txt, exe, ogg, etc)")
         };
 
-        // rebuilder matching criteria types - to be used elsewhere (rebuilder)
+        // merger matching criteria types - to be used elsewhere (merger)
         public static readonly HitType[] MatchTypes;
 
-        // all possible file merge options - to be used elsewhere (rebuilder)
+        // all possible file merge options - to be used elsewhere (merger)
         public static readonly IgnoreCriteria[] IgnoreCriteria =
         {
             new() {Enum = IgnoreCriteriaEnum.IgnoreIfContainsWords, Tip = "If the file is matched: ignore the source file if it contains any of the configured words"},
@@ -62,9 +62,9 @@ namespace ClrVpin.Models.Settings
             new() {Enum = IgnoreCriteriaEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"}
         };
 
-        public static readonly Option DeleteIgnoredFilesOption = new() {Tip = "When enabled, rebuilder will delete the ignored files (if trainer wheels is not enabled).", Description = "Delete Ignored Files"};
+        public static readonly Option DeleteIgnoredFilesOption = new() {Tip = "When enabled, merger will delete the ignored files (if trainer wheels is not enabled).", Description = "Delete Ignored Files"};
 
-        // all possible file merge options - to be used elsewhere (rebuilder)
+        // all possible file merge options - to be used elsewhere (merger)
         public static readonly MergeOption[] MergeOptions =
         {
             new() {Enum = MergeOptionEnum.PreserveDateModified, Tip = "Date modified timestamp of merged file (in the destination folder) will match the source file, else the current time will be used"},

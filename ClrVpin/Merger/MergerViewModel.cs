@@ -21,12 +21,12 @@ using PropertyChanged;
 using Utils;
 using Utils.Extensions;
 
-namespace ClrVpin.Rebuilder
+namespace ClrVpin.Merger
 {
     [AddINotifyPropertyChangedInterface]
-    public class RebuilderViewModel : IShowViewModel
+    public class MergerViewModel : IShowViewModel
     {
-        public RebuilderViewModel() 
+        public MergerViewModel() 
         {
             StartCommand = new ActionCommand(Start);
             DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
@@ -37,16 +37,16 @@ namespace ClrVpin.Rebuilder
 
             MergeOptionsView = new ListCollectionView(CreateMergeOptions().ToList());
 
-            SourceFolderModel = new FolderTypeModel("Source", Settings.Rebuilder.SourceFolder, folder =>
+            SourceFolderModel = new FolderTypeModel("Source", Settings.Merger.SourceFolder, folder =>
             {
-                Settings.Rebuilder.SourceFolder = folder;
+                Settings.Merger.SourceFolder = folder;
                 TryUpdateDestinationFolder(folder);
             });
 
             _destinationContentTypes = Model.Settings.GetFixableContentTypes().Select(x => x.Description);
             DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
 
-            IgnoreWordsString = string.Join(", ", Settings.Rebuilder.IgnoreIWords);
+            IgnoreWordsString = string.Join(", ", Settings.Merger.IgnoreIWords);
             IgnoreWordsChangedCommand = new ActionCommand(IgnoreWordsChanged);
 
             UpdateIsValid();
@@ -90,9 +90,9 @@ namespace ClrVpin.Rebuilder
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parent.Resources,
-                ContentTemplate = parent.FindResource("RebuilderTemplate") as DataTemplate,
+                ContentTemplate = parent.FindResource("MergerTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,
-                Title = "Rebuilder"
+                Title = "Merger"
             };
 
             _window.Show();
@@ -108,8 +108,8 @@ namespace ClrVpin.Rebuilder
                 Description = StaticSettings.DeleteIgnoredFilesOption.Description,
                 Tip = StaticSettings.DeleteIgnoredFilesOption.Tip,
                 IsSupported = true,
-                IsActive = Settings.Rebuilder.DeleteIgnoredFiles,
-                SelectedCommand = new ActionCommand(() => Settings.Rebuilder.DeleteIgnoredFiles = !Settings.Rebuilder.DeleteIgnoredFiles)
+                IsActive = Settings.Merger.DeleteIgnoredFiles,
+                SelectedCommand = new ActionCommand(() => Settings.Merger.DeleteIgnoredFiles = !Settings.Merger.DeleteIgnoredFiles)
             };
 
             return feature;
@@ -117,16 +117,16 @@ namespace ClrVpin.Rebuilder
 
         private void IgnoreWordsChanged()
         {
-            Settings.Rebuilder.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
+            Settings.Merger.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
         }
 
-        private void UpdateIsValid() => IsValid = !string.IsNullOrEmpty(Settings.Rebuilder.DestinationContentType);
+        private void UpdateIsValid() => IsValid = !string.IsNullOrEmpty(Settings.Merger.DestinationContentType);
 
         private void TryUpdateDestinationFolder(string folder)
         {
             // attempt to assign destination folder automatically based on the specified folder
             var contentType = _destinationContentTypes.FirstOrDefault(c => folder.ToLower().EndsWith(c.ToLower()));
-            Settings.Rebuilder.DestinationContentType = contentType;
+            Settings.Merger.DestinationContentType = contentType;
 
             UpdateIsValid();
         }
@@ -142,8 +142,8 @@ namespace ClrVpin.Rebuilder
                     Description = matchType.Description,
                     Tip = matchType.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Rebuilder.SelectedMatchTypes.Contains(matchType.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMatchTypes.Toggle(matchType.Enum)),
+                    IsActive = Settings.Merger.SelectedMatchTypes.Contains(matchType.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Merger.SelectedMatchTypes.Toggle(matchType.Enum)),
                     IsHighlighted = matchType.IsHighlighted,
                     IsHelpSupported = matchType.HelpUrl != null,
                     HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) { UseShellExecute = true }))
@@ -172,8 +172,8 @@ namespace ClrVpin.Rebuilder
                     Description = criteria.Description,
                     Tip = criteria.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Rebuilder.SelectedIgnoreCriteria.Contains(criteria.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedIgnoreCriteria.Toggle(criteria.Enum))
+                    IsActive = Settings.Merger.SelectedIgnoreCriteria.Contains(criteria.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Merger.SelectedIgnoreCriteria.Toggle(criteria.Enum))
                 };
 
                 return featureType;
@@ -201,8 +201,8 @@ namespace ClrVpin.Rebuilder
                     Description = mergeOption.Description,
                     Tip = mergeOption.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Rebuilder.SelectedMergeOptions.Contains(mergeOption.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Rebuilder.SelectedMergeOptions.Toggle(mergeOption.Enum))
+                    IsActive = Settings.Merger.SelectedMergeOptions.Contains(mergeOption.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Merger.SelectedMergeOptions.Toggle(mergeOption.Enum))
                 };
 
                 return featureType;
@@ -213,7 +213,7 @@ namespace ClrVpin.Rebuilder
 
         private async void Start()
         {
-            Logger.Info($"\nRebuilder started, settings={JsonSerializer.Serialize(Settings)}");
+            Logger.Info($"\nMerger started, settings={JsonSerializer.Serialize(Settings)}");
 
             _window.Hide();
             Logger.Clear();
@@ -237,13 +237,13 @@ namespace ClrVpin.Rebuilder
             }
 
             progress.Update("Checking and Matching Files");
-            var unmatchedFiles = await RebuilderUtils.CheckAndMatchAsync(games, UpdateProgress);
+            var unmatchedFiles = await MergerUtils.CheckAndMatchAsync(games, UpdateProgress);
 
             progress.Update("Merging Files");
-            var gameFiles = await RebuilderUtils.MergeAsync(games, Settings.BackupFolder, UpdateProgress);
+            var gameFiles = await MergerUtils.MergeAsync(games, Settings.BackupFolder, UpdateProgress);
 
             progress.Update("Removing Unmatched Ignored Files");
-            await RebuilderUtils.RemoveUnmatchedIgnoredAsync(unmatchedFiles, UpdateProgress);
+            await MergerUtils.RemoveUnmatchedIgnoredAsync(unmatchedFiles, UpdateProgress);
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
             FileUtils.DeleteActiveBackupFolderIfEmpty();
@@ -263,25 +263,25 @@ namespace ClrVpin.Rebuilder
         {
             var screenPosition = _window.GetCurrentScreenPosition();
 
-            var statistics = new RebuilderStatisticsViewModel(_games, duration, gameFiles, unmatchedFiles);
+            var statistics = new MergerStatisticsViewModel(_games, duration, gameFiles, unmatchedFiles);
             statistics.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
 
             var width = Model.ScreenWorkArea.Width - statistics.Window.Width - WindowMargin;
-            var rebuilderResults = new RebuilderResultsViewModel(_games, gameFiles, unmatchedFiles);
-            var showTask = rebuilderResults.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, WindowMargin, width);
+            var mergerResults = new MergerResultsViewModel(_games, gameFiles, unmatchedFiles);
+            var showTask = mergerResults.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, WindowMargin, width);
 
             var logging = new LoggingViewModel();
-            logging.Show(_window, rebuilderResults.Window.Left, rebuilderResults.Window.Top + rebuilderResults.Window.Height + WindowMargin, width);
+            logging.Show(_window, mergerResults.Window.Left, mergerResults.Window.Top + mergerResults.Window.Height + WindowMargin, width);
 
             logging.Window.Closed += CloseWindows();
-            rebuilderResults.Window.Closed += CloseWindows();
+            mergerResults.Window.Closed += CloseWindows();
             statistics.Window.Closed += CloseWindows();
 
             EventHandler CloseWindows()
             {
                 return (_, _) =>
                 {
-                    rebuilderResults.Close();
+                    mergerResults.Close();
                     statistics.Window.Close();
                     logging.Close();
                     _window.TryShow();

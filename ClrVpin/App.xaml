@@ -12,35 +12,6 @@
          - perhaps related somehow to how WPF manages resources in app.xaml differently to other xaml files, e.g. affecting the need for referencing files (refer above)
          - perhaps somehow circumvents the SharedResourceDictionary?
     -->
-    <!--<ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-
-        <controls:SharedResourceDictionary Source="..\Controls\Styles.xaml" />
-        <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
-
-        <controls:SharedResourceDictionary Source="../Scanner/Scanner.xaml" />
-        <controls:SharedResourceDictionary Source="../Scanner/ScannerStatistics.xaml" />
-        <controls:SharedResourceDictionary Source="../Scanner/ScannerExplorer.xaml" />
-
-        <controls:SharedResourceDictionary Source="../Rebuilder/Rebuilder.xaml" />
-        <controls:SharedResourceDictionary Source="../Rebuilder/RebuilderStatistics.xaml" />
-
-        <controls:SharedResourceDictionary Source="../Importer/Importer.xaml" />
-        <controls:SharedResourceDictionary Source="../Importer/ImporterResults.xaml" />
-        <controls:SharedResourceDictionary Source="../Importer/ImporterStatistics.xaml" />
-
-        <controls:SharedResourceDictionary Source="../Shared/Results.xaml" />
-        <controls:SharedResourceDictionary Source="../Shared/Progress.xaml" />
-
-        <controls:SharedResourceDictionary Source="../Settings/Settings.xaml" />
-        <controls:SharedResourceDictionary Source="../About/About.xaml" />
-        <controls:SharedResourceDictionary Source="../About/Thanks.xaml" />
-        <controls:SharedResourceDictionary Source="../About/Donate.xaml" />
-
-        <controls:SharedResourceDictionary Source="../Logging/Logging.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>-->
   </Application.Resources>
 
 </Application>

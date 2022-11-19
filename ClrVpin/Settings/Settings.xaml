@@ -114,7 +114,7 @@
           <TextBlock FontStyle="Italic"
                      Text="¹ Folder setup is optional" />
           <TextBlock FontStyle="Italic"
-                     Text="  - it is highly recommended for PinballY/X users to enable the Scanner, Rebuilder, and Fuzzy Matching features" />
+                     Text="  - it is highly recommended for PinballY/X users to enable the Cleaner, Merger, Explorer, and Fuzzy Matching features" />
         </StackPanel>
 
         <!-- general -->

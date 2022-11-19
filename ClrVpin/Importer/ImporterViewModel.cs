@@ -70,7 +70,7 @@ namespace ClrVpin.Importer
         private void CreateMatchCriteriaTypes()
         {
             // show all match criteria types
-            // - only fuzzy is supported, but using a list for consistency with scanner and rebuilder
+            // - only fuzzy is supported, but using a list for consistency with cleaner and merger
             var featureTypes = StaticSettings.MatchTypes.Where(x => x.Enum.In(HitTypeEnum.Fuzzy)).Select(matchType =>
             {
                 var featureType = new FeatureType((int)matchType.Enum)

@@ -11,12 +11,12 @@ using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Rebuilder
+namespace ClrVpin.Merger
 {
     [AddINotifyPropertyChangedInterface]
-    public class RebuilderResultsViewModel : ResultsViewModel
+    public class MergerResultsViewModel : ResultsViewModel
     {
-        public RebuilderResultsViewModel(ObservableCollection<LocalGame> games, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
+        public MergerResultsViewModel(ObservableCollection<LocalGame> games, ICollection<FileDetail> gameFiles, ICollection<FileDetail> unmatchedFiles)
         {
             Games = games;
             _unmatchedFiles = unmatchedFiles;
@@ -46,8 +46,8 @@ namespace ClrVpin.Rebuilder
 
         protected override IList<FeatureType> CreateAllContentFeatureTypes()
         {
-            // show all content types, but assign enabled and active based on the rebuilder configuration
-            // - rebuilder only supports one destination content type, but display them all as a list for consistency with ScannerResultsViewModel
+            // show all content types, but assign enabled and active based on the merger configuration
+            // - merger only supports one destination content type, but display them all as a list for consistency with ScannerResultsViewModel
             var featureTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
@@ -62,13 +62,13 @@ namespace ClrVpin.Rebuilder
 
         protected override IList<FeatureType> CreateAllHitFeatureTypes()
         {
-            // show all hit types, but assign enabled and active based on the rebuilder configuration
+            // show all hit types, but assign enabled and active based on the merger configuration
             // - valid hits are also visible, enabled by default since these files are copied across without any file name fixing
             var featureTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
-                IsSupported = Settings.Rebuilder.SelectedMatchTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.CorrectName,
-                IsActive = Settings.Rebuilder.SelectedMatchTypes.Contains(hitType.Enum),
+                IsSupported = Settings.Merger.SelectedMatchTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.CorrectName,
+                IsActive = Settings.Merger.SelectedMatchTypes.Contains(hitType.Enum),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             }).ToList();
 

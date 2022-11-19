@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
-using ClrVpin.Models.Rebuilder;
+using ClrVpin.Models.Merger;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
@@ -13,11 +13,11 @@ using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;
 
-namespace ClrVpin.Rebuilder
+namespace ClrVpin.Merger
 {
-    public static class RebuilderUtils
+    public static class MergerUtils
     {
-        static RebuilderUtils()
+        static MergerUtils()
         {
             _settings = Model.Settings;
         }
@@ -45,12 +45,12 @@ namespace ClrVpin.Rebuilder
             var contentType = _settings.GetSelectedDestinationContentType();
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
-            var contentFiles = TableUtils.GetContentFileNames(contentType, _settings.Rebuilder.SourceFolder);
+            var contentFiles = TableUtils.GetContentFileNames(contentType, _settings.Merger.SourceFolder);
             var unmatchedContentFiles = TableUtils.AddContentFilesToGames(games, contentFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
                 (fileName, fileCount) => updateProgress(fileName, fileCount / (float)contentFiles.Count));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
-            var nonContentFiles = TableUtils.GetNonContentFileDetails(contentType, _settings.Rebuilder.SourceFolder);
+            var nonContentFiles = TableUtils.GetNonContentFileDetails(contentType, _settings.Merger.SourceFolder);
 
             // unmatchedFiles = unmatchedContentFiles + nonContentFiles
             return unmatchedContentFiles.Concat(nonContentFiles).ToList();
@@ -81,7 +81,7 @@ namespace ClrVpin.Rebuilder
                 var mergeableHits = contentHitCollection.Hits.Where(hit => hit.Type.In(StaticSettings.FixablePrioritizedHitTypeEnums));
 
                 // merge each hit
-                mergeableHits.ForEach(hit => gameFiles.Add(Merge(hit, game, _settings.Rebuilder.SelectedMatchTypes)));
+                mergeableHits.ForEach(hit => gameFiles.Add(Merge(hit, game, _settings.Merger.SelectedMatchTypes)));
             });
 
             return gameFiles;
@@ -130,8 +130,8 @@ namespace ClrVpin.Rebuilder
                 {
                     fixFileType = FixFileTypeEnum.Merged;
 
-                    var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Rebuilder.SelectedMergeOptions);
-                    var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Rebuilder.SelectedMergeOptions);
+                    var shouldDeleteSource = MergeOptionEnum.RemoveSource.In(Model.Settings.Merger.SelectedMergeOptions);
+                    var preserveDateModified = MergeOptionEnum.PreserveDateModified.In(Model.Settings.Merger.SelectedMergeOptions);
 
                     Logger.Info($"Merging.. table: {localGame.Game.Name}, description: {localGame.Game.Description}, type: {hit.Type.GetDescription()}, content: {hit.ContentType}", isHighlight: true);
                     LogFuzzyMatch();
@@ -148,18 +148,18 @@ namespace ClrVpin.Rebuilder
             // - unlike scanner 'multiple match preference'.. which is more of an 'opt in'
 
             // contains words - destination file isn't required (although a table match is required)
-            if (_settings.Rebuilder.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfContainsWords) && _settings.Rebuilder.IgnoreIWords.Any(x => sourceFileInfo.Name.ToLower().Contains(x)))
+            if (_settings.Merger.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfContainsWords) && _settings.Merger.IgnoreIWords.Any(x => sourceFileInfo.Name.ToLower().Contains(x)))
                 return ProcessIgnore(game, IgnoreCriteriaEnum.IgnoreIfContainsWords.GetDescription(), hit, sourceFileInfo, destinationFileInfo, logAction);
 
             // source vs destination file
             if (destinationFileInfo != null)
             {
-                var thresholdSizePercentage = _settings.Rebuilder.IgnoreIfSmallerPercentage / 100;
+                var thresholdSizePercentage = _settings.Merger.IgnoreIfSmallerPercentage / 100;
                 var actualSizePercentage = (decimal)sourceFileInfo.Length / destinationFileInfo.Length;
-                if (_settings.Rebuilder.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfSmaller) && actualSizePercentage <= thresholdSizePercentage)
+                if (_settings.Merger.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfSmaller) && actualSizePercentage <= thresholdSizePercentage)
                     return ProcessIgnore(game, $"{IgnoreCriteriaEnum.IgnoreIfSmaller.GetDescription()} (threshold: {thresholdSizePercentage:P2}, actual:{actualSizePercentage:P2}", hit, sourceFileInfo, destinationFileInfo, logAction);
 
-                if (_settings.Rebuilder.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfNotNewer) && sourceFileInfo.LastWriteTime <= destinationFileInfo.LastWriteTime)
+                if (_settings.Merger.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfNotNewer) && sourceFileInfo.LastWriteTime <= destinationFileInfo.LastWriteTime)
                     return ProcessIgnore(game, IgnoreCriteriaEnum.IgnoreIfNotNewer.GetDescription(), hit, sourceFileInfo, destinationFileInfo, logAction);
             }
 
@@ -173,12 +173,12 @@ namespace ClrVpin.Rebuilder
         private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, HitTypeEnum hitTypeEnum, ContentTypeEnum contentTypeEnum, Hit hit, FileSystemInfo sourceFileInfo,
             FileSystemInfo destinationFileInfo, Action logAction = null)
         {
-            var prefix = _settings.Rebuilder.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
+            var prefix = _settings.Merger.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
             Logger.Info($"{prefix}.. table: {game?.Name ?? "n/a"}, description: {game?.Description ?? "n/a"}, type: {hitTypeEnum.GetDescription()}, " +
-                        $"content: {contentTypeEnum.GetDescription()}, ignore option: {ignoreCriteriaDescription}, delete ignored: {_settings.Rebuilder.DeleteIgnoredFiles}");
+                        $"content: {contentTypeEnum.GetDescription()}, ignore option: {ignoreCriteriaDescription}, delete ignored: {_settings.Merger.DeleteIgnoredFiles}");
             logAction?.Invoke();
 
-            if (_settings.Rebuilder.DeleteIgnoredFiles)
+            if (_settings.Merger.DeleteIgnoredFiles)
             {
                 FileUtils.DeleteIgnored(sourceFileInfo.FullName, destinationFileInfo?.FullName, hitTypeEnum, contentTypeEnum.GetDescription(), newFile =>
                 {
@@ -205,7 +205,7 @@ namespace ClrVpin.Rebuilder
             //   - IgnoreIfContainsWords
             // - only applicable for IgnoreIfContainsWords IF the table was unmatched, since IgnoreIfContainsWords doesn't mandate a table match
             var unmatchedFilesToDelete = unmatchedFiles
-                .Where(unmatchedFile => _settings.Rebuilder.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfContainsWords) && _settings.Rebuilder.IgnoreIWords.Any(x => unmatchedFile.Path.ToLower().Contains(x)))
+                .Where(unmatchedFile => _settings.Merger.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfContainsWords) && _settings.Merger.IgnoreIWords.Any(x => unmatchedFile.Path.ToLower().Contains(x)))
                 .ToList();
 
             unmatchedFilesToDelete.ForEach((fileDetail, i) =>

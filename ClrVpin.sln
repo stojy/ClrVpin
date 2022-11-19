@@ -48,7 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scanner", "scanner", "{B2EA
 		docs\screenshots\scanner\statistics.png = docs\screenshots\scanner\statistics.png
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rebuilder", "rebuilder", "{CFF71167-5612-47C6-A2A2-C7A3BA3AEB95}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "merge", "merge", "{CFF71167-5612-47C6-A2A2-C7A3BA3AEB95}"
 	ProjectSection(SolutionItems) = preProject
 		docs\screenshots\rebuilder\logs.png = docs\screenshots\rebuilder\logs.png
 		docs\screenshots\rebuilder\results.png = docs\screenshots\rebuilder\results.png

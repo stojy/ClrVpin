@@ -1,6 +1,6 @@
 ﻿using ClrVpin.Models.Shared;
 
-namespace ClrVpin.Models.Rebuilder
+namespace ClrVpin.Models.Merger
 {
     public class MergeOption : Option
     {
