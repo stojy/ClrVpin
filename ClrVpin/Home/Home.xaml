@@ -142,7 +142,7 @@
           -->
           <StackPanel Margin="0,25">
             <Grid>
-              <Image Source="/Resources/ClrVpin.png" Height="400" Margin="5" MouseDown="ImageMouseDown" />
+              <Image Source="/Resources/ClrVpin.png" Width="390" Margin="0,5" MouseDown="ImageMouseDown" />
               <!--<Button Command="{Binding CloseCommand}"
                       Style="{StaticResource RaisedAccentDarkButtonStyle}"
                       Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}" 
@@ -153,60 +153,89 @@
               </Button>-->
             </Grid>
 
-            <StackPanel Margin="5" Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
+            <StackPanel Margin="0,5" Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
+              <StackPanel.Resources>
+                <Style x:Key="PackIconStyle" TargetType="materialDesign:PackIcon">
+                  <Setter Property="Height" Value="60" />
+                  <Setter Property="Width" Value="60" />
+                  <Setter Property="HorizontalAlignment" Value="Center" />
+                </Style>
+                <Style x:Key="PackIconSmallStyle" TargetType="materialDesign:PackIcon" BasedOn="{StaticResource PackIconStyle}">
+                  <Setter Property="Height" Value="40" />
+                  <Setter Property="Width" Value="40" />
+                </Style>
+                <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+                  <Setter Property="HorizontalAlignment" Value="Center" />
+                  <Setter Property="FontSize" Value="18" />
+                </Style>
+                <Style x:Key="TextBlockSmallStyle" TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}">
+                  <Setter Property="FontSize" Value="16" />
+                </Style>
+              </StackPanel.Resources>
+
               <WrapPanel>
-                <Button Command="{Binding ImporterCommand}" Width="70" Style="{StaticResource RaisedAccentButtonStyle}"
-                        ToolTip="Import and navigate online database to check for updated content">
+                <Button Command="{Binding ImporterCommand}" 
+                        ToolTip="Import and navigate online database to check for updated content"
+                        Style="{StaticResource RaisedAccentButtonStyle}" Width="90" Margin="0,0,5,0">
                   <StackPanel>
-                    <TextBlock Text="Feeder" HorizontalAlignment="Center" />
-                    <materialDesign:PackIcon Kind="Web" Height="40" Width="40" HorizontalAlignment="Center" />
+                    <TextBlock Text="Feeder" Style="{StaticResource TextBlockStyle}" Margin="0,0,0,5" />
+                    <materialDesign:PackIcon Kind="Web" Style="{StaticResource PackIconStyle}" />
                   </StackPanel>
                 </Button>
 
                 <StackPanel>
                   <!--features-->
                   <WrapPanel HorizontalAlignment="Right">
-                    <Button Command="{Binding MergerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentDarkButtonStyle}"
-                            ToolTip="{Binding MergerToolTip}">
+                    <Button Command="{Binding MergerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
+                            ToolTip="{Binding MergerToolTip}"
+                            Style="{StaticResource RaisedAccentDarkButtonStyle}" Width="90" Height="90">
                       <StackPanel>
-                        <TextBlock Text="Merger" HorizontalAlignment="Center" />
-                        <materialDesign:PackIcon Kind="Import" Height="40" Width="40" HorizontalAlignment="Center" />
+                        <TextBlock Text="Merger" Style="{StaticResource TextBlockStyle}"  />
+                        <materialDesign:PackIcon Kind="Import" Style="{StaticResource PackIconStyle}" />
                       </StackPanel>
                     </Button>
-                    <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentDarkButtonStyle}"
-                            ToolTip="{Binding ScannerToolTip}">
+                    <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
+                            ToolTip="{Binding ScannerToolTip}"
+                            Style="{StaticResource RaisedAccentDarkButtonStyle}" Width="90" Height="90">
                       <StackPanel>
-                        <TextBlock Text="Cleaner" HorizontalAlignment="Center" />
-                        <materialDesign:PackIcon Kind="Sparkles" Height="40" Width="40" HorizontalAlignment="Center" />
+                        <TextBlock Text="Cleaner" Style="{StaticResource TextBlockStyle}" />
+                        <materialDesign:PackIcon Kind="Sparkles" Style="{StaticResource PackIconStyle}"/>
                       </StackPanel>
                     </Button>
-                    <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" Width="70" Style="{StaticResource RaisedAccentDarkButtonStyle}"
-                            ToolTip="{Binding ScannerToolTip}">
+                    <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
+                            ToolTip="{Binding ScannerToolTip}"
+                            Style="{StaticResource RaisedAccentDarkButtonStyle}" Width="90" Height="90" Margin="5,0,0,0">
                       <StackPanel>
-                        <TextBlock Text="Explorer" HorizontalAlignment="Center" />
-                        <materialDesign:PackIcon Kind="Magnify" Height="40" Width="40" HorizontalAlignment="Center" />
+                        <TextBlock Text="Explorer" Style="{StaticResource TextBlockStyle}"  />
+                        <materialDesign:PackIcon Kind="Magnify" Style="{StaticResource PackIconStyle}"/>
                       </StackPanel>
                     </Button>
                   </WrapPanel>
 
                   <!--support-->
                   <WrapPanel Margin="0,10,0,0" HorizontalAlignment="Right">
-                    <Button Command="{Binding SettingsCommand}" Width="70" ToolTip="Common setting used by feeder, merger, cleaner, and explorer">
+                    <Button Command="{Binding SettingsCommand}"
+                            ToolTip="Common setting used by feeder, merger, cleaner, and explorer"
+                            Width="90" Height="70" >
                       <StackPanel>
-                        <TextBlock Text="Settings" HorizontalAlignment="Center" />
-                        <materialDesign:PackIcon Kind="Cog" Height="40" Width="40" HorizontalAlignment="Center" />
+                        <TextBlock Text="Settings" Style="{StaticResource TextBlockSmallStyle}" />
+                        <materialDesign:PackIcon Kind="Cog" Style="{StaticResource PackIconSmallStyle}" />
                       </StackPanel>
                     </Button>
-                    <Button Command="{Binding AboutCommand}" Width="70" ToolTip="General application information and links">
+                    <Button Command="{Binding AboutCommand}"
+                            ToolTip="General application information and links"
+                            Width="90" Height="70" >
                       <StackPanel>
-                        <TextBlock Text="About" HorizontalAlignment="Center" />
-                        <materialDesign:PackIcon Kind="AboutOutline" Height="40" Width="40" />
+                        <TextBlock Text="About" Style="{StaticResource TextBlockSmallStyle}"  />
+                        <materialDesign:PackIcon Kind="AboutOutline" Style="{StaticResource PackIconSmallStyle}" />
                       </StackPanel>
                     </Button>
-                    <Button VerticalAlignment="Bottom" Command="{Binding CloseCommand}" Width="70" ToolTip="Close ClrVpin" Style="{StaticResource RaisedMidButtonStyle}">
+                    <Button VerticalAlignment="Bottom" Command="{Binding CloseCommand}" 
+                            ToolTip="Close ClrVpin" Style="{StaticResource RaisedMidButtonStyle}"
+                            Width="90" Height="70" Margin="5,0,0,0">
                       <StackPanel>
-                        <TextBlock Text="Close" HorizontalAlignment="Center" />
-                        <materialDesign:PackIcon Kind="Close" Height="40" Width="40" />
+                        <TextBlock Text="Close" Style="{StaticResource TextBlockSmallStyle}"  />
+                        <materialDesign:PackIcon Kind="Close" Style="{StaticResource PackIconSmallStyle}" Height="45" Width="45" />
                       </StackPanel>
                     </Button>
                   </WrapPanel>

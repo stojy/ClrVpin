@@ -30,7 +30,7 @@ namespace ClrVpin.Merger
             Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
-                Title = "Results (Matched Files)",
+                Title = "Results (Merged Files)",
                 Left = left,
                 Top = top,
                 Width = width,
