@@ -88,19 +88,19 @@
     <Page Update="Controls\ControlTemplates.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="Importer\Importer.xaml">
+    <Page Update="Feeder\Feeder.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Importer\ImporterStatistics.xaml">
+    <Page Update="Feeder\FeederStatistics.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Importer\ImporterResults.xaml">
+    <Page Update="Feeder\FeederResults.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Importer\DatabaseItem.xaml">
+    <Page Update="Feeder\DatabaseItem.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Logging\Logging.xaml">

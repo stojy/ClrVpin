@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ClrVpin.Logging;
-using ClrVpin.Models.Importer;
-using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Models.Feeder;
+using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;
 
-namespace ClrVpin.Importer;
+namespace ClrVpin.Feeder;
 
-public static class ImporterFix
+public static class FeederFix
 {
-    static ImporterFix()
+    static FeederFix()
     {
         // used with Regex.Replace will capture multiple matches at once.. same word or other other words
         // - refer Fuzzy.cs
@@ -117,7 +117,7 @@ public static class ImporterFix
         FixManufacturerWhitespace(onlineGame);
 
         // assign a flag to indicate the  original game state
-        // - this isn't technically a fix, but is done here (i.e. instead of ImporterResultsVM) as the information is required for subsequent fixes
+        // - this isn't technically a fix, but is done here (i.e. instead of FeederResultsVM) as the information is required for subsequent fixes
         onlineGame.IsOriginal = GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name);
 
         FixManufacturedIncludesAuthor(onlineGame);
@@ -142,7 +142,7 @@ public static class ImporterFix
         duplicateGamesGrouping.ForEach(grouping =>
         {
             // assign the unique and duplicate(s)
-            var game = ImporterUtils.GetUniqueGame(grouping.ToList());
+            var game = FeederUtils.GetUniqueGame(grouping.ToList());
             var duplicates = grouping.Except(game).ToList();
 
             LogFixed(game, FixStatisticsEnum.DuplicateGame, $"duplicate table(s)={duplicates.Select(x => x.Description).StringJoin()}");
@@ -533,7 +533,7 @@ public static class ImporterFix
         onlineGame.Year = year ?? onlineGame.Year;
     }
 
-    private static bool IsActive(FixFeedOptionEnum option) => Model.Settings.Importer.SelectedFeedFixOptions.Contains(option);
+    private static bool IsActive(FixFeedOptionEnum option) => Model.Settings.Feeder.SelectedFeedFixOptions.Contains(option);
 
     private static void LogFixedTimestamp(OnlineGameBase onlineGame, FixStatisticsEnum fixStatisticsEnum, string gameTimeName, DateTime? gameTime, string maxFileTimeName, DateTime? maxFileTime, bool greaterThan = false)
     {

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
 using PropertyChanged;

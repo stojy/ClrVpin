@@ -21,7 +21,7 @@ namespace ClrVpin.About
         public List<Contributor> Contributors { get; } = new()
         {
             new Contributor("https://virtual-pinball-spreadsheet.web.app", "VPS Web App: an excellent web page rendering of the traditional google sheets spreadsheet (beta)"),
-            new Contributor("https://www.facebook.com/VPSheet", "VPS: maintainers of the google sheets spreadsheet (now a json file) used as the source of truth for the 'importer' feature"),
+            new Contributor("https://www.facebook.com/VPSheet", "VPS: maintainers of the google sheets spreadsheet (now a json file) used as the source of truth for the Feeder feature"),
             new Contributor("http://mjrnet.org/pinscape/PinballY.php", "PinballY: an amazing table frontend. Not just fast and flexible.. it's fully open source :)"),
             new Contributor("https://www.vpforums.org", "VP Forums: forum and download repository for everything VP. Be sure to join and contribute."),
             new Contributor("https://vpuniverse.com", "VP Universe: forum and download repository for everything VP. Be sure to join and contribute."),

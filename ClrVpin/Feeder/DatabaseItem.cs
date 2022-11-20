@@ -2,14 +2,14 @@
 using System.Text.Json;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using ClrVpin.Models.Importer;
-using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Models.Feeder;
+using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Game;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
 using Utils.Extensions;
 
-namespace ClrVpin.Importer
+namespace ClrVpin.Feeder
 {
     [AddINotifyPropertyChangedInterface]
     public class DatabaseItem

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using ClrVpin.Logging;
-using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Database;
 using Utils.Extensions;
 
-namespace ClrVpin.Importer
+namespace ClrVpin.Feeder
 {
     internal static class GameUpdater
     {

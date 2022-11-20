@@ -63,9 +63,9 @@ namespace ClrVpin.Models.Settings
             Merger.SelectedMergeOptions.AddRange(StaticSettings.MergeOptions.Select(x => x.Enum).ToList());
             Merger.DeleteIgnoredFiles = true;
 
-            Importer = new ImporterSettings();
-            Importer.SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
-            Importer.SelectedFeedFixOptions.AddRange(StaticSettings.FixFeedOptions.Select(x => x.Enum).ToList());
+            Feeder = new FeederSettings();
+            Feeder.SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
+            Feeder.SelectedFeedFixOptions.AddRange(StaticSettings.FixFeedOptions.Select(x => x.Enum).ToList());
         }
 
         // default settings
@@ -112,7 +112,7 @@ namespace ClrVpin.Models.Settings
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
         public MergerSettings Merger { get; set; }
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
-        public ImporterSettings Importer { get; set; }
+        public FeederSettings Feeder { get; set; }
 
         public int Version { get; set; }
 

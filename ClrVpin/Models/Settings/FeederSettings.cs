@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using ClrVpin.Models.Importer;
+using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Shared;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Settings;
 
 [AddINotifyPropertyChangedInterface]
-public class ImporterSettings
+public class FeederSettings
 {
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
     public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new();

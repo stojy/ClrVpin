@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ClrVpin.Importer;
+namespace ClrVpin.Feeder;
 
 public enum FixStatisticsEnum
 {

@@ -5,7 +5,7 @@ using System.Windows.Input;
 using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 
-namespace ClrVpin.Models.Importer.Vps;
+namespace ClrVpin.Models.Feeder.Vps;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global

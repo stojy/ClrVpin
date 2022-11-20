@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ClrVpin.Models.Importer;
-using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Models.Feeder;
+using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Database;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using MaterialDesignThemes.Wpf;
 using Utils.Extensions;
 
-namespace ClrVpin.Importer;
+namespace ClrVpin.Feeder;
 
 public static class DatabaseItemManagement
 {
@@ -20,7 +20,7 @@ public static class DatabaseItemManagement
     {
         var item = new DatabaseItem(gameItem.OnlineGame, gameItem.LocalGame, gameCollections, true, gameItem.TableMatchType);
 
-        var result = await DialogHost.Show(item, ImporterResultsViewModel.DialogHostName) as DatabaseItemAction?;
+        var result = await DialogHost.Show(item, FeederResultsViewModel.DialogHostName) as DatabaseItemAction?;
         if (result == DatabaseItemAction.Update)
         {
             // replace the existing game details with the updated details
@@ -88,7 +88,7 @@ public static class DatabaseItemManagement
 
         var item = new DatabaseItem(onlineGame, localGame, gameCollections, false, gameItem.TableMatchType);
 
-        var result = await DialogHost.Show(item, ImporterResultsViewModel.DialogHostName) as DatabaseItemAction?;
+        var result = await DialogHost.Show(item, FeederResultsViewModel.DialogHostName) as DatabaseItemAction?;
         if (result == DatabaseItemAction.Insert)
         {
             localGame.Game = item.LocalGame.Game;

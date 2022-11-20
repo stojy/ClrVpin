@@ -4,10 +4,10 @@
                     mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:importer="clr-namespace:ClrVpin.Importer"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules">
+                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
+                    xmlns:feeder="clr-namespace:ClrVpin.Feeder">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -19,19 +19,19 @@
   <!-- x:Shared resources must be defined at the top level resource dictionary -->
   <controls:Triggers x:Key="TextChangedTriggers" x:Shared="False">
     <b:EventTrigger EventName="TextChanged">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}" />
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=feeder:DatabaseItem}" />
     </b:EventTrigger>
   </controls:Triggers>
 
   <controls:Triggers x:Key="ComboChangedTriggers" x:Shared="False">
     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}" />
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=feeder:DatabaseItem}" />
     </controls:RoutedEventTrigger>
   </controls:Triggers>
 
   <controls:Triggers x:Key="DatePickerChangedTriggers" x:Shared="False">
     <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}" />
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=feeder:DatabaseItem}" />
     </controls:RoutedEventTrigger>
   </controls:Triggers>
 
@@ -41,13 +41,13 @@
       <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=database:Game}" />
     </b:EventTrigger>-->
 
-    <b:PropertyChangedTrigger Binding="{Binding DateModified}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}">
-      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=importer:DatabaseItem}" />
+    <b:PropertyChangedTrigger Binding="{Binding DateModified}" d:DataContext="{d:DesignInstance Type=feeder:DatabaseItem}">
+      <b:InvokeCommandAction Command="{Binding ChangedCommand}" d:DataContext="{d:DesignInstance Type=feeder:DatabaseItem}" />
     </b:PropertyChangedTrigger>
   </controls:Triggers>
 
   <!--table and frontend properties-->
-  <DataTemplate x:Key="DatabaseItemDetails" DataType="{x:Type importer:DatabaseItem}">
+  <DataTemplate x:Key="DatabaseItemDetails" DataType="{x:Type feeder:DatabaseItem}">
     <StackPanel>
       <b:Interaction.Triggers>
         <b:EventTrigger EventName="Loaded">
@@ -287,8 +287,8 @@
        - the template is being re-used for subsequent rendering.. presumably(?) due to SharedDictionary which causes this template to only be loaded once
          a. e.g. ComboBox.SelectedItem will persist between 2 different dialogs.. thus important to explicitly assign SelectedItem so the correct one is used
   -->
-  <DataTemplate DataType="{x:Type importer:DatabaseItem}">
-    <!--explicit border with background and padding required to support usage within a DialogHost that has a transparent background, e.g. importer's image dialog-->
+  <DataTemplate DataType="{x:Type feeder:DatabaseItem}">
+    <!--explicit border with background and padding required to support usage within a DialogHost that has a transparent background, e.g. feeder's image dialog-->
     <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" Width="640">
       <StackPanel>
 
@@ -318,20 +318,20 @@
                   Command="{Binding OverwriteAllInfoCommand}"
                   ToolTip="Overwrite all info for this table to your local database from online sources. Information that doesn't exist from online sources will not be overwritten (e.g. ratings)." />
 
-          <Button Content="Update" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Update}"
+          <Button Content="Update" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Update}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
                   ToolTip="Update changed info for this table to your local database" />
-          <Button Content="Delete" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Delete}"
+          <Button Content="Delete" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Delete}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   Foreground="{StaticResource AlertBrush}"
                   ToolTip="Delete this table from your local database" />
 
-          <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Insert}"
+          <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Insert}"
                   Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
                   ToolTip="Add a new table entry entry to your local database" />
 
-          <Button Content="Cancel" IsCancel="True" Width="100" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static importer:DatabaseItemAction.Cancel}"
+          <Button Content="Cancel" IsCancel="True" Width="100" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Cancel}"
                   ToolTip="Exit without updating/inserting an entry in your local database" />
         </WrapPanel>
 

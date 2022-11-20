@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ClrVpin.Models.Importer.Vps;
+namespace ClrVpin.Models.Feeder.Vps;
 
 // ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
 

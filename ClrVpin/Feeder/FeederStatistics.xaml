@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:importer="clr-namespace:ClrVpin.Importer">
+                    xmlns:feeder="clr-namespace:ClrVpin.Feeder">
 
-  <DataTemplate x:Key="ImporterStatisticsTemplate" DataType="{x:Type importer:ImporterStatisticsViewModel}">
+  <DataTemplate x:Key="FeederStatisticsTemplate" DataType="{x:Type feeder:FeederStatisticsViewModel}">
     <DockPanel>
       <TextBox Margin="5" Text="{Binding Result}" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0"/>
     </DockPanel>

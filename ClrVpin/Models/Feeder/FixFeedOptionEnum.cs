@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ClrVpin.Models.Importer
+namespace ClrVpin.Models.Feeder
 {
     public enum FixFeedOptionEnum
     {

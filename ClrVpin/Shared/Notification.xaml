@@ -31,7 +31,7 @@
     </DataTemplate.Resources>
 
     <!--explicit border with background and padding required to..
-        - support usage within a DialogHost that has a transparent background, e.g. importer's image dialog
+        - support usage within a DialogHost that has a transparent background, e.g. feeder's image dialog
         - provide a corner radius
     -->
     <Border BorderThickness="0" Padding="10" Background="{DynamicResource MaterialDesignPaper}" MinWidth="300" CornerRadius="10">

@@ -37,9 +37,9 @@
         <controls:SharedResourceDictionary Source="../Merger/Merger.xaml" />
         <controls:SharedResourceDictionary Source="../Merger/MergerStatistics.xaml" />
 
-        <controls:SharedResourceDictionary Source="../Importer/Importer.xaml" />
-        <controls:SharedResourceDictionary Source="../Importer/ImporterResults.xaml" />
-        <controls:SharedResourceDictionary Source="../Importer/ImporterStatistics.xaml" />
+        <controls:SharedResourceDictionary Source="../Feeder/Feeder.xaml" />
+        <controls:SharedResourceDictionary Source="../Feeder/FeederResults.xaml" />
+        <controls:SharedResourceDictionary Source="../Feeder/FeederStatistics.xaml" />
 
         <controls:SharedResourceDictionary Source="../Shared/Results.xaml" />
         <controls:SharedResourceDictionary Source="../Shared/Progress.xaml" />
@@ -174,7 +174,7 @@
               </StackPanel.Resources>
 
               <WrapPanel>
-                <Button Command="{Binding ImporterCommand}" 
+                <Button Command="{Binding FeederCommand}" 
                         ToolTip="Import and navigate online database to check for updated content"
                         Style="{StaticResource RaisedAccentButtonStyle}" Width="90" Margin="0,0,5,0">
                   <StackPanel>

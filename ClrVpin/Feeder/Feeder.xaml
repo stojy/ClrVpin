@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:importer="clr-namespace:ClrVpin.Importer"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:controls="clr-namespace:ClrVpin.Controls">
+                    xmlns:controls="clr-namespace:ClrVpin.Controls"
+                    xmlns:feeder="clr-namespace:ClrVpin.Feeder">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -12,7 +12,7 @@
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <DataTemplate x:Key="ImporterTemplate" DataType="{x:Type importer:ImporterViewModel}">
+  <DataTemplate x:Key="FeederTemplate" DataType="{x:Type feeder:FeederViewModel}">
     <StackPanel Margin="5">
       <TextBlock Style="{StaticResource TitleStyle}">Match</TextBlock>
       <GroupBox Header="Criteria" Width="660">

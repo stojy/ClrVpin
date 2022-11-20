@@ -40,7 +40,7 @@ namespace ClrVpin.Models.Shared.Game
             }
 
             // memory optimisation to perform this operation once on database read (or update) instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
-            // - null check to cater for scenario where the value can be null, e.g. when cleared via importer's database update dialog
+            // - null check to cater for scenario where the value can be null, e.g. when cleared via feeder's database update dialog
             derived.NameLowerCase = localGame.Game.Name?.ToLower();
             derived.DescriptionLowerCase = localGame.Game.Description?.ToLower();
             derived.TableFileWithExtension = localGame.Game.Name  + ".vpx";

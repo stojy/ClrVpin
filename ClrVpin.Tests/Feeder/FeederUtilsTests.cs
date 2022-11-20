@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using ClrVpin.Importer;
-using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Feeder;
+using ClrVpin.Models.Feeder.Vps;
 using NUnit.Framework;
 
-namespace ClrVpin.Tests.Importer;
+namespace ClrVpin.Tests.Feeder;
 
 [TestFixture]
-internal class ImporterUtilsTests
+internal class FeederUtilsTests
 {
     [Test]
     [TestCase(new [] {"first"}, "first")]
@@ -19,7 +19,7 @@ internal class ImporterUtilsTests
     {
         var onlineGames = names.Select(name => new OnlineGame { Name = name }).ToList();
             
-        var uniqueName = ImporterUtils.GetUniqueGame(onlineGames);
+        var uniqueName = FeederUtils.GetUniqueGame(onlineGames);
 
         Assert.That(uniqueName.Name, Is.EqualTo(expectedName));
     }

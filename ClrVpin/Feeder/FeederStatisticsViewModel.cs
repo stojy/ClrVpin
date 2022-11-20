@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
-using ClrVpin.Models.Importer;
+using ClrVpin.Models.Feeder;
 using PropertyChanged;
 using Utils.Extensions;
 
-namespace ClrVpin.Importer
+namespace ClrVpin.Feeder
 {
     [AddINotifyPropertyChangedInterface]
-    public class ImporterStatisticsViewModel
+    public class FeederStatisticsViewModel
     {
-        public ImporterStatisticsViewModel(IList<GameItem> gameItems, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics)
+        public FeederStatisticsViewModel(IList<GameItem> gameItems, TimeSpan elapsedTime, Dictionary<string, int> feedFixStatistics)
         {
             _gameItems = gameItems;
             _elapsedTime = elapsedTime;
@@ -28,14 +28,14 @@ namespace ClrVpin.Importer
             Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
-                Title = "Importer Statistics",
+                Title = "Statistics",
                 Left = left,
                 Top = top,
                 Width = 712,
                 Height = Model.ScreenWorkArea.Height - top - WindowMargin,
                 Content = this,
                 Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("ImporterStatisticsTemplate") as DataTemplate
+                ContentTemplate = parentWindow.FindResource("FeederStatisticsTemplate") as DataTemplate
             };
             Window.Show();
 

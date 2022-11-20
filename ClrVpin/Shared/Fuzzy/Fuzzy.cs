@@ -221,10 +221,10 @@ public static class Fuzzy
     public static (LocalGame game, int? score, bool isMatch) MatchToLocalDatabase(this IList<LocalGame> games, FuzzyItemDetails fileOrFeedFuzzyItemDetails, bool isFile = true)
     {
         // first chance
-        // - check EVERY DB game entry against the fuzzy name details (which can be a file file for cleaner/merger OR online game entry for importer (file to look for the best match)
+        // - check EVERY DB game entry against the fuzzy name details (which can be a file file for cleaner/merger OR online game entry for feeder (file to look for the best match)
         // - Match will compare the source fuzzy details of each local game DB entry against the fuzzy details of the destination item being matched.. 
         //   a. file name OR
-        //   b. importer feed table
+        //   b. feeder feed table
         // - Fields to matched against..
         //   a. Table name (non-media) OR
         //   b. Description (media)

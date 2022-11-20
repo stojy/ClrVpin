@@ -5,7 +5,7 @@ using ClrVpin.About;
 using ClrVpin.Cleaner;
 using ClrVpin.Controls;
 using ClrVpin.Extensions;
-using ClrVpin.Importer;
+using ClrVpin.Feeder;
 using ClrVpin.Merger;
 using ClrVpin.Models.Settings;
 using ClrVpin.Settings;
@@ -28,13 +28,13 @@ public class HomeViewModel
 
         CleanerCommand = new ActionCommand(Show<CleanerViewModel>);
         MergerCommand = new ActionCommand(Show<MergerViewModel>);
-        ImporterCommand = new ActionCommand(Show<ImporterViewModel>);
+        FeederCommand = new ActionCommand(Show<FeederViewModel>);
         SettingsCommand = new ActionCommand(Show<SettingsViewModel>);
         AboutCommand = new ActionCommand(Show<AboutViewModel>);
         CloseCommand = new ActionCommand(_mainWindow.Close);
 
         CleanerToolTip = "Scan existing content and optionally fix" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
-        MergerToolTip = "Rebuild existing library by merging new content from alternate folders" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
+        MergerToolTip = "Merge downloaded content into your existing collection" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
 
         _mainWindow.SizeChanged += SizeChanged;
     }
@@ -46,7 +46,7 @@ public class HomeViewModel
 
     public ICommand CleanerCommand { get; }
     public ICommand MergerCommand { get; }
-    public ICommand ImporterCommand { get; }
+    public ICommand FeederCommand { get; }
     public ICommand SettingsCommand { get; }
     public ICommand AboutCommand { get; }
     public ICommand CloseCommand { get; }

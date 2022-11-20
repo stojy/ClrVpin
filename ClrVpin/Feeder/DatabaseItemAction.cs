@@ -1,4 +1,4 @@
-﻿namespace ClrVpin.Importer;
+﻿namespace ClrVpin.Feeder;
 
 public enum DatabaseItemAction
 {

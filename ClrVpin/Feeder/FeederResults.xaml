@@ -2,14 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:importer="clr-namespace:ClrVpin.Importer"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:vps="clr-namespace:ClrVpin.Models.Importer.Vps"
                     xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
-                    xmlns:importerModel="clr-namespace:ClrVpin.Models.Importer">
+                    xmlns:vps="clr-namespace:ClrVpin.Models.Feeder.Vps"
+                    xmlns:feederModels="clr-namespace:ClrVpin.Models.Feeder"
+                    xmlns:feeder="clr-namespace:ClrVpin.Feeder">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
@@ -233,8 +233,8 @@
     <Setter Property="IsEditable" Value="True" />
   </Style>
 
-  <DataTemplate x:Key="ImporterResultsTemplate" DataType="{x:Type importer:ImporterResultsViewModel}">
-    <materialDesign:DialogHost Identifier="ImporterResultsDialog" CloseOnClickAway="True" VerticalAlignment="Stretch" DialogMargin="0" DialogBackground="Transparent">
+  <DataTemplate x:Key="FeederResultsTemplate" DataType="{x:Type feeder:FeederResultsViewModel}">
+    <materialDesign:DialogHost Identifier="FeederResultsDialog" CloseOnClickAway="True" VerticalAlignment="Stretch" DialogMargin="0" DialogBackground="Transparent">
       <!--example of different dialogs from the same host.. https://github.com/Keboo/MaterialDesignInXaml.Examples/blob/master/DialogHost/DialogHost.FromViewModel/MainWindow.xaml-->
       <materialDesign:DialogHost.DialogContentTemplate>
         <DataTemplate>
@@ -547,7 +547,7 @@
             <TextBlock Text="{Binding GameItems.Count}" />
           </WrapPanel>
 
-          <DataGrid Name="ImporterResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GameItemsView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+          <DataGrid Name="FeederResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GameItemsView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                     SelectionMode="Single"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
@@ -562,30 +562,30 @@
             </b:Interaction.Triggers>
 
             <DataGrid.Columns>
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
                                   Header="#" Binding="{Binding Index}" Width="45" />
 
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" Header="Fix" Width="30" SortMemberPath="OnlineGame.IsMatched">
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" Header="Fix" Width="30" SortMemberPath="OnlineGame.IsMatched">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate>
                     <WrapPanel Margin="-7,-2,0,0">
                       <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30"
                               ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalAndOnline}}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalAndOnline}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
                       </Button>
                       <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
                               ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.LocalOnly}}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding UpdateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
                       </Button>
                       <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
                               ToolTip="{Binding CreateDatabaseEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static importerModel:TableMatchOptionEnum.OnlineOnly}}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.OnlineOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding CreateDatabaseEntryCommand}">
                         <materialDesign:PackIcon Kind="Plus" Width="33" Height="33" />
@@ -595,15 +595,15 @@
                 </DataGridTemplateColumn.CellTemplate>
               </DataGridTemplateColumn>
 
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
                                   Binding="{Binding Name}"
                                   Width="255" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
                                   Binding="{Binding Manufacturer}" Width="160" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
                                   Binding="{Binding Year}"
                                   Width="55" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=importerModel:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
                                   Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
             </DataGrid.Columns>
           </DataGrid>
@@ -611,7 +611,7 @@
 
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
           <Grid>
-            <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource NegativeToVisibilityConverter}}"
+            <StackPanel Visibility="{Binding ElementName=FeederResults, Path=SelectedIndex, Converter={StaticResource NegativeToVisibilityConverter}}"
                         VerticalAlignment="Center" HorizontalAlignment="Center">
               <materialDesign:PackIcon Kind="HelpCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
               <TextBlock Text="Select a table to view the online information" FontSize="28" />
@@ -619,14 +619,14 @@
 
             <StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource NullToVisibilityConverter}}"
                         VerticalAlignment="Center" HorizontalAlignment="Center">
-              <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
+              <StackPanel Visibility="{Binding ElementName=FeederResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
                           VerticalAlignment="Center" HorizontalAlignment="Center">
                 <materialDesign:PackIcon Kind="AlertCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
                 <TextBlock Text="Online information is not available for unmatched tables" FontSize="28" />
               </StackPanel>
             </StackPanel>
 
-            <StackPanel Visibility="{Binding ElementName=ImporterResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
+            <StackPanel Visibility="{Binding ElementName=FeederResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
               <StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource ReverseNullToVisibilityConverter}}">
                 <UniformGrid Columns="3">
                   <GroupBox Header="Hardware: Table Info">

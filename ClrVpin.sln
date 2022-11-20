@@ -60,7 +60,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils.Tests", "Utils.Tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClrVpin.Tests", "ClrVpin.Tests\ClrVpin.Tests.csproj", "{CB9CE454-2994-4F14-B781-8BB78F3B2414}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "importer", "importer", "{A9565933-F1E0-4F5D-A181-E2BF62C87787}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "feeder", "feeder", "{A9565933-F1E0-4F5D-A181-E2BF62C87787}"
 	ProjectSection(SolutionItems) = preProject
 		docs\screenshots\importer\logs.png = docs\screenshots\importer\logs.png
 		docs\screenshots\importer\results.png = docs\screenshots\importer\results.png

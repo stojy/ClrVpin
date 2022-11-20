@@ -10,7 +10,7 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Extensions;
 using ClrVpin.Logging;
-using ClrVpin.Models.Importer;
+using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
@@ -19,12 +19,12 @@ using PropertyChanged;
 using Utils;
 using Utils.Extensions;
 
-namespace ClrVpin.Importer
+namespace ClrVpin.Feeder
 {
     [AddINotifyPropertyChangedInterface]
-    public class ImporterViewModel : IShowViewModel
+    public class FeederViewModel : IShowViewModel
     {
-        public ImporterViewModel()
+        public FeederViewModel()
         {
             StartCommand = new ActionCommand(Start);
 
@@ -53,9 +53,9 @@ namespace ClrVpin.Importer
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parent.Resources,
-                ContentTemplate = parent.FindResource("ImporterTemplate") as DataTemplate,
+                ContentTemplate = parent.FindResource("FeederTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,
-                Title = "Importer"
+                Title = "Feeder"
             };
 
             _window.Show();
@@ -77,8 +77,8 @@ namespace ClrVpin.Importer
                     Description = matchType.Description,
                     Tip = matchType.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Importer.SelectedMatchCriteriaOptions.Contains(matchType.Enum),
-                    SelectedCommand = new ActionCommand(() => Settings.Importer.SelectedMatchCriteriaOptions.Toggle(matchType.Enum)),
+                    IsActive = Settings.Feeder.SelectedMatchCriteriaOptions.Contains(matchType.Enum),
+                    SelectedCommand = new ActionCommand(() => Settings.Feeder.SelectedMatchCriteriaOptions.Toggle(matchType.Enum)),
                     IsHighlighted = matchType.IsHighlighted,
                     IsHelpSupported = matchType.HelpUrl != null,
                     HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) { UseShellExecute = true }))
@@ -94,7 +94,7 @@ namespace ClrVpin.Importer
             if (!Model.SettingsManager.IsValid)
             {
                 // clear the settings to disable matching
-                Settings.Importer.SelectedMatchCriteriaOptions.Clear();
+                Settings.Feeder.SelectedMatchCriteriaOptions.Clear();
 
                 // disable the UI so it can't be selected
                 MatchFuzzy.IsActive = false;
@@ -113,7 +113,7 @@ namespace ClrVpin.Importer
                     Description = feedFix.Description,
                     Tip = feedFix.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Importer.SelectedFeedFixOptions.Contains(feedFix.Enum),
+                    IsActive = Settings.Feeder.SelectedFeedFixOptions.Contains(feedFix.Enum),
                     SelectedCommand = new ActionCommand(() => FixFeedOptionSelected(feedFix.Enum))
                 };
                 return featureType;
@@ -126,10 +126,10 @@ namespace ClrVpin.Importer
 
         private void FixFeedOptionSelected(FixFeedOptionEnum fixFeedOption)
         {
-            Settings.Importer.SelectedFeedFixOptions.Toggle(fixFeedOption);
+            Settings.Feeder.SelectedFeedFixOptions.Toggle(fixFeedOption);
 
             // disable 'duplicate table' option if the prerequisite fix options aren't enabled
-            if (!Settings.Importer.SelectedFeedFixOptions.ContainsAll(
+            if (!Settings.Feeder.SelectedFeedFixOptions.ContainsAll(
                     FixFeedOptionEnum.Whitespace,
                     FixFeedOptionEnum.ManufacturedIncludesAuthor,
                     FixFeedOptionEnum.OriginalTableIncludesIpdbUrl,
@@ -141,7 +141,7 @@ namespace ClrVpin.Importer
             {
                 _feedFixDuplicateTableOption.IsActive = false;
                 _feedFixDuplicateTableOption.IsSupported = false;
-                Settings.Importer.SelectedFeedFixOptions.Remove(FixFeedOptionEnum.DuplicateTable);
+                Settings.Feeder.SelectedFeedFixOptions.Remove(FixFeedOptionEnum.DuplicateTable);
             }
             else
             {
@@ -151,7 +151,7 @@ namespace ClrVpin.Importer
 
         private async void Start()
         {
-            Logger.Info($"Importer started, settings={JsonSerializer.Serialize(Settings)}");
+            Logger.Info($"Feeder started, settings={JsonSerializer.Serialize(Settings)}");
 
             _window.Hide();
             Logger.Clear();
@@ -177,18 +177,18 @@ namespace ClrVpin.Importer
             }
 
             progress.Update("Fetching online database");
-            var onlineGames = await ImporterUtils.ReadGamesFromOnlineDatabase();
+            var onlineGames = await FeederUtils.ReadGamesFromOnlineDatabase();
 
             progress.Update("Fixing online database");
-            var feedFixStatistics = ImporterFix.FixOnlineDatabase(onlineGames);
+            var feedFixStatistics = FeederFix.FixOnlineDatabase(onlineGames);
             Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
 
             progress.Update("Matching online to local database");
-            await ImporterUtils.MatchOnlineToLocalAsync(localGames, onlineGames, UpdateProgress);
+            await FeederUtils.MatchOnlineToLocalAsync(localGames, onlineGames, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Update("Matching local to online database");
-            var gameItems = await ImporterUtils.MergeOnlineAndLocalGamesAsync(localGames, onlineGames, UpdateProgress);
+            var gameItems = await FeederUtils.MergeOnlineAndLocalGamesAsync(localGames, onlineGames, UpdateProgress);
             Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
             progress.Update("Preparing Results");
@@ -196,7 +196,7 @@ namespace ClrVpin.Importer
             progress.Close();
 
             await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics);
-            Logger.Info($"Importer rendered, duration={progress.Duration}", true);
+            Logger.Info($"Feeder rendered, duration={progress.Duration}", true);
 
             void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
         }
@@ -205,10 +205,10 @@ namespace ClrVpin.Importer
         {
             var screenPosition = _window.GetCurrentScreenPosition();
 
-            var results = new ImporterResultsViewModel(gameItems, localGames);
+            var results = new FeederResultsViewModel(gameItems, localGames);
             var showTask = results.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
 
-            var statistics = new ImporterStatisticsViewModel(gameItems, duration, fixStatistics);
+            var statistics = new FeederStatisticsViewModel(gameItems, duration, fixStatistics);
             statistics.Show(_window, screenPosition.X + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
             var logging = new LoggingViewModel();

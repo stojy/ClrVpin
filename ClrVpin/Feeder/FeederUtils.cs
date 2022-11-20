@@ -7,17 +7,17 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using ClrVpin.Converters;
 using ClrVpin.Logging;
-using ClrVpin.Models.Importer;
-using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Models.Feeder;
+using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;
 
-namespace ClrVpin.Importer;
+namespace ClrVpin.Feeder;
 
-public static class ImporterUtils
+public static class FeederUtils
 {
-    static ImporterUtils()
+    static FeederUtils()
     {
         _jsonSerializerOptions = new JsonSerializerOptions
         {

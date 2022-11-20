@@ -10,8 +10,8 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Logging;
-using ClrVpin.Models.Importer;
-using ClrVpin.Models.Importer.Vps;
+using ClrVpin.Models.Feeder;
+using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
@@ -21,7 +21,7 @@ using PropertyChanged;
 using Utils;
 using Utils.Extensions;
 
-namespace ClrVpin.Importer
+namespace ClrVpin.Feeder
 {
     public interface IGameCollections
     {
@@ -37,21 +37,21 @@ namespace ClrVpin.Importer
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class ImporterResultsViewModel : IGameCollections
+    public class FeederResultsViewModel : IGameCollections
     {
-        public ImporterResultsViewModel(IList<GameItem> gameItems, IList<LocalGame> localGames)
+        public FeederResultsViewModel(IList<GameItem> gameItems, IList<LocalGame> localGames)
         {
             // use the supplied localGames list instead of extracting from gameItems to ensure the existing ordering in the DB file(s) is preserved
-            // - we don't want to re-order based on the online feed (after the various importer fixes) as this makes it too difficult to track the differences
+            // - we don't want to re-order based on the online feed (after the various Feeder fixes) as this makes it too difficult to track the differences
             // - _localGames = gameItems.Where(item => item.LocalGame != null).Select(item => item.LocalGame).ToList();
             _localGames = localGames;
 
-            IsMatchingEnabled = Model.Settings.Importer.SelectedMatchCriteriaOptions.Any();
+            IsMatchingEnabled = Model.Settings.Feeder.SelectedMatchCriteriaOptions.Any();
 
-            TableStyleOptionsView = CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured, () => Model.Settings.Importer.SelectedTableStyleOption);
-            TableMatchOptionsView = CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All, () => Model.Settings.Importer.SelectedTableMatchOption);
-            TableAvailabilityOptionsView = CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any, () => Model.Settings.Importer.SelectedTableAvailabilityOption);
-            TableNewContentOptionsView = CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any, () => Model.Settings.Importer.SelectedTableNewContentOption);
+            TableStyleOptionsView = CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured, () => Model.Settings.Feeder.SelectedTableStyleOption);
+            TableMatchOptionsView = CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All, () => Model.Settings.Feeder.SelectedTableMatchOption);
+            TableAvailabilityOptionsView = CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any, () => Model.Settings.Feeder.SelectedTableAvailabilityOption);
+            TableNewContentOptionsView = CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any, () => Model.Settings.Feeder.SelectedTableNewContentOption);
             PresetDateOptionsView = CreatePresetDateOptionsView(StaticSettings.PresetDateOptions);
 
             // assign VM properties
@@ -242,7 +242,7 @@ namespace ClrVpin.Importer
         public string BackupFolder { get; }
         public ICommand NavigateToBackupFolderCommand { get; }
 
-        public ImporterSettings Settings { get; } = Model.Settings.Importer;
+        public FeederSettings Settings { get; } = Model.Settings.Feeder;
 
         // todo; move filters into a separate class?
         public ListCollectionView<string> TablesFilterView { get; private set; }
@@ -295,7 +295,7 @@ namespace ClrVpin.Importer
                 Height = (Model.ScreenWorkArea.Height - 10) * 0.73,
                 Content = this,
                 Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("ImporterResultsTemplate") as DataTemplate
+                ContentTemplate = parentWindow.FindResource("FeederResultsTemplate") as DataTemplate
             };
 
             Window.Show();
@@ -334,7 +334,7 @@ namespace ClrVpin.Importer
                 return;
             }
 
-            // simplified summary of the ImporterStatisticsViewModel info
+            // simplified summary of the FeederStatisticsViewModel info
             var restrictedGameItems = GameItems.Where(gameItem => 
                 !gameItem.IsOriginal && 
                 gameItem.OnlineGame?.TableFormats.Contains("VPX") == true && 
@@ -534,7 +534,7 @@ namespace ClrVpin.Importer
 
         private readonly Regex _regexExtractIpdbId = new(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
         private readonly IList<LocalGame> _localGames;
-        public const string DialogHostName = "ImporterResultsDialog";
+        public const string DialogHostName = "FeederResultsDialog";
 
         private const int WindowMargin = 0;
         private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T ENABLED";

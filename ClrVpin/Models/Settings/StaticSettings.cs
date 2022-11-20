@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using ClrVpin.Models.Cleaner;
-using ClrVpin.Models.Importer;
+using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Merger;
 using ClrVpin.Models.Shared;
 using Utils.Extensions;
@@ -23,7 +23,7 @@ namespace ClrVpin.Models.Settings
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
                 HitTypeEnum.Unsupported)).ToArray();
 
-            // importer
+            // feeder
             TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableAvailabilityOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -87,7 +87,7 @@ namespace ClrVpin.Models.Settings
             }
         };
 
-        // all possible table style options - to be used elsewhere (importer)
+        // all possible table style options - to be used elsewhere (feeder)
         public static readonly EnumOption<TableStyleOptionEnum>[] TableStyleOptions =
         {
             new() {Enum = TableStyleOptionEnum.Manufactured, Tip = "A physical table has been manufactured"},
@@ -118,7 +118,7 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TableNewContentOptionEnum.Any, Tip = "Tables with new content of any type, including any unmatched tables where new content is n/a"}
         };
 
-        // all possible file merge options - to be used elsewhere (importer)
+        // all possible file merge options - to be used elsewhere (feeder)
         public static readonly EnumOption<FixFeedOptionEnum>[] FixFeedOptions =
         {
             new() {Enum = FixFeedOptionEnum.InvalidCharacters, Tip = "Fix or remove any invalid characters (anything not supported by the windows file system)"},
