@@ -26,27 +26,36 @@ public class HomeViewModel
         SettingsManager = Model.SettingsManager = SettingsManager.Create();
         Model.Settings = Model.SettingsManager.Settings;
 
-        CleanerCommand = new ActionCommand(Show<CleanerViewModel>);
-        MergerCommand = new ActionCommand(Show<MergerViewModel>);
         FeederCommand = new ActionCommand(Show<FeederViewModel>);
+        MergerCommand = new ActionCommand(Show<MergerViewModel>);
+        CleanerCommand = new ActionCommand(Show<CleanerViewModel>);
+        ExplorerCommand = new ActionCommand(Show<CleanerViewModel>);    // todo;
         SettingsCommand = new ActionCommand(Show<SettingsViewModel>);
         AboutCommand = new ActionCommand(Show<AboutViewModel>);
         CloseCommand = new ActionCommand(_mainWindow.Close);
 
-        CleanerToolTip = "Scan existing content and optionally fix" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
-        MergerToolTip = "Merge downloaded content into your existing collection" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
+        UpdateProperties();
 
         _mainWindow.SizeChanged += SizeChanged;
     }
 
+    private void UpdateProperties()
+    {
+        CleanerToolTip = "Clean your existing collection" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
+        MergerToolTip = "Merge downloaded files into your existing collection" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
+        ExplorerToolTip = "Explore your existing collection" + (Model.SettingsManager.IsValid ? "" : Model.OptionsDisabledMessage);
+    }
+
     public static SettingsManager SettingsManager { get; private set; }
 
-    public string CleanerToolTip { get; }
-    public string MergerToolTip { get; }
+    public string CleanerToolTip { get; private set; }
+    public string MergerToolTip { get; private set; }
+    public string ExplorerToolTip { get; private set; }
 
-    public ICommand CleanerCommand { get; }
-    public ICommand MergerCommand { get; }
     public ICommand FeederCommand { get; }
+    public ICommand MergerCommand { get; }
+    public ICommand CleanerCommand { get; }
+    public ICommand ExplorerCommand { get; }
     public ICommand SettingsCommand { get; }
     public ICommand AboutCommand { get; }
     public ICommand CloseCommand { get; }
@@ -82,13 +91,14 @@ public class HomeViewModel
         childWindow.Closed += (_, _) =>
         {
             IsChildWindowActive = false;
+            UpdateProperties();
 
             // restore the original main window location
             _mainWindow.Left = originalPositionLeft;
             _mainWindow.Top = originalPositionTop;
 
             // hide then show to ensure the window is brought to the foreground
-            // - it's a workaround required in case other non-ClrVpin windows were active, e.g. browser
+            // - it's a workaround required to reliable handle scenario where non-ClrVpin windows were active, e.g. browser
             _mainWindow.Hide();
             _mainWindow.TryShow();
         };

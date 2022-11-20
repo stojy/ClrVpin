@@ -175,7 +175,7 @@
 
               <WrapPanel>
                 <Button Command="{Binding FeederCommand}" 
-                        ToolTip="Import and navigate online database to check for updated content"
+                        ToolTip="Navigate the online feed, check for new content, and download files"
                         Style="{StaticResource RaisedAccentButtonStyle}" Width="90" Margin="0,0,5,0">
                   <StackPanel>
                     <TextBlock Text="Feeder" Style="{StaticResource TextBlockStyle}" Margin="0,0,0,5" />
@@ -202,8 +202,8 @@
                         <materialDesign:PackIcon Kind="Sparkles" Style="{StaticResource PackIconStyle}"/>
                       </StackPanel>
                     </Button>
-                    <Button Command="{Binding CleanerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
-                            ToolTip="{Binding CleanerToolTip}"
+                    <Button Command="{Binding ExplorerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
+                            ToolTip="{Binding ExplorerToolTip}"
                             Style="{StaticResource RaisedAccentDarkButtonStyle}" Width="90" Height="90" Margin="5,0,0,0">
                       <StackPanel>
                         <TextBlock Text="Explorer" Style="{StaticResource TextBlockStyle}"  />
