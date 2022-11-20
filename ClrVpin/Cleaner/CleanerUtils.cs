@@ -4,16 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
-using ClrVpin.Models.Scanner;
+using ClrVpin.Models.Cleaner;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Cleaner
 {
-    public static class ScannerUtils
+    public static class CleanerUtils
     {
         private static readonly Models.Settings.Settings _settings = Model.Settings;
 
@@ -50,7 +50,7 @@ namespace ClrVpin.Scanner
                 unmatchedFiles.AddRange(unknownFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
-                if (_settings.Scanner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
+                if (_settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported))
                 {
                     var unsupportedFiles = TableUtils.GetNonContentFileDetails(contentType, contentType.Folder);
 
@@ -117,7 +117,7 @@ namespace ClrVpin.Scanner
                     var orderedByHitType = gameContentHits.Hits.OrderBy(hit => hit.Type);
 
                     // when fixing order, need to cater for no FileInfo, e.g. file missing
-                    switch (_settings.Scanner.SelectedMultipleMatchOption)
+                    switch (_settings.Cleaner.SelectedMultipleMatchOption)
                     {
                         case MultipleMatchOptionEnum.PreferCorrectName:
                             FixOrderedHits(orderedByHitType.ToList(), gameFiles, fixableContentLocalGame);
@@ -135,7 +135,7 @@ namespace ClrVpin.Scanner
                             decimal? correctHitLength = orderedByMostRecent.FirstOrDefault(x => x.Type == HitTypeEnum.CorrectName)?.FileInfo.Length;
                             if (correctHitLength != null)
                             {
-                                var sizeThreshold = _settings.Scanner.MultipleMatchExceedSizeThresholdPercentage / 100;
+                                var sizeThreshold = _settings.Cleaner.MultipleMatchExceedSizeThresholdPercentage / 100;
                                 orderedByMostRecent = orderedByMostRecent.OrderByDescending(hit => correctHitLength != 0 && hit.FileInfo?.Length / correctHitLength > sizeThreshold).ToList();
                             }
 
@@ -163,13 +163,13 @@ namespace ClrVpin.Scanner
             if (preferredHit.Type == HitTypeEnum.CorrectName && orderedHits.Count == 1)
                 return;
 
-            var multiOptionDescription = _settings.Scanner.SelectedMultipleMatchOption.GetDescription();
-            if (_settings.Scanner.SelectedMultipleMatchOption == MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold)
-                multiOptionDescription = $"{multiOptionDescription} (criteria: {_settings.Scanner.MultipleMatchExceedSizeThresholdPercentage / 100:P2})";
+            var multiOptionDescription = _settings.Cleaner.SelectedMultipleMatchOption.GetDescription();
+            if (_settings.Cleaner.SelectedMultipleMatchOption == MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold)
+                multiOptionDescription = $"{multiOptionDescription} (criteria: {_settings.Cleaner.MultipleMatchExceedSizeThresholdPercentage / 100:P2})";
 
             // nothing to fix if the preferred hit 'correct name' AND the other hits aren't selected
             // - e.g. preferred = wrong case, other=correct name (not selected)
-            if (preferredHit.Type == HitTypeEnum.CorrectName && !nonPreferredHits.Any(hit => hit.Type.In(_settings.Scanner.SelectedFixHitTypes)))
+            if (preferredHit.Type == HitTypeEnum.CorrectName && !nonPreferredHits.Any(hit => hit.Type.In(_settings.Cleaner.SelectedFixHitTypes)))
             {
                 Logger.Info($"Skipping (fix criteria not selected).. table: {localGame.Game.Name}, description: {localGame.Game.Description}, " +
                             $"preferred type: {preferredHit.Type.GetDescription()}, required fix types (unselected): {string.Join('|', nonPreferredHits.Select(x => x.Type.GetDescription()).Distinct())}, " +
@@ -179,7 +179,7 @@ namespace ClrVpin.Scanner
 
             // nothing to fix if the preferred hit isn't selected
             // - e.g. correct name not selected
-            if (preferredHit.Type != HitTypeEnum.CorrectName && !preferredHit.Type.In(_settings.Scanner.SelectedFixHitTypes))
+            if (preferredHit.Type != HitTypeEnum.CorrectName && !preferredHit.Type.In(_settings.Cleaner.SelectedFixHitTypes))
             {
                 Logger.Info($"Skipping (fix criteria not selected).. table: {localGame.Game.Name}, description: {localGame.Game.Description}, " +
                             $"preferred type (unselected): {preferredHit.Type.GetDescription()}, " +
@@ -198,11 +198,11 @@ namespace ClrVpin.Scanner
             else
                 Logger.Debug(message);
 
-            gameFiles.AddRange(FileUtils.DeleteAllExcept(orderedHits, preferredHit, _settings.Scanner.SelectedFixHitTypes));
+            gameFiles.AddRange(FileUtils.DeleteAllExcept(orderedHits, preferredHit, _settings.Cleaner.SelectedFixHitTypes));
 
             // if the preferred hit file isn't 'CorrectName', then rename it
             if (preferredHit.Type != HitTypeEnum.CorrectName)
-                gameFiles.Add(FileUtils.Rename(preferredHit, localGame, _settings.Scanner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
+                gameFiles.Add(FileUtils.Rename(preferredHit, localGame, _settings.Cleaner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
         }
 
         public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
@@ -214,8 +214,8 @@ namespace ClrVpin.Scanner
         {
             // delete files NOT associated with localGame, aka unmatched files
             var unmatchedFilesToDelete = unmatchedFiles.Where(unmatchedFile =>
-                unmatchedFile.HitType == HitTypeEnum.Unknown && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
-                unmatchedFile.HitType == HitTypeEnum.Unsupported && _settings.Scanner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported)).ToList();
+                unmatchedFile.HitType == HitTypeEnum.Unknown && _settings.Cleaner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
+                unmatchedFile.HitType == HitTypeEnum.Unsupported && _settings.Cleaner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported)).ToList();
 
             unmatchedFilesToDelete.ForEach((fileDetail, i) =>
             {

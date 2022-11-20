@@ -77,7 +77,7 @@ namespace ClrVpin.Merger
 
                 // merge ALL of the selected hit types
                 // - for each supported file that exists, there will be 1 hit type
-                // - if their are multiple hit type matches.. then a subsequent 'scanner' (aka clean) run will be required to clean up the extra files
+                // - if their are multiple hit type matches.. then a subsequent 'cleaner' run will be required to clean up the extra files
                 var mergeableHits = contentHitCollection.Hits.Where(hit => hit.Type.In(StaticSettings.FixablePrioritizedHitTypeEnums));
 
                 // merge each hit
@@ -98,7 +98,7 @@ namespace ClrVpin.Merger
             var destinationFileName = Path.Combine(contentType.Folder, hit.File);
             var destinationFileInfo = File.Exists(destinationFileName) ? new FileInfo(destinationFileName) : null;
 
-            // construct the correct destination file name - i.e. the file name that WILL be used when the scanner is eventually run (typically after the merge)
+            // construct the correct destination file name - i.e. the file name that WILL be used when the cleaner is eventually run (typically after the merge)
             // - calculated here the purpose of logging, i.e. so that the file details of the file that will potentially be overwritten (when scanning is run) is displayed
             // - selecting from the relevant hit.Type would likely be more efficient, but not done because full file paths are required/useful for logging
             var correctDestinationFileName = FileUtils.GetCorrectFile(localGame, contentType.Category, contentType.Folder, hit.Extension);
@@ -145,7 +145,7 @@ namespace ClrVpin.Merger
         private static bool ShouldIgnore(Game game, Hit hit, FileInfo sourceFileInfo, FileInfo destinationFileInfo, Action logAction)
         {
             // opt out: scan through each ignore criteria to determine if the file should be considered 'merge worthy'
-            // - unlike scanner 'multiple match preference'.. which is more of an 'opt in'
+            // - unlike cleaner 'multiple match preference'.. which is more of an 'opt in'
 
             // contains words - destination file isn't required (although a table match is required)
             if (_settings.Merger.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfContainsWords) && _settings.Merger.IgnoreIWords.Any(x => sourceFileInfo.Name.ToLower().Contains(x)))

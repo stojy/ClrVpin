@@ -1,6 +1,6 @@
 ﻿using ClrVpin.Models.Shared;
 
-namespace ClrVpin.Models.Scanner
+namespace ClrVpin.Models.Cleaner
 {
     public class MultipleMatchOption : Option
     {

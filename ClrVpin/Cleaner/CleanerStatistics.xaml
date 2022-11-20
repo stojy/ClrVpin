@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:scanner="clr-namespace:ClrVpin.Scanner">
+                    xmlns:cleaner="clr-namespace:ClrVpin.Cleaner">
 
 
-  <DataTemplate x:Key="ScannerStatisticsTemplate" DataType="{x:Type scanner:ScannerStatisticsViewModel}">
+  <DataTemplate x:Key="CleanerStatisticsTemplate" DataType="{x:Type cleaner:CleanerStatisticsViewModel}">
     <DockPanel>
       <TextBox Margin="5" Text="{Binding Result}" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0"/>
     </DockPanel>

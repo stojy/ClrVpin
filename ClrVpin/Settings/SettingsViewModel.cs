@@ -5,7 +5,7 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models.Shared;
-using ClrVpin.Scanner;
+using ClrVpin.Shared;
 using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
 

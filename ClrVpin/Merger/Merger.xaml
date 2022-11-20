@@ -42,7 +42,7 @@
       <TextBlock Style="{StaticResource TitleStyle}">Match</TextBlock>
       <GroupBox Header="Criteria" Width="650">
         <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
-          <!-- not using an ItemsControl for the LCV (e.g. similar to scanner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
+          <!-- not using an ItemsControl for the LCV (e.g. similar to cleaner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
           <ContentControl Content="{Binding MatchWrongCase}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
           <ContentControl Content="{Binding MatchDuplicate}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
           <ContentControl Content="{Binding MatchTableName}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
@@ -80,7 +80,7 @@
       <TextBlock Style="{StaticResource TitleStyle}" Text="Ignore" ToolTip="Criteria whereby source files will NOT be considered for merging" />
       <GroupBox Header="Criteria" Width="650">
         <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
-          <!-- not using an ItemsControl for the LCV (e.g. similar to scanner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
+          <!-- not using an ItemsControl for the LCV (e.g. similar to cleaner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
           <WrapPanel>
             <ContentControl Content="{Binding IgnoreIfContainsWordsFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Width="230" />
 

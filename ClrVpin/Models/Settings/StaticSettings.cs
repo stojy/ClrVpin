@@ -1,7 +1,7 @@
 ﻿using System.Linq;
+using ClrVpin.Models.Cleaner;
 using ClrVpin.Models.Importer;
 using ClrVpin.Models.Merger;
-using ClrVpin.Models.Scanner;
 using ClrVpin.Models.Shared;
 using Utils.Extensions;
 
@@ -11,7 +11,7 @@ namespace ClrVpin.Models.Settings
     {
         static StaticSettings()
         {
-            // scanner
+            // cleaner
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
             FixablePrioritizedHitTypeEnums = AllHitTypes.Where(x => x.Fixable).Select(x => x.Enum).ToArray();
 
@@ -37,7 +37,7 @@ namespace ClrVpin.Models.Settings
 
         //private static Settings Settings => Model.Settings;
 
-        // scanner matching hit types - to be used elsewhere (scanner) to create check and fix collections
+        // cleaner matching hit types - to be used elsewhere (cleaner) to create check and fix collections
         public static readonly HitType[] AllHitTypes =
         {
             new(HitTypeEnum.CorrectName, true, "Files that match perfectly!"),

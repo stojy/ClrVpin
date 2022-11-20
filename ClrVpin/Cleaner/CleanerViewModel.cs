@@ -11,7 +11,7 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Extensions;
 using ClrVpin.Logging;
-using ClrVpin.Models.Scanner;
+using ClrVpin.Models.Cleaner;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
@@ -20,12 +20,12 @@ using PropertyChanged;
 using Utils;
 using Utils.Extensions;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Cleaner
 {
     [AddINotifyPropertyChangedInterface]
-    public class ScannerViewModel : IShowViewModel
+    public class CleanerViewModel : IShowViewModel
     {
-        public ScannerViewModel()
+        public CleanerViewModel()
         {
             StartCommand = new ActionCommand(Start);
             CheckPinballContentTypesView = new ListCollectionView(CreateCheckContentTypes(Settings.GetPinballContentTypes()).ToList());
@@ -63,9 +63,9 @@ namespace ClrVpin.Scanner
                 SizeToContent = SizeToContent.WidthAndHeight,
                 Content = this,
                 Resources = parent.Resources,
-                ContentTemplate = parent.FindResource("ScannerTemplate") as DataTemplate,
+                ContentTemplate = parent.FindResource("CleanerTemplate") as DataTemplate,
                 ResizeMode = ResizeMode.NoResize,
-                Title = "Scanner"
+                Title = "Cleaner"
             };
 
             _window.Show();
@@ -74,7 +74,7 @@ namespace ClrVpin.Scanner
             return _window;
         }
 
-        private void UpdateIsValid() => IsValid = Settings.Scanner.SelectedCheckContentTypes.Any();
+        private void UpdateIsValid() => IsValid = Settings.Cleaner.SelectedCheckContentTypes.Any();
 
         private IEnumerable<FeatureType> CreateCheckContentTypes(IEnumerable<ContentType> contentTypes)
         {
@@ -86,10 +86,10 @@ namespace ClrVpin.Scanner
                     Description = contentType.Description,
                     Tip = contentType.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
+                    IsActive = Settings.Cleaner.SelectedCheckContentTypes.Contains(contentType.Description),
                     SelectedCommand = new ActionCommand(() =>
                     {
-                        Settings.Scanner.SelectedCheckContentTypes.Toggle(contentType.Description);
+                        Settings.Cleaner.SelectedCheckContentTypes.Toggle(contentType.Description);
                         UpdateIsValid();
                     })
                 };
@@ -110,7 +110,7 @@ namespace ClrVpin.Scanner
                     Description = hitType.Description,
                     Tip = hitType.Tip,
                     IsSupported = true,
-                    IsActive = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum),
+                    IsActive = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitType.Enum),
                     IsHighlighted = hitType.IsHighlighted,
                     IsHelpSupported = hitType.HelpUrl != null,
                     HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
@@ -118,7 +118,7 @@ namespace ClrVpin.Scanner
 
                 featureType.SelectedCommand = new ActionCommand(() =>
                 {
-                    Settings.Scanner.SelectedCheckHitTypes.Toggle(hitType.Enum);
+                    Settings.Cleaner.SelectedCheckHitTypes.Toggle(hitType.Enum);
 
                     // toggle the fix hit type checked & enabled
                     var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
@@ -126,7 +126,7 @@ namespace ClrVpin.Scanner
                     if (featureType.IsActive == false)
                     {
                         fixHitType.IsActive = false;
-                        Settings.Scanner.SelectedFixHitTypes.Remove(hitType.Enum);
+                        Settings.Cleaner.SelectedFixHitTypes.Remove(hitType.Enum);
                     }
                 });
 
@@ -144,9 +144,9 @@ namespace ClrVpin.Scanner
                 Description = hitType.Description,
                 Tip = hitType.Tip,
                 IsNeverSupported = hitType.Enum == HitTypeEnum.Missing,
-                IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
-                IsActive = Settings.Scanner.SelectedFixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
-                SelectedCommand = new ActionCommand(() => Settings.Scanner.SelectedFixHitTypes.Toggle(hitType.Enum)),
+                IsSupported = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
+                IsActive = Settings.Cleaner.SelectedFixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
+                SelectedCommand = new ActionCommand(() => Settings.Cleaner.SelectedFixHitTypes.Toggle(hitType.Enum)),
                 IsHighlighted = hitType.IsHighlighted,
                 IsHelpSupported = hitType.HelpUrl != null,
                 HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
@@ -163,10 +163,10 @@ namespace ClrVpin.Scanner
                 Description = hitType.Description,
                 Tip = hitType.Tip,
                 IsSupported = true,
-                IsActive = Settings.Scanner.SelectedMultipleMatchOption == hitType.Enum,
+                IsActive = Settings.Cleaner.SelectedMultipleMatchOption == hitType.Enum,
                 SelectedCommand = new ActionCommand(() =>
                 {
-                    Settings.Scanner.SelectedMultipleMatchOption = hitType.Enum;
+                    Settings.Cleaner.SelectedMultipleMatchOption = hitType.Enum;
                     UpdateExceedThresholdChecked();
                 })
             });
@@ -176,12 +176,12 @@ namespace ClrVpin.Scanner
 
         private void UpdateExceedThresholdChecked()
         {
-            ExceedSizeThresholdSelected = Settings.Scanner.SelectedMultipleMatchOption == MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold;
+            ExceedSizeThresholdSelected = Settings.Cleaner.SelectedMultipleMatchOption == MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold;
         }
 
         private async void Start()
         {
-            Logger.Info($"\nScanner started, settings={JsonSerializer.Serialize(Settings)}");
+            Logger.Info($"\nCleaner started, settings={JsonSerializer.Serialize(Settings)}");
 
             _window.Hide();
             Logger.Clear();
@@ -204,13 +204,13 @@ namespace ClrVpin.Scanner
             }
 
             progress.Update("Checking Files");
-            var unmatchedFiles = await ScannerUtils.CheckAsync(games, UpdateProgress);
+            var unmatchedFiles = await CleanerUtils.CheckAsync(games, UpdateProgress);
 
             progress.Update("Fixing Files");
-            var fixedFiles = await ScannerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
+            var fixedFiles = await CleanerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
 
             progress.Update("Removing Unmatched Files");
-            await ScannerUtils.RemoveUnmatchedAsync(unmatchedFiles, UpdateProgress);
+            await CleanerUtils.RemoveUnmatchedAsync(unmatchedFiles, UpdateProgress);
 
             // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
             FileUtils.DeleteActiveBackupFolderIfEmpty();
@@ -230,14 +230,14 @@ namespace ClrVpin.Scanner
         {
             var screenPosition = _window.GetCurrentScreenPosition();
 
-            var statistics = new ScannerStatisticsViewModel(_games, duration, fixedFiles, unmatchedFiles);
+            var statistics = new CleanerStatisticsViewModel(_games, duration, fixedFiles, unmatchedFiles);
             statistics.Show(_window, screenPosition.X + WindowMargin, WindowMargin);
 
             var width = Model.ScreenWorkArea.Width - statistics.Window.Width - WindowMargin;
-            var results = new ScannerResultsViewModel(_games);
+            var results = new CleanerResultsViewModel(_games);
             var displayTask = results.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top, width);
 
-            var explorer = new ScannerExplorerViewModel(_games);
+            var explorer = new CleanerExplorerViewModel(_games);
             explorer.Show(_window, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin, width);
 
             var logging = new LoggingViewModel();

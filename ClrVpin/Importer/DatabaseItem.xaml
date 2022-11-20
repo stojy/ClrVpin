@@ -274,9 +274,9 @@
                  Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
                  Text="¹ Run the following after the missing table is added.."/>
       <TextBlock FontStyle="Italic">
-        <Run Text="  1. Scanner - to correct content file names" />
+        <Run Text="  1. Cleaner - to correct content file names" />
         <LineBreak />
-        <Run Text="  2. Importer - to match content against online sources" />
+        <Run Text="  2. Feeder - to match content against online feeds" />
         <LineBreak />
       </TextBlock>
 

@@ -11,12 +11,12 @@ using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Cleaner
 {
     [AddINotifyPropertyChangedInterface]
-    public class ScannerResultsViewModel : ResultsViewModel
+    public class CleanerResultsViewModel : ResultsViewModel
     {
-        public ScannerResultsViewModel(ObservableCollection<LocalGame> games)
+        public CleanerResultsViewModel(ObservableCollection<LocalGame> games)
         {
             Games = games;
             Initialise();
@@ -27,7 +27,7 @@ namespace ClrVpin.Scanner
             Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
-                Title = "Results (Issues and Fixes)",
+                Title = "Results",
                 Left = left,
                 Top = top,
                 Width = width,
@@ -43,15 +43,15 @@ namespace ClrVpin.Scanner
 
         protected override IList<FeatureType> CreateAllContentFeatureTypes()
         {
-            // show all content types, but assign enabled and active based on the scanner configuration
+            // show all content types, but assign enabled and active based on the cleaner configuration
             var featureTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
                 Tip = contentType.Tip,
 
                 // todo; use id
-                IsSupported = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
-                IsActive = Settings.Scanner.SelectedCheckContentTypes.Contains(contentType.Description),
+                IsSupported = Settings.Cleaner.SelectedCheckContentTypes.Contains(contentType.Description),
+                IsActive = Settings.Cleaner.SelectedCheckContentTypes.Contains(contentType.Description),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             }).ToList();
 
@@ -60,13 +60,13 @@ namespace ClrVpin.Scanner
 
         protected override IList<FeatureType> CreateAllHitFeatureTypes()
         {
-            // show all hit types, but assign enabled and active based on the scanner configuration
+            // show all hit types, but assign enabled and active based on the cleaner configuration
             // - for completeness the valid hits are also visible, but disabled by default since no fixes were required
             var featureTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
             {
                 Description = hitType.Description,
-                IsSupported = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.CorrectName,
-                IsActive = Settings.Scanner.SelectedCheckHitTypes.Contains(hitType.Enum),
+                IsSupported = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.CorrectName,
+                IsActive = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitType.Enum),
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             }).ToList();
 
@@ -77,7 +77,7 @@ namespace ClrVpin.Scanner
         private async Task ShowSummary()
         {
             var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
-            var eligibleFiles = Games.Count * Settings.Scanner.SelectedCheckContentTypes.Count;
+            var eligibleFiles = Games.Count * Settings.Cleaner.SelectedCheckContentTypes.Count;
             var missingFilesCount = eligibleFiles - validHits.Count;
 
             var detail = CreatePercentageStatistic("Missing Files", missingFilesCount, eligibleFiles);

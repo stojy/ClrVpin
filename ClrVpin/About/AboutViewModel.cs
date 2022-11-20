@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Home;
-using ClrVpin.Scanner;
+using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
 

@@ -14,7 +14,6 @@ using ClrVpin.Models.Importer;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
-using ClrVpin.Scanner;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;

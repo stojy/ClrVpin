@@ -2,11 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:scanner="clr-namespace:ClrVpin.Scanner"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
-                    xmlns:controls="clr-namespace:ClrVpin.Controls">
+                    xmlns:controls="clr-namespace:ClrVpin.Controls"
+                    xmlns:cleaner="clr-namespace:ClrVpin.Cleaner">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -23,7 +23,7 @@
     <WrapPanel Orientation="Vertical" ItemWidth="195" />
   </ItemsPanelTemplate>
 
-  <DataTemplate x:Key="ScannerTemplate" DataType="{x:Type scanner:ScannerViewModel}">
+  <DataTemplate x:Key="CleanerTemplate" DataType="{x:Type cleaner:CleanerViewModel}">
     <StackPanel Margin="5">
 
       <!-- content -->
@@ -121,9 +121,9 @@
               <TextBox materialDesign:HintAssist.Hint="Threshold" IsReadOnly="True" IsEnabled="False" Width="75" Padding="0"
                        materialDesign:TextFieldAssist.SuffixText="%"
                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                       Text="{Binding Settings.Scanner.MultipleMatchExceedSizeThresholdPercentage}" />
+                       Text="{Binding Settings.Cleaner.MultipleMatchExceedSizeThresholdPercentage}" />
               <Slider Margin="10,-1,0,0" Width="290" HorizontalAlignment="Left"
-                      Value="{Binding Settings.Scanner.MultipleMatchExceedSizeThresholdPercentage}" 
+                      Value="{Binding Settings.Cleaner.MultipleMatchExceedSizeThresholdPercentage}" 
                       ToolTip="Ignore if file is smaller than the specified percentage" />
             </WrapPanel>
           </StackPanel>
@@ -131,7 +131,7 @@
       </WrapPanel>
 
       <!-- trainer wheels -->
-      <WrapPanel Margin="0,10,10,10" ToolTip="When enabled, scanner will show what would be changed, but without making ANY actual changes. No files will be copied, moved, renamed, or deleted.">
+      <WrapPanel Margin="0,10,10,10" ToolTip="When enabled, cleaner will show what would be changed, but without making ANY actual changes. No files will be copied, moved, renamed, or deleted.">
         <ToggleButton IsChecked="{Binding Settings.TrainerWheels}" />
         <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
       </WrapPanel>

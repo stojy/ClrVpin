@@ -6,12 +6,12 @@ using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Cleaner
 {
     [AddINotifyPropertyChangedInterface]
-    public class ScannerExplorerViewModel
+    public class CleanerExplorerViewModel
     {
-        public ScannerExplorerViewModel(ObservableCollection<LocalGame> localGames)
+        public CleanerExplorerViewModel(ObservableCollection<LocalGame> localGames)
         {
             LocalGames = localGames;
             LocalGamesView = new ListCollectionView<LocalGame>(localGames);
@@ -42,7 +42,7 @@ namespace ClrVpin.Scanner
                 MinWidth = 400,
                 Content = this,
                 Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("ScannerExplorerTemplate") as DataTemplate
+                ContentTemplate = parentWindow.FindResource("CleanerExplorerTemplate") as DataTemplate
             };
             Window.Show();
         }

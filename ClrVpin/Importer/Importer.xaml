@@ -17,7 +17,7 @@
       <TextBlock Style="{StaticResource TitleStyle}">Match</TextBlock>
       <GroupBox Header="Criteria" Width="660">
         <StackPanel Margin="5" HorizontalAlignment="Left">
-          <!-- not using an ItemsControl for the LCV (e.g. similar to scanner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
+          <!-- not using an ItemsControl for the LCV (e.g. similar to cleaner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
           <WrapPanel>
             <WrapPanel>
               <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />

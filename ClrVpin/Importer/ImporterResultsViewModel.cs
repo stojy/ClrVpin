@@ -368,16 +368,16 @@ namespace ClrVpin.Importer
                     "Overwrite All Info In Your Database Files From Online Sources",
                     "This will fix incorrect and out of date information in your local database.\n\n" +
                     "Please read carefully before proceeding.",
-                    "1. Before starting, run Scanner to confirm your collection is clean.\n" +
+                    "1. Before starting, run Cleaner to confirm your collection is clean.\n" +
                     "2. During the process, all the local database info is updated from online sources¹²³.\n" +
-                    "3. After completing, run Scanner to clean your collection (e.g. rename files).\n" +
+                    "3. After completing, run Cleaner to re-clean your collection (e.g. rename files, delete obsolete files, etc).\n" +
                     "\n" +
                     "¹ The database file(s) are automatically backed up before any changes are made.\n" +
                     "² Information that doesn't exist from online sources will not be overwritten (e.g. ratings)\n" +
                     "³ In extreme cases, if your local database had substantially different values for 'name' and 'description',\n" +
-                    "  then Scanner may not be able to automatically rename the files.  You can fix this by either..\n" +
-                    "  a. Run Scanner with trainer wheels to identify the files, then manually rename the files.\n" +
-                    "  b. Run Scanner without trainer wheels, then rename files (in the backup folder), then run Importer\n" +
+                    "  then Cleaner may not be able to automatically rename the files.  You can fix this by either..\n" +
+                    "  a. Run Cleaner with trainer wheels to identify the files, then manually rename the files.\n" +
+                    "  b. Run Cleaner without trainer wheels, then rename files (in the backup folder), then run Merger\n" +
                     "     to merge the files back into your collection."
                     , true, "Update Now", "Maybe Later");
 

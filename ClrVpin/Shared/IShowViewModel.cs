@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace ClrVpin.Scanner;
+namespace ClrVpin.Shared;
 
 public interface IShowViewModel
 {

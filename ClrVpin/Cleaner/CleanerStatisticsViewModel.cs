@@ -9,24 +9,24 @@ using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 
-namespace ClrVpin.Scanner
+namespace ClrVpin.Cleaner
 {
-    public class ScannerStatisticsViewModel : StatisticsViewModel
+    public class CleanerStatisticsViewModel : StatisticsViewModel
     {
-        public ScannerStatisticsViewModel(ObservableCollection<LocalGame> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
+        public CleanerStatisticsViewModel(ObservableCollection<LocalGame> games, TimeSpan elapsedTime, ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles)
             : base(games, elapsedTime, fixedFiles, unmatchedFiles)
         {
             // hit type stats for all supported types only
             // - including the extra 'under the hood' types.. valid, unknown, unsupported
             SupportedHitTypes = StaticSettings.AllHitTypes.ToList();
 
-            SupportedContentTypes = Settings.GetFixableContentTypes().Where(x => Settings.Scanner.SelectedCheckContentTypes.Contains(x.Description)).ToList();
+            SupportedContentTypes = Settings.GetFixableContentTypes().Where(x => Settings.Cleaner.SelectedCheckContentTypes.Contains(x.Description)).ToList();
 
-            SelectedCheckContentTypes = Settings.Scanner.SelectedCheckContentTypes;
+            SelectedCheckContentTypes = Settings.Cleaner.SelectedCheckContentTypes;
 
             // merger doesn't support check and fix separately
-            SelectedCheckHitTypes = Settings.Scanner.SelectedCheckHitTypes.ToList();
-            SelectedFixHitTypes = Settings.Scanner.SelectedFixHitTypes.ToList();
+            SelectedCheckHitTypes = Settings.Cleaner.SelectedCheckHitTypes.ToList();
+            SelectedFixHitTypes = Settings.Cleaner.SelectedFixHitTypes.ToList();
 
             // unlike merger, the total count represents the number of LocalGames
             TotalCount = Games.Count;
@@ -37,14 +37,14 @@ namespace ClrVpin.Scanner
             Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
-                Title = "Scanner Statistics",
+                Title = "Statistics",
                 Left = left,
                 Top = top,
                 Width = 770,
                 Height = Model.ScreenWorkArea.Height - WindowMargin - WindowMargin,
                 Content = this,
                 Resources = parentWindow.Resources,
-                ContentTemplate = parentWindow.FindResource("ScannerStatisticsTemplate") as DataTemplate
+                ContentTemplate = parentWindow.FindResource("CleanerStatisticsTemplate") as DataTemplate
             };
             Window.Show();
 
@@ -55,7 +55,7 @@ namespace ClrVpin.Scanner
         {
             var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
 
-            var eligibleHits = Games.Count * Settings.Scanner.SelectedCheckContentTypes.Count;
+            var eligibleHits = Games.Count * Settings.Cleaner.SelectedCheckContentTypes.Count;
 
             // all files
             var allFilesCount = validHits.Count + FixedFiles.Count;

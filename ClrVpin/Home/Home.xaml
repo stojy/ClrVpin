@@ -30,9 +30,9 @@
 
         <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
 
-        <controls:SharedResourceDictionary Source="../Scanner/Scanner.xaml" />
-        <controls:SharedResourceDictionary Source="../Scanner/ScannerStatistics.xaml" />
-        <controls:SharedResourceDictionary Source="../Scanner/ScannerExplorer.xaml" />
+        <controls:SharedResourceDictionary Source="../Cleaner/Cleaner.xaml" />
+        <controls:SharedResourceDictionary Source="../Cleaner/CleanerStatistics.xaml" />
+        <controls:SharedResourceDictionary Source="../Cleaner/CleanerExplorer.xaml" />
 
         <controls:SharedResourceDictionary Source="../Merger/Merger.xaml" />
         <controls:SharedResourceDictionary Source="../Merger/MergerStatistics.xaml" />
@@ -194,16 +194,16 @@
                         <materialDesign:PackIcon Kind="Import" Style="{StaticResource PackIconStyle}" />
                       </StackPanel>
                     </Button>
-                    <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
-                            ToolTip="{Binding ScannerToolTip}"
+                    <Button Command="{Binding CleanerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
+                            ToolTip="{Binding CleanerToolTip}"
                             Style="{StaticResource RaisedAccentDarkButtonStyle}" Width="90" Height="90">
                       <StackPanel>
                         <TextBlock Text="Cleaner" Style="{StaticResource TextBlockStyle}" />
                         <materialDesign:PackIcon Kind="Sparkles" Style="{StaticResource PackIconStyle}"/>
                       </StackPanel>
                     </Button>
-                    <Button Command="{Binding ScannerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
-                            ToolTip="{Binding ScannerToolTip}"
+                    <Button Command="{Binding CleanerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
+                            ToolTip="{Binding CleanerToolTip}"
                             Style="{StaticResource RaisedAccentDarkButtonStyle}" Width="90" Height="90" Margin="5,0,0,0">
                       <StackPanel>
                         <TextBlock Text="Explorer" Style="{StaticResource TextBlockStyle}"  />
@@ -235,7 +235,7 @@
                             Width="90" Height="70" Margin="5,0,0,0">
                       <StackPanel>
                         <TextBlock Text="Close" Style="{StaticResource TextBlockSmallStyle}"  />
-                        <materialDesign:PackIcon Kind="Close" Style="{StaticResource PackIconSmallStyle}" Height="45" Width="45" />
+                        <materialDesign:PackIcon Kind="Close" Style="{StaticResource PackIconSmallStyle}" Height="50" Width="50" Margin="0,-5,0,0" />
                       </StackPanel>
                     </Button>
                   </WrapPanel>

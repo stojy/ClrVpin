@@ -49,13 +49,13 @@ namespace ClrVpin.Models.Settings
             AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // initialise all settings to enabled 
-            Scanner = new ScannerSettings();
+            Cleaner = new CleanerSettings();
 
             // very important NOT to include the database type, since doing so would cause the database file(s) to be deleted
             // - deleted because would be designated as unmatched file since no table will match 'Visual Pinball'
-            Scanner.SelectedCheckContentTypes.AddRange(GetFixableContentTypes().Select(x => x.Description).ToList());
-            Scanner.SelectedCheckHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
-            Scanner.SelectedFixHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
+            Cleaner.SelectedCheckContentTypes.AddRange(GetFixableContentTypes().Select(x => x.Description).ToList());
+            Cleaner.SelectedCheckHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
+            Cleaner.SelectedFixHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
 
             Merger = new MergerSettings();
             Merger.SelectedMatchTypes.AddRange(StaticSettings.MatchTypes.Select(x => x.Enum).ToList());
@@ -108,7 +108,7 @@ namespace ClrVpin.Models.Settings
         public decimal MatchFuzzyMinimumPercentage { get; set; } = 100;
 
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
-        public ScannerSettings Scanner { get; set; }
+        public CleanerSettings Cleaner { get; set; }
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
         public MergerSettings Merger { get; set; }
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
@@ -133,9 +133,9 @@ namespace ClrVpin.Models.Settings
         public ContentType GetDatabaseContentType() => AllContentTypes.First(x => x.Category == ContentTypeCategoryEnum.Database);
 
         // it shouldn't be possible to select the database file since it's not selectable from the UI
-        // - but with an abundance caution we explicitly ignore it since if it were included the scanner would attempt to delete the file as 'unmatched'
+        // - but with an abundance caution we explicitly ignore it since if it were included the cleaner would attempt to delete the file as 'unmatched'
         // - refer ctor
-        public ContentType[] GetSelectedCheckContentTypes() => GetFixableContentTypes().Where(type => Scanner.SelectedCheckContentTypes.Contains(type.Description)).ToArray();
+        public ContentType[] GetSelectedCheckContentTypes() => GetFixableContentTypes().Where(type => Cleaner.SelectedCheckContentTypes.Contains(type.Description)).ToArray();
 
         public ContentType GetSelectedDestinationContentType() => AllContentTypes.First(x => x.Description == Merger.DestinationContentType);
         public ContentType GetContentType(ContentTypeEnum contentTypeEnum) => AllContentTypes.First(x => x.Enum == contentTypeEnum);

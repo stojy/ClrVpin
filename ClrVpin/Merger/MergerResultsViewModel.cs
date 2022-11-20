@@ -30,7 +30,7 @@ namespace ClrVpin.Merger
             Window = new MaterialWindowEx
             {
                 Owner = parentWindow,
-                Title = "Results (Merged Files)",
+                Title = "Results",
                 Left = left,
                 Top = top,
                 Width = width,
@@ -47,7 +47,7 @@ namespace ClrVpin.Merger
         protected override IList<FeatureType> CreateAllContentFeatureTypes()
         {
             // show all content types, but assign enabled and active based on the merger configuration
-            // - merger only supports one destination content type, but display them all as a list for consistency with ScannerResultsViewModel
+            // - merger only supports one destination content type, but display them all as a list for consistency with CleanerResultsViewModel
             var featureTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
             {
                 Description = contentType.Description,
