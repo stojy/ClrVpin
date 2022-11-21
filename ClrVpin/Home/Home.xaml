@@ -202,7 +202,7 @@
                         <materialDesign:PackIcon Kind="Sparkles" Style="{StaticResource PackIconStyle}"/>
                       </StackPanel>
                     </Button>
-                    <Button Command="{Binding ExplorerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
+                    <Button Command="{Binding ExplorerCommand}" IsEnabled="False" 
                             ToolTip="{Binding ExplorerToolTip}"
                             Style="{StaticResource RaisedAccentDarkButtonStyle}" Width="90" Height="90" Margin="5,0,0,0">
                       <StackPanel>
