@@ -41,6 +41,10 @@
         <controls:SharedResourceDictionary Source="../Feeder/FeederResults.xaml" />
         <controls:SharedResourceDictionary Source="../Feeder/FeederStatistics.xaml" />
 
+        <controls:SharedResourceDictionary Source="../Explorer/Explorer.xaml" />
+        <controls:SharedResourceDictionary Source="../Explorer/ExplorerResults.xaml" />
+        <controls:SharedResourceDictionary Source="../Explorer/ExplorerStatistics.xaml" />
+
         <controls:SharedResourceDictionary Source="../Shared/Results.xaml" />
         <controls:SharedResourceDictionary Source="../Shared/Progress.xaml" />
 
@@ -202,7 +206,7 @@
                         <materialDesign:PackIcon Kind="Sparkles" Style="{StaticResource PackIconStyle}"/>
                       </StackPanel>
                     </Button>
-                    <Button Command="{Binding ExplorerCommand}" IsEnabled="False" 
+                    <Button Command="{Binding ExplorerCommand}" IsEnabled="{Binding SettingsManager.IsValid}" 
                             ToolTip="{Binding ExplorerToolTip}"
                             Style="{StaticResource RaisedAccentDarkButtonStyle}" Width="90" Height="90" Margin="5,0,0,0">
                       <StackPanel>
