@@ -14,7 +14,6 @@ public class FuzzyItemNameDetails
 
 public class FuzzyItemDetails : FuzzyItemNameDetails
 {
-
     public FuzzyItemDetails(string actualName, string actualNameTrimmed, string actualNameWithoutManufacturerOrYear, string name, string nameWithoutWhiteSpace, string nameWithoutParenthesis, 
         string manufacturer, string manufacturerNoWhiteSpace, int? year)
     {

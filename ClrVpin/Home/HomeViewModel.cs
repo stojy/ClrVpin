@@ -4,6 +4,7 @@ using System.Windows.Input;
 using ClrVpin.About;
 using ClrVpin.Cleaner;
 using ClrVpin.Controls;
+using ClrVpin.Explorer;
 using ClrVpin.Extensions;
 using ClrVpin.Feeder;
 using ClrVpin.Merger;
@@ -29,7 +30,7 @@ public class HomeViewModel
         FeederCommand = new ActionCommand(Show<FeederViewModel>);
         MergerCommand = new ActionCommand(Show<MergerViewModel>);
         CleanerCommand = new ActionCommand(Show<CleanerViewModel>);
-        ExplorerCommand = new ActionCommand(Show<CleanerViewModel>);    // todo;
+        ExplorerCommand = new ActionCommand(Show<ExplorerViewModel>);
         SettingsCommand = new ActionCommand(Show<SettingsViewModel>);
         AboutCommand = new ActionCommand(Show<AboutViewModel>);
         CloseCommand = new ActionCommand(_mainWindow.Close);
