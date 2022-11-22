@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
-using ClrVpin.Controls;
 using ClrVpin.Extensions;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared.Game;
@@ -16,11 +15,10 @@ namespace ClrVpin.Explorer;
 [AddINotifyPropertyChangedInterface]
 public class ExplorerViewModel : IShowViewModel
 {
-    public Models.Settings.Settings Settings { get; } = Model.Settings;
-
     public Window Show(Window parent)
     {
-        _window = new MaterialWindowEx
+        // create and show window to satisfy IShowViewModel.Show(), but make sure it's not visible since there are no user configurable settings
+        _window = new Window
         {
             Owner = parent,
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -28,12 +26,16 @@ public class ExplorerViewModel : IShowViewModel
             Content = this,
             Resources = parent.Resources,
             ContentTemplate = parent.FindResource("ExplorerTemplate") as DataTemplate,
-            ResizeMode = ResizeMode.NoResize,
-            Title = "Explorer"
+            WindowStyle = WindowStyle.None,
+            Width = 0,
+            Height = 0,
+            ShowInTaskbar = false,
+            ShowActivated = false
         };
 
         _window.Show();
 
+        // immediately start
         Start();
 
         _window.Closed += (_, _) => Model.SettingsManager.Write();
@@ -43,8 +45,7 @@ public class ExplorerViewModel : IShowViewModel
 
     private async void Start()
     {
-        Logger.Info($"\nExplorer started, settings={JsonSerializer.Serialize(Settings)}");
-
+        Logger.Info($"\nExplorer started, settings={JsonSerializer.Serialize(_settings)}");
         _window.Hide();
         Logger.Clear();
 
@@ -55,27 +56,17 @@ public class ExplorerViewModel : IShowViewModel
         try
         {
             progress.Update("Loading Database");
-            games = await TableUtils.ReadGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
+            games = await TableUtils.ReadGamesFromDatabases(_settings.GetAllContentTypes());
             Logger.Info($"Loading database complete, duration={progress.Duration}", true);
         }
         catch (Exception)
         {
             progress.Close();
-            _window.TryShow();
             return;
         }
 
         progress.Update("Checking Files");
-        var unmatchedFiles = await ExplorerUtils.CheckAsync(games, UpdateProgress);
-
-        progress.Update("Fixing Files");
-        var fixedFiles = await ExplorerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
-
-        progress.Update("Removing Unmatched Files");
-        await ExplorerUtils.RemoveUnmatchedAsync(unmatchedFiles, UpdateProgress);
-
-        // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-        FileUtils.DeleteActiveBackupFolderIfEmpty();
+        var unmatchedFiles = await TableUtils.CheckAsync(games, UpdateProgress, _settings.GetAllContentTypes(), true);
 
         progress.Update("Preparing Results");
         await Task.Delay(1);
@@ -83,11 +74,12 @@ public class ExplorerViewModel : IShowViewModel
 
         progress.Close();
 
-        await ShowResults(fixedFiles, unmatchedFiles, progress.Duration);
+        await ShowResults(new List<FileDetail>(), unmatchedFiles, progress.Duration);
 
         void UpdateProgress(string detail, float ratioComplete) => progress.Update(null, ratioComplete, detail);
     }
 
+    // todo; remove fixedFiles
     private async Task ShowResults(ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
     {
         var screenPosition = _window.GetCurrentScreenPosition();
@@ -100,7 +92,7 @@ public class ExplorerViewModel : IShowViewModel
         statistics.Show(_window, screenPosition.X + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
         var logging = new LoggingViewModel();
-        logging.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin, 
+        logging.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin,
             Model.ScreenWorkArea.Width - statistics.Window.Width - WindowMargin - WindowMargin);
 
         statistics.Window.Closed += CloseWindows();
@@ -122,7 +114,9 @@ public class ExplorerViewModel : IShowViewModel
         await displayTask;
     }
 
+    private readonly Models.Settings.Settings _settings = Model.Settings;
+
     private ObservableCollection<LocalGame> _games;
-    private MaterialWindowEx _window;
+    private Window _window;
     private const int WindowMargin = 0;
 }
