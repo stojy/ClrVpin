@@ -204,7 +204,7 @@ namespace ClrVpin.Cleaner
             }
 
             progress.Update("Checking Files");
-            var unmatchedFiles = await TableUtils.CheckAsync(games, UpdateProgress, Settings.GetSelectedCheckContentTypes(), Settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported));
+            var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, Settings.GetSelectedCheckContentTypes(), Settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported));
 
             progress.Update("Fixing Files");
             var fixedFiles = await CleanerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
