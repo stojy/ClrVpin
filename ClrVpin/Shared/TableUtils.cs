@@ -67,6 +67,7 @@ namespace ClrVpin.Shared
 
         public static IList<string> GetContentFileNames(ContentType contentType, string folder)
         {
+            // for each supported extension file type (e.g. vpx, vpt), retrieve all the files with a matching extension in the specified folder
             var supportedFiles = contentType.ExtensionsList.Select(ext => Directory.EnumerateFiles(folder, ext));
 
             return supportedFiles.SelectMany(x => x).ToList();
@@ -88,12 +89,18 @@ namespace ClrVpin.Shared
             return unsupportedFixFiles.ToList();
         }
 
-        public static IEnumerable<FileDetail> AddContentFilesToGames(IList<LocalGame> localGames, IEnumerable<string> contentFiles, ContentType contentType,
+        public static async Task<List<FileDetail>> MatchContentToLocalAsync(List<LocalGame> games, Action<string, float> updateProgress, ContentType[] contentTypes, bool includeUnsupportedFiles)
+        {
+            var unmatchedFiles = await Task.Run(() => MatchContentToLocal(games, updateProgress, contentTypes, includeUnsupportedFiles));
+            return unmatchedFiles;
+        }
+
+        public static IEnumerable<FileDetail> MatchFilesToLocal(IList<LocalGame> localGames, IEnumerable<string> contentFiles, ContentType contentType,
             Func<LocalGame, ContentHits> getContentHits, Action<string, int> updateProgress)
         {
-            var unknownSupportedFiles = new List<FileDetail>();
+            var unmatchedSupportedFiles = new List<FileDetail>();
 
-            // for each file, associate it with a game or if one can't be found, then mark it as unknown
+            // for each file, associate it with a game or if one can't be found, then mark it as unmatched
             // - ASSOCIATION IS DONE IRRESPECTIVE OF THE USER'S SELECTED PREFERENCE, I.E. THE USE SELECTIONS ARE CHECKED ELSEWHERE
             contentFiles.ForEach((contentFile, i) =>
             {
@@ -103,8 +110,11 @@ namespace ClrVpin.Shared
                 LocalGame matchedLocalGame;
 
                 // check for hit..
-                // - only 1 hit per file.. but a game DB entry can have multiple file hits.. with a maximum of 1 valid hit, i.e. the others considered as duplicate, wrong case, fuzzy matched, etc.
+                // - a file only match one DB entry.. but a game DB entry can have multiple file hits
+                // - if DB entry has more than 1 file hit, then the best match is used and the other are marked as duplicates.. e.g. wrong case, fuzzy matched, etc.
                 // - ignores the check criteria.. the check criteria is only used in the results (e.g. statistics)
+
+                // exact match
                 if ((matchedLocalGame = localGames.FirstOrDefault(game => Content.GetName(game, contentType.Category) == fileNameWithoutExtension)) != null)
                 {
                     // if a match already exists, then assume this match is a duplicate name with wrong extension
@@ -112,11 +122,13 @@ namespace ClrVpin.Shared
                     var contentHits = getContentHits(matchedLocalGame);
                     contentHits.Add(contentHits.Hits.Any(hit => hit.Type == HitTypeEnum.CorrectName) ? HitTypeEnum.DuplicateExtension : HitTypeEnum.CorrectName, contentFile);
                 }
+                // wrong case match
                 else if ((matchedLocalGame = localGames.FirstOrDefault(localGame =>
                              string.Equals(Content.GetName(localGame, contentType.Category), fileNameWithoutExtension, StringComparison.CurrentCultureIgnoreCase))) != null)
                 {
                     getContentHits(matchedLocalGame).Add(HitTypeEnum.WrongCase, contentFile);
                 }
+                // media matches table name
                 else if (contentType.Category == ContentTypeCategoryEnum.Media && (matchedLocalGame = localGames.FirstOrDefault(localGame => localGame.Game.Name == fileNameWithoutExtension)) != null)
                 {
                     getContentHits(matchedLocalGame).Add(HitTypeEnum.TableName, contentFile);
@@ -132,21 +144,16 @@ namespace ClrVpin.Shared
                     }
                     else
                     {
-                        // possible for..
-                        // - table --> new table files added AND the database not updated yet
-                        // - table support and media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
-                        unknownSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, contentFile, new FileInfo(contentFile).Length));
+                        // unmatched
+                        // - e.g. possible for..
+                        //   a. table --> new table files added AND the database not updated yet
+                        //   b. table support and media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
+                        unmatchedSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, contentFile, new FileInfo(contentFile).Length));
                     }
                 }
             });
 
-            return unknownSupportedFiles;
-        }
-
-        public static async Task<List<FileDetail>> CheckAsync(List<LocalGame> games, Action<string, float> updateProgress, ContentType[] contentTypes, bool includeUnsupportedFiles)
-        {
-            var unmatchedFiles = await Task.Run(() => Check(games, updateProgress, contentTypes, includeUnsupportedFiles));
-            return unmatchedFiles;
+            return unmatchedSupportedFiles;
         }
 
         private static List<LocalGame> GetGamesFromDatabases(IEnumerable<ContentType> contentTypes)
@@ -213,12 +220,13 @@ namespace ClrVpin.Shared
             return localGames;
         }
 
-        private static List<FileDetail> Check(List<LocalGame> games, Action<string, float> updateProgress, IEnumerable<ContentType> checkContentTypes, bool includeUnsupportedFiles)
+        private static List<FileDetail> MatchContentToLocal(List<LocalGame> games, Action<string, float> updateProgress, IEnumerable<ContentType> checkContentTypes, bool includeUnsupportedFiles)
         {
             var unmatchedFiles = new List<FileDetail>();
 
-            // retrieve all supported files
+            // retrieve all supported files within the folder
             // - for each content type, match files (from the configured content folder location) with the correct file extension(s) to a table
+            // - file matching is performed irrespective of the configured matching type (e.g. invalid case, fuzzy, etc) --> refer MatchFilesToLocal
             var contentTypeSupportedFiles = checkContentTypes.Select(contentType => new
             {
                 contentType,
@@ -232,17 +240,20 @@ namespace ClrVpin.Shared
                 var supportedFiles = details.supportedFiles;
                 var contentType = details.contentType;
 
-                var unknownFiles = AddContentFilesToGames(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
+                // for the specified content type, match all retrieved files to local database game entries
+                // - any files that can't be matched are designated as 'unknownFiles'.. which form part of 'unmatchedFiles'
+                var unmatchedSupportedFiles = MatchFilesToLocal(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
                     (fileName, _) => updateProgress($"{contentType.Description}: {fileName}", ++fileCount / (float)totalFilesCount));
-                unmatchedFiles.AddRange(unknownFiles);
+
+                // unmatched files = unmatchedSupportedFiles (supported file type, but failed to match) + unsupportedFiles (unsupported file type)
+                unmatchedFiles.AddRange(unmatchedSupportedFiles);
 
                 // identify any unsupported files, i.e. files in the directory that don't have a matching extension
                 if (includeUnsupportedFiles)
                 {
                     var unsupportedFiles = GetNonContentFileDetails(contentType, contentType.Folder);
 
-                    // n/a for pinball - since it's expected that extra files will exist in same tables folder
-                    // - e.g. vpx, directb2s, pov, ogg, txt, exe, etc
+                    // only applicable for media file types, since the 'table files' typically include misc support files (e.g. vbs, pdf, txt, etc)
                     if (contentType.Category == ContentTypeCategoryEnum.Media)
                         unmatchedFiles.AddRange(unsupportedFiles);
                 }

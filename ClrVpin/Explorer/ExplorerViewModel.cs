@@ -66,7 +66,7 @@ public class ExplorerViewModel : IShowViewModel
         }
 
         progress.Update("Checking Files");
-        var unmatchedFiles = await TableUtils.CheckAsync(games, UpdateProgress, _settings.GetAllContentTypes(), true);
+        var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, _settings.GetAllContentTypes(), true);
 
         progress.Update("Preparing Results");
         await Task.Delay(1);

@@ -79,7 +79,7 @@ public static class FeederUtils
             updateProgress(onlineGame.Name, (i + 1f) / onlineGames.Count);
 
             // todo; perform an exact match check to potentially avoid the need for the more expensive fuzzy match check
-            // - similar to TableUtils.AddContentFilesToGames() uses since VPX/PBY mandates that the entries must be the same!
+            // - similar to TableUtils.MatchFilesToLocal() uses since VPX/PBY mandates that the entries must be the same!
             // - a LOT faster!!
 
 

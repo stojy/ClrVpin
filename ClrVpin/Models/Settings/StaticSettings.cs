@@ -32,7 +32,7 @@ namespace ClrVpin.Models.Settings
             PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
-        // hit types in priority order as determined by matching algorithm - refer AddContentFilesToGames
+        // hit types in priority order as determined by matching algorithm - refer MatchFilesToLocal
         public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; }
 
         //private static Settings Settings => Model.Settings;
