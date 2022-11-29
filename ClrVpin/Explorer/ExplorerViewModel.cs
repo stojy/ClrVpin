@@ -65,30 +65,30 @@ public class ExplorerViewModel : IShowViewModel
             return;
         }
 
-        progress.Update("Checking Files");
+        progress.Update("Matching Files");
         var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, _settings.GetAllContentTypes(), true);
 
         progress.Update("Preparing Results");
         await Task.Delay(1);
-        _games = new ObservableCollection<LocalGame>(games);
 
         progress.Close();
 
-        await ShowResults(new List<FileDetail>(), unmatchedFiles, progress.Duration);
+        await ShowResults(games, unmatchedFiles, progress.Duration);
 
         void UpdateProgress(string detail, float ratioComplete) => progress.Update(null, ratioComplete, detail);
     }
 
-    // todo; remove fixedFiles
-    private async Task ShowResults(ICollection<FileDetail> fixedFiles, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
+    private async Task ShowResults(List<LocalGame> localGames, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)
     {
+        var localGamesCollection = new ObservableCollection<LocalGame>(localGames);
+
         var screenPosition = _window.GetCurrentScreenPosition();
 
         var width = Model.ScreenWorkArea.Width - WindowMargin;
-        var results = new ExplorerResultsViewModel(_games);
+        var results = new ExplorerResultsViewModel(localGamesCollection);
         var displayTask = results.Show(_window, screenPosition.X, screenPosition.Y + WindowMargin, width);
 
-        var statistics = new ExplorerStatisticsViewModel(_games, duration, fixedFiles, unmatchedFiles);
+        var statistics = new ExplorerStatisticsViewModel(localGamesCollection, duration, new List<FileDetail>(), unmatchedFiles);
         statistics.Show(_window, screenPosition.X + WindowMargin, results.Window.Top + results.Window.Height + WindowMargin);
 
         var logging = new LoggingViewModel();
@@ -116,7 +116,6 @@ public class ExplorerViewModel : IShowViewModel
 
     private readonly Models.Settings.Settings _settings = Model.Settings;
 
-    private ObservableCollection<LocalGame> _games;
     private Window _window;
     private const int WindowMargin = 0;
 }

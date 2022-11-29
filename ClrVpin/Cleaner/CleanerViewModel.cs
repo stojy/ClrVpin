@@ -203,7 +203,7 @@ namespace ClrVpin.Cleaner
                 return;
             }
 
-            progress.Update("Checking Files");
+            progress.Update("Matching Files");
             var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, Settings.GetSelectedCheckContentTypes(), Settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported));
 
             progress.Update("Fixing Files");
