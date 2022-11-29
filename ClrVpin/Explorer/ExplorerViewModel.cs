@@ -104,7 +104,7 @@ public class ExplorerViewModel : IShowViewModel
             return (_, _) =>
             {
                 statistics.Window.Close();
-                results.Close();
+                results.Window.Close();
                 logging.Close();
 
                 _window.Close();

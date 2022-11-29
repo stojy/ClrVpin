@@ -8,8 +8,7 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
                     xmlns:vps="clr-namespace:ClrVpin.Models.Feeder.Vps"
-                    xmlns:feederModels="clr-namespace:ClrVpin.Models.Feeder"
-                    xmlns:feeder="clr-namespace:ClrVpin.Feeder">
+                    xmlns:explorer="clr-namespace:ClrVpin.Explorer">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
@@ -91,34 +90,6 @@
     </ItemsControl>
   </DataTemplate>
 
-  <!--an insane attempt to use a control template..
-      - failed because Command won't fire (for some reason) on the behaviour
-      - kept here commented out as a reminder for future me not to try this again!
-          <ContentControl Template="{StaticResource ImageTemplate}"
-                        controls:GenericAttached.String="{Binding ImgUrl}" controls:GenericAttached.Command="{Binding ImageSelectedCommand}" />
-  -->
-  <!-- if valid url then show progress and ultimate image, else show broken image
-       - written as a control template (vs a DataTemplate with string binding so that it's usable by top level Game and also ImageFile --><!--
-  <ControlTemplate x:Key="ImageTemplate" TargetType="ContentControl">
-    <Grid Height="300" ToolTip="{TemplateBinding controls:GenericAttached.String}">
-      <materialDesign:PackIcon Kind="ImageOffOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Visibility="{TemplateBinding controls:GenericAttached.String, Converter={StaticResource NullToVisibilityConverter}}" />
-      <Grid Visibility="{TemplateBinding controls:GenericAttached.String, Converter={StaticResource ReverseNullToVisibilityConverter}}">
-
-        <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
-         --><!-- converter required because template binding doesn't convert to Uri automatically.. second class binding!! 
-              - refer https://stackoverflow.com/questions/1935919/wpf-custom-control-templatebinding-to-image--><!-- 
-        <Image Source="{TemplateBinding controls:GenericAttached.String, Converter={StaticResource ImageSourceConverter}}" Stretch="UniformToFill" Cursor="Hand">
-          <b:Interaction.Triggers>
-            <b:EventTrigger EventName="MouseUp">
-              <b:InvokeCommandAction Command="{TemplateBinding controls:GenericAttached.Command}" />
-            </b:EventTrigger>
-          </b:Interaction.Triggers>
-        </Image>
-      </Grid>
-    </Grid>
-  </ControlTemplate>-->
-
   <DataTemplate x:Key="ImageTemplate" DataType="vps:UrlSelection">
     <Grid Height="300">
       <materialDesign:PackIcon Kind="ImageOffOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -127,7 +98,7 @@
 
         <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
 
-        <!--converter used to ensure image does not bind to null (which it can't handle).. this seems like a WPF bug though since the parent Grid control is collapsed when Url is null-->
+        <!--converter used to ensure image does not bind to null (which it can't handle).. this seems like a WPF bg though since the parent Grid control is collapsed when Url is null-->
         <Image Source="{Binding Url, Converter={StaticResource NullOrEmptyToUnsetConverter}}" Stretch="UniformToFill" Cursor="Hand">
           <b:Interaction.Triggers>
             <b:EventTrigger EventName="MouseUp">
@@ -233,8 +204,8 @@
     <Setter Property="IsEditable" Value="True" />
   </Style>
 
-  <DataTemplate x:Key="FeederResultsTemplate" DataType="{x:Type feeder:FeederResultsViewModel}">
-    <materialDesign:DialogHost Identifier="FeederResultsDialog" CloseOnClickAway="True" VerticalAlignment="Stretch" DialogMargin="0" DialogBackground="Transparent">
+  <DataTemplate x:Key="ExplorerResultsTemplate" DataType="{x:Type explorer:ExplorerResultsViewModel}">
+    <materialDesign:DialogHost Identifier="ResultsDialog" CloseOnClickAway="True" VerticalAlignment="Stretch" DialogMargin="0" DialogBackground="Transparent">
       <!--example of different dialogs from the same host.. https://github.com/Keboo/MaterialDesignInXaml.Examples/blob/master/DialogHost/DialogHost.FromViewModel/MainWindow.xaml-->
       <materialDesign:DialogHost.DialogContentTemplate>
         <DataTemplate>
@@ -294,7 +265,7 @@
         <DockPanel DockPanel.Dock="Left" Width="700">
           <GroupBox DockPanel.Dock="Top" Header="Criteria" Margin="0,0,0,10">
             <StackPanel Margin="5">
-              <WrapPanel Margin="0,-10,0,0"> <!-- margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :( -->
+              <!--<WrapPanel Margin="0,-10,0,0"> --><!-- margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :( --><!--
                 <ComboBox ItemsSource="{Binding TablesFilterView}"
                           Text="{Binding Path=Settings.SelectedTableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Table"
@@ -326,9 +297,9 @@
                   <ToggleButton IsChecked="{Binding Settings.IsDynamicFiltering}" Command="{Binding DynamicFilteringCommand}" />
                   <TextBlock Margin="5,0,0,0" Text="Dynamic Filtering" />
                 </WrapPanel>
-              </WrapPanel>
+              </WrapPanel>-->
 
-              <Grid Margin="0,10,0,0">
+              <!--<Grid Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="1.20*" />
                   <ColumnDefinition Width="Auto" />
@@ -396,7 +367,7 @@
                     <Style x:Key="DatePickerStyle" TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignFloatingHintDatePicker}">
                       <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
                       <Setter Property="Margin" Value="10,0,0,0" />
-                      <!--<Setter Property="Padding" Value="0,2" />-->
+                      --><!--<Setter Property="Padding" Value="0,2" />--><!--
                       <Setter Property="Width" Value="130" />
                     </Style>
                   </WrapPanel.Resources>
@@ -495,59 +466,17 @@
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding TableAvailabilityOptionsView}" />
                 </ContentControl>
-              </Grid>
-            </StackPanel>
-          </GroupBox>
-
-          <GroupBox DockPanel.Dock="Top" Header="Fix" Margin="0,0,0,10">
-            <StackPanel Margin="5,0">
-              <WrapPanel Margin="0,5,0,0">
-                <ContentControl Template="{StaticResource KeyValuePair}"
-                                controls:GenericAttached.String="Existing Tables"
-                                controls:GenericAttached.String2="tba"
-                                controls:GenericAttached.Double="100"
-                                controls:GenericAttached.Double2="14">
-                  <WrapPanel>
-                    <Button ToolTip="{Binding AddMissingDatabaseInfoTip}"
-                            ToolTipService.ShowOnDisabled="True"
-                            Style="{StaticResource RaisedAccentButtonStyle}"
-                            Margin="0,0,5,0"
-                            Width="150" Height="30"
-                            IsEnabled="{Binding IsMatchingEnabled}"
-                            Command="{Binding AllTableAddMissingDatabaseInfoCommand}">
-                      Add Missing Info
-                    </Button>
-                    <Button ToolTip="{Binding OverwriteDatabaseInfoTip}"
-                            ToolTipService.ShowOnDisabled="True"
-                            Style="{StaticResource RaisedAccentButtonStyle}"
-                            Width="150" Height="30"
-                            Margin="10,0,0,0"
-                            IsEnabled="{Binding IsMatchingEnabled}"
-                            Command="{Binding AllTableOverwriteDatabaseInfoCommand}">
-                      Overwrite All Info
-                    </Button>
-                  </WrapPanel>
-                </ContentControl>
-              </WrapPanel>
-
-              <ContentControl Template="{StaticResource KeyValuePair}"
-                              controls:GenericAttached.String="Backup Folder"
-                              controls:GenericAttached.Double="100"
-                              controls:GenericAttached.Double2="14">
-                <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}" FontSize="16">
-                  <TextBlock Text="{Binding BackupFolder}" />
-                </Hyperlink>
-              </ContentControl>
+              </Grid>-->
             </StackPanel>
           </GroupBox>
 
           <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
-            <TextBlock Text="{Binding GameItemsView.Count}" />
+            <TextBlock Text="{Binding GamesView.Count}" />
             <TextBlock Text=" / " />
-            <TextBlock Text="{Binding GameItems.Count}" />
+            <TextBlock Text="{Binding Games.Count}" />
           </WrapPanel>
 
-          <DataGrid Name="FeederResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GameItemsView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+          <!--<DataGrid Name="FeederResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GameItemsView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                     SelectionMode="Single"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
@@ -606,7 +535,7 @@
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
                                   Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
             </DataGrid.Columns>
-          </DataGrid>
+          </DataGrid>-->
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
@@ -617,7 +546,7 @@
               <TextBlock Text="Select a table to view the online information" FontSize="28" />
             </StackPanel>
 
-            <StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource NullToVisibilityConverter}}"
+            <!--<StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource NullToVisibilityConverter}}"
                         VerticalAlignment="Center" HorizontalAlignment="Center">
               <StackPanel Visibility="{Binding ElementName=FeederResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
                           VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -684,7 +613,7 @@
 
                   <TabControl Style="{StaticResource TabControlStyle}" ItemsSource="{Binding SelectedOnlineGame.AllFilesList}" SelectedItem="{Binding SelectedFileCollection}">
                     <TabControl.ItemTemplate>
-                      <!--tab item header content-->
+                      --><!--tab item header content--><!--
                       <DataTemplate DataType="{x:Type vps:FileCollection}">
                         <WrapPanel>
                           <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Title}"
@@ -697,13 +626,13 @@
 
                     <TabControl.ContentTemplate>
                       <DataTemplate>
-                        <!-- selected tab item contents (underneath) -->
+                        --><!-- selected tab item contents (underneath) --><!--
                         <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FilesTemplate}" />
                       </DataTemplate>
                     </TabControl.ContentTemplate>
 
                     <TabControl.ItemContainerStyle>
-                      <!-- tab item header style, e.g. padding, disabled, etc -->
+                      --><!-- tab item header style, e.g. padding, disabled, etc --><!--
                       <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MaterialDesignTabItem}" d:DataContext="{d:DesignInstance vps:FileCollection}">
                         <Setter Property="IsEnabled" Value="{Binding Count}" />
                         <Setter Property="Padding" Value="6,12" />
@@ -712,7 +641,7 @@
                   </TabControl>
                 </GroupBox>
               </StackPanel>
-            </StackPanel>
+            </StackPanel>-->
           </Grid>
         </DockPanel>
       </DockPanel>
