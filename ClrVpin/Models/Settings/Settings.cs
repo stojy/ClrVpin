@@ -66,6 +66,8 @@ namespace ClrVpin.Models.Settings
             Feeder = new FeederSettings();
             Feeder.SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
             Feeder.SelectedFeedFixOptions.AddRange(StaticSettings.FixFeedOptions.Select(x => x.Enum).ToList());
+
+            Explorer = new ExplorerSettings();
         }
 
         // default settings
@@ -113,6 +115,8 @@ namespace ClrVpin.Models.Settings
         public MergerSettings Merger { get; set; }
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
         public FeederSettings Feeder { get; set; }
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
+        public ExplorerSettings Explorer { get; set; }
 
         public int Version { get; set; }
 
