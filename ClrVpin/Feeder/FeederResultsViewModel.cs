@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,13 +45,9 @@ public class FeederResultsViewModel : IGameCollections
         // - _localGames = gameItems.Where(item => item.LocalGame != null).Select(item => item.LocalGame).ToList();
         _localGames = localGames;
 
-        IsMatchingEnabled = Model.Settings.Feeder.SelectedMatchCriteriaOptions.Any();
+        GameFilters = new GameFiltersViewModel();
 
-        TableStyleOptionsView = CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured, () => Model.Settings.Feeder.SelectedTableStyleOption);
-        TableMatchOptionsView = CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All, () => Model.Settings.Feeder.SelectedTableMatchOption);
-        TableAvailabilityOptionsView = CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any, () => Model.Settings.Feeder.SelectedTableAvailabilityOption);
-        TableNewContentOptionsView = CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any, () => Model.Settings.Feeder.SelectedTableNewContentOption);
-        PresetDateOptionsView = CreatePresetDateOptionsView(StaticSettings.PresetDateOptions);
+        IsMatchingEnabled = Model.Settings.Feeder.SelectedMatchCriteriaOptions.Any();
 
         // assign VM properties
         gameItems.ForEach(gameItem =>
@@ -60,7 +55,7 @@ public class FeederResultsViewModel : IGameCollections
             // local database show/add commands
             gameItem.IsMatchingEnabled = IsMatchingEnabled;
             gameItem.UpdateDatabaseEntryCommand = new ActionCommand(() =>
-                DatabaseItemManagement.UpdateDatabaseItem(_localGames, gameItem, this, () => GameItems.Remove(gameItem)));
+                DatabaseItemManagement.UpdateDatabaseItem(_localGames, gameItem, this, () => GameItems?.Remove(gameItem)));
             gameItem.CreateDatabaseEntryCommand = new ActionCommand(() =>
                 DatabaseItemManagement.CreateDatabaseItem(_localGames, gameItem, this));
             gameItem.UpdateDatabaseMatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
@@ -124,11 +119,20 @@ public class FeederResultsViewModel : IGameCollections
         GameItemsView.MoveCurrentToFirst();
 
         // create game collections (e.g. list of manufacturers) to be used by results and also externally by the database item dialogs
-        GameFilters = new GameFiltersViewModel();
         UpdateCollections();
 
         DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
         FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
+
+        GameFilters.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
+            () => Model.Settings.Feeder.SelectedTableStyleOption, FilterChangedCommand);
+        GameFilters.TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
+            () => Model.Settings.Feeder.SelectedTableMatchOption, FilterChangedCommand);
+        GameFilters.TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,
+            () => Model.Settings.Feeder.SelectedTableAvailabilityOption, FilterChangedCommand);
+        GameFilters.TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
+            () => Model.Settings.Feeder.SelectedTableNewContentOption, FilterChangedCommand);
+        GameFilters.PresetDateOptionsView = CreatePresetDateOptionsView(StaticSettings.PresetDateOptions);
 
         UpdatedFilterTimeChanged = new ActionCommand(() =>
         {
@@ -171,6 +175,37 @@ public class FeederResultsViewModel : IGameCollections
         GameItemSelectedCommand.Execute(null);
     }
 
+    public string AddMissingDatabaseInfoTip { get; }
+    public string OverwriteDatabaseInfoTip { get; }
+
+    public string BackupFolder { get; }
+    public ICommand NavigateToBackupFolderCommand { get; }
+
+    public FeederSettings Settings { get; } = Model.Settings.Feeder;
+
+    public ObservableCollection<GameItem> GameItems { get; }
+    public ListCollectionView<GameItem> GameItemsView { get; }
+
+    public Window Window { get; private set; }
+
+    public GameItem SelectedGameItem { get; set; }
+    public OnlineGame SelectedOnlineGame { get; private set; }
+
+    public ICommand DynamicFilteringCommand { get; }
+    public ICommand FilterChangedCommand { get; set; }
+    public ICommand UpdatedFilterTimeChanged { get; set; }
+
+    public ICommand NavigateToUrlCommand { get; }
+    public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
+    public ICommand AllTableOverwriteDatabaseInfoCommand { get; }
+    public ICommand GameItemSelectedCommand { get; }
+
+    public bool IsMatchingEnabled { get; }
+    public FileCollection SelectedFileCollection { get; set; }
+    private IList<string> Formats { get; set; }
+
+    public GameFiltersViewModel GameFilters { get; }
+
     public void UpdateCollections()
     {
         // the collections consist of all the possible permutations from BOTH the online source and the local source
@@ -182,25 +217,25 @@ public class FeederResultsViewModel : IGameCollections
         GameFilters.TablesFilterView = new ListCollectionView<string>(tableNames)
         {
             // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-            Filter = table => Filter(() => GameItemsView.Any(x => x.Name == table))
+            Filter = tableName => Filter(() => GameItemsView.Any(x => x.Name == tableName))
         };
 
         Manufacturers = GameItems.Select(x => x.Manufacturers).SelectManyUnique();
         GameFilters.ManufacturersFilterView = new ListCollectionView<string>(Manufacturers)
         {
-            // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
+            // filter the manufacturers list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
             Filter = manufacturer => Filter(() => GameItemsView.Any(x => x.Manufacturer == manufacturer))
         };
 
         Years = GameItems.Select(x => x.Years).SelectManyUnique();
         GameFilters.YearsBeginFilterView = new ListCollectionView<string>(Years)
         {
-            // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
+            // filter the 'years from' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => GameItemsView.Any(x => x.Year == yearString))
         };
         GameFilters.YearsEndFilterView = new ListCollectionView<string>(Years)
         {
-            // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
+            // filter the 'years to' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => GameItemsView.Any(x => x.Year == yearString))
         };
 
@@ -225,55 +260,14 @@ public class FeederResultsViewModel : IGameCollections
         Authors = GameItems.Select(x => x.Authors).SelectManyUnique();
     }
 
-    private bool Filter(Func<bool> dynamicFilteringFunc)
-    {
-        // only evaluate the func if dynamic filtering is enabled
-        return !Settings.IsDynamicFiltering || dynamicFilteringFunc();
-    }
-
-    public string AddMissingDatabaseInfoTip { get; }
-    public string OverwriteDatabaseInfoTip { get; }
-
-    public ListCollectionView<FeatureType> TableStyleOptionsView { get; }
-    public ListCollectionView<FeatureType> TableMatchOptionsView { get; }
-    public ListCollectionView<FeatureType> TableAvailabilityOptionsView { get; }
-    public ListCollectionView<FeatureType> TableNewContentOptionsView { get; }
-    public ListCollectionView<FeatureType> PresetDateOptionsView { get; }
-
-    public string BackupFolder { get; }
-    public ICommand NavigateToBackupFolderCommand { get; }
-
-    public FeederSettings Settings { get; } = Model.Settings.Feeder;
-
-    public ObservableCollection<GameItem> GameItems { get; }
-    public ListCollectionView<GameItem> GameItemsView { get; }
-
-    public Window Window { get; private set; }
-
-    public GameItem SelectedGameItem { get; set; }
-    public OnlineGame SelectedOnlineGame { get; private set; }
-
-    public ICommand DynamicFilteringCommand { get; }
-    public ICommand FilterChangedCommand { get; set; }
-    public ICommand UpdatedFilterTimeChanged { get; set; }
-
-    public ICommand NavigateToUrlCommand { get; }
-    public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
-    public ICommand AllTableOverwriteDatabaseInfoCommand { get; }
-    public ICommand GameItemSelectedCommand { get; }
-        
-    public bool IsMatchingEnabled { get; }
-    public FileCollection SelectedFileCollection { get; set; }
-
     // IGameCollections
     public IList<string> Manufacturers { get; private set; }
-    public IList<string> Types { get; private set;}
-    private IList<string> Formats { get; set;}
-    public IList<string> Years { get; private set;}
-    public IList<string> Players { get; private set;}
-    public IList<string> Roms { get; private set;}
-    public IList<string> Themes { get; private set;}
-    public IList<string> Authors { get; private set;}
+    public IList<string> Types { get; private set; }
+    public IList<string> Years { get; private set; }
+    public IList<string> Players { get; private set; }
+    public IList<string> Roms { get; private set; }
+    public IList<string> Themes { get; private set; }
+    public IList<string> Authors { get; private set; }
 
     public async Task Show(Window parentWindow, double left, double top)
     {
@@ -302,13 +296,17 @@ public class FeederResultsViewModel : IGameCollections
         Window.Close();
     }
 
+    private bool Filter(Func<bool> dynamicFilteringFunc) =>
+        // only evaluate the func if dynamic filtering is enabled
+        !Settings.IsDynamicFiltering || dynamicFilteringFunc();
+
     private void RefreshViews(bool refreshFilters)
     {
         // update main list
         GameItemsView.RefreshDebounce();
 
         // update filters based on what is shown in the main list
-        if (refreshFilters) 
+        if (refreshFilters)
             GameFilters.Refresh();
     }
 
@@ -321,9 +319,9 @@ public class FeederResultsViewModel : IGameCollections
         }
 
         // simplified summary of the FeederStatisticsViewModel info
-        var restrictedGameItems = GameItems.Where(gameItem => 
-            !gameItem.IsOriginal && 
-            gameItem.OnlineGame?.TableFormats.Contains("VPX") == true && 
+        var restrictedGameItems = GameItems.Where(gameItem =>
+            !gameItem.IsOriginal &&
+            gameItem.OnlineGame?.TableFormats.Contains("VPX") == true &&
             gameItem.OnlineGame?.TableAvailability == TableAvailabilityOptionEnum.Available).ToList();
         var matchedManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.LocalAndOnline);
         var missingManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.OnlineOnly);
@@ -392,34 +390,6 @@ public class FeederResultsViewModel : IGameCollections
             await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
     }
 
-    private ListCollectionView<FeatureType> CreateFeatureOptionsView<T>(IEnumerable<EnumOption<T>> enumOptions, T highlightedOption, Expression<Func<T>> selectionExpression) where T : Enum
-    {
-        var accessor = new Accessor<T>(selectionExpression);
-
-        // all table style options
-        var featureTypes = enumOptions.Select(option =>
-        {
-            var featureType = new FeatureType(Convert.ToInt32(option.Enum))
-            {
-                Tag = typeof(T).Name,
-                Description = option.Description,
-                Tip = option.Tip,
-                IsSupported = true,
-                IsHighlighted = option.Enum.IsEqual(highlightedOption),
-                IsActive = option.Enum.IsEqual(accessor.Get()),
-                SelectedCommand = new ActionCommand(() =>
-                {
-                    accessor.Set(option.Enum);
-                    FilterChangedCommand.Execute(null);
-                })
-            };
-
-            return featureType;
-        }).ToList();
-
-        return new ListCollectionView<FeatureType>(featureTypes);
-    }
-        
     private ListCollectionView<FeatureType> CreatePresetDateOptionsView(IEnumerable<EnumOption<PresetDateOptionEnum>> enumOptions)
     {
         // all preset date options
@@ -438,12 +408,12 @@ public class FeederResultsViewModel : IGameCollections
                     {
                         PresetDateOptionEnum.Today => (0, 0),
                         PresetDateOptionEnum.Yesterday => (1, 0),
-                        PresetDateOptionEnum.LastThreeDays => (3,0),
+                        PresetDateOptionEnum.LastThreeDays => (3, 0),
                         PresetDateOptionEnum.LastWeek => (7, 0),
-                        PresetDateOptionEnum.LastMonth => (0,1),
-                        PresetDateOptionEnum.LastThreeMonths => (0,3),
-                        PresetDateOptionEnum.LastYear => (0,12),
-                        _ => (0,0)
+                        PresetDateOptionEnum.LastMonth => (0, 1),
+                        PresetDateOptionEnum.LastThreeMonths => (0, 3),
+                        PresetDateOptionEnum.LastYear => (0, 12),
+                        _ => (0, 0)
                     };
                     Settings.SelectedUpdatedAtDateBegin = DateTime.Today.AddDays(-offset.Item1).AddMonths(-offset.Item2);
 
@@ -511,7 +481,7 @@ public class FeederResultsViewModel : IGameCollections
                     DialogHost.Close(DialogHostName);
             })
         };
-            
+
         if (!DialogHost.IsDialogOpen(DialogHostName))
             await DialogHost.Show(imageUrlSelection, DialogHostName);
     }
@@ -524,6 +494,4 @@ public class FeederResultsViewModel : IGameCollections
 
     private const int WindowMargin = 0;
     private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T ENABLED";
-
-    public GameFiltersViewModel GameFilters { get; }
 }
