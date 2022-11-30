@@ -91,6 +91,11 @@ namespace Utils.Extensions
             return items.Where(x => x != null).Distinct().OrderBy(x => x).ToList();
         }
 
+        public static IList<string> SelectUnique(this IEnumerable<string> items)
+        {
+            return items.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToList();
+        }
+
         public static IList<T> SelectManyUnique<T>(this IEnumerable<IEnumerable<T>> items)
         {
             return items.SelectMany(x => x).Where(x => x != null).Distinct().OrderBy(x => x).ToList();
