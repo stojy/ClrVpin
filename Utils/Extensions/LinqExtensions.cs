@@ -86,6 +86,11 @@ namespace Utils.Extensions
             return string.Join(separator, items);
         }
 
+        public static IList<T> SelectUnique<T>(this IEnumerable<T> items)
+        {
+            return items.Where(x => x != null).Distinct().OrderBy(x => x).ToList();
+        }
+
         public static IList<T> SelectManyUnique<T>(this IEnumerable<IEnumerable<T>> items)
         {
             return items.SelectMany(x => x).Where(x => x != null).Distinct().OrderBy(x => x).ToList();
