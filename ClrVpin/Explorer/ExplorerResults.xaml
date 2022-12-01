@@ -8,7 +8,8 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
                     xmlns:vps="clr-namespace:ClrVpin.Models.Feeder.Vps"
-                    xmlns:explorer="clr-namespace:ClrVpin.Explorer">
+                    xmlns:explorer="clr-namespace:ClrVpin.Explorer"
+                    xmlns:game="clr-namespace:ClrVpin.Models.Shared.Game">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
@@ -431,7 +432,7 @@
             <TextBlock Text="{Binding Games.Count}" />
           </WrapPanel>
 
-          <!--<DataGrid Name="FeederResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GameItemsView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+          <DataGrid Name="ExplorerResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                     SelectionMode="Single"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
@@ -446,10 +447,10 @@
             </b:Interaction.Triggers>
 
             <DataGrid.Columns>
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
                                   Header="#" Binding="{Binding Index}" Width="45" />
 
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" Header="Fix" Width="30" SortMemberPath="OnlineGame.IsMatched">
+              <!--<DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Fix" Width="30" SortMemberPath="OnlineGame.IsMatched">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate>
                     <WrapPanel Margin="-7,-2,0,0">
@@ -477,25 +478,25 @@
                     </WrapPanel>
                   </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
+              </DataGridTemplateColumn>-->
 
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
-                                  Binding="{Binding Name}"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
+                                  Binding="{Binding Game.Name}"
                                   Width="255" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
-                                  Binding="{Binding Manufacturer}" Width="160" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
-                                  Binding="{Binding Year}"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
+                                  Binding="{Binding Game.Manufacturer}" Width="160" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
+                                  Binding="{Binding Game.Year}"
                                   Width="55" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=feederModels:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
-                                  Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
+                                  Binding="{Binding Game.UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
             </DataGrid.Columns>
-          </DataGrid>-->
+          </DataGrid>
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
           <Grid>
-            <StackPanel Visibility="{Binding ElementName=FeederResults, Path=SelectedIndex, Converter={StaticResource NegativeToVisibilityConverter}}"
+            <StackPanel Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource NegativeToVisibilityConverter}}"
                         VerticalAlignment="Center" HorizontalAlignment="Center">
               <materialDesign:PackIcon Kind="HelpCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
               <TextBlock Text="Select a table to view the online information" FontSize="28" />
@@ -503,14 +504,14 @@
 
             <!--<StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource NullToVisibilityConverter}}"
                         VerticalAlignment="Center" HorizontalAlignment="Center">
-              <StackPanel Visibility="{Binding ElementName=FeederResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
+              <StackPanel Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
                           VerticalAlignment="Center" HorizontalAlignment="Center">
                 <materialDesign:PackIcon Kind="AlertCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
                 <TextBlock Text="Online information is not available for unmatched tables" FontSize="28" />
               </StackPanel>
             </StackPanel>
 
-            <StackPanel Visibility="{Binding ElementName=FeederResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
+            <StackPanel Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
               <StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource ReverseNullToVisibilityConverter}}">
                 <UniformGrid Columns="3">
                   <GroupBox Header="Hardware: Table Info">
@@ -568,7 +569,6 @@
 
                   <TabControl Style="{StaticResource TabControlStyle}" ItemsSource="{Binding SelectedOnlineGame.AllFilesList}" SelectedItem="{Binding SelectedFileCollection}">
                     <TabControl.ItemTemplate>
-                      --><!--tab item header content--><!--
                       <DataTemplate DataType="{x:Type vps:FileCollection}">
                         <WrapPanel>
                           <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Title}"
@@ -581,13 +581,11 @@
 
                     <TabControl.ContentTemplate>
                       <DataTemplate>
-                        --><!-- selected tab item contents (underneath) --><!--
                         <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FilesTemplate}" />
                       </DataTemplate>
                     </TabControl.ContentTemplate>
 
                     <TabControl.ItemContainerStyle>
-                      --><!-- tab item header style, e.g. padding, disabled, etc --><!--
                       <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MaterialDesignTabItem}" d:DataContext="{d:DesignInstance vps:FileCollection}">
                         <Setter Property="IsEnabled" Value="{Binding Count}" />
                         <Setter Property="Padding" Value="6,12" />
