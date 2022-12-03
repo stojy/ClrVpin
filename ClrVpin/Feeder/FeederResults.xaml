@@ -341,7 +341,7 @@
                             materialDesign:HintAssist.Hint="Type"
                             Style="{StaticResource ComboBoxStyle}"
                             Width="65" Margin="0,0,0,0" 
-                            ToolTip="Filter the tables based on the table construction type.">
+                            ToolTip="Filter the tables based on the table construction type: PM (Purely Mechanical), EM (Electromechanical), SS (Solid State).">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />

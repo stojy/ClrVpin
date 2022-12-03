@@ -312,7 +312,7 @@
                             materialDesign:HintAssist.Hint="Type"
                             Style="{StaticResource ComboBoxStyle}"
                             Width="65" Margin="0,0,0,0"
-                            ToolTip="Filter the tables based on the table construction type.">
+                            ToolTip="Filter the tables based on the table construction type: PM (Purely Mechanical), EM (Electromechanical), SS (Solid State).">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -445,7 +445,7 @@
 
               <DataTemplate x:Key="IsManufacturedTemplate" DataType="game:LocalGame">
                 <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Derived.IsOriginal, Converter={StaticResource IsOriginalToIconConverter}}"
-                                         Height="40" Width="40" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                         Height="30" Width="30" VerticalAlignment="Center" HorizontalAlignment="Center">
                   <!-- just for giggles.. setting foreground by a style trigger instead of a converter.. it's rather large!-->
                   <materialDesign:PackIcon.Style>
                     <Style TargetType="materialDesign:PackIcon">
@@ -461,6 +461,29 @@
                   </materialDesign:PackIcon.Style>
                 </materialDesign:PackIcon>
               </DataTemplate>
+
+              <DataTemplate x:Key="RatingTemplate" DataType="{x:Type game:LocalGame}">
+                <materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
+                                          Min="0" Max="5" ValueIncrements="0.5" IsPreviewValueEnabled="True" IsReadOnly="True" VerticalAlignment="Center"
+                                          Margin="0,4,0,0">
+                  <materialDesign:RatingBar.Resources>
+                    <ResourceDictionary>
+                      <ResourceDictionary.MergedDictionaries>
+                        <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="Gold" SecondaryColor="Lime" />
+                      </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                  </materialDesign:RatingBar.Resources>
+                  <materialDesign:RatingBar.ValueItemTemplate>
+                    <DataTemplate>
+                      <materialDesign:PackIcon Kind="Star" Height="30" Width="30" />
+                    </DataTemplate>
+                  </materialDesign:RatingBar.ValueItemTemplate>
+                </materialDesign:RatingBar>
+              </DataTemplate>
+              <Style x:Key="CellStyle" TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+              </Style>
 
             </DataGrid.Resources>
 
@@ -512,12 +535,11 @@
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
                                   Binding="{Binding Game.Year}"
                                   Width="55" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Rating"
-                                  Binding="{Binding Game.Rating}"
-                                  Width="55" />
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
+                                      SortMemberPath="Game.Rating" Width="155"/>
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
                                   Binding="{Binding Game.Type}"
-                                  Width="55" />
+                                  Width="35" />
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufactured" CellTemplate="{StaticResource IsManufacturedTemplate}"
                                       SortMemberPath="Derived.IsOriginal" Width="85" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
