@@ -20,6 +20,7 @@ namespace ClrVpin.Models.Shared.Game
         {
             var derived = localGame.Derived;
 
+            // update number if one is provided, else keep the existing value
             derived.Number = number ?? derived.Number;
 
             derived.IsOriginal = CheckIsOriginal(localGame.Game.Manufacturer, localGame.Game.Name);
