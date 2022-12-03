@@ -219,7 +219,7 @@
                     <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
                   </b:EventTrigger>
                 </b:Interaction.Triggers>
-               
+
                 <Grid Name="container">
                   <Image Margin="20" Source="{Binding Url, Converter={StaticResource NullOrEmptyToUnsetConverter}}" Stretch="Uniform" Height="1100" />
 
@@ -262,10 +262,10 @@
 
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
-        <DockPanel DockPanel.Dock="Left" Width="700">
+        <DockPanel DockPanel.Dock="Left" Width="900">
           <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
-              <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(--> 
+              <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(-->
                 <ComboBox ItemsSource="{Binding GameFilters.TablesFilterView}"
                           Text="{Binding Path=Settings.SelectedTableFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Table"
@@ -311,7 +311,7 @@
                             SelectedItem="{Binding Path=Settings.SelectedTypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             materialDesign:HintAssist.Hint="Type"
                             Style="{StaticResource ComboBoxStyle}"
-                            Width="65" Margin="0,0,0,0" 
+                            Width="65" Margin="0,0,0,0"
                             ToolTip="Filter the tables based on the table construction type.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
@@ -359,10 +359,10 @@
                     </Style>
                   </WrapPanel.Resources>
 
-                  <DatePicker materialDesign:HintAssist.Hint="Updated From" 
-                              Style="{StaticResource DatePickerStyle}" 
+                  <DatePicker materialDesign:HintAssist.Hint="Updated From"
+                              Style="{StaticResource DatePickerStyle}"
                               SelectedDate="{Binding Settings.SelectedUpdatedAtDateBegin}"
-                              DisplayDateEnd="{Binding Settings.SelectedUpdatedAtDateEnd}" 
+                              DisplayDateEnd="{Binding Settings.SelectedUpdatedAtDateEnd}"
                               Margin="0"
                               ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
@@ -372,8 +372,8 @@
                     </b:Interaction.Triggers>
                   </DatePicker>
 
-                  <DatePicker materialDesign:HintAssist.Hint="Updated To" 
-                              Style="{StaticResource DatePickerStyle}" 
+                  <DatePicker materialDesign:HintAssist.Hint="Updated To"
+                              Style="{StaticResource DatePickerStyle}"
                               SelectedDate="{Binding Settings.SelectedUpdatedAtDateEnd}"
                               DisplayDateStart="{Binding Settings.SelectedUpdatedAtDateBegin}"
                               ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
@@ -415,8 +415,8 @@
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" 
-                                controls:GenericAttached.String="Style" 
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
+                                controls:GenericAttached.String="Style"
                                 controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14">
@@ -440,6 +440,30 @@
                     ColumnHeaderStyle="{StaticResource HeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
                     SelectedItem="{Binding SelectedGameItem}">
 
+            <DataGrid.Resources>
+              <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Exclamation" False="Check" />
+
+              <DataTemplate x:Key="IsManufacturedTemplate" DataType="game:LocalGame">
+                <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Derived.IsOriginal, Converter={StaticResource IsOriginalToIconConverter}}"
+                                         Height="40" Width="40" VerticalAlignment="Center" HorizontalAlignment="Center">
+                  <!-- just for giggles.. setting foreground by a style trigger instead of a converter.. it's rather large!-->
+                  <materialDesign:PackIcon.Style>
+                    <Style TargetType="materialDesign:PackIcon">
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding Derived.IsOriginal}" Value="True">
+                          <Setter Property="Foreground" Value="{StaticResource PrimaryMidBrush}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Derived.IsOriginal}" Value="False">
+                          <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </materialDesign:PackIcon.Style>
+                </materialDesign:PackIcon>
+              </DataTemplate>
+
+            </DataGrid.Resources>
+
             <b:Interaction.Triggers>
               <b:EventTrigger EventName="SelectionChanged">
                 <b:InvokeCommandAction Command="{Binding GameItemSelectedCommand}" />
@@ -448,7 +472,7 @@
 
             <DataGrid.Columns>
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
-                                  Header="#" Binding="{Binding Index}" Width="45" />
+                                  Header="#" Binding="{Binding Derived.Number}" Width="45" />
 
               <!--<DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Fix" Width="30" SortMemberPath="OnlineGame.IsMatched">
                 <DataGridTemplateColumn.CellTemplate>
@@ -488,8 +512,16 @@
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
                                   Binding="{Binding Game.Year}"
                                   Width="55" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Rating"
+                                  Binding="{Binding Game.Rating}"
+                                  Width="55" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
+                                  Binding="{Binding Game.Type}"
+                                  Width="55" />
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufactured" CellTemplate="{StaticResource IsManufacturedTemplate}"
+                                      SortMemberPath="Derived.IsOriginal" Width="85" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
-                                  Binding="{Binding Game.UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
+                                  Binding="{Binding Derived.UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
