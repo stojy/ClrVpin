@@ -164,6 +164,7 @@ namespace ClrVpin.Shared
             var files = Directory.EnumerateFiles(databaseContentType.Folder, databaseContentType.Extensions);
 
             var localGames = new List<LocalGame>();
+            var gameNumber = 1;
 
             files.ForEach(file =>
             {
@@ -201,10 +202,9 @@ namespace ClrVpin.Shared
 
                 var databaseLocalGames = menu.Games.Select(g => new LocalGame { Game = g }).ToList();
 
-                var number = 1;
                 databaseLocalGames.ForEach(localGame =>
                 {
-                    localGame.Init(number++);
+                    localGame.Init(gameNumber++);
 
                     localGame.Game.DatabaseFile = file;
                     localGame.ViewState.NavigateToIpdbCommand = new ActionCommand(() => NavigateToIpdb(localGame.Derived.IpdbUrl));
