@@ -139,29 +139,29 @@
           </WrapPanel>
 
           <WrapPanel Margin="0,20,0,0">
-            <ComboBox ItemsSource="{Binding YearsView}" 
+            <ComboBox ItemsSource="{Binding YearsView}"
                       Text="{Binding Path=LocalGame.Game.Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Year"
                       Style="{StaticResource EditComboBoxStyle}"
                       Width="90" />
-            <ComboBox ItemsSource="{Binding TypesView}" 
+            <ComboBox ItemsSource="{Binding TypesView}"
                       Text="{Binding Path=LocalGame.Game.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Type" ToolTip="EM: electro-mechanical, SS: solid state, PM: purely mechanical"
                       Style="{StaticResource EditComboBoxStyle}"
                       Width="90" Margin="10,0,0,0" />
-            <ComboBox ItemsSource="{Binding PlayersView}" 
+            <ComboBox ItemsSource="{Binding PlayersView}"
                       Text="{Binding Path=LocalGame.Game.Players, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Players"
                       Style="{StaticResource EditComboBoxStyle}"
                       Width="90" Margin="10,0,0,0" />
-            <ComboBox ItemsSource="{Binding RomsView}" 
+            <ComboBox ItemsSource="{Binding RomsView}"
                       Text="{Binding Path=LocalGame.Game.Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
                       Style="{StaticResource EditComboBoxStyle}"
                       Width="300" Margin="10,0,0,0" />
           </WrapPanel>
 
-          <ComboBox ItemsSource="{Binding ThemesView}" 
+          <ComboBox ItemsSource="{Binding ThemesView}"
                     Text="{Binding Path=LocalGame.Game.Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     materialDesign:HintAssist.Hint="Theme(s)"
                     Style="{StaticResource EditComboBoxStyle}"
@@ -182,7 +182,7 @@
                      materialDesign:HintAssist.Hint="Version"
                      Style="{StaticResource DatabaseEntryTextBoxStyle}"
                      Width="140" />
-            <ComboBox ItemsSource="{Binding AuthorsView}" 
+            <ComboBox ItemsSource="{Binding AuthorsView}"
                       Text="{Binding Path=LocalGame.Game.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Author(s)"
                       Style="{StaticResource EditComboBoxStyle}"
@@ -200,23 +200,10 @@
                        materialDesign:HintAssist.Hint="Rating" IsReadOnly="True" Opacity="0.5"
                        Style="{StaticResource DatabaseEntryTextBoxStyle}"
                        Width="220" />
+
               <!--ratings bar is drawn within the TextBox so it appears to be part of the same control-->
               <materialDesign:RatingBar Value="{Binding LocalGame.Game.Rating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        Min="0" Max="5" ValueIncrements="0.5" IsPreviewValueEnabled="True"
-                                        Margin="50,18,0,0">
-                <materialDesign:RatingBar.Resources>
-                  <ResourceDictionary>
-                    <ResourceDictionary.MergedDictionaries>
-                      <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="Gold" SecondaryColor="Lime" />
-                    </ResourceDictionary.MergedDictionaries>
-                  </ResourceDictionary>
-                </materialDesign:RatingBar.Resources>
-                <materialDesign:RatingBar.ValueItemTemplate>
-                  <DataTemplate>
-                    <materialDesign:PackIcon Kind="Star" Height="30" Width="30" />
-                  </DataTemplate>
-                </materialDesign:RatingBar.ValueItemTemplate>
-              </materialDesign:RatingBar>
+                                        Style="{StaticResource RatingBarStyle}" Margin="50,4,0,0" />
             </Grid>
 
             <TextBox Text="{Binding LocalGame.Game.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -267,12 +254,12 @@
         </StackPanel>
       </GroupBox>
 
-      <TextBlock FontStyle="Italic" Margin="0,10,0,0" 
+      <TextBlock FontStyle="Italic" Margin="0,10,0,0"
                  Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                  Text="¹ Run the following if 'Title, Manufacturer, Year, or Description' are modified.." />
-      <TextBlock FontStyle="Italic" Margin="0,10,0,0" 
+      <TextBlock FontStyle="Italic" Margin="0,10,0,0"
                  Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
-                 Text="¹ Run the following after the missing table is added.."/>
+                 Text="¹ Run the following after the missing table is added.." />
       <TextBlock FontStyle="Italic">
         <Run Text="  1. Cleaner - to correct content file names" />
         <LineBreak />

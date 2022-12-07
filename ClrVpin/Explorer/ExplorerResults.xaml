@@ -464,21 +464,7 @@
 
               <DataTemplate x:Key="RatingTemplate" DataType="{x:Type game:LocalGame}">
                 <materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
-                                          Min="0" Max="5" ValueIncrements="0.5" IsPreviewValueEnabled="True" IsReadOnly="True" VerticalAlignment="Center"
-                                          Margin="0,4,0,0">
-                  <materialDesign:RatingBar.Resources>
-                    <ResourceDictionary>
-                      <ResourceDictionary.MergedDictionaries>
-                        <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="Gold" SecondaryColor="Lime" />
-                      </ResourceDictionary.MergedDictionaries>
-                    </ResourceDictionary>
-                  </materialDesign:RatingBar.Resources>
-                  <materialDesign:RatingBar.ValueItemTemplate>
-                    <DataTemplate>
-                      <materialDesign:PackIcon Kind="Star" Height="30" Width="30" />
-                    </DataTemplate>
-                  </materialDesign:RatingBar.ValueItemTemplate>
-                </materialDesign:RatingBar>
+                                          Style="{StaticResource RatingBarStyle}" IsReadOnly="True" />
               </DataTemplate>
               <Style x:Key="CellStyle" TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
                 <Setter Property="VerticalAlignment" Value="Center" />
