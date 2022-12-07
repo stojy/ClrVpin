@@ -264,4 +264,27 @@
     <Setter Property="InitialShowDelay" Value="250"/>
   </Style>-->
 
+  <!-- common rating bar styling.. golden stars -->
+  <Style x:Key="RatingBarStyle" TargetType="materialDesign:RatingBar">
+    <Style.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+          <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="Gold" SecondaryColor="Lime" />
+        </ResourceDictionary.MergedDictionaries>
+      </ResourceDictionary>
+    </Style.Resources>
+    <Setter Property="ValueItemTemplate">
+      <Setter.Value>
+        <DataTemplate>
+          <materialDesign:PackIcon Kind="Star" Height="30" Width="30" />
+        </DataTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Min" Value="0" />
+    <Setter Property="Max" Value="5" />
+    <Setter Property="ValueIncrements" Value="0.5" />
+    <Setter Property="IsPreviewValueEnabled" Value="True" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Margin" Value="0,4,0,0" />
+  </Style>
 </ResourceDictionary>
