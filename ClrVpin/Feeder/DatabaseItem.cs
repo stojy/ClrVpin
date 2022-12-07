@@ -89,9 +89,10 @@ namespace ClrVpin.Feeder
 
                 // update rounding
                 // - required because the underlying RatingsBar unfortunately doesn't bind the value to the 'ValueIncrements' used in the UI, e.g. bound value 1.456700001
-                // - if the rounding value is changed, the TextBox will rebind and cause another ChangedCommand to fire
-                if (decimal.TryParse(LocalGame.Game.Rating, out var rating))
-                    LocalGame.Game.Rating = (Math.Round(rating * 2) / 2).ToString();
+                // - if the rounding value is changed, the WPF control (e.g. RatingBar), will rebind and cause another ChangedCommand to fire..
+                //   but with the new rounded value hence avoiding subsequent updates
+                if (LocalGame.Game.Rating != null)
+                    LocalGame.Game.Rating = Math.Round((LocalGame.Game.Rating ?? 0) * 2) / 2;
 
                 // explicitly update dynamic game details to account for any updated properties, e.g. table name, ipdb, etc
                 LocalGame.Init();

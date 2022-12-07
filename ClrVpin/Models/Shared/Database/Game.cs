@@ -37,7 +37,11 @@ public class Game
     public string Enabled { get; set; }
 
     [XmlElement("rating")]
-    public string Rating { get; set; }
+    public double? Rating { get; set; }
+
+    // don't serialize a null Rating, otherwise the XmlSerializer behavior is to serialize null as 'xsi:nil="true"'
+    // - refer https://stackoverflow.com/a/246359/227110
+    public bool ShouldSerializeRating() => Rating.HasValue;
 
     [XmlElement("players")]
     public string Players { get; set; }
