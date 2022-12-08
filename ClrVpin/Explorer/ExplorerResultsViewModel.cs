@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,6 +59,8 @@ public class ExplorerResultsViewModel
     {
         Settings = Model.Settings.Explorer;
 
+        // update status of each game, e.g. to update the Game.Content.LatestUpdatedAt timestamp
+        Games.ForEach(game => game.Content.Update(() => new List<int>(), () => new List<int>()));
 
         UpdateCollections();
 
