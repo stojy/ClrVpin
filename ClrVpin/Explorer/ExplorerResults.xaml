@@ -59,20 +59,9 @@
     </Button>
   </DataTemplate>
 
-  <!-- urls.. 
-       - drawn with negative top margin so they appear in the same visual 'row' as the image
-       - fixed listbox height of 72 (icon=40 + various margins added by windows & material) so the card items are drawn the same height whether download URLs exist or not
-  -->
-  <DataTemplate x:Key="UrlsTemplate">
-    <ListBox DockPanel.Dock="Right" ItemsSource="{Binding}" materialDesign:ListBoxItemAssist.ShowSelection="False"
-             Style="{StaticResource RightAlignedHorizontalListBoxStyle}"
-             ItemTemplate="{StaticResource UrlDetailTemplate}" Margin="0,-40,0,0" Height="72">
-      <ListBox.ItemContainerStyle>
-        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource HighlightedListBoxItemEffectStyle}" d:DataContext="{d:DesignInstance vps:UrlDetail}">
-          <Setter Property="IsEnabled" Value="{Binding Broken, Converter={StaticResource InvertBooleanConverter}}" />
-        </Style>
-      </ListBox.ItemContainerStyle>
-    </ListBox>
+  <DataTemplate x:Key="RatingTemplate" DataType="{x:Type game:LocalGame}">
+    <materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
+                              Style="{StaticResource RatingBarStyle}" IsReadOnly="True" IsPreviewValueEnabled="False" />
   </DataTemplate>
 
   <DataTemplate x:Key="FeatureTypeTemplate">
@@ -88,100 +77,6 @@
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
-  </DataTemplate>
-
-  <DataTemplate x:Key="ImageTemplate" DataType="vps:UrlSelection">
-    <Grid Height="300">
-      <materialDesign:PackIcon Kind="ImageOffOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Visibility="{Binding Url, Converter={StaticResource NullToVisibilityConverter}}" />
-      <Grid Visibility="{Binding Url, Converter={StaticResource ReverseNullToVisibilityConverter}}">
-
-        <ProgressBar Height="50" Width="50" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="{DynamicResource MaterialDesignBody}" Value="0" IsIndeterminate="True" />
-
-        <!--converter used to ensure image does not bind to null (which it can't handle).. this seems like a WPF bg though since the parent Grid control is collapsed when Url is null-->
-        <Image Source="{Binding Url, Converter={StaticResource NullOrEmptyToUnsetConverter}}" Stretch="UniformToFill" Cursor="Hand">
-          <b:Interaction.Triggers>
-            <b:EventTrigger EventName="MouseUp">
-              <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
-            </b:EventTrigger>
-          </b:Interaction.Triggers>
-        </Image>
-      </Grid>
-    </Grid>
-  </DataTemplate>
-
-  <!--each of the x3 types (TableFile, ImageFile and File) are subtly different enough to warrant separate templates-->
-  <DataTemplate DataType="{x:Type vps:TableFile}">
-    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="6" ClipContent="True">
-      <StackPanel>
-        <!--<Button Command="{Binding ImageSelectedCommand}" Background="Transparent">-->
-        <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
-        <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
-
-        <StackPanel Margin="5,0,0,0">
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Comment" controls:GenericAttached.String2="{Binding Comment}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                          controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
-                          Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Format" controls:GenericAttached.String2="{Binding TableFormat}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
-                          controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
-        </StackPanel>
-      </StackPanel>
-    </materialDesign:Card>
-  </DataTemplate>
-
-  <DataTemplate DataType="{x:Type vps:ImageFile}">
-    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="6" ClipContent="True">
-      <StackPanel>
-        <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
-        <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
-
-        <StackPanel Margin="5,0,0,0">
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                          controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
-                          Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
-        </StackPanel>
-      </StackPanel>
-    </materialDesign:Card>
-  </DataTemplate>
-
-  <DataTemplate DataType="{x:Type vps:File}">
-    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="6" ClipContent="True">
-      <StackPanel>
-        <Grid Height="300">
-          <materialDesign:PackIcon Kind="GhostOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Grid>
-        <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
-
-        <StackPanel Margin="5,0,0,0">
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
-                          Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
-        </StackPanel>
-      </StackPanel>
-    </materialDesign:Card>
-  </DataTemplate>
-
-  <DataTemplate x:Key="FilesTemplate">
-    <controls:HorizontalWheelScrollViewer>
-      <!--item template is deliberately not specified so that the correct DataTemplate is automatically selected at run time-->
-      <ListBox ItemsSource="{Binding}" materialDesign:ListBoxItemAssist.ShowSelection="False" VerticalContentAlignment="Top"
-               ItemContainerStyle="{StaticResource HighlightedListBoxItemOpacityStyle}" Style="{StaticResource HorizontalListBoxStyle}" />
-    </controls:HorizontalWheelScrollViewer>
   </DataTemplate>
 
   <Style x:Key="ComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}">
@@ -432,13 +327,13 @@
             <TextBlock Text="{Binding Games.Count}" />
           </WrapPanel>
 
-          <DataGrid Name="ExplorerResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
-                    SelectionMode="Single"
+          <DataGrid Name="ExplorerResults" DockPanel.Dock="Bottom" SelectionMode="Single" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False"
+                    CanUserDeleteRows="False"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
                     ColumnHeaderStyle="{StaticResource HeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
-                    SelectedItem="{Binding SelectedGameItem}">
+                    SelectedItem="{Binding SelectedLocalGame}">
 
             <DataGrid.Resources>
               <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Exclamation" False="Check" />
@@ -462,10 +357,6 @@
                 </materialDesign:PackIcon>
               </DataTemplate>
 
-              <DataTemplate x:Key="RatingTemplate" DataType="{x:Type game:LocalGame}">
-                <materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
-                                          Style="{StaticResource RatingBarStyle}" IsReadOnly="True" IsPreviewValueEnabled="False" />
-              </DataTemplate>
               <Style x:Key="CellStyle" TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -475,7 +366,7 @@
 
             <b:Interaction.Triggers>
               <b:EventTrigger EventName="SelectionChanged">
-                <b:InvokeCommandAction Command="{Binding GameItemSelectedCommand}" />
+                <b:InvokeCommandAction Command="{Binding LocalGameSelectedCommand}" />
               </b:EventTrigger>
             </b:Interaction.Triggers>
 
@@ -514,7 +405,7 @@
               </DataGridTemplateColumn>-->
 
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
-                                  Binding="{Binding Game.Name}"
+                                  Binding="{Binding Fuzzy.TableDetails.ActualNameWithoutManufacturerOrYear}"
                                   Width="255" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
                                   Binding="{Binding Game.Manufacturer}" Width="160" />
@@ -522,13 +413,13 @@
                                   Binding="{Binding Game.Year}"
                                   Width="55" />
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
-                                      SortMemberPath="Game.Rating" Width="155"/>
+                                      SortMemberPath="Game.Rating" Width="155" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
                                   Binding="{Binding Game.Type}"
                                   Width="35" />
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufactured" CellTemplate="{StaticResource IsManufacturedTemplate}"
                                       SortMemberPath="Derived.IsOriginal" Width="85" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Latest File Time"
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table/Backglass Update"
                                   Binding="{Binding Content.LatestUpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}" />
             </DataGrid.Columns>
           </DataGrid>
@@ -549,9 +440,14 @@
                 <materialDesign:PackIcon Kind="AlertCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
                 <TextBlock Text="Online information is not available for unmatched tables" FontSize="28" />
               </StackPanel>
-            </StackPanel>
+            </StackPanel> -->
 
             <StackPanel Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
+              <StackPanel Visibility="{Binding SelectedLocalGame, Converter={StaticResource ReverseNullToVisibilityConverter}}">
+                <TextBlock Text="{Binding SelectedLocalGame.Game.Name}" />
+              </StackPanel>
+            </StackPanel>
+            <!-- <StackPanel Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
               <StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource ReverseNullToVisibilityConverter}}">
                 <UniformGrid Columns="3">
                   <GroupBox Header="Hardware: Table Info">

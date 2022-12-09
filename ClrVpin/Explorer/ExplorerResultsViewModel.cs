@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
@@ -34,6 +35,8 @@ public class ExplorerResultsViewModel
     public ObservableCollection<LocalGame> Games { get; }
 
     public GameFiltersViewModel GameFilters { get; set; }
+    public LocalGame SelectedLocalGame { get; set; }
+    public ICommand LocalGameSelectedCommand { get; set; }
 
     public async Task Show(Window parentWindow, double left, double top, double width)
     {
