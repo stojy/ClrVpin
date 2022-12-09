@@ -6,6 +6,7 @@ using System.Windows.Data;
 using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
+using Utils.Extensions;
 
 namespace ClrVpin.Models.Shared;
 
@@ -41,9 +42,9 @@ public class Content
         IsSmelly = ContentHitsCollection.Any(contentHits => contentHits.IsSmelly);
 
         // timestamp of the most recent 'pinball category' (table, backglass, or POV) content file
-        var contentHitsEnumerable = ContentHitsCollection
-            .Where(contentHits => contentHits.ContentType.Category == ContentTypeCategoryEnum.Pinball);
-        LatestUpdatedAt = contentHitsEnumerable.Max(contentHits => contentHits.Hits
+        var tableAndBackglassContent = ContentHitsCollection
+            .Where(contentHits => contentHits.ContentType.Enum.In(ContentTypeEnum.Tables, ContentTypeEnum.Backglasses));
+        LatestUpdatedAt = tableAndBackglassContent.Max(contentHits => contentHits.Hits
             .Where(hit => hit.IsPresent)
             .Max(hit => (DateTime?)hit.FileInfo.LastWriteTime));
 
