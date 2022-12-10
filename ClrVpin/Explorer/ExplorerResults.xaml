@@ -60,8 +60,10 @@
   </DataTemplate>
 
   <DataTemplate x:Key="RatingTemplate" DataType="{x:Type game:LocalGame}">
-    <materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
-                              Style="{StaticResource RatingBarStyle}" IsReadOnly="True" IsPreviewValueEnabled="False" />
+    <!--temporarily disabled ratings bar as it appears to be causing rendering performance issues for the GridView.. scrolling and sorting-->
+    <!--<materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
+                              Style="{StaticResource RatingBarStyle}" IsReadOnly="True" IsPreviewValueEnabled="False" />-->
+    <TextBlock Text="{Binding Game.Rating}"/>
   </DataTemplate>
 
   <DataTemplate x:Key="FeatureTypeTemplate">
