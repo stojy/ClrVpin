@@ -1,4 +1,5 @@
 ﻿using System;
+using ClrVpin.Models.Feeder;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Settings;
@@ -18,4 +19,5 @@ public class ExplorerSettings
 
     public DateTime? SelectedUpdatedAtDateBegin { get; set; }
     public DateTime? SelectedUpdatedAtDateEnd { get; set; }
+    public TableStyleOptionEnum SelectedTableStyleOption { get; set; }
 }

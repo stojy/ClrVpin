@@ -296,9 +296,11 @@ public class FeederResultsViewModel : IGameCollections
         Window.Close();
     }
 
-    private bool Filter(Func<bool> dynamicFilteringFunc) =>
+    private bool Filter(Func<bool> dynamicFilteringFunc)
+    {
         // only evaluate the func if dynamic filtering is enabled
-        !Settings.IsDynamicFiltering || dynamicFilteringFunc();
+        return !Settings.IsDynamicFiltering || dynamicFilteringFunc();
+    }
 
     private void RefreshViews(bool refreshFilters)
     {

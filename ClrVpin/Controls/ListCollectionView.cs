@@ -9,7 +9,10 @@ namespace ClrVpin.Controls;
 public sealed class ListCollectionView<T> : ListCollectionView, IEnumerable<T>
 {
     //todo; add ctor that takes delegate to explicitly invoke during a refresh
-    
+    public ListCollectionView() : this (new List<T>())
+    {
+    }
+
     public ListCollectionView(IList<T> list, T selectedItem)
         : this(list)
     {
@@ -57,7 +60,7 @@ public sealed class ListCollectionView<T> : ListCollectionView, IEnumerable<T>
         Dispatcher.CurrentDispatcher.InvokeAsync(() => base.Refresh(), DispatcherPriority.ContextIdle);
     }
 
-    public void RefreshDebounce(int debounceMilliseconds = 200)
+    public void RefreshDebounce(int debounceMilliseconds = 400)
     {
         // delay processing text changed
         _refreshDebounceTimer.Interval = TimeSpan.FromMilliseconds(debounceMilliseconds);

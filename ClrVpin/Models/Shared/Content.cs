@@ -24,7 +24,7 @@ public class Content
     // true if game contains any hits types that are not valid
     public bool IsSmelly { get; set; }
 
-    public DateTime? LatestUpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public static string GetName(LocalGame localGame, ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball
@@ -44,7 +44,7 @@ public class Content
         // timestamp of the most recent 'pinball category' (table, backglass, or POV) content file
         var tableAndBackglassContent = ContentHitsCollection
             .Where(contentHits => contentHits.ContentType.Enum.In(ContentTypeEnum.Tables, ContentTypeEnum.Backglasses));
-        LatestUpdatedAt = tableAndBackglassContent.Max(contentHits => contentHits.Hits
+        UpdatedAt = tableAndBackglassContent.Max(contentHits => contentHits.Hits
             .Where(hit => hit.IsPresent)
             .Max(hit => (DateTime?)hit.FileInfo.LastWriteTime));
 

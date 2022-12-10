@@ -23,20 +23,22 @@ public class ExplorerResultsViewModel
     public ExplorerResultsViewModel(ObservableCollection<LocalGame> games)
     {
         Games = games;
-        GamesView = new ListCollectionView<LocalGame>(games);
+        
         Initialise();
     }
 
     public ExplorerSettings Settings { get; private set; }
-    public ListCollectionView<LocalGame> GamesView { get; }
+    public ListCollectionView<LocalGame> GamesView { get; private set; }
 
     public Window Window { get; private set; }
 
     public ObservableCollection<LocalGame> Games { get; }
 
-    public GameFiltersViewModel GameFilters { get; set; }
+    public GameFiltersViewModel GameFilters { get; private set; }
     public LocalGame SelectedLocalGame { get; set; }
     public ICommand LocalGameSelectedCommand { get; set; }
+    public ICommand FilterChangedCommand { get; set; }
+    public ICommand DynamicFilteringCommand { get; private set; }
 
     public async Task Show(Window parentWindow, double left, double top, double width)
     {
@@ -62,14 +64,33 @@ public class ExplorerResultsViewModel
     {
         Settings = Model.Settings.Explorer;
 
-        // update status of each game, e.g. to update the Game.Content.LatestUpdatedAt timestamp
+        // update status of each game, e.g. to update the Game.Content.UpdatedAt timestamp
         Games.ForEach(game => game.Content.Update(() => new List<int>(), () => new List<int>()));
+
+        GamesView = new ListCollectionView<LocalGame>(Games)
+        {
+            // filter the table names list to reflect the various view filtering criteria
+            // - quickest checks placed first to short circuit evaluation of more complex checks
+            Filter = localGame =>
+                //(Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || game.Derived.IsType == Settings.SelectedTableStyleOption) &&
+                (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(localGame.Game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
+                (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(localGame.Game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
+                (Settings.SelectedTypeFilter == null || string.CompareOrdinal(localGame.Game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
+                (Settings.SelectedUpdatedAtDateBegin == null || localGame.Content.UpdatedAt == null || localGame.Content.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
+                (Settings.SelectedUpdatedAtDateEnd == null || localGame.Content.UpdatedAt == null || localGame.Content.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
+                (Settings.SelectedTableFilter == null || localGame.Game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (Settings.SelectedManufacturerFilter == null || localGame.Game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase))
+        };
+        GamesView.MoveCurrentToFirst();
 
         UpdateCollections();
 
         GameFilters.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
-            () => Model.Settings.Feeder.SelectedTableStyleOption, new ActionCommand(() => { }));
+            () => Settings.SelectedTableStyleOption, new ActionCommand(() => { }));
 
+        DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
+
+        FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
         //_allContentFeatureTypes = CreateAllContentFeatureTypes();
         //AllContentFeatureTypesView = new ListCollectionView<FeatureType>(_allContentFeatureTypes.ToList());
 
@@ -85,6 +106,7 @@ public class ExplorerResultsViewModel
         //UpdateStatus(Games);
         //InitView();
     }
+
 
     private void UpdateCollections()
     {
@@ -138,10 +160,21 @@ public class ExplorerResultsViewModel
         //    Authors = GameItems.Select(x => x.Authors).SelectManyUnique();
     }
 
-    private bool Filter(Func<bool> dynamicFilteringFunc) =>
+    private bool Filter(Func<bool> dynamicFilteringFunc)
+    {
         // only evaluate the func if dynamic filtering is enabled
-        !Settings.IsDynamicFiltering || dynamicFilteringFunc();
+        return !Settings.IsDynamicFiltering || dynamicFilteringFunc();
+    }
 
+    private void RefreshViews(bool refreshFilters)
+    {
+        // update main list
+        GamesView.RefreshDebounce();
+
+        // update filters based on what is shown in the main list
+        if (refreshFilters)
+            GameFilters.Refresh();
+    }
 
     private async Task ShowSummary()
     {
