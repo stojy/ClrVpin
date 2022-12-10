@@ -327,13 +327,15 @@
             <TextBlock Text="{Binding Games.Count}" />
           </WrapPanel>
 
-          <DataGrid Name="ExplorerResults" DockPanel.Dock="Bottom" SelectionMode="Single" ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False"
+          <DataGrid Name="ExplorerResults" DockPanel.Dock="Bottom" SelectionMode="Single"
+                    ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
                     ColumnHeaderStyle="{StaticResource HeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
-                    SelectedItem="{Binding SelectedLocalGame}">
+                    SelectedItem="{Binding SelectedLocalGame}"
+                    EnableRowVirtualization="True">
 
             <DataGrid.Resources>
               <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Exclamation" False="Check" />
@@ -420,7 +422,7 @@
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufactured" CellTemplate="{StaticResource IsManufacturedTemplate}"
                                       SortMemberPath="Derived.IsOriginal" Width="85" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table/Backglass Update"
-                                  Binding="{Binding Content.LatestUpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}" />
+                                  Binding="{Binding Content.UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
