@@ -264,7 +264,7 @@
                               ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
-                        <b:InvokeCommandAction Command="{Binding UpdatedFilterTimeChanged}" />
+                        <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
                       </controls:RoutedEventTrigger>
                     </b:Interaction.Triggers>
                   </DatePicker>
@@ -276,7 +276,7 @@
                               ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
-                        <b:InvokeCommandAction Command="{Binding UpdatedFilterTimeChanged}" />
+                        <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
                       </controls:RoutedEventTrigger>
                     </b:Interaction.Triggers>
                   </DatePicker>
