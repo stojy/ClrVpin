@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
-using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils.Extensions;

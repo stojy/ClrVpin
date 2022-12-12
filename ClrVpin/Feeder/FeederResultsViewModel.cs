@@ -45,7 +45,11 @@ public class FeederResultsViewModel : IGameCollections
         // - _localGames = gameItems.Where(item => item.LocalGame != null).Select(item => item.LocalGame).ToList();
         _localGames = localGames;
 
-        GameFilters = new GameFiltersViewModel();
+        GameFilters = new GameFiltersViewModel(() => FilterChangedCommand?.Execute(null), startDate =>
+        {
+            Settings.SelectedUpdatedAtDateBegin = startDate;
+            Settings.SelectedUpdatedAtDateEnd = DateTime.Today;
+        });
 
         IsMatchingEnabled = Model.Settings.Feeder.SelectedMatchCriteriaOptions.Any();
 
@@ -132,7 +136,6 @@ public class FeederResultsViewModel : IGameCollections
             () => Model.Settings.Feeder.SelectedTableAvailabilityOption, FilterChangedCommand);
         GameFilters.TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
             () => Model.Settings.Feeder.SelectedTableNewContentOption, FilterChangedCommand);
-        GameFilters.PresetDateOptionsView = CreatePresetDateOptionsView(StaticSettings.PresetDateOptions);
 
         UpdatedFilterTimeChanged = new ActionCommand(() =>
         {
@@ -390,42 +393,6 @@ public class FeederResultsViewModel : IGameCollections
             await Notification.ShowSuccess(DialogHostName, "No Updates Required");
         else
             await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
-    }
-
-    private ListCollectionView<FeatureType> CreatePresetDateOptionsView(IEnumerable<EnumOption<PresetDateOptionEnum>> enumOptions)
-    {
-        // all preset date options
-        var featureTypes = enumOptions.Select(option =>
-        {
-            var featureType = new FeatureType(Convert.ToInt32(option.Enum))
-            {
-                Tag = nameof(PresetDateOptionEnum),
-                Description = option.Description,
-                Tip = option.Tip,
-                IsSupported = true,
-                SelectedCommand = new ActionCommand(() =>
-                {
-                    // assign the updated at from begin date
-                    var offset = option.Enum switch
-                    {
-                        PresetDateOptionEnum.Today => (0, 0),
-                        PresetDateOptionEnum.Yesterday => (1, 0),
-                        PresetDateOptionEnum.LastThreeDays => (3, 0),
-                        PresetDateOptionEnum.LastWeek => (7, 0),
-                        PresetDateOptionEnum.LastMonth => (0, 1),
-                        PresetDateOptionEnum.LastThreeMonths => (0, 3),
-                        PresetDateOptionEnum.LastYear => (0, 12),
-                        _ => (0, 0)
-                    };
-                    Settings.SelectedUpdatedAtDateBegin = DateTime.Today.AddDays(-offset.Item1).AddMonths(-offset.Item2);
-
-                    FilterChangedCommand.Execute(null);
-                })
-            };
-            return featureType;
-        }).ToList();
-
-        return new ListCollectionView<FeatureType>(featureTypes);
     }
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);

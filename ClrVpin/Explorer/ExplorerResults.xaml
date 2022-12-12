@@ -287,7 +287,7 @@
                                            PopupUniformCornerRadius="5"
                                            Width="30"
                                            ToolTip="Filter the tables based on when the table was last updated via the preset dates. Ignored for unmatched tables.">
-                    <ItemsControl ItemsSource="{Binding PresetDateOptionsView}">
+                    <ItemsControl ItemsSource="{Binding GameFilters.PresetDateOptionsView}">
                       <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                           <StackPanel />
@@ -424,7 +424,8 @@
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufactured" CellTemplate="{StaticResource IsManufacturedTemplate}"
                                       SortMemberPath="Derived.IsOriginal" Width="85" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table/Backglass Update"
-                                  Binding="{Binding Content.UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}" />
+                                  Binding="{Binding Content.UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}"
+                                  Width="140"/>
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
