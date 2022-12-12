@@ -83,7 +83,7 @@ public class ExplorerResultsViewModel
         };
         GamesView.MoveCurrentToFirst();
 
-        UpdateCollections();
+        InitialiseFilters();
 
         GameFilters.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
             () => Settings.SelectedTableStyleOption, new ActionCommand(() => { }));
@@ -108,9 +108,13 @@ public class ExplorerResultsViewModel
     }
 
 
-    private void UpdateCollections()
+    private void InitialiseFilters()
     {
-        GameFilters = new GameFiltersViewModel();
+        GameFilters = new GameFiltersViewModel(() => FilterChangedCommand?.Execute(null), startDate =>
+        {
+            Settings.SelectedUpdatedAtDateBegin = startDate;
+            Settings.SelectedUpdatedAtDateEnd = DateTime.Today;
+        });
 
         // filters views (drop down combo boxes)
         var tableNames = Games.Select(x => x.Game.Name).SelectUnique();
