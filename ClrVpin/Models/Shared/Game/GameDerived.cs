@@ -1,4 +1,5 @@
 ﻿using System;
+using ClrVpin.Models.Feeder;
 using PropertyChanged;
 // ReSharper disable MemberCanBePrivate.Global - public setters required to support json deserialization, refer DatabaseItem
 
@@ -15,6 +16,7 @@ namespace ClrVpin.Models.Shared.Game
         public string DescriptionLowerCase { get; set; }
         public bool IsOriginal { get; set; }
         public string TableFileWithExtension { get; set; }
+        public TableStyleOptionEnum TableStyleOption { get; private set; }
 
         public static void Init(LocalGame localGame, int? number = null)
         {
@@ -39,6 +41,8 @@ namespace ClrVpin.Models.Shared.Game
                 derived.Ipdb = localGame.Game.IpdbId ?? localGame.Game.IpdbNr ?? derived.Ipdb;
                 derived.IpdbUrl = derived.Ipdb == null ? null : $"https://www.ipdb.org/machine.cgi?id={derived.Ipdb}";
             }
+
+            derived.TableStyleOption = derived.IsOriginal ? TableStyleOptionEnum.Original : TableStyleOptionEnum.Manufactured;
 
             // memory optimisation to perform this operation once on database read (or update) instead of multiple times during fuzzy comparison (refer Fuzzy.GetUniqueMatch)
             // - null check to cater for scenario where the value can be null, e.g. when cleared via feeder's database update dialog
