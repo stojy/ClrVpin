@@ -21,6 +21,7 @@ public class OnlineGame : OnlineGameBase
     public List<string> TableFormats { get; set; }
 
     public bool IsOriginal { get; set; }
+    public TableStyleOptionEnum TableStyleOption { get; set; }
 
     public string IpdbId { get; set; } = string.Empty;
     public string Description { get; set; }

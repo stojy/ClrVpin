@@ -43,7 +43,7 @@ public class GameItem
 
     public DateTime? UpdatedAt => OnlineGame?.UpdatedAt; // not supported in local DB LocalGame
     public bool IsOriginal => OnlineGame?.IsOriginal ?? LocalGame.Derived.IsOriginal;
-    public TableStyleOptionEnum TableStyleOption { get; private set; }
+    public TableStyleOptionEnum TableStyleOption => OnlineGame?.TableStyleOption ?? LocalGame.Derived.TableStyleOption;
 
     public LocalGame LocalGame { get; private set; }
     public OnlineGame OnlineGame { get; }
@@ -65,7 +65,6 @@ public class GameItem
         LocalGame = localGame;
         
         TableMatchType = GetTableMatchEnum();
-        TableStyleOption = IsOriginal ? TableStyleOptionEnum.Original : TableStyleOptionEnum.Manufactured;
     }
 
     private TableMatchOptionEnum GetTableMatchEnum()

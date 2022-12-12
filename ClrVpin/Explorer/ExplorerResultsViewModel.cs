@@ -72,7 +72,7 @@ public class ExplorerResultsViewModel
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
             Filter = localGame =>
-                //(Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || game.Derived.IsType == Settings.SelectedTableStyleOption) &&
+                (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || localGame.Derived.TableStyleOption == Settings.SelectedTableStyleOption) &&
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(localGame.Game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(localGame.Game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(localGame.Game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
@@ -83,14 +83,11 @@ public class ExplorerResultsViewModel
         };
         GamesView.MoveCurrentToFirst();
 
+        DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
+        FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
+
         InitialiseFilters();
 
-        GameFilters.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
-            () => Settings.SelectedTableStyleOption, new ActionCommand(() => { }));
-
-        DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
-
-        FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
         //_allContentFeatureTypes = CreateAllContentFeatureTypes();
         //AllContentFeatureTypesView = new ListCollectionView<FeatureType>(_allContentFeatureTypes.ToList());
 
@@ -110,11 +107,16 @@ public class ExplorerResultsViewModel
 
     private void InitialiseFilters()
     {
+        // ReSharper disable once UseObjectOrCollectionInitializer
         GameFilters = new GameFiltersViewModel(() => FilterChangedCommand?.Execute(null), startDate =>
         {
             Settings.SelectedUpdatedAtDateBegin = startDate;
             Settings.SelectedUpdatedAtDateEnd = DateTime.Today;
         });
+
+        GameFilters.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
+            () => Settings.SelectedTableStyleOption, FilterChangedCommand);
+
 
         // filters views (drop down combo boxes)
         var tableNames = Games.Select(x => x.Game.Name).SelectUnique();

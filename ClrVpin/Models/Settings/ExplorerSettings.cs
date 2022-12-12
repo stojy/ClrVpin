@@ -19,5 +19,7 @@ public class ExplorerSettings
 
     public DateTime? SelectedUpdatedAtDateBegin { get; set; }
     public DateTime? SelectedUpdatedAtDateEnd { get; set; }
-    public TableStyleOptionEnum SelectedTableStyleOption { get; set; }
+    
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter is assigned member expression, refer Accessor.cs
+    public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
 }

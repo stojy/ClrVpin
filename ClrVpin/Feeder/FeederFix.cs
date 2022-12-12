@@ -119,6 +119,7 @@ public static class FeederFix
         // assign a flag to indicate the  original game state
         // - this isn't technically a fix, but is done here (i.e. instead of FeederResultsVM) as the information is required for subsequent fixes
         onlineGame.IsOriginal = GameDerived.CheckIsOriginal(onlineGame.Manufacturer, onlineGame.Name);
+        onlineGame.TableStyleOption = onlineGame.IsOriginal ? TableStyleOptionEnum.Original : TableStyleOptionEnum.Manufactured;
 
         FixManufacturedIncludesAuthor(onlineGame);
 
