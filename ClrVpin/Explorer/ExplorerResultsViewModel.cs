@@ -23,7 +23,7 @@ public class ExplorerResultsViewModel
     public ExplorerResultsViewModel(ObservableCollection<LocalGame> games)
     {
         Games = games;
-        
+
         Initialise();
     }
 
@@ -39,6 +39,7 @@ public class ExplorerResultsViewModel
     public ICommand LocalGameSelectedCommand { get; set; }
     public ICommand FilterChangedCommand { get; set; }
     public ICommand DynamicFilteringCommand { get; private set; }
+    public ICommand RatingsChangedCommand { get; set; }
 
     public async Task Show(Window parentWindow, double left, double top, double width)
     {
@@ -85,25 +86,14 @@ public class ExplorerResultsViewModel
 
         DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
         FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
-
+        RatingsChangedCommand = new ActionCommand(RatingsChanged);
         InitialiseFilters();
-
-        //_allContentFeatureTypes = CreateAllContentFeatureTypes();
-        //AllContentFeatureTypesView = new ListCollectionView<FeatureType>(_allContentFeatureTypes.ToList());
-
-        //_allHitFeatureTypes = CreateAllHitFeatureTypes();
-        //AllHitFeatureTypesView = new ListCollectionView<FeatureType>(_allHitFeatureTypes.ToList());
-
-        //SearchTextCommand = new ActionCommand(SearchTextChanged);
-        //ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
-
-        //BackupFolder = FileUtils.ActiveBackupFolder;
-        //NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
-
-        //UpdateStatus(Games);
-        //InitView();
     }
 
+    private void RatingsChanged()
+    {
+        FilterChangedCommand.Execute(null);
+    }
 
     private void InitialiseFilters()
     {
@@ -116,7 +106,6 @@ public class ExplorerResultsViewModel
 
         GameFilters.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
             () => Settings.SelectedTableStyleOption, FilterChangedCommand);
-
 
         // filters views (drop down combo boxes)
         var tableNames = Games.Select(x => x.Game.Name).SelectUnique();
@@ -151,26 +140,11 @@ public class ExplorerResultsViewModel
         {
             Filter = type => Filter(() => GamesView.Any(x => x.Game.Type == type))
         };
-
-        //// table formats - vpx, fp, etc
-        //// - only available via online
-        //    Formats = GameItems.SelectMany(x => x.OnlineGame?.TableFormats ?? new List<string>()).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
-        //    FormatsFilterView = new ListCollectionView<string>(Formats)
-        //    {
-        //        Filter = format => Filter(() => GameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true))
-        //    };
-
-        //    Themes = GameItems.Select(x => x.Themes).SelectManyUnique();
-        //    Players = GameItems.Select(x => x.Players).SelectManyUnique();
-        //Roms = GameItems.Select(x => x.Roms).SelectManyUnique();
-        //    Authors = GameItems.Select(x => x.Authors).SelectManyUnique();
     }
 
-    private bool Filter(Func<bool> dynamicFilteringFunc)
-    {
+    private bool Filter(Func<bool> dynamicFilteringFunc) =>
         // only evaluate the func if dynamic filtering is enabled
-        return !Settings.IsDynamicFiltering || dynamicFilteringFunc();
-    }
+        !Settings.IsDynamicFiltering || dynamicFilteringFunc();
 
     private void RefreshViews(bool refreshFilters)
     {
@@ -201,6 +175,5 @@ public class ExplorerResultsViewModel
     }
 
     private const int WindowMargin = 0;
-
     private const string DialogHostName = "ResultsDialog";
 }

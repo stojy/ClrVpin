@@ -22,4 +22,7 @@ public class ExplorerSettings
     
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter is assigned member expression, refer Accessor.cs
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
+
+    public double? SelectedMinRating { get; set; }
+    public double? SelectedMaxRating { get; set; }
 }

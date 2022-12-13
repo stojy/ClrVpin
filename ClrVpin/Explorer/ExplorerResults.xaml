@@ -20,6 +20,13 @@
     <controls:SharedResourceDictionary Source="\Shared\Notification.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
+  <!-- x:Shared resources must be defined at the top level resource dictionary -->
+  <controls:Triggers x:Key="RatingsTextChangedTriggers" x:Shared="False">
+    <b:EventTrigger EventName="TextChanged">
+      <b:InvokeCommandAction Command="{Binding RatingsChangedCommand}" d:DataContext="{d:DesignInstance Type=explorer:ExplorerResultsViewModel}" />
+    </b:EventTrigger>
+  </controls:Triggers>
+
   <Style x:Key="UrlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFloatingActionDarkButton}">
     <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
     <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
@@ -303,20 +310,54 @@
                 </WrapPanel>
               </Grid>
 
-              <Grid Margin="0,10,0,0">
+              <Grid>
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="1.20*" />
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
+                <WrapPanel>
+                  <WrapPanel.Resources>
+                    <Style x:Key="RatingsBarTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+                      <Setter Property="Margin" Value="0,10" />
+                      <Setter Property="HorizontalAlignment" Value="Left" />
+                      <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
+                      <!--<Setter Property="FontSize" Value="16" />-->
+                      <Setter Property="controls:StylableInteraction.Triggers" Value="{StaticResource RatingsTextChangedTriggers}" />
+                    </Style>
+                  </WrapPanel.Resources>
+                  
+                  <Grid>
+                    <!-- ratings is drawn within TextBox - refer DatabaseItem.xaml -->
+                    <TextBox Text="{Binding Settings.SelectedMinRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Min Rating" IsReadOnly="True" Opacity="0.5"
+                             Style="{StaticResource RatingsBarTextBoxStyle}"
+                             Width="240" />
+                    <materialDesign:RatingBar Value="{Binding Settings.SelectedMinRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Style="{StaticResource RatingBarStyle}" Margin="70,4,0,0" />
+                  </Grid>
+
+                  <Grid Margin="10,0,0,0">
+                    <!-- ratings is drawn within TextBox - refer DatabaseItem.xaml -->
+                    <TextBox Text="{Binding Settings.SelectedMaxRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Max Rating" IsReadOnly="True" Opacity="0.5"
+                             Style="{StaticResource RatingsBarTextBoxStyle}"
+                             Width="240" />
+                    <materialDesign:RatingBar Value="{Binding Settings.SelectedMaxRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Style="{StaticResource RatingBarStyle}" Margin="70,4,0,0" />
+                  </Grid>
+
+
+                </WrapPanel>
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
                 <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
                                 controls:GenericAttached.String="Style"
                                 controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
                                 controls:GenericAttached.Double="60"
-                                controls:GenericAttached.Double2="14">
+                                controls:GenericAttached.Double2="14"
+                                VerticalAlignment="Center">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFilters.TableStyleOptionsView}" />
                 </ContentControl>
               </Grid>
@@ -340,7 +381,7 @@
                     EnableRowVirtualization="True">
 
             <DataGrid.Resources>
-              <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Exclamation" False="Check" />
+              <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Check" False="Check" />
 
               <DataTemplate x:Key="IsManufacturedTemplate" DataType="game:LocalGame">
                 <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Derived.IsOriginal, Converter={StaticResource IsOriginalToIconConverter}}"
