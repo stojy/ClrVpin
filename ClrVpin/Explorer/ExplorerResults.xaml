@@ -348,7 +348,6 @@
                                               Style="{StaticResource RatingBarStyle}" Margin="70,4,0,0" />
                   </Grid>
 
-
                 </WrapPanel>
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
