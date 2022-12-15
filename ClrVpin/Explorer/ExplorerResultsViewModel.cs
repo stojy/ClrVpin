@@ -11,9 +11,10 @@ using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
-using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
+using Utils;
 using Utils.Extensions;
+using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
 
 namespace ClrVpin.Explorer;
 
@@ -92,7 +93,14 @@ public class ExplorerResultsViewModel
 
     private void RatingsChanged()
     {
-        FilterChangedCommand.Execute(null);
+        // update rounding
+        // - required because the underlying RatingsBar unfortunately doesn't bind the value to the 'ValueIncrements' used in the UI, e.g. bound value 1.456700001
+        // - this will cause a property change and update to occur, refer DatabaseItem
+        Settings.SelectedMinRating = Rounding.ToHalf(Settings.SelectedMinRating);
+        Settings.SelectedMaxRating = Rounding.ToHalf(Settings.SelectedMaxRating);
+
+        // to ensure the ratings bar animation isn't interrupted, the view refresh is delayed a little because it's CPU intensive and runs on the dispatcher (UI) thread
+        RefreshViews(Settings.IsDynamicFiltering, 1000);
     }
 
     private void InitialiseFilters()
@@ -146,14 +154,14 @@ public class ExplorerResultsViewModel
         // only evaluate the func if dynamic filtering is enabled
         !Settings.IsDynamicFiltering || dynamicFilteringFunc();
 
-    private void RefreshViews(bool refreshFilters)
+    private void RefreshViews(bool refreshFilters, int? debounceMilliseconds = null)
     {
         // update main list
-        GamesView.RefreshDebounce();
+        GamesView.RefreshDebounce(debounceMilliseconds);
 
         // update filters based on what is shown in the main list
         if (refreshFilters)
-            GameFilters.Refresh();
+            GameFilters.Refresh(debounceMilliseconds);
     }
 
     private async Task ShowSummary()

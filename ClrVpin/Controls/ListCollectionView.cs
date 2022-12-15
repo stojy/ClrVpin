@@ -57,13 +57,13 @@ public sealed class ListCollectionView<T> : ListCollectionView, IEnumerable<T>
         if (!CheckAccess())
             throw new Exception("LCV.Refresh invoked on the incorrect thread.. must be on the UI thread!");
 
-        Dispatcher.CurrentDispatcher.InvokeAsync(() => base.Refresh(), DispatcherPriority.ContextIdle);
+        Dispatcher.CurrentDispatcher.InvokeAsync(() => base.Refresh(), DispatcherPriority.ApplicationIdle);
     }
 
-    public void RefreshDebounce(int debounceMilliseconds = 400)
+    public void RefreshDebounce(int? debounceMilliseconds = null)
     {
         // delay processing text changed
-        _refreshDebounceTimer.Interval = TimeSpan.FromMilliseconds(debounceMilliseconds);
+        _refreshDebounceTimer.Interval = TimeSpan.FromMilliseconds(debounceMilliseconds ?? 400);
 
         // reset the timer if one is already started
         _refreshDebounceTimer.Stop();

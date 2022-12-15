@@ -5,9 +5,10 @@ using ClrVpin.Controls;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Game;
-using Microsoft.Xaml.Behaviors.Core;
 using PropertyChanged;
+using Utils;
 using Utils.Extensions;
+using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
 
 namespace ClrVpin.Feeder
 {
@@ -91,8 +92,7 @@ namespace ClrVpin.Feeder
                 // - required because the underlying RatingsBar unfortunately doesn't bind the value to the 'ValueIncrements' used in the UI, e.g. bound value 1.456700001
                 // - if the rounding value is changed, the WPF control (e.g. RatingBar), will rebind and cause another ChangedCommand to fire..
                 //   but with the new rounded value hence avoiding subsequent updates
-                if (LocalGame.Game.Rating != null)
-                    LocalGame.Game.Rating = Math.Round((LocalGame.Game.Rating ?? 0) * 2) / 2;
+                LocalGame.Game.Rating = Rounding.ToHalf(LocalGame.Game.Rating);
 
                 // explicitly update dynamic game details to account for any updated properties, e.g. table name, ipdb, etc
                 LocalGame.Init();
@@ -107,7 +107,7 @@ namespace ClrVpin.Feeder
 
             OverwriteAllInfoCommand = new ActionCommand(() => { GameUpdater.UpdateProperties(onlineGame, LocalGame.Game, true); });
         }
-
+        
         public LocalGame LocalGame { get; }
 
         public bool IsExisting { get; set; }

@@ -32,14 +32,14 @@ public class GameFiltersViewModel
     public ListCollectionView<FeatureType> TableNewContentOptionsView { get; set; } = new();
     public ListCollectionView<FeatureType> PresetDateOptionsView { get; }
 
-    public void Refresh()
+    public void Refresh(int? debounceMilliseconds = null)
     {
-        TablesFilterView.RefreshDebounce();
-        ManufacturersFilterView.RefreshDebounce();
-        YearsBeginFilterView.RefreshDebounce();
-        YearsEndFilterView.RefreshDebounce();
-        TypesFilterView.RefreshDebounce();
-        FormatsFilterView.RefreshDebounce();
+        TablesFilterView.RefreshDebounce(debounceMilliseconds);
+        ManufacturersFilterView.RefreshDebounce(debounceMilliseconds);
+        YearsBeginFilterView.RefreshDebounce(debounceMilliseconds);
+        YearsEndFilterView.RefreshDebounce(debounceMilliseconds);
+        TypesFilterView.RefreshDebounce(debounceMilliseconds);
+        FormatsFilterView.RefreshDebounce(debounceMilliseconds);
     }
 
     private ListCollectionView<FeatureType> CreatePresetDateOptionsView(IEnumerable<EnumOption<PresetDateOptionEnum>> enumOptions)
