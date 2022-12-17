@@ -20,13 +20,6 @@
     <controls:SharedResourceDictionary Source="\Shared\Notification.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <!-- x:Shared resources must be defined at the top level resource dictionary -->
-  <controls:Triggers x:Key="RatingsTextChangedTriggers" x:Shared="False">
-    <b:EventTrigger EventName="TextChanged">
-      <b:InvokeCommandAction Command="{Binding RatingsChangedCommand}" d:DataContext="{d:DesignInstance Type=explorer:ExplorerResultsViewModel}" />
-    </b:EventTrigger>
-  </controls:Triggers>
-
   <Style x:Key="UrlButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFloatingActionDarkButton}">
     <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
     <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
@@ -324,7 +317,6 @@
                       <Setter Property="HorizontalAlignment" Value="Left" />
                       <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
                       <!--<Setter Property="FontSize" Value="16" />-->
-                      <Setter Property="controls:StylableInteraction.Triggers" Value="{StaticResource RatingsTextChangedTriggers}" />
                     </Style>
                   </WrapPanel.Resources>
                   
@@ -333,7 +325,14 @@
                     <TextBox Text="{Binding Settings.SelectedMinRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              materialDesign:HintAssist.Hint="Min Rating" IsReadOnly="True" Opacity="0.5"
                              Style="{StaticResource RatingsBarTextBoxStyle}"
-                             Width="240" />
+                             Width="240">
+                      <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="TextChanged">
+                          <b:InvokeCommandAction Command="{Binding MinRatingChangedCommand}" d:DataContext="{d:DesignInstance Type=explorer:ExplorerResultsViewModel}" />
+                        </b:EventTrigger>
+                      </b:Interaction.Triggers>
+                    </TextBox>
+
                     <materialDesign:RatingBar Value="{Binding Settings.SelectedMinRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               Style="{StaticResource RatingBarStyle}" Margin="70,4,0,0" />
                   </Grid>
@@ -343,7 +342,14 @@
                     <TextBox Text="{Binding Settings.SelectedMaxRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              materialDesign:HintAssist.Hint="Max Rating" IsReadOnly="True" Opacity="0.5"
                              Style="{StaticResource RatingsBarTextBoxStyle}"
-                             Width="240" />
+                             Width="240" >
+                      <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="TextChanged">
+                          <b:InvokeCommandAction Command="{Binding MaxRatingChangedCommand}" d:DataContext="{d:DesignInstance Type=explorer:ExplorerResultsViewModel}" />
+                        </b:EventTrigger>
+                      </b:Interaction.Triggers>
+                    </TextBox>
+
                     <materialDesign:RatingBar Value="{Binding Settings.SelectedMaxRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               Style="{StaticResource RatingBarStyle}" Margin="70,4,0,0" />
                   </Grid>
