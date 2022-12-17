@@ -93,34 +93,30 @@ public class ExplorerResultsViewModel
         InitialiseFilters();
     }
 
-    //private void ProcessRatingChanged(Expression<Func<decimal?>> rating, Expression<Func<decimal?>> otherRating)
-    //{
-
-    //}
-
     private void MinRatingChanged()
     {
-        // update rounding
-        // - required because the underlying RatingsBar unfortunately doesn't bind the value to the 'ValueIncrements' used in the UI, e.g. bound value 1.456700001
-        // - this will cause a synchronous property change to be processed, which will be processed BEFORE this instance is completed
-        Settings.SelectedMinRating = Rounding.ToHalf(Settings.SelectedMinRating);
-
-        if (Settings.SelectedMinRating > Settings.SelectedMaxRating)
-            Settings.SelectedMaxRating = Settings.SelectedMinRating;
-
-        // to ensure the ratings bar animation isn't interrupted, the view refresh is delayed a little because it's CPU intensive and runs on the dispatcher (UI) thread
-        RefreshViews(Settings.IsDynamicFiltering, 1000);
+        ProcessRatingChanged(Settings.SelectedMinRating,
+            roundedRating => Settings.SelectedMinRating = roundedRating,
+            roundedRating => Settings.SelectedMaxRating = roundedRating);
     }
 
     private void MaxRatingChanged()
     {
+        ProcessRatingChanged(Settings.SelectedMaxRating,
+            roundedRating => Settings.SelectedMaxRating = roundedRating,
+            roundedRating => Settings.SelectedMinRating = roundedRating);
+    }
+
+    private void ProcessRatingChanged(double? rating, Action<double?> setRating, Action<double?> setOtherRating)
+    {
         // update rounding
         // - required because the underlying RatingsBar unfortunately doesn't bind the value to the 'ValueIncrements' used in the UI, e.g. bound value 1.456700001
         // - this will cause a synchronous property change to be processed, which will be processed BEFORE this instance is completed
-        Settings.SelectedMaxRating = Rounding.ToHalf(Settings.SelectedMaxRating);
+        var roundedRating = Rounding.ToHalf(rating);
+        setRating(roundedRating);
 
-        if (Settings.SelectedMaxRating < Settings.SelectedMinRating)
-            Settings.SelectedMinRating = Settings.SelectedMaxRating;
+        if (Settings.SelectedMinRating > Settings.SelectedMaxRating) // which also covers max < min
+            setOtherRating(roundedRating);
 
         // to ensure the ratings bar animation isn't interrupted, the view refresh is delayed a little because it's CPU intensive and runs on the dispatcher (UI) thread
         RefreshViews(Settings.IsDynamicFiltering, 1000);
