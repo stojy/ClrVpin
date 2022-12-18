@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using ClrVpin.Extensions;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared.Game;
@@ -35,15 +36,30 @@ public class ExplorerViewModel : IShowViewModel
 
         _window.Show();
 
-        // immediately start
-        Start();
-
         _window.Closed += (_, _) => Model.SettingsManager.Write();
+
+        // queue the start in after the window has been rendered to avoid race conditions in the event the window isn't fully constructed, e.g. error during Start()
+        Dispatcher.CurrentDispatcher.BeginInvoke(TryStart);
 
         return _window;
     }
 
-    private async void Start()
+    private async Task TryStart()
+    {
+        try
+        {
+            await Start();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, $"ExplorerViewModel - failed to start");
+            
+            // explicitly close the window so the HomeVM can detect this child window has been closed and thus show the menu options
+            _window.Close();
+        }
+    }
+
+    private async Task Start()
     {
         Logger.Info($"\nExplorer started, settings={JsonSerializer.Serialize(_settings)}");
         _window.Hide();
@@ -62,7 +78,7 @@ public class ExplorerViewModel : IShowViewModel
         catch (Exception)
         {
             progress.Close();
-            return;
+            throw;
         }
 
         progress.Update("Matching Files");
