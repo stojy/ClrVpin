@@ -82,7 +82,15 @@ public class ExplorerResultsViewModel
                 (Settings.SelectedUpdatedAtDateBegin == null || localGame.Content.UpdatedAt == null || localGame.Content.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
                 (Settings.SelectedUpdatedAtDateEnd == null || localGame.Content.UpdatedAt == null || localGame.Content.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
                 (Settings.SelectedTableFilter == null || localGame.Game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (Settings.SelectedManufacturerFilter == null || localGame.Game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase))
+                (Settings.SelectedManufacturerFilter == null || localGame.Game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
+                
+                // min rating match if either.. null selected min rating is a "don't care", but also explicitly handles no rating (i.e. null rating)
+                // - game rating is null AND selected min rating is null
+                // - game rating >= selected min rating, treating null as zero
+                ((localGame.Game.Rating == null && Settings.SelectedMinRating == null) || localGame.Game.Rating >= (Settings.SelectedMinRating ?? 0)) &&
+                // max rating match if either.. null selected max rating is a "don't care", no special 'no rating' is required as this is done during the min check
+                // - game rating <= selected max rating, treating null as 5
+                (localGame.Game.Rating ?? 0) <= (Settings.SelectedMaxRating ?? 5)
         };
         GamesView.MoveCurrentToFirst();
 
