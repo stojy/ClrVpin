@@ -198,7 +198,7 @@
 
               <Grid Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1.20*" />
+                  <ColumnDefinition Width="1.65*" />
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -252,7 +252,7 @@
                       <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
                       <Setter Property="Margin" Value="10,0,0,0" />
                       <Setter Property="Padding" Value="0,2" />
-                      <Setter Property="Width" Value="130" />
+                      <Setter Property="Width" Value="125" />
                     </Style>
                   </WrapPanel.Resources>
 
@@ -305,7 +305,7 @@
 
               <Grid>
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1.20*" />
+                  <ColumnDefinition Width="1.65*" />
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
