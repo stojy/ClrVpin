@@ -127,7 +127,7 @@ public class ExplorerResultsViewModel
             setOtherRating(roundedRating);
 
         // to ensure the ratings bar animation isn't interrupted, the view refresh is delayed a little because it's CPU intensive and runs on the dispatcher (UI) thread
-        RefreshViews(Settings.IsDynamicFiltering, 1000);
+        RefreshViews(Settings.IsDynamicFiltering, 800);
     }
 
     private void InitialiseFilters()
