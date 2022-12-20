@@ -63,7 +63,7 @@
     <!--temporarily disabled ratings bar as it appears to be causing rendering performance issues for the GridView.. scrolling and sorting-->
     <!--<materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
                               Style="{StaticResource RatingBarStyle}" IsReadOnly="True" IsPreviewValueEnabled="False" />-->
-    <TextBlock Text="{Binding Game.Rating}"/>
+    <TextBlock Text="{Binding Game.Rating}" HorizontalAlignment="Center"/>
   </DataTemplate>
 
   <DataTemplate x:Key="FeatureTypeTemplate">
@@ -159,7 +159,7 @@
 
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
-        <DockPanel DockPanel.Dock="Left" Width="950">
+        <DockPanel DockPanel.Dock="Left" Width="840">
           <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(-->
@@ -463,7 +463,7 @@
                                   Binding="{Binding Game.Year}"
                                   Width="55" />
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
-                                      SortMemberPath="Game.Rating" Width="155" />
+                                      SortMemberPath="Game.Rating" Width="45" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
                                   Binding="{Binding Game.Type}"
                                   Width="35" />
