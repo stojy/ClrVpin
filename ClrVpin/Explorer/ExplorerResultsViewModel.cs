@@ -126,8 +126,13 @@ public class ExplorerResultsViewModel
         if (Settings.SelectedMinRating > Settings.SelectedMaxRating) // which also covers max < min
             setOtherRating(roundedRating);
 
-        // to ensure the ratings bar animation isn't interrupted, the view refresh is delayed a little because it's CPU intensive and runs on the dispatcher (UI) thread
-        RefreshViews(Settings.IsDynamicFiltering, 800);
+        // only refresh the views if we're processing a rounded rating, i.e. skip the view refresh for the initial click which supplies a non-rounded rating
+        if (roundedRating?.Equals(rating) == true)
+        {
+            // to ensure the ratings bar animation isn't interrupted (i.e. seen as stuttering) delay the view refresh a little
+            // - required because the animation is CPU intensive and runs on the dispatcher (UI) thread
+            RefreshViews(Settings.IsDynamicFiltering, 800);
+        }
     }
 
     private void InitialiseFilters()
