@@ -49,10 +49,6 @@
   <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="#FF00C853" False="#89FFFFFF" /> <!--{DynamicResource MaterialDesignBodyLight}-->
   <converters:BoolToStyleConverter x:Key="IsNewUrlButtonStyleConverter" True="{StaticResource IsNewUrlButtonStyle}" False="{StaticResource UrlButtonStyle}" />
 
-  <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
-    <Setter Property="FontSize" Value="12" />
-  </Style>
-
   <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
     <!--<Button Style="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ContentControl}}, Path=DataContext.IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}"-->
     <Button Style="{Binding IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}" ToolTip="{Binding Url}" Command="{Binding SelectedCommand}">
@@ -552,7 +548,8 @@
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
-                    ColumnHeaderStyle="{StaticResource HeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
+                    GridLinesVisibility="None"
+                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
                     SelectedItem="{Binding SelectedGameItem}">
 
             <b:Interaction.Triggers>

@@ -48,10 +48,6 @@
   <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="#FF00C853" False="#89FFFFFF" /> <!--{DynamicResource MaterialDesignBodyLight}-->
   <converters:BoolToStyleConverter x:Key="IsNewUrlButtonStyleConverter" True="{StaticResource IsNewUrlButtonStyle}" False="{StaticResource UrlButtonStyle}" />
 
-  <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
-    <Setter Property="FontSize" Value="12" />
-  </Style>
-
   <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
     <!--<Button Style="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ContentControl}}, Path=DataContext.IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}"-->
     <Button Style="{Binding IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}" ToolTip="{Binding Url}" Command="{Binding SelectedCommand}">
@@ -381,9 +377,12 @@
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
-                    ColumnHeaderStyle="{StaticResource HeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
+                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                    CanUserSortColumns="True" IsReadOnly="True"
                     SelectedItem="{Binding SelectedLocalGame}"
-                    EnableRowVirtualization="True">
+                    EnableRowVirtualization="True"
+                    GridLinesVisibility="None"
+                    Margin="0,5,0,0">
 
             <DataGrid.Resources>
               <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Check" False="Check" />
@@ -458,17 +457,21 @@
                                   Binding="{Binding Fuzzy.TableDetails.ActualNameWithoutManufacturerOrYear}"
                                   Width="255" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
-                                  Binding="{Binding Game.Manufacturer}" Width="160" />
+                                  Binding="{Binding Game.Manufacturer}"
+                                  Width="160"/>
+
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
                                   Binding="{Binding Game.Year}"
                                   Width="55" />
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
-                                      SortMemberPath="Game.Rating" Width="45" />
+                                      SortMemberPath="Game.Rating" 
+                                      Width="45" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
                                   Binding="{Binding Game.Type}"
                                   Width="35" />
               <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufactured" CellTemplate="{StaticResource IsManufacturedTemplate}"
-                                      SortMemberPath="Derived.IsOriginal" Width="85" />
+                                      SortMemberPath="Derived.IsOriginal" 
+                                      Width="85" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table/Backglass Update"
                                   Binding="{Binding Content.UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}"
                                   Width="140"/>
