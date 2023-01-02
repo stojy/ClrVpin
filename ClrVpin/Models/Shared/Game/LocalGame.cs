@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.Windows.Input;
 using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
@@ -36,6 +37,10 @@ public class LocalGame
     [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
     // ReSharper disable once UnusedAutoPropertyAccessor.Global - keeping for future use
     public OnlineGame OnlineGame { get; set; }
+    
+    // VM properties
+    [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
+    public ICommand ShowDetailedInfoCommand { get; set; }
 
     public override string ToString() => $"Table: {Derived.TableFileWithExtension}, IsSmelly: {Content?.IsSmelly}";
 }
