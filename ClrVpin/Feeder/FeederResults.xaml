@@ -543,13 +543,20 @@
             <TextBlock Text="{Binding GameItems.Count}" />
           </WrapPanel>
 
-          <DataGrid Name="FeederResults" DockPanel.Dock="Bottom" ItemsSource="{Binding GameItemsView}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+          <DataGrid Name="FeederResults" DockPanel.Dock="Bottom" 
                     SelectionMode="Single"
+                    ItemsSource="{Binding GameItemsView}"
+                    AutoGenerateColumns="False" 
+                    CanUserAddRows="False" 
+                    CanUserDeleteRows="False"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
+                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" 
+                    CanUserSortColumns="True"
+                    IsReadOnly="True"
+                    EnableRowVirtualization="True"
                     GridLinesVisibility="None"
-                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" CanUserSortColumns="True" IsReadOnly="True"
                     SelectedItem="{Binding SelectedGameItem}">
 
             <b:Interaction.Triggers>

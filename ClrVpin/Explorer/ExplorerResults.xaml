@@ -51,7 +51,7 @@
   <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
     <!--<Button Style="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ContentControl}}, Path=DataContext.IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}"-->
     <Button Style="{Binding IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}" ToolTip="{Binding Url}" Command="{Binding SelectedCommand}">
-      <materialDesign:PackIcon Kind="{Binding Broken, Converter={StaticResource UrlToIconConverter}}" Height="40" Width="40" Foreground="{DynamicResource MaterialDesignBody}" />
+      <materialDesign:PackIcon Kind="{Binding Broken, Converter={StaticResource UrlToIconConverter}}" Height="30" Width="30" Foreground="{DynamicResource MaterialDesignBody}" />
     </Button>
   </DataTemplate>
 
@@ -59,7 +59,7 @@
     <!--temporarily disabled ratings bar as it appears to be causing rendering performance issues for the GridView.. scrolling and sorting-->
     <!--<materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
                               Style="{StaticResource RatingBarStyle}" IsReadOnly="True" IsPreviewValueEnabled="False" />-->
-    <TextBlock Text="{Binding Game.Rating}" HorizontalAlignment="Center"/>
+    <TextBlock Text="{Binding Game.Rating}" HorizontalAlignment="Center" />
   </DataTemplate>
 
   <DataTemplate x:Key="FeatureTypeTemplate">
@@ -155,7 +155,7 @@
 
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
-        <DockPanel DockPanel.Dock="Left" Width="840">
+        <DockPanel DockPanel.Dock="Left" Width="875">
           <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(-->
@@ -315,7 +315,7 @@
                       <!--<Setter Property="FontSize" Value="16" />-->
                     </Style>
                   </WrapPanel.Resources>
-                  
+
                   <Grid>
                     <!-- ratings is drawn within TextBox - refer DatabaseItem.xaml -->
                     <TextBox Text="{Binding Settings.SelectedMinRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -338,7 +338,7 @@
                     <TextBox Text="{Binding Settings.SelectedMaxRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              materialDesign:HintAssist.Hint="Max Rating" IsReadOnly="True" Opacity="0.5"
                              Style="{StaticResource RatingsBarTextBoxStyle}"
-                             Width="240" >
+                             Width="240">
                       <b:Interaction.Triggers>
                         <b:EventTrigger EventName="TextChanged">
                           <b:InvokeCommandAction Command="{Binding MaxRatingChangedCommand}" d:DataContext="{d:DesignInstance Type=explorer:ExplorerResultsViewModel}" />
@@ -371,7 +371,9 @@
             <TextBlock Text="{Binding Games.Count}" />
           </WrapPanel>
 
-          <DataGrid Name="ExplorerResults" DockPanel.Dock="Bottom" SelectionMode="Single"
+          <DataGrid Name="ExplorerResults" DockPanel.Dock="Bottom"
+                    Margin="0,5,0,0"
+                    SelectionMode="Single"
                     ItemsSource="{Binding GamesView}" AutoGenerateColumns="False" CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
@@ -379,10 +381,9 @@
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
                     ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
                     CanUserSortColumns="True" IsReadOnly="True"
-                    SelectedItem="{Binding SelectedLocalGame}"
                     EnableRowVirtualization="True"
                     GridLinesVisibility="None"
-                    Margin="0,5,0,0">
+                    SelectedItem="{Binding SelectedLocalGame}">
 
             <DataGrid.Resources>
               <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Check" False="Check" />
@@ -406,10 +407,13 @@
                 </materialDesign:PackIcon>
               </DataTemplate>
 
-              <Style x:Key="CellStyle" TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-              </Style>
+              <DataTemplate x:Key="ShowDetailedInfoTemplate" DataType="{x:Type game:LocalGame}">
+                <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30"
+                        ToolTip="Show detailed information about the table, e.g. database info, matched files, etc."
+                        Command="{Binding ShowDetailedInfoCommand}" HorizontalAlignment="Center">
+                  <materialDesign:PackIcon Kind="InfoVariant" Width="30" Height="30" />
+                </Button>
+              </DataTemplate>
 
             </DataGrid.Resources>
 
@@ -421,60 +425,37 @@
 
             <DataGrid.Columns>
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
-                                  Header="#" Binding="{Binding Derived.Number}" Width="45" />
+                                  Header="#" Binding="{Binding Derived.Number}"
+                                  Width="45" />
 
-              <!--<DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Fix" Width="30" SortMemberPath="OnlineGame.IsMatched">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <WrapPanel Margin="-7,-2,0,0">
-                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30"
-                              ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalAndOnline}}"
-                              IsEnabled="{Binding IsMatchingEnabled}"
-                              Command="{Binding UpdateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
-                      </Button>
-                      <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
-                              ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalOnly}}"
-                              IsEnabled="{Binding IsMatchingEnabled}"
-                              Command="{Binding UpdateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="AutoRenew" Width="33" Height="33" />
-                      </Button>
-                      <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
-                              ToolTip="{Binding CreateDatabaseEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.OnlineOnly}}"
-                              IsEnabled="{Binding IsMatchingEnabled}"
-                              Command="{Binding CreateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="Plus" Width="33" Height="33" />
-                      </Button>
-                    </WrapPanel>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>-->
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" CanUserSort="False" CellStyle="{StaticResource AlignedDataGridCellStyle}"
+                                      CellTemplate="{StaticResource ShowDetailedInfoTemplate}"
+                                      Header="Detail" 
+                                      Width="37" />
 
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
                                   Binding="{Binding Fuzzy.TableDetails.ActualNameWithoutManufacturerOrYear}"
                                   Width="255" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
                                   Binding="{Binding Game.Manufacturer}"
-                                  Width="160"/>
-
+                                  Width="160" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
                                   Binding="{Binding Game.Year}"
                                   Width="55" />
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
-                                      SortMemberPath="Game.Rating" 
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" 
+                                      CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
+                                      SortMemberPath="Game.Rating"
                                       Width="45" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
                                   Binding="{Binding Game.Type}"
                                   Width="35" />
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufactured" CellTemplate="{StaticResource IsManufacturedTemplate}"
-                                      SortMemberPath="Derived.IsOriginal" 
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufactured" CellStyle="{StaticResource CenteredDataGridCellStyle}"
+                                      CellTemplate="{StaticResource IsManufacturedTemplate}"
+                                      SortMemberPath="Derived.IsOriginal"
                                       Width="85" />
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table/Backglass Update"
                                   Binding="{Binding Content.UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}"
-                                  Width="140"/>
+                                  Width="140" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
