@@ -23,7 +23,8 @@ public class Content
     // true if game contains any hits types that are not valid
     public bool IsSmelly { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
+    // timestamp of the most recent 'pinball category' (table or backglass) content file
+    public DateTime? UpdatedAt { get; private set; }
 
     public static string GetName(LocalGame localGame, ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball
@@ -40,7 +41,7 @@ public class Content
         // standard properties to avoid cost of recalculating getters during every request (e.g. wpf bindings)
         IsSmelly = ContentHitsCollection.Any(contentHits => contentHits.IsSmelly);
 
-        // timestamp of the most recent 'pinball category' (table, backglass, or POV) content file
+        // timestamp of the most recent 'pinball category' (table or backglass) content file
         var tableAndBackglassContent = ContentHitsCollection
             .Where(contentHits => contentHits.ContentType.Enum.In(ContentTypeEnum.Tables, ContentTypeEnum.Backglasses));
         UpdatedAt = tableAndBackglassContent.Max(contentHits => contentHits.Hits
