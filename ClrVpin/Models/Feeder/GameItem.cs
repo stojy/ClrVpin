@@ -41,7 +41,10 @@ public class GameItem
     public string[] Roms => new[] { OnlineGame?.RomFiles.FirstOrDefault()?.Name, LocalGame?.Game.Rom };
     public string[] Authors => new[] { string.Join(", ", OnlineGame?.TableFiles.FirstOrDefault()?.Authors ?? new [] {""}), LocalGame?.Game.Author };
 
-    public DateTime? UpdatedAt => OnlineGame?.UpdatedAt; // not supported in local DB LocalGame
+    // online feed doesn't contain a rating (yet)
+    public double? Rating => LocalGame?.Game.Rating;
+
+    public DateTime? UpdatedAt => OnlineGame?.UpdatedAt ?? LocalGame?.Content.UpdatedAt;
     public bool IsOriginal => OnlineGame?.IsOriginal ?? LocalGame.Derived.IsOriginal;
     public TableStyleOptionEnum TableStyleOption => OnlineGame?.TableStyleOption ?? LocalGame.Derived.TableStyleOption;
 

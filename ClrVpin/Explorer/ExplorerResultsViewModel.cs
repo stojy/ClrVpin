@@ -14,6 +14,7 @@ using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
+using Utils.Extensions;
 using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
 
 namespace ClrVpin.Explorer;
@@ -21,29 +22,25 @@ namespace ClrVpin.Explorer;
 [AddINotifyPropertyChangedInterface]
 public class ExplorerResultsViewModel
 {
-    public ExplorerResultsViewModel(ObservableCollection<LocalGame> localGames)
+    public ExplorerResultsViewModel(IEnumerable<LocalGame> localGames)
     {
-        LocalGames = localGames;
-
-        Initialise();
+        Initialise(localGames);
     }
 
     public ExplorerSettings Settings { get; private set; }
-    public ListCollectionView<LocalGame> GamesView { get; private set; }
+    public ListCollectionView<GameItem> GameItemsView { get; private set; }
 
     public Window Window { get; private set; }
 
-    public ObservableCollection<LocalGame> LocalGames { get; }
-
     public GameFiltersViewModel GameFilters { get; private set; }
-    public LocalGame SelectedLocalGame { get; set; }
+    public GameItem SelectedGameItem { get; set; }
     public ICommand LocalGameSelectedCommand { get; set; }
     public ICommand FilterChangedCommand { get; set; }
     public ICommand DynamicFilteringCommand { get; private set; }
     public ICommand MinRatingChangedCommand { get; set; }
     public ICommand MaxRatingChangedCommand { get; set; }
 
-    public List<GameItem> GameItems { get; set; }
+    public ObservableCollection<GameItem> GameItems { get; private set; }
 
     public async Task Show(Window parentWindow, double left, double top, double width)
     {
@@ -64,12 +61,12 @@ public class ExplorerResultsViewModel
         await ShowSummary();
     }
 
-    private void Initialise()
+    private void Initialise(IEnumerable<LocalGame> localGames)
     {
         Settings = Model.Settings.Explorer;
 
-        // todo; remove obsolete LocalGames??
-        GameItems = LocalGames.Select(localGame => new GameItem(localGame)).ToList();
+        // convert LocalGame to GameItem for consistency with Feeder, i.e. to make it easier for refactoring/sharing
+        GameItems = new ObservableCollection<GameItem>(localGames.OrderBy(localGame => localGame.Game.Name).Select(localGame => new GameItem(localGame)));
 
         // ReSharper disable once UseObjectOrCollectionInitializer
         GameFilters = new GameFiltersViewModel(() => FilterChangedCommand?.Execute(null), startDate =>
@@ -84,32 +81,31 @@ public class ExplorerResultsViewModel
             gameItem.LocalGame.Content.Update(() => new List<int>(), () => new List<int>());
 
             gameItem.LocalGame.ShowDetailedInfoCommand = new ActionCommand(() =>
-                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, LocalGames, gameItem, _gameCollections, () => LocalGames.Remove(gameItem.LocalGame)));
+                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, GameItems.Select(item => item.LocalGame).ToList(), gameItem, _gameCollections, () => GameItems.Remove(gameItem)));
         });
 
-        GamesView = new ListCollectionView<LocalGame>(LocalGames)
+        GameItemsView = new ListCollectionView<GameItem>(GameItems)
         {
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
-            Filter = localGame =>
-                (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || localGame.Derived.TableStyleOption == Settings.SelectedTableStyleOption) &&
-                (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(localGame.Game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
-                (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(localGame.Game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
-                (Settings.SelectedTypeFilter == null || string.CompareOrdinal(localGame.Game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
-                (Settings.SelectedUpdatedAtDateBegin == null || localGame.Content.UpdatedAt == null || localGame.Content.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
-                (Settings.SelectedUpdatedAtDateEnd == null || localGame.Content.UpdatedAt == null || localGame.Content.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
-                (Settings.SelectedTableFilter == null || localGame.Game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (Settings.SelectedManufacturerFilter == null || localGame.Game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
+            Filter = gameItem => (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || gameItem.TableStyleOption == Settings.SelectedTableStyleOption) &&
+                                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
+                                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
+                                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
+                                 (Settings.SelectedUpdatedAtDateBegin == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
+                                 (Settings.SelectedUpdatedAtDateEnd == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
+                                 (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
+                                 (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
 
-                // min rating match if either.. null selected min rating is a "don't care", but also explicitly handles no rating (i.e. null rating)
-                // - game rating is null AND selected min rating is null
-                // - game rating >= selected min rating, treating null as zero
-                ((localGame.Game.Rating == null && Settings.SelectedMinRating == null) || localGame.Game.Rating >= (Settings.SelectedMinRating ?? 0)) &&
-                // max rating match if either.. null selected max rating is a "don't care", no special 'no rating' is required as this is done during the min check
-                // - game rating <= selected max rating, treating null as 5
-                (localGame.Game.Rating ?? 0) <= (Settings.SelectedMaxRating ?? 5)
+                                 // min rating match if either.. null selected min rating is a "don't care", but also explicitly handles no rating (i.e. null rating)
+                                 // - game rating is null AND selected min rating is null
+                                 // - game rating >= selected min rating, treating null as zero
+                                 ((gameItem.Rating == null && Settings.SelectedMinRating == null) || gameItem.Rating >= (Settings.SelectedMinRating ?? 0)) &&
+                                 // max rating match if either.. null selected max rating is a "don't care", no special 'no rating' is required as this is done during the min check
+                                 // - game rating <= selected max rating, treating null as 5
+                                 (gameItem.Rating ?? 0) <= (Settings.SelectedMaxRating ?? 5)
         };
-        GamesView.MoveCurrentToFirst();
+        GameItemsView.MoveCurrentToFirst();
 
         _gameCollections = new GameCollections(GameItems, UpdateGameFilters);
 
@@ -164,30 +160,30 @@ public class ExplorerResultsViewModel
         GameFilters.TablesFilterView = new ListCollectionView<string>(_gameCollections.TableNames)
         {
             // filter the table names list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
-            Filter = tableName => Filter(() => GamesView.Any(x => x.Game.Name == tableName))
+            Filter = tableName => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Name == tableName))
         };
 
         GameFilters.ManufacturersFilterView = new ListCollectionView<string>(_gameCollections.Manufacturers)
         {
             // filter the manufacturers list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
-            Filter = manufacturer => Filter(() => GamesView.Any(x => x.Game.Manufacturer == manufacturer))
+            Filter = manufacturer => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Manufacturer == manufacturer))
         };
 
         GameFilters.YearsBeginFilterView = new ListCollectionView<string>(_gameCollections.Years)
         {
             // filter the 'years from' list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
-            Filter = yearString => Filter(() => GamesView.Any(x => x.Game.Year == yearString))
+            Filter = yearString => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Year == yearString))
         };
         GameFilters.YearsEndFilterView = new ListCollectionView<string>(_gameCollections.Years)
         {
             // filter the 'years to' list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
-            Filter = yearString => Filter(() => GamesView.Any(x => x.Game.Year == yearString))
+            Filter = yearString => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Year == yearString))
         };
 
         // table HW type, i.e. SS, EM, PM
         GameFilters.TypesFilterView = new ListCollectionView<string>(_gameCollections.Types)
         {
-            Filter = type => Filter(() => GamesView.Any(x => x.Game.Type == type))
+            Filter = type => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Type == type))
         };
     }
 
@@ -198,7 +194,7 @@ public class ExplorerResultsViewModel
     private void RefreshViews(bool refreshFilters, int? debounceMilliseconds = null)
     {
         // update main list
-        GamesView.RefreshDebounce(debounceMilliseconds);
+        GameItemsView.RefreshDebounce(debounceMilliseconds);
 
         // update filters based on what is shown in the main list
         if (refreshFilters)
@@ -207,8 +203,8 @@ public class ExplorerResultsViewModel
 
     private async Task ShowSummary()
     {
-        var validHits = LocalGames.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
-        var eligibleFiles = LocalGames.Count * Model.Settings.AllContentTypes.Count;
+        var validHits = GameItems.SelectMany(x => x.LocalGame.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
+        var eligibleFiles = GameItems.Count * Model.Settings.AllContentTypes.Count;
         var missingFilesCount = eligibleFiles - validHits.Count;
 
         var detail = CreatePercentageStatistic("Missing Files", missingFilesCount, eligibleFiles);
