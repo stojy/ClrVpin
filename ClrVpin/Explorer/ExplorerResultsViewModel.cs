@@ -14,13 +14,12 @@ using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using PropertyChanged;
 using Utils;
-using Utils.Extensions;
 using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
 
 namespace ClrVpin.Explorer;
 
 [AddINotifyPropertyChangedInterface]
-public class ExplorerResultsViewModel : GameCollections
+public class ExplorerResultsViewModel
 {
     public ExplorerResultsViewModel(ObservableCollection<LocalGame> localGames)
     {
@@ -44,6 +43,8 @@ public class ExplorerResultsViewModel : GameCollections
     public ICommand MinRatingChangedCommand { get; set; }
     public ICommand MaxRatingChangedCommand { get; set; }
 
+    public List<GameItem> GameItems { get; set; }
+
     public async Task Show(Window parentWindow, double left, double top, double width)
     {
         Window = new MaterialWindowEx
@@ -63,20 +64,27 @@ public class ExplorerResultsViewModel : GameCollections
         await ShowSummary();
     }
 
-
     private void Initialise()
     {
         Settings = Model.Settings.Explorer;
 
-        // update status of each game, e.g. to update the Game.Content.UpdatedAt timestamp
-        LocalGames.ForEach(localGame =>
-        {
-            localGame.Content.Update(() => new List<int>(), () => new List<int>());
+        // todo; remove obsolete LocalGames??
+        GameItems = LocalGames.Select(localGame => new GameItem(localGame)).ToList();
 
-            // todo; create GameItems to replace LocalGames
-            var gameItem = new GameItem(localGame);
-            localGame.ShowDetailedInfoCommand = new ActionCommand(() =>
-                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, LocalGames, gameItem, this, () => LocalGames.Remove(gameItem.LocalGame)));
+        // ReSharper disable once UseObjectOrCollectionInitializer
+        GameFilters = new GameFiltersViewModel(() => FilterChangedCommand?.Execute(null), startDate =>
+        {
+            Settings.SelectedUpdatedAtDateBegin = startDate;
+            Settings.SelectedUpdatedAtDateEnd = DateTime.Today;
+        });
+
+        GameItems.ForEach(gameItem =>
+        {
+            // update status of each game, e.g. to update the Game.Content.UpdatedAt timestamp
+            gameItem.LocalGame.Content.Update(() => new List<int>(), () => new List<int>());
+
+            gameItem.LocalGame.ShowDetailedInfoCommand = new ActionCommand(() =>
+                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, LocalGames, gameItem, _gameCollections, () => LocalGames.Remove(gameItem.LocalGame)));
         });
 
         GamesView = new ListCollectionView<LocalGame>(LocalGames)
@@ -92,7 +100,7 @@ public class ExplorerResultsViewModel : GameCollections
                 (Settings.SelectedUpdatedAtDateEnd == null || localGame.Content.UpdatedAt == null || localGame.Content.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
                 (Settings.SelectedTableFilter == null || localGame.Game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
                 (Settings.SelectedManufacturerFilter == null || localGame.Game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
-                
+
                 // min rating match if either.. null selected min rating is a "don't care", but also explicitly handles no rating (i.e. null rating)
                 // - game rating is null AND selected min rating is null
                 // - game rating >= selected min rating, treating null as zero
@@ -103,11 +111,14 @@ public class ExplorerResultsViewModel : GameCollections
         };
         GamesView.MoveCurrentToFirst();
 
+        _gameCollections = new GameCollections(GameItems, UpdateGameFilters);
+
         DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
         FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
         MinRatingChangedCommand = new ActionCommand(MinRatingChanged);
         MaxRatingChangedCommand = new ActionCommand(MaxRatingChanged);
-        InitialiseFilters();
+
+        UpdateGameFilters();
     }
 
     private void MinRatingChanged()
@@ -144,48 +155,37 @@ public class ExplorerResultsViewModel : GameCollections
         }
     }
 
-    private void InitialiseFilters()
+    private void UpdateGameFilters()
     {
-        // ReSharper disable once UseObjectOrCollectionInitializer
-        GameFilters = new GameFiltersViewModel(() => FilterChangedCommand?.Execute(null), startDate =>
-        {
-            Settings.SelectedUpdatedAtDateBegin = startDate;
-            Settings.SelectedUpdatedAtDateEnd = DateTime.Today;
-        });
-
         GameFilters.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
             () => Settings.SelectedTableStyleOption, FilterChangedCommand);
 
         // filters views (drop down combo boxes)
-        var tableNames = LocalGames.Select(x => x.Game.Name).SelectUnique();
-        GameFilters.TablesFilterView = new ListCollectionView<string>(tableNames)
+        GameFilters.TablesFilterView = new ListCollectionView<string>(_gameCollections.TableNames)
         {
             // filter the table names list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
             Filter = tableName => Filter(() => GamesView.Any(x => x.Game.Name == tableName))
         };
 
-        var manufacturers = LocalGames.Select(x => x.Game.Manufacturer).SelectUnique();
-        GameFilters.ManufacturersFilterView = new ListCollectionView<string>(manufacturers)
+        GameFilters.ManufacturersFilterView = new ListCollectionView<string>(_gameCollections.Manufacturers)
         {
             // filter the manufacturers list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
             Filter = manufacturer => Filter(() => GamesView.Any(x => x.Game.Manufacturer == manufacturer))
         };
 
-        var years = LocalGames.Select(x => x.Game.Year).SelectUnique();
-        GameFilters.YearsBeginFilterView = new ListCollectionView<string>(years)
+        GameFilters.YearsBeginFilterView = new ListCollectionView<string>(_gameCollections.Years)
         {
             // filter the 'years from' list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => GamesView.Any(x => x.Game.Year == yearString))
         };
-        GameFilters.YearsEndFilterView = new ListCollectionView<string>(years)
+        GameFilters.YearsEndFilterView = new ListCollectionView<string>(_gameCollections.Years)
         {
             // filter the 'years to' list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => GamesView.Any(x => x.Game.Year == yearString))
         };
 
         // table HW type, i.e. SS, EM, PM
-        var types = LocalGames.Select(x => x.Game.Type).SelectUnique();
-        GameFilters.TypesFilterView = new ListCollectionView<string>(types)
+        GameFilters.TypesFilterView = new ListCollectionView<string>(_gameCollections.Types)
         {
             Filter = type => Filter(() => GamesView.Any(x => x.Game.Type == type))
         };
@@ -223,11 +223,8 @@ public class ExplorerResultsViewModel : GameCollections
         return $"{title}:  {count} of {totalCount} ({percentage:F2}%)";
     }
 
+    private GameCollections _gameCollections;
+
     private const int WindowMargin = 0;
     private const string DialogHostName = "ResultsDialog";
-    
-    public override void UpdateCollections()
-    {
-        throw new NotImplementedException();
-    }
 }

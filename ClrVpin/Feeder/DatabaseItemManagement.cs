@@ -112,6 +112,6 @@ public static class DatabaseItemManagement
         var localGamesInDatabaseFile = localGames.Where(localGame => localGame.Game.DatabaseFile == databaseItem.LocalGame.Game.DatabaseFile);
         TableUtils.WriteGamesToDatabase(localGamesInDatabaseFile.Select(x => x.Game), databaseItem.LocalGame.Game.DatabaseFile, databaseItem.LocalGame.Game.Name, isNewEntry);
             
-        gameCollections.UpdateCollections();
+        gameCollections.Update();
     }
 }
