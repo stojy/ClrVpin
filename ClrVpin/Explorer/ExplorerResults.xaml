@@ -386,7 +386,7 @@
                     SelectedItem="{Binding SelectedLocalGame}">
 
             <DataGrid.Resources>
-              <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Check" False="Check" />
+              <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Close" False="Check" />
 
               <DataTemplate x:Key="IsManufacturedTemplate" DataType="game:LocalGame">
                 <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Derived.IsOriginal, Converter={StaticResource IsOriginalToIconConverter}}"
