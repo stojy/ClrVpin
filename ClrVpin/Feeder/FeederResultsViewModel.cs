@@ -23,7 +23,7 @@ using Utils.Extensions;
 namespace ClrVpin.Feeder;
 
 [AddINotifyPropertyChangedInterface]
-public sealed class FeederResultsViewModel : GameCollections
+public sealed class FeederResultsViewModel
 {
     public FeederResultsViewModel(IList<GameItem> gameItems, IList<LocalGame> localGames)
     {
@@ -39,16 +39,16 @@ public sealed class FeederResultsViewModel : GameCollections
         });
 
         IsMatchingEnabled = Model.Settings.Feeder.SelectedMatchCriteriaOptions.Any();
-
+        
         // assign VM properties
         gameItems.ForEach(gameItem =>
         {
             // local database show/add commands
             gameItem.IsMatchingEnabled = IsMatchingEnabled;
             gameItem.UpdateDatabaseEntryCommand = new ActionCommand(() =>
-                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, _localGames, gameItem, this, () => GameItems?.Remove(gameItem)));
+                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, _localGames, gameItem, _gameCollections, () => GameItems?.Remove(gameItem)));
             gameItem.CreateDatabaseEntryCommand = new ActionCommand(() =>
-                DatabaseItemManagement.CreateDatabaseItem(DialogHostName, _localGames, gameItem, this));
+                DatabaseItemManagement.CreateDatabaseItem(DialogHostName, _localGames, gameItem, _gameCollections));
             gameItem.UpdateDatabaseMatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
             gameItem.UpdateDatabaseUnmatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
             gameItem.CreateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
@@ -109,8 +109,7 @@ public sealed class FeederResultsViewModel : GameCollections
         };
         GameItemsView.MoveCurrentToFirst();
 
-        // create game collections (e.g. list of manufacturers) to be used by results and also externally by the database item dialogs
-        UpdateCollections();
+        _gameCollections = new GameCollections(gameItems, UpdateGameFilters);
 
         DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
         FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
@@ -163,6 +162,8 @@ public sealed class FeederResultsViewModel : GameCollections
         // select the first item from the filtered list
         SelectedGameItem = GameItemsView.FirstOrDefault();
         GameItemSelectedCommand.Execute(null);
+
+        UpdateGameFilters();
     }
 
     public string AddMissingDatabaseInfoTip { get; }
@@ -176,6 +177,7 @@ public sealed class FeederResultsViewModel : GameCollections
     public ObservableCollection<GameItem> GameItems { get; }
     public ListCollectionView<GameItem> GameItemsView { get; }
 
+    private readonly GameCollections _gameCollections;
     public Window Window { get; private set; }
 
     public GameItem SelectedGameItem { get; set; }
@@ -192,62 +194,48 @@ public sealed class FeederResultsViewModel : GameCollections
 
     public bool IsMatchingEnabled { get; }
     public FileCollection SelectedFileCollection { get; set; }
-    private IList<string> Formats { get; set; }
 
     public GameFiltersViewModel GameFilters { get; }
 
-    public override void UpdateCollections()
+    // todo; move into GameFiltersViewModel??
+    private void UpdateGameFilters()
     {
-        // the collections consist of all the possible permutations from BOTH the online source and the local source
-        // - this is to ensure the maximum possible options are presented AND that the active item (from the local DB in the case of the update dialog) is actually in the list,
-        //   otherwise it will be assigned to null via the ListCollectionView when the SelectedItem is assigned (either explicitly or via binding)
-
         // filters views (drop down combo boxes) - uses the online AND unmatched local DB 
-        var tableNames = GameItems.Select(x => x.Names).SelectManyUnique();
-        GameFilters.TablesFilterView = new ListCollectionView<string>(tableNames)
+        GameFilters.TablesFilterView = new ListCollectionView<string>(_gameCollections.TableNames)
         {
             // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
             Filter = tableName => Filter(() => GameItemsView.Any(x => x.Name == tableName))
         };
 
-        Manufacturers = GameItems.Select(x => x.Manufacturers).SelectManyUnique();
-        GameFilters.ManufacturersFilterView = new ListCollectionView<string>(Manufacturers)
+        GameFilters.ManufacturersFilterView = new ListCollectionView<string>(_gameCollections.Manufacturers)
         {
             // filter the manufacturers list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
             Filter = manufacturer => Filter(() => GameItemsView.Any(x => x.Manufacturer == manufacturer))
         };
 
-        Years = GameItems.Select(x => x.Years).SelectManyUnique();
-        GameFilters.YearsBeginFilterView = new ListCollectionView<string>(Years)
+        GameFilters.YearsBeginFilterView = new ListCollectionView<string>(_gameCollections.Years)
         {
             // filter the 'years from' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => GameItemsView.Any(x => x.Year == yearString))
         };
-        GameFilters.YearsEndFilterView = new ListCollectionView<string>(Years)
+        GameFilters.YearsEndFilterView = new ListCollectionView<string>(_gameCollections.Years)
         {
             // filter the 'years to' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => GameItemsView.Any(x => x.Year == yearString))
         };
 
         // table HW type, i.e. SS, EM, PM
-        Types = GameItems.Select(x => x.Types).SelectManyUnique();
-        GameFilters.TypesFilterView = new ListCollectionView<string>(Types)
+        GameFilters.TypesFilterView = new ListCollectionView<string>(_gameCollections.Types)
         {
             Filter = type => Filter(() => GameItemsView.Any(x => x.Type == type))
         };
 
         // table formats - vpx, fp, etc
         // - only available via online
-        Formats = GameItems.SelectMany(x => x.OnlineGame?.TableFormats ?? new List<string>()).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
-        GameFilters.FormatsFilterView = new ListCollectionView<string>(Formats)
+        GameFilters.FormatsFilterView = new ListCollectionView<string>(_gameCollections.Formats)
         {
             Filter = format => Filter(() => GameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true))
         };
-
-        Themes = GameItems.Select(x => x.Themes).SelectManyUnique();
-        Players = GameItems.Select(x => x.Players).SelectManyUnique();
-        Roms = GameItems.Select(x => x.Roms).SelectManyUnique();
-        Authors = GameItems.Select(x => x.Authors).SelectManyUnique();
     }
 
     public async Task Show(Window parentWindow, double left, double top)
