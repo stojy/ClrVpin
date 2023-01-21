@@ -22,21 +22,8 @@ using Utils.Extensions;
 
 namespace ClrVpin.Feeder;
 
-public interface IGameCollections
-{
-    IList<string> Manufacturers { get; }
-    IList<string> Types { get; }
-    IList<string> Years { get; }
-    IList<string> Players { get; }
-    IList<string> Roms { get; }
-    IList<string> Themes { get; }
-    IList<string> Authors { get; }
-
-    public void UpdateCollections();
-}
-
 [AddINotifyPropertyChangedInterface]
-public class FeederResultsViewModel : IGameCollections
+public sealed class FeederResultsViewModel : GameCollections
 {
     public FeederResultsViewModel(IList<GameItem> gameItems, IList<LocalGame> localGames)
     {
@@ -59,9 +46,9 @@ public class FeederResultsViewModel : IGameCollections
             // local database show/add commands
             gameItem.IsMatchingEnabled = IsMatchingEnabled;
             gameItem.UpdateDatabaseEntryCommand = new ActionCommand(() =>
-                DatabaseItemManagement.UpdateDatabaseItem(_localGames, gameItem, this, () => GameItems?.Remove(gameItem)));
+                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, _localGames, gameItem, this, () => GameItems?.Remove(gameItem)));
             gameItem.CreateDatabaseEntryCommand = new ActionCommand(() =>
-                DatabaseItemManagement.CreateDatabaseItem(_localGames, gameItem, this));
+                DatabaseItemManagement.CreateDatabaseItem(DialogHostName, _localGames, gameItem, this));
             gameItem.UpdateDatabaseMatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
             gameItem.UpdateDatabaseUnmatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
             gameItem.CreateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
@@ -209,7 +196,7 @@ public class FeederResultsViewModel : IGameCollections
 
     public GameFiltersViewModel GameFilters { get; }
 
-    public void UpdateCollections()
+    public override void UpdateCollections()
     {
         // the collections consist of all the possible permutations from BOTH the online source and the local source
         // - this is to ensure the maximum possible options are presented AND that the active item (from the local DB in the case of the update dialog) is actually in the list,
@@ -262,15 +249,6 @@ public class FeederResultsViewModel : IGameCollections
         Roms = GameItems.Select(x => x.Roms).SelectManyUnique();
         Authors = GameItems.Select(x => x.Authors).SelectManyUnique();
     }
-
-    // IGameCollections
-    public IList<string> Manufacturers { get; private set; }
-    public IList<string> Types { get; private set; }
-    public IList<string> Years { get; private set; }
-    public IList<string> Players { get; private set; }
-    public IList<string> Roms { get; private set; }
-    public IList<string> Themes { get; private set; }
-    public IList<string> Authors { get; private set; }
 
     public async Task Show(Window parentWindow, double left, double top)
     {

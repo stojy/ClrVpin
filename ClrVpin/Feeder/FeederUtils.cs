@@ -150,7 +150,7 @@ public static class FeederUtils
     private static void AddMatch(OnlineGame onlineGame, LocalGame localMatchedLocalGame, int? score)
     {
         // link both entities together so they can be referenced from all perspectives.. matched, unmatched, and missing (refer TableMatchOptionEnum)
-        onlineGame.Hit = new GameHit
+        onlineGame.Hit = new LocalGameHit
         {
             LocalGame = localMatchedLocalGame,
             Score = score

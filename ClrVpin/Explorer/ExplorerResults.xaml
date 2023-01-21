@@ -368,7 +368,7 @@
           <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
             <TextBlock Text="{Binding GamesView.Count}" />
             <TextBlock Text=" / " />
-            <TextBlock Text="{Binding Games.Count}" />
+            <TextBlock Text="{Binding LocalGames.Count}" />
           </WrapPanel>
 
           <DataGrid Name="ExplorerResults" DockPanel.Dock="Bottom"

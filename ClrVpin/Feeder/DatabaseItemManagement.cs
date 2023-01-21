@@ -16,11 +16,11 @@ public static class DatabaseItemManagement
 {
     private static string DefaultDatabaseFile => Path.Combine(Model.Settings.GetDatabaseContentType().Folder, "ClrVpin.xml");
 
-    public static async void UpdateDatabaseItem(IList<LocalGame> localGames, GameItem gameItem, IGameCollections gameCollections, Action removeGameItem)
+    public static async void UpdateDatabaseItem(string dialogHostName, IList<LocalGame> localGames, GameItem gameItem, IGameCollections gameCollections, Action removeGameItem)
     {
         var item = new DatabaseItem(gameItem.OnlineGame, gameItem.LocalGame, gameCollections, true, gameItem.TableMatchType);
 
-        var result = await DialogHost.Show(item, FeederResultsViewModel.DialogHostName) as DatabaseItemAction?;
+        var result = await DialogHost.Show(item, dialogHostName) as DatabaseItemAction?;
         if (result == DatabaseItemAction.Update)
         {
             // replace the existing game details with the updated details
@@ -51,7 +51,7 @@ public static class DatabaseItemManagement
         }
     }
 
-    public static async void CreateDatabaseItem(IList<LocalGame> localGames, GameItem gameItem, IGameCollections gameCollections)
+    public static async void CreateDatabaseItem(string dialogHostName, IList<LocalGame> localGames, GameItem gameItem, IGameCollections gameCollections)
     {
         var onlineGame = gameItem.OnlineGame;
 
@@ -88,7 +88,7 @@ public static class DatabaseItemManagement
 
         var item = new DatabaseItem(onlineGame, localGame, gameCollections, false, gameItem.TableMatchType);
 
-        var result = await DialogHost.Show(item, FeederResultsViewModel.DialogHostName) as DatabaseItemAction?;
+        var result = await DialogHost.Show(item, dialogHostName) as DatabaseItemAction?;
         if (result == DatabaseItemAction.Insert)
         {
             localGame.Game = item.LocalGame.Game;
@@ -96,7 +96,7 @@ public static class DatabaseItemManagement
 
             // assume the game is now matched to remove the 'add' option
             // - in reality though the game may in theory still be unmatched if the user has changed the name/description beyond the reach of the fuzzy checking
-            onlineGame.Hit = new GameHit { LocalGame = localGame };
+            onlineGame.Hit = new LocalGameHit { LocalGame = localGame };
             gameItem.Update(localGame);
 
             // add the new game to the local DB
