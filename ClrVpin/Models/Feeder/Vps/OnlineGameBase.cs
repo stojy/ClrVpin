@@ -51,7 +51,7 @@ public class OnlineGameBase
 }
 
 [AddINotifyPropertyChangedInterface]
-public class GameHit
+public class LocalGameHit
 {
     // ReSharper disable once PropertyCanBeMadeInitOnly.Global
     public LocalGame LocalGame { get; set; }

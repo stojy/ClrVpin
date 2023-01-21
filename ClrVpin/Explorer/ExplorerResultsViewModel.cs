@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
+using ClrVpin.Feeder;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
@@ -19,11 +20,11 @@ using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
 namespace ClrVpin.Explorer;
 
 [AddINotifyPropertyChangedInterface]
-public class ExplorerResultsViewModel
+public class ExplorerResultsViewModel : GameCollections
 {
-    public ExplorerResultsViewModel(ObservableCollection<LocalGame> games)
+    public ExplorerResultsViewModel(ObservableCollection<LocalGame> localGames)
     {
-        Games = games;
+        LocalGames = localGames;
 
         Initialise();
     }
@@ -33,7 +34,7 @@ public class ExplorerResultsViewModel
 
     public Window Window { get; private set; }
 
-    public ObservableCollection<LocalGame> Games { get; }
+    public ObservableCollection<LocalGame> LocalGames { get; }
 
     public GameFiltersViewModel GameFilters { get; private set; }
     public LocalGame SelectedLocalGame { get; set; }
@@ -68,9 +69,17 @@ public class ExplorerResultsViewModel
         Settings = Model.Settings.Explorer;
 
         // update status of each game, e.g. to update the Game.Content.UpdatedAt timestamp
-        Games.ForEach(game => game.Content.Update(() => new List<int>(), () => new List<int>()));
+        LocalGames.ForEach(localGame =>
+        {
+            localGame.Content.Update(() => new List<int>(), () => new List<int>());
 
-        GamesView = new ListCollectionView<LocalGame>(Games)
+            // todo; create GameItems to replace LocalGames
+            var gameItem = new GameItem(localGame);
+            localGame.ShowDetailedInfoCommand = new ActionCommand(() =>
+                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, LocalGames, gameItem, this, () => LocalGames.Remove(gameItem.LocalGame)));
+        });
+
+        GamesView = new ListCollectionView<LocalGame>(LocalGames)
         {
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
@@ -148,34 +157,34 @@ public class ExplorerResultsViewModel
             () => Settings.SelectedTableStyleOption, FilterChangedCommand);
 
         // filters views (drop down combo boxes)
-        var tableNames = Games.Select(x => x.Game.Name).SelectUnique();
+        var tableNames = LocalGames.Select(x => x.Game.Name).SelectUnique();
         GameFilters.TablesFilterView = new ListCollectionView<string>(tableNames)
         {
-            // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
+            // filter the table names list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
             Filter = tableName => Filter(() => GamesView.Any(x => x.Game.Name == tableName))
         };
 
-        var manufacturers = Games.Select(x => x.Game.Manufacturer).SelectUnique();
+        var manufacturers = LocalGames.Select(x => x.Game.Manufacturer).SelectUnique();
         GameFilters.ManufacturersFilterView = new ListCollectionView<string>(manufacturers)
         {
-            // filter the manufacturers list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
+            // filter the manufacturers list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
             Filter = manufacturer => Filter(() => GamesView.Any(x => x.Game.Manufacturer == manufacturer))
         };
 
-        var years = Games.Select(x => x.Game.Year).SelectUnique();
+        var years = LocalGames.Select(x => x.Game.Year).SelectUnique();
         GameFilters.YearsBeginFilterView = new ListCollectionView<string>(years)
         {
-            // filter the 'years from' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
+            // filter the 'years from' list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => GamesView.Any(x => x.Game.Year == yearString))
         };
         GameFilters.YearsEndFilterView = new ListCollectionView<string>(years)
         {
-            // filter the 'years to' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
+            // filter the 'years to' list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => GamesView.Any(x => x.Game.Year == yearString))
         };
 
         // table HW type, i.e. SS, EM, PM
-        var types = Games.Select(x => x.Game.Type).SelectUnique();
+        var types = LocalGames.Select(x => x.Game.Type).SelectUnique();
         GameFilters.TypesFilterView = new ListCollectionView<string>(types)
         {
             Filter = type => Filter(() => GamesView.Any(x => x.Game.Type == type))
@@ -198,8 +207,8 @@ public class ExplorerResultsViewModel
 
     private async Task ShowSummary()
     {
-        var validHits = Games.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
-        var eligibleFiles = Games.Count * Model.Settings.AllContentTypes.Count;
+        var validHits = LocalGames.SelectMany(x => x.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
+        var eligibleFiles = LocalGames.Count * Model.Settings.AllContentTypes.Count;
         var missingFilesCount = eligibleFiles - validHits.Count;
 
         var detail = CreatePercentageStatistic("Missing Files", missingFilesCount, eligibleFiles);
@@ -216,4 +225,9 @@ public class ExplorerResultsViewModel
 
     private const int WindowMargin = 0;
     private const string DialogHostName = "ResultsDialog";
+    
+    public override void UpdateCollections()
+    {
+        throw new NotImplementedException();
+    }
 }
