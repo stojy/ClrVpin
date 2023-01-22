@@ -40,7 +40,7 @@ public class LocalGame
     
     // VM properties
     [JsonIgnore] // optimisation - no need to serialize this property, e.g. not required by DatabaseItem
-    public ICommand ShowDetailedInfoCommand { get; set; }
+    public ICommand UpdateDatabaseEntryCommand { get; set; }
 
     public override string ToString() => $"Table: {Derived.TableFileWithExtension}, IsSmelly: {Content?.IsSmelly}";
 }

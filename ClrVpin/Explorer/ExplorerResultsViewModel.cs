@@ -80,7 +80,7 @@ public class ExplorerResultsViewModel
             // update status of each game, e.g. to update the Game.Content.UpdatedAt timestamp
             gameItem.LocalGame.Content.Update(() => new List<int>(), () => new List<int>());
 
-            gameItem.LocalGame.ShowDetailedInfoCommand = new ActionCommand(() =>
+            gameItem.LocalGame.UpdateDatabaseEntryCommand = new ActionCommand(() =>
                 DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, GameItems.Select(item => item.LocalGame).ToList(), gameItem, _gameCollections, () => GameItems.Remove(gameItem)));
         });
 
