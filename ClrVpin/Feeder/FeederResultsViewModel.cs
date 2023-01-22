@@ -32,12 +32,6 @@ public sealed class FeederResultsViewModel
         // - _localGames = gameItems.Where(item => item.LocalGame != null).Select(item => item.LocalGame).ToList();
         _localGames = localGames;
 
-        GameFilters = new GameFiltersViewModel(() => FilterChangedCommand?.Execute(null), startDate =>
-        {
-            Settings.SelectedUpdatedAtDateBegin = startDate;
-            Settings.SelectedUpdatedAtDateEnd = DateTime.Today;
-        });
-
         IsMatchingEnabled = Model.Settings.Feeder.SelectedMatchCriteriaOptions.Any();
         
         // assign VM properties
@@ -109,19 +103,22 @@ public sealed class FeederResultsViewModel
         };
         GameItemsView.MoveCurrentToFirst();
 
-        _gameCollections = new GameCollections(gameItems, UpdateGameFilters);
+        _gameCollections = new GameCollections(gameItems, () => GameFiltersViewModel?.UpdateFilterViews());
 
         DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
         FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
 
-        GameFilters.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
-            () => Model.Settings.Feeder.SelectedTableStyleOption, FilterChangedCommand);
-        GameFilters.TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
-            () => Model.Settings.Feeder.SelectedTableMatchOption, FilterChangedCommand);
-        GameFilters.TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,
-            () => Model.Settings.Feeder.SelectedTableAvailabilityOption, FilterChangedCommand);
-        GameFilters.TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
-            () => Model.Settings.Feeder.SelectedTableNewContentOption, FilterChangedCommand);
+        GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null))
+        {
+            TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
+                () => Model.Settings.Feeder.SelectedTableStyleOption, FilterChangedCommand),
+            TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
+                () => Model.Settings.Feeder.SelectedTableMatchOption, FilterChangedCommand),
+            TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,
+                () => Model.Settings.Feeder.SelectedTableAvailabilityOption, FilterChangedCommand),
+            TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
+                () => Model.Settings.Feeder.SelectedTableNewContentOption, FilterChangedCommand)
+        };
 
         UpdatedFilterTimeChanged = new ActionCommand(() =>
         {
@@ -162,8 +159,6 @@ public sealed class FeederResultsViewModel
         // select the first item from the filtered list
         SelectedGameItem = GameItemsView.FirstOrDefault();
         GameItemSelectedCommand.Execute(null);
-
-        UpdateGameFilters();
     }
 
     public string AddMissingDatabaseInfoTip { get; }
@@ -195,48 +190,7 @@ public sealed class FeederResultsViewModel
     public bool IsMatchingEnabled { get; }
     public FileCollection SelectedFileCollection { get; set; }
 
-    public GameFiltersViewModel GameFilters { get; }
-
-    // todo; move into GameFiltersViewModel??
-    private void UpdateGameFilters()
-    {
-        // filters views (drop down combo boxes) - uses the online AND unmatched local DB 
-        GameFilters.TablesFilterView = new ListCollectionView<string>(_gameCollections.TableNames)
-        {
-            // filter the table names list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-            Filter = tableName => Filter(() => GameItemsView.Any(x => x.Name == tableName))
-        };
-
-        GameFilters.ManufacturersFilterView = new ListCollectionView<string>(_gameCollections.Manufacturers)
-        {
-            // filter the manufacturers list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-            Filter = manufacturer => Filter(() => GameItemsView.Any(x => x.Manufacturer == manufacturer))
-        };
-
-        GameFilters.YearsBeginFilterView = new ListCollectionView<string>(_gameCollections.Years)
-        {
-            // filter the 'years from' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-            Filter = yearString => Filter(() => GameItemsView.Any(x => x.Year == yearString))
-        };
-        GameFilters.YearsEndFilterView = new ListCollectionView<string>(_gameCollections.Years)
-        {
-            // filter the 'years to' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
-            Filter = yearString => Filter(() => GameItemsView.Any(x => x.Year == yearString))
-        };
-
-        // table HW type, i.e. SS, EM, PM
-        GameFilters.TypesFilterView = new ListCollectionView<string>(_gameCollections.Types)
-        {
-            Filter = type => Filter(() => GameItemsView.Any(x => x.Type == type))
-        };
-
-        // table formats - vpx, fp, etc
-        // - only available via online
-        GameFilters.FormatsFilterView = new ListCollectionView<string>(_gameCollections.Formats)
-        {
-            Filter = format => Filter(() => GameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true))
-        };
-    }
+    public GameFiltersViewModel GameFiltersViewModel { get; }
 
     public async Task Show(Window parentWindow, double left, double top)
     {
@@ -265,12 +219,6 @@ public sealed class FeederResultsViewModel
         Window.Close();
     }
 
-    private bool Filter(Func<bool> dynamicFilteringFunc)
-    {
-        // only evaluate the func if dynamic filtering is enabled
-        return !Settings.IsDynamicFiltering || dynamicFilteringFunc();
-    }
-
     private void RefreshViews(bool refreshFilters)
     {
         // update main list
@@ -278,7 +226,7 @@ public sealed class FeederResultsViewModel
 
         // update filters based on what is shown in the main list
         if (refreshFilters)
-            GameFilters.Refresh();
+            GameFiltersViewModel.Refresh();
     }
 
     private async Task ShowSummary()
@@ -425,7 +373,7 @@ public sealed class FeederResultsViewModel
 
     private readonly Regex _regexExtractIpdbId = new(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
     private readonly IList<LocalGame> _localGames;
-    public const string DialogHostName = "FeederResultsDialog";
+    private const string DialogHostName = "FeederResultsDialog";
 
     private const int WindowMargin = 0;
     private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T ENABLED";

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ClrVpin.Models.Feeder;
+using PropertyChanged;
 using Utils.Extensions;
 
 namespace ClrVpin.Shared;
@@ -23,6 +24,7 @@ public interface IGameCollections
     public void Update();
 }
 
+[AddINotifyPropertyChangedInterface]
 public class GameCollections : IGameCollections
 {
     public GameCollections(IList<GameItem> gameItems, Action updatedAction)
