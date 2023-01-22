@@ -408,11 +408,11 @@
                 </materialDesign:PackIcon>
               </DataTemplate>
 
-              <DataTemplate x:Key="ShowDetailedInfoTemplate" DataType="{x:Type feeder:GameItem}">
-                <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30"
+              <DataTemplate x:Key="UpdateDatabaseEntryTemplate" DataType="{x:Type feeder:GameItem}">
+                <Button Style="{StaticResource ButtonIconStyle}" Height="28" Width="28"
                         ToolTip="Show detailed information about the table, e.g. database info, matched files, etc."
-                        Command="{Binding LocalGame.ShowDetailedInfoCommand}" HorizontalAlignment="Center">
-                  <materialDesign:PackIcon Kind="InfoVariant" Width="30" Height="30" />
+                        Command="{Binding LocalGame.UpdateDatabaseEntryCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                  <materialDesign:PackIcon Kind="Pencil" />
                 </Button>
               </DataTemplate>
 
@@ -429,10 +429,10 @@
                                   Header="#" Binding="{Binding LocalGame.Derived.Number}"
                                   Width="45" />
 
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" CanUserSort="False" CellStyle="{StaticResource AlignedDataGridCellStyle}"
-                                      CellTemplate="{StaticResource ShowDetailedInfoTemplate}"
-                                      Header="Detail" 
-                                      Width="37" />
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" CanUserSort="False" CanUserReorder="False" CanUserResize="False"
+                                      CellStyle="{StaticResource AlignedDataGridCellStyle}"
+                                      CellTemplate="{StaticResource UpdateDatabaseEntryTemplate}"
+                                      Width="30" />
 
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
                                   Binding="{Binding LocalGame.Fuzzy.TableDetails.ActualNameWithoutManufacturerOrYear}"

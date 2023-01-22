@@ -147,6 +147,7 @@
     <Setter Property="HorizontalContentAlignment" Value="Left" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="MaxHeight" Value="30" />
+    <Setter Property="Padding" Value="1" /> <!-- material design defaults to 4,1,1,4 which is too wasteful, e.g. truncating image content-->
   </Style>
 
   <Style x:Key="CenteredDataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource AlignedDataGridCellStyle}">
@@ -156,7 +157,6 @@
   <Style x:Key="NoBorderDataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource AlignedDataGridCellStyle}">
     <!-- remove the border outline in the cell when selected, i.e. to give a more 'list box' feel -->
     <Setter Property="Margin" Value="4,0,0,0"/>
-    <Setter Property="Padding" Value="1"/>
     <Setter Property="FontSize" Value="16" />
 
     <!-- vertically align content without the 'double grid' lines anomaly by redefining the template.. https://stackoverflow.com/a/3995839/227110 
