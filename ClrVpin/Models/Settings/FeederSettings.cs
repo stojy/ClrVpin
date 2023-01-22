@@ -2,12 +2,10 @@
 using System.Collections.ObjectModel;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Shared;
-using PropertyChanged;
 
 namespace ClrVpin.Models.Settings;
 
-[AddINotifyPropertyChangedInterface]
-public class FeederSettings
+public class FeederSettings : CommonSettings
 {
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
     public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new();
@@ -24,8 +22,6 @@ public class FeederSettings
     public TableNewContentOptionEnum SelectedTableNewContentOption { get; set; } = TableNewContentOptionEnum.Any;
     // ReSharper restore AutoPropertyCanBeMadeGetOnly.Global
     
-    public bool IsDynamicFiltering { get; set; }
-
     public string SelectedTableFilter { get; set; }
     public string SelectedManufacturerFilter { get; set; }
 
