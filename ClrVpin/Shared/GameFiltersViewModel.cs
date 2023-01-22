@@ -5,6 +5,7 @@ using ClrVpin.Controls;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils;
 

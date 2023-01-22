@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Input;
+using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Feeder.Vps;
-using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 
-namespace ClrVpin.Models.Feeder;
+namespace ClrVpin.Models.Shared.Game;
 
 // a common access class to harmonize access to the underlying OnlineGame or LocalGame properties
 [AddINotifyPropertyChangedInterface]

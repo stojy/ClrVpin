@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Models.Feeder;
+using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils.Extensions;
 
