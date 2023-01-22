@@ -389,7 +389,7 @@
             <DataGrid.Resources>
               <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Close" False="Check" />
 
-              <DataTemplate x:Key="IsManufacturedTemplate" DataType="{x:Type feeder:GameItem}">
+              <DataTemplate x:Key="IsManufacturedTemplate" DataType="{x:Type game:GameItem}">
                 <materialDesign:PackIcon x:Name="Icon" Kind="{Binding IsOriginal, Converter={StaticResource IsOriginalToIconConverter}}"
                                          Height="30" Width="30" VerticalAlignment="Center" HorizontalAlignment="Center">
                   <!-- just for giggles.. setting foreground by a style trigger instead of a converter.. it's rather large!-->
@@ -408,7 +408,7 @@
                 </materialDesign:PackIcon>
               </DataTemplate>
 
-              <DataTemplate x:Key="UpdateDatabaseEntryTemplate" DataType="{x:Type feeder:GameItem}">
+              <DataTemplate x:Key="UpdateDatabaseEntryTemplate" DataType="{x:Type game:GameItem}">
                 <Button Style="{StaticResource ButtonIconStyle}" Height="28" Width="28"
                         ToolTip="Show detailed information about the table, e.g. database info, matched files, etc."
                         Command="{Binding LocalGame.UpdateDatabaseEntryCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
