@@ -4,7 +4,7 @@ using System.Linq;
 using ClrVpin.Models.Feeder;
 using Utils.Extensions;
 
-namespace ClrVpin.Feeder;
+namespace ClrVpin.Shared;
 
 public interface IGameCollections
 {
