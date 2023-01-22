@@ -1,14 +1,10 @@
 ﻿using System;
 using ClrVpin.Models.Feeder;
-using PropertyChanged;
 
 namespace ClrVpin.Models.Settings;
 
-[AddINotifyPropertyChangedInterface]
-public class ExplorerSettings
+public class ExplorerSettings : CommonSettings
 {
-    public bool IsDynamicFiltering { get; set; }
-
     public string SelectedTableFilter { get; set; }
     public string SelectedManufacturerFilter { get; set; }
 
@@ -26,3 +22,4 @@ public class ExplorerSettings
     public double? SelectedMinRating { get; set; }
     public double? SelectedMaxRating { get; set; }
 }
+
