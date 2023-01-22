@@ -32,7 +32,7 @@ public class ExplorerResultsViewModel
 
     public Window Window { get; private set; }
 
-    public GameFiltersViewModel GameFilters { get; private set; }
+    public GameFiltersViewModel GameFiltersViewModel { get; private set; }
     public GameItem SelectedGameItem { get; set; }
     public ICommand LocalGameSelectedCommand { get; set; }
     public ICommand FilterChangedCommand { get; set; }
@@ -68,13 +68,6 @@ public class ExplorerResultsViewModel
         // convert LocalGame to GameItem for consistency with Feeder, i.e. to make it easier for refactoring/sharing
         GameItems = new ObservableCollection<GameItem>(localGames.OrderBy(localGame => localGame.Game.Name).Select(localGame => new GameItem(localGame)));
 
-        // ReSharper disable once UseObjectOrCollectionInitializer
-        GameFilters = new GameFiltersViewModel(() => FilterChangedCommand?.Execute(null), startDate =>
-        {
-            Settings.SelectedUpdatedAtDateBegin = startDate;
-            Settings.SelectedUpdatedAtDateEnd = DateTime.Today;
-        });
-
         GameItems.ForEach(gameItem =>
         {
             // update status of each game, e.g. to update the Game.Content.UpdatedAt timestamp
@@ -107,14 +100,17 @@ public class ExplorerResultsViewModel
         };
         GameItemsView.MoveCurrentToFirst();
 
-        _gameCollections = new GameCollections(GameItems, UpdateGameFilters);
+        _gameCollections = new GameCollections(GameItems, () => GameFiltersViewModel?.UpdateFilterViews());
+
+        GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null));
 
         DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
         FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
         MinRatingChangedCommand = new ActionCommand(MinRatingChanged);
         MaxRatingChangedCommand = new ActionCommand(MaxRatingChanged);
 
-        UpdateGameFilters();
+        GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
+            () => Settings.SelectedTableStyleOption, FilterChangedCommand);
     }
 
     private void MinRatingChanged()
@@ -151,46 +147,6 @@ public class ExplorerResultsViewModel
         }
     }
 
-    private void UpdateGameFilters()
-    {
-        GameFilters.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
-            () => Settings.SelectedTableStyleOption, FilterChangedCommand);
-
-        // filters views (drop down combo boxes)
-        GameFilters.TablesFilterView = new ListCollectionView<string>(_gameCollections.TableNames)
-        {
-            // filter the table names list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
-            Filter = tableName => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Name == tableName))
-        };
-
-        GameFilters.ManufacturersFilterView = new ListCollectionView<string>(_gameCollections.Manufacturers)
-        {
-            // filter the manufacturers list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
-            Filter = manufacturer => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Manufacturer == manufacturer))
-        };
-
-        GameFilters.YearsBeginFilterView = new ListCollectionView<string>(_gameCollections.Years)
-        {
-            // filter the 'years from' list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
-            Filter = yearString => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Year == yearString))
-        };
-        GameFilters.YearsEndFilterView = new ListCollectionView<string>(_gameCollections.Years)
-        {
-            // filter the 'years to' list to reflect what's displayed in the localGames list, i.e. taking into account ALL of the existing filter criteria
-            Filter = yearString => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Year == yearString))
-        };
-
-        // table HW type, i.e. SS, EM, PM
-        GameFilters.TypesFilterView = new ListCollectionView<string>(_gameCollections.Types)
-        {
-            Filter = type => Filter(() => GameItemsView.Any(x => x.LocalGame.Game.Type == type))
-        };
-    }
-
-    private bool Filter(Func<bool> dynamicFilteringFunc) =>
-        // only evaluate the func if dynamic filtering is enabled
-        !Settings.IsDynamicFiltering || dynamicFilteringFunc();
-
     private void RefreshViews(bool refreshFilters, int? debounceMilliseconds = null)
     {
         // update main list
@@ -198,7 +154,7 @@ public class ExplorerResultsViewModel
 
         // update filters based on what is shown in the main list
         if (refreshFilters)
-            GameFilters.Refresh(debounceMilliseconds);
+            GameFiltersViewModel.Refresh(debounceMilliseconds);
     }
 
     private async Task ShowSummary()
