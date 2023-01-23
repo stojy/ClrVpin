@@ -160,19 +160,28 @@ public class ExplorerResultsViewModel
     private async Task ShowSummary()
     {
         var validHits = GameItems.SelectMany(x => x.LocalGame.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
-        var eligibleFiles = GameItems.Count * Model.Settings.AllContentTypes.Count;
-        var missingFilesCount = eligibleFiles - validHits.Count;
 
-        var detail = CreatePercentageStatistic("Missing Files", missingFilesCount, eligibleFiles);
-        var isSuccess = missingFilesCount == 0;
+        var importantContentTypes = new[] { ContentTypeEnum.Tables, ContentTypeEnum.Backglasses, ContentTypeEnum.WheelImages, ContentTypeEnum.TableVideos, ContentTypeEnum.BackglassVideos };
+        var statistics = importantContentTypes.Select(contentType => CreateStatistic(validHits, contentType)).ToList();
 
-        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Incorrect Files", null, detail));
+        var isSuccess = statistics.Sum(statistic => statistic.missingCount) == 0;
+        var statisticsDetail = statistics.Select(x => x.missingStatistic).StringJoin("\n");
+        
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Incorrect Files", null, statisticsDetail));
+    }
+
+    private (int missingCount, string missingStatistic) CreateStatistic(IEnumerable<Hit> validHits, ContentTypeEnum contentType)
+    {
+        var missingCount = GameItems.Count - validHits.Count(hit => hit.ContentTypeEnum == contentType);
+        var missingStatistic = CreatePercentageStatistic($"Missing {contentType.GetDescription(),-16}", missingCount, GameItems.Count);
+
+        return (missingCount, missingStatistic);
     }
 
     private static string CreatePercentageStatistic(string title, int count, int totalCount)
     {
         var percentage = totalCount == 0 ? 0 : 100f * count / totalCount;
-        return $"{title}:  {count} of {totalCount} ({percentage:F2}%)";
+        return $"{title} : {count, 2} of {totalCount} ({percentage:F2}%)";
     }
 
     private GameCollections _gameCollections;
