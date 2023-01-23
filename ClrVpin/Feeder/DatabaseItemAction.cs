@@ -3,7 +3,7 @@
 public enum DatabaseItemAction
 {
     Update = 1,
-    Insert = 2,
+    Add = 2,
     Delete = 3,
     Cancel = 4
 }

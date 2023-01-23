@@ -256,17 +256,16 @@
 
       <TextBlock FontStyle="Italic" Margin="0,10,0,0"
                  Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
-                 Text="¹ Run the following if 'Title, Manufacturer, Year, or Description' are modified.." />
+                 Text="¹ Run the following if the table is deleted OR 'Title, Manufacturer, Year, or Description' are updated.." />
       <TextBlock FontStyle="Italic" Margin="0,10,0,0"
                  Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
-                 Text="¹ Run the following after the missing table is added.." />
+                 Text="¹ Run the following if a table is added.." />
       <TextBlock FontStyle="Italic">
-        <Run Text="  1. Cleaner - to correct content file names" />
+        <Run Text="  1. Cleaner - to automatically rename content file(s)" />
         <LineBreak />
-        <Run Text="  2. Feeder - to match content against online feeds" />
+        <Run Text="  2. Feeder - to re-match table against against the online feed" />
         <LineBreak />
       </TextBlock>
-
     </StackPanel>
   </DataTemplate>
 
@@ -314,7 +313,7 @@
                   Foreground="{StaticResource AlertBrush}"
                   ToolTip="Delete this table from your local database" />
 
-          <Button Content="Insert" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Insert}"
+          <Button Content="Add" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Add}"
                   Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
                   ToolTip="Add a new table entry entry to your local database" />
 

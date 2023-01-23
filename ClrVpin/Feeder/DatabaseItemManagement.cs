@@ -88,7 +88,7 @@ public static class DatabaseItemManagement
         var item = new DatabaseItem(onlineGame, localGame, gameCollections, false, gameItem.TableMatchType);
 
         var result = await DialogHost.Show(item, dialogHostName) as DatabaseItemAction?;
-        if (result == DatabaseItemAction.Insert)
+        if (result == DatabaseItemAction.Add)
         {
             localGame.Game = item.LocalGame.Game;
             localGame.Derived = item.LocalGame.Derived;
