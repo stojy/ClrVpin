@@ -9,8 +9,7 @@
                     xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
                     xmlns:vps="clr-namespace:ClrVpin.Models.Feeder.Vps"
                     xmlns:explorer="clr-namespace:ClrVpin.Explorer"
-                    xmlns:game="clr-namespace:ClrVpin.Models.Shared.Game"
-                    xmlns:feeder="clr-namespace:ClrVpin.Models.Feeder">
+                    xmlns:game="clr-namespace:ClrVpin.Models.Shared.Game">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />

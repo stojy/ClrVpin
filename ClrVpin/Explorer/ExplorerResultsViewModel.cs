@@ -131,7 +131,7 @@ public class ExplorerResultsViewModel
     {
         // update rounding
         // - required because the underlying RatingsBar unfortunately doesn't bind the value to the 'ValueIncrements' used in the UI, e.g. bound value 1.456700001
-        // - this will cause a synchronous property change to be processed, which will be processed BEFORE this instance is completed
+        // - this will cause a synchronous property change to be processed if the rounded rating is different to the raw rating, which will be processed BEFORE this instance is completed
         var roundedRating = Rounding.ToHalf(rating);
         setRating(roundedRating);
 
@@ -139,7 +139,7 @@ public class ExplorerResultsViewModel
             setOtherRating(roundedRating);
 
         // only refresh the views if we're processing a rounded rating, i.e. skip the view refresh for the initial click which supplies a non-rounded rating
-        if (roundedRating?.Equals(rating) == true)
+        if (roundedRating == null || roundedRating.Equals(rating))
         {
             // to ensure the ratings bar animation isn't interrupted (i.e. seen as stuttering) delay the view refresh a little
             // - required because the animation is CPU intensive and runs on the dispatcher (UI) thread
