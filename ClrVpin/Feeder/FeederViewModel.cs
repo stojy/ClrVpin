@@ -226,7 +226,8 @@ namespace ClrVpin.Feeder
                     results.Close();
                     statistics.Close();
                     logging.Close();
-                    _window.TryShow();
+
+                    _window.Close();
                 };
             }
 

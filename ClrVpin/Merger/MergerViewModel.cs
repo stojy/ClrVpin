@@ -283,7 +283,8 @@ namespace ClrVpin.Merger
                     mergerResults.Close();
                     statistics.Window.Close();
                     logging.Close();
-                    _window.TryShow();
+
+                    _window.Close();
                 };
             }
 

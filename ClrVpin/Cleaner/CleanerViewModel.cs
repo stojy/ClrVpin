@@ -257,7 +257,7 @@ namespace ClrVpin.Cleaner
                     explorer.Close();
                     logging.Close();
 
-                    _window.TryShow();
+                    _window.Close();
                 };
             }
 
