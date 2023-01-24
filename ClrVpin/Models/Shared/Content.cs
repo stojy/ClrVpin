@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
+using ClrVpin.Controls;
 using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils.Extensions;
@@ -56,5 +57,10 @@ public class Content
             Filter = hitObject => getActiveContentFeatureTypes().Contains((int)((Hit)hitObject).ContentTypeEnum) &&
                                   getActiveHitContentTypes().Contains((int)((Hit)hitObject).Type)
         };
+
+        var wheelHit = Hits.FirstOrDefault(hit => hit.ContentTypeEnum == ContentTypeEnum.WheelImages);
+        WheelImagePath = wheelHit?.IsPresent == true ? wheelHit.Path : null;
     }
+
+    public string WheelImagePath { get; set; }
 }
