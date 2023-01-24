@@ -442,7 +442,7 @@
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
                                   Binding="{Binding Year}"
                                   Width="55" />
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" 
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}"
                                       CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
                                       SortMemberPath="Game.Rating"
                                       Width="45" />
@@ -460,6 +460,7 @@
           </DataGrid>
         </DockPanel>
 
+        <!-- right hand side content -->
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
           <Grid>
             <StackPanel Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource NegativeToVisibilityConverter}}"
@@ -468,20 +469,58 @@
               <TextBlock Text="Select a table to view the online information" FontSize="28" />
             </StackPanel>
 
-            <!--<StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource NullToVisibilityConverter}}"
-                        VerticalAlignment="Center" HorizontalAlignment="Center">
-              <StackPanel Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
-                          VerticalAlignment="Center" HorizontalAlignment="Center">
-                <materialDesign:PackIcon Kind="AlertCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
-                <TextBlock Text="Online information is not available for unmatched tables" FontSize="28" />
-              </StackPanel>
-            </StackPanel> -->
+            <Grid Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
+              <DockPanel Visibility="{Binding SelectedGameItem, Converter={StaticResource ReverseNullToVisibilityConverter}}" LastChildFill="True">
+                <DockPanel.Resources>
+                  <converters:ContentTypeToIconConverter x:Key="ContentTypeToIconConverter" />
 
-            <StackPanel Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
-              <StackPanel Visibility="{Binding SelectedGameItem, Converter={StaticResource ReverseNullToVisibilityConverter}}">
-                <TextBlock Text="{Binding SelectedGameItem.Name}" />
-              </StackPanel>
-            </StackPanel>
+                  <DataTemplate x:Key="HitTemplate" DataType="shared:Hit">
+                    <Grid Background="Transparent">
+                      <materialDesign:PackIcon Kind="{Binding ContentTypeEnum, Converter={StaticResource ContentTypeToIconConverter}}"
+                                               Height="80" Width="80" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                      <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="MouseUp">
+                          <b:InvokeCommandAction Command="{Binding OpenFileCommand}" />
+                        </b:EventTrigger>
+                      </b:Interaction.Triggers>
+                    </Grid>
+                  </DataTemplate>
+
+                  <DataTemplate x:Key="LocalGameTemplate" DataType="game:LocalGame">
+                    <ListBox ItemsSource="{Binding Content.Hits}" ItemTemplate="{StaticResource HitTemplate}">
+                      <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                      </ListBox.ItemsPanel>
+
+                      <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" d:DataContext="{d:DesignInstance Type=shared:Hit}">
+                          <!-- assign smaller padding to maximize the content size (template bound to material's Ripple) -->
+                          <Setter Property="Padding" Value="2" />
+                          <Setter Property="IsEnabled" Value="{Binding IsPresent}" />
+
+                          <!-- add tooltip to list box item instead of within pack icon so that it's not restricted to the mouse over the actual icon image -->
+                          <Setter Property="ToolTipService.ToolTip" Value="{Binding Description}" />
+                          <Setter Property="ToolTipService.ShowOnDisabled" Value="true" />
+                        </Style>
+                      </ListBox.ItemContainerStyle>
+                    </ListBox>
+                  </DataTemplate>
+                </DockPanel.Resources>
+
+                <ContentControl DockPanel.Dock="Bottom" Content="{Binding SelectedGameItem.LocalGame}" ContentTemplate="{StaticResource LocalGameTemplate}" />
+
+                <Grid>
+                  <materialDesign:PackIcon Kind="HeartBroken" Height="500" Width="500" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Visibility="{Binding SelectedGameItem.LocalGame.Content.WheelImagePath, Converter={StaticResource NullToVisibilityConverter}}"
+                                           ToolTip="The wheel image is missing" />
+                  <Image Source="{Binding SelectedGameItem.LocalGame.Content.WheelImagePath}"
+                         Visibility="{Binding SelectedGameItem.LocalGame.Content.WheelImagePath, Converter={StaticResource ReverseNullToVisibilityConverter}}" />
+                </Grid>
+              </DockPanel>
+            </Grid>
+
             <!-- <StackPanel Visibility="{Binding ElementName=ExplorerResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
               <StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource ReverseNullToVisibilityConverter}}">
                 <UniformGrid Columns="3">
