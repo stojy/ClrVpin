@@ -148,7 +148,7 @@
 
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
-        <DockPanel DockPanel.Dock="Left" Width="880">
+        <DockPanel DockPanel.Dock="Left" Width="890">
           <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(-->
@@ -157,7 +157,7 @@
                           materialDesign:HintAssist.Hint="Table"
                           Style="{StaticResource EditComboBoxStyle}"
                           Width="265" Margin="0,0,10,0"
-                          ToolTip="Filter the tables based on the table name.">
+                          ToolTip="Filter tables based on the table name.">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -170,7 +170,7 @@
                           materialDesign:HintAssist.Hint="Manufacturer"
                           Style="{StaticResource EditComboBoxStyle}"
                           Width="230" Margin="0"
-                          ToolTip="Filter the tables based on the manufacturer.">
+                          ToolTip="Filter tables based on the manufacturer.">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
                       <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -187,7 +187,7 @@
 
               <Grid Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1.65*" />
+                  <ColumnDefinition Width="1.55*" />
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -198,7 +198,7 @@
                             materialDesign:HintAssist.Hint="Type"
                             Style="{StaticResource ComboBoxStyle}"
                             Width="65" Margin="0,0,0,0"
-                            ToolTip="Filter the tables based on the table construction type: PM (Purely Mechanical), EM (Electromechanical), SS (Solid State).">
+                            ToolTip="Filter tables based on the table construction type: PM (Purely Mechanical), EM (Electromechanical), SS (Solid State).">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -211,7 +211,7 @@
                             materialDesign:HintAssist.Hint="Year From"
                             Style="{StaticResource ComboBoxStyle}"
                             Width="98" Margin="10,0,0,0"
-                            ToolTip="Filter the tables based on the earliest manufacture year.">
+                            ToolTip="Filter tables based on the earliest manufacture year.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -224,7 +224,7 @@
                             materialDesign:HintAssist.Hint="Year To"
                             Style="{StaticResource ComboBoxStyle}"
                             Width="82" Margin="10,0,0,0"
-                            ToolTip="Filter the tables based on the latest manufacture year.">
+                            ToolTip="Filter tables based on the latest manufacture year.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -250,7 +250,7 @@
                               SelectedDate="{Binding Settings.SelectedUpdatedAtDateBegin}"
                               DisplayDateEnd="{Binding Settings.SelectedUpdatedAtDateEnd}"
                               Margin="0"
-                              ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
+                              ToolTip="Filter tables based on when the table was last updated. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -262,7 +262,7 @@
                               Style="{StaticResource DatePickerStyle}"
                               SelectedDate="{Binding Settings.SelectedUpdatedAtDateEnd}"
                               DisplayDateStart="{Binding Settings.SelectedUpdatedAtDateBegin}"
-                              ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
+                              ToolTip="Filter tables based on when the table was last updated. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="DatePicker.SelectedDateChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -275,7 +275,7 @@
                                            PopupMode="Click"
                                            PopupUniformCornerRadius="5"
                                            Width="30"
-                                           ToolTip="Filter the tables based on when the table was last updated via the preset dates. Ignored for unmatched tables.">
+                                           ToolTip="Filter tables based on when the table was last updated via the preset dates. Ignored for unmatched tables.">
                     <ItemsControl ItemsSource="{Binding GameFiltersViewModel.PresetDateOptionsView}">
                       <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -294,7 +294,7 @@
 
               <Grid>
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1.65*" />
+                  <ColumnDefinition Width="1.55*" />
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -344,17 +344,47 @@
                   </Grid>
 
                 </WrapPanel>
+                
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
                 <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
                                 controls:GenericAttached.String="Style"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
+                                controls:GenericAttached.String2="Filter tables based on whether the table was physically manufactured."
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14"
                                 VerticalAlignment="Center">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
                 </ContentControl>
               </Grid>
+
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="1.95*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ContentControl Grid.Column="0" Template="{StaticResource KeyValueAutoPair}"
+                                controls:GenericAttached.String="Missing"
+                                controls:GenericAttached.String2="Filter tables based on whether the selected files are missing."
+                                controls:GenericAttached.Double="60"
+                                controls:GenericAttached.Double2="14"
+                                VerticalAlignment="Center">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableMissingOptionsView}" />
+                </ContentControl>
+
+                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
+
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
+                                controls:GenericAttached.String="Stale"
+                                controls:GenericAttached.String2="Filter tables based on whether the selected media video files are out of date and need to be updated, i.e. re-recorded."
+                                controls:GenericAttached.Double="60"
+                                controls:GenericAttached.Double2="14"
+                                VerticalAlignment="Center">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableStaleOptionsView}" />
+                </ContentControl>
+              </Grid>
+
             </StackPanel>
           </GroupBox>
 
@@ -460,7 +490,7 @@
                                       CellTemplate="{StaticResource IsManufacturedTemplate}"
                                       SortMemberPath="LocalGame.Derived.IsOriginal"
                                       Width="95" />
-              <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Last Update"
+              <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
                                   Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}" ToolTipService.ToolTip="omg"
                                   Width="140" />
             </DataGrid.Columns>

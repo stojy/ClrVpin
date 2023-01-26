@@ -17,6 +17,9 @@ namespace ClrVpin.Models.Settings
 
             MultipleMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
+            TableMissingOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TableStaleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+
             // merge
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreCriteria.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -93,6 +96,23 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TableStyleOptionEnum.Manufactured, Tip = "A physical table has been manufactured"},
             new() {Enum = TableStyleOptionEnum.Original, Tip = "An original table creation that has not been manufactured"},
             new() {Enum = TableStyleOptionEnum.Both, Tip = "Manufactured AND original tables"}
+        };
+
+        // all possible table missing options - to be used elsewhere (explorer)
+        public static readonly EnumOption<ContentTypeEnum>[] TableMissingOptions =
+        {
+            new() {Enum = ContentTypeEnum.Tables},
+            new() {Enum = ContentTypeEnum.Backglasses},
+            new() {Enum = ContentTypeEnum.WheelImages},
+            new() {Enum = ContentTypeEnum.TableVideos},
+            new() {Enum = ContentTypeEnum.BackglassVideos}
+        };
+
+        // all possible table stale options - to be used elsewhere (explorer)
+        public static readonly EnumOption<ContentTypeEnum>[] TableStaleOptions =
+        {
+            new() {Enum = ContentTypeEnum.TableVideos, Tip = "Table video files that are older than the table files (.vpx)"},
+            new() {Enum = ContentTypeEnum.BackglassVideos, Tip = "Backglass video files that are older than the backglass files (.directb2s)"},
         };
 
         // all possible table match options

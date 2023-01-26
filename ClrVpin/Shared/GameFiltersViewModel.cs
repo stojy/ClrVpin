@@ -38,6 +38,9 @@ public class GameFiltersViewModel
     public ListCollectionView<FeatureType> TableAvailabilityOptionsView { get; set; }
     public ListCollectionView<FeatureType> TableNewContentOptionsView { get; set; }
     public ListCollectionView<FeatureType> PresetDateOptionsView { get; }
+    
+    public ListCollectionView<FeatureType> TableMissingOptionsView { get; set; }
+    public ListCollectionView<FeatureType> TableStaleOptionsView { get; set; }
 
     public void Refresh(int? debounceMilliseconds = null)
     {

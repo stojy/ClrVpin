@@ -111,6 +111,13 @@ public class ExplorerResultsViewModel
 
         GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
             () => Settings.SelectedTableStyleOption, FilterChangedCommand);
+
+        // todo; tag override, checkbox (not radio button)
+        GameFiltersViewModel.TableMissingOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableMissingOptions, ContentTypeEnum.Tables,
+            () => Settings.SelectedTableMissingOptions, FilterChangedCommand);
+        
+        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStaleOptions, ContentTypeEnum.TableVideos,
+            () => Settings.SelectedTableStaleOptions, FilterChangedCommand);
     }
 
     private void MinRatingChanged()
