@@ -55,13 +55,6 @@
     </Button>
   </DataTemplate>
 
-  <DataTemplate x:Key="RatingTemplate" DataType="{x:Type game:LocalGame}">
-    <!--temporarily disabled ratings bar as it appears to be causing rendering performance issues for the GridView.. scrolling and sorting-->
-    <!--<materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
-                              Style="{StaticResource RatingBarStyle}" IsReadOnly="True" IsPreviewValueEnabled="False" />-->
-    <TextBlock Text="{Binding Game.Rating}" HorizontalAlignment="Center" />
-  </DataTemplate>
-
   <DataTemplate x:Key="FeatureTypeTemplate">
     <ItemsControl ItemsSource="{Binding}">
       <ItemsControl.ItemsPanel>
@@ -155,7 +148,7 @@
 
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
-        <DockPanel DockPanel.Dock="Left" Width="875">
+        <DockPanel DockPanel.Dock="Left" Width="880">
           <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(-->
@@ -415,6 +408,20 @@
                 </Button>
               </DataTemplate>
 
+              <DataTemplate x:Key="RatingTemplate" DataType="{x:Type game:GameItem}">
+                <!--temporarily(?) disabled ratings bar as it appears to be causing rendering performance issues for the GridView.. scrolling and sorting-->
+                <!--<materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
+                              Style="{StaticResource RatingBarStyle}" IsReadOnly="True" IsPreviewValueEnabled="False" />-->
+                <TextBlock Text="{Binding Rating}" HorizontalAlignment="Center" />
+              </DataTemplate>
+
+              <DataTemplate x:Key="IpdbTemplate" DataType="{x:Type game:GameItem}">
+                <TextBlock VerticalAlignment="Center">
+                  <Hyperlink NavigateUri="{Binding LocalGame.Derived.IpdbUrl}" Command="{Binding LocalGame.ViewState.NavigateToIpdbCommand}">
+                    <TextBlock Text="{Binding LocalGame.Derived.Ipdb}" />
+                  </Hyperlink>
+                </TextBlock>
+              </DataTemplate>
             </DataGrid.Resources>
 
             <b:Interaction.Triggers>
@@ -424,37 +431,37 @@
             </b:Interaction.Triggers>
 
             <DataGrid.Columns>
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
+              <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
                                   Header="#" Binding="{Binding LocalGame.Derived.Number}"
                                   Width="45" />
-
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" CanUserSort="False" CanUserReorder="False" CanUserResize="False"
+              <DataGridTemplateColumn CanUserSort="False" CanUserReorder="False" CanUserResize="False"
                                       CellStyle="{StaticResource AlignedDataGridCellStyle}"
                                       CellTemplate="{StaticResource UpdateDatabaseEntryTemplate}"
                                       Width="30" />
-
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
+              <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
                                   Binding="{Binding LocalGame.Fuzzy.TableDetails.ActualNameWithoutManufacturerOrYear}"
-                                  Width="255" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
+                                  Width="220" />
+              <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
                                   Binding="{Binding Manufacturer}"
-                                  Width="160" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
+                                  Width="150" />
+              <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
                                   Binding="{Binding Year}"
-                                  Width="55" />
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}"
-                                      CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
-                                      SortMemberPath="Game.Rating"
+                                  Width="45" />
+              <DataGridTemplateColumn CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
+                                      SortMemberPath="Rating"
+                                      Width="55" />
+              <DataGridTemplateColumn Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}"
+                                      SortMemberPath="LocalGame.Derived.Ipdb"
                                       Width="45" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
+              <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
                                   Binding="{Binding Type}"
-                                  Width="35" />
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" Header="Manufactured" CellStyle="{StaticResource CenteredDataGridCellStyle}"
+                                  Width="45" />
+              <DataGridTemplateColumn Header="Manufactured" CellStyle="{StaticResource CenteredDataGridCellStyle}"
                                       CellTemplate="{StaticResource IsManufacturedTemplate}"
-                                      SortMemberPath="Derived.IsOriginal"
-                                      Width="85" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:LocalGame}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table/Backglass Update"
-                                  Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}"
+                                      SortMemberPath="LocalGame.Derived.IsOriginal"
+                                      Width="95" />
+              <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Last Update"
+                                  Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}" ToolTipService.ToolTip="omg"
                                   Width="140" />
             </DataGrid.Columns>
           </DataGrid>
