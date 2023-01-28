@@ -119,11 +119,15 @@
     <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
   </Style>
 
-  <Style x:Key="AccentToggleButtonBoxStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchAccentToggleButton}">
+  <Style x:Key="AccentSwitchToggleButtonBoxStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchAccentToggleButton}">
     <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
   </Style>
 
-  <Style x:Key="AccentRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipAccentRadioButton}">
+  <Style x:Key="AccentFilterChipCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignFilterChipAccentCheckBox}">
+    <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
+  </Style>
+
+  <Style x:Key="AccentChoiceChipRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipAccentRadioButton}">
     <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
   </Style>
 

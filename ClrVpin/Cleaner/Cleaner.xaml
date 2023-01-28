@@ -11,7 +11,7 @@
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/Styles.xaml" />
-    <controls:SharedResourceDictionary Source="/Controls/DataTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="/Controls/FeatureTypeTemplates.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
@@ -30,12 +30,12 @@
       <TextBlock Style="{StaticResource TitleStyle}">Content</TextBlock>
       <WrapPanel>
         <GroupBox Header="Pinball">
-          <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeCheckBoxTemplate}"
+          <ItemsControl ItemsSource="{Binding CheckPinballContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}"
                         ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
 
         <GroupBox Margin="10,0,0,0" Header="Media">
-          <ItemsControl Height="185" ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeCheckBoxTemplate}"
+          <ItemsControl Height="185" ItemsSource="{Binding CheckMediaContentTypesView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}"
                         ItemsPanel="{StaticResource ContentTypeItemsTemplate}" />
         </GroupBox>
       </WrapPanel>
@@ -52,7 +52,7 @@
 
                 <StackPanel Width="400">
                   <WrapPanel>
-                    <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
+                    <ContentControl ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Content="{Binding}" />
                     <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding HelpAction}"
                             Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
                             Foreground="{Binding IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
@@ -88,7 +88,7 @@
               <DataTemplate DataType="shared:FeatureType">
                 <!-- fixed width to have items align nicely -->
                 <WrapPanel Width="185">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Content="{Binding}" />
 
                   <Button Visibility="{Binding IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding HelpAction}"
                           Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"

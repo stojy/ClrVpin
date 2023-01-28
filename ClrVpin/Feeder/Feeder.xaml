@@ -7,7 +7,7 @@
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <controls:SharedResourceDictionary Source="..\..\Controls\Styles.xaml" />
-    <controls:SharedResourceDictionary Source="/Controls/DataTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="/Controls/FeatureTypeTemplates.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
@@ -20,7 +20,7 @@
           <!-- not using an ItemsControl for the LCV (e.g. similar to cleaner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
           <WrapPanel>
             <WrapPanel>
-              <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+              <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
               <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
                       Style="{StaticResource MaterialDesignIconButton}" 
                       ToolTip="Open help page in the browser" 
@@ -62,7 +62,7 @@
 
       <TextBlock Style="{StaticResource TitleStyle}">Fix</TextBlock>
       <GroupBox Header="Feed" >
-        <ItemsControl ItemsSource="{Binding FeedFixOptionsView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Height="200">
+        <ItemsControl ItemsSource="{Binding FeedFixOptionsView}" BorderThickness="5" HorizontalAlignment="Left" ItemTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Height="200">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
               <WrapPanel Orientation="Vertical" ItemWidth="320" />
