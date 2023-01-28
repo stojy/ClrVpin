@@ -6,15 +6,15 @@
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
                     xmlns:vps="clr-namespace:ClrVpin.Models.Feeder.Vps"
                     xmlns:feederModels="clr-namespace:ClrVpin.Models.Feeder"
                     xmlns:feeder="clr-namespace:ClrVpin.Feeder"
+                    xmlns:featureType="clr-namespace:ClrVpin.Shared.FeatureType"
                     xmlns:game="clr-namespace:ClrVpin.Models.Shared.Game">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
-    <controls:SharedResourceDictionary Source="\Controls\FeatureTypeTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="/Shared/FeatureType/FeatureTypeTemplates.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
     <controls:SharedResourceDictionary Source="DatabaseItem.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
@@ -423,7 +423,7 @@
                         </ItemsPanelTemplate>
                       </ItemsControl.ItemsPanel>
                       <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="shared:FeatureType">
+                        <DataTemplate DataType="featureType:FeatureType">
                           <Button Content="{Binding Description}" Command="{Binding SelectedCommand}" />
                         </DataTemplate>
                       </ItemsControl.ItemTemplate>

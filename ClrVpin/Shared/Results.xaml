@@ -8,12 +8,13 @@
                     xmlns:shared="clr-namespace:ClrVpin.Shared"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:shared1="clr-namespace:ClrVpin.Models.Shared"
-                    xmlns:game="clr-namespace:ClrVpin.Models.Shared.Game">
+                    xmlns:game="clr-namespace:ClrVpin.Models.Shared.Game"
+                    xmlns:featureType="clr-namespace:ClrVpin.Shared.FeatureType">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/Styles.xaml" />
-    <controls:SharedResourceDictionary Source="/Controls/FeatureTypeTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="/Shared/FeatureType/FeatureTypeTemplates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <ContextMenu x:Key="HitGameContentContextMenu" d:DataContext="{d:DesignInstance shared1:Hit }">
@@ -69,7 +70,7 @@
               <!-- fixed height control to get items in to columns -->
               <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
                 <ItemsControl.ItemTemplate>
-                  <DataTemplate DataType="shared1:FeatureType">
+                  <DataTemplate DataType="featureType:FeatureType">
                     <ContentControl ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Content="{Binding}" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -86,7 +87,7 @@
             <GroupBox Margin="10,0,0,0" Header="Criteria">
               <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
                 <ItemsControl.ItemTemplate>
-                  <DataTemplate DataType="shared1:FeatureType">
+                  <DataTemplate DataType="featureType:FeatureType">
                     <ContentControl ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Content="{Binding}" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>

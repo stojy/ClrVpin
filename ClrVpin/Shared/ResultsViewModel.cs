@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using Utils;
 using Utils.Extensions;
@@ -17,8 +16,8 @@ namespace ClrVpin.Shared
         // all games referenced in the DB.. irrespective of hits
         public ObservableCollection<LocalGame> Games { get; protected init; }
 
-        public ListCollectionView<FeatureType> AllContentFeatureTypesView { get; private set; }
-        public ListCollectionView<FeatureType> AllHitFeatureTypesView { get; private set; }
+        public ListCollectionView<FeatureType.FeatureType> AllContentFeatureTypesView { get; private set; }
+        public ListCollectionView<FeatureType.FeatureType> AllHitFeatureTypesView { get; private set; }
         public ListCollectionView<LocalGame> HitGamesView { get; private set; }
 
         public ICommand ExpandGamesCommand { get; private set; }
@@ -40,10 +39,10 @@ namespace ClrVpin.Shared
             Settings = Model.Settings;
 
             _allContentFeatureTypes = CreateAllContentFeatureTypes();
-            AllContentFeatureTypesView = new ListCollectionView<FeatureType>(_allContentFeatureTypes.ToList());
+            AllContentFeatureTypesView = new ListCollectionView<FeatureType.FeatureType>(_allContentFeatureTypes.ToList());
 
             _allHitFeatureTypes = CreateAllHitFeatureTypes();
-            AllHitFeatureTypesView = new ListCollectionView<FeatureType>(_allHitFeatureTypes.ToList());
+            AllHitFeatureTypesView = new ListCollectionView<FeatureType.FeatureType>(_allHitFeatureTypes.ToList());
 
             SearchTextCommand = new ActionCommand(SearchTextChanged);
             ExpandGamesCommand = new ActionCommand<bool>(ExpandItems);
@@ -55,8 +54,8 @@ namespace ClrVpin.Shared
             InitView();
         }
 
-        protected abstract IList<FeatureType> CreateAllContentFeatureTypes();
-        protected abstract IList<FeatureType> CreateAllHitFeatureTypes();
+        protected abstract IList<FeatureType.FeatureType> CreateAllContentFeatureTypes();
+        protected abstract IList<FeatureType.FeatureType> CreateAllHitFeatureTypes();
 
         protected void UpdateHitsView()
         {
@@ -111,8 +110,8 @@ namespace ClrVpin.Shared
         // games referenced in the DB that have hits
         private ObservableCollection<LocalGame> _hitGames;
 
-        private IEnumerable<FeatureType> _allContentFeatureTypes;
-        private IEnumerable<FeatureType> _allHitFeatureTypes;
+        private IEnumerable<FeatureType.FeatureType> _allContentFeatureTypes;
+        private IEnumerable<FeatureType.FeatureType> _allHitFeatureTypes;
 
         protected const string DialogHostName = "ResultsDialog";
     }

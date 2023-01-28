@@ -15,6 +15,7 @@ using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
+using ClrVpin.Shared.FeatureType;
 using PropertyChanged;
 using Utils;
 using Utils.Extensions;

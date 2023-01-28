@@ -4,14 +4,14 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
-                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:cleaner="clr-namespace:ClrVpin.Cleaner">
+                    xmlns:cleaner="clr-namespace:ClrVpin.Cleaner"
+                    xmlns:featureType="clr-namespace:ClrVpin.Shared.FeatureType">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/Styles.xaml" />
-    <controls:SharedResourceDictionary Source="/Controls/FeatureTypeTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="/Shared/FeatureType/FeatureTypeTemplates.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
@@ -47,7 +47,7 @@
         <GroupBox Header="Match">
           <ItemsControl ItemsSource="{Binding CheckHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
-              <DataTemplate DataType="shared:FeatureType">
+              <DataTemplate DataType="featureType:FeatureType">
                 <!-- fixed width to have items align nicely -->
 
                 <StackPanel Width="400">
@@ -85,7 +85,7 @@
         <GroupBox Margin="10,0,0,0" Header="Fix">
           <ItemsControl ItemsSource="{Binding FixHitTypesView}" BorderThickness="5">
             <ItemsControl.ItemTemplate>
-              <DataTemplate DataType="shared:FeatureType">
+              <DataTemplate DataType="featureType:FeatureType">
                 <!-- fixed width to have items align nicely -->
                 <WrapPanel Width="185">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Content="{Binding}" />
@@ -109,7 +109,7 @@
           <StackPanel>
             <ItemsControl ItemsSource="{Binding MultipleMatchOptionsView}" BorderThickness="5" HorizontalAlignment="Left">
               <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="shared:FeatureType">
+                <DataTemplate DataType="featureType:FeatureType">
                   <RadioButton Width="330" GroupName="MultipleMatchPreference" Content="{Binding Description}" ToolTip="{Binding Tip}"
                                IsChecked="{Binding IsActive}" IsEnabled="{Binding IsSupported}"
                                Command="{Binding SelectedCommand}" />
