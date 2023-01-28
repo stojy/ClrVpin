@@ -15,10 +15,11 @@
   <converters:BoolToStringConverter x:Key="BoolToRadioButtonMarginConverter" True="5,0,5,0" False="0,0,5,0" />
 
   <converters:BoolToStyleConverter x:Key="BoolToCheckboxStyeConverter" True="{StaticResource AccentCheckBoxStyle}" False="{StaticResource MaterialDesignCheckBox}" />
-  <converters:BoolToStyleConverter x:Key="BooToToggleButtonStyeConverter" True="{StaticResource AccentToggleButtonBoxStyle}" False="{StaticResource MaterialDesignSwitchToggleButton}" />
-  <converters:BoolToStyleConverter x:Key="BoolToRadioButtonStyeConverter" True="{StaticResource AccentRadioButtonStyle}" False="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" />
+  <converters:BoolToStyleConverter x:Key="BooToSwitchToggleButtonStyeConverter" True="{StaticResource AccentSwitchToggleButtonBoxStyle}" False="{StaticResource MaterialDesignSwitchToggleButton}" />
+  <converters:BoolToStyleConverter x:Key="BoolToFilterChipStyeConverter" True="{StaticResource AccentFilterChipCheckBoxStyle}" False="{StaticResource MaterialDesignFilterChipPrimaryCheckBox}" />
+  <converters:BoolToStyleConverter x:Key="BoolToChoiceChipStyeConverter" True="{StaticResource AccentChoiceChipRadioButtonStyle}" False="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}" />
 
-  <DataTemplate x:Key="FeatureTypeCheckBoxTemplate" DataType="shared:FeatureType">
+  <DataTemplate x:Key="FeatureTypeItemCheckBoxTemplate" DataType="shared:FeatureType">
     <CheckBox Content="{Binding Description}"
               ToolTip="{Binding Tip}"
               ToolTipService.ShowOnDisabled="true"
@@ -29,13 +30,25 @@
               FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
               Style="{Binding IsHighlighted, Converter={StaticResource BoolToCheckboxStyeConverter}}" />
   </DataTemplate>
+  
+  <DataTemplate x:Key="FeatureTypeItemFilterChipTemplate" DataType="shared:FeatureType">
+    <CheckBox Content="{Binding Description}"
+              ToolTip="{Binding Tip}"
+              ToolTipService.ShowOnDisabled="true"
+              IsChecked="{Binding IsActive}"
+              IsEnabled="{Binding IsSupported}"
+              Margin="{Binding IsSpecial, Converter={StaticResource BoolToCheckboxMarginConverter}}"
+              Command="{Binding SelectedCommand}"
+              FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
+              Style="{Binding IsHighlighted, Converter={StaticResource BoolToFilterChipStyeConverter}}" />
+  </DataTemplate>
 
-  <DataTemplate x:Key="FeatureTypeToggleButtonTemplate" DataType="shared:FeatureType">
+  <DataTemplate x:Key="FeatureTypeItemSwitchToggleButtonTemplate" DataType="shared:FeatureType">
     <WrapPanel ToolTip="{Binding Tip}" ToolTipService.ShowOnDisabled="true" Margin="{Binding IsSpecial, Converter={StaticResource BoolToToggleButtonMarginConverter}}">
       <ToggleButton IsChecked="{Binding IsActive}"
                     IsEnabled="{Binding IsSupported}"
                     Command="{Binding SelectedCommand}"
-                    Style="{Binding IsHighlighted, Converter={StaticResource BooToToggleButtonStyeConverter}}" />
+                    Style="{Binding IsHighlighted, Converter={StaticResource BooToSwitchToggleButtonStyeConverter}}" />
       <TextBlock Text="{Binding Description}"
                  VerticalAlignment="Center"
                  Margin="5,0,0,0"
@@ -43,7 +56,7 @@
     </WrapPanel>
   </DataTemplate>
 
-  <DataTemplate x:Key="FeatureTypeRadioButtonTemplate" DataType="shared:FeatureType">
+  <DataTemplate x:Key="FeatureTypeItemChoiceChipTemplate" DataType="shared:FeatureType">
     <RadioButton GroupName="{Binding Tag}"
                  Content="{Binding Description}"
                  ToolTip="{Binding Tip}"
@@ -53,7 +66,37 @@
                  Margin="{Binding IsSpecial, Converter={StaticResource BoolToRadioButtonMarginConverter}}"
                  Command="{Binding SelectedCommand}"
                  FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
-                 Style="{Binding IsHighlighted, Converter={StaticResource BoolToRadioButtonStyeConverter}}" />
+                 Style="{Binding IsHighlighted, Converter={StaticResource BoolToChoiceChipStyeConverter}}" />
+  </DataTemplate>
+  
+  <DataTemplate x:Key="FeatureTypeListChoiceChipTemplate">
+    <ItemsControl ItemsSource="{Binding}">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate DataType="shared:FeatureType">
+          <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeItemChoiceChipTemplate}" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </DataTemplate>
+
+  <DataTemplate x:Key="FeatureTypeListFilterChipTemplate">
+    <ItemsControl ItemsSource="{Binding}">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate DataType="shared:FeatureType">
+          <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeItemFilterChipTemplate}" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
   </DataTemplate>
 
 </ResourceDictionary>

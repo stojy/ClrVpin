@@ -14,7 +14,7 @@
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
-    <controls:SharedResourceDictionary Source="\Controls\DataTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\FeatureTypeTemplates.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
     <controls:SharedResourceDictionary Source="DatabaseItem.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
@@ -73,21 +73,6 @@
         </Style>
       </ListBox.ItemContainerStyle>
     </ListBox>
-  </DataTemplate>
-
-  <DataTemplate x:Key="FeatureTypeTemplate">
-    <ItemsControl ItemsSource="{Binding}">
-      <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-          <WrapPanel />
-        </ItemsPanelTemplate>
-      </ItemsControl.ItemsPanel>
-      <ItemsControl.ItemTemplate>
-        <DataTemplate DataType="shared:FeatureType">
-          <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
   </DataTemplate>
 
   <!--an insane attempt to use a control template..
@@ -457,7 +442,7 @@
                                 controls:GenericAttached.String="Fuzzy"
                                 controls:GenericAttached.String2="Filter the tables based on whether the fuzzy matching was successful."
                                 controls:GenericAttached.Double="60" controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableMatchOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableMatchOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
@@ -467,7 +452,7 @@
                                 controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
                 </ContentControl>
               </Grid>
 
@@ -482,7 +467,7 @@
                                 controls:GenericAttached.String2="Filter the tables based on the type of content that was updated. Not applicable for unmatched tables."
                                 controls:GenericAttached.Double="60" 
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableNewContentOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableNewContentOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
@@ -492,7 +477,7 @@
                                 controls:GenericAttached.String2="Filter the tables based on whether the table can be downloaded. Not applicable for unmatched tables."
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableAvailabilityOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableAvailabilityOptionsView}" />
                 </ContentControl>
               </Grid>
             </StackPanel>

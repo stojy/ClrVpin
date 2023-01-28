@@ -13,7 +13,7 @@
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/Styles.xaml" />
-    <controls:SharedResourceDictionary Source="/Controls/DataTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="/Controls/FeatureTypeTemplates.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <ContextMenu x:Key="HitGameContentContextMenu" d:DataContext="{d:DesignInstance shared1:Hit }">
@@ -70,7 +70,7 @@
               <ItemsControl ItemsSource="{Binding AllContentFeatureTypesView}" BorderThickness="5" Height="110">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate DataType="shared1:FeatureType">
-                    <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
+                    <ContentControl ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Content="{Binding}" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
 
@@ -87,7 +87,7 @@
               <ItemsControl ItemsSource="{Binding AllHitFeatureTypesView}" BorderThickness="5" Height="110">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate DataType="shared1:FeatureType">
-                    <ContentControl ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Content="{Binding}" />
+                    <ContentControl ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Content="{Binding}" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
 

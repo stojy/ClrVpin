@@ -10,7 +10,7 @@
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/Styles.xaml" />
-    <controls:SharedResourceDictionary Source="/Controls/DataTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="/Controls/FeatureTypeTemplates.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
@@ -43,12 +43,12 @@
       <GroupBox Header="Criteria" Width="650">
         <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
           <!-- not using an ItemsControl for the LCV (e.g. similar to cleaner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
-          <ContentControl Content="{Binding MatchWrongCase}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
-          <ContentControl Content="{Binding MatchDuplicate}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
-          <ContentControl Content="{Binding MatchTableName}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+          <ContentControl Content="{Binding MatchWrongCase}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
+          <ContentControl Content="{Binding MatchDuplicate}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
+          <ContentControl Content="{Binding MatchTableName}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
           <WrapPanel>
               <WrapPanel Width="160" HorizontalAlignment="Left">
-                <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+                <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
                 <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
                         Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
                         Foreground="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
@@ -73,7 +73,7 @@
               </WrapPanel>
           </WrapPanel>
 
-          <ContentControl Content="{Binding MatchSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Width="230" HorizontalAlignment="Left" />
+          <ContentControl Content="{Binding MatchSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Width="230" HorizontalAlignment="Left" />
         </StackPanel>
       </GroupBox>
 
@@ -82,7 +82,7 @@
         <StackPanel Margin="5,0,0,5" HorizontalAlignment="Left">
           <!-- not using an ItemsControl for the LCV (e.g. similar to cleaner) in order to accommodate the unique associated controls (without mucking about with template triggers) -->
           <WrapPanel>
-            <ContentControl Content="{Binding IgnoreIfContainsWordsFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" Width="230" />
+            <ContentControl Content="{Binding IgnoreIfContainsWordsFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Width="230" />
 
             <TextBox Margin="6,0,0,0" Width="390" HorizontalAlignment="Left" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Ignore Words"
                      IsEnabled="{Binding IgnoreIfContainsWordsFeature.IsActive}"
@@ -98,7 +98,7 @@
 
           <WrapPanel Margin="0,10,0,0">
             <ContentControl Width="230" VerticalAlignment="Top" 
-                            Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+                            Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
           
             <WrapPanel IsEnabled="{Binding IgnoreIfSmallerFeature.IsActive}" Margin="5,0,0,8">
               <TextBox materialDesign:HintAssist.Hint="Threshold" IsReadOnly="True" IsEnabled="False" Padding="0"
@@ -111,11 +111,11 @@
             </WrapPanel>
           </WrapPanel>
 
-          <ContentControl Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" HorizontalAlignment="Left" Width="230" />
+          <ContentControl Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" HorizontalAlignment="Left" Width="230" />
 
-          <ContentControl Content="{Binding DeleteIgnoredFilesOptionFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+          <ContentControl Content="{Binding DeleteIgnoredFilesOptionFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
 
-          <ContentControl Content="{Binding IgnoreSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+          <ContentControl Content="{Binding IgnoreSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
         </StackPanel>
       </GroupBox>
 
@@ -124,7 +124,7 @@
         <ItemsControl ItemsSource="{Binding MergeOptionsView}" BorderThickness="5" HorizontalAlignment="Left">
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="shared:FeatureType">
-              <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeCheckBoxTemplate}" />
+              <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>
           <ItemsControl.ItemsPanel>

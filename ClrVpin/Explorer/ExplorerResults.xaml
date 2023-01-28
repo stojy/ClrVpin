@@ -13,7 +13,7 @@
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
-    <controls:SharedResourceDictionary Source="\Controls\DataTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\FeatureTypeTemplates.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\ControlTemplates.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Constants.xaml" />
@@ -53,21 +53,6 @@
     <Button Style="{Binding IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}" ToolTip="{Binding Url}" Command="{Binding SelectedCommand}">
       <materialDesign:PackIcon Kind="{Binding Broken, Converter={StaticResource UrlToIconConverter}}" Height="30" Width="30" Foreground="{DynamicResource MaterialDesignBody}" />
     </Button>
-  </DataTemplate>
-
-  <DataTemplate x:Key="FeatureTypeTemplate">
-    <ItemsControl ItemsSource="{Binding}">
-      <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-          <WrapPanel />
-        </ItemsPanelTemplate>
-      </ItemsControl.ItemsPanel>
-      <ItemsControl.ItemTemplate>
-        <DataTemplate DataType="shared:FeatureType">
-          <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeRadioButtonTemplate}" />
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
   </DataTemplate>
 
   <Style x:Key="ComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}">
@@ -148,7 +133,7 @@
 
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
-        <DockPanel DockPanel.Dock="Left" Width="890">
+        <DockPanel DockPanel.Dock="Left" Width="850">
           <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(-->
@@ -344,7 +329,7 @@
                   </Grid>
 
                 </WrapPanel>
-                
+
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
                 <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
@@ -353,37 +338,27 @@
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14"
                                 VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
                 </ContentControl>
               </Grid>
 
-              <Grid>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1.95*" />
-                  <ColumnDefinition Width="Auto" />
-                  <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Missing"
+                              controls:GenericAttached.String2="Filter tables based on whether the selected files are missing."
+                              controls:GenericAttached.Double="60"
+                              controls:GenericAttached.Double2="14"
+                              VerticalAlignment="Center">
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableMissingOptionsView}" />
+              </ContentControl>
 
-                <ContentControl Grid.Column="0" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Missing"
-                                controls:GenericAttached.String2="Filter tables based on whether the selected files are missing."
-                                controls:GenericAttached.Double="60"
-                                controls:GenericAttached.Double2="14"
-                                VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableMissingOptionsView}" />
-                </ContentControl>
-
-                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
-
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Stale"
-                                controls:GenericAttached.String2="Filter tables based on whether the selected media video files are out of date and need to be updated, i.e. re-recorded."
-                                controls:GenericAttached.Double="60"
-                                controls:GenericAttached.Double2="14"
-                                VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeTemplate}" Content="{Binding GameFiltersViewModel.TableStaleOptionsView}" />
-                </ContentControl>
-              </Grid>
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Stale"
+                              controls:GenericAttached.String2="Filter tables based on whether the selected media video files are out of date and need to be updated, i.e. re-recorded."
+                              controls:GenericAttached.Double="60"
+                              controls:GenericAttached.Double2="14"
+                              VerticalAlignment="Center">
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableStaleOptionsView}" />
+              </ContentControl>
 
             </StackPanel>
           </GroupBox>
