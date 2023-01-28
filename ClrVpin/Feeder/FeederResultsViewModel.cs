@@ -12,9 +12,9 @@ using ClrVpin.Logging;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Settings;
-using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
+using ClrVpin.Shared.FeatureType;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;
@@ -110,14 +110,14 @@ public sealed class FeederResultsViewModel
 
         GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null))
         {
-            TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
-                () => Model.Settings.Feeder.SelectedTableStyleOption, FilterChangedCommand),
-            TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
-                () => Model.Settings.Feeder.SelectedTableMatchOption, FilterChangedCommand),
-            TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,
-                () => Model.Settings.Feeder.SelectedTableAvailabilityOption, FilterChangedCommand),
-            TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
-                () => Model.Settings.Feeder.SelectedTableNewContentOption, FilterChangedCommand)
+            TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
+                () => Model.Settings.Feeder.SelectedTableStyleOption, () => FilterChangedCommand.Execute(null)),
+            TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
+                () => Model.Settings.Feeder.SelectedTableMatchOption, () => FilterChangedCommand.Execute(null)),
+            TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,
+                () => Model.Settings.Feeder.SelectedTableAvailabilityOption, () => FilterChangedCommand.Execute(null)),
+            TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
+                () => Model.Settings.Feeder.SelectedTableNewContentOption, () => FilterChangedCommand.Execute(null))
         };
 
         UpdatedFilterTimeChanged = new ActionCommand(() =>

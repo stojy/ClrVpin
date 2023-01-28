@@ -4,7 +4,6 @@ using System.Linq;
 using ClrVpin.Controls;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
-using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils;
@@ -33,14 +32,14 @@ public class GameFiltersViewModel
     public ListCollectionView<string> TypesFilterView { get; set; }
     public ListCollectionView<string> FormatsFilterView { get; set; }
 
-    public ListCollectionView<FeatureType> TableStyleOptionsView { get; set; }
-    public ListCollectionView<FeatureType> TableMatchOptionsView { get; set; }
-    public ListCollectionView<FeatureType> TableAvailabilityOptionsView { get; set; }
-    public ListCollectionView<FeatureType> TableNewContentOptionsView { get; set; }
-    public ListCollectionView<FeatureType> PresetDateOptionsView { get; }
+    public ListCollectionView<FeatureType.FeatureType> TableStyleOptionsView { get; set; }
+    public ListCollectionView<FeatureType.FeatureType> TableMatchOptionsView { get; set; }
+    public ListCollectionView<FeatureType.FeatureType> TableAvailabilityOptionsView { get; set; }
+    public ListCollectionView<FeatureType.FeatureType> TableNewContentOptionsView { get; set; }
+    public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
     
-    public ListCollectionView<FeatureType> TableMissingOptionsView { get; set; }
-    public ListCollectionView<FeatureType> TableStaleOptionsView { get; set; }
+    public ListCollectionView<FeatureType.FeatureType> TableMissingOptionsView { get; set; }
+    public ListCollectionView<FeatureType.FeatureType> TableStaleOptionsView { get; set; }
 
     public void Refresh(int? debounceMilliseconds = null)
     {
@@ -100,12 +99,12 @@ public class GameFiltersViewModel
         return !_commonFilterSettings.IsDynamicFiltering || dynamicFilteringFunc();
     }
 
-    private ListCollectionView<FeatureType> CreatePresetDateOptionsView(IEnumerable<EnumOption<PresetDateOptionEnum>> enumOptions)
+    private ListCollectionView<FeatureType.FeatureType> CreatePresetDateOptionsView(IEnumerable<EnumOption<PresetDateOptionEnum>> enumOptions)
     {
         // all preset date options
         var featureTypes = enumOptions.Select(option =>
         {
-            var featureType = new FeatureType(Convert.ToInt32(option.Enum))
+            var featureType = new FeatureType.FeatureType(Convert.ToInt32(option.Enum))
             {
                 Tag = nameof(PresetDateOptionEnum),
                 Description = option.Description,
@@ -133,7 +132,7 @@ public class GameFiltersViewModel
             return featureType;
         }).ToList();
 
-        return new ListCollectionView<FeatureType>(featureTypes);
+        return new ListCollectionView<FeatureType.FeatureType>(featureTypes);
     }
 
     private void UpdatedAtDateBegin(DateTime startDate)

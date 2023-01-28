@@ -12,6 +12,7 @@ using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
+using ClrVpin.Shared.FeatureType;
 using PropertyChanged;
 using Utils;
 using Utils.Extensions;
@@ -109,15 +110,15 @@ public class ExplorerResultsViewModel
         MinRatingChangedCommand = new ActionCommand(MinRatingChanged);
         MaxRatingChangedCommand = new ActionCommand(MaxRatingChanged);
 
-        GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
-            () => Settings.SelectedTableStyleOption, FilterChangedCommand);
+        GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
+            () => Settings.SelectedTableStyleOption, () => FilterChangedCommand.Execute(null));
 
         // todo; tag override, checkbox (not radio button)
-        GameFiltersViewModel.TableMissingOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableMissingOptions, ContentTypeEnum.Tables,
-            () => Settings.SelectedTableMissingOptions, FilterChangedCommand);
+        GameFiltersViewModel.TableMissingOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableMissingOptions, ContentTypeEnum.Tables,
+            () => Settings.SelectedTableMissingOptions, () => FilterChangedCommand.Execute(null));
         
-        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsView(StaticSettings.TableStaleOptions, ContentTypeEnum.TableVideos,
-            () => Settings.SelectedTableStaleOptions, FilterChangedCommand);
+        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableStaleOptions, ContentTypeEnum.TableVideos,
+            () => Settings.SelectedTableStaleOptions, () => FilterChangedCommand.Execute(null));
     }
 
     private void MinRatingChanged()

@@ -3,14 +3,14 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:shared="clr-namespace:ClrVpin.Models.Shared"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:merger="clr-namespace:ClrVpin.Merger">
+                    xmlns:merger="clr-namespace:ClrVpin.Merger"
+                    xmlns:featureType="clr-namespace:ClrVpin.Shared.FeatureType">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/Styles.xaml" />
-    <controls:SharedResourceDictionary Source="/Controls/FeatureTypeTemplates.xaml" />
+    <controls:SharedResourceDictionary Source="/Shared/FeatureType/FeatureTypeTemplates.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
@@ -123,7 +123,7 @@
       <GroupBox Header="Options" Width="650">
         <ItemsControl ItemsSource="{Binding MergeOptionsView}" BorderThickness="5" HorizontalAlignment="Left">
           <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="shared:FeatureType">
+            <DataTemplate DataType="featureType:FeatureType">
               <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>
