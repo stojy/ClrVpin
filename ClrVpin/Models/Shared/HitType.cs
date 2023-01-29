@@ -1,9 +1,10 @@
-﻿using PropertyChanged;
+﻿using ClrVpin.Models.Feeder;
+using PropertyChanged;
 
 namespace ClrVpin.Models.Shared;
 
 [AddINotifyPropertyChangedInterface]
-public class HitType
+public class HitType : EnumOption<HitTypeEnum>
 {
     public HitType(HitTypeEnum hitTypeEnum, bool fixable, string tip, bool isHighlighted = false, string helpUrl = null)
     {
@@ -14,10 +15,7 @@ public class HitType
         HelpUrl = helpUrl;
     }
 
-    public HitTypeEnum Enum { get; }
-    public string Tip { get; }
     public bool Fixable { get; }
-    public string Description { get; set; }
     public string HelpUrl { get; }
     public bool IsHighlighted { get; }
 }
