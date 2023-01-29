@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -40,7 +39,7 @@ public class FeederViewModel : IShowViewModel
 
     public ICommand StartCommand { get; }
     public Models.Settings.Settings Settings { get; } = Model.Settings;
-
+    
     public ListCollectionView FeedFixOptionsView { get; }
 
     public FeatureType MatchFuzzy { get; private set; }
@@ -71,25 +70,13 @@ public class FeederViewModel : IShowViewModel
     {
         // show all match criteria types
         // - only fuzzy is supported, but using a list for consistency with cleaner and merger
-        var featureTypes = StaticSettings.MatchTypes.Where(x => x.Enum.In(HitTypeEnum.Fuzzy)).Select(matchType =>
-        {
-            var featureType = new FeatureType((int)matchType.Enum)
-            {
-                Description = matchType.Description,
-                Tip = matchType.Tip,
-                IsSupported = true,
-                IsActive = Settings.Feeder.SelectedMatchCriteriaOptions.Contains(matchType.Enum),
-                SelectedCommand = new ActionCommand(() => Settings.Feeder.SelectedMatchCriteriaOptions.Toggle(matchType.Enum)),
-                IsHighlighted = matchType.IsHighlighted,
-                IsHelpSupported = matchType.HelpUrl != null,
-                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) { UseShellExecute = true }))
-            };
-
-            return featureType;
-        }).ToList();
+        var featureTypes = StaticSettings.MatchTypes
+            .Where(x => x.Enum.In(HitTypeEnum.Fuzzy))
+            .Select(matchType => FeatureOptions.CreateFeatureType(matchType, Settings.Feeder.SelectedMatchCriteriaOptions.Contains(matchType.Enum))).ToList();
 
         // create separate property for each so they can be referenced individually in the UI
         MatchFuzzy = featureTypes.First(x => x.Id == (int)HitTypeEnum.Fuzzy);
+        MatchFuzzy.SelectedCommand = new ActionCommand(() => Settings.Feeder.SelectedMatchCriteriaOptions.Toggle(HitTypeEnum.Fuzzy));
 
         // explicitly disable fuzzy logic if ALL of the settings are not fully configured, e.g. frontend database folder not setup
         if (!Model.SettingsManager.IsValid)
