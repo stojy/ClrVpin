@@ -43,7 +43,6 @@ public class CleanerViewModel : IShowViewModel
             fixHitFeatureType.IsActive = Settings.Cleaner.SelectedFixHitTypes.Contains(hitTypeEnum) && hitTypeEnum != HitTypeEnum.Missing;
         });
 
-        //MultipleMatchOptionsView = new ListCollectionView(CreateMultipleMatchOptionTypes().ToList());
         MultipleMatchOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(
             StaticSettings.MultipleMatchOptions, MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold, () => Settings.Cleaner.SelectedMultipleMatchOption, UpdateExceedThresholdChecked);
 

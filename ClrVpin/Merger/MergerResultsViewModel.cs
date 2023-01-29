@@ -11,6 +11,7 @@ using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
 using PropertyChanged;
 using Utils;
+using Utils.Extensions;
 
 namespace ClrVpin.Merger
 {
@@ -45,20 +46,19 @@ namespace ClrVpin.Merger
             await ShowSummary();
         }
 
-        protected override IList<FeatureType> CreateAllContentFeatureTypes()
+        protected override ListCollectionView<FeatureType> CreateAllContentFeatureTypesView()
         {
-            // show all content types, but assign enabled and active based on the merger configuration
-            // - merger only supports one destination content type, but display them all as a list for consistency with CleanerResultsViewModel
-            var featureTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
-            {
-                Description = contentType.Description,
-                Tip = contentType.Tip,
-                IsSupported = false, // don't allow user to deselect the destination type
-                IsActive = Settings.GetSelectedDestinationContentType().Enum == contentType.Enum,
-                SelectedCommand = new ActionCommand(UpdateHitsView)
-            }).ToList();
+            var featureView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetFixableContentTypes(), 
+                new ObservableCollection<string> {Settings.GetSelectedDestinationContentType().Description}, _ => UpdateHitsView());
 
-            return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) }).ToList();
+            // merger content types is a 'special egg'.. unlike cleaner, the list is readonly
+            featureView.ForEach(featureType => featureType.IsSupported = false);
+            
+            var destinationFeatureType = featureView.First(x => x.Id == (int)Settings.GetSelectedDestinationContentType().Enum);
+            destinationFeatureType.IsSupported = false;
+            destinationFeatureType.IsActive = true;
+
+            return featureView;
         }
 
         protected override IList<FeatureType> CreateAllHitFeatureTypes()
