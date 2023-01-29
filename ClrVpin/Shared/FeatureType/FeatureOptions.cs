@@ -130,4 +130,12 @@ public static class FeatureOptions
 
         return selectAll;
     }
+
+    public static void DisableFeatureType(FeatureType featureType, string message = null)
+    {
+        // disable feature type so it can't be used, e.g. non-selectable
+        featureType.IsActive = false;
+        featureType.IsSupported = false;
+        featureType.Tip += message ?? Model.OptionsDisabledMessage;
+    }
 }
