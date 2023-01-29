@@ -38,8 +38,8 @@ namespace ClrVpin.Shared
         {
             Settings = Model.Settings;
 
-            _allContentFeatureTypes = CreateAllContentFeatureTypes();
-            AllContentFeatureTypesView = new ListCollectionView<FeatureType.FeatureType>(_allContentFeatureTypes.ToList());
+            _allContentFeatureTypes = 
+            AllContentFeatureTypesView = CreateAllContentFeatureTypesView();
 
             _allHitFeatureTypes = CreateAllHitFeatureTypes();
             AllHitFeatureTypesView = new ListCollectionView<FeatureType.FeatureType>(_allHitFeatureTypes.ToList());
@@ -54,7 +54,7 @@ namespace ClrVpin.Shared
             InitView();
         }
 
-        protected abstract IList<FeatureType.FeatureType> CreateAllContentFeatureTypes();
+        protected abstract ListCollectionView<FeatureType.FeatureType> CreateAllContentFeatureTypesView();
         protected abstract IList<FeatureType.FeatureType> CreateAllHitFeatureTypes();
 
         protected void UpdateHitsView()

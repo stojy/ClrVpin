@@ -42,21 +42,10 @@ namespace ClrVpin.Cleaner
             await ShowSummary();
         }
 
-        protected override IList<FeatureType> CreateAllContentFeatureTypes()
+        protected override ListCollectionView<FeatureType> CreateAllContentFeatureTypesView()
         {
             // show all content types, but assign enabled and active based on the cleaner configuration
-            var featureTypes = Settings.GetFixableContentTypes().Select(contentType => new FeatureType((int)contentType.Enum)
-            {
-                Description = contentType.Description,
-                Tip = contentType.Tip,
-
-                // todo; use id
-                IsSupported = Settings.Cleaner.SelectedCheckContentTypes.Contains(contentType.Description),
-                IsActive = Settings.Cleaner.SelectedCheckContentTypes.Contains(contentType.Description),
-                SelectedCommand = new ActionCommand(UpdateHitsView)
-            }).ToList();
-
-            return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) }).ToList();
+            return FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetFixableContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, _ => UpdateHitsView());
         }
 
         protected override IList<FeatureType> CreateAllHitFeatureTypes()
