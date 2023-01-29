@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Extensions;
@@ -28,11 +27,20 @@ public class FeederViewModel : IShowViewModel
     {
         StartCommand = new ActionCommand(Start);
 
-        CreateMatchCriteriaTypes();
+        // create separate property for each match criteria so they can be referenced individually from the view
+        var matchCriteriaView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.MatchTypes, Settings.Feeder.SelectedMatchCriteriaOptions);
+        MatchFuzzy = matchCriteriaView.First(x => x.Id == (int)HitTypeEnum.Fuzzy);
+
+        // explicitly disable fuzzy logic if ALL of the settings are not fully configured, e.g. frontend database folder not setup
+        if (!Model.SettingsManager.IsValid)
+        {
+            Settings.Feeder.SelectedMatchCriteriaOptions.Clear();  // clear the settings to disable matching
+            FeatureOptions.DisableFeatureType(MatchFuzzy);
+        }
 
         FeedFixOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.FixFeedOptions, Settings.Feeder.SelectedFeedFixOptions, _ => FixFeedOptionSelected());
 
-        _feedFixDuplicateTableOption = FeedFixOptionsView.SourceCollection.Cast<FeatureType>().First(x => x.Id == (int)FixFeedOptionEnum.DuplicateTable);
+        _feedFixDuplicateTableOption = FeedFixOptionsView.First(x => x.Id == (int)FixFeedOptionEnum.DuplicateTable);
 
         UpdateIsValid();
     }
@@ -42,9 +50,9 @@ public class FeederViewModel : IShowViewModel
     public ICommand StartCommand { get; }
     public Models.Settings.Settings Settings { get; } = Model.Settings;
     
-    public ListCollectionView FeedFixOptionsView { get; }
+    public ListCollectionView<FeatureType> FeedFixOptionsView { get; }
 
-    public FeatureType MatchFuzzy { get; private set; }
+    public FeatureType MatchFuzzy { get; }
 
     public Window Show(Window parent)
     {
@@ -67,31 +75,6 @@ public class FeederViewModel : IShowViewModel
     }
 
     private void UpdateIsValid() => IsValid = true;
-
-    private void CreateMatchCriteriaTypes()
-    {
-        // show all match criteria types
-        // - only fuzzy is supported, but using a list for consistency with cleaner and merger
-        var featureTypes = StaticSettings.MatchTypes
-            .Where(x => x.Enum.In(HitTypeEnum.Fuzzy))
-            .Select(matchType => FeatureOptions.CreateFeatureType(matchType, Settings.Feeder.SelectedMatchCriteriaOptions.Contains(matchType.Enum))).ToList();
-
-        // create separate property for each so they can be referenced individually in the UI
-        MatchFuzzy = featureTypes.First(x => x.Id == (int)HitTypeEnum.Fuzzy);
-        MatchFuzzy.SelectedCommand = new ActionCommand(() => Settings.Feeder.SelectedMatchCriteriaOptions.Toggle(HitTypeEnum.Fuzzy));
-
-        // explicitly disable fuzzy logic if ALL of the settings are not fully configured, e.g. frontend database folder not setup
-        if (!Model.SettingsManager.IsValid)
-        {
-            // clear the settings to disable matching
-            Settings.Feeder.SelectedMatchCriteriaOptions.Clear();
-
-            // disable the UI so it can't be selected
-            MatchFuzzy.IsActive = false;
-            MatchFuzzy.IsSupported = false;
-            MatchFuzzy.Tip += Model.OptionsDisabledMessage;
-        }
-    }
 
     private void FixFeedOptionSelected()
     {
