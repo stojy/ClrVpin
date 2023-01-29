@@ -29,11 +29,10 @@ public class CleanerViewModel : IShowViewModel
     public CleanerViewModel()
     {
         StartCommand = new ActionCommand(Start);
-        CheckPinballContentTypesView = new ListCollectionView(CreateCheckContentTypes(Settings.GetPinballContentTypes()).ToList());
 
-        //CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
-        //    Settings.GetPinballContentTypes().Select(x => x.Enum), Settings.Cleaner.SelectedCheckContentTypes, () => UpdateIsValid());
-        
+        CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
+            Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, UpdateIsValid, true);
+
         CheckMediaContentTypesView = new ListCollectionView(CreateCheckContentTypes(Settings.GetMediaContentTypes()).ToList());
 
         CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
@@ -102,7 +101,7 @@ public class CleanerViewModel : IShowViewModel
             return featureType;
         }).ToList();
 
-        return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
+        return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) });
     }
 
     private IEnumerable<FeatureType> CreateCheckHitTypes()
@@ -138,7 +137,7 @@ public class CleanerViewModel : IShowViewModel
             return featureType;
         }).ToList();
 
-        return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
+        return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) });
     }
 
     private IEnumerable<FeatureType> CreateFixHitTypes()
@@ -157,7 +156,7 @@ public class CleanerViewModel : IShowViewModel
             HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
         }).ToList();
 
-        return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
+        return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) });
     }
 
     private IEnumerable<FeatureType> CreateMultipleMatchOptionTypes()

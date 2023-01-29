@@ -41,13 +41,13 @@ public static class FeatureOptions
         return new ListCollectionView<FeatureType>(featureTypes);
     }
 
-    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, 
-        ObservableCollection<string> selections, Action changedAction) where T : Enum
+    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<string> selections,
+        Action changedAction, bool includeSelectAll) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
         var featureTypes = enumOptions.Select(option =>
         {
-            var featureType = new FeatureType(Convert.ToInt32(option.Description))
+            var featureType = new FeatureType(Convert.ToInt32(option.Enum))
             {
                 Description = option.Description,
                 Tip = option.Tip,
@@ -63,8 +63,45 @@ public static class FeatureOptions
             return featureType;
         }).ToList();
 
-        //return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
+        if (includeSelectAll)
+            featureTypes.Add(CreateSelectAll(featureTypes));
 
         return new ListCollectionView<FeatureType>(featureTypes);
+    }
+
+    public static FeatureType CreateSelectAll(List<FeatureType> featureTypes)
+    {
+        // a generic select/clear all feature type
+        var selectAll = new FeatureType(-1)
+        {
+            Description = "Select/Clear All",
+            Tip = "Select or clear all criteria/options",
+            IsSupported = true,
+            IsActive = featureTypes.All(x => x.IsActive),
+            IsSpecial = true
+        };
+
+        selectAll.SelectedCommand = new ActionCommand(() =>
+        {
+            // select/clear every sibling feature type
+            featureTypes.ForEach(featureType =>
+            {
+                // don't set state if it's not supported
+                if (!featureType.IsSupported)
+                    return;
+
+                // update is active state before invoking command
+                // - required in this order because this is how it would normally be seen if the underlying feature was changed via the UI
+                var wasActive = featureType.IsActive;
+                featureType.IsActive = selectAll.IsActive;
+
+                // invoke action by only toggling on/off if not already in the on/off state
+                // - to ensure the underlying model is updated
+                if (selectAll.IsActive && !wasActive || !selectAll.IsActive && wasActive)
+                    featureType.SelectedCommand.Execute(null);
+            });
+        });
+
+        return selectAll;
     }
 }

@@ -159,7 +159,7 @@ public class MergerViewModel : IShowViewModel
         MatchFuzzy = featureTypes.First(x => x.Id == (int)HitTypeEnum.Fuzzy);
 
         // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
-        MatchSelectClearAllFeature = FeatureType.CreateSelectAll(featureTypes);
+        MatchSelectClearAllFeature = FeatureOptions.CreateSelectAll(featureTypes);
     }
 
     private void CreateIgnoreCriteria()
@@ -188,7 +188,7 @@ public class MergerViewModel : IShowViewModel
         DeleteIgnoredFilesOptionFeature = CreateDeleteIgnoredFilesOption();
         featureTypes.Add(DeleteIgnoredFilesOptionFeature);
 
-        IgnoreSelectClearAllFeature = FeatureType.CreateSelectAll(featureTypes);
+        IgnoreSelectClearAllFeature = FeatureOptions.CreateSelectAll(featureTypes);
     }
 
     private IEnumerable<FeatureType> CreateMergeOptions()
@@ -208,7 +208,7 @@ public class MergerViewModel : IShowViewModel
             return featureType;
         }).ToList();
 
-        return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) });
+        return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) });
     }
 
     private async void Start()
