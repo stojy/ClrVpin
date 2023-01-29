@@ -13,6 +13,21 @@ namespace ClrVpin.Shared.FeatureType;
 
 public static class FeatureOptions
 {
+    public static FeatureType CreateFeatureType<T>(EnumOption<T> option, bool isActive, bool isHighlightedOverride = false) where T : Enum
+    {
+        return new FeatureType(Convert.ToInt32(option.Enum))
+        {
+            Description = option.Description,
+            Tip = option.Tip,
+            IsSupported = true,
+            IsHighlighted = option.IsHighlighted || isHighlightedOverride,
+            IsActive = isActive,
+                
+            IsHelpSupported = option.HelpUrl != null,
+            HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true })),
+        };
+    }
+
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionView<T>(IEnumerable<EnumOption<T>> enumOptions, T highlightedOption, 
         Expression<Func<T>> selection, Action changedAction) where T : Enum
     {
@@ -21,24 +36,12 @@ public static class FeatureOptions
         // create options with a single selection, e.g. style.. radio button, choice chip, etc
         var featureTypes = enumOptions.Select(option =>
         {
-            var featureType = new FeatureType(Convert.ToInt32(option.Enum))
+            var featureType = CreateFeatureType(option, option.Enum.IsEqual(memberAccessor.Get()), option.Enum.IsEqual(highlightedOption));
+            featureType.SelectedCommand = new ActionCommand(() =>
             {
-                Tag = typeof(T).Name,
-                Description = option.Description,
-                Tip = option.Tip,
-                IsSupported = true,
-                IsHighlighted = option.IsHighlighted || option.Enum.IsEqual(highlightedOption),
-                IsActive = option.Enum.IsEqual(memberAccessor.Get()),
-
-                IsHelpSupported = option.HelpUrl != null,
-                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true })),
-                
-                SelectedCommand = new ActionCommand(() =>
-                {
-                    memberAccessor.Set(option.Enum);
-                    changedAction.Invoke();
-                })
-            };
+                memberAccessor.Set(option.Enum);
+                changedAction.Invoke();
+            });
 
             return featureType;
         }).ToList();
@@ -46,24 +49,14 @@ public static class FeatureOptions
         return new ListCollectionView<FeatureType>(featureTypes);
     }
 
+    // todo; refactor with the selection string and enum implementations
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<string> selections,
         Action<FeatureType> changedAction = null, bool includeSelectAll = true) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
         var featureTypes = enumOptions.Select(option =>
         {
-            var featureType = new FeatureType(Convert.ToInt32(option.Enum))
-            {
-                Description = option.Description,
-                Tip = option.Tip,
-                IsSupported = true,
-                IsHighlighted = option.IsHighlighted,
-                IsActive = selections.Contains(option.Description),
-                
-                IsHelpSupported = option.HelpUrl != null,
-                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true })),
-            };
-
+            var featureType = CreateFeatureType(option, selections.Contains(option.Description));
             featureType.SelectedCommand = new ActionCommand(() =>
             {
                 selections.Toggle(option.Description);
@@ -78,26 +71,14 @@ public static class FeatureOptions
 
         return new ListCollectionView<FeatureType>(featureTypes);
     }
-    
-    // todo; refactor with the selection string implementation
+
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<T> selections,
         Action<FeatureType> changedAction = null, bool includeSelectAll = true) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
         var featureTypes = enumOptions.Select(option =>
         {
-            var featureType = new FeatureType(Convert.ToInt32(option.Enum))
-            {
-                Description = option.Description,
-                Tip = option.Tip,
-                IsSupported = true,
-                IsHighlighted = option.IsHighlighted,
-                IsActive = selections.Contains(option.Enum),
-                
-                IsHelpSupported = option.HelpUrl != null,
-                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true })),
-            };
-
+            var featureType = CreateFeatureType(option, selections.Contains(option.Enum));
             featureType.SelectedCommand = new ActionCommand(() =>
             {
                 selections.Toggle(option.Enum);
