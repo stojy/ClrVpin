@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Extensions;
@@ -36,12 +35,11 @@ public class CleanerViewModel : IShowViewModel
         FixHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedFixHitTypes);
 
         // special handling for the fix hit types as they're functionality is coupled wit the criteria hit types, e.g. fix is disabled when check options are not selected
-        var fixHitFeatureTypes = FixHitTypesView.SourceCollection.Cast<FeatureType>();
-        fixHitFeatureTypes.ForEach(fixHitFeatureType =>
+        FixHitTypesView.ForEach(fixHitFeatureType =>
         {
             var hitTypeEnum = (HitTypeEnum)fixHitFeatureType.Id;
             fixHitFeatureType.IsNeverSupported = hitTypeEnum == HitTypeEnum.Missing;
-            fixHitFeatureType.IsSupported = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitTypeEnum) && hitTypeEnum != HitTypeEnum.Missing;
+            fixHitFeatureType.IsSupported = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitTypeEnum) && hitTypeEnum != HitTypeEnum.Missing || fixHitFeatureType.Id == FeatureOptions.SelectAllId;
             fixHitFeatureType.IsActive = Settings.Cleaner.SelectedFixHitTypes.Contains(hitTypeEnum) && hitTypeEnum != HitTypeEnum.Missing;
         });
 
@@ -55,11 +53,11 @@ public class CleanerViewModel : IShowViewModel
 
     public bool IsValid { get; set; }
 
-    public ListCollectionView CheckMediaContentTypesView { get; }
-    public ListCollectionView CheckPinballContentTypesView { get; }
-    public ListCollectionView CheckHitTypesView { get; }
-    public ListCollectionView FixHitTypesView { get; }
-    public ListCollectionView MultipleMatchOptionsView { get; }
+    public ListCollectionView<FeatureType> CheckMediaContentTypesView { get; }
+    public ListCollectionView<FeatureType> CheckPinballContentTypesView { get; }
+    public ListCollectionView<FeatureType> CheckHitTypesView { get; }
+    public ListCollectionView<FeatureType> FixHitTypesView { get; }
+    public ListCollectionView<FeatureType> MultipleMatchOptionsView { get; }
     public ICommand StartCommand { get; }
     public Models.Settings.Settings Settings { get; } = Model.Settings;
 
@@ -90,7 +88,7 @@ public class CleanerViewModel : IShowViewModel
     private void ToggleFixHitTypeState(FeatureType featureType)
     {
         // toggle the fix hit type checked & enabled
-        var fixHitType = FixHitTypesView.SourceCollection.Cast<FeatureType>().First(x => x.Description == featureType.Description);
+        var fixHitType = FixHitTypesView.First(x => x.Description == featureType.Description);
 
         fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
         if (featureType.IsActive == false)
