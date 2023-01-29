@@ -76,7 +76,6 @@ public sealed class FeederResultsViewModel
             // assign VPS Url (not a fix)
             onlineGame.VpsUrl = $@"https://virtual-pinball-spreadsheet.web.app/game/{onlineGame.Id}";
 
-
             // navigate to url
             onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
         });
