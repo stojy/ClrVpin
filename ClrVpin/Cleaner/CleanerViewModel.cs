@@ -40,7 +40,8 @@ public class CleanerViewModel : IShowViewModel
         FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
 
         //MultipleMatchOptionsView = new ListCollectionView(CreateMultipleMatchOptionTypes().ToList());
-        MultipleMatchOptionsView = new ListCollectionView(CreateMultipleMatchOptionTypes().ToList());
+        MultipleMatchOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(
+            StaticSettings.MultipleMatchOptions, MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold, () => Settings.Cleaner.SelectedMultipleMatchOption, UpdateExceedThresholdChecked);
 
         UpdateExceedThresholdChecked();
         UpdateIsValid();

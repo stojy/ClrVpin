@@ -1,9 +1,7 @@
-﻿using ClrVpin.Models.Shared;
+﻿using ClrVpin.Models.Feeder;
 
-namespace ClrVpin.Models.Cleaner
+namespace ClrVpin.Models.Cleaner;
+
+public class MultipleMatchOption : EnumOption<MultipleMatchOptionEnum>
 {
-    public class MultipleMatchOption : Option
-    {
-        public MultipleMatchOptionEnum Enum { get; set; }
-    }
 }
