@@ -16,6 +16,4 @@ public class HitType : EnumOption<HitTypeEnum>
     }
 
     public bool Fixable { get; }
-    public string HelpUrl { get; }
-    public bool IsHighlighted { get; }
 }

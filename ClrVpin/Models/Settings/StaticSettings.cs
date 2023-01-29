@@ -48,7 +48,7 @@ namespace ClrVpin.Models.Settings
             new(HitTypeEnum.TableName, true, "Files that match against the table name instead of the table description - ONLY APPLICABLE FOR MEDIA CONTENT, since tables ALWAYS match the table name"),
             new(HitTypeEnum.Fuzzy, true, "Various 'fuzzy logic' algorithms to determine a match (refer help page for more info)", true, "https://github.com/stojy/ClrVpin/wiki/Fuzzy-Logic"),
             new(HitTypeEnum.DuplicateExtension, true, "Files that match the correct name AND have a configured file extension, but multiple extension matches exist (e.g. mkv and mp4"),
-            new(HitTypeEnum.Missing, false, "Files that are missing, i.e. they need to be downloaded from your favorite pinball site(s)"),
+            new(HitTypeEnum.Missing, false, "Files that are missing that can be downloaded from your favorite pinball site(s) via the 'Feeder' feature from the home page"),
             new(HitTypeEnum.Unknown, false, "Files that do match the configured file extension type, but don't match any of the tables in the database"),
             new(HitTypeEnum.Unsupported, false,
                 "Files that don't match the configured file extension types - ONLY APPLICABLE FOR MEDIA CONTENT, since unsupported files are EXPECTED to exist in the tables folder (e.g. txt, exe, ogg, etc)")

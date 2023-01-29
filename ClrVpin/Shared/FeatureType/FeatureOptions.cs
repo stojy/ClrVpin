@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using ClrVpin.Controls;
@@ -26,8 +27,12 @@ public static class FeatureOptions
                 Description = option.Description,
                 Tip = option.Tip,
                 IsSupported = true,
-                IsHighlighted = option.Enum.IsEqual(highlightedOption),
+                IsHighlighted = option.IsHighlighted || option.Enum.IsEqual(highlightedOption),
                 IsActive = option.Enum.IsEqual(memberAccessor.Get()),
+
+                IsHelpSupported = option.HelpUrl != null,
+                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true })),
+                
                 SelectedCommand = new ActionCommand(() =>
                 {
                     memberAccessor.Set(option.Enum);
@@ -42,7 +47,7 @@ public static class FeatureOptions
     }
 
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<string> selections,
-        Action changedAction, bool includeSelectAll = true) where T : Enum
+        Action<FeatureType> changedAction, bool includeSelectAll = true) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
         var featureTypes = enumOptions.Select(option =>
@@ -52,16 +57,52 @@ public static class FeatureOptions
                 Description = option.Description,
                 Tip = option.Tip,
                 IsSupported = true,
+                IsHighlighted = option.IsHighlighted,
                 IsActive = selections.Contains(option.Description),
-                //IsHighlighted = hitType.IsHighlighted,
-                //IsHelpSupported = hitType.HelpUrl != null,
-                //HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
-                SelectedCommand = new ActionCommand(() =>
-                {
-                    selections.Toggle(option.Description);
-                    changedAction();
-                })
+                
+                IsHelpSupported = option.HelpUrl != null,
+                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true })),
             };
+
+            featureType.SelectedCommand = new ActionCommand(() =>
+            {
+                selections.Toggle(option.Description);
+                changedAction(featureType);
+            });
+
+            return featureType;
+        }).ToList();
+
+        if (includeSelectAll)
+            featureTypes.Add(CreateSelectAll(featureTypes));
+
+        return new ListCollectionView<FeatureType>(featureTypes);
+    }
+    
+    // todo; refactor with the selection string implementation
+    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<T> selections,
+        Action<FeatureType> changedAction, bool includeSelectAll = true) where T : Enum
+    {
+        // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
+        var featureTypes = enumOptions.Select(option =>
+        {
+            var featureType = new FeatureType(Convert.ToInt32(option.Enum))
+            {
+                Description = option.Description,
+                Tip = option.Tip,
+                IsSupported = true,
+                IsHighlighted = option.IsHighlighted,
+                IsActive = selections.Contains(option.Enum),
+                
+                IsHelpSupported = option.HelpUrl != null,
+                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true })),
+            };
+
+            featureType.SelectedCommand = new ActionCommand(() =>
+            {
+                selections.Toggle(option.Enum);
+                changedAction(featureType);
+            });
 
             return featureType;
         }).ToList();

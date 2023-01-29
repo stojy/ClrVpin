@@ -30,11 +30,11 @@ public class CleanerViewModel : IShowViewModel
     {
         StartCommand = new ActionCommand(Start);
 
-        CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, UpdateIsValid);
-        CheckMediaContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetMediaContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, UpdateIsValid);
+        CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, _ => UpdateIsValid());
+        CheckMediaContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetMediaContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, _ => UpdateIsValid());
 
-        CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
-    //    CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
+        //CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
+        CheckHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedCheckHitTypes, ToggleFixHitTypeState);
 
         _fixHitTypes = CreateFixHitTypes();
         FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
@@ -81,40 +81,16 @@ public class CleanerViewModel : IShowViewModel
 
     private void UpdateIsValid() => IsValid = Settings.Cleaner.SelectedCheckContentTypes.Any();
 
-    private IEnumerable<FeatureType> CreateCheckHitTypes()
+    private void ToggleFixHitTypeState(FeatureType featureType)
     {
-        // show all hit types
-        var featureTypes = StaticSettings.AllHitTypes.Select(hitType =>
+        // toggle the fix hit type checked & enabled
+        var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
+        fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
+        if (featureType.IsActive == false)
         {
-            var featureType = new FeatureType((int)hitType.Enum)
-            {
-                Description = hitType.Description,
-                Tip = hitType.Tip,
-                IsSupported = true,
-                IsActive = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitType.Enum),
-                IsHighlighted = hitType.IsHighlighted,
-                IsHelpSupported = hitType.HelpUrl != null,
-                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
-            };
-
-            featureType.SelectedCommand = new ActionCommand(() =>
-            {
-                Settings.Cleaner.SelectedCheckHitTypes.Toggle(hitType.Enum);
-
-                // toggle the fix hit type checked & enabled
-                var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
-                fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
-                if (featureType.IsActive == false)
-                {
-                    fixHitType.IsActive = false;
-                    Settings.Cleaner.SelectedFixHitTypes.Remove(hitType.Enum);
-                }
-            });
-
-            return featureType;
-        }).ToList();
-
-        return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) });
+            fixHitType.IsActive = false;
+            Settings.Cleaner.SelectedFixHitTypes.Remove((HitTypeEnum)featureType.Id);
+        }
     }
 
     private IEnumerable<FeatureType> CreateFixHitTypes()
