@@ -10,7 +10,6 @@ using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
 using PropertyChanged;
-using Utils;
 using Utils.Extensions;
 
 namespace ClrVpin.Merger
@@ -49,31 +48,27 @@ namespace ClrVpin.Merger
         protected override ListCollectionView<FeatureType> CreateAllContentFeatureTypesView()
         {
             var featureView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetFixableContentTypes(), 
-                new ObservableCollection<string> {Settings.GetSelectedDestinationContentType().Description}, _ => UpdateHitsView());
+                new ObservableCollection<string> {Settings.GetSelectedDestinationContentType().Description}, _ => UpdateHitsView(), false);
 
             // merger content types is a 'special egg'.. unlike cleaner, the list is readonly
             featureView.ForEach(featureType => featureType.IsSupported = false);
-            
-            var destinationFeatureType = featureView.First(x => x.Id == (int)Settings.GetSelectedDestinationContentType().Enum);
-            destinationFeatureType.IsSupported = false;
-            destinationFeatureType.IsActive = true;
+            featureView.First(x => x.Id == (int)Settings.GetSelectedDestinationContentType().Enum).IsActive = true;
 
             return featureView;
         }
 
-        protected override IList<FeatureType> CreateAllHitFeatureTypes()
+        protected override ListCollectionView<FeatureType> CreateAllHitFeatureTypesView()
         {
             // show all hit types, but assign enabled and active based on the merger configuration
             // - valid hits are also visible, enabled by default since these files are copied across without any file name fixing
-            var featureTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
+            var hitFeaturesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Merger.SelectedMatchTypes.Clone(), _ => UpdateHitsView());
+            hitFeaturesView.ForEach(hitFeature =>
             {
-                Description = hitType.Description,
-                IsSupported = Settings.Merger.SelectedMatchTypes.Contains(hitType.Enum) || hitType.Enum == HitTypeEnum.CorrectName,
-                IsActive = Settings.Merger.SelectedMatchTypes.Contains(hitType.Enum),
-                SelectedCommand = new ActionCommand(UpdateHitsView)
-            }).ToList();
-
-            return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) }).ToList();
+                hitFeature.IsSupported = Settings.Merger.SelectedMatchTypes.Contains((HitTypeEnum)hitFeature.Id) ||
+                                         (HitTypeEnum)hitFeature.Id == HitTypeEnum.CorrectName ||
+                                         hitFeature.Id == FeatureOptions.SelectAllId;
+            });
+            return hitFeaturesView;
         }
 
         private async Task ShowSummary()
