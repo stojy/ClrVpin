@@ -17,6 +17,7 @@ public static class FeatureOptions
     {
         return new FeatureType(Convert.ToInt32(option.Enum))
         {
+            Tag = nameof(T),
             Description = option.Description,
             Tip = option.Tip,
             IsSupported = true,
