@@ -136,25 +136,6 @@ public class CleanerViewModel : IShowViewModel
         return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) });
     }
 
-    private IEnumerable<FeatureType> CreateMultipleMatchOptionTypes()
-    {
-        // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
-        var contentTypes = StaticSettings.MultipleMatchOptions.Select(hitType => new FeatureType((int)hitType.Enum)
-        {
-            Description = hitType.Description,
-            Tip = hitType.Tip,
-            IsSupported = true,
-            IsActive = Settings.Cleaner.SelectedMultipleMatchOption == hitType.Enum,
-            SelectedCommand = new ActionCommand(() =>
-            {
-                Settings.Cleaner.SelectedMultipleMatchOption = hitType.Enum;
-                UpdateExceedThresholdChecked();
-            })
-        });
-
-        return contentTypes.ToList();
-    }
-
     private void UpdateExceedThresholdChecked()
     {
         ExceedSizeThresholdSelected = Settings.Cleaner.SelectedMultipleMatchOption == MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold;
