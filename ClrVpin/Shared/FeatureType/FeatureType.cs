@@ -15,7 +15,7 @@ public class FeatureType
     public string Description { get; init; }
     public string Tip { get; set; }
     public bool IsSupported { get; set; }
-    public bool IsNeverSupported { get; init; }
+    public bool IsNeverSupported { get; set; }
     public bool IsActive { get; set; }
     public ICommand SelectedCommand { get; set; }
     public bool IsHighlighted { get; init; }
