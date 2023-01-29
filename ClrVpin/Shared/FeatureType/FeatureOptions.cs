@@ -47,7 +47,7 @@ public static class FeatureOptions
     }
 
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<string> selections,
-        Action<FeatureType> changedAction, bool includeSelectAll = true) where T : Enum
+        Action<FeatureType> changedAction = null, bool includeSelectAll = true) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
         var featureTypes = enumOptions.Select(option =>
@@ -67,7 +67,7 @@ public static class FeatureOptions
             featureType.SelectedCommand = new ActionCommand(() =>
             {
                 selections.Toggle(option.Description);
-                changedAction(featureType);
+                changedAction?.Invoke(featureType);
             });
 
             return featureType;
@@ -81,7 +81,7 @@ public static class FeatureOptions
     
     // todo; refactor with the selection string implementation
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<T> selections,
-        Action<FeatureType> changedAction, bool includeSelectAll = true) where T : Enum
+        Action<FeatureType> changedAction = null, bool includeSelectAll = true) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
         var featureTypes = enumOptions.Select(option =>
@@ -101,7 +101,7 @@ public static class FeatureOptions
             featureType.SelectedCommand = new ActionCommand(() =>
             {
                 selections.Toggle(option.Enum);
-                changedAction(featureType);
+                changedAction?.Invoke(featureType);
             });
 
             return featureType;

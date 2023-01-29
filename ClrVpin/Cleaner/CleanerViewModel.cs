@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -33,11 +32,18 @@ public class CleanerViewModel : IShowViewModel
         CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, _ => UpdateIsValid());
         CheckMediaContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetMediaContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, _ => UpdateIsValid());
 
-        //CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
         CheckHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedCheckHitTypes, ToggleFixHitTypeState);
+        FixHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedFixHitTypes);
 
-        _fixHitTypes = CreateFixHitTypes();
-        FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
+        // special handling for the fix hit types as they're functionality is coupled wit the criteria hit types, e.g. fix is disabled when check options are not selected
+        var fixHitFeatureTypes = FixHitTypesView.SourceCollection.Cast<FeatureType>();
+        fixHitFeatureTypes.ForEach(fixHitFeatureType =>
+        {
+            var hitTypeEnum = (HitTypeEnum)fixHitFeatureType.Id;
+            fixHitFeatureType.IsNeverSupported = hitTypeEnum == HitTypeEnum.Missing;
+            fixHitFeatureType.IsSupported = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitTypeEnum) && hitTypeEnum != HitTypeEnum.Missing;
+            fixHitFeatureType.IsActive = Settings.Cleaner.SelectedFixHitTypes.Contains(hitTypeEnum) && hitTypeEnum != HitTypeEnum.Missing;
+        });
 
         //MultipleMatchOptionsView = new ListCollectionView(CreateMultipleMatchOptionTypes().ToList());
         MultipleMatchOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(
@@ -84,32 +90,14 @@ public class CleanerViewModel : IShowViewModel
     private void ToggleFixHitTypeState(FeatureType featureType)
     {
         // toggle the fix hit type checked & enabled
-        var fixHitType = _fixHitTypes.First(x => x.Description == featureType.Description);
+        var fixHitType = FixHitTypesView.SourceCollection.Cast<FeatureType>().First(x => x.Description == featureType.Description);
+
         fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
         if (featureType.IsActive == false)
         {
             fixHitType.IsActive = false;
             Settings.Cleaner.SelectedFixHitTypes.Remove((HitTypeEnum)featureType.Id);
         }
-    }
-
-    private IEnumerable<FeatureType> CreateFixHitTypes()
-    {
-        // show all hit types, but allow them to be enabled and selected indirectly via the check hit type
-        var featureTypes = StaticSettings.AllHitTypes.Select(hitType => new FeatureType((int)hitType.Enum)
-        {
-            Description = hitType.Description,
-            Tip = hitType.Tip,
-            IsNeverSupported = hitType.Enum == HitTypeEnum.Missing,
-            IsSupported = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
-            IsActive = Settings.Cleaner.SelectedFixHitTypes.Contains(hitType.Enum) && hitType.Enum != HitTypeEnum.Missing,
-            SelectedCommand = new ActionCommand(() => Settings.Cleaner.SelectedFixHitTypes.Toggle(hitType.Enum)),
-            IsHighlighted = hitType.IsHighlighted,
-            IsHelpSupported = hitType.HelpUrl != null,
-            HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
-        }).ToList();
-
-        return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) });
     }
 
     private void UpdateExceedThresholdChecked()
@@ -201,8 +189,6 @@ public class CleanerViewModel : IShowViewModel
 
         await displayTask;
     }
-
-    private readonly IEnumerable<FeatureType> _fixHitTypes;
 
     private ObservableCollection<LocalGame> _games;
     private MaterialWindowEx _window;
