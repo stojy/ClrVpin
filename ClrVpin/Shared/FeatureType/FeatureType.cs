@@ -24,42 +24,6 @@ public class FeatureType
     public bool IsHighlighted { get; init; }
     public bool IsHelpSupported { get; set; }
     public ICommand HelpAction { get; init; }
-    public bool IsSpecial { get; private init; }
+    public bool IsSpecial { get; set; }
     public string Tag { get; init; } // arbitrary tagging value, e.g. to be used to identify a type uniquely for RadioButton.GroupName
-
-    public static FeatureType CreateSelectAll(List<FeatureType> featureTypes)
-    {
-        // a generic select/clear all feature type
-        var selectAll = new FeatureType(-1)
-        {
-            Description = "Select/Clear All",
-            Tip = "Select or clear all criteria/options",
-            IsSupported = true,
-            IsActive = featureTypes.All(x => x.IsActive),
-            IsSpecial = true
-        };
-
-        selectAll.SelectedCommand = new ActionCommand(() =>
-        {
-            // select/clear every sibling feature type
-            featureTypes.ForEach(featureType =>
-            {
-                // don't set state if it's not supported
-                if (!featureType.IsSupported)
-                    return;
-
-                // update is active state before invoking command
-                // - required in this order because this is how it would normally be seen if the underlying feature was changed via the UI
-                var wasActive = featureType.IsActive;
-                featureType.IsActive = selectAll.IsActive;
-
-                // invoke action by only toggling on/off if not already in the on/off state
-                // - to ensure the underlying model is updated
-                if (selectAll.IsActive && !wasActive || !selectAll.IsActive && wasActive)
-                    featureType.SelectedCommand.Execute(null);
-            });
-        });
-
-        return selectAll;
-    }
 }

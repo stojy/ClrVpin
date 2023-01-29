@@ -122,7 +122,7 @@ public class FeederViewModel : IShowViewModel
 
         _feedFixDuplicateTableOption = feedFixOptions.First(x => x.Id == (int)FixFeedOptionEnum.DuplicateTable);
 
-        return feedFixOptions.Concat(new[] { FeatureType.CreateSelectAll(feedFixOptions) });
+        return feedFixOptions.Concat(new[] { FeatureOptions.CreateSelectAll(feedFixOptions) });
     }
 
     private void FixFeedOptionSelected(FixFeedOptionEnum fixFeedOption)

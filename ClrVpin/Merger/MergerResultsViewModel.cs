@@ -58,7 +58,7 @@ namespace ClrVpin.Merger
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             }).ToList();
 
-            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) }).ToList();
+            return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) }).ToList();
         }
 
         protected override IList<FeatureType> CreateAllHitFeatureTypes()
@@ -73,7 +73,7 @@ namespace ClrVpin.Merger
                 SelectedCommand = new ActionCommand(UpdateHitsView)
             }).ToList();
 
-            return featureTypes.Concat(new[] { FeatureType.CreateSelectAll(featureTypes) }).ToList();
+            return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) }).ToList();
         }
 
         private async Task ShowSummary()
