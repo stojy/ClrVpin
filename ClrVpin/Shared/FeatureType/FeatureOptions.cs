@@ -13,6 +13,8 @@ namespace ClrVpin.Shared.FeatureType;
 
 public static class FeatureOptions
 {
+    public const int SelectAllId = -1;
+
     public static FeatureType CreateFeatureType<T>(EnumOption<T> option, bool isActive, bool isHighlightedOverride = false) where T : Enum
     {
         return new FeatureType(Convert.ToInt32(option.Enum))
@@ -98,7 +100,7 @@ public static class FeatureOptions
     public static FeatureType CreateSelectAll(List<FeatureType> featureTypes)
     {
         // a generic select/clear all feature type
-        var selectAll = new FeatureType(-1)
+        var selectAll = new FeatureType(SelectAllId)
         {
             Description = "Select/Clear All",
             Tip = "Select or clear all criteria/options",
