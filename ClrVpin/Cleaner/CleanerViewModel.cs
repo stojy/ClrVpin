@@ -30,6 +30,10 @@ public class CleanerViewModel : IShowViewModel
     {
         StartCommand = new ActionCommand(Start);
         CheckPinballContentTypesView = new ListCollectionView(CreateCheckContentTypes(Settings.GetPinballContentTypes()).ToList());
+
+        //CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
+        //    Settings.GetPinballContentTypes().Select(x => x.Enum), Settings.Cleaner.SelectedCheckContentTypes, () => UpdateIsValid());
+        
         CheckMediaContentTypesView = new ListCollectionView(CreateCheckContentTypes(Settings.GetMediaContentTypes()).ToList());
 
         CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
