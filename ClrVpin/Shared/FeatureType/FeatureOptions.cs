@@ -42,7 +42,7 @@ public static class FeatureOptions
     }
 
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<string> selections,
-        Action changedAction, bool includeSelectAll) where T : Enum
+        Action changedAction, bool includeSelectAll = true) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
         var featureTypes = enumOptions.Select(option =>
@@ -53,6 +53,9 @@ public static class FeatureOptions
                 Tip = option.Tip,
                 IsSupported = true,
                 IsActive = selections.Contains(option.Description),
+                //IsHighlighted = hitType.IsHighlighted,
+                //IsHelpSupported = hitType.HelpUrl != null,
+                //HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(hitType.HelpUrl) { UseShellExecute = true }))
                 SelectedCommand = new ActionCommand(() =>
                 {
                     selections.Toggle(option.Description);

@@ -30,16 +30,16 @@ public class CleanerViewModel : IShowViewModel
     {
         StartCommand = new ActionCommand(Start);
 
-        CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
-            Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, UpdateIsValid, true);
-
-        CheckMediaContentTypesView = new ListCollectionView(CreateCheckContentTypes(Settings.GetMediaContentTypes()).ToList());
+        CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, UpdateIsValid);
+        CheckMediaContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetMediaContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, UpdateIsValid);
 
         CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
+    //    CheckHitTypesView = new ListCollectionView(CreateCheckHitTypes().ToList());
 
         _fixHitTypes = CreateFixHitTypes();
         FixHitTypesView = new ListCollectionView(_fixHitTypes.ToList());
 
+        //MultipleMatchOptionsView = new ListCollectionView(CreateMultipleMatchOptionTypes().ToList());
         MultipleMatchOptionsView = new ListCollectionView(CreateMultipleMatchOptionTypes().ToList());
 
         UpdateExceedThresholdChecked();
@@ -79,30 +79,6 @@ public class CleanerViewModel : IShowViewModel
     }
 
     private void UpdateIsValid() => IsValid = Settings.Cleaner.SelectedCheckContentTypes.Any();
-
-    private IEnumerable<FeatureType> CreateCheckContentTypes(IEnumerable<ContentType> contentTypes)
-    {
-        // show all hit types
-        var featureTypes = contentTypes.Select(contentType =>
-        {
-            var featureType = new FeatureType((int)contentType.Enum)
-            {
-                Description = contentType.Description,
-                Tip = contentType.Tip,
-                IsSupported = true,
-                IsActive = Settings.Cleaner.SelectedCheckContentTypes.Contains(contentType.Description),
-                SelectedCommand = new ActionCommand(() =>
-                {
-                    Settings.Cleaner.SelectedCheckContentTypes.Toggle(contentType.Description);
-                    UpdateIsValid();
-                })
-            };
-
-            return featureType;
-        }).ToList();
-
-        return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) });
-    }
 
     private IEnumerable<FeatureType> CreateCheckHitTypes()
     {
