@@ -30,7 +30,9 @@ public class FeederViewModel : IShowViewModel
 
         CreateMatchCriteriaTypes();
 
-        FeedFixOptionsView = new ListCollectionView(CreateFeedFixOptions().ToList());
+        FeedFixOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.FixFeedOptions, Settings.Feeder.SelectedFeedFixOptions, _ => FixFeedOptionSelected());
+
+        _feedFixDuplicateTableOption = FeedFixOptionsView.SourceCollection.Cast<FeatureType>().First(x => x.Id == (int)FixFeedOptionEnum.DuplicateTable);
 
         UpdateIsValid();
     }
@@ -91,31 +93,8 @@ public class FeederViewModel : IShowViewModel
         }
     }
 
-    private IEnumerable<FeatureType> CreateFeedFixOptions()
+    private void FixFeedOptionSelected()
     {
-        // show all feed fix options
-        var feedFixOptions = StaticSettings.FixFeedOptions.Select(feedFix =>
-        {
-            var featureType = new FeatureType((int)feedFix.Enum)
-            {
-                Description = feedFix.Description,
-                Tip = feedFix.Tip,
-                IsSupported = true,
-                IsActive = Settings.Feeder.SelectedFeedFixOptions.Contains(feedFix.Enum),
-                SelectedCommand = new ActionCommand(() => FixFeedOptionSelected(feedFix.Enum))
-            };
-            return featureType;
-        }).ToList();
-
-        _feedFixDuplicateTableOption = feedFixOptions.First(x => x.Id == (int)FixFeedOptionEnum.DuplicateTable);
-
-        return feedFixOptions.Concat(new[] { FeatureOptions.CreateSelectAll(feedFixOptions) });
-    }
-
-    private void FixFeedOptionSelected(FixFeedOptionEnum fixFeedOption)
-    {
-        Settings.Feeder.SelectedFeedFixOptions.Toggle(fixFeedOption);
-
         // disable 'duplicate table' option if the prerequisite fix options aren't enabled
         if (!Settings.Feeder.SelectedFeedFixOptions.ContainsAll(
                 FixFeedOptionEnum.Whitespace,
@@ -224,6 +203,6 @@ public class FeederViewModel : IShowViewModel
 
     //private readonly IEnumerable<string> _destinationContentTypes;
     private MaterialWindowEx _window;
-    private FeatureType _feedFixDuplicateTableOption;
+    private readonly FeatureType _feedFixDuplicateTableOption;
     private const int WindowMargin = 0;
 }
