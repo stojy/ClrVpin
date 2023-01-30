@@ -13,8 +13,6 @@ namespace ClrVpin.Shared.FeatureType;
 
 public static class FeatureOptions
 {
-    public const int SelectAllId = -1;
-
     public static FeatureType CreateFeatureType<T>(EnumOption<T> option, bool isActive, bool isHighlightedOverride = false) where T : Enum
     {
         return new FeatureType(Convert.ToInt32(option.Enum))
@@ -25,13 +23,13 @@ public static class FeatureOptions
             IsSupported = true,
             IsHighlighted = option.IsHighlighted || isHighlightedOverride,
             IsActive = isActive,
-                
+
             IsHelpSupported = option.HelpUrl != null,
-            HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true })),
+            HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true }))
         };
     }
 
-    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionView<T>(IEnumerable<EnumOption<T>> enumOptions, T highlightedOption, 
+    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionView<T>(IEnumerable<EnumOption<T>> enumOptions, T highlightedOption,
         Expression<Func<T>> selection, Action changedAction) where T : Enum
     {
         var memberAccessor = new Accessor<T>(selection);
@@ -97,7 +95,15 @@ public static class FeatureOptions
         return new ListCollectionView<FeatureType>(featureTypes);
     }
 
-    public static FeatureType CreateSelectAll(List<FeatureType> featureTypes)
+    public static void DisableFeatureType(FeatureType featureType, string message = null)
+    {
+        // disable feature type so it can't be used, e.g. non-selectable
+        featureType.IsActive = false;
+        featureType.IsSupported = false;
+        featureType.Tip += message ?? Model.OptionsDisabledMessage;
+    }
+
+    private static FeatureType CreateSelectAll(List<FeatureType> featureTypes)
     {
         // a generic select/clear all feature type
         var selectAll = new FeatureType(SelectAllId)
@@ -125,7 +131,7 @@ public static class FeatureOptions
 
                 // invoke action by only toggling on/off if not already in the on/off state
                 // - to ensure the underlying model is updated
-                if (selectAll.IsActive && !wasActive || !selectAll.IsActive && wasActive)
+                if ((selectAll.IsActive && !wasActive) || (!selectAll.IsActive && wasActive))
                     featureType.SelectedCommand.Execute(null);
             });
         });
@@ -133,11 +139,5 @@ public static class FeatureOptions
         return selectAll;
     }
 
-    public static void DisableFeatureType(FeatureType featureType, string message = null)
-    {
-        // disable feature type so it can't be used, e.g. non-selectable
-        featureType.IsActive = false;
-        featureType.IsSupported = false;
-        featureType.Tip += message ?? Model.OptionsDisabledMessage;
-    }
+    public const int SelectAllId = -1;
 }
