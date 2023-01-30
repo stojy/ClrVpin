@@ -34,7 +34,7 @@ public class MergerViewModel : IShowViewModel
 
         CreateIgnoreCriteria();
 
-        MergeOptionsView = new ListCollectionView(CreateMergeOptions().ToList());
+        MergeOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.MergeOptions, Settings.Merger.SelectedMergeOptions);
 
         SourceFolderModel = new FolderTypeModel("Source", Settings.Merger.SourceFolder, folder =>
         {
@@ -100,20 +100,6 @@ public class MergerViewModel : IShowViewModel
         return _window;
     }
 
-    private FeatureType CreateDeleteIgnoredFilesOption()
-    {
-        var feature = new FeatureType(-1)
-        {
-            Description = StaticSettings.DeleteIgnoredFilesOption.Description,
-            Tip = StaticSettings.DeleteIgnoredFilesOption.Tip,
-            IsSupported = true,
-            IsActive = Settings.Merger.DeleteIgnoredFiles,
-            SelectedCommand = new ActionCommand(() => Settings.Merger.DeleteIgnoredFiles = !Settings.Merger.DeleteIgnoredFiles)
-        };
-
-        return feature;
-    }
-
     private void IgnoreWordsChanged()
     {
         Settings.Merger.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
@@ -161,26 +147,6 @@ public class MergerViewModel : IShowViewModel
         DeleteIgnoredFilesOptionFeature = FeatureOptions.CreateFeatureType(StaticSettings.DeleteIgnoredFilesOption, Settings.Merger.DeleteIgnoredFiles);
         DeleteIgnoredFilesOptionFeature.SelectedCommand = new ActionCommand(() => Settings.Merger.DeleteIgnoredFiles = !Settings.Merger.DeleteIgnoredFiles);
         ignoreFeatureTypesView.AddNewItem(DeleteIgnoredFilesOptionFeature);
-    }
-
-    private IEnumerable<FeatureType> CreateMergeOptions()
-    {
-        // show all merge options
-        var featureTypes = StaticSettings.MergeOptions.Select(mergeOption =>
-        {
-            var featureType = new FeatureType((int)mergeOption.Enum)
-            {
-                Description = mergeOption.Description,
-                Tip = mergeOption.Tip,
-                IsSupported = true,
-                IsActive = Settings.Merger.SelectedMergeOptions.Contains(mergeOption.Enum),
-                SelectedCommand = new ActionCommand(() => Settings.Merger.SelectedMergeOptions.Toggle(mergeOption.Enum))
-            };
-
-            return featureType;
-        }).ToList();
-
-        return featureTypes.Concat(new[] { FeatureOptions.CreateSelectAll(featureTypes) });
     }
 
     private async void Start()
