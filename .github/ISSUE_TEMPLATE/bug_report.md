@@ -19,5 +19,5 @@ assignees: stojy
 **Screenshots**
 [If applicable, add screenshots to help explain your problem.]
 
-**Additional context**
-[Add any other context about the problem here.]
+**Stacktrace and/or Logs**
+[If applicable, add stack trace and/or the log file: %ProgramData%\ClrVpin\logs\ClrVpin.log]
