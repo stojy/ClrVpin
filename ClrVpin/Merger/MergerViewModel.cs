@@ -149,30 +149,18 @@ public class MergerViewModel : IShowViewModel
     private void CreateIgnoreCriteria()
     {
         // create ignore criteria
-        var featureTypes = StaticSettings.IgnoreCriteria.Select(criteria =>
-        {
-            var featureType = new FeatureType((int)criteria.Enum)
-            {
-                Description = criteria.Description,
-                Tip = criteria.Tip,
-                IsSupported = true,
-                IsActive = Settings.Merger.SelectedIgnoreCriteria.Contains(criteria.Enum),
-                SelectedCommand = new ActionCommand(() => Settings.Merger.SelectedIgnoreCriteria.Toggle(criteria.Enum))
-            };
-
-            return featureType;
-        }).ToList();
+        var ignoreFeatureTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.IgnoreCriteria, Settings.Merger.SelectedIgnoreCriteria);
 
         // create separate property for each so they can be referenced individually in the UI
-        IgnoreIfContainsWordsFeature = featureTypes.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfContainsWords);
-        IgnoreIfSmallerFeature = featureTypes.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfSmaller);
-        IgnoreIfNotNewerFeature = featureTypes.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfNotNewer);
+        IgnoreIfContainsWordsFeature = ignoreFeatureTypesView.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfContainsWords);
+        IgnoreIfSmallerFeature = ignoreFeatureTypesView.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfSmaller);
+        IgnoreIfNotNewerFeature = ignoreFeatureTypesView.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfNotNewer);
+        IgnoreSelectClearAllFeature = ignoreFeatureTypesView.First(x => x.Id == FeatureOptions.SelectAllId);
 
-        // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
-        DeleteIgnoredFilesOptionFeature = CreateDeleteIgnoredFilesOption();
-        featureTypes.Add(DeleteIgnoredFilesOptionFeature);
-
-        IgnoreSelectClearAllFeature = FeatureOptions.CreateSelectAll(featureTypes);
+        // delete ignored isn't technically an ignored option.. but added here to keep it visually consistent
+        DeleteIgnoredFilesOptionFeature = FeatureOptions.CreateFeatureType(StaticSettings.DeleteIgnoredFilesOption, Settings.Merger.DeleteIgnoredFiles);
+        DeleteIgnoredFilesOptionFeature.SelectedCommand = new ActionCommand(() => Settings.Merger.DeleteIgnoredFiles = !Settings.Merger.DeleteIgnoredFiles);
+        ignoreFeatureTypesView.AddNewItem(DeleteIgnoredFilesOptionFeature);
     }
 
     private IEnumerable<FeatureType> CreateMergeOptions()
