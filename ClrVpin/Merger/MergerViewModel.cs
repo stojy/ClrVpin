@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -135,31 +134,16 @@ public class MergerViewModel : IShowViewModel
     {
         // show all match criteria types
         // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
-        var featureTypes = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).Select(matchType =>
-        {
-            var featureType = new FeatureType((int)matchType.Enum)
-            {
-                Description = matchType.Description,
-                Tip = matchType.Tip,
-                IsSupported = true,
-                IsActive = Settings.Merger.SelectedMatchTypes.Contains(matchType.Enum),
-                SelectedCommand = new ActionCommand(() => Settings.Merger.SelectedMatchTypes.Toggle(matchType.Enum)),
-                IsHighlighted = matchType.IsHighlighted,
-                IsHelpSupported = matchType.HelpUrl != null,
-                HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(matchType.HelpUrl) { UseShellExecute = true }))
-            };
-
-            return featureType;
-        }).ToList();
+        var featureTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
+            StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)),
+            Settings.Merger.SelectedMatchTypes);
 
         // create separate property for each so they can be referenced individually in the UI
-        MatchWrongCase = featureTypes.First(x => x.Id == (int)HitTypeEnum.WrongCase);
-        MatchTableName = featureTypes.First(x => x.Id == (int)HitTypeEnum.TableName);
-        MatchDuplicate = featureTypes.First(x => x.Id == (int)HitTypeEnum.DuplicateExtension);
-        MatchFuzzy = featureTypes.First(x => x.Id == (int)HitTypeEnum.Fuzzy);
-
-        // delete ignored isn't technically an ignored option.. but added here to keep it consistent visually
-        MatchSelectClearAllFeature = FeatureOptions.CreateSelectAll(featureTypes);
+        MatchWrongCase = featureTypesView.First(x => x.Id == (int)HitTypeEnum.WrongCase);
+        MatchTableName = featureTypesView.First(x => x.Id == (int)HitTypeEnum.TableName);
+        MatchDuplicate = featureTypesView.First(x => x.Id == (int)HitTypeEnum.DuplicateExtension);
+        MatchFuzzy = featureTypesView.First(x => x.Id == (int)HitTypeEnum.Fuzzy);
+        MatchSelectClearAllFeature = featureTypesView.First(x => x.Id == FeatureOptions.SelectAllId);
     }
 
     private void CreateIgnoreCriteria()
