@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ClrVpin.Controls;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared.Game;
+using ClrVpin.Shared.FeatureType;
 using PropertyChanged;
-using Utils;
 
 namespace ClrVpin.Shared;
 
@@ -20,22 +20,22 @@ public class GameFiltersViewModel
         _gameCollections = gameCollections;
         _filterChanged = filterChanged;
 
-        PresetDateOptionsView = CreatePresetDateOptionsView(StaticSettings.PresetDateOptions);
+        PresetDateOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.PresetDateOptions, new ObservableCollection<PresetDateOptionEnum>(), PresetDateSelected, false);
         
         UpdateFilterViews();
     }
 
-    public ListCollectionView<string> TablesFilterView { get; set; }
-    public ListCollectionView<string> ManufacturersFilterView { get; set; }
-    public ListCollectionView<string> YearsBeginFilterView { get; set; }
-    public ListCollectionView<string> YearsEndFilterView { get; set; }
-    public ListCollectionView<string> TypesFilterView { get; set; }
-    public ListCollectionView<string> FormatsFilterView { get; set; }
+    public ListCollectionView<string> TablesFilterView { get; private set; }
+    public ListCollectionView<string> ManufacturersFilterView { get; private set; }
+    public ListCollectionView<string> YearsBeginFilterView { get; private set; }
+    public ListCollectionView<string> YearsEndFilterView { get; private set; }
+    public ListCollectionView<string> TypesFilterView { get; private set; }
+    public ListCollectionView<string> FormatsFilterView { get; private set; }
 
     public ListCollectionView<FeatureType.FeatureType> TableStyleOptionsView { get; set; }
-    public ListCollectionView<FeatureType.FeatureType> TableMatchOptionsView { get; set; }
-    public ListCollectionView<FeatureType.FeatureType> TableAvailabilityOptionsView { get; set; }
-    public ListCollectionView<FeatureType.FeatureType> TableNewContentOptionsView { get; set; }
+    public ListCollectionView<FeatureType.FeatureType> TableMatchOptionsView { get; init; }
+    public ListCollectionView<FeatureType.FeatureType> TableAvailabilityOptionsView { get; init; }
+    public ListCollectionView<FeatureType.FeatureType> TableNewContentOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
     
     public ListCollectionView<FeatureType.FeatureType> TableMissingOptionsView { get; set; }
@@ -99,40 +99,23 @@ public class GameFiltersViewModel
         return !_commonFilterSettings.IsDynamicFiltering || dynamicFilteringFunc();
     }
 
-    private ListCollectionView<FeatureType.FeatureType> CreatePresetDateOptionsView(IEnumerable<EnumOption<PresetDateOptionEnum>> enumOptions)
+    private void PresetDateSelected(FeatureType.FeatureType featureType)
     {
-        // all preset date options
-        var featureTypes = enumOptions.Select(option =>
+        // assign the updated at from begin date
+        var offset = (PresetDateOptionEnum) featureType.Id switch
         {
-            var featureType = new FeatureType.FeatureType(Convert.ToInt32(option.Enum))
-            {
-                Tag = nameof(PresetDateOptionEnum),
-                Description = option.Description,
-                Tip = option.Tip,
-                IsSupported = true,
-                SelectedCommand = new ActionCommand(() =>
-                {
-                    // assign the updated at from begin date
-                    var offset = option.Enum switch
-                    {
-                        PresetDateOptionEnum.Today => (0, 0),
-                        PresetDateOptionEnum.Yesterday => (1, 0),
-                        PresetDateOptionEnum.LastThreeDays => (3, 0),
-                        PresetDateOptionEnum.LastWeek => (7, 0),
-                        PresetDateOptionEnum.LastMonth => (0, 1),
-                        PresetDateOptionEnum.LastThreeMonths => (0, 3),
-                        PresetDateOptionEnum.LastYear => (0, 12),
-                        _ => (0, 0)
-                    };
-                    UpdatedAtDateBegin(DateTime.Today.AddDays(-offset.Item1).AddMonths(-offset.Item2));
+            PresetDateOptionEnum.Today => (0, 0),
+            PresetDateOptionEnum.Yesterday => (1, 0),
+            PresetDateOptionEnum.LastThreeDays => (3, 0),
+            PresetDateOptionEnum.LastWeek => (7, 0),
+            PresetDateOptionEnum.LastMonth => (0, 1),
+            PresetDateOptionEnum.LastThreeMonths => (0, 3),
+            PresetDateOptionEnum.LastYear => (0, 12),
+            _ => (0, 0)
+        };
+        UpdatedAtDateBegin(DateTime.Today.AddDays(-offset.Item1).AddMonths(-offset.Item2));
 
-                    _filterChanged();
-                })
-            };
-            return featureType;
-        }).ToList();
-
-        return new ListCollectionView<FeatureType.FeatureType>(featureTypes);
+        _filterChanged();
     }
 
     private void UpdatedAtDateBegin(DateTime startDate)
