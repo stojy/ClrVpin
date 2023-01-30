@@ -119,7 +119,7 @@
         </StackPanel>
       </GroupBox>
 
-      <TextBlock Style="{StaticResource TitleStyle}">Merger</TextBlock>
+      <TextBlock Style="{StaticResource TitleStyle}">Merge</TextBlock>
       <GroupBox Header="Options" Width="650">
         <ItemsControl ItemsSource="{Binding MergeOptionsView}" BorderThickness="5" HorizontalAlignment="Left">
           <ItemsControl.ItemTemplate>

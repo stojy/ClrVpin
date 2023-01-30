@@ -1,9 +1,7 @@
-﻿using ClrVpin.Models.Shared;
+﻿using ClrVpin.Models.Feeder;
 
-namespace ClrVpin.Models.Merger
+namespace ClrVpin.Models.Merger;
+
+public class MergeOption : EnumOption<MergeOptionEnum>
 {
-    public class MergeOption : Option
-    {
-        public MergeOptionEnum Enum { get; set; }
-    }
 }
