@@ -79,7 +79,7 @@ namespace ClrVpin
                 if (Current.MainWindow is MaterialWindowEx window)
                     window.TryShow();
 
-                Notification.ShowError("HomeDialog", title, subTitle, detail, true, true).ContinueWith(_ => SubmitBugAndExit());
+                Notification.ShowError("HomeDialog", title, subTitle, detail, true, true).ContinueWith(_ => SubmitBugAndExit(detail));
             }
             catch (Exception ex)
             {
@@ -94,9 +94,30 @@ namespace ClrVpin
             //}
         }
 
-        private static void SubmitBugAndExit()
+        private static void SubmitBugAndExit(string detail)
         {
-            Process.Start(new ProcessStartInfo(@"https://github.com/stojy/ClrVpin/issues/new?assignees=&labels=&template=bug_report.md&title=Unhandled Error - <add summary description here>") { UseShellExecute = true });
+            const string title = @"Unhandled Error - [add summary description here]";
+            var body = @$"**Describe the bug**
+[A description of what the bug is.]
+
+**To Reproduce**
+[Steps to reproduce the behavior.]
+
+**Expected behavior**
+[A description of what you expected to happen.]
+
+**Screenshots**
+[If applicable, add screenshots to help explain your problem.]
+
+**Logs**
+[If applicable, add stack trace and/or the log file: c:\ProgramData\ClrVpin\logs\ClrVpin.log]
+
+**Unhandled Error Details**
+{detail}";
+
+            var bodyHtml = body.Replace("\n", "<br />");
+            
+            Process.Start(new ProcessStartInfo($@"https://github.com/stojy/ClrVpin/issues/new?&template=bug_report.md&title={title}&body={bodyHtml}") { UseShellExecute = true });
 
             Environment.Exit(-1);
         }
