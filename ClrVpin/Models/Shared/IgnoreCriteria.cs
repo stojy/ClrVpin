@@ -1,7 +1,7 @@
-﻿namespace ClrVpin.Models.Shared
+﻿using ClrVpin.Models.Feeder;
+
+namespace ClrVpin.Models.Shared;
+
+public class IgnoreCriteria : EnumOption<IgnoreCriteriaEnum>
 {
-    public class IgnoreCriteria : Option
-    {
-        public IgnoreCriteriaEnum Enum { get; set; }
-    }
 }

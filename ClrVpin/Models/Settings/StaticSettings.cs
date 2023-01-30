@@ -25,6 +25,7 @@ namespace ClrVpin.Models.Settings
             IgnoreCriteria.ForEach(x => x.Description = x.Enum.GetDescription());
             MatchTypes = AllHitTypes.Where(x => x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.TableName, HitTypeEnum.WrongCase, HitTypeEnum.DuplicateExtension, HitTypeEnum.Fuzzy, HitTypeEnum.Unknown,
                 HitTypeEnum.Unsupported)).ToArray();
+            DeleteIgnoredFilesOption.Description = DeleteIgnoredFilesOption.Enum.GetDescription();
 
             // feeder
             TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -65,7 +66,8 @@ namespace ClrVpin.Models.Settings
             new() {Enum = IgnoreCriteriaEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"}
         };
 
-        public static readonly Option DeleteIgnoredFilesOption = new() {Tip = "When enabled, merger will delete the ignored files (if trainer wheels is not enabled).", Description = "Delete Ignored Files"};
+        public static readonly EnumOption<DeleteIgnoredFilesEnum> DeleteIgnoredFilesOption = 
+            new() {Enum = DeleteIgnoredFilesEnum.DeleteIgnoredFiles, Tip = "When enabled, merger will delete the ignored files (if trainer wheels is not enabled)."};
 
         // all possible file merge options - to be used elsewhere (merger)
         public static readonly MergeOption[] MergeOptions =
