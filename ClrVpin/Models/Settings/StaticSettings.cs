@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ClrVpin.Models.Cleaner;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Merger;
@@ -39,7 +40,10 @@ namespace ClrVpin.Models.Settings
         // hit types in priority order as determined by matching algorithm - refer MatchFilesToLocal
         public static HitTypeEnum[] FixablePrioritizedHitTypeEnums { get; }
 
-        //private static Settings Settings => Model.Settings;
+        public static readonly IEnumerable<ContentTypeEnum> ImportantContentTypes = new[]
+        {
+            ContentTypeEnum.Tables, ContentTypeEnum.Backglasses, ContentTypeEnum.WheelImages, ContentTypeEnum.TableVideos, ContentTypeEnum.BackglassVideos
+        };
 
         // cleaner matching hit types - to be used elsewhere (cleaner) to create check and fix collections
         public static readonly HitType[] AllHitTypes =
@@ -102,7 +106,7 @@ namespace ClrVpin.Models.Settings
 
         // all possible missing file options - to be used elsewhere (explorer)
         public static readonly EnumOption<ContentTypeEnum>[] ImportantFileOptions =
-            ContentTypeEnumExtensions.ImportantContentTypes.Select(contentType => new EnumOption<ContentTypeEnum> { Enum = contentType }).ToArray();
+            ImportantContentTypes.Select(contentType => new EnumOption<ContentTypeEnum> { Enum = contentType }).ToArray();
 
         // all possible table stale options - to be used elsewhere (explorer)
         public static readonly EnumOption<ContentTypeEnum>[] TableStaleOptions =
