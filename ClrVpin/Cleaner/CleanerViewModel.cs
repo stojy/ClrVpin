@@ -158,17 +158,15 @@ public class CleanerViewModel : IShowViewModel
 
         var width = Model.ScreenWorkArea.Width - statistics.Window.Width - WindowMargin;
         var results = new CleanerResultsViewModel(_games);
-        var displayTask = results.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top, width);
+        var resultsShowTask = results.Show(_window, statistics.Window.Left + statistics.Window.Width + WindowMargin, statistics.Window.Top, width);
 
-        var explorer = new CleanerExplorerViewModel(_games);
-        explorer.Show(_window, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin, width);
+        //explorer.Show(_window, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin, width);
 
         var logging = new LoggingViewModel();
-        logging.Show(_window, explorer.Window.Left, explorer.Window.Top + explorer.Window.Height + WindowMargin, width);
+        logging.Show(_window, results.Window.Left, results.Window.Top + results.Window.Height + WindowMargin, width);
 
         statistics.Window.Closed += CloseWindows();
         results.Window.Closed += CloseWindows();
-        explorer.Window.Closed += CloseWindows();
         logging.Window.Closed += CloseWindows();
 
         EventHandler CloseWindows()
@@ -177,14 +175,13 @@ public class CleanerViewModel : IShowViewModel
             {
                 statistics.Window.Close();
                 results.Close();
-                explorer.Close();
                 logging.Close();
 
                 _window.Close();
             };
         }
 
-        await displayTask;
+        await resultsShowTask;
     }
 
     private ObservableCollection<LocalGame> _games;
