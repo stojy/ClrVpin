@@ -172,7 +172,7 @@ public class ExplorerResultsViewModel
     {
         var validHits = GameItems.SelectMany(x => x.LocalGame.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
 
-        var statistics = ContentTypeEnumExtensions.ImportantContentTypes.Select(contentType => CreateStatistic(validHits, contentType)).ToList();
+        var statistics = StaticSettings.ImportantContentTypes.Select(contentType => CreateStatistic(validHits, contentType)).ToList();
 
         var isSuccess = statistics.Sum(statistic => statistic.missingCount) == 0;
         var statisticsDetail = statistics.Select(x => x.missingStatistic).StringJoin("\n");
