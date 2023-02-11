@@ -53,16 +53,16 @@
   </DataTemplate>
 
   <DataTemplate x:Key="SmellyTemplate" DataType="game:LocalGame">
-    <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Content.IsSmelly, Converter={StaticResource SmellyToIconConverter}}"
+    <materialDesign:PackIcon x:Name="Icon" Kind="{Binding Content.IsAnySmelly, Converter={StaticResource SmellyToIconConverter}}"
                              Height="40" Width="40" VerticalAlignment="Center" HorizontalAlignment="Center">
       <!-- just for giggles.. setting foreground by a style trigger instead of a converter.. it's rather large!-->
       <materialDesign:PackIcon.Style>
         <Style TargetType="materialDesign:PackIcon">
           <Style.Triggers>
-            <DataTrigger Binding="{Binding Content.IsSmelly}" Value="True">
+            <DataTrigger Binding="{Binding Content.IsAnySmelly}" Value="True">
               <Setter Property="Foreground" Value="{StaticResource AlertBrush}" />
             </DataTrigger>
-            <DataTrigger Binding="{Binding Content.IsSmelly}" Value="False">
+            <DataTrigger Binding="{Binding Content.IsAnySmelly}" Value="False">
               <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
             </DataTrigger>
           </Style.Triggers>

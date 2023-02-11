@@ -9,7 +9,7 @@
   <ResourceDictionary.MergedDictionaries>
     <!-- generated brush names (reference as DynamicResource, not StaticResource)
          = https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Getting-Started
-         - https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Brush-Name
+         - https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Brush-Names
          - e.g. PrimaryHueDarkBrush, PrimaryHueLightBrush, PrimaryHueMidBrush  = blue shades
                 SecondaryHueDarkBrush, SecondaryHueLightBrush, SecondaryHueMidBrush  = green shades
                 MaterialDesignPaper = light grey (background.. #FF303030)
@@ -25,11 +25,11 @@
   <!-- not using DynamicResource=PrimaryHueMidBrush because it's referenced via BoolToBrushConverter which doesn't support a dependency property -->
   <SolidColorBrush x:Key="PrimaryMidBrush" Color="#FF2196F3" />
   <!-- not using DynamicResource=SecondaryHueLightBrush because snoop (incorrectly??) identifies the color brush as freezable-->
-  <SolidColorBrush x:Key="AccentLightBrush" Color="#FF00C853" /> 
-  
+  <SolidColorBrush x:Key="AccentLightBrush" Color="#FF00C853" />
+
   <SolidColorBrush x:Key="AlertBrush" Color="Coral" />
   <SolidColorBrush x:Key="ErrorBrush" Color="Red" />
-  <SolidColorBrush x:Key="SeparatorBrush" Color="#848484"/>
+  <SolidColorBrush x:Key="SeparatorBrush" Color="#848484" />
 
   <!-- keyed window required by windows created in xaml.. i.e. App.xaml creates MainWindow.xaml -->
   <Style x:Key="MaterialWindowBaseStyle" TargetType="Window">
@@ -136,9 +136,9 @@
 
   <Style x:Key="DataGridColumnHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
     <Setter Property="FontSize" Value="12" />
-    <Setter Property="Margin" Value="0"/>
+    <Setter Property="Margin" Value="0" />
     <!--an explicit border thickness to accommodate DataGrid.GridLinesVisibility=None usage where the 'double grid line' can be removed (finally!) -->
-    <Setter Property="BorderThickness" Value="0,0,0,3"/>  
+    <Setter Property="BorderThickness" Value="0,0,0,3" />
     <!--<Setter Property="BorderBrush" Value="{StaticResource SeparatorBrush}"/>-->
     <!--<Setter Property="Background" Value="Black" />-->
   </Style>
@@ -160,7 +160,7 @@
 
   <Style x:Key="NoBorderDataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource AlignedDataGridCellStyle}">
     <!-- remove the border outline in the cell when selected, i.e. to give a more 'list box' feel -->
-    <Setter Property="Margin" Value="4,0,0,0"/>
+    <Setter Property="Margin" Value="4,0,0,0" />
     <Setter Property="FontSize" Value="16" />
 
     <!-- vertically align content without the 'double grid' lines anomaly by redefining the template.. https://stackoverflow.com/a/3995839/227110 
@@ -266,7 +266,7 @@
   </Style>
 
   <Style x:Key="KeyTextBlockAutoStyle" TargetType="TextBlock" BasedOn="{StaticResource KeyTextBlockStyleBase}">
-    <Setter Property="Margin" Value="0"/>
+    <Setter Property="Margin" Value="0" />
   </Style>
 
   <Style x:Key="ValueTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignSubtitle1TextBlock}">
@@ -293,11 +293,7 @@
   <!-- common rating bar styling.. golden stars -->
   <Style x:Key="RatingBarStyle" TargetType="materialDesign:RatingBar">
     <Style.Resources>
-      <ResourceDictionary>
-        <ResourceDictionary.MergedDictionaries>
-          <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="Gold" SecondaryColor="Lime" />
-        </ResourceDictionary.MergedDictionaries>
-      </ResourceDictionary>
+      <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="Gold" SecondaryColor="Lime" />
     </Style.Resources>
     <Setter Property="ValueItemTemplate">
       <Setter.Value>

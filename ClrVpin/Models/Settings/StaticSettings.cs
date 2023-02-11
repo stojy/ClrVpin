@@ -17,7 +17,7 @@ namespace ClrVpin.Models.Settings
 
             MultipleMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
-            TableMissingOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            ImportantFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableStaleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // merge
@@ -100,15 +100,9 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TableStyleOptionEnum.Both, Tip = "Manufactured AND original tables"}
         };
 
-        // all possible table missing options - to be used elsewhere (explorer)
-        public static readonly EnumOption<ContentTypeEnum>[] TableMissingOptions =
-        {
-            new() {Enum = ContentTypeEnum.Tables},
-            new() {Enum = ContentTypeEnum.Backglasses},
-            new() {Enum = ContentTypeEnum.WheelImages},
-            new() {Enum = ContentTypeEnum.TableVideos},
-            new() {Enum = ContentTypeEnum.BackglassVideos}
-        };
+        // all possible missing file options - to be used elsewhere (explorer)
+        public static readonly EnumOption<ContentTypeEnum>[] ImportantFileOptions =
+            ContentTypeEnumExtensions.ImportantContentTypes.Select(contentType => new EnumOption<ContentTypeEnum> { Enum = contentType }).ToArray();
 
         // all possible table stale options - to be used elsewhere (explorer)
         public static readonly EnumOption<ContentTypeEnum>[] TableStaleOptions =

@@ -82,22 +82,26 @@ public class ExplorerResultsViewModel
         {
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
-            Filter = gameItem => (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || gameItem.TableStyleOption == Settings.SelectedTableStyleOption) &&
-                                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
-                                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
-                                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
-                                 (Settings.SelectedUpdatedAtDateBegin == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
-                                 (Settings.SelectedUpdatedAtDateEnd == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
-                                 (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
-                                 (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
+            Filter = gameItem =>
+                (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || gameItem.TableStyleOption == Settings.SelectedTableStyleOption) &&
+                (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
+                (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
+                (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
+                (Settings.SelectedUpdatedAtDateBegin == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
+                (Settings.SelectedUpdatedAtDateEnd == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
+                (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
+                
+                // if no missing file options are selected then the filter is effectively ignored
+                (!Settings.SelectedMissingFileOptions.Any() || gameItem.LocalGame.Content.MissingImportantTypes.ContainsAny(Settings.SelectedMissingFileOptions)) &&
 
-                                 // min rating match if either.. null selected min rating is a "don't care", but also explicitly handles no rating (i.e. null rating)
-                                 // - game rating is null AND selected min rating is null
-                                 // - game rating >= selected min rating, treating null as zero
-                                 ((gameItem.Rating == null && Settings.SelectedMinRating == null) || gameItem.Rating >= (Settings.SelectedMinRating ?? 0)) &&
-                                 // max rating match if either.. null selected max rating is a "don't care", no special 'no rating' is required as this is done during the min check
-                                 // - game rating <= selected max rating, treating null as 5
-                                 (gameItem.Rating ?? 0) <= (Settings.SelectedMaxRating ?? 5)
+                // min rating match if either.. null selected min rating is a "don't care", but also explicitly handles no rating (i.e. null rating)
+                // - game rating is null AND selected min rating is null
+                // - game rating >= selected min rating, treating null as zero
+                ((gameItem.Rating == null && Settings.SelectedMinRating == null) || gameItem.Rating >= (Settings.SelectedMinRating ?? 0)) &&
+                // max rating match if either.. null selected max rating is a "don't care", no special 'no rating' is required as this is done during the min check
+                // - game rating <= selected max rating, treating null as 5
+                (gameItem.Rating ?? 0) <= (Settings.SelectedMaxRating ?? 5)
         };
         GameItemsView.MoveCurrentToFirst();
 
@@ -113,9 +117,8 @@ public class ExplorerResultsViewModel
         GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
             () => Settings.SelectedTableStyleOption, () => FilterChangedCommand.Execute(null));
 
-        // todo; tag override, checkbox (not radio button)
-        GameFiltersViewModel.TableMissingOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableMissingOptions, ContentTypeEnum.Tables,
-            () => Settings.SelectedTableMissingOptions, () => FilterChangedCommand.Execute(null));
+        GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.ImportantFileOptions, Settings.SelectedMissingFileOptions, 
+            _ => FilterChangedCommand.Execute(null));
         
         GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableStaleOptions, ContentTypeEnum.TableVideos,
             () => Settings.SelectedTableStaleOptions, () => FilterChangedCommand.Execute(null));
@@ -169,8 +172,7 @@ public class ExplorerResultsViewModel
     {
         var validHits = GameItems.SelectMany(x => x.LocalGame.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
 
-        var importantContentTypes = new[] { ContentTypeEnum.Tables, ContentTypeEnum.Backglasses, ContentTypeEnum.WheelImages, ContentTypeEnum.TableVideos, ContentTypeEnum.BackglassVideos };
-        var statistics = importantContentTypes.Select(contentType => CreateStatistic(validHits, contentType)).ToList();
+        var statistics = ContentTypeEnumExtensions.ImportantContentTypes.Select(contentType => CreateStatistic(validHits, contentType)).ToList();
 
         var isSuccess = statistics.Sum(statistic => statistic.missingCount) == 0;
         var statisticsDetail = statistics.Select(x => x.missingStatistic).StringJoin("\n");

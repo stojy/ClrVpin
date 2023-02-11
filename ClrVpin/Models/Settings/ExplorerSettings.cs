@@ -1,4 +1,5 @@
-﻿using ClrVpin.Models.Shared;
+﻿using System.Collections.ObjectModel;
+using ClrVpin.Models.Shared;
 
 namespace ClrVpin.Models.Settings;
 
@@ -8,7 +9,7 @@ public class ExplorerSettings : CommonFilterSettings
     public double? SelectedMaxRating { get; set; }
 
     // todo; checkbox with list
-    public ContentTypeEnum SelectedTableMissingOptions { get; set; } = ContentTypeEnum.Tables;
+    public ObservableCollection<ContentTypeEnum> SelectedMissingFileOptions { get; set; } = new();
     public ContentTypeEnum SelectedTableStaleOptions { get; set; } = ContentTypeEnum.TableVideos;
 }
 
