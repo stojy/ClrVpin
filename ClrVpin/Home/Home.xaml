@@ -32,7 +32,6 @@
 
         <controls:SharedResourceDictionary Source="../Cleaner/Cleaner.xaml" />
         <controls:SharedResourceDictionary Source="../Cleaner/CleanerStatistics.xaml" />
-        <controls:SharedResourceDictionary Source="../Cleaner/CleanerExplorer.xaml" />
 
         <controls:SharedResourceDictionary Source="../Merger/Merger.xaml" />
         <controls:SharedResourceDictionary Source="../Merger/MergerStatistics.xaml" />

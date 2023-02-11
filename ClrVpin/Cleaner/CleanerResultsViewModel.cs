@@ -31,7 +31,7 @@ public class CleanerResultsViewModel : ResultsViewModel
             Left = left,
             Top = top,
             Width = width,
-            Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) / 3,
+            Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) * 2 / 3,
             Content = this,
             Resources = parentWindow.Resources,
             ContentTemplate = parentWindow.FindResource("ResultsTemplate") as DataTemplate
