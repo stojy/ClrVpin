@@ -20,11 +20,16 @@ public class Content
     public ObservableCollection<Hit> Hits { get; private set; }
     public ListCollectionView HitsView { get; set; }
 
-    // true if game contains any hits types that are not valid
-    public bool IsSmelly { get; set; }
+    public bool IsAnySmelly { get; set; }
+    public bool IsMissingImportantTypes { get; set; }
+    public List<ContentTypeEnum> MissingImportantTypes { get; set; }
 
     // timestamp of the most recent 'pinball category' (table or backglass) content file
     public DateTime? UpdatedAt { get; private set; }
+
+
+    public string WheelImagePath { get; set; }
+
 
     public static string GetName(LocalGame localGame, ContentTypeCategoryEnum category) =>
         // determine the correct name - different for media vs pinball
@@ -38,8 +43,14 @@ public class Content
 
     public void Update(Func<IEnumerable<int>> getActiveContentFeatureTypes, Func<IEnumerable<int>> getActiveHitContentTypes)
     {
-        // standard properties to avoid cost of recalculating getters during every request (e.g. wpf bindings)
-        IsSmelly = ContentHitsCollection.Any(contentHits => contentHits.IsSmelly);
+        // assign/calculate standard properties to avoid the expensive cost of recalculating during every lookup, e.g. via getters during a wpf binding
+
+        // smelly content is when any content types (table, backglass, media, etc) are not valid, e.g. incorrect name
+        IsAnySmelly = ContentHitsCollection.Any(contentHits => contentHits.IsSmelly);
+        
+        // calculate 'important' content file status, e.g. missing backglass, table, wheel, video, etc.. refer .IsImportant() extension method
+        MissingImportantTypes = ContentHitsCollection.Where(contentHits => contentHits.Enum.IsImportant() && contentHits.IsMissing).Select(contentHits => contentHits.Enum).ToList();
+        IsMissingImportantTypes = MissingImportantTypes.Any();
 
         // timestamp of the most recent 'pinball category' (table or backglass) content file
         var tableAndBackglassContent = ContentHitsCollection
@@ -60,6 +71,4 @@ public class Content
         var wheelHit = Hits.FirstOrDefault(hit => hit.ContentTypeEnum == ContentTypeEnum.WheelImages);
         WheelImagePath = wheelHit?.IsPresent == true ? wheelHit.Path : null;
     }
-
-    public string WheelImagePath { get; set; }
 }

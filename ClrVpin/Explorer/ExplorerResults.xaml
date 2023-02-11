@@ -349,7 +349,7 @@
                               controls:GenericAttached.Double="60"
                               controls:GenericAttached.Double2="14"
                               VerticalAlignment="Center">
-                <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableMissingOptionsView}" />
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.MissingFilesOptionsView}" />
               </ContentControl>
 
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
