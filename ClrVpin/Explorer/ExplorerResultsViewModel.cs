@@ -95,6 +95,11 @@ public class ExplorerResultsViewModel
                 // if no missing file options are selected then the filter is effectively ignored
                 (!Settings.SelectedMissingFileOptions.Any() || gameItem.LocalGame.Content.MissingImportantTypes.ContainsAny(Settings.SelectedMissingFileOptions)) &&
 
+                // if no stale file options are selected then the filter is effectively ignored
+                (!Settings.SelectedTableStaleOptions.Any() || 
+                    gameItem.LocalGame.Content.IsTableVideoStale && Settings.SelectedTableStaleOptions.Contains(ContentTypeEnum.TableVideos) ||
+                    gameItem.LocalGame.Content.IsBackglassVideoStale && Settings.SelectedTableStaleOptions.Contains(ContentTypeEnum.BackglassVideos)) &&
+
                 // min rating match if either.. null selected min rating is a "don't care", but also explicitly handles no rating (i.e. null rating)
                 // - game rating is null AND selected min rating is null
                 // - game rating >= selected min rating, treating null as zero
@@ -120,8 +125,8 @@ public class ExplorerResultsViewModel
         GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.ImportantFileOptions, Settings.SelectedMissingFileOptions, 
             _ => FilterChangedCommand.Execute(null));
         
-        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableStaleOptions, ContentTypeEnum.TableVideos,
-            () => Settings.SelectedTableStaleOptions, () => FilterChangedCommand.Execute(null));
+        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.TableStaleOptions, Settings.SelectedTableStaleOptions, 
+            _ => FilterChangedCommand.Execute(null));
     }
 
     private void MinRatingChanged()
