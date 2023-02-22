@@ -202,7 +202,7 @@ public class ExplorerResultsViewModel
         };
         var staleStatistic = CreatePercentageStatistic(staleCount, GameItems.Count);
 
-        var statistic = $"{contentType,-20}{missingStatistic,-14}{staleStatistic,-14}";
+        var statistic = $"{contentType.GetDescription(),-20}{missingStatistic,-14}{staleStatistic,-14}";
 
         return (missingCount, staleCount, statistic);
     }
