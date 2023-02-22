@@ -16,7 +16,7 @@ namespace ClrVpin.Feeder
     [AddINotifyPropertyChangedInterface]
     public class DatabaseItem
     {
-        public DatabaseItem(OnlineGame onlineGame, LocalGame originalLocalGame, IGameCollections gameCollections, bool isExisting, TableMatchOptionEnum tableMatchType)
+        public DatabaseItem(OnlineGame onlineGame, LocalGame originalLocalGame, IGameCollections gameCollections, bool isExisting, TableMatchOptionEnum tableMatchType, bool isMatchingApplicable)
         {
             // clone game details so that..
             // - changes can be discarded if required, i.e. not saved
@@ -42,7 +42,7 @@ namespace ClrVpin.Feeder
             Title = tableMatchType switch
             {
                 TableMatchOptionEnum.LocalAndOnline => "Update Matched Table¹",
-                TableMatchOptionEnum.LocalOnly => "Update Unmatched Table¹",
+                TableMatchOptionEnum.LocalOnly => isMatchingApplicable ? "Update Unmatched Table¹" : "Update Table¹",
                 TableMatchOptionEnum.OnlineOnly => "Add Missing Table¹",
                 _ => null
             };

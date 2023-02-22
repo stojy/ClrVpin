@@ -40,7 +40,7 @@ public sealed class FeederResultsViewModel
             // local database show/add commands
             gameItem.IsMatchingEnabled = IsMatchingEnabled;
             gameItem.UpdateDatabaseEntryCommand = new ActionCommand(() =>
-                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, _localGames, gameItem, _gameCollections, () => GameItems?.Remove(gameItem)));
+                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, _localGames, gameItem, _gameCollections, () => GameItems?.Remove(gameItem), true));
             gameItem.CreateDatabaseEntryCommand = new ActionCommand(() =>
                 DatabaseItemManagement.CreateDatabaseItem(DialogHostName, _localGames, gameItem, _gameCollections));
             gameItem.UpdateDatabaseMatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;

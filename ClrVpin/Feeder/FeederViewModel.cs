@@ -133,7 +133,7 @@ public class FeederViewModel : IShowViewModel
         var feedFixStatistics = FeederFix.FixOnlineDatabase(onlineGames);
         Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
 
-        progress.Update("Matching online to local database");
+        progress.Update("Matching online to local database(s)");
         await FeederUtils.MatchOnlineToLocalAsync(localGames, onlineGames, UpdateProgress);
         Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
 
