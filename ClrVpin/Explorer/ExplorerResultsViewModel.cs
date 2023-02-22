@@ -175,28 +175,47 @@ public class ExplorerResultsViewModel
 
     private async Task ShowSummary()
     {
-        var validHits = GameItems.SelectMany(x => x.LocalGame.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
+        var correctNameHits = GameItems.SelectMany(x => x.LocalGame.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
 
-        var statistics = StaticSettings.ImportantContentTypes.Select(contentType => CreateStatistic(validHits, contentType)).ToList();
+        var statistics = StaticSettings.ImportantContentTypes.Select(contentType => CreateContentStatistics(correctNameHits, contentType)).ToList();
 
-        var isSuccess = statistics.Sum(statistic => statistic.missingCount) == 0;
-        var statisticsDetail = statistics.Select(x => x.missingStatistic).StringJoin("\n");
+        var statisticsDetail = $"{"",-20}{"Missing", -14}{"Stale", -14}\n" + statistics.Select(x => $"{x.missingStatistic}").StringJoin("\n");
         
-        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Incorrect Files", null, statisticsDetail));
+        // success requires no missing or stale files
+        var missingCount = statistics.Sum(statistic => statistic.missingCount);
+        var staleCount = statistics.Sum(statistic => statistic.staleCount);
+        var isSuccess = missingCount  + staleCount == 0;
+
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Stale Files Detected", null, statisticsDetail));
     }
 
-    private (int missingCount, string missingStatistic) CreateStatistic(IEnumerable<Hit> validHits, ContentTypeEnum contentType)
+    private (int missingCount, int? staleCount, string missingStatistic) CreateContentStatistics(IEnumerable<Hit> correctNameHits, ContentTypeEnum contentType)
     {
-        var missingCount = GameItems.Count - validHits.Count(hit => hit.ContentTypeEnum == contentType);
-        var missingStatistic = CreatePercentageStatistic($"Missing {contentType.GetDescription(),-16}", missingCount, GameItems.Count);
+        var missingCount = GameItems.Count - correctNameHits.Count(hit => hit.ContentTypeEnum == contentType && hit.IsPresent);
+        var missingStatistic = CreatePercentageStatistic(missingCount, GameItems.Count);
 
-        return (missingCount, missingStatistic);
+        var staleCount = contentType switch
+        {
+            ContentTypeEnum.TableVideos => GameItems.Count(gameItem => gameItem.LocalGame.Content.IsTableVideoStale),
+            ContentTypeEnum.BackglassVideos => GameItems.Count(gameItem => gameItem.LocalGame.Content.IsBackglassVideoStale),
+            _ => (int?)null
+        };
+        var staleStatistic = CreatePercentageStatistic(staleCount, GameItems.Count);
+
+        var statistic = $"{contentType,-20}{missingStatistic,-14}{staleStatistic,-14}";
+
+        return (missingCount, staleCount, statistic);
     }
 
-    private static string CreatePercentageStatistic(string title, int count, int totalCount)
+    private static string CreatePercentageStatistic(int? count, int totalCount)
     {
-        var percentage = totalCount == 0 ? 0 : 100f * count / totalCount;
-        return $"{title} : {count, 2} of {totalCount} ({percentage:F2}%)";
+        if (count == null)
+            return "n/a";
+
+        var missingPercentage = totalCount == 0 ? 0 : 100f * count / totalCount;
+        var missingPercentageStatistic = $"{count,-3} ({missingPercentage:F2}%)";
+
+        return missingPercentageStatistic;
     }
 
     private GameCollections _gameCollections;
