@@ -134,7 +134,7 @@
 
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
-        <DockPanel DockPanel.Dock="Left" Width="850">
+        <DockPanel DockPanel.Dock="Left" Width="875">
           <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(-->
@@ -382,7 +382,8 @@
                     CanUserSortColumns="True" IsReadOnly="True"
                     EnableRowVirtualization="True"
                     GridLinesVisibility="None"
-                    SelectedItem="{Binding SelectedGameItem}">
+                    SelectedItem="{Binding SelectedGameItem}"
+                    HorizontalScrollBarVisibility="Hidden">
 
             <DataGrid.Resources>
               <converters:BoolToStringConverter x:Key="IsOriginalToIconConverter" True="Close" False="Check" />
@@ -439,7 +440,7 @@
             <DataGrid.Columns>
               <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
                                   Header="#" Binding="{Binding LocalGame.Derived.Number}"
-                                  Width="45" />
+                                  Width="50" />
               <DataGridTemplateColumn CanUserSort="False" CanUserReorder="False" CanUserResize="False"
                                       CellStyle="{StaticResource AlignedDataGridCellStyle}"
                                       CellTemplate="{StaticResource UpdateDatabaseEntryTemplate}"
@@ -468,7 +469,7 @@
                                       Width="95" />
               <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
                                   Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}" ToolTipService.ToolTip="omg"
-                                  Width="140" />
+                                  Width="125" />
             </DataGrid.Columns>
           </DataGrid>
         </DockPanel>
