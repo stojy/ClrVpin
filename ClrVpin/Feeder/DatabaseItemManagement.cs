@@ -15,9 +15,9 @@ public static class DatabaseItemManagement
 {
     private static string DefaultDatabaseFile => Path.Combine(Model.Settings.GetDatabaseContentType().Folder, "ClrVpin.xml");
 
-    public static async void UpdateDatabaseItem(string dialogHostName, IList<LocalGame> localGames, GameItem gameItem, IGameCollections gameCollections, Action removeGameItem)
+    public static async void UpdateDatabaseItem(string dialogHostName, IList<LocalGame> localGames, GameItem gameItem, IGameCollections gameCollections, Action removeGameItem, bool isMatchingApplicable)
     {
-        var item = new DatabaseItem(gameItem.OnlineGame, gameItem.LocalGame, gameCollections, true, gameItem.TableMatchType);
+        var item = new DatabaseItem(gameItem.OnlineGame, gameItem.LocalGame, gameCollections, true, gameItem.TableMatchType, isMatchingApplicable);
 
         var result = await DialogHost.Show(item, dialogHostName) as DatabaseItemAction?;
         if (result == DatabaseItemAction.Update)
@@ -85,7 +85,7 @@ public static class DatabaseItemManagement
             }
         };
 
-        var item = new DatabaseItem(onlineGame, localGame, gameCollections, false, gameItem.TableMatchType);
+        var item = new DatabaseItem(onlineGame, localGame, gameCollections, false, gameItem.TableMatchType, true);
 
         var result = await DialogHost.Show(item, dialogHostName) as DatabaseItemAction?;
         if (result == DatabaseItemAction.Add)

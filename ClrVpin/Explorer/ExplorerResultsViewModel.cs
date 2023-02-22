@@ -75,7 +75,7 @@ public class ExplorerResultsViewModel
             gameItem.LocalGame.Content.Update(() => new List<int>(), () => new List<int>());
 
             gameItem.LocalGame.UpdateDatabaseEntryCommand = new ActionCommand(() =>
-                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, GameItems.Select(item => item.LocalGame).ToList(), gameItem, _gameCollections, () => GameItems.Remove(gameItem)));
+                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, GameItems.Select(item => item.LocalGame).ToList(), gameItem, _gameCollections, () => GameItems.Remove(gameItem), false));
         });
 
         GameItemsView = new ListCollectionView<GameItem>(GameItems)

@@ -263,7 +263,9 @@
       <TextBlock FontStyle="Italic">
         <Run Text="  1. Cleaner - to automatically rename content file(s)" />
         <LineBreak />
-        <Run Text="  2. Feeder - to re-match table against against the online feed" />
+        <Run Text="  2. Feeder - to re-match table against against the online feed OR" />
+        <LineBreak />
+        <Run Text="      Explorer - to review your local file content (images, video, tables, etc)" />
         <LineBreak />
       </TextBlock>
     </StackPanel>
