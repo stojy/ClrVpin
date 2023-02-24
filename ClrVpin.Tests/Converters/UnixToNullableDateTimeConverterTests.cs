@@ -9,8 +9,8 @@ namespace ClrVpin.Tests.Converters;
 public class UnixToNullableDateTimeConverterTests
 {
     [Test]
-    [TestCase("1613967667240", "2021-02-22 12:21:07.24", TestName = "unix time in milliseconds")]
-    [TestCase("1613967667", "2021-02-22 12:21:07", TestName = "unix time in seconds")]
+    [TestCase("1613967667240", "2021-02-22 12:21:07.24+08:00", TestName = "unix time in milliseconds (+8 TZ)")]
+    [TestCase("1613967667", "2021-02-22 12:21:07+08:00", TestName = "unix time in seconds (+8 TZ)")]
     [TestCase("\"invalid\"", null, TestName = "invalid time")]
     [TestCase("null", null, TestName = "null time")]
     [TestCase("\"\"", null, TestName = "empty time")]
