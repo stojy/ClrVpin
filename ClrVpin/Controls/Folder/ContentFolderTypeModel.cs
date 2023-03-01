@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using ClrVpin.Controls.FolderSelection;
 using ClrVpin.Models.Shared;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Settings
+namespace ClrVpin.Controls.Folder
 {
     [AddINotifyPropertyChangedInterface]
-    public class ContentTypeModel : FolderTypeDetail
+    public class ContentFolderTypeModel : FolderTypeDetail
     {
-        public ContentTypeModel(ContentType contentType, Action updatedAction = null)
+        public ContentFolderTypeModel(ContentType contentType, Action updatedAction = null)
         {
             ContentType = contentType;
             Folder = contentType.Folder;

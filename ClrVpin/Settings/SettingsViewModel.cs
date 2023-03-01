@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using ClrVpin.Controls.FolderSelection;
+using ClrVpin.Controls.Folder;
 using ClrVpin.Models.Shared;
 using ClrVpin.Shared;
 using Microsoft.Xaml.Behaviors.Core;
@@ -16,14 +16,13 @@ namespace ClrVpin.Settings
     {
         public SettingsViewModel()
         {
-            PinballFolderModel = new FolderTypeModel("Visual Pinball Executable", Settings.PinballFolder, folder => Settings.PinballFolder = folder);
+            PinballFolderModel = new GenericFolderTypeModel("Visual Pinball Executable", Settings.PinballFolder, folder => Settings.PinballFolder = folder);
+            PinballContentTypeModels = Model.Settings.GetPinballContentTypes().Select(contentType => new ContentFolderTypeModel(contentType)).ToList();
 
-            PinballContentTypeModels = Model.Settings.GetPinballContentTypes().Select(contentType => new ContentTypeModel(contentType)).ToList();
+            FrontendFolderModel = new GenericFolderTypeModel("PinballY/X Frontend Executable", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
+            FrontendContentTypeModels = Model.Settings.GetFrontendContentTypes().Select(contentType => new ContentFolderTypeModel(contentType)).ToList();
 
-            FrontendFolderModel = new FolderTypeModel("PinballY/X Frontend Executable", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
-            FrontendContentTypeModels = Model.Settings.GetFrontendContentTypes().Select(contentType => new ContentTypeModel(contentType)).ToList();
-
-            BackupFolderModel = new FolderTypeModel("Backup Root", Settings.BackupFolder, folder => Settings.BackupFolder = folder);
+            BackupFolderModel = new GenericFolderTypeModel("Backup Root", Settings.BackupFolder, folder => Settings.BackupFolder = folder);
 
             AutoAssignPinballFoldersCommand = new ActionCommand(AutoAssignPinballFolders);
             AutoAssignFrontendFoldersCommand = new ActionCommand(AutoAssignFrontendFolders);
@@ -31,13 +30,13 @@ namespace ClrVpin.Settings
             SaveCommand = new ActionCommand(Close);
         }
 
-        public FolderTypeModel PinballFolderModel { get; }
-        public List<ContentTypeModel> PinballContentTypeModels { get; }
+        public GenericFolderTypeModel PinballFolderModel { get; }
+        public List<ContentFolderTypeModel> PinballContentTypeModels { get; }
 
-        public FolderTypeModel FrontendFolderModel { get; }
-        public List<ContentTypeModel> FrontendContentTypeModels { get; }
+        public GenericFolderTypeModel FrontendFolderModel { get; }
+        public List<ContentFolderTypeModel> FrontendContentTypeModels { get; }
 
-        public FolderTypeModel BackupFolderModel { get; }
+        public GenericFolderTypeModel BackupFolderModel { get; }
 
         public ICommand AutoAssignPinballFoldersCommand { get; }
         public ICommand AutoAssignFrontendFoldersCommand { get; }

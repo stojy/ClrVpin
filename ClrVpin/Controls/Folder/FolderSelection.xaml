@@ -3,8 +3,8 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:folderSelection="clr-namespace:ClrVpin.Controls.FolderSelection"
-                    xmlns:controls="clr-namespace:ClrVpin.Controls">
+                    xmlns:controls="clr-namespace:ClrVpin.Controls"
+                    xmlns:folder="clr-namespace:ClrVpin.Controls.Folder">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -18,7 +18,7 @@
 
 
   <!-- present folder name (with optional folder suffix matching) and open folder button -->
-  <DataTemplate x:Key="FolderSelection" DataType="folderSelection:FolderTypeDetail">
+  <DataTemplate x:Key="FolderSelection" DataType="folder:FolderTypeDetail">
     <WrapPanel Height="50">
       <WrapPanel.Resources>
         <controls:BindingProxyFolder x:Key="BindingProxyFolder" Data="{Binding}" />

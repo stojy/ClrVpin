@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using ClrVpin.Controls.FolderSelection;
+using ClrVpin.Controls.Folder;
 using PropertyChanged;
 
 namespace ClrVpin.Controls;

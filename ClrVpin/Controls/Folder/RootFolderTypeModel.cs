@@ -3,12 +3,12 @@ using System.Windows.Controls;
 using PropertyChanged;
 using Utils;
 
-namespace ClrVpin.Controls.FolderSelection
+namespace ClrVpin.Controls.Folder
 {
     [AddINotifyPropertyChangedInterface]
-    public class FolderTypeModel : FolderTypeDetail
+    public class GenericFolderTypeModel : FolderTypeDetail
     {
-        public FolderTypeModel(string description, string folder, Action<string> setFolder) 
+        public GenericFolderTypeModel(string description, string folder, Action<string> setFolder) 
         {
             Folder = folder;
             Description = description;
@@ -16,7 +16,7 @@ namespace ClrVpin.Controls.FolderSelection
             FolderChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
             {
                 // workaround for validation error not updating binding
-                // - refer ContentTypeModel comments
+                // - refer ContentFolderTypeModel comments
                 if (e.Source is TextBox textBox)
                     Folder = textBox.Text;
 

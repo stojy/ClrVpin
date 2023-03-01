@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
-namespace ClrVpin.Controls.FolderSelection
+namespace ClrVpin.Controls.Folder
 {
     public class FolderUtil
     {

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using PropertyChanged;
 
-namespace ClrVpin.Controls.FolderSelection
+namespace ClrVpin.Controls.Folder
 {
     [AddINotifyPropertyChangedInterface]
     public class FolderTypeDetail
