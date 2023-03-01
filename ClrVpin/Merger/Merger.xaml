@@ -11,7 +11,7 @@
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
     <controls:SharedResourceDictionary Source="/Controls/Styles.xaml" />
     <controls:SharedResourceDictionary Source="/Shared/FeatureType/FeatureTypeTemplates.xaml" />
-    <controls:SharedResourceDictionary Source="/Controls/FolderSelection/FolderSelection.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Folder\FolderSelection.xaml" />
     <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 

@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ClrVpin.Controls;
-using ClrVpin.Controls.FolderSelection;
+using ClrVpin.Controls.Folder;
 using ClrVpin.Extensions;
 using ClrVpin.Logging;
 using ClrVpin.Models.Settings;
@@ -36,7 +36,7 @@ public class MergerViewModel : IShowViewModel
 
         MergeOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.MergeOptions, Settings.Merger.SelectedMergeOptions);
 
-        SourceFolderModel = new FolderTypeModel("Source", Settings.Merger.SourceFolder, folder =>
+        SourceFolderModel = new GenericFolderTypeModel("Source", Settings.Merger.SourceFolder, folder =>
         {
             Settings.Merger.SourceFolder = folder;
             TryUpdateDestinationFolder(folder);
@@ -55,7 +55,7 @@ public class MergerViewModel : IShowViewModel
 
     public ListCollectionView MergeOptionsView { get; }
 
-    public FolderTypeModel SourceFolderModel { get; }
+    public GenericFolderTypeModel SourceFolderModel { get; }
     public ObservableCollection<string> DestinationContentTypes { get; }
 
     public ICommand DestinationContentTypeSelectedCommand { get; set; }
