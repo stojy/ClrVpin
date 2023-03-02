@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PropertyChanged;
+using Utils.Extensions;
+using Path = System.IO.Path;
 
 namespace ClrVpin.Models.Settings
 {
@@ -49,16 +51,27 @@ namespace ClrVpin.Models.Settings
 
         private void UpdateIsValid()
         {
-            var paths = new List<string>
+            // following special folders are considered mandatory
+            var specialFolders = new List<string>
             {
-                Settings.PinballFolder,
-                Settings.FrontendFolder,
+                //Settings.PinballFolder,
+                //Settings.FrontendFolder,
                 Settings.BackupFolder
             };
-            paths.AddRange(Settings.GetAllContentTypes().Select(x => x.Folder));
 
-            IsValid = paths.All(path => Directory.Exists(path) || File.Exists(path));
+            // assume all folders are invalid
+            Settings.GetAllContentTypes().ForEach(x => x.IsFolderValid = false);
+
+            // verify content folder types that are either..
+            // - required
+            // - optional, but have been defined
+            var contentTypesToVerify = Settings.GetAllContentTypes().Where(x => x.IsFolderRequired  || !string.IsNullOrEmpty(x.Folder)).ToList();
+            contentTypesToVerify.ForEach(x => x.IsFolderValid = DoesFolderOrFileExist(x.Folder));
+
+            IsValid = contentTypesToVerify.All(x => x.IsFolderValid) && specialFolders.All(DoesFolderOrFileExist);
         }
+
+        private static bool DoesFolderOrFileExist(string path) => Directory.Exists(path) || File.Exists(path);
 
         private readonly DefaultSettings _defaultSettings;
         private static SettingsManager _sessionManager;
