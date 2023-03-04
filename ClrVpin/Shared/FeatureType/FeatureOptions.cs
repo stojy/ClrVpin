@@ -29,8 +29,11 @@ public static class FeatureOptions
         };
     }
 
-    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionView<T>(IEnumerable<EnumOption<T>> enumOptions, T highlightedOption,
-        Expression<Func<T>> selection, Action changedAction) where T : Enum
+    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionView<T>(
+        IEnumerable<EnumOption<T>> enumOptions, 
+        T highlightedOption,
+        Expression<Func<T>> selection, 
+        Action changedAction) where T : Enum
     {
         var memberAccessor = new Accessor<T>(selection);
 
@@ -50,39 +53,42 @@ public static class FeatureOptions
         return new ListCollectionView<FeatureType>(featureTypes);
     }
 
-    // todo; refactor with the selection string and enum implementations
-    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<string> selections,
-        Action<FeatureType> changedAction = null, bool includeSelectAll = true) where T : Enum
+    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(
+        IEnumerable<EnumOption<T>> enumOptions, 
+        ObservableCollection<string> selections,
+        Action<FeatureType> changedAction = null, 
+        bool includeSelectAll = true) where T : Enum
     {
-        // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
-        var featureTypes = enumOptions.Select(option =>
-        {
-            var featureType = CreateFeatureType(option, selections.Contains(option.Description));
-            featureType.SelectedCommand = new ActionCommand(() =>
-            {
-                selections.Toggle(option.Description);
-                changedAction?.Invoke(featureType);
-            });
-
-            return featureType;
-        }).ToList();
-
-        if (includeSelectAll)
-            featureTypes.Add(CreateSelectAll(featureTypes));
-
-        return new ListCollectionView<FeatureType>(featureTypes);
+        return CreateFeatureOptionsSelectionsView(enumOptions,
+            enumOption => selections.Contains(enumOption.Description), enumOption => selections.Toggle(enumOption.Description),
+            changedAction, includeSelectAll);
     }
 
-    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(IEnumerable<EnumOption<T>> enumOptions, ObservableCollection<T> selections,
-        Action<FeatureType> changedAction = null, bool includeSelectAll = true) where T : Enum
+    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(
+        IEnumerable<EnumOption<T>> enumOptions, 
+        ObservableCollection<T> selections,
+        Action<FeatureType> changedAction = null, 
+        bool includeSelectAll = true) where T : Enum
+    {
+        return CreateFeatureOptionsSelectionsView(enumOptions,
+            enumOption => selections.Contains(enumOption.Enum), enumOption => selections.Toggle(enumOption.Enum),
+            changedAction, includeSelectAll);
+    }
+
+    private static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(
+        IEnumerable<EnumOption<T>> enumOptions, 
+        Func<EnumOption<T>, bool> containsSelection,
+        Action<EnumOption<T>> toggleSelection,
+        Action<FeatureType> changedAction = null, 
+        bool includeSelectAll = true) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
-        var featureTypes = enumOptions.Select(option =>
+        var featureTypes = enumOptions.Select(enumOption =>
         {
-            var featureType = CreateFeatureType(option, selections.Contains(option.Enum));
+            var featureType = CreateFeatureType(enumOption, containsSelection(enumOption));
             featureType.SelectedCommand = new ActionCommand(() =>
             {
-                selections.Toggle(option.Enum);
+                toggleSelection(enumOption);
                 changedAction?.Invoke(featureType);
             });
 
