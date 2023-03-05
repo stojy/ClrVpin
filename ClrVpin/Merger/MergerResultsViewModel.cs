@@ -48,11 +48,11 @@ namespace ClrVpin.Merger
         protected override ListCollectionView<FeatureType> CreateAllContentFeatureTypesView()
         {
             var featureView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetFixableContentTypes(), 
-                new ObservableCollection<string> {Settings.GetSelectedDestinationContentType().Description}, _ => UpdateHitsView(), null, false);
-
-            // merger content types is a 'special egg'.. unlike cleaner, the list is readonly
-            featureView.ForEach(featureType => featureType.IsSupported = false);
-            featureView.First(x => x.Id == (int)Settings.GetSelectedDestinationContentType().Enum).IsActive = true;
+                new ObservableCollection<string> {Settings.GetSelectedDestinationContentType().Description}, 
+                _ => UpdateHitsView(), 
+                // merger content types is a 'special egg'.. unlike cleaner, the list is readonly
+                (_, enumOption) => Settings.GetSelectedDestinationContentType().Enum == enumOption.Enum,
+                false);
 
             return featureView;
         }
