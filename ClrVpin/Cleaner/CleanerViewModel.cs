@@ -28,8 +28,12 @@ public class CleanerViewModel : IShowViewModel
     {
         StartCommand = new ActionCommand(Start);
 
-        CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, _ => UpdateIsValid());
-        CheckMediaContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetMediaContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, _ => UpdateIsValid());
+        CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
+            Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, 
+            _ => UpdateIsValid(), (enumOptions, enumOption) => enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid);
+        CheckMediaContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
+            Settings.GetMediaContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, 
+            _ => UpdateIsValid(), (enumOptions, enumOption) => enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid);
 
         CheckHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedCheckHitTypes, ToggleFixHitTypeState);
         FixHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedFixHitTypes);

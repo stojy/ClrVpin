@@ -48,7 +48,7 @@ namespace ClrVpin.Merger
         protected override ListCollectionView<FeatureType> CreateAllContentFeatureTypesView()
         {
             var featureView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetFixableContentTypes(), 
-                new ObservableCollection<string> {Settings.GetSelectedDestinationContentType().Description}, _ => UpdateHitsView(), false);
+                new ObservableCollection<string> {Settings.GetSelectedDestinationContentType().Description}, _ => UpdateHitsView(), null, false);
 
             // merger content types is a 'special egg'.. unlike cleaner, the list is readonly
             featureView.ForEach(featureType => featureType.IsSupported = false);
