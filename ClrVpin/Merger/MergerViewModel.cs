@@ -120,9 +120,8 @@ public class MergerViewModel : IShowViewModel
     {
         // show all match criteria types
         // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
-        var featureTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
-            StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)),
-            Settings.Merger.SelectedMatchTypes);
+        var enumOptions = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).ToArray();
+        var featureTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(enumOptions, Settings.Merger.SelectedMatchTypes);
 
         // create separate property for each so they can be referenced individually in the UI
         MatchWrongCase = featureTypesView.First(x => x.Id == (int)HitTypeEnum.WrongCase);

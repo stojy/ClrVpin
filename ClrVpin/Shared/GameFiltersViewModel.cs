@@ -20,7 +20,7 @@ public class GameFiltersViewModel
         _gameCollections = gameCollections;
         _filterChanged = filterChanged;
 
-        PresetDateOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.PresetDateOptions, new ObservableCollection<PresetDateOptionEnum>(), PresetDateSelected, false);
+        PresetDateOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.PresetDateOptions, new ObservableCollection<PresetDateOptionEnum>(), PresetDateSelected, null, false);
         
         UpdateFilterViews();
     }
