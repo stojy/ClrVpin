@@ -98,11 +98,13 @@ public static class FeatureOptions
             // if the feature is not supported, then update both..
             // - model, i.e. selections array of string or eum
             // - viewmodel, i.e. the checkbox/radio/chip/etc
-            if (!isSupportedFunc?.Invoke(enumOptions, enumOption) ?? true)
+            if (!(isSupportedFunc?.Invoke(enumOptions, enumOption) ?? true))
             {
                 if (featureType.IsActive)
+                {
                     toggleSelection(enumOption);
-                featureType.IsActive = false;
+                    featureType.IsActive = false;
+                }
                 featureType.IsSupported = false;
             }
 

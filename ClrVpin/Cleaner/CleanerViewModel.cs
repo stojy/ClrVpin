@@ -17,7 +17,6 @@ using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
 using PropertyChanged;
 using Utils;
-using Utils.Extensions;
 
 namespace ClrVpin.Cleaner;
 
@@ -36,16 +35,11 @@ public class CleanerViewModel : IShowViewModel
             _ => UpdateIsValid(), (enumOptions, enumOption) => enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid);
 
         CheckHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedCheckHitTypes, ToggleFixHitTypeState);
-        FixHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedFixHitTypes);
-
-        // special handling for the fix hit types as they're functionality is coupled wit the criteria hit types, e.g. fix is disabled when check options are not selected
-        FixHitTypesView.ForEach(fixHitFeatureType =>
-        {
-            var hitTypeEnum = (HitTypeEnum)fixHitFeatureType.Id;
-            fixHitFeatureType.IsNeverSupported = hitTypeEnum == HitTypeEnum.Missing;
-            fixHitFeatureType.IsSupported = Settings.Cleaner.SelectedCheckHitTypes.Contains(hitTypeEnum) && hitTypeEnum != HitTypeEnum.Missing || fixHitFeatureType.Id == FeatureOptions.SelectAllId;
-            fixHitFeatureType.IsActive = Settings.Cleaner.SelectedFixHitTypes.Contains(hitTypeEnum) && hitTypeEnum != HitTypeEnum.Missing;
-        });
+        
+        FixHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedFixHitTypes, 
+            // special handling for the fix hit types as they're functionality coupled with the criteria hit types, e.g. fix is disabled when check options are not selected
+            isSupportedFunc: (_, enumOption) => Settings.Cleaner.SelectedCheckHitTypes.Contains(enumOption.Enum) && enumOption.Enum != HitTypeEnum.Missing);
+        FixHitTypesView.First(fixHitFeatureType => (HitTypeEnum)fixHitFeatureType.Id == HitTypeEnum.Missing).IsNeverSupported = true;
 
         MultipleMatchOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(
             StaticSettings.MultipleMatchOptions, MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold, () => Settings.Cleaner.SelectedMultipleMatchOption, UpdateExceedThresholdChecked);
@@ -88,16 +82,16 @@ public class CleanerViewModel : IShowViewModel
 
     private void UpdateIsValid() => IsValid = Settings.Cleaner.SelectedCheckContentTypes.Any();
 
-    private void ToggleFixHitTypeState(FeatureType featureType)
+    private void ToggleFixHitTypeState(FeatureType checkFeatureType)
     {
         // toggle the fix hit type checked & enabled
-        var fixHitType = FixHitTypesView.First(x => x.Description == featureType.Description);
+        var fixHitType = FixHitTypesView.First(x => x.Description == checkFeatureType.Description);
 
-        fixHitType.IsSupported = featureType.IsActive && !fixHitType.IsNeverSupported;
-        if (featureType.IsActive == false)
+        fixHitType.IsSupported = checkFeatureType.IsActive && !fixHitType.IsNeverSupported;
+        if (!checkFeatureType.IsActive)
         {
             fixHitType.IsActive = false;
-            Settings.Cleaner.SelectedFixHitTypes.Remove((HitTypeEnum)featureType.Id);
+            Settings.Cleaner.SelectedFixHitTypes.Remove((HitTypeEnum)checkFeatureType.Id);
         }
     }
 
