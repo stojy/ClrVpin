@@ -60,10 +60,11 @@ public class ExplorerViewModel : IShowViewModel
         progress.Show(_window);
 
         List<LocalGame> games;
+        var allValidContentTypes = _settings.GetAllValidContentTypes();
         try
         {
             progress.Update("Loading Database");
-            games = await TableUtils.ReadGamesFromDatabases(_settings.GetAllContentTypes());
+            games = await TableUtils.ReadGamesFromDatabases(allValidContentTypes);
             Logger.Info($"Loading database complete, duration={progress.Duration}", true);
         }
         catch (Exception)
@@ -73,7 +74,7 @@ public class ExplorerViewModel : IShowViewModel
         }
 
         progress.Update("Matching Files");
-        var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, _settings.GetAllContentTypes(), true);
+        var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, allValidContentTypes, true);
 
         progress.Update("Preparing Results");
         await Task.Delay(1);

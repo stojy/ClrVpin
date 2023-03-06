@@ -32,7 +32,7 @@ public static class CleanerUtils
         // - skip criteria is selected or relevant
         var gameFiles = new List<FileDetail>();
 
-        var selectedContentTypes = _settings.GetSelectedCheckContentTypes().ToList();
+        var selectedContentTypes = _settings.Cleaner.GetSelectedCheckContentTypes().ToList();
 
         var gamesWithContentCount = 0;
         var gamesWithContentMaxCount = 0;
