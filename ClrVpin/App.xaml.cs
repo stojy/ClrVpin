@@ -97,28 +97,41 @@ namespace ClrVpin
         private static void SubmitBugAndExit(string detail)
         {
             const string title = @"Unhandled Error - [add summary description here]";
-            var body = @$"**Describe the bug**
-[A description of what the bug is.]
+            var body = @"**Describe the bug**
+[A description of what the bug is]
 
 **To Reproduce**
-[Steps to reproduce the behavior.]
+[Steps to reproduce the behavior]
 
 **Expected behavior**
-[A description of what you expected to happen.]
+[A description of what you expected to happen]
 
 **Screenshots**
-[If applicable, add screenshots to help explain your problem.]
+[If applicable, add screenshots]
 
 **Logs**
-[If applicable, add stack trace and/or the log file: c:\ProgramData\ClrVpin\logs\ClrVpin.log]
+[If applicable, add the log file (or snippet): c:\ProgramData\ClrVpin\logs\ClrVpin.log]
 
 **Unhandled Error Details**
-{detail}";
+";
 
-            var bodyHtml = body.Replace("\n", "<br />");
+            // markdown/github workaround: using the tilde for code span doesn't respect newlines
+            // - pre(formatted) tag presents exactly as written preserving all whitespace (including new lines)
+            //   https://developer.mozilla.org/en-US/docs/Web/HTML/Element/pre
+            // - on github this is rendered similar to a code block, but within a div that supports horizontal scrolling to make things pretty
+            //   refer https://stackoverflow.com/questions/32550310/html-display-new-line-in-code-tag
+            //   https://github.github.com/gfm/#code-spans
+            body += $"<pre>{detail}</pre>";                  
+
+            // more markdown/github workarounds
+            body = body
+                .Replace("`", @"\`")              // escape tilde to avoid being interpreting as code, e.g. used by .net in it's stack trace
+                .Replace("\r\n", "<br />")        // change newlines within stacktrace to line breaks
+                .Replace("\n", "<br />")          // change other newlines to line breaks    
+                [..Math.Min(body.Length, 8_000)]; // max github URL is 8k, refer https://github.com/cli/cli/issues/1575
             
-            Process.Start(new ProcessStartInfo($@"https://github.com/stojy/ClrVpin/issues/new?&template=bug_report.md&title={title}&body={bodyHtml}") { UseShellExecute = true });
-
+            Process.Start(new ProcessStartInfo($@"https://github.com/stojy/ClrVpin/issues/new?&template=bug_report.md&title={title}&body={body}") { UseShellExecute = true });
+             
             Environment.Exit(-1);
         }
     }
