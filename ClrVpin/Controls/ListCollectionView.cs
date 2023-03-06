@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Data;
 using System.Windows.Threading;
 
@@ -9,9 +10,9 @@ namespace ClrVpin.Controls;
 public sealed class ListCollectionView<T> : ListCollectionView, IEnumerable<T>
 {
     //todo; add ctor that takes delegate to explicitly invoke during a refresh
-    public ListCollectionView() : this (new List<T>())
-    {
-    }
+    public ListCollectionView(IEnumerable<T> enumerable) : this(enumerable.ToList()) { }
+
+    public ListCollectionView(IEnumerable<T> enumerable, T selectedItem) : this(enumerable.ToList(), selectedItem) { }
 
     public ListCollectionView(IList<T> list, T selectedItem)
         : this(list)

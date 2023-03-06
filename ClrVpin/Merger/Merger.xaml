@@ -21,16 +21,29 @@
       <WrapPanel>
         <ContentControl ContentTemplate="{StaticResource FolderSelection}" Margin="0" Content="{Binding SourceFolderModel}" />
 
-        <ComboBox materialDesign:HintAssist.Hint="Destination Type" ItemsSource="{Binding DestinationContentTypes}"
+        <ComboBox materialDesign:HintAssist.Hint="Destination Type" ItemsSource="{Binding DestinationContentTypesView}"
                   Width="170" VerticalAlignment="Top"
                   Style="{StaticResource MaterialDesignFloatingHintComboBox}" materialDesign:TextFieldAssist.HasClearButton="True">
           <ComboBox.SelectedItem>
-            <Binding Path="Settings.Merger.DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+            <Binding Path="DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
               <Binding.ValidationRules>
                 <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" Description="Content type" />
               </Binding.ValidationRules>
             </Binding>
           </ComboBox.SelectedItem>
+
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Description}"/>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+          
+          <ComboBox.ItemContainerStyle>
+            <Style TargetType="ComboBoxItem">
+              <Setter Property="IsEnabled" Value="{Binding IsActive}"/>
+            </Style>
+          </ComboBox.ItemContainerStyle>
+          
           <b:Interaction.Triggers>
             <b:EventTrigger EventName="SelectionChanged">
               <b:InvokeCommandAction Command="{Binding DestinationContentTypeSelectedCommand}" />
