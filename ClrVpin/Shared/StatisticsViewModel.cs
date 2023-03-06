@@ -89,7 +89,7 @@ namespace ClrVpin.Shared
             var prefix = "discovered";
 
             // discovered statistics - from the games list
-            var discoveredStatistics = $"{prefix} {Games.Sum(g => g.Content.ContentHitsCollection.First(x => x.Enum == contentType).Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
+            var discoveredStatistics = $"{prefix} {Games.Sum(g => g.Content.ContentHitsCollection.FirstOrDefault(x => x.Enum == contentType)?.Hits.Count(hit => hit.Type == hitType))}/{TotalCount}";
 
             // file statistics - from the file list.. which is also stored in the games list, but more accessible via LocalGames
             // - for n/a hit types (e.g. ignored) there will be no stats since there are no FixedFiles :)

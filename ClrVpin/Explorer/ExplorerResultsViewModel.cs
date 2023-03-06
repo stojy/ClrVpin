@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Linq;
 using ClrVpin.Controls;
 using ClrVpin.Feeder;
 using ClrVpin.Models.Feeder;
@@ -122,11 +123,13 @@ public class ExplorerResultsViewModel
         GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
             () => Settings.SelectedTableStyleOption, () => FilterChangedCommand.Execute(null));
 
-        GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.ImportantFileOptions, Settings.SelectedMissingFileOptions, 
-            _ => FilterChangedCommand.Execute(null));
+        var missingFileOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.MissingFileOptions.Select(y => y.Enum))).ToArray();
+        GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(missingFileOptions, Settings.SelectedMissingFileOptions, 
+            _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid);
         
-        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.TableStaleOptions, Settings.SelectedTableStaleOptions, 
-            _ => FilterChangedCommand.Execute(null));
+        var tableStaleOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.TableStaleOptions.Select(y => y.Enum))).ToArray();
+        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(tableStaleOptions, Settings.SelectedTableStaleOptions, 
+            _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid);
     }
 
     private void MinRatingChanged()

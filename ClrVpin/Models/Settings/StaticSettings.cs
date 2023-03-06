@@ -18,7 +18,7 @@ namespace ClrVpin.Models.Settings
 
             MultipleMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
-            ImportantFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            MissingFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableStaleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // merge
@@ -105,7 +105,7 @@ namespace ClrVpin.Models.Settings
         };
 
         // all possible missing file options - to be used elsewhere (explorer)
-        public static readonly EnumOption<ContentTypeEnum>[] ImportantFileOptions =
+        public static readonly EnumOption<ContentTypeEnum>[] MissingFileOptions =
             ImportantContentTypes.Select(contentType => new EnumOption<ContentTypeEnum> { Enum = contentType }).ToArray();
 
         // all possible table stale options - to be used elsewhere (explorer)
