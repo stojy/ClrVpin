@@ -98,19 +98,19 @@ namespace ClrVpin
         {
             const string title = @"Unhandled Error - [add summary description here]";
             var body = @"**Describe the bug**
-[A description of what the bug is]
+[A description of the bug]
 
 **To Reproduce**
-[Steps to reproduce the behavior]
+[Steps to reproduce the bug]
 
 **Expected behavior**
-[A description of what you expected to happen]
+[If applicable, what did you expect to happen]
 
 **Screenshots**
 [If applicable, add screenshots]
 
 **Logs**
-[If applicable, add the log file (or snippet): c:\ProgramData\ClrVpin\logs\ClrVpin.log]
+[If applicable, add the log file (or relevant snippet): c:\ProgramData\ClrVpin\logs\ClrVpin.log]
 
 **Unhandled Error Details**
 ";
