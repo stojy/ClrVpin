@@ -177,9 +177,10 @@ public class ExplorerResultsViewModel
     {
         var correctNameHits = GameItems.SelectMany(x => x.LocalGame.Content.ContentHitsCollection).SelectMany(x => x.Hits).Where(x => x.Type == HitTypeEnum.CorrectName).ToList();
 
-        var statistics = StaticSettings.ImportantContentTypes.Select(contentType => CreateContentStatistics(correctNameHits, contentType)).ToList();
+        var importantValidContentTypes = Model.Settings.GetAllValidContentTypes().Where(x => x.Enum.In(StaticSettings.ImportantContentTypes)).Select(x => x.Enum);
+        var statistics = importantValidContentTypes.Select(contentType => CreateContentStatistics(correctNameHits, contentType)).ToList();
 
-        var statisticsDetail = $"{"",-20}{"Missing", -14}{"Stale", -14}\n" + statistics.Select(x => $"{x.missingStatistic}").StringJoin("\n");
+        var statisticsDetail = $"{"",-20}{"Missing", -16}{"Stale", -16}\n" + statistics.Select(x => $"{x.missingStatistic}").StringJoin("\n");
         
         // success requires no missing or stale files
         var missingCount = statistics.Sum(statistic => statistic.missingCount);
@@ -202,7 +203,7 @@ public class ExplorerResultsViewModel
         };
         var staleStatistic = CreatePercentageStatistic(staleCount, GameItems.Count);
 
-        var statistic = $"{contentType.GetDescription(),-20}{missingStatistic,-14}{staleStatistic,-14}";
+        var statistic = $"{contentType.GetDescription(),-20}{missingStatistic,-16}{staleStatistic,-16}";
 
         return (missingCount, staleCount, statistic);
     }

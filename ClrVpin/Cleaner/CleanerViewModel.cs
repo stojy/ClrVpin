@@ -111,10 +111,11 @@ public class CleanerViewModel : IShowViewModel
         progress.Show(_window);
 
         List<LocalGame> games;
+        var selectedCheckContentTypes = Settings.Cleaner.GetSelectedCheckContentTypes();
         try
         {
             progress.Update("Loading Database");
-            games = await TableUtils.ReadGamesFromDatabases(Settings.GetSelectedCheckContentTypes());
+            games = await TableUtils.ReadGamesFromDatabases(selectedCheckContentTypes);
             Logger.Info($"Loading database complete, duration={progress.Duration}", true);
         }
         catch (Exception)
@@ -125,7 +126,7 @@ public class CleanerViewModel : IShowViewModel
         }
 
         progress.Update("Matching Files");
-        var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, Settings.GetSelectedCheckContentTypes(), Settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported));
+        var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, selectedCheckContentTypes, Settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported));
 
         progress.Update("Fixing Files");
         var fixedFiles = await CleanerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
