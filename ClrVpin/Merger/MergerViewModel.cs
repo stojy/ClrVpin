@@ -28,7 +28,7 @@ public class MergerViewModel : IShowViewModel
     public MergerViewModel() 
     {
         StartCommand = new ActionCommand(Start);
-        DestinationContentTypeSelectedCommand = new ActionCommand(UpdateIsValid);
+        DestinationContentTypeSelectedCommand = new ActionCommand(UpdateDestinationContentTypeSettings);
 
         CreateMatchCriteriaTypes();
 
@@ -42,21 +42,29 @@ public class MergerViewModel : IShowViewModel
             TryUpdateDestinationFolder(folder);
         });
 
-        _destinationContentTypes = Model.Settings.GetFixableContentTypes().Select(x => x.Description);
-        DestinationContentTypes = new ObservableCollection<string>(_destinationContentTypes);
+        var destinationContentTypes = Model.Settings.GetFixableContentTypes().Select((contentType, i) => 
+            new FeatureType(i)
+            {
+                Description = contentType.Description,
+                IsActive = contentType.IsFolderValid
+            });
+        DestinationContentTypesView = new ListCollectionView<FeatureType>(destinationContentTypes);
+        TryUpdateDestinationFolder(Settings.Merger.DestinationContentType);
 
         IgnoreWordsString = string.Join(", ", Settings.Merger.IgnoreIWords);
         IgnoreWordsChangedCommand = new ActionCommand(IgnoreWordsChanged);
 
-        UpdateIsValid();
+        UpdateDestinationContentTypeSettings();
     }
+
 
     public bool IsValid { get; set; }
 
     public ListCollectionView MergeOptionsView { get; }
 
     public GenericFolderTypeModel SourceFolderModel { get; }
-    public ObservableCollection<string> DestinationContentTypes { get; }
+    
+    public ListCollectionView<FeatureType> DestinationContentTypesView { get; }
 
     public ICommand DestinationContentTypeSelectedCommand { get; set; }
     public ICommand StartCommand { get; }
@@ -79,6 +87,7 @@ public class MergerViewModel : IShowViewModel
 
     public FeatureType MatchWrongCase { get; private set; }
     public FeatureType MatchSelectClearAllFeature { get; private set; }
+    public FeatureType DestinationContentType { get; set; }
 
     public Window Show(Window parent)
     {
@@ -105,15 +114,24 @@ public class MergerViewModel : IShowViewModel
         Settings.Merger.IgnoreIWords = IgnoreWordsString == null ? new List<string>() : IgnoreWordsString.Split(",").Select(x => x.Trim().ToLower()).ToList();
     }
 
-    private void UpdateIsValid() => IsValid = !string.IsNullOrEmpty(Settings.Merger.DestinationContentType);
+    private void UpdateDestinationContentTypeSettings()
+    {
+        Settings.Merger.DestinationContentType = DestinationContentType?.Description;
+        IsValid = !string.IsNullOrEmpty(Settings.Merger.DestinationContentType);
+    }
 
     private void TryUpdateDestinationFolder(string folder)
     {
         // attempt to assign destination folder automatically based on the specified folder
-        var contentType = _destinationContentTypes.FirstOrDefault(c => folder.ToLower().EndsWith(c.ToLower()));
-        Settings.Merger.DestinationContentType = contentType;
+        // - if a folder for a disabled content type is specified (e.g. folder in settings hasn't been configured), then remove the selected item (if any)
+        var matchedContentType = DestinationContentTypesView
+            .Where(contentType => contentType.IsActive)
+            .FirstOrDefault(c => folder.ToLower().EndsWith(c.Description.ToLower()));
+        
+        DestinationContentType = matchedContentType;
+        DestinationContentTypesView.MoveCurrentTo(DestinationContentType);
 
-        UpdateIsValid();
+        UpdateDestinationContentTypeSettings();
     }
 
     private void CreateMatchCriteriaTypes()
@@ -229,7 +247,6 @@ public class MergerViewModel : IShowViewModel
         await showTask;
     }
 
-    private readonly IEnumerable<string> _destinationContentTypes;
     private ObservableCollection<LocalGame> _games;
     private MaterialWindowEx _window;
     private const int WindowMargin = 0;
