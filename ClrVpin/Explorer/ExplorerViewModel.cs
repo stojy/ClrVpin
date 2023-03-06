@@ -38,25 +38,16 @@ public class ExplorerViewModel : IShowViewModel
 
         _window.Closed += (_, _) => Model.SettingsManager.Write();
 
-        // queue the start in after the window has been rendered to avoid race conditions in the event the window isn't fully constructed, e.g. error during Start()
-        Dispatcher.CurrentDispatcher.BeginInvoke(TryStart);
+        // queue the start to after the window has been returned to the caller to  in the event the window isn't fully constructed, e.g. error during Start()
+        var timer = new DispatcherTimer();
+        timer.Tick += async (_, _) =>
+        {
+            timer.Stop();
+            await Start();
+        };
+        timer.Start();
 
         return _window;
-    }
-
-    private async Task TryStart()
-    {
-        try
-        {
-            await Start();
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e, $"ExplorerViewModel - failed to start");
-            
-            // explicitly close the window so the HomeVM can detect this child window has been closed and thus show the menu options
-            _window.Close();
-        }
     }
 
     private async Task Start()
