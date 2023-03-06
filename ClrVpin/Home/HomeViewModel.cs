@@ -61,7 +61,7 @@ public class HomeViewModel
     public ICommand AboutCommand { get; }
     public ICommand CloseCommand { get; }
 
-    public bool IsChildWindowActive { get; set; }
+    public bool? IsChildWindowActive { get; set; }
 
     private void SizeChanged(object sender, SizeChangedEventArgs e)
     {
@@ -87,22 +87,28 @@ public class HomeViewModel
         var childWindow = viewModel.Show(_mainWindow);
 
         // delay the child window active notification to avoid unnecessary screen flickering whilst the child window becomes 'truly active'
-        childWindow.ContentRendered += (_, _) => Task.Delay(200).ContinueWith(_ => Application.Current.Dispatcher.BeginInvoke(() => { IsChildWindowActive = true; }));
-
-        childWindow.Closed += (_, _) =>
+        childWindow.ContentRendered += (_, _) => Task.Delay(200).ContinueWith(_ => Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            IsChildWindowActive = false;
-            UpdateProperties();
+            // only assign child window active if it hasn't already been assigned, e.g. ensure child window hasn't already closed if it had issues starting correctly
+            IsChildWindowActive ??= true;
+        }));
 
-            // restore the original main window location
-            _mainWindow.Left = originalPositionLeft;
-            _mainWindow.Top = originalPositionTop;
+        childWindow.Closed += (_, _) => HandleChildWindowClosed(originalPositionLeft, originalPositionTop);
+    }
 
-            // hide then show to ensure the window is brought to the foreground
-            // - it's a workaround required to reliable handle scenario where non-ClrVpin windows were active, e.g. browser
-            _mainWindow.Hide();
-            _mainWindow.TryShow();
-        };
+    private void HandleChildWindowClosed(double originalPositionLeft, double originalPositionTop)
+    {
+        IsChildWindowActive = false;
+        UpdateProperties();
+
+        // restore the original main window location
+        _mainWindow.Left = originalPositionLeft;
+        _mainWindow.Top = originalPositionTop;
+
+        // hide then show to ensure the window is brought to the foreground
+        // - it's a workaround required to reliable handle scenario where non-ClrVpin windows were active, e.g. browser
+        _mainWindow.Hide();
+        _mainWindow.TryShow();
     }
 
     private readonly MaterialWindowEx _mainWindow;
