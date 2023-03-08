@@ -15,6 +15,7 @@ namespace ClrVpin.Controls.Folder
             ContentType = contentType;
             Folder = contentType.Folder;
             Description = contentType.Description;
+            IsRequired = contentType.IsFolderRequired;
 
             // add a validation pattern (checked elsewhere to ensure the base folder matches the description, i.e. to avoid any unexpected folders being specified (e.g. c:\)
             // - refer FilePatternValidation
