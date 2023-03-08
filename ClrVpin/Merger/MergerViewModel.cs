@@ -46,7 +46,8 @@ public class MergerViewModel : IShowViewModel
             new FeatureType(i)
             {
                 Description = contentType.Description,
-                IsActive = contentType.IsFolderValid
+                IsActive = contentType.IsFolderValid,
+                Tip = contentType.Tip + (contentType.IsFolderValid == false ? Model.OptionsDisabledMessage : null)
             });
         DestinationContentTypesView = new ListCollectionView<FeatureType>(destinationContentTypes);
         TryUpdateDestinationFolder(Settings.Merger.DestinationContentType);
@@ -126,7 +127,7 @@ public class MergerViewModel : IShowViewModel
         // - if a folder for a disabled content type is specified (e.g. folder in settings hasn't been configured), then remove the selected item (if any)
         var matchedContentType = DestinationContentTypesView
             .Where(contentType => contentType.IsActive)
-            .FirstOrDefault(c => folder.ToLower().EndsWith(c.Description.ToLower()));
+            .FirstOrDefault(c => folder?.ToLower().EndsWith(c.Description.ToLower()) ?? false);
         
         DestinationContentType = matchedContentType;
         DestinationContentTypesView.MoveCurrentTo(DestinationContentType);
