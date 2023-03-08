@@ -26,9 +26,10 @@ namespace ClrVpin.Models.Settings
             File.WriteAllText(GetPath<T>(), serializedSettings);
         }
 
-        public static T Read<T>(DefaultSettings defaultSettings) where T : ISettings, new()
+        public static (T, string) Read<T>(DefaultSettings defaultSettings) where T : ISettings, new()
         {
             T settings;
+            string resetReason = null;
 
             // retrieve existing config (from disk) or create a fresh one
             var path = GetPath<T>();
@@ -44,12 +45,17 @@ namespace ClrVpin.Models.Settings
 
                     // reset the settings if the user's stored settings version differs to the default version
                     if (settings!.Version < settings.MinVersion)
+                    {
+                        //Notification.ShowWarning("HomeDialog", "Your settings are incompatible and will be reset", "Apologies for the inconvenience").RunSynchronously();
                         settings = Reset<T>(defaultSettings);
+                        resetReason = "Your settings file was out of date.";
+                    }
                 }
                 catch (Exception e)
                 {
                     Logger.Error(e, "Failed to deserialize settings.. resetting settings");
                     settings = Reset<T>(defaultSettings);
+                    resetReason = "Your settings file could not be read.";
                 }
             }
             else
@@ -57,7 +63,7 @@ namespace ClrVpin.Models.Settings
                 settings = Reset<T>(defaultSettings);
             }
 
-            return settings;
+            return (settings, resetReason);
         }
 
         public static void CreateRootFolder(string rootFolder)
