@@ -13,6 +13,8 @@ namespace ClrVpin.Controls.Folder
         
         public string PatternValidation { get; set; }
 
+        public bool IsRequired { get; set; }
+
         public ICommand FolderExplorerCommand { get; protected init; }
         public ICommand FolderChangedCommandWithParam { get; set; }
     }

@@ -16,13 +16,13 @@ namespace ClrVpin.Settings
     {
         public SettingsViewModel()
         {
-            PinballFolderModel = new GenericFolderTypeModel("Visual Pinball Executable", Settings.PinballFolder, folder => Settings.PinballFolder = folder);
+            PinballFolderModel = new GenericFolderTypeModel("Visual Pinball Executable", Settings.PinballFolder, false, folder => Settings.PinballFolder = folder);
             PinballContentTypeModels = Model.Settings.GetPinballContentTypes().Select(contentType => new ContentFolderTypeModel(contentType)).ToList();
 
-            FrontendFolderModel = new GenericFolderTypeModel("PinballY/X Frontend Executable", Settings.FrontendFolder, folder => Settings.FrontendFolder = folder);
+            FrontendFolderModel = new GenericFolderTypeModel("PinballY/X Frontend Executable", Settings.FrontendFolder, false, folder => Settings.FrontendFolder = folder);
             FrontendContentTypeModels = Model.Settings.GetFrontendContentTypes().Select(contentType => new ContentFolderTypeModel(contentType)).ToList();
 
-            BackupFolderModel = new GenericFolderTypeModel("Backup Root", Settings.BackupFolder, folder => Settings.BackupFolder = folder);
+            BackupFolderModel = new GenericFolderTypeModel("Backup Root", Settings.BackupFolder, true, folder => Settings.BackupFolder = folder);
 
             AutoAssignPinballFoldersCommand = new ActionCommand(AutoAssignPinballFolders);
             AutoAssignFrontendFoldersCommand = new ActionCommand(AutoAssignFrontendFolders);

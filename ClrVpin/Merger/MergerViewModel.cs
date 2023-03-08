@@ -36,7 +36,7 @@ public class MergerViewModel : IShowViewModel
 
         MergeOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.MergeOptions, Settings.Merger.SelectedMergeOptions);
 
-        SourceFolderModel = new GenericFolderTypeModel("Source", Settings.Merger.SourceFolder, folder =>
+        SourceFolderModel = new GenericFolderTypeModel("Source", Settings.Merger.SourceFolder, true, folder =>
         {
             Settings.Merger.SourceFolder = folder;
             TryUpdateDestinationFolder(folder);

@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Controls;
 using PropertyChanged;
 
-namespace ClrVpin.Validation_Rules;
+namespace ClrVpin.Controls.Folder.Validation_Rules;
 
 [AddINotifyPropertyChangedInterface]
 public class FileExistsValidationRule : ValidationRule
@@ -14,11 +14,15 @@ public class FileExistsValidationRule : ValidationRule
 
         // return ValidationResult false update the UI with 'red warning text' AND doesn't update the binding
         if (string.IsNullOrEmpty(path))
-            return new ValidationResult(false, "Folder is required");
+        {
+            return Args.IsRequired ? new ValidationResult(false, "Folder is required") : new ValidationResult(true, "Optional folder");
+        }
 
         if (!Directory.Exists(path) && !File.Exists(path))
             return new ValidationResult(false, "Folder does not exist");
             
         return ValidationResult.ValidResult;
     }
+
+    public FileExistsValidationRuleArgs Args { get; set; }
 }

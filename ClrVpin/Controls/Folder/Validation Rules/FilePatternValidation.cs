@@ -11,11 +11,11 @@ public class FilePatternValidation : ValidationRule
     {
         var path = value as string;
 
-        if (FilePatternValidationArgs.Pattern != null && path?.EndsWith(FilePatternValidationArgs.Pattern) != true)
-            return new ValidationResult(false, $"Folder path must end with '{FilePatternValidationArgs.Pattern}'");
+        if (Args.Pattern != null && path?.EndsWith(Args.Pattern) != true)
+            return new ValidationResult(false, $"Folder path must end with '{Args.Pattern}'");
 
         return ValidationResult.ValidResult;
     }
 
-    public FilePatternValidationArgs FilePatternValidationArgs { get; set; }
+    public FilePatternValidationArgs Args { get; set; }
 }

@@ -8,10 +8,11 @@ namespace ClrVpin.Controls.Folder
     [AddINotifyPropertyChangedInterface]
     public class GenericFolderTypeModel : FolderTypeDetail
     {
-        public GenericFolderTypeModel(string description, string folder, Action<string> setFolder) 
+        public GenericFolderTypeModel(string description, string folder, bool isRequired, Action<string> setFolder) 
         {
             Folder = folder;
             Description = description;
+            IsRequired = isRequired;
 
             FolderChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
             {
