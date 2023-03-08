@@ -6,8 +6,8 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
-                    xmlns:feeder="clr-namespace:ClrVpin.Feeder">
+                    xmlns:feeder="clr-namespace:ClrVpin.Feeder"
+                    xmlns:validationRules="clr-namespace:ClrVpin.Controls.Folder.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />

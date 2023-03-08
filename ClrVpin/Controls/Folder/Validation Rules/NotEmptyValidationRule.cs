@@ -4,7 +4,7 @@ using System.Windows.Data;
 using ClrVpin.Extensions;
 using PropertyChanged;
 
-namespace ClrVpin.Validation_Rules;
+namespace ClrVpin.Controls.Folder.Validation_Rules;
 
 [AddINotifyPropertyChangedInterface]
 public class NotEmptyValidationRule : ValidationRule
