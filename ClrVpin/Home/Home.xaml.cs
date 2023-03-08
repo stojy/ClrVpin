@@ -39,20 +39,20 @@ public partial class HomeWindow
             }
 
             // guard against multiple window activations
-            if (Model.SettingsManager.WasReset && !_wasConfigResetHandled)
+            if (Model.SettingsManager.ResetReason != null && !_wasConfigResetHandled)
             {
                 _wasConfigResetHandled = true;
                 await DialogHost.Show(new RestartInfo
                 {
                     Title = "Your settings have been reset",
-                    Detail = "ClrVpin will now be restarted."
+                    Detail = Model.SettingsManager.ResetReason
                 }, "HomeDialog").ContinueWith(_ => Dispatcher.Invoke(Restart));
             }
         };
 
         Loaded += async (_, _) =>
         {
-            if (VersionManagementService.ShouldCheck())
+            if (VersionManagementService.ShouldCheck() && Model.SettingsManager.ResetReason == null)
                 await VersionManagementService.CheckAndHandle();
         };
     }

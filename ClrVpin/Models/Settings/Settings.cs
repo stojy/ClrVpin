@@ -121,7 +121,7 @@ public class Settings : ISettings
     public int Version { get; set; }
 
     [JsonIgnore]
-    public int MinVersion { get; set; } = 5;
+    public int MinVersion { get; set; } = 6;
 
     public void Init(DefaultSettings defaultSettings)
     {
