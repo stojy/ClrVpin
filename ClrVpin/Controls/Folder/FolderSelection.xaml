@@ -1,10 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:folder="clr-namespace:ClrVpin.Controls.Folder">
+                    xmlns:folder="clr-namespace:ClrVpin.Controls.Folder"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:validationRules="clr-namespace:ClrVpin.Controls.Folder.Validation_Rules"
+                    mc:Ignorable="d">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -21,7 +24,8 @@
   <DataTemplate x:Key="FolderSelection" DataType="folder:FolderTypeDetail">
     <WrapPanel Height="50">
       <WrapPanel.Resources>
-        <controls:BindingProxyFolder x:Key="BindingProxyFolder" Data="{Binding}" />
+        <!-- create a proxy object with a Data property assigned to the FolderTypeDetail instance that is being data templated -->
+        <controls:BindingProxy x:Key="BindingProxy" Data="{Binding}" />
       </WrapPanel.Resources>
 
       <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}">
@@ -32,10 +36,12 @@
               <validationRules:FileExistsValidationRule ValidatesOnTargetUpdated="True"/>
               <validationRules:FilePatternValidation ValidatesOnTargetUpdated="True" >
                 <!-- convoluted args property and BindingProxy required to support adding a new property that doesn't directly support binding
+                     - bind validation POCO Args to a new class instance that is a dependency object referenced via a binding proxy that is a freezable object.. OMG madness!!
                      - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx -->
-                <validationRules:FilePatternValidation.Args>
-                  <validationRules:Args Pattern="{Binding Data.PatternValidation, Source={StaticResource BindingProxyFolder}}"/>
-                </validationRules:FilePatternValidation.Args>
+                <validationRules:FilePatternValidation.FilePatternValidationArgs>
+                  <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
+                  <validationRules:FilePatternValidationArgs Pattern="{Binding Data.PatternValidation, Source={StaticResource BindingProxy}}" d:DataContext="{d:DesignInstance Type=folder:FolderTypeDetail}"/>
+                </validationRules:FilePatternValidation.FilePatternValidationArgs>
               </validationRules:FilePatternValidation>
             </Binding.ValidationRules>
           </Binding>

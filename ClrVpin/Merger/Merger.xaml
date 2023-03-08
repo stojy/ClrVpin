@@ -1,11 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:validationRules="clr-namespace:ClrVpin.Validation_Rules"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
                     xmlns:merger="clr-namespace:ClrVpin.Merger"
-                    xmlns:featureType="clr-namespace:ClrVpin.Shared.FeatureType">
+                    xmlns:featureType="clr-namespace:ClrVpin.Shared.FeatureType"
+                    xmlns:validationRules="clr-namespace:ClrVpin.Controls.Folder.Validation_Rules">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />

@@ -1,25 +1,7 @@
-﻿using System.Globalization;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using PropertyChanged;
 
-namespace ClrVpin.Validation_Rules;
-
-[AddINotifyPropertyChangedInterface]
-public class FilePatternValidation : ValidationRule
-{
-    public override ValidationResult Validate(object value, CultureInfo cultureInfo)
-    {
-        var path = value as string;
-
-        if (Args.Pattern != null && path?.EndsWith(Args.Pattern) != true)
-            return new ValidationResult(false, $"Folder path must end with '{Args.Pattern}'");
-
-        return ValidationResult.ValidResult;
-    }
-
-    public Args Args { get; set; }
-}
+namespace ClrVpin.Controls.Folder.Validation_Rules;
 
 // validation property must be added as a dependency property to support binding
 // - separate class used because we can't add dependency property to a ValidationRule, because ValidationRule is not a DependencyObject (e.g. UserControl)!
@@ -29,10 +11,10 @@ public class FilePatternValidation : ValidationRule
 // - https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx
 // - https://stackoverflow.com/questions/3862385/wpf-validationrule-with-dependency-property
 [AddINotifyPropertyChangedInterface]
-public class Args : DependencyObject
+public class FilePatternValidationArgs : DependencyObject
 {
     public static readonly DependencyProperty PatternProperty =
-        DependencyProperty.Register(nameof(Pattern), typeof(string), typeof(Args), new PropertyMetadata(default(string)));
+        DependencyProperty.Register(nameof(Pattern), typeof(string), typeof(FilePatternValidationArgs), new PropertyMetadata(default(string)));
 
     public string Pattern
     {
