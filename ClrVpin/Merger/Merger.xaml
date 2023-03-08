@@ -34,7 +34,7 @@
 
           <ComboBox.ItemTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding Description}"/>
+              <TextBlock Text="{Binding Description}" ToolTip="{Binding Tip}" ToolTipService.ShowOnDisabled="true"/>
             </DataTemplate>
           </ComboBox.ItemTemplate>
           

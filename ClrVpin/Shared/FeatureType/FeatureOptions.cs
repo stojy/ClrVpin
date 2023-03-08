@@ -34,7 +34,7 @@ public static class FeatureOptions
         T highlightedOption,
         Expression<Func<T>> selection, 
         Action changedAction,
-        Func<ICollection<EnumOption<T>>, EnumOption<T>, bool> isSupportedFunc = null) where T : Enum
+        Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null) where T : Enum
     {
         var memberAccessor = new Accessor<T>(selection);
 
@@ -62,7 +62,7 @@ public static class FeatureOptions
         ICollection<EnumOption<T>> enumOptions, 
         ObservableCollection<string> selections,
         Action<FeatureType> changedAction = null, 
-        Func<ICollection<EnumOption<T>>, EnumOption<T>, bool> isSupportedFunc = null,
+        Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null,
         bool includeSelectAll = true) where T : Enum
     {
         return CreateFeatureOptionsSelectionsViewInternal(enumOptions,
@@ -74,7 +74,7 @@ public static class FeatureOptions
         ICollection<EnumOption<T>> enumOptions, 
         ObservableCollection<T> selections,
         Action<FeatureType> changedAction = null, 
-        Func<ICollection<EnumOption<T>>, EnumOption<T>, bool> isSupportedFunc = null,
+        Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null,
         bool includeSelectAll = true) where T : Enum
     {
         return CreateFeatureOptionsSelectionsViewInternal(enumOptions,
@@ -87,7 +87,7 @@ public static class FeatureOptions
         Func<EnumOption<T>, bool> containsSelection,
         Action<EnumOption<T>> toggleSelection,
         Action<FeatureType> changedAction = null,
-        Func<ICollection<EnumOption<T>>, EnumOption<T>, bool> isSupportedFunc = null,
+        Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null,
         bool includeSelectAll = true) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
@@ -111,20 +111,20 @@ public static class FeatureOptions
         return new ListCollectionView<FeatureType>(featureTypes);
     }
 
-    private static void SetupIsSupported<T>(ICollection<EnumOption<T>> enumOptions, Action<EnumOption<T>> toggleSelection, Func<ICollection<EnumOption<T>>, EnumOption<T>, bool> isSupportedFunc, EnumOption<T> enumOption, FeatureType featureType) where T : Enum
+    private static void SetupIsSupported<T>(ICollection<EnumOption<T>> enumOptions, Action<EnumOption<T>> toggleSelection, 
+        Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool isSupported, string message)> isSupportedFunc, 
+        EnumOption<T> enumOption, FeatureType featureType) where T : Enum
     {
         // if the feature is not supported, then update both..
         // - model, i.e. selections array of string or eum
         // - viewmodel, i.e. the checkbox/radio/chip/etc
-        if (!(isSupportedFunc?.Invoke(enumOptions, enumOption) ?? true))
+        var result = isSupportedFunc?.Invoke(enumOptions, enumOption);
+        if (result?.isSupported == false)
         {
             if (featureType.IsActive)
-            {
                 toggleSelection(enumOption);
-                featureType.IsActive = false;
-            }
 
-            featureType.IsSupported = false;
+            DisableFeatureType(featureType, result.Value.message);
         }
     }
 
@@ -133,7 +133,8 @@ public static class FeatureOptions
         // disable feature type so it can't be used, e.g. non-selectable
         featureType.IsActive = false;
         featureType.IsSupported = false;
-        featureType.Tip += message ?? Model.OptionsDisabledMessage;
+        if (message != null)
+            featureType.Tip += message;
     }
 
     private static FeatureType CreateSelectAll(List<FeatureType> featureTypes)

@@ -35,7 +35,7 @@ public class FeederViewModel : IShowViewModel
         if (!Model.SettingsManager.IsValid)
         {
             Settings.Feeder.SelectedMatchCriteriaOptions.Clear();  // clear the settings to disable matching
-            FeatureOptions.DisableFeatureType(MatchFuzzy);
+            FeatureOptions.DisableFeatureType(MatchFuzzy, Model.OptionsDisabledMessage);
         }
 
         FeedFixOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.FixFeedOptions, Settings.Feeder.SelectedFeedFixOptions, _ => FixFeedOptionSelected());

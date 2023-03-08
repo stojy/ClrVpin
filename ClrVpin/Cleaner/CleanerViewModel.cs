@@ -29,16 +29,16 @@ public class CleanerViewModel : IShowViewModel
 
         CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
             Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, 
-            _ => UpdateIsValid(), (enumOptions, enumOption) => enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid);
+            _ => UpdateIsValid(), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage));
         CheckMediaContentTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(
             Settings.GetMediaContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, 
-            _ => UpdateIsValid(), (enumOptions, enumOption) => enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid);
+            _ => UpdateIsValid(), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage));
 
         CheckHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedCheckHitTypes, ToggleFixHitTypeState);
         
         FixHitTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedFixHitTypes, 
             // special handling for the fix hit types as they're functionality coupled with the criteria hit types, e.g. fix is disabled when check options are not selected
-            isSupportedFunc: (_, enumOption) => Settings.Cleaner.SelectedCheckHitTypes.Contains(enumOption.Enum) && enumOption.Enum != HitTypeEnum.Missing);
+            isSupportedFunc: (_, enumOption) => (Settings.Cleaner.SelectedCheckHitTypes.Contains(enumOption.Enum) && enumOption.Enum != HitTypeEnum.Missing, null));
         FixHitTypesView.First(fixHitFeatureType => (HitTypeEnum)fixHitFeatureType.Id == HitTypeEnum.Missing).IsNeverSupported = true;
 
         MultipleMatchOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(

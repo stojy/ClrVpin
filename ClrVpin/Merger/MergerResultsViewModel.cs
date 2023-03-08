@@ -51,7 +51,7 @@ namespace ClrVpin.Merger
                 new ObservableCollection<string> {Settings.GetSelectedDestinationContentType().Description}, 
                 _ => UpdateHitsView(), 
                 // merger content types is a 'special egg'.. unlike cleaner, the list is readonly
-                (_, enumOption) => Settings.GetSelectedDestinationContentType().Enum == enumOption.Enum,
+                (_, enumOption) => (Settings.GetSelectedDestinationContentType().Enum == enumOption.Enum, null),
                 false);
 
             return featureView;
