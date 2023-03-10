@@ -1,21 +1,17 @@
 ﻿using System.Globalization;
 using System.Windows.Controls;
-using System.Windows.Data;
-using ClrVpin.Extensions;
 using PropertyChanged;
 
 namespace ClrVpin.Controls.Folder.Validation_Rules;
 
 [AddINotifyPropertyChangedInterface]
-public class NotEmptyValidationRule : ValidationRule
+public class NotEmptyValidationRule : ValidationRuleBase
 {
     public string Description { get; set; } = "Field";
 
     public override ValidationResult Validate(object value, CultureInfo cultureInfo)
     {
-        // value is BindingExpression when a ValidationStep is used, i.e. not the bound value
-        if (value is BindingExpression bindingExpression)
-            value = bindingExpression.GetValue();
+        value = GetValueAndClearError<string>(value);
 
         return string.IsNullOrWhiteSpace((value ?? "").ToString())
             ? new ValidationResult(false, $"{Description} required")
