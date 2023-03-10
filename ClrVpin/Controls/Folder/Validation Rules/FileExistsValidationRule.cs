@@ -6,17 +6,14 @@ using PropertyChanged;
 namespace ClrVpin.Controls.Folder.Validation_Rules;
 
 [AddINotifyPropertyChangedInterface]
-public class FileExistsValidationRule : ValidationRule
+public class FileExistsValidationRule : ValidationRuleBase
 {
     public override ValidationResult Validate(object value, CultureInfo cultureInfo)
     {
-        var path = value as string;
+        var path = GetValueAndClearError<string>(value);
 
-        // return ValidationResult false update the UI with 'red warning text' AND doesn't update the binding
-        if (string.IsNullOrEmpty(path))
-        {
-            return Args.IsRequired ? new ValidationResult(false, "Folder is required") : new ValidationResult(true, "Optional folder");
-        }
+        if (string.IsNullOrWhiteSpace(path))
+            return Args.IsRequired ? new ValidationResult(false, "Folder is required") : ValidationResult.ValidResult;
 
         if (!Directory.Exists(path) && !File.Exists(path))
             return new ValidationResult(false, "Folder does not exist");

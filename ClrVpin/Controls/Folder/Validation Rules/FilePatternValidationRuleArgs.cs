@@ -11,10 +11,10 @@ namespace ClrVpin.Controls.Folder.Validation_Rules;
 // - https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx
 // - https://stackoverflow.com/questions/3862385/wpf-validationrule-with-dependency-property
 [AddINotifyPropertyChangedInterface]
-public class FilePatternValidationArgs : DependencyObject
+public class FilePatternValidationRuleArgs : DependencyObject
 {
     public static readonly DependencyProperty PatternProperty =
-        DependencyProperty.Register(nameof(Pattern), typeof(string), typeof(FilePatternValidationArgs), new PropertyMetadata(default(string)));
+        DependencyProperty.Register(nameof(Pattern), typeof(string), typeof(FilePatternValidationRuleArgs), new PropertyMetadata(default(string)));
 
     public string Pattern
     {

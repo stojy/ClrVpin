@@ -7,6 +7,7 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:validationRules="clr-namespace:ClrVpin.Controls.Folder.Validation_Rules"
+                    xmlns:converters="clr-namespace:ClrVpin.Converters"
                     mc:Ignorable="d">
 
   <ResourceDictionary.MergedDictionaries>
@@ -14,40 +15,52 @@
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
+  <converters:BoolToStringConverter x:Key="RequiredFolderToHintTextConverter" False="(Optional Folder)" True="(Required Folder)"/>
+
   <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
     <Setter Property="Width" Value="400" />
     <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
+    
+    <!-- floating hint (aka field type) made larger to look like a heading once the user has made a text entry -->
+    <Setter Property="materialDesign:HintAssist.FloatingScale" Value="1.0" /> 
+  </Style>
+
+  <Style x:Key="HelperTextStyle" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHelperTextBlock}">
+    <Setter Property="FontStyle" Value="Italic" />
   </Style>
 
   <!-- present folder name (with optional folder suffix matching) and open folder button -->
   <DataTemplate x:Key="FolderSelection" DataType="folder:FolderTypeDetail">
-    <WrapPanel Height="50">
+    <WrapPanel Height="65">
       <WrapPanel.Resources>
         <!-- create a proxy object with a Data property assigned to the FolderTypeDetail instance that is being data templated -->
         <controls:BindingProxy x:Key="BindingProxy" Data="{Binding}" />
       </WrapPanel.Resources>
 
-      <TextBox Style="{StaticResource TextBoxStyle}" materialDesign:HintAssist.Hint="{Binding Description}" materialDesign:HintAssist.HelperText="blah">
-
+      <TextBox Style="{StaticResource TextBoxStyle}"
+               materialDesign:HintAssist.Hint="{Binding Description}"
+               materialDesign:HintAssist.HelperText="{Binding IsRequired, Converter={StaticResource RequiredFolderToHintTextConverter}}"
+               materialDesign:HintAssist.HelperTextStyle="{StaticResource HelperTextStyle}">
         <TextBox.Text>
           <Binding Path="Folder" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
             <Binding.ValidationRules>
-              <validationRules:FileExistsValidationRule ValidatesOnTargetUpdated="True">
+              <!-- run the validation rule after the source is committed, i.e. invalid values are deliberately saved -->
+              <validationRules:FileExistsValidationRule ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue">
                 <validationRules:FileExistsValidationRule.Args>
                   <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
                   <validationRules:FileExistsValidationRuleArgs IsRequired="{Binding Data.IsRequired, Source={StaticResource BindingProxy}}" d:DataContext="{d:DesignInstance Type=folder:FolderTypeDetail}"/>
                 </validationRules:FileExistsValidationRule.Args>
               </validationRules:FileExistsValidationRule>
 
-              <validationRules:FilePatternValidation ValidatesOnTargetUpdated="True" >
-                <!-- convoluted args property and BindingProxy required to support adding a new property that doesn't directly support binding
+              <validationRules:FilePatternValidationRule ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue">
+                 <!--convoluted args property and BindingProxy required to support adding a new property that doesn't directly support binding
                      - bind validation POCO Args to a new class instance that is a dependency object referenced via a binding proxy that is a freezable object.. OMG madness!!
-                     - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx -->
-                <validationRules:FilePatternValidation.Args>
-                  <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                  <validationRules:FilePatternValidationArgs Pattern="{Binding Data.PatternValidation, Source={StaticResource BindingProxy}}" d:DataContext="{d:DesignInstance Type=folder:FolderTypeDetail}"/>
-                </validationRules:FilePatternValidation.Args>
-              </validationRules:FilePatternValidation>
+                     - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx--> 
+                <validationRules:FilePatternValidationRule.Args>
+                   <!--ReSharper disable once Xaml.BindingWithContextNotResolved--> 
+                  <validationRules:FilePatternValidationRuleArgs Pattern="{Binding Data.PatternValidation, Source={StaticResource BindingProxy}}" d:DataContext="{d:DesignInstance Type=folder:FolderTypeDetail}"/>
+                </validationRules:FilePatternValidationRule.Args>
+              </validationRules:FilePatternValidationRule>
 
             </Binding.ValidationRules>
           </Binding>
@@ -55,7 +68,7 @@
 
         <b:Interaction.Triggers>
           <b:EventTrigger EventName="TextChanged">
-            <!-- pass event args to allow workaround for the validation rule triggering which subsequently doesn't update the binding source -->
+            <!-- trigger a command so that we can update the underlying model -->
             <b:InvokeCommandAction Command="{Binding FolderChangedCommandWithParam}" PassEventArgsToCommand="True" />
           </b:EventTrigger>
         </b:Interaction.Triggers>
@@ -66,6 +79,5 @@
       </Button>
     </WrapPanel>
   </DataTemplate>
-
 
 </ResourceDictionary>
