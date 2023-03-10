@@ -46,6 +46,10 @@
             <Binding.ValidationRules>
               <!-- run the validation rule after the source is committed, i.e. invalid values are deliberately saved -->
               <validationRules:FileExistsValidationRule ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue">
+                <!-- VERY convoluted binding required because..
+                      1. Binding requires a dependency property.. but this can't be added to the ValidationRule because it is NOT a dependency object
+                      2. Binding a control requires a DataContext.. which isn't available on a new POCO dependency object so it must be bound to a UI BindingProxy (e.g. Freezable element)
+                    - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx--> 
                 <validationRules:FileExistsValidationRule.Args>
                   <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
                   <validationRules:FileExistsValidationRuleArgs IsRequired="{Binding Data.IsRequired, Source={StaticResource BindingProxy}}" d:DataContext="{d:DesignInstance Type=folder:FolderTypeDetail}"/>
@@ -53,9 +57,6 @@
               </validationRules:FileExistsValidationRule>
 
               <validationRules:FilePatternValidationRule ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue">
-                 <!--convoluted args property and BindingProxy required to support adding a new property that doesn't directly support binding
-                     - bind validation POCO Args to a new class instance that is a dependency object referenced via a binding proxy that is a freezable object.. OMG madness!!
-                     - refer https://social.technet.microsoft.com/wiki/contents/articles/31422.wpf-passing-a-data-bound-value-to-a-validation-rule.aspx--> 
                 <validationRules:FilePatternValidationRule.Args>
                    <!--ReSharper disable once Xaml.BindingWithContextNotResolved--> 
                   <validationRules:FilePatternValidationRuleArgs Pattern="{Binding Data.PatternValidation, Source={StaticResource BindingProxy}}" d:DataContext="{d:DesignInstance Type=folder:FolderTypeDetail}"/>
