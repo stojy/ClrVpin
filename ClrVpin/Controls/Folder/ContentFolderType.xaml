@@ -28,7 +28,7 @@
         <TextBox.Text>
           <Binding Path="Extensions" UpdateSourceTrigger="PropertyChanged">
             <Binding.ValidationRules>
-              <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
+              <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" Description="Extension(s)" />
             </Binding.ValidationRules>
           </Binding>
         </TextBox.Text>

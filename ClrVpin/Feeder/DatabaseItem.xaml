@@ -103,7 +103,7 @@
             <TextBox.Text>
               <Binding Path="LocalGame.Game.Name" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                 <Binding.ValidationRules>
-                  <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue" />
+                  <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" ValidationStep="CommittedValue" Description="Name" />
                 </Binding.ValidationRules>
               </Binding>
             </TextBox.Text>

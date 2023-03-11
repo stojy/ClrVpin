@@ -27,23 +27,23 @@
           <ComboBox.SelectedItem>
             <Binding Path="DestinationContentType" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
               <Binding.ValidationRules>
-                <validationRules:NotEmptyValidationRule ValidatesOnTargetUpdated="True" Description="Content type" />
+                <validationRules:NotNullValidationRule ValidatesOnTargetUpdated="True" Description="Content type" />
               </Binding.ValidationRules>
             </Binding>
           </ComboBox.SelectedItem>
 
           <ComboBox.ItemTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding Description}" ToolTip="{Binding Tip}" ToolTipService.ShowOnDisabled="true"/>
+              <TextBlock Text="{Binding Description}" ToolTip="{Binding Tip}" ToolTipService.ShowOnDisabled="true" />
             </DataTemplate>
           </ComboBox.ItemTemplate>
-          
+
           <ComboBox.ItemContainerStyle>
             <Style TargetType="ComboBoxItem">
-              <Setter Property="IsEnabled" Value="{Binding IsActive}"/>
+              <Setter Property="IsEnabled" Value="{Binding IsActive}" />
             </Style>
           </ComboBox.ItemContainerStyle>
-          
+
           <b:Interaction.Triggers>
             <b:EventTrigger EventName="SelectionChanged">
               <b:InvokeCommandAction Command="{Binding DestinationContentTypeSelectedCommand}" />
@@ -60,30 +60,30 @@
           <ContentControl Content="{Binding MatchDuplicate}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
           <ContentControl Content="{Binding MatchTableName}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
           <WrapPanel>
-              <WrapPanel Width="160" HorizontalAlignment="Left">
-                <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
-                <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
-                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
-                        Foreground="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
-                  <materialDesign:PackIcon Kind="InformationOutline" />
-                </Button>
-              </WrapPanel>
+            <WrapPanel Width="160" HorizontalAlignment="Left">
+              <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
+              <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
+                      Style="{StaticResource MaterialDesignIconButton}" ToolTip="Open help page in the browser" Height="NaN" Width="NaN" Margin="10,0,0,0"
+                      Foreground="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToAccentBrush}}">
+                <materialDesign:PackIcon Kind="InformationOutline" />
+              </Button>
+            </WrapPanel>
 
-              <WrapPanel IsEnabled="{Binding MatchFuzzy.IsActive}"
-                         Margin="10,2,0,4">
-                <TextBox materialDesign:HintAssist.Hint="Confidence" IsReadOnly="True" IsEnabled="False" Width="75" Padding="0"
-                         materialDesign:TextFieldAssist.SuffixText="%"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Text="{Binding Settings.MatchFuzzyMinimumPercentage}" />
-                <Slider Margin="10,1,0,0" Width="370" HorizontalAlignment="Left"
-                        Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
-                        Value="{Binding Settings.MatchFuzzyMinimumPercentage}"
-                        ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
-                  <Slider.Resources>
-                    <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
-                  </Slider.Resources>
-                </Slider>
-              </WrapPanel>
+            <WrapPanel IsEnabled="{Binding MatchFuzzy.IsActive}"
+                       Margin="10,2,0,4">
+              <TextBox materialDesign:HintAssist.Hint="Confidence" IsReadOnly="True" IsEnabled="False" Width="75" Padding="0"
+                       materialDesign:TextFieldAssist.SuffixText="%"
+                       Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                       Text="{Binding Settings.MatchFuzzyMinimumPercentage}" />
+              <Slider Margin="10,1,0,0" Width="370" HorizontalAlignment="Left"
+                      Minimum="50" Maximum="250" SelectionStart="100" IsSelectionRangeEnabled="True"
+                      Value="{Binding Settings.MatchFuzzyMinimumPercentage}"
+                      ToolTip="Minimum confidence required for a fuzzy match (default 100%)">
+                <Slider.Resources>
+                  <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Green" SecondaryColor="Pink" />
+                </Slider.Resources>
+              </Slider>
+            </WrapPanel>
           </WrapPanel>
 
           <ContentControl Content="{Binding MatchSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" Width="230" HorizontalAlignment="Left" />
@@ -110,16 +110,16 @@
           </WrapPanel>
 
           <WrapPanel Margin="0,10,0,0">
-            <ContentControl Width="230" VerticalAlignment="Top" 
+            <ContentControl Width="230" VerticalAlignment="Top"
                             Content="{Binding IgnoreIfSmallerFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
-          
+
             <WrapPanel IsEnabled="{Binding IgnoreIfSmallerFeature.IsActive}" Margin="5,0,0,8">
               <TextBox materialDesign:HintAssist.Hint="Threshold" IsReadOnly="True" IsEnabled="False" Padding="0"
                        materialDesign:TextFieldAssist.SuffixText="%"
                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                        Text="{Binding Settings.Merger.IgnoreIfSmallerPercentage}" />
               <Slider Margin="10,-1,0,0" Width="316" HorizontalAlignment="Left"
-                      Value="{Binding Settings.Merger.IgnoreIfSmallerPercentage}" 
+                      Value="{Binding Settings.Merger.IgnoreIfSmallerPercentage}"
                       ToolTip="Ignore if file is smaller than the specified percentage" />
             </WrapPanel>
           </WrapPanel>
@@ -147,6 +147,9 @@
           </ItemsControl.ItemsPanel>
         </ItemsControl>
       </GroupBox>
+
+      <TextBlock Margin="0,10,0,5" FontStyle="Italic"
+                 Text="¹ Required folder. The content type will be automatically selected if the folder name matches." />
 
       <WrapPanel Margin="0,10,10,10" ToolTip="When enabled, merge will show what would be changed, but without making ANY actual changes. No files will be copied, moved, renamed, or deleted.">
         <ToggleButton IsChecked="{Binding Settings.TrainerWheels}" />
