@@ -14,7 +14,7 @@ public class CleanerSettings
     public ObservableCollection<HitTypeEnum> SelectedFixHitTypes { get; set; } = new();
         
     public MultipleMatchOptionEnum SelectedMultipleMatchOption { get; set; } = MultipleMatchOptionEnum.PreferMostRecentAndExceedSizeThreshold;
-    public decimal MultipleMatchExceedSizeThresholdPercentage { get; set; } = 85;
+    public decimal MultipleMatchExceedSizeThresholdPercentage { get; set; } = 80;
 
     // it shouldn't be possible to select the database file since it's not selectable from the UI
     // - but with an abundance caution we explicitly ignore it since if it were included the cleaner would attempt to delete the file as 'unmatched'

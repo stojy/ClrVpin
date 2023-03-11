@@ -21,7 +21,7 @@ namespace ClrVpin.Models.Settings
         public string SourceFolder { get; set; }
         public string DestinationContentType { get; set; }
         
-        public decimal IgnoreIfSmallerPercentage { get; set; } = 75;
+        public decimal IgnoreIfSmallerPercentage { get; set; } = 80;
         public List<string> IgnoreIWords { get; set; } = new List<string>{"nude", "adult", "tba", "original", "orginal", "b&w", " bw ", "2scr", "2 screen"};
 
         public bool DeleteIgnoredFiles { get; set; }
