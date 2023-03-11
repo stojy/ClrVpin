@@ -62,7 +62,7 @@
         </GroupBox>
 
         <!-- front end folders -->
-        <TextBlock Style="{StaticResource TitleStyle}">PinballY/X Frontends</TextBlock>
+        <TextBlock Style="{StaticResource TitleStyle}">PinballY/X Frontend</TextBlock>
         <GroupBox Header="Folders/Files" Margin="0,0,0,5">
           <StackPanel Margin="0,0,0,3">
             <WrapPanel>

@@ -64,9 +64,9 @@ public class SettingsManager
 
         // requirements for the overall settings to be valid..
         // - required folders are specified and exist.. optional folders are ignored
+        Settings.GetAllContentTypes().ForEach(x => x.IsFolderValid = DoesFolderOrFileExist(x.Folder));
+        
         var contentTypesToVerify = Settings.GetAllContentTypes().Where(x => x.IsFolderRequired).ToList();
-        contentTypesToVerify.ForEach(x => x.IsFolderValid = DoesFolderOrFileExist(x.Folder));
-
         IsValid = contentTypesToVerify.All(x => x.IsFolderValid) && specialFolders.All(DoesFolderOrFileExist);
     }
 
