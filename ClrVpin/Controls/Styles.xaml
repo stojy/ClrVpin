@@ -145,7 +145,7 @@
 
   <!-- useful posting regarding data grid cell styling/alignment.. https://stackoverflow.com/questions/6072093/how-to-center-the-content-of-cells-in-a-data-grid -->
   <Style x:Key="AlignedDataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource MaterialDesignDataGridCell}">
-    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Stretch" /> <!--stretch required so the 'blank' parts of the row register as selected when clicked-->
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="HorizontalAlignment" Value="Stretch" /> <!--stretch required so the 'blank' parts of the row register as selected when clicked-->
     <Setter Property="HorizontalContentAlignment" Value="Left" />
