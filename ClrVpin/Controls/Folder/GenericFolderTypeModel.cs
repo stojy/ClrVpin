@@ -11,7 +11,7 @@ namespace ClrVpin.Controls.Folder
         public GenericFolderTypeModel(string description, string folder, bool isRequired, Action<string> setFolder) 
         {
             Folder = folder;
-            Description = description;
+            Description = $"{description} {(isRequired ? "¹" : "²")}";
             IsRequired = isRequired;
 
             FolderChangedCommandWithParam = new ActionCommand<TextChangedEventArgs>(e =>
