@@ -70,10 +70,11 @@ public class HomeViewModel
 
     private void Show<T>() where T : IShowViewModel, new()
     {
+        IsChildWindowActive = null;
         var originalPositionLeft = _mainWindow.Left;
         var originalPositionTop = _mainWindow.Top;
 
-        // the main window MUST remain visible as a workaround a 'feature' where the UI stops updating when windows performs a 'global window update'
+        // the main window MUST remain visible as a workaround a 'feature' whereby the UI stops updating when windows performs a 'global window update'
         // - 'UI stops updating' has the input working (e.g. mouse clicks), but no visual updates are made (e.g. checkbox state not visually updated)
         // - the window will sometimes resume working (including any previous clicks) if it's dragged to the same window as the home window
         // - suspected, but not proven, to be an issue with the top level overlay..
