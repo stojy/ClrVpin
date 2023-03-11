@@ -5,15 +5,15 @@ using PropertyChanged;
 namespace ClrVpin.Controls.Folder.Validation_Rules;
 
 [AddINotifyPropertyChangedInterface]
-public class NotEmptyValidationRule : ValidationRuleBase
+public class NotNullValidationRule : ValidationRuleBase
 {
     public string Description { get; set; }
 
     public override ValidationResult Validate(object value, CultureInfo cultureInfo)
     {
-        value = GetValueAndClearError<string>(value);
+        value = GetValueAndClearError<object>(value);
 
-        return string.IsNullOrWhiteSpace((value ?? "").ToString())
+        return value == null
             ? new ValidationResult(false, $"{Description} required")
             : ValidationResult.ValidResult;
     }
