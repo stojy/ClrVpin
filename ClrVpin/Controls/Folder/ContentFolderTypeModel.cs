@@ -14,7 +14,7 @@ public class ContentFolderTypeModel : FolderTypeDetail
     {
         ContentType = contentType;
         Folder = contentType.Folder;
-        Description = contentType.Description;
+        Description = $"{contentType.Description} {(contentType.IsFolderRequired ? "¹" : "²")}";
         IsRequired = contentType.IsFolderRequired;
 
         // add a validation pattern (checked elsewhere to ensure the base folder matches the description, i.e. to avoid any unexpected folders being specified (e.g. c:\)

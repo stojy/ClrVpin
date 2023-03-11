@@ -15,6 +15,7 @@
   <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
     <Setter Property="Width" Value="400" />
     <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
+    <Setter Property="materialDesign:HintAssist.FloatingScale" Value="0.8" /> 
   </Style>
 
   <!-- present folder selection with file extension and kindred file extension support -->
@@ -22,7 +23,7 @@
     <WrapPanel Margin="0,0,0,0">
       <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding}" />
 
-      <TextBox Margin="5,0,0,0" Width="150" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="File(s)"
+      <TextBox Margin="5,0,0,0" Width="150" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="File Extension(s)"
                ToolTip="Only files with matching extensions will be considered. Extensions are ordered in descending priority order.">
         <TextBox.Text>
           <Binding Path="Extensions" UpdateSourceTrigger="PropertyChanged">

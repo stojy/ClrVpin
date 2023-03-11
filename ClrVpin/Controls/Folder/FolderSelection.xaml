@@ -15,10 +15,9 @@
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <converters:BoolToStringConverter x:Key="RequiredFolderToHintTextConverter" False="(Optional Folder)" True="(Required Folder)"/>
-
   <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
     <Setter Property="Width" Value="400" />
+    <!--<Setter Property="FontSize" Value="15" />-->
     <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
     
     <!-- floating hint (aka field type) made larger to look like a heading once the user has made a text entry -->
@@ -31,7 +30,7 @@
 
   <!-- present folder name (with optional folder suffix matching) and open folder button -->
   <DataTemplate x:Key="FolderSelection" DataType="folder:FolderTypeDetail">
-    <WrapPanel Height="65">
+    <WrapPanel Height="60">
       <WrapPanel.Resources>
         <!-- create a proxy object with a Data property assigned to the FolderTypeDetail instance that is being data templated -->
         <controls:BindingProxy x:Key="BindingProxy" Data="{Binding}" />
@@ -39,7 +38,6 @@
 
       <TextBox Style="{StaticResource TextBoxStyle}"
                materialDesign:HintAssist.Hint="{Binding Description}"
-               materialDesign:HintAssist.HelperText="{Binding IsRequired, Converter={StaticResource RequiredFolderToHintTextConverter}}"
                materialDesign:HintAssist.HelperTextStyle="{StaticResource HelperTextStyle}">
         <TextBox.Text>
           <Binding Path="Folder" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
