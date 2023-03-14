@@ -3,7 +3,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace ClrVpin.Controls.Folder
 {
-    public class FolderUtil
+    public static class FolderUtil
     {
         public static void Get(string description, string folder, Action<string> updateAction)
         {

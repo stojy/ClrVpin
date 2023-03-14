@@ -28,6 +28,8 @@ namespace ClrVpin.Settings
             AutoAssignFrontendFoldersCommand = new ActionCommand(AutoAssignFrontendFolders);
             ResetCommand = new ActionCommand(Reset);
             SaveCommand = new ActionCommand(Close);
+
+            var pinballXFolder = SettingsUtils.GetPinballXFolder();
         }
 
         public GenericFolderTypeModel PinballFolderModel { get; }
