@@ -30,6 +30,7 @@ namespace ClrVpin.Settings
             SaveCommand = new ActionCommand(Close);
 
             var pinballXFolder = SettingsUtils.GetPinballXFolder();
+            var pinballYFolder = SettingsUtils.GetPinballYFolder();
         }
 
         public GenericFolderTypeModel PinballFolderModel { get; }

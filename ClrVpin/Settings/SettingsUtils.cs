@@ -1,14 +1,24 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using Microsoft.Win32;
 
 namespace ClrVpin.Settings;
 
 public static class SettingsUtils
 {
+    public static string GetPinballYFolder()
+    {
+        // find PinballY install path by going directly to the Pinscape registry setting
+        using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Pinscape Labs\PinballY");
+        var path = key?.GetValue("InstallPath") as string;
+        
+        return path?.TrimEnd('\\');
+    }
+    
     public static string GetPinballXFolder()
     {
         // find PinballX install path by examining the uninstall registry key
-        // - need to search the subkeys since PBX uses an installation GUID
+        // - need to search the subkeys since PBX uses an installation GUID for it's parent key
         //   e.g. Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{53F4530D-803D-482A-86DD-F82D8EC7D628}_is1
         // - locate key that contains DisplayIcon="pinballX.exe", then use the 'InstallLocation' key
         // - inspired by VPY:
