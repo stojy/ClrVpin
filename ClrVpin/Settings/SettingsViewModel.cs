@@ -29,6 +29,7 @@ namespace ClrVpin.Settings
             ResetCommand = new ActionCommand(Reset);
             SaveCommand = new ActionCommand(Close);
 
+            var vpxFolder = SettingsUtils.GetVpxFolder();
             var pinballXFolder = SettingsUtils.GetPinballXFolder();
             var pinballYFolder = SettingsUtils.GetPinballYFolder();
         }
