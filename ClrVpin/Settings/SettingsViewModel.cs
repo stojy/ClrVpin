@@ -30,6 +30,7 @@ namespace ClrVpin.Settings
             SaveCommand = new ActionCommand(Close);
 
             var vpxFolder = SettingsUtils.GetVpxFolder();
+            var vpxTableFolder = SettingsUtils.GetVpxMostRecentTablesFolder();
             var pinballXFolder = SettingsUtils.GetPinballXFolder();
             var pinballYFolder = SettingsUtils.GetPinballYFolder();
         }
