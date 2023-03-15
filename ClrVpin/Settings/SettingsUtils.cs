@@ -1,20 +1,29 @@
-﻿using System.Globalization;
-using System.IO;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 
 namespace ClrVpin.Settings;
 
 public static class SettingsUtils
 {
+    private const string DefaultFieldName = "";
+
+    public static string GetVpxFolder()
+    {
+        // find VPX install path by it's COM/type-library registration
+        // - e.g. Computer\HKEY_CURRENT_USER\SOFTWARE\Classes\TypeLib\{384DF69D-3592-4041-848D-9A2D5CD081A0}\1.0
+        var path = SearchKey(Registry.CurrentUser, @"SOFTWARE\Classes\TypeLib", "1.0", DefaultFieldName, "Visual Pinball", "HELPDIR", DefaultFieldName);
+        return path?.TrimEnd('\\');
+    }
+
     public static string GetPinballYFolder()
     {
         // find PinballY install path by going directly to the Pinscape registry setting
+        // - e.g. Computer\HKEY_CURRENT_USER\SOFTWARE\Pinscape Labs\PinballY
         using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Pinscape Labs\PinballY");
         var path = key?.GetValue("InstallPath") as string;
-        
+
         return path?.TrimEnd('\\');
     }
-    
+
     public static string GetPinballXFolder()
     {
         // find PinballX install path by examining the uninstall registry key
@@ -25,25 +34,36 @@ public static class SettingsUtils
         //   https://github.com/mjrgh/PinballY/blob/88c132e7775f33d353cc5fb3f0118091df2be7dd/Utilities/PBXUtil.cpp#L16
         //   https://github.com/mjrgh/PinballY/blob/88c132e7775f33d353cc5fb3f0118091df2be7dd/PinballY/GameList.cpp#L2576
 
-        var path = SearchKey(@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall", "DisplayIcon", "PinballX.exe", "InstallLocation") ?? 
-                   SearchKey(@"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "DisplayIcon", "PinballX.exe", "InstallLocation");
+        var path = SearchKey(Registry.LocalMachine, @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall", null, "DisplayIcon", "PinballX.exe", null, "InstallLocation") ??
+                   SearchKey(Registry.LocalMachine, @"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", null, "DisplayIcon", "PinballX.exe", null, "InstallLocation");
 
         return path?.TrimEnd('\\');
     }
 
-    // search for key within a specified key contained 2 levels down
-    private static string SearchKey(string rootKey, string keyToMatch, string valueToMatch, string keyToReturnValue)
+    private static string SearchKey(RegistryKey rootKey, string parentKeyName, string subParentKeySuffix, string fieldNameToMatch, string fieldValueToMatch, string lowerKeyName, string lowerFieldName)
     {
-        using var key = Registry.LocalMachine.OpenSubKey(rootKey);
-        if (key != null)
+        using var parentKey = rootKey.OpenSubKey(parentKeyName);
+        if (parentKey != null)
         {
-            var subKeyNames = key.GetSubKeyNames() ;
-            foreach (var subKeyName in subKeyNames)
+            var subParentKeyNames = parentKey.GetSubKeyNames();
+
+            // iterate through every subkey looking for the first matching key/value
+            foreach (var subParentKeyName in subParentKeyNames)
             {
-                using var subKey = key.OpenSubKey(subKeyName);
-                var value = subKey?.GetValue(keyToMatch) as string;
-                if (value?.EndsWith(valueToMatch) == true)
-                    return subKey.GetValue(keyToReturnValue) as string;
+                var subParentKeyNameWithSuffix = subParentKeySuffix == null ? subParentKeyName : @$"{subParentKeyName}\{subParentKeySuffix}";
+                using var subParentKey = parentKey.OpenSubKey(subParentKeyNameWithSuffix);
+                
+                var value = subParentKey?.GetValue(fieldNameToMatch) as string;
+                if (value?.Contains(fieldValueToMatch) == true)
+                {
+                    if (lowerKeyName != null)
+                    {
+                        using var lowerKey = subParentKey.OpenSubKey(lowerKeyName);
+                        return lowerKey?.GetValue(lowerFieldName) as string;
+                    }
+
+                    return subParentKey.GetValue(lowerFieldName) as string;
+                }
             }
         }
 
