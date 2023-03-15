@@ -13,12 +13,22 @@ public static class SettingsUtils
         return path?.TrimPath("VPX");
     }
 
-    public static string GetVpxMostRecentTablesFolder()
+    public static string GetTablesFolder()
     {
         // find VPX most recently used table folder
         // - i.e. Computer\HKEY_CURRENT_USER\SOFTWARE\Visual Pinball\VP10\RecentDir
-        using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\\Visual Pinball\VP10\RecentDir");
+        using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Visual Pinball\VP10\RecentDir");
         var path = key?.GetValue("LoadDir") as string;
+
+        // if we can't find the MRU table, then revert to the VPX installation path
+        if (path == null)
+        {
+            Logger.Warn("Using VPX installation path to calculate the table path");
+            var vpxPath = GetVpxFolder();
+            if (vpxPath != null)
+                path = @$"{vpxPath}\tables";
+        }
+
         return path?.TrimPath("Table");
     }
 
@@ -42,7 +52,7 @@ public static class SettingsUtils
         //   https://github.com/mjrgh/PinballY/blob/88c132e7775f33d353cc5fb3f0118091df2be7dd/PinballY/GameList.cpp#L2576
 
         var path = SearchKey(Registry.LocalMachine, @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall", null, "DisplayIcon", "PinballX.exe", null, "InstallLocation") ??
-                   SearchKey(Registry.LocalMachine, @"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", null, "DisplayIcon", "PinballX.exe", null, "InstallLocation");
+                   SearchKey(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", null, "DisplayIcon", "PinballX.exe", null, "InstallLocation");
         return path?.TrimPath("PBX");
     }
 
