@@ -6,7 +6,7 @@ namespace ClrVpin.Shared.FeatureType;
 [AddINotifyPropertyChangedInterface]
 public class FeatureType
 {
-    public FeatureType(int id)
+    public FeatureType(int id = 0)
     {
         Id = id;
     }

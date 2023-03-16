@@ -13,6 +13,19 @@ namespace ClrVpin.Shared.FeatureType;
 
 public static class FeatureOptions
 {
+    public static FeatureType CreateFeatureType(string description, string tip, bool isActive, Action action, bool isHighlighted = false)
+    {
+        return new FeatureType()
+        {
+            Description = description,
+            Tip = tip,
+            IsSupported = true,
+            IsHighlighted = isHighlighted,
+            IsActive = isActive,
+            SelectedCommand = new ActionCommand(action)
+        };
+    }
+
     public static FeatureType CreateFeatureType<T>(EnumOption<T> option, bool isActive, bool isHighlightedOverride = false) where T : Enum
     {
         return new FeatureType(Convert.ToInt32(option.Enum))

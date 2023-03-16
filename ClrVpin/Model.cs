@@ -12,5 +12,5 @@ public static class Model
 
     public static Size ScreenWorkArea { get; set; }
 
-    public const string OptionsDisabledMessage = "... DISABLED BECAUSE THE FOLDER SETTINGS ARE INCOMPLETE";
+    public const string OptionsDisabledMessage = ".. DISABLED BECAUSE THE FOLDER SETTINGS ARE INCOMPLETE";
 }
