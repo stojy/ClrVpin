@@ -375,5 +375,5 @@ public sealed class FeederResultsViewModel
     private const string DialogHostName = "FeederResultsDialog";
 
     private const int WindowMargin = 0;
-    private const string MatchingDisabledMessage = "... DISABLED BECAUSE MATCHING WASN'T ENABLED";
+    private const string MatchingDisabledMessage = ".. DISABLED BECAUSE MATCHING WASN'T ENABLED";
 }
