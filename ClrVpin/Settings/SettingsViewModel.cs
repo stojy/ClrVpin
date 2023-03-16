@@ -35,17 +35,8 @@ public class SettingsViewModel : IShowViewModel
         var pinballXFolder = SettingsUtils.GetPinballXFolder();
 
         AutofillVpxFeature = CreateAutofillOption("Visual Pinball X", vpxFolder != null && vpxTableFolder != null, () => AutoAssignVpxFolders(vpxFolder, vpxTableFolder));
-        AutofillPinballYFeature = CreateAutofillOption("Pinball Y", pinballYFolder != null, () => AutoAssignFrontendFolders(pinballYFolder));
-        AutofillPinballXFeature = CreateAutofillOption("Pinball X", pinballXFolder != null, () => AutoAssignFrontendFolders(pinballXFolder));
-    }
-
-    private static FeatureType CreateAutofillOption(string application, bool isEnabled, Action action)
-    {
-        var tip = "Automatically assign folders based on the installed application";
-        if (!isEnabled)
-            tip += $".. DISABLED BECAUSE '{application}' INSTALLATION WASN'T DETECTED";
-
-        return FeatureOptions.CreateFeatureType(application, tip, isEnabled, action);
+        AutofillPinballYFeature = CreateAutofillOption("Pinball Y", pinballYFolder != null, () => AutoAssignFrontendFolders(pinballYFolder, "Visual Pinball X"));
+        AutofillPinballXFeature = CreateAutofillOption("Pinball X", pinballXFolder != null, () => AutoAssignFrontendFolders(pinballXFolder, "Visual Pinball"));
     }
 
     public FeatureType AutofillVpxFeature { get; }
@@ -88,6 +79,15 @@ public class SettingsViewModel : IShowViewModel
         return _window;
     }
 
+    private static FeatureType CreateAutofillOption(string application, bool isEnabled, Action action)
+    {
+        var tip = "Automatically assign folders based on the installed application";
+        if (!isEnabled)
+            tip += $".. DISABLED BECAUSE '{application}' INSTALLATION WASN'T DETECTED";
+
+        return FeatureOptions.CreateFeatureType(application, tip, isEnabled, action);
+    }
+
     private void Close()
     {
         _window.Close();
@@ -108,7 +108,7 @@ public class SettingsViewModel : IShowViewModel
         });
     }
 
-    private void AutoAssignFrontendFolders(string frontendFolder)
+    private void AutoAssignFrontendFolders(string frontendFolder, string subFolder)
     {
         FrontendFolderModel.SetFolder(frontendFolder);
 
@@ -119,7 +119,7 @@ public class SettingsViewModel : IShowViewModel
             switch (x.ContentType.Category)
             {
                 case ContentTypeCategoryEnum.Database:
-                    x.ContentType.Folder = $@"{Settings.FrontendFolder}\Databases\Visual Pinball";
+                    x.ContentType.Folder = $@"{Settings.FrontendFolder}\Databases\{subFolder}";
                     break;
                 case ContentTypeCategoryEnum.Media:
                     switch (x.ContentType.Enum)
@@ -136,7 +136,7 @@ public class SettingsViewModel : IShowViewModel
                             x.ContentType.Folder = $@"{Settings.FrontendFolder}\Media\{x.ContentType.Description}";
                             break;
                         default:
-                            x.ContentType.Folder = $@"{Settings.FrontendFolder}\Media\Visual Pinball\{x.ContentType.Description}";
+                            x.ContentType.Folder = $@"{Settings.FrontendFolder}\Media\{subFolder}\{x.ContentType.Description}";
                             break;
                     }
 
