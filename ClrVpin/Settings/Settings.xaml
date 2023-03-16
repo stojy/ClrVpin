@@ -57,7 +57,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
       <StackPanel Margin="5">
         <!-- pinball (vpx) folders -->
-        <TextBlock Style="{StaticResource TitleStyle}">Visual Pinball Player</TextBlock>
+        <TextBlock Style="{StaticResource TitleStyle}">Player</TextBlock>
         <GroupBox Header="Folders/Files" Margin="0,0,0,5">
           <StackPanel Margin="0,0,0,3">
             <WrapPanel>
@@ -69,7 +69,7 @@
         </GroupBox>
 
         <!-- front end folders -->
-        <TextBlock Style="{StaticResource TitleStyle}">PinballY/X Frontend</TextBlock>
+        <TextBlock Style="{StaticResource TitleStyle}">Frontend</TextBlock>
         <GroupBox Header="Folders/Files" Margin="0,0,0,5">
           <StackPanel Margin="0,0,0,3">
             <WrapPanel>
