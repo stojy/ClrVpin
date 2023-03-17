@@ -75,32 +75,16 @@ public class Settings : ISettings
     //   e.g. when settings reset via the UI, these default settings will remain in the separate DefaultSettings.json file to be used for reseeding the Settings file
     // - accessed via Settings as a convenience
     // - need to check for null as this is assigned AFTER ctor via Init() method
-    public string PinballFolder
-    {
-        get => _defaultSettings?.PinballFolder;
-        set
-        {
-            if (_defaultSettings != null)
-                _defaultSettings.PinballFolder = value;
-        }
-    }
-
-    public string FrontendFolder
-    {
-        get => _defaultSettings?.FrontendFolder;
-        set
-        {
-            if (_defaultSettings != null)
-                _defaultSettings.FrontendFolder = value;
-        }
-    }
     public string Guid => _defaultSettings?.Guid;
 
     // ReSharper disable once MemberCanBePrivate.Global - property is serialized
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - property is serialized
     public List<ContentType> AllContentTypes { get; set; }
 
+    public string PinballFolder { get; set; }
+    public string FrontendFolder { get; set; }
     public string BackupFolder { get; set; }
+
     public bool EnableDiagnosticLogging { get; set; }
     public bool SkipLoggingForOriginalTables { get; set; }
     public bool EnableCheckForNewVersion { get; set; }
