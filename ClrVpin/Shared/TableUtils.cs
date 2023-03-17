@@ -178,10 +178,23 @@ namespace ClrVpin.Shared
                 // - further reading.. https://en.wikipedia.org/wiki/Extended_ASCII, https://codepoints.net/U+2122?lang=en
                 using var reader = new StreamReader(file, Encoding.GetEncoding("Windows-1252"));
 
+                // PinballX unfortunately defines some of it's XML using HTML entity names which are not valid within XML
+                // - technically it would be allowed if the PBX file defined an ENTITY mapping, but unfortunately it does not
+                // - refer https://www.w3schools.com/html/html_entities.asp
+                //   e.g. PBX uses &pos; instead of &#39; or just plain ' (apostrophe)
+                // - the invalid XML causes XDocument to fail, so we strip out the common scenarios so that the file can be read (and ultimately written if changes are made)
+                var xmlString = reader.ReadToEnd();
+                xmlString = xmlString
+                    .Replace(@"&pos;", "'")
+                    .Replace(@"&copy;", "©")
+                    .Replace(@"&reg;", "®")
+                    .Replace(@"&amp;", "&#38;")
+                    .Replace(@"&quot;", "&#34;");
+
                 XDocument doc;
                 try
                 {
-                    doc = XDocument.Load(reader);
+                    doc = XDocument.Parse(xmlString);
                     if (doc.Root == null)
                         throw new Exception("Root element missing");
                 }
