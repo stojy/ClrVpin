@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Octokit" Version="5.0.0" />
-    <PackageReference Include="Semver" Version="2.2.0" />
+    <PackageReference Include="Octokit" Version="5.0.2" />
+    <PackageReference Include="Semver" Version="2.3.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
 
