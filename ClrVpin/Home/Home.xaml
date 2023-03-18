@@ -125,7 +125,7 @@
                       <Button Content="Later" CommandParameter="{x:Static utils:VersionManagementAction.Later}" Style="{StaticResource ButtonStyle}"
                               ToolTip="Don't check or prompt again for 24hrs" />
                       <!--non-visible button marked with IsCancel to support the escape key-->
-                      <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Style="{StaticResource ButtonStyle}" />
+                      <Button Content="Cancel" Style="{StaticResource HiddenButtonStyle}" IsCancel="True" />
                     </WrapPanel>
                   </StackPanel>
                 </DataTemplate>
@@ -146,14 +146,6 @@
           <StackPanel Margin="0,25">
             <Grid>
               <Image Source="/Resources/ClrVpin.png" Width="390" Margin="0,5" MouseDown="ImageMouseDown" />
-              <!--<Button Command="{Binding CloseCommand}"
-                      Style="{StaticResource RaisedAccentDarkButtonStyle}"
-                      Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}" 
-                      Width="50" Height="50"
-                      HorizontalAlignment="Right" VerticalAlignment="Top"
-                      ToolTip="Close ClrVpin">
-                <materialDesign:PackIcon Kind="Close" Height="40" Width="40" HorizontalAlignment="Center" />
-              </Button>-->
             </Grid>
 
             <StackPanel Margin="0,5" Visibility="{Binding IsChildWindowActive, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
@@ -172,14 +164,14 @@
                   <Setter Property="FontSize" Value="18" />
                 </Style>
                 <Style x:Key="TextBlockSmallStyle" TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}">
-                  <Setter Property="FontSize" Value="16" />
+                  <!--<Setter Property="FontSize" Value="18" />-->
                 </Style>
               </StackPanel.Resources>
 
               <WrapPanel>
                 <Button Command="{Binding FeederCommand}" 
                         ToolTip="Navigate the online feed, check for new content, and download files"
-                        Style="{StaticResource RaisedAccentButtonStyle}" Width="90" Margin="0,0,5,0">
+                        Style="{StaticResource RaisedAccentButtonStyle}" Width="90" Margin="0,0,5,0" Height="Auto">
                   <StackPanel>
                     <TextBlock Text="Feeder" Style="{StaticResource TextBlockStyle}" Margin="0,0,0,5" />
                     <materialDesign:PackIcon Kind="Web" Style="{StaticResource PackIconStyle}" />

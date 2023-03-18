@@ -119,7 +119,7 @@
                 </Grid>
 
                 <!--non-visible button marked with IsCancel to support the escape key-->
-                <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+                <Button Content="Cancel" Style="{StaticResource HiddenButtonStyle}" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
               </StackPanel>
             </DataTemplate>
 
