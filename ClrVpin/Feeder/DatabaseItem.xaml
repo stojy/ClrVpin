@@ -306,20 +306,20 @@
                   Command="{Binding OverwriteAllInfoCommand}"
                   ToolTip="Overwrite all info for this table to your local database from online sources. Information that doesn't exist from online sources will not be overwritten (e.g. ratings)." />
 
-          <Button Content="Update" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Update}"
+          <Button Content="Update" Width="90" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Update}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   IsEnabled="{Binding IsItemChanged, Mode=OneWay}"
                   ToolTip="Update changed info for this table to your local database" />
-          <Button Content="Delete" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Delete}"
+          <Button Content="Delete" Width="90" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Delete}"
                   Visibility="{Binding IsExisting, Converter={StaticResource BoolToVisibilityConverter}}"
                   Foreground="{StaticResource AlertBrush}"
                   ToolTip="Delete this table from your local database" />
 
-          <Button Content="Add" Width="100" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Add}"
+          <Button Content="Add" Width="90" Style="{StaticResource DialogButtonAccentStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Add}"
                   Visibility="{Binding IsExisting, Converter={StaticResource ReverseBoolToVisibilityConverter}}"
                   ToolTip="Add a new table entry entry to your local database" />
 
-          <Button Content="Cancel" IsCancel="True" Width="100" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Cancel}"
+          <Button Content="Cancel" IsCancel="True" Width="90" Style="{StaticResource DialogButtonStyle}" CommandParameter="{x:Static feeder:DatabaseItemAction.Cancel}"
                   ToolTip="Exit without updating/inserting an entry in your local database" />
         </WrapPanel>
 
