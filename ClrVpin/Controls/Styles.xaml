@@ -89,7 +89,8 @@
     <Setter Property="Height" Value="0" /> 
   </Style>
   
-  <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButtonStyle}" />
+  <!-- removed the default button style since it interferes with some of the MaterialDesignXaml controls that contains buttons that don't explicitly specify a style, e.g. DatePicker
+  <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButtonStyle}" />-->
 
   <Style x:Key="FlatAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatAccentButton}">
     <Setter Property="HorizontalAlignment" Value="Center" />

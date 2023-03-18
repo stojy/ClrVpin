@@ -211,7 +211,7 @@
                   <WrapPanel Margin="0,10,0,0" HorizontalAlignment="Right">
                     <Button Command="{Binding SettingsCommand}"
                             ToolTip="Common setting used by feeder, merger, cleaner, and explorer"
-                            Width="90" Height="70" >
+                            Style="{StaticResource RaisedDarkButtonStyle}" Width="90" Height="70">
                       <StackPanel>
                         <TextBlock Text="Settings" Style="{StaticResource TextBlockSmallStyle}" />
                         <materialDesign:PackIcon Kind="Cog" Style="{StaticResource PackIconSmallStyle}" />
@@ -219,15 +219,15 @@
                     </Button>
                     <Button Command="{Binding AboutCommand}"
                             ToolTip="General application information and links"
-                            Width="90" Height="70" >
+                            Style="{StaticResource RaisedDarkButtonStyle}" Width="90" Height="70" >
                       <StackPanel>
                         <TextBlock Text="About" Style="{StaticResource TextBlockSmallStyle}"  />
                         <materialDesign:PackIcon Kind="AboutOutline" Style="{StaticResource PackIconSmallStyle}" />
                       </StackPanel>
                     </Button>
                     <Button VerticalAlignment="Bottom" Command="{Binding CloseCommand}" 
-                            ToolTip="Close ClrVpin" Style="{StaticResource RaisedMidButtonStyle}"
-                            Width="90" Height="70" Margin="5,0,0,0">
+                            ToolTip="Close ClrVpin" 
+                            Style="{StaticResource RaisedMidButtonStyle}" Width="90" Height="70" Margin="5,0,0,0">
                       <StackPanel>
                         <TextBlock Text="Close" Style="{StaticResource TextBlockSmallStyle}"  />
                         <materialDesign:PackIcon Kind="Close" Style="{StaticResource PackIconSmallStyle}" Height="50" Width="50" Margin="0,-5,0,0" />
