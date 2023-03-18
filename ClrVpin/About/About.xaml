@@ -21,7 +21,7 @@
       </Style>
     </DataTemplate.Resources>
 
-    <StackPanel Margin="5" Width="500">
+    <StackPanel Margin="5" Width="600">
       <WrapPanel>
         <TextBlock Style="{StaticResource MaterialDesignHeadline1TextBlock}" HorizontalAlignment="Center">ClrVpin</TextBlock>
         <TextBlock VerticalAlignment="Bottom" Margin="10,0,0,20" Text="{Binding AssemblyVersion}" />
@@ -29,49 +29,57 @@
       <Image Source="/Resources/ClrVpin.png" Height="250" Margin="10" />
 
       <TextBlock Margin="5,10,0,0" FontSize="16" TextWrapping="Wrap">An open source virtual pinball content management tool.</TextBlock>
-      <TextBlock Margin="5,20,0,0" FontSize="16" TextWrapping="Wrap">Designed to automate the manual tasks of keeping your pinball collections and databases so they are..</TextBlock>
+      <TextBlock Margin="5,20,0,0" FontSize="16" TextWrapping="Wrap">Designed to automate the manual tasks of keeping your pinball collections (tables, backglasses, wheels, video, audio, database, etc)..</TextBlock>
       <TextBlock Margin="15,5,0,0" FontSize="16">• Accurate</TextBlock>
       <TextBlock Margin="15,0,0,0" FontSize="16">• Clean</TextBlock>
       <TextBlock Margin="15,0,0,0" FontSize="16">• Minimal</TextBlock>
       <TextBlock Margin="15,0,0,0" FontSize="16">• Current</TextBlock>
+      <TextBlock Margin="5,20,0,0" FontSize="16" TextWrapping="Wrap">So you can spend more time playing the awesome tables created by the open source community :)</TextBlock>
 
       <WrapPanel Margin="0,20,0,0" HorizontalAlignment="Center">
-        <Button Command="{Binding SourceCommand}" Width="70" ToolTip="View the source code on GitHub">
+        <WrapPanel.Resources>
+          <Style x:Key="ButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedDarkButtonStyle}">
+            <Setter Property="Width" Value="70" />
+            <Setter Property="Height" Value="Auto" />
+          </Style>
+        </WrapPanel.Resources>
+
+        <Button Command="{Binding SourceCommand}" Style="{StaticResource ButtonStyle}" ToolTip="View the source code on GitHub">
           <StackPanel>
             <TextBlock Text="Source" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="Github" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
 
-        <Button Command="{Binding HelpCommand}" Width="70" ToolTip="View the online help">
+        <Button Command="{Binding HelpCommand}" Style="{StaticResource ButtonStyle}" ToolTip="View the online help">
           <StackPanel>
             <TextBlock Text="Help" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="HelpCircleOutline" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
 
-        <Button Command="{Binding AuthorCommand}" Width="70" ToolTip="Contact the Author">
+        <Button Command="{Binding AuthorCommand}" Style="{StaticResource ButtonStyle}" ToolTip="Contact the Author">
           <StackPanel>
             <TextBlock Text="Author" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="Email" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
 
-        <Button Command="{Binding ThanksCommand}" Width="70" ToolTip="Special community thanks">
+        <Button Command="{Binding ThanksCommand}" Style="{StaticResource ButtonStyle}" ToolTip="Special community thanks">
           <StackPanel>
             <TextBlock Text="Thanks" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="HandClap" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
         
-        <Button Command="{Binding UpdateCommand}" Width="70" ToolTip="Manually check for an update">
+        <Button Command="{Binding UpdateCommand}" Style="{StaticResource ButtonStyle}" ToolTip="Manually check for an update">
           <StackPanel>
             <TextBlock Text="Update" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="Update" Style="{StaticResource PackIconStyle}" />
           </StackPanel>
         </Button>
 
-        <Button Command="{Binding DonateCommand}" Style="{StaticResource RaisedAccentButtonStyle}" Width="70" ToolTip="Make a donation">
+        <Button Command="{Binding DonateCommand}" Style="{StaticResource RaisedAccentButtonStyle}" Width="70" Height="Auto" ToolTip="Make a donation">
           <StackPanel>
             <TextBlock Text="Donate" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="GiftOutline" Style="{StaticResource PackIconStyle}"/>

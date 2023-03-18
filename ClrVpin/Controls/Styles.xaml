@@ -10,8 +10,8 @@
     <!-- generated brush names (reference as DynamicResource, not StaticResource)
          = https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Getting-Started
          - https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/wiki/Brush-Names
-         - e.g. PrimaryHueDarkBrush, PrimaryHueLightBrush, PrimaryHueMidBrush  = blue shades
-                SecondaryHueDarkBrush, SecondaryHueLightBrush, SecondaryHueMidBrush  = green shades
+         - e.g. PrimaryHueDarkBrush, PrimaryHueLightBrush, PrimaryHueMidBrush  = dark/light/mid blue shades
+                SecondaryHueDarkBrush, SecondaryHueLightBrush, SecondaryHueMidBrush  = dark/light/mid green shades
                 MaterialDesignPaper = light grey (background.. #FF303030)
                 MaterialDesignBody = white
     -->
@@ -51,38 +51,45 @@
   <!--un-keyed style required by windows created in code, e.g. XxxWindow.Show()-->
   <Style TargetType="controls:MaterialWindowEx" BasedOn="{StaticResource MaterialWindowStyle}" />
 
-  <Style x:Key="RaisedDarkButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
+  <Style x:Key="RaisedDarkButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
     <Setter Property="Margin" Value="5,0" />
     <Setter Property="Padding" Value="5" />
-    <Setter Property="Height" Value="Auto" />
+    <Setter Property="MinHeight" Value="35" />
     <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4" />
+    <Setter Property="ToolTipService.ShowOnDisabled" Value="true" />
+    <Setter Property="FontSize" Value="18"/>
+    <Setter Property="MinWidth" Value="90"/>
+    <!--<Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />-->
   </Style>
 
-  <Style x:Key="TransparentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="Background" Value="Transparent" />
-  </Style>
-
-  <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButton}" />
-
-  <Style x:Key="RaisedMidButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedDarkButton}">
+  <Style x:Key="RaisedMidButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedDarkButtonStyle}">
     <Setter Property="Background" Value="{DynamicResource PrimaryHueMidBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueMidBrush}" />
   </Style>
-
-  <Style x:Key="RaisedAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
-    <Setter Property="Margin" Value="5,0" />
-    <Setter Property="Padding" Value="5" />
-    <Setter Property="Height" Value="Auto" />
-    <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
-    <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="4" />
-    <Setter Property="ToolTipService.ShowOnDisabled" Value="true" />
+  
+  <Style x:Key="RaisedAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedDarkButtonStyle}">
+    <Setter Property="Background" Value="{DynamicResource SecondaryHueMidBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource SecondaryHueMidBrush}" />
   </Style>
 
-  <Style x:Key="RaisedAccentDarkButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedAccentButtonStyle}">
+  <Style x:Key="RaisedAccentDarkButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedDarkButtonStyle}">
     <Setter Property="Background" Value="{DynamicResource SecondaryHueDarkBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource SecondaryHueDarkBrush}" />
   </Style>
+
+  <Style x:Key="TransparentButtonStyle" TargetType="Button" BasedOn="{StaticResource RaisedDarkButtonStyle}">
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Background" Value="Transparent" /> 
+  </Style>
+
+  <Style x:Key="HiddenButtonStyle" TargetType="Button" BasedOn="{StaticResource TransparentButtonStyle}">
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="MinHeight" Value="0" /> 
+    <Setter Property="Width" Value="0" />
+    <Setter Property="Height" Value="0" /> 
+  </Style>
+  
+  <Style TargetType="Button" BasedOn="{StaticResource RaisedDarkButtonStyle}" />
 
   <Style x:Key="FlatAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatAccentButton}">
     <Setter Property="HorizontalAlignment" Value="Center" />

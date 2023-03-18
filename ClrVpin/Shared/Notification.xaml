@@ -80,7 +80,7 @@
         </StackPanel>
 
         <!--non-visible button marked with IsCancel to support the escape key-->
-        <Button Content="Cancel" Width="0" Height="0" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+        <Button Content="Cancel" Style="{StaticResource HiddenButtonStyle}" IsCancel="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
 
         <WrapPanel Margin="0,15,0,0" HorizontalAlignment="Center" Visibility="{Binding IsConfirmation, Converter={StaticResource BoolToVisibilityConverter}}">
           <Button Content="{Binding TrueLabel}" CommandParameter="{StaticResource TrueValue}"
