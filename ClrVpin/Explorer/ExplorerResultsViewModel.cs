@@ -189,7 +189,7 @@ public class ExplorerResultsViewModel
         var staleCount = statistics.Sum(statistic => statistic.staleCount);
         var isSuccess = missingCount  + staleCount == 0;
 
-        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All Files Are Good") : Notification.ShowWarning(DialogHostName, "Missing or Stale Files Detected", null, statisticsDetail));
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "Important Files Are Up To Date") : Notification.ShowWarning(DialogHostName, "Missing or Stale Files Detected", null, statisticsDetail));
     }
 
     private (int missingCount, int? staleCount, string missingStatistic) CreateContentStatistics(IEnumerable<Hit> correctNameHits, ContentTypeEnum contentType)
