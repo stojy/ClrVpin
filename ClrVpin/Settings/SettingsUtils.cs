@@ -16,7 +16,7 @@ public static class SettingsUtils
 
         // if we can't find the VPX installation path, then use the COM/type-library registration
         // - e.g. Computer\HKEY_CURRENT_USER\SOFTWARE\Classes\TypeLib\{384DF69D-3592-4041-848D-9A2D5CD081A0}\1.0
-        Logger.Warn($"{LogPrefix}: unable to locate 'Visual Pinball X' by it's uninstall path.. reverting to the typelib path instead");
+        Logger.Warn($"{LogPrefix}: unable to locate 'Visual Pinball X' path by it's uninstall path.. reverting to the typelib path instead");
         (path, key) = SearchKey(Registry.CurrentUser, @"SOFTWARE\Classes\TypeLib", "1.0", DefaultFieldName, "Visual Pinball", "HELPDIR", DefaultFieldName);
 
         return Process("Visual Pinball X", path, key);
@@ -34,7 +34,7 @@ public static class SettingsUtils
             return Process("Tables", path, @$"{Registry.CurrentUser.Name}\{rootKey}\{valueKey}");
 
         // if we can't find the MRU table, then revert to the VPX installation path
-        Logger.Warn($"{LogPrefix}: unable to locate 'Tables' by the mostly recently used folder.. reverting to the VPX install path instead");
+        Logger.Warn($"{LogPrefix}: unable to locate 'Tables' path by the mostly recently used folder.. reverting to the VPX install path instead");
         var vpxPath = GetVpxFolder();
         if (vpxPath != null)
             path = @$"{vpxPath}\tables";
@@ -121,5 +121,5 @@ public static class SettingsUtils
     }
 
     private const string DefaultFieldName = "";
-    private const string LogPrefix = "Install detection";
+    private const string LogPrefix = "Path detection";
 }
