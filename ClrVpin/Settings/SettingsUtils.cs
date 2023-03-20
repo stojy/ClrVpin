@@ -1,4 +1,5 @@
-﻿using ClrVpin.Logging;
+﻿using System.IO;
+using ClrVpin.Logging;
 using Microsoft.Win32;
 
 namespace ClrVpin.Settings;
@@ -7,10 +8,17 @@ public static class SettingsUtils
 {
     public static string GetVpxFolder()
     {
-        // find VPX install path by it's COM/type-library registration
+        // find VPX install path by examining the uninstall registry key
+        // i.e. Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Visual Pinball\
+        var (path, key) = GetValue(Registry.LocalMachine, @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Visual Pinball", "UninstallString");
+        if (path != null)
+            return Process("Visual Pinball X", Path.GetDirectoryName(path), key);
+
+        // if we can't find the VPX installation path, then use the COM/type-library registration
         // - e.g. Computer\HKEY_CURRENT_USER\SOFTWARE\Classes\TypeLib\{384DF69D-3592-4041-848D-9A2D5CD081A0}\1.0
-        var (path, key) = SearchKey(Registry.CurrentUser, @"SOFTWARE\Classes\TypeLib", "1.0", DefaultFieldName, "Visual Pinball", "HELPDIR", DefaultFieldName);
-        
+        Logger.Warn($"{LogPrefix}: unable to locate 'Visual Pinball X' by it's uninstall path.. reverting to the typelib path instead");
+        (path, key) = SearchKey(Registry.CurrentUser, @"SOFTWARE\Classes\TypeLib", "1.0", DefaultFieldName, "Visual Pinball", "HELPDIR", DefaultFieldName);
+
         return Process("Visual Pinball X", path, key);
     }
 
@@ -22,12 +30,11 @@ public static class SettingsUtils
         using var key = Registry.CurrentUser.OpenSubKey(rootKey);
         var valueKey = "LoadDir";
         var path = key?.GetValue(valueKey) as string;
-
-        // if we can't find the MRU table, then revert to the VPX installation path
         if (path != null)
             return Process("Tables", path, @$"{Registry.CurrentUser.Name}\{rootKey}\{valueKey}");
-        
-        Logger.Warn("Using VPX installation path to calculate the table path");
+
+        // if we can't find the MRU table, then revert to the VPX installation path
+        Logger.Warn($"{LogPrefix}: unable to locate 'Tables' by the mostly recently used folder.. reverting to the VPX install path instead");
         var vpxPath = GetVpxFolder();
         if (vpxPath != null)
             path = @$"{vpxPath}\tables";
@@ -41,7 +48,7 @@ public static class SettingsUtils
         // - i.e. Computer\HKEY_CURRENT_USER\SOFTWARE\Pinscape Labs\PinballY
         const string rootKey = @"SOFTWARE\Pinscape Labs\PinballY";
         const string valueKey = "InstallPath";
-        
+
         using var key = Registry.CurrentUser.OpenSubKey(rootKey);
         var path = key?.GetValue(valueKey) as string;
 
@@ -66,11 +73,19 @@ public static class SettingsUtils
         return Process("PinballX", path, key);
     }
 
+    private static (string path, string key) GetValue(RegistryKey rootKey, string parentKeyName, string lowerFieldName)
+    {
+        using var key = rootKey.OpenSubKey(parentKeyName);
+        var path = key?.GetValue(lowerFieldName) as string;
+
+        return (path, @$"{rootKey.Name}\{parentKeyName}\{lowerFieldName}");
+    }
+
     private static string Process(string product, string path, string key)
     {
         var trimmedPath = path?.TrimEnd('\\');
 
-        Logger.Info($"Detected installation: product='{product}', path={trimmedPath ?? "n/a"}, key={key ?? "n/a"}");
+        Logger.Info($"{LogPrefix}: product='{product}', path={trimmedPath ?? "n/a"}, key={key ?? "n/a"}");
 
         return trimmedPath;
     }
@@ -106,4 +121,5 @@ public static class SettingsUtils
     }
 
     private const string DefaultFieldName = "";
+    private const string LogPrefix = "Install detection";
 }
