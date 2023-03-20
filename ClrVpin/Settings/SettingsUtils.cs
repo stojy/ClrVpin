@@ -9,36 +9,43 @@ public static class SettingsUtils
     {
         // find VPX install path by it's COM/type-library registration
         // - e.g. Computer\HKEY_CURRENT_USER\SOFTWARE\Classes\TypeLib\{384DF69D-3592-4041-848D-9A2D5CD081A0}\1.0
-        var path = SearchKey(Registry.CurrentUser, @"SOFTWARE\Classes\TypeLib", "1.0", DefaultFieldName, "Visual Pinball", "HELPDIR", DefaultFieldName);
-        return path?.TrimPath("VPX");
+        var (path, key) = SearchKey(Registry.CurrentUser, @"SOFTWARE\Classes\TypeLib", "1.0", DefaultFieldName, "Visual Pinball", "HELPDIR", DefaultFieldName);
+        
+        return Process("Visual Pinball X", path, key);
     }
 
     public static string GetTablesFolder()
     {
         // find VPX most recently used table folder
         // - i.e. Computer\HKEY_CURRENT_USER\SOFTWARE\Visual Pinball\VP10\RecentDir
-        using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Visual Pinball\VP10\RecentDir");
-        var path = key?.GetValue("LoadDir") as string;
+        var rootKey = @"SOFTWARE\Visual Pinball\VP10\RecentDir";
+        using var key = Registry.CurrentUser.OpenSubKey(rootKey);
+        var valueKey = "LoadDir";
+        var path = key?.GetValue(valueKey) as string;
 
         // if we can't find the MRU table, then revert to the VPX installation path
-        if (path == null)
-        {
-            Logger.Warn("Using VPX installation path to calculate the table path");
-            var vpxPath = GetVpxFolder();
-            if (vpxPath != null)
-                path = @$"{vpxPath}\tables";
-        }
+        if (path != null)
+            return Process("Tables", path, @$"{Registry.CurrentUser.Name}\{rootKey}\{valueKey}");
+        
+        Logger.Warn("Using VPX installation path to calculate the table path");
+        var vpxPath = GetVpxFolder();
+        if (vpxPath != null)
+            path = @$"{vpxPath}\tables";
 
-        return path?.TrimPath("Table");
+        return Process("Tables", path, @$"{Registry.CurrentUser.Name}\{rootKey}\{valueKey}");
     }
 
     public static string GetPinballYFolder()
     {
         // find PinballY install path by going directly to the Pinscape registry setting
         // - i.e. Computer\HKEY_CURRENT_USER\SOFTWARE\Pinscape Labs\PinballY
-        using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Pinscape Labs\PinballY");
-        var path = key?.GetValue("InstallPath") as string;
-        return path?.TrimPath("PBY");
+        const string rootKey = @"SOFTWARE\Pinscape Labs\PinballY";
+        const string valueKey = "InstallPath";
+        
+        using var key = Registry.CurrentUser.OpenSubKey(rootKey);
+        var path = key?.GetValue(valueKey) as string;
+
+        return Process("PinballY", path, @$"{Registry.CurrentUser.Name}\{rootKey}\{valueKey}");
     }
 
     public static string GetPinballXFolder()
@@ -51,21 +58,24 @@ public static class SettingsUtils
         //   https://github.com/mjrgh/PinballY/blob/88c132e7775f33d353cc5fb3f0118091df2be7dd/Utilities/PBXUtil.cpp#L16
         //   https://github.com/mjrgh/PinballY/blob/88c132e7775f33d353cc5fb3f0118091df2be7dd/PinballY/GameList.cpp#L2576
 
-        var path = SearchKey(Registry.LocalMachine, @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall", null, "DisplayIcon", "PinballX.exe", null, "InstallLocation") ??
-                   SearchKey(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", null, "DisplayIcon", "PinballX.exe", null, "InstallLocation");
-        return path?.TrimPath("PBX");
+        // search for '\PinballX.exe' with preceding slash to avoid mismatch with VPinball.exe
+        var (path, key) = SearchKey(Registry.LocalMachine, @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall", null, "DisplayIcon", @"\PinballX.exe", null, "InstallLocation");
+        if (path == null)
+            (path, key) = SearchKey(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", null, "DisplayIcon", @"\PinballX.exe", null, "InstallLocation");
+
+        return Process("PinballX", path, key);
     }
 
-    private static string TrimPath(this string path, string folderType)
+    private static string Process(string product, string path, string key)
     {
         var trimmedPath = path?.TrimEnd('\\');
-        
-        Logger.Info($"Calculated path '{folderType}': {trimmedPath ?? "n/a"}");
+
+        Logger.Info($"Detected installation: product='{product}', path={trimmedPath ?? "n/a"}, key={key ?? "n/a"}");
 
         return trimmedPath;
     }
 
-    private static string SearchKey(RegistryKey rootKey, string parentKeyName, string subParentKeySuffix, string fieldNameToMatch, string fieldValueToMatch, string lowerKeyName, string lowerFieldName)
+    private static (string path, string key) SearchKey(RegistryKey rootKey, string parentKeyName, string subParentKeySuffix, string fieldNameToMatch, string fieldValueToMatch, string lowerKeyName, string lowerFieldName)
     {
         using var parentKey = rootKey.OpenSubKey(parentKeyName);
         if (parentKey != null)
@@ -84,15 +94,15 @@ public static class SettingsUtils
                     if (lowerKeyName != null)
                     {
                         using var lowerKey = subParentKey.OpenSubKey(lowerKeyName);
-                        return lowerKey?.GetValue(lowerFieldName) as string;
+                        return (lowerKey?.GetValue(lowerFieldName) as string, @$"{subParentKey.Name}\{lowerKeyName}\{lowerFieldName}");
                     }
 
-                    return subParentKey.GetValue(lowerFieldName) as string;
+                    return (subParentKey.GetValue(lowerFieldName) as string, $@"{subParentKey.Name}\{lowerFieldName}");
                 }
             }
         }
 
-        return null;
+        return (null, null);
     }
 
     private const string DefaultFieldName = "";
