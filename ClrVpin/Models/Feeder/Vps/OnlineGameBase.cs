@@ -117,6 +117,7 @@ public class ImageFile : File
 
     // view model properties
     public UrlSelection ImageUrlSelection { get; set; }
+    public bool IsFullDmd { get; set; }
 }
 
 // ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
@@ -128,4 +129,7 @@ public class TableFile : ImageFile
 
     public string TableFormat { get; set; }
     public string Comment { get; set; }
+    
+    // view model properties
+    public bool IsVirtualOnly { get; set; }
 }

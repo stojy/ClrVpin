@@ -65,6 +65,12 @@ public sealed class FeederResultsViewModel
                     Url = imageFile.ImgUrl,
                     SelectedCommand = new ActionCommand(() => ShowImage(imageFile.ImgUrl))
                 };
+                imageFile.IsFullDmd = imageFile.Features?.Any(feature => feature?.ToLower().Trim() == "fulldmd") == true;
+            });
+            
+            onlineGame.TableFiles.ForEach(tableFile =>
+            {
+                tableFile.IsVirtualOnly = tableFile.Comment?.ToLower().Trim() == "vr room";
             });
 
             // extract IpdbId
@@ -323,6 +329,10 @@ public sealed class FeederResultsViewModel
                 {
                     // flag file - if the update time range is satisfied
                     file.IsNew = file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
+
+                    // flag file - if table file is 'VR Room'
+                    //file.IsNew = file.IsNew && (file as TableFile)?.Comment
+                    //    file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
 
                     // flag each url within the file - required to allow for simpler view binding
                     file.Urls.ForEach(url => url.IsNew = file.IsNew);
