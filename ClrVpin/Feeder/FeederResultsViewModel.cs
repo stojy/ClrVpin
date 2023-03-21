@@ -101,10 +101,13 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
                 (Settings.SelectedFormatFilter == null || game.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
+                // do we really need to re-filter against 'UpdatedAt' given it's already calculated during UpdateIsNew??
                 (Settings.SelectedUpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
                 (Settings.SelectedUpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
+                
                 (Settings.SelectedTableFilter == null || game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (Settings.SelectedManufacturerFilter == null || game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase))
+                (Settings.SelectedManufacturerFilter == null || game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
+                game.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false // keep if the online file collection is new or doesn't exist (i.e. unmatched)
         };
         GameItemsView.MoveCurrentToFirst();
 
@@ -329,8 +332,11 @@ public sealed class FeederResultsViewModel
                     file.IsNew = file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
 
                     // flag file - if table file is 'VR Room'
-                    //file.IsNew = file.IsNew && (file as TableFile)?.Comment
-                    //    file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
+                    if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.VirtualRealityOnly) && file is TableFile tableFile) 
+                        file.IsNew = !tableFile.IsVirtualOnly;
+
+                    if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.FullDmd) && file is ImageFile imageFile) 
+                        file.IsNew = !imageFile.IsFullDmd;
 
                     // flag each url within the file - required to allow for simpler view binding
                     file.Urls.ForEach(url => url.IsNew = file.IsNew);
