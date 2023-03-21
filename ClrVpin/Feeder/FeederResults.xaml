@@ -492,8 +492,8 @@
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ContentControl Template="{StaticResource KeyValueAutoPair}" 
-                                controls:GenericAttached.String="Ignore" 
-                                controls:GenericAttached.String2="Files that match the feature set are ignored"
+                                controls:GenericAttached.String="Features" 
+                                controls:GenericAttached.String2="Ignore update content when calculating the 'new' status if they they contain these features"
                                 controls:GenericAttached.Double="60" 
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.IgnoreFeaturesOptionsView }" />
