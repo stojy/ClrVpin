@@ -36,6 +36,7 @@ public class GameFiltersViewModel
     public ListCollectionView<FeatureType.FeatureType> TableMatchOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> TableAvailabilityOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> TableNewContentOptionsView { get; init; }
+    public ListCollectionView<FeatureType.FeatureType> IgnoreFeaturesOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
     
     public ListCollectionView<FeatureType.FeatureType> MissingFilesOptionsView { get; set; }

@@ -35,6 +35,7 @@ namespace ClrVpin.Models.Settings
             TableNewContentOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            IgnoreFeatureOptions.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
         // hit types in priority order as determined by matching algorithm - refer MatchFilesToLocal
@@ -136,6 +137,12 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TableNewContentOptionEnum.TableBackglassDmd, Tip = "Tables with new content of type: Table, Backglass, or DMDs"},
             new() {Enum = TableNewContentOptionEnum.Other, Tip = "Tables with new content of type: Wheels, ROMs, Media Packs, Sounds, Toppers, PuP Packs, POVs, Alt. Sounds, or Rules"},
             new() {Enum = TableNewContentOptionEnum.Any, Tip = "Tables with new content of any type, including any unmatched tables where new content is n/a"}
+        };
+
+        public static readonly EnumOption<IgnoreFeatureOptionEnum>[] IgnoreFeatureOptions =
+        {
+            new() {Enum = IgnoreFeatureOptionEnum.VirtualRealityOnly, Tip = "Table files that only support virtual reality"},
+            new() {Enum = IgnoreFeatureOptionEnum.FullDmd, Tip = "Backglass files designed for full DMD"},
         };
 
         // all possible file merge options - to be used elsewhere (feeder)

@@ -276,7 +276,7 @@
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Left" Width="700">
-          <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
+          <GroupBox DockPanel.Dock="Top" Header="Include Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0"> <!-- margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :( -->
                 <ComboBox ItemsSource="{Binding GameFiltersViewModel.TablesFilterView}"
@@ -479,6 +479,27 @@
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableAvailabilityOptionsView}" />
                 </ContentControl>
+              </Grid>
+            </StackPanel>
+          </GroupBox>
+
+          <GroupBox DockPanel.Dock="Top" Header="Exclude Filters" Margin="0,0,0,10">
+            <StackPanel Margin="5">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="1.20*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ContentControl Template="{StaticResource KeyValueAutoPair}" 
+                                controls:GenericAttached.String="Ignore" 
+                                controls:GenericAttached.String2="Files that match the feature set are ignored"
+                                controls:GenericAttached.Double="60" 
+                                controls:GenericAttached.Double2="14">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.IgnoreFeaturesOptionsView }" />
+                </ContentControl>
+
+                <!--<Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />-->
               </Grid>
             </StackPanel>
           </GroupBox>

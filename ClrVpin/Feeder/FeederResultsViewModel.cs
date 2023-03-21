@@ -122,14 +122,12 @@ public sealed class FeederResultsViewModel
             TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,
                 () => Model.Settings.Feeder.SelectedTableAvailabilityOption, () => FilterChangedCommand.Execute(null)),
             TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
-                () => Model.Settings.Feeder.SelectedTableNewContentOption, () => FilterChangedCommand.Execute(null))
+                () => Model.Settings.Feeder.SelectedTableNewContentOption, () => FilterChangedCommand.Execute(null)),
+            IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.IgnoreFeatureOptions, Model.Settings.Feeder.SelectedIgnoreFeatureOptions,
+                _ => UpdateIsNew(), includeSelectAll: false)
         };
 
-        UpdatedFilterTimeChanged = new ActionCommand(() =>
-        {
-            UpdateIsNew();
-            FilterChangedCommand.Execute(null);
-        });
+        UpdatedFilterTimeChanged = new ActionCommand(UpdateIsNew);
 
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
@@ -318,7 +316,7 @@ public sealed class FeederResultsViewModel
 
     private void UpdateIsNew()
     {
-        // flag models if they satisfy the update time range
+        // flag models if they satisfy the updated criteria
         var onlineGames = GetOnlineGames();
         onlineGames.ForEach(onlineGame =>
         {
@@ -358,6 +356,8 @@ public sealed class FeederResultsViewModel
                 onlineGame.NewContentType = null;
             }
         });
+
+        FilterChangedCommand.Execute(null);
     }
 
     private static void NavigateToUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
