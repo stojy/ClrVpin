@@ -142,6 +142,7 @@ namespace ClrVpin.Models.Settings
         public static readonly EnumOption<IgnoreFeatureOptionEnum>[] IgnoreFeatureOptions =
         {
             new() {Enum = IgnoreFeatureOptionEnum.VirtualRealityOnly, Tip = "Table files that only support virtual reality"},
+            new() {Enum = IgnoreFeatureOptionEnum.MusicOrSoundMod, Tip = "Table files that are music and/or sound modifications"},
             new() {Enum = IgnoreFeatureOptionEnum.FullDmd, Tip = "Backglass files designed for full DMD"},
         };
 

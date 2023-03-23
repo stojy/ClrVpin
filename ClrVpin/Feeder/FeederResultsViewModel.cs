@@ -70,7 +70,9 @@ public sealed class FeederResultsViewModel
             // mark files that are eligible for the ignore filtering
             onlineGame.TableFiles.ForEach(tableFile =>
             {
-                tableFile.IsVirtualOnly = tableFile.Comment?.ToLower().Trim().StartsWith("vr room") == true;
+                var comment = tableFile.Comment?.ToLower().Trim();
+                tableFile.IsVirtualOnly = comment?.StartsWith("vr room") == true;
+                tableFile.IsMusicOrSoundMod = comment?.ContainsAny("sound mod", "music mod")  == true;
             });
 
             onlineGame.B2SFiles.ForEach(backglassFile =>
@@ -337,11 +339,16 @@ public sealed class FeederResultsViewModel
                     // flag file - if the update time range is satisfied
                     file.IsNew = file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
 
-                    // flag file - if table file is 'VR Room'
+                    // treat file as NOT new if any of the except rules are satisfied
+                    // VR only
                     if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.VirtualRealityOnly) && file is TableFile tableFile) 
                         file.IsNew = !tableFile.IsVirtualOnly;
 
-                    // flag file - if table file is 'Full DMD'
+                    // music/sound mod
+                    if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.MusicOrSoundMod) && file is TableFile tableFile2) 
+                        file.IsNew = !tableFile2.IsMusicOrSoundMod;
+
+                    // full DMD
                     if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.FullDmd) && file is ImageFile imageFile) 
                         file.IsNew = !imageFile.IsFullDmd;
 

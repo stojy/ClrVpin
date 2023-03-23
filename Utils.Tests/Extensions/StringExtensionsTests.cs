@@ -31,8 +31,19 @@ public class StringExtensionsTests
     [TestCase("abcdefgh", new[] {'b', 'f'}, "acdegh")]
     [TestCase("abc--de-fgh", new[] {'-'}, "abcdefgh")]
     [TestCase(null, new[] {'-'}, null)]
-    public void TestRemoveChars(string source, char[] unwantedChars, string expected)
+    public void TestRemoveChars(string source, char[] unwantedChars, string expectedResult)
     {
-        Assert.That(source.RemoveChars(unwantedChars), Is.EqualTo(expected));
+        Assert.That(source.RemoveChars(unwantedChars), Is.EqualTo(expectedResult));
+    }
+
+    [Test]
+    [TestCase("music and sound mod", new[] {"music mod"}, false)]
+    [TestCase("music and sound mod", new[] {"music"}, true)]
+    [TestCase("music and sound mod", new[] {"sound mod"}, true)]
+    [TestCase(null, new[] {"sound mod"}, false)]
+    [TestCase(null, new[] {""}, false)]
+    public void TestContainsAny(string source, string[] items, bool expectedResult)
+    {
+        Assert.That(source.ContainsAny(items), Is.EqualTo(expectedResult));
     }
 }
