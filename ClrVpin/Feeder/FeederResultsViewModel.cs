@@ -65,12 +65,18 @@ public sealed class FeederResultsViewModel
                     Url = imageFile.ImgUrl,
                     SelectedCommand = new ActionCommand(() => ShowImage(imageFile.ImgUrl))
                 };
-                imageFile.IsFullDmd = imageFile.Features?.Any(feature => feature?.ToLower().Trim() == "fulldmd") == true;
             });
             
+            // mark files that are eligible for the ignore filtering
             onlineGame.TableFiles.ForEach(tableFile =>
             {
                 tableFile.IsVirtualOnly = tableFile.Comment?.ToLower().Trim() == "vr room";
+            });
+
+            onlineGame.B2SFiles.ForEach(backglassFile =>
+            {
+                backglassFile.IsFullDmd = backglassFile.Features?.Any(feature => feature?.ToLower().Trim() == "fulldmd") == true ||
+                                          backglassFile.Urls?.Any(url => url.Url.ToLower().RemoveChars('-').Contains("fulldmd")) == true;
             });
 
             // extract IpdbId
@@ -335,6 +341,7 @@ public sealed class FeederResultsViewModel
                     if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.VirtualRealityOnly) && file is TableFile tableFile) 
                         file.IsNew = !tableFile.IsVirtualOnly;
 
+                    // flag file - if table file is 'Full DMD'
                     if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.FullDmd) && file is ImageFile imageFile) 
                         file.IsNew = !imageFile.IsFullDmd;
 
