@@ -493,7 +493,7 @@
                 </Grid.ColumnDefinitions>
                 <ContentControl Template="{StaticResource KeyValueAutoPair}" 
                                 controls:GenericAttached.String="Features" 
-                                controls:GenericAttached.String2="Ignore update content when calculating the 'new' status if they they contain these features"
+                                controls:GenericAttached.String2="Don't attribute file(s) as 'New' if they contain these features"
                                 controls:GenericAttached.Double="60" 
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.IgnoreFeaturesOptionsView }" />

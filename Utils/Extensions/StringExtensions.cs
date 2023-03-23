@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Utils.Extensions;
@@ -31,5 +32,12 @@ public static class StringExtensions
     public static bool IsEmpty(this string value)
     {
         return string.IsNullOrWhiteSpace(value) || value == "-";
+    }
+
+    public static string RemoveChars(this string value, params char[] unwantedChars)
+    {
+        // x3 times quicker to remove via Split than Replace!
+        // - https://stackoverflow.com/a/16974999/227110
+        return value == null ? null : string.Join("", value.Split(unwantedChars));
     }
 }
