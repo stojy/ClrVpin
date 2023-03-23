@@ -70,7 +70,7 @@ public sealed class FeederResultsViewModel
             // mark files that are eligible for the ignore filtering
             onlineGame.TableFiles.ForEach(tableFile =>
             {
-                tableFile.IsVirtualOnly = tableFile.Comment?.ToLower().Trim() == "vr room";
+                tableFile.IsVirtualOnly = tableFile.Comment?.ToLower().Trim().StartsWith("vr room") == true;
             });
 
             onlineGame.B2SFiles.ForEach(backglassFile =>
