@@ -41,7 +41,7 @@ public static class Fuzzy
         // - used with Regex.Replace will capture multiple matches at once.. same word or other words
         // - lookahead match without capture: https://stackoverflow.com/a/3926546/227110
         // - https://regex101.com/r/DoztL5/1
-        Authors = new[] { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99", "balutito" };
+        Authors = new[] { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99", "balutito", "siggis" };
         string[] language = { "a", "and", "n'", "'n", "n", "the", "en" };
         string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
         string[] types = { "em", "ss", "pm" };
