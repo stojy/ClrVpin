@@ -24,7 +24,7 @@ public class MergerSettings
     public string DestinationContentType { get; set; }
         
     public decimal IgnoreIfSmallerPercentage { get; set; } = 80;
-    public List<string> IgnoreIWords { get; set; } = new() {"nude", "adult", "tba", "original", "orginal", "b&w", " bw ", "2scr", "2 screen", "vr room"};
+    public List<string> IgnoreIWords { get; set; } = new() {"nude", "adult", "tba", "original", "orginal", "b&w", " bw ", "2scr", "2 screen", "vr room", "pcv"};
 
     public bool DeleteIgnoredFiles { get; set; }
 
