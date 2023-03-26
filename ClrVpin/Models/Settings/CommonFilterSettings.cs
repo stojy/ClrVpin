@@ -5,6 +5,7 @@ using PropertyChanged;
 namespace ClrVpin.Models.Settings;
 
 [AddINotifyPropertyChangedInterface]
+[Serializable]
 public class CommonFilterSettings
 {
     public bool IsDynamicFiltering { get; set; }
@@ -22,6 +23,5 @@ public class CommonFilterSettings
     public DateTime? SelectedUpdatedAtDateBegin { get; set; }
     public DateTime? SelectedUpdatedAtDateEnd { get; set; }
 
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter is assigned member expression, refer Accessor.cs
     public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
 }
