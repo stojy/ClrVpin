@@ -92,17 +92,16 @@ public class UrlDetail
 }
 
 [AddINotifyPropertyChangedInterface]
+[Serializable]
 public class File
 {
     public string Name { get; set; }
     public string Version { get; set; }
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for deserialization
     public string[] Authors { get; set; } = Array.Empty<string>();
 
     public DateTime? UpdatedAt { get; set; }
     public DateTime? CreatedAt { get; set; }
 
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public UrlDetail[] Urls { get; set; } = Array.Empty<UrlDetail>();
 
     // view model properties

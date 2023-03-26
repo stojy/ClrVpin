@@ -10,6 +10,7 @@ using Utils.Extensions;
 namespace ClrVpin.Models.Settings;
 
 [AddINotifyPropertyChangedInterface]
+[Serializable]
 public class Settings : ISettings
 {
     public Settings()
@@ -78,7 +79,6 @@ public class Settings : ISettings
     public string Guid => _defaultSettings?.Guid;
 
     // ReSharper disable once MemberCanBePrivate.Global - property is serialized
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - property is serialized
     public List<ContentType> AllContentTypes { get; set; }
 
     public string PinballFolder { get; set; }
@@ -93,13 +93,9 @@ public class Settings : ISettings
 
     public decimal MatchFuzzyMinimumPercentage { get; set; } = 100;
 
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
     public CleanerSettings Cleaner { get; set; }
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
     public MergerSettings Merger { get; set; }
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
     public FeederSettings Feeder { get; set; }
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - used by Json.Net during deserialization
     public ExplorerSettings Explorer { get; set; }
 
     public int Version { get; set; }

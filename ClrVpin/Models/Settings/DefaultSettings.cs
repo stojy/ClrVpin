@@ -5,6 +5,7 @@ using PropertyChanged;
 namespace ClrVpin.Models.Settings;
 
 [AddINotifyPropertyChangedInterface]
+[Serializable]
 public class DefaultSettings : ISettings
 {
     public DefaultSettings()
@@ -16,8 +17,7 @@ public class DefaultSettings : ISettings
             
         Guid = System.Guid.NewGuid().ToString();
     }
-        
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global - setter required for json.net
+    
     public string Guid { get; set; }
 
     public int Version { get; set; }
