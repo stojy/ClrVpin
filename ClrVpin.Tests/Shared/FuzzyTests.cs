@@ -276,7 +276,8 @@ public class FuzzyTests
     [TestCase("Guns N' Roses (Data East 1994)", "Guns N Roses (Data East 1994)_Bigus(MOD)3.0.vpx", 221, TestName = "language word: treat N same as 'N and N'")]
     [TestCase("Dale Jr. (Stern 2007)", "JP's Dale Jr Nascar v4.vpx", 145, TestName = "alias #4: special case for 'dale jr nascar'")]
     [TestCase("Nascar (Stern 2005)", "JP's Nascar Race v4.vpx", 145, TestName = "alias #5: special case for 'nascar race'")]
-    [TestCase("Frank Thomas' Big Hurt (Gottlieb 1995)", "Big Hurt (Gottlieb 1995)_Bigus(MOD)1.1", 100, TestName = "ending match #1")]
+    [TestCase("Frank Thomas' Big Hurt (Gottlieb 1995)", "Big Hurt (Gottlieb 1995)_Bigus(MOD)1.1.vpx", 100, TestName = "ending match #1")]
+    [TestCase("Lord Of The Rings (Stern 2003)", "Lord of the Rings Siggis Mod 2.0.vpx", 148, TestName = "author check: siggis")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
