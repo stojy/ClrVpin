@@ -276,6 +276,7 @@ public class FuzzyTests
     [TestCase("Guns N' Roses (Data East 1994)", "Guns N Roses (Data East 1994)_Bigus(MOD)3.0.vpx", 221, TestName = "language word: treat N same as 'N and N'")]
     [TestCase("Dale Jr. (Stern 2007)", "JP's Dale Jr Nascar v4.vpx", 145, TestName = "alias #4: special case for 'dale jr nascar'")]
     [TestCase("Nascar (Stern 2005)", "JP's Nascar Race v4.vpx", 145, TestName = "alias #5: special case for 'nascar race'")]
+    [TestCase("Frank Thomas' Big Hurt (Gottlieb 1995)", "Big Hurt (Gottlieb 1995)_Bigus(MOD)1.1", 100, TestName = "ending match #1")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
@@ -369,7 +370,7 @@ public class FuzzyTests
         fileDetails = Fuzzy.GetTableDetails("Ball.vpx", true);
         (game, var score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
         Assert.That(game?.Derived.Ipdb, Is.Not.Null);
-        Assert.That(score, Is.EqualTo(5));
+        Assert.That(score, Is.EqualTo(22));
         Assert.That(isMatch, Is.False);
 
         // ??

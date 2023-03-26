@@ -454,45 +454,45 @@ public static class Fuzzy
         if (score == 0 && isLevenshteinEnabled)
             score = IsLevenshteinMatch(14, 2, first, second) ? 120 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0 && isLevenshteinEnabled)
-            score = IsLevenshteinMatch(14, 2, secondNoWhiteSpace, firstNoWhiteSpace) ? 120 : 0;
+            score = IsLevenshteinMatch(14, 2, firstNoWhiteSpace, secondNoWhiteSpace) ? 120 : 0;
 
         // starts with
         if (score == 0)
             score = IsStartsMatch(14, first, second) ? 100 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
-            score = IsStartsMatch(14, secondNoWhiteSpace, firstNoWhiteSpace) ? 100 : 0;
+            score = IsStartsMatch(14, firstNoWhiteSpace, secondNoWhiteSpace) ? 100 : 0;
 
         if (score == 0)
             score = IsStartsMatch(10, first, second) ? 60 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
-            score = IsStartsMatch(10, secondNoWhiteSpace, firstNoWhiteSpace) ? 60 : 0;
+            score = IsStartsMatch(10, firstNoWhiteSpace, secondNoWhiteSpace) ? 60 : 0;
 
         if (score == 0)
             score = IsStartsMatch(8, first, second) ? 50 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
-            score = IsStartsMatch(8, secondNoWhiteSpace, firstNoWhiteSpace) ? 50 : 0;
+            score = IsStartsMatch(8, firstNoWhiteSpace, secondNoWhiteSpace) ? 50 : 0;
 
         // contains
         if (score == 0)
             score = IsContainsMatch(17, first, second) ? 100 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
-            score = IsContainsMatch(17, secondNoWhiteSpace, firstNoWhiteSpace) ? 100 : 0;
+            score = IsContainsMatch(17, firstNoWhiteSpace, secondNoWhiteSpace) ? 100 : 0;
 
         if (score == 0)
             score = IsContainsMatch(13, first, second) ? 60 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
-            score = IsContainsMatch(13, secondNoWhiteSpace, firstNoWhiteSpace) ? 60 : 0;
+            score = IsContainsMatch(13, firstNoWhiteSpace, secondNoWhiteSpace) ? 60 : 0;
 
         if (score == 0)
             score = IsContainsMatch(11, first, second) ? 30 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
-            score = IsContainsMatch(11, secondNoWhiteSpace, firstNoWhiteSpace) ? 30 : 0;
+            score = IsContainsMatch(11, firstNoWhiteSpace, secondNoWhiteSpace) ? 30 : 0;
 
         // starts and ends
         if (score == 0)
             score = IsStartsAndEndsMatch(7, 8, first, second) ? 60 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
-            score = IsStartsAndEndsMatch(7, 8, secondNoWhiteSpace, firstNoWhiteSpace) ? 60 : 0;
+            score = IsStartsAndEndsMatch(7, 8, firstNoWhiteSpace, secondNoWhiteSpace) ? 60 : 0;
 
         // exact match - without parenthesis
         if (score == 0)
@@ -505,7 +505,13 @@ public static class Fuzzy
             if (score == 0)
                 score = IsStartsMatch(first, second) ? 30 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsStartsMatch(secondNoWhiteSpace, firstNoWhiteSpace) ? 30 : 0;
+                score = IsStartsMatch(firstNoWhiteSpace, secondNoWhiteSpace) ? 30 : 0;// starts with - limited to source length of strings, i.e. which can be less than the earlier prescribed length breakpoints of 14, 10, and 8
+            
+            // ends with - limited to source length of strings, i.e. which can be less than the earlier prescribed length breakpoints of 14, 10, and 8
+            if (score == 0)
+                score = IsEndsMatch(first, second) ? 20 + ScoringNoWhiteSpaceBonus : 0;
+            if (score == 0)
+                score = IsEndsMatch(firstNoWhiteSpace, secondNoWhiteSpace) ? 20 : 0;
         }
 
         // no match could represent either missing data (e.g. no manufacturer) or a mismatch (e.g. wrong manufacturer)
@@ -556,6 +562,15 @@ public static class Fuzzy
         // does either string start with the other string
         return first.StartsWith(second) || second.StartsWith(first);
     }
+    
+    private static bool IsEndsMatch(string first, string second)
+    {
+        if (first == null || second == null)
+            return false;
+
+        // does either string start with the other string
+        return first.EndsWith(second) || second.EndsWith(first);
+    }
 
     private static bool IsContainsMatch(int minStringLength, string first, string second)
     {
@@ -578,7 +593,7 @@ public static class Fuzzy
 
         return first.StartsWith(second.Remove(startMatchLength)) && first.EndsWith(second.Substring(second.Length - endMatchLength));
     }
-
+    
     // non-anonymous type so it can be passed as a method parameter
     // - refer https://stackoverflow.com/questions/6624811/how-to-pass-anonymous-types-as-parameters
     private class MatchDetail
