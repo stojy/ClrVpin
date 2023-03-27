@@ -419,7 +419,7 @@
                 <!--temporarily(?) disabled ratings bar as it appears to be causing rendering performance issues for the GridView.. scrolling and sorting-->
                 <!--<materialDesign:RatingBar Value="{Binding Game.Rating, Mode=OneTime}"
                               Style="{StaticResource RatingBarStyle}" IsReadOnly="True" IsPreviewValueEnabled="False" />-->
-                <TextBlock Text="{Binding Rating}" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Rating}" HorizontalAlignment="Center" VerticalAlignment="Center" />
               </DataTemplate>
 
               <DataTemplate x:Key="IpdbTemplate" DataType="{x:Type game:GameItem}">
