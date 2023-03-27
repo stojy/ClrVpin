@@ -278,6 +278,8 @@ public class FuzzyTests
     [TestCase("Nascar (Stern 2005)", "JP's Nascar Race v4.vpx", 145, TestName = "alias #5: special case for 'nascar race'")]
     [TestCase("Frank Thomas' Big Hurt (Gottlieb 1995)", "Big Hurt (Gottlieb 1995)_Bigus(MOD)1.1.vpx", 100, TestName = "ending match #1")]
     [TestCase("Lord Of The Rings (Stern 2003)", "Lord of the Rings Siggis Mod 2.0.vpx", 148, TestName = "author check: siggis")]
+    [TestCase("Black Hole (LTD do Brazil 1982)", "LTD Black Hole.vpx", 16, TestName = "failed match - 'ends with' match (because of LTD prefix) and no manufacturer/year match")]
+    [TestCase("Black Hole (Gottlieb 1981)", "Black Hole.vpx", 146, TestName = "exact name match - without manufacturer/year")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
@@ -337,11 +339,11 @@ public class FuzzyTests
         Assert.That(game?.Derived.Ipdb, Is.EqualTo("2"));
         Assert.That(isMatch, Is.True);
 
-        // longest match chosen - i.e. not the first match
+        // no match because the we have a tie for highest scoring - i.e. unable to determine the winner
         fileDetails = Fuzzy.GetTableDetails("Eight Ball 2 blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);
         (game, _, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
-        Assert.That(game?.Derived.Ipdb, Is.EqualTo("4"));
-        Assert.That(isMatch, Is.True);
+        Assert.That(game?.Derived.Ipdb, Is.EqualTo(null));
+        Assert.That(isMatch, Is.False);
 
         // partial match
         fileDetails = Fuzzy.GetTableDetails("Blah Cowboy Eight Ball blah (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", true);

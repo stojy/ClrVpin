@@ -234,10 +234,24 @@ public static class Fuzzy
         var orderedMatches = tableFileMatches.Concat(descriptionMatches)
             .OrderByDescending(x => x.MatchResult.success)
             .ThenByDescending(x => x.MatchResult.score)
-            .ThenByDescending(x => x.LocalGame.Game.Name.Length) // tie breaker
+            .GroupBy(x => x.LocalGame).Select(x => x.First()) // remove duplicate game matches when comparing table and descriptions.. just take the highest match
             .ToList();
 
         var preferredMatch = orderedMatches.FirstOrDefault();
+        var alternateMatch = orderedMatches.Skip(1).FirstOrDefault();
+
+        if (preferredMatch?.MatchResult.score >= MinMatchScore && preferredMatch.MatchResult.score == alternateMatch?.MatchResult.score)
+        {
+            // reject match if we have a tie since we can't reliably determine which is the correct match based on the scoring
+            // - e.g. file 'black hole.vpx' should not be able to match against a DB that contains these entries.. 'Black Hole (LTD do Brazil 1982)' and 'Black Hole (Gottlieb 1981)'
+            var log = $"Fuzzy table match: success=False, failed because multiple DB table entries matched with identical score, score={$"{preferredMatch.MatchResult.score},",-4}\n" +
+                           $"- source {(isFile ? "file" : "feed")}:         {LogGameInfo(fileOrFeedFuzzyItemDetails.ActualName, null, fileOrFeedFuzzyItemDetails.Manufacturer, fileOrFeedFuzzyItemDetails.Year?.ToString())}\n" +
+                           $"- matched db table #1: {LogGameInfo(preferredMatch.LocalGame.Game.Name, preferredMatch.LocalGame.Game.Description, preferredMatch.LocalGame.Game.Manufacturer, preferredMatch.LocalGame.Game.Year)}\n" +
+                           $"- matched db table #2: {LogGameInfo(alternateMatch.LocalGame.Game.Name, alternateMatch.LocalGame.Game.Description, alternateMatch.LocalGame.Game.Manufacturer, alternateMatch.LocalGame.Game.Year)}";
+            Logger.Warn(log);
+            
+            preferredMatch = null;
+        }
 
         // second chance
         // - if there's still no match, check if the fuzzy name (i.e. after processing) has a UNIQUE match within in the game DB.. using a simple 'to lowercase' check
@@ -262,7 +276,7 @@ public static class Fuzzy
         var isMatch = preferredMatch?.MatchResult.score >= MinMatchScore;
         var isOriginal = preferredMatch?.LocalGame.Derived.IsOriginal == true || fileOrFeedFuzzyItemDetails.IsOriginal;
 
-        var fuzzyLog = $"fuzzy table match: success={isMatch}, score={$"{preferredMatch?.MatchResult.score},",-4} isUniqueMatch(second chance)={isUniqueMatch}, isOriginal={isOriginal}\n" +
+        var fuzzyLog = $"Fuzzy table match: success={isMatch}, score={$"{preferredMatch?.MatchResult.score},",-4} isUniqueMatch(second chance)={isUniqueMatch}, isOriginal={isOriginal}\n" +
                        $"- source {(isFile ? "file" : "feed")}:      {LogGameInfo(fileOrFeedFuzzyItemDetails.ActualName, null, fileOrFeedFuzzyItemDetails.Manufacturer, fileOrFeedFuzzyItemDetails.Year?.ToString())}\n" +
                        $"- matched db table: {LogGameInfo(preferredMatch?.LocalGame.Game.Name, preferredMatch?.LocalGame.Game.Description, preferredMatch?.LocalGame.Game.Manufacturer, preferredMatch?.LocalGame.Game.Year)}";
 
@@ -390,8 +404,8 @@ public static class Fuzzy
             GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Name, match.LocalGame.Derived.NameLowerCase, null, false, 0 , true) > 0 ||
             GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Description, match.LocalGame.Derived.DescriptionLowerCase, null, false, 0 , true) > 0).ToList();
 
-        // only considered a 'unique match' if it matches EXACTLY twice.. one for table and description
-        return matchesContainingFileName.Count == 2 ? matchesContainingFileName.First() : null;
+        // only considered a 'unique match' if it matches EXACTLY once.. i.e. sine the table and description duplicate entries have already been removed
+        return matchesContainingFileName.Count == 1 ? matchesContainingFileName.First() : null;
     }
 
     //private static MatchDetail GetOrderedMatchesByNameWithoutParenthesis(IEnumerable<MatchDetail> orderedMatches, string nameToMatch, string nameToMatchNoWhiteSpace)
