@@ -102,6 +102,7 @@ public static class Fuzzy
             new("GOTG", "Guardians Of The Galaxy"),
             new("Dale Jr Nascar", "Dale Jr"), // special case.. 'nascar' refers to the table used as a basis, 'dale jr' is a limited run of 'nascar'
             new("Nascar Race", "Nascar"), // special case.. 'race' is not part of the title
+            new("totan", "Tales of the Arabian Nights (Williams 1996)"), 
         };
 
         // remove parenthesis and contents
