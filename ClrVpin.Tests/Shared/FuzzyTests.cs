@@ -280,6 +280,7 @@ public class FuzzyTests
     [TestCase("Lord Of The Rings (Stern 2003)", "Lord of the Rings Siggis Mod 2.0.vpx", 148, TestName = "author check: siggis")]
     [TestCase("Black Hole (LTD do Brazil 1982)", "LTD Black Hole.vpx", 16, TestName = "failed match - 'ends with' match (because of LTD prefix) and no manufacturer/year match")]
     [TestCase("Black Hole (Gottlieb 1981)", "Black Hole.vpx", 146, TestName = "exact name match - without manufacturer/year")]
+    [TestCase("Tales of the Arabian Nights (Williams 1996)", "TOTAN4k 1.5.vpx", 232, TestName = "alias: totan")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
