@@ -3,35 +3,39 @@
 
 ## Purpose
 An ___open source___ virtual pinball content management tool.  Designed to ___automate___ the manual tasks of keeping your collections and databases..
+- Current
 - Accurate
 - Clean
 - Minimal
-- Current
 
-## Supported Platforms and Content
+## Supported Applications
 1. [Visual Pinball X (open source)](https://github.com/vpinball/vpinball) engine - Tables, Backglasses, and POV.
-1. [PinballY (open source)](https://github.com/mjrgh/PinballY) and [PinballX (proprietary)](https://www.pinballx.com/) frontends - Videos, Audio, Wheels, Instructions, Flyters, etc.
+1. [PinballY (open source)](https://github.com/mjrgh/PinballY) and [PinballX](https://www.pinballx.com/) frontends - Videos, Audio, Wheels, Instructions, Flyers, etc.
 
 ## Features
-1. Cleaner - clean your existing file collection.
-   - Fix files that can be fixed - e.g. rename files to match your DB and remove unsupported/obsolete files
-   - Report files that can't be fixed - e.g. missing files
-   - Explore file content - e.g. open files and view in explorer.
-2. Merger - merge new/updated pinball files into your existing collection.
-   - Fuzzy logic applied to match the different author file  naming conventions/mistakes to those defined in your database
-   - Automaticaly backup files that are merged and replaced.
-3. Feeder - check against online resources to determine whether your collection is up to date.
-   - Navigate [VPS](https://virtual-pinball-spreadsheet.web.app/) collections with variety of user defined filters - e.g. update time, type, manufacturer, etc.
-   - Open browser from application to the source of the updated file so it can be reviewed and downloaded
+1. Feeder - check online sources for potential updates to your collection.
+   - Browse the [VPS (open source)](https://virtual-pinball-spreadsheet.web.app/) feed using customizable filters - e.g. last update time, table type, manufacturer, content type, etc.
+   - Open the web browser to review, rate, and download content.
+1. Merger - merge downloaded content into your collection.
+   - Apply criteria to automatically ignore certain files - e.g. older files, too small, adult content, etc.
+   - Applies fuzzy logic algorithms to match the file names to the entries in your collection - e.g. author, version, acronyms, incorrect manufacturer/year, etc.
+   - Use 'trainer wheels' mode that allows you to review the changes that would be made _before_ any changes are actually made.
+   - Automatically backup your files before making any changes.
+1. Cleaner - clean the content in your collection.
+   - Fix files that satisfy customizable criteria - e.g. incorrectly named files, obsolete files, etc.
+   - Detailed reports on what was changed
+   - Plus all the features offered by Merger.. fuzzy matching, trainer wheels, automated backups, etc.
+1. Scanner - view content from your collection.
+   - Apply customizable filters to locate the table(s) of interest.
+   - Identify missing and out of date content - e.g. missing wheel, out of date table video, etc.
+   - Open the content - e.g. open images, videos, etc.
 
-## Quick Start
-Refer [TL&DR](https://github.com/stojy/ClrVpin/wiki/TL&DR).
-
-## Screenshots
-Refer [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots).
-
-## Roadmap
-Refer [Roadmap](https://github.com/stojy/ClrVpin/wiki/Roadmap).
+## More Info
+Some highlights from the wiki..
+- [Quick Start Guide](https://github.com/stojy/ClrVpin/wiki/Quick-Start)
+- [Step by Step Guide](https://github.com/stojy/ClrVpin/wiki/step-by-step)
+- [Screenshots](https://github.com/stojy/ClrVpin/wiki/Screenshots)
+- [Roadmap](https://github.com/stojy/ClrVpin/wiki/Roadmap)
 
 ## Build Status
 [![build](https://github.com/stojy/ClrVpin/actions/workflows/build.yml/badge.svg)](https://github.com/stojy/ClrVpin/actions/workflows/build.yml)
