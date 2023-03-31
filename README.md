@@ -13,7 +13,7 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
 1. [PinballY (open source)](https://github.com/mjrgh/PinballY) and [PinballX](https://www.pinballx.com/) frontends - Videos, Audio, Wheels, Instructions, Flyers, etc.
 
 ## Features
-1. Feeder - check online sources for potential updates to your collection.
+1. Feeder - check online feeds for potential updates to your collection.
    - Browse the [VPS (open source)](https://virtual-pinball-spreadsheet.web.app/) feed using customizable filters - e.g. last update time, table type, manufacturer, content type, etc.
    - Open the web browser to review, rate, and download content.
 1. Merger - merge downloaded content into your collection.
@@ -25,7 +25,7 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
    - Fix files that satisfy customizable criteria - e.g. incorrectly named files, obsolete files, etc.
    - Detailed reports on what was changed
    - Plus all the features offered by Merger.. fuzzy matching, trainer wheels, automated backups, etc.
-1. Explorer - view content from your collection.
+1. Explorer - explore content from your collection.
    - Apply customizable filters to locate the table(s) of interest.
    - Identify missing and out of date content - e.g. missing wheel, out of date table video, etc.
    - Open the content - e.g. open images, videos, etc.
