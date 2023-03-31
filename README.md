@@ -25,7 +25,7 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
    - Fix files that satisfy customizable criteria - e.g. incorrectly named files, obsolete files, etc.
    - Detailed reports on what was changed
    - Plus all the features offered by Merger.. fuzzy matching, trainer wheels, automated backups, etc.
-1. Scanner - view content from your collection.
+1. Explorer - view content from your collection.
    - Apply customizable filters to locate the table(s) of interest.
    - Identify missing and out of date content - e.g. missing wheel, out of date table video, etc.
    - Open the content - e.g. open images, videos, etc.
