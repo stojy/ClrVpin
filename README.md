@@ -16,19 +16,20 @@ An ___open source___ virtual pinball content management tool.  Designed to ___au
 1. Feeder - check online feeds for potential updates to your collection.
    - Browse the [VPS (open source)](https://virtual-pinball-spreadsheet.web.app/) feed using customizable filters - e.g. last update time, table type, manufacturer, content type, etc.
    - Open the web browser to review, rate, and download content.
-1. Merger - merge downloaded content into your collection.
+1. Merger - merge downloaded updated content into your collection.
    - Apply criteria to automatically ignore certain files - e.g. older files, too small, adult content, etc.
    - Applies fuzzy logic algorithms to match the file names to the entries in your collection - e.g. author, version, acronyms, incorrect manufacturer/year, etc.
    - Use 'trainer wheels' mode that allows you to review the changes that would be made _before_ any changes are actually made.
    - Automatically backup your files before making any changes.
-1. Cleaner - clean the content in your collection.
+1. Cleaner - clean the existing content in your collection (e.g. after merge).
    - Fix files that satisfy customizable criteria - e.g. incorrectly named files, obsolete files, etc.
    - Detailed reports on what was changed
    - Plus all the features offered by Merger.. fuzzy matching, trainer wheels, automated backups, etc.
-1. Explorer - explore content from your collection.
-   - Apply customizable filters to locate the table(s) of interest.
+1. Explorer - explore content in your collection.
    - Identify missing and out of date content - e.g. missing wheel, out of date table video, etc.
-   - Open the content - e.g. open images, videos, etc.
+   - Apply customizable filters to locate the table(s) of interest.
+   - View and edit all table information stored in your database.
+   - Open the content to see how it looks/sounds/etc - e.g. open images, play videos, listen to table audio, etc.
 
 ## More Info
 Some highlights from the wiki..
