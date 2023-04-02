@@ -48,7 +48,7 @@ public class VersionManagementView
         var latestRelease = releases.First();
 
         ExistingVersion = $"{VersionManagement.GetProductVersion()} ({VersionManagement.GetBuildTime()})";
-        LatestVersion = $"{latestRelease.TagName} ({latestRelease.CreatedAt.LocalDateTime})";
+        LatestVersion = $"{latestRelease.TagName}{(latestRelease.Prerelease ? " pre-release" : "")} ({latestRelease.CreatedAt.LocalDateTime})";
 
         // display release notes
         ViewLatestReleaseCommand = new ActionCommand(() => ViewLatestVersion(latestRelease));
