@@ -44,5 +44,13 @@ public class Notification
         return result as bool?;
     }
 
-    private static async Task<object> Show(string dialogHost, Notification notification) => await DialogHost.Show(notification, dialogHost);
+    private static async Task<object> Show(string dialogHost, Notification notification)
+    {
+        // close any existing dialogs before opening a new one
+        // - workaround since DialogHost doesn't queue the dialogs, instead throwing an error if more than one dialog is present
+        if (DialogHost.IsDialogOpen(dialogHost))
+            DialogHost.Close(dialogHost);
+
+        return await DialogHost.Show(notification, dialogHost);
+    }
 }
