@@ -2,10 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:cleaner="clr-namespace:ClrVpin.Cleaner">
 
-
   <DataTemplate x:Key="CleanerStatisticsTemplate" DataType="{x:Type cleaner:CleanerStatisticsViewModel}">
     <DockPanel>
-      <TextBox Margin="5" Text="{Binding Result}" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0"/>
+      <TextBox Margin="5" Text="{Binding Result}" FontFamily="Courier New" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" BorderThickness="0" VerticalAlignment="Top"/>
     </DockPanel>
   </DataTemplate>
 
