@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
@@ -33,6 +34,8 @@ namespace ClrVpin.About
         public ICommand UpdateCommand { get; }
         public ICommand DonateCommand { get; }
 
+        public bool IsUpdateCheckInProgress { get; set; }
+
         public Window Show(Window parent)
         {
             _window = new MaterialWindowEx
@@ -54,7 +57,15 @@ namespace ClrVpin.About
 
         private async void CheckAndHandleUpdate()
         {
-            await VersionManagementService.CheckAndHandle(_window, true);
+            try
+            {
+                IsUpdateCheckInProgress = true;
+                await VersionManagementService.CheckAndHandle(_window, true);
+            }
+            finally
+            {
+                IsUpdateCheckInProgress = false;
+            }
         }
 
         private MaterialWindowEx _window;

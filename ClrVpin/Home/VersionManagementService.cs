@@ -23,6 +23,8 @@ public static class VersionManagementService
 
     public static async Task CheckAndHandle(MaterialWindowEx parent = null, bool showIfNoUpdateExists = false)
     {
+        const string dialogHost = "HomeDialog";
+
         try
         {
             var releases = await VersionManagement.Check(Model.SettingsManager.Settings.Guid, "stojy", "ClrVpin", msg => Logger.Info($"Version checking: {msg}"));
@@ -30,7 +32,7 @@ public static class VersionManagementService
             if (releases.Any())
                 await VersionManagementView.Show(releases, parent);
             else if (showIfNoUpdateExists)
-                await Notification.ShowSuccess("HomeDialog", "No Updates Available");
+                await Notification.ShowSuccess(dialogHost, "No Updates Available");
 
             // update last check AFTER processing to ensure the msi installer (if invoked) doesn't update the version (since it causes the process to exit before it reaches here)
             // - intention is that the new version when it starts up will perform another version check to ensure everything is up to date (which it should be!)
@@ -39,7 +41,7 @@ public static class VersionManagementService
         }
         catch (Exception e)
         {
-            await Notification.ShowError("HomeDialog", "Update Check Failed", "", e.Message, true, true);
+            await Notification.ShowError(dialogHost, "Update Check Failed", "", e.Message, true, true);
         }
     }
 }

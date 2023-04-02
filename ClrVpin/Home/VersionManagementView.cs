@@ -61,6 +61,8 @@ public class VersionManagementView
         parent?.Hide();
 
         // render release notes
+        if (DialogHost.IsDialogOpen("HomeDialog"))
+            DialogHost.Close("HomeDialog");
         var result = await DialogHost.Show(this, "HomeDialog") as VersionManagementAction?;
 
         // install or view release

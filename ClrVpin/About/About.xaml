@@ -6,6 +6,7 @@
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="\Controls\Styles.xaml" />
+    <controls:SharedResourceDictionary Source="\Controls\Converters.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <Style x:Key="PackIconStyle" TargetType="materialDesign:PackIcon">
@@ -72,7 +73,8 @@
           </StackPanel>
         </Button>
         
-        <Button Command="{Binding UpdateCommand}" Style="{StaticResource ButtonStyle}" ToolTip="Manually check for an update">
+        <Button Command="{Binding UpdateCommand}" Style="{StaticResource ButtonStyle}" ToolTip="Manually check for an update" 
+                IsEnabled="{Binding IsUpdateCheckInProgress, Converter={StaticResource ReverseBoolConverter}}">
           <StackPanel>
             <TextBlock Text="Update" HorizontalAlignment="Center" />
             <materialDesign:PackIcon Kind="Update" Style="{StaticResource PackIconStyle}" />
