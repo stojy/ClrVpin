@@ -11,6 +11,7 @@ using ClrVpin.Models.Shared.Database;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
+using ClrVpin.Shared.Utils;
 using Utils.Extensions;
 
 namespace ClrVpin.Merger
@@ -45,12 +46,12 @@ namespace ClrVpin.Merger
             var contentType = _settings.GetSelectedDestinationContentType();
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
-            var contentFiles = TableUtils.GetContentFileNames(contentType, _settings.Merger.SourceFolder);
-            var unmatchedSupportedFiles = TableUtils.MatchFilesToLocal(games, contentFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
+            var contentFiles = ContentUtils.GetContentFileNames(contentType, _settings.Merger.SourceFolder);
+            var unmatchedSupportedFiles = ContentUtils.MatchFilesToLocal(games, contentFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
                 (fileName, fileCount) => updateProgress(fileName, fileCount / (float)contentFiles.Count));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
-            var nonContentFiles = TableUtils.GetNonContentFileDetails(contentType, _settings.Merger.SourceFolder);
+            var nonContentFiles = ContentUtils.GetNonContentFileDetails(contentType, _settings.Merger.SourceFolder);
 
             // unmatchedFiles = unmatchedContentFiles + nonContentFiles
             return unmatchedSupportedFiles.Concat(nonContentFiles).ToList();

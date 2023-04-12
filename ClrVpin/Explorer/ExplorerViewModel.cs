@@ -9,6 +9,7 @@ using ClrVpin.Extensions;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
+using ClrVpin.Shared.Utils;
 using PropertyChanged;
 
 namespace ClrVpin.Explorer;
@@ -64,7 +65,7 @@ public class ExplorerViewModel : IShowViewModel
         try
         {
             progress.Update("Loading Database");
-            games = await TableUtils.ReadGamesFromDatabases(allValidContentTypes);
+            games = await DatabaseUtils.ReadGamesFromDatabases(allValidContentTypes);
             Logger.Info($"Loading database complete, duration={progress.Duration}", true);
         }
         catch (Exception)
@@ -74,7 +75,7 @@ public class ExplorerViewModel : IShowViewModel
         }
 
         progress.Update("Matching Files");
-        var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, allValidContentTypes, true);
+        var unmatchedFiles = await ContentUtils.MatchContentToLocalAsync(games, UpdateProgress, allValidContentTypes, true);
 
         progress.Update("Preparing Results");
         await Task.Delay(1);

@@ -1,4 +1,4 @@
-﻿using ClrVpin.Shared;
+﻿using ClrVpin.Shared.Utils;
 using NUnit.Framework;
 
 namespace ClrVpin.Tests.Shared
