@@ -15,6 +15,7 @@ using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
+using ClrVpin.Shared.Utils;
 using MaterialDesignThemes.Wpf;
 using PropertyChanged;
 using Utils;
@@ -308,7 +309,7 @@ public sealed class FeederResultsViewModel
         // - updated properties via OnlineGames.Hit.LocalGame are reflected in the local game entries
         // - write irrespective of whether matched or not so that no entries are lost
         if (updatedGameCount > 0)
-            TableUtils.WriteGamesToDatabase(_localGames.Select(x => x.Game));
+            DatabaseUtils.WriteGamesToDatabase(_localGames.Select(x => x.Game));
 
         Logger.Info($"Added missing database info: table count: {updatedGameCount}, info count: {GameUpdater.GetPropertiesUpdatedCount(propertyStatistics)}");
 

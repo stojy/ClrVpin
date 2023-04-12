@@ -15,6 +15,7 @@ using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
+using ClrVpin.Shared.Utils;
 using PropertyChanged;
 using Utils;
 
@@ -115,7 +116,7 @@ public class CleanerViewModel : IShowViewModel
         try
         {
             progress.Update("Loading Database");
-            games = await TableUtils.ReadGamesFromDatabases(selectedCheckContentTypes);
+            games = await DatabaseUtils.ReadGamesFromDatabases(selectedCheckContentTypes);
             Logger.Info($"Loading database complete, duration={progress.Duration}", true);
         }
         catch (Exception)
@@ -126,7 +127,7 @@ public class CleanerViewModel : IShowViewModel
         }
 
         progress.Update("Matching Files");
-        var unmatchedFiles = await TableUtils.MatchContentToLocalAsync(games, UpdateProgress, selectedCheckContentTypes, Settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported));
+        var unmatchedFiles = await ContentUtils.MatchContentToLocalAsync(games, UpdateProgress, selectedCheckContentTypes, Settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported));
 
         progress.Update("Fixing Files");
         var fixedFiles = await CleanerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);

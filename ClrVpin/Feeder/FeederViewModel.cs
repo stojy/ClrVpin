@@ -14,6 +14,7 @@ using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
+using ClrVpin.Shared.Utils;
 using PropertyChanged;
 using Utils;
 using Utils.Extensions;
@@ -115,7 +116,7 @@ public class FeederViewModel : IShowViewModel
             try
             {
                 progress.Update("Loading database");
-                localGames = await TableUtils.ReadGamesFromDatabases(Settings.GetFixableContentTypes());
+                localGames = await DatabaseUtils.ReadGamesFromDatabases(Settings.GetFixableContentTypes());
                 Logger.Info($"Loading database complete, duration={progress.Duration}", true);
             }
             catch (Exception)

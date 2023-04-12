@@ -6,6 +6,7 @@ using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Database;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
+using ClrVpin.Shared.Utils;
 using MaterialDesignThemes.Wpf;
 using Utils.Extensions;
 
@@ -109,7 +110,7 @@ public static class DatabaseItemManagement
     {
         // update all games that reside in the same database file as the updated game
         var localGamesInDatabaseFile = localGames.Where(localGame => localGame.Game.DatabaseFile == databaseItem.LocalGame.Game.DatabaseFile);
-        TableUtils.WriteGamesToDatabase(localGamesInDatabaseFile.Select(x => x.Game), databaseItem.LocalGame.Game.DatabaseFile, databaseItem.LocalGame.Game.Name, isNewEntry);
+        DatabaseUtils.WriteGamesToDatabase(localGamesInDatabaseFile.Select(x => x.Game), databaseItem.LocalGame.Game.DatabaseFile, databaseItem.LocalGame.Game.Name, isNewEntry);
             
         gameCollections.Update();
     }

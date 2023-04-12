@@ -10,7 +10,7 @@ using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using Utils.Extensions;
 
-namespace ClrVpin.Shared
+namespace ClrVpin.Shared.Utils
 {
     public static class FileUtils
     {
@@ -138,7 +138,7 @@ namespace ClrVpin.Shared
             var fileName = hasNoPath ? path : Path.GetFileName(path);
             return fileName.IndexOfAny(_invalidFileNameChars) != -1;
         }
-        
+
         public static string RemoveInvalidFileNameChars(this string path, bool hasNoPath = false)
         {
             if (path == null)
@@ -279,7 +279,7 @@ namespace ClrVpin.Shared
             var isWarning = false;
 
             // confirm the new file path is valid before attempting renaming, e.g. no invalid character.. ':', '/', etc
-            if (HasInvalidFileNameChars(destinationPath))
+            if (destinationPath.HasInvalidFileNameChars())
             {
                 skippedDisclaimer = " (skipped: dest has invalid file name characters)";
                 isWarning = true;

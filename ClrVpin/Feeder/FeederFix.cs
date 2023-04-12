@@ -6,8 +6,8 @@ using ClrVpin.Logging;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared.Game;
-using ClrVpin.Shared;
 using ClrVpin.Shared.Fuzzy;
+using ClrVpin.Shared.Utils;
 using Utils.Extensions;
 
 namespace ClrVpin.Feeder;

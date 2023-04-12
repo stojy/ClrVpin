@@ -16,6 +16,7 @@ using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
+using ClrVpin.Shared.Utils;
 using PropertyChanged;
 using Utils;
 using Utils.Extensions;
@@ -182,7 +183,7 @@ public class MergerViewModel : IShowViewModel
         try
         {
             progress.Update("Loading Database");
-            games = await TableUtils.ReadGamesFromDatabases(new List<ContentType> { Settings.GetSelectedDestinationContentType() });
+            games = await DatabaseUtils.ReadGamesFromDatabases(new List<ContentType> { Settings.GetSelectedDestinationContentType() });
             Logger.Info($"Loading database complete, duration={progress.Duration}", true);
         }
         catch (Exception)
