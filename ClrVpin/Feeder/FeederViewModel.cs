@@ -44,6 +44,9 @@ public class FeederViewModel : IShowViewModel
         _feedFixDuplicateTableOption = FeedFixOptionsView.First(x => x.Id == (int)FixFeedOptionEnum.DuplicateTable);
 
         UpdateIsValid();
+
+        var rom = TableUtils.GetRomOrPup(@"C:\vp\tables\vpx\4 Queens (Bally 1970).vpx");
+//        var rom = TableUtils.GetRomOrPup(@"C:\vp\tables\vpx\4a.zip");
     }
 
     public bool IsValid { get; set; }
