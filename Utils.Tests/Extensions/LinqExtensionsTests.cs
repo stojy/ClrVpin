@@ -47,11 +47,11 @@ internal class LinqExtensionsTests
     }
 
     [Test]
-    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {1, 3}, -1)]
-    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {}, -1)]
-    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {1}, 0)]
-    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {2, 3}, 1)]
-    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {20, 30, 40}, 5)]
+    [TestCase(new byte[] { 1, 2, 3}, new byte[] {1, 3}, -1)]
+    [TestCase(new byte[] { 1, 2, 3}, new byte[] {}, -1)]
+    [TestCase(new byte[] { 1, 2, 3}, new byte[] {1}, 0)]
+    [TestCase(new byte[] { 1, 2, 3}, new byte[] {2, 3}, 1)]
+    [TestCase(new byte[] { 1, 2, 3, 20, 30, 40}, new byte[] {20, 30, 40}, 3)]
     [TestCase(new byte[] { 1, 2}, new byte[] {1, 2, 3}, -1)]
     [TestCase(new byte[] { }, new byte[] {1, 2, 3}, -1)]
     [TestCase(new byte[] { }, new byte[] {}, -1)]

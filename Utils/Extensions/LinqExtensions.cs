@@ -116,7 +116,7 @@ public static class LinqExtensions
                 var j = 0;
                 for (; j < needleLength; j++)
                 {
-                    if (needleArray.ElementAt(j) != haystackArray[i + j])
+                    if (needleArray[j] != haystackArray[i + j])
                         break;
                 }
 
