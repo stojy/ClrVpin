@@ -28,10 +28,7 @@ public static class LinqExtensions
             action(item, i++);
     }
 
-    public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item)
-    {
-        return source.Except(new List<T> {item});
-    }
+    public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item) => source.Except(new List<T> { item });
 
     public static void Toggle<T>(this ICollection<T> source, T item)
     {
@@ -40,7 +37,7 @@ public static class LinqExtensions
         else
             source.Add(item);
     }
-        
+
     public static void Remove<T>(this ICollection<T> source, T item)
     {
         if (source.Contains(item))
@@ -66,25 +63,13 @@ public static class LinqExtensions
         items.ForEach(source.Add);
     }
 
-    public static bool In<T>(this T source, IEnumerable<T> items)
-    {
-        return items.Contains(source);
-    }
+    public static bool In<T>(this T source, IEnumerable<T> items) => items.Contains(source);
 
-    public static bool In<T>(this T source, params T[] items)
-    {
-        return items.Contains(source);
-    }
+    public static bool In<T>(this T source, params T[] items) => items.Contains(source);
 
-    public static bool ContainsAll<T>(this IEnumerable<T> source, params T[] items)
-    {
-        return items.Any() && items.All(source.Contains);
-    }
-        
-    public static bool ContainsAny<T>(this IEnumerable<T> source, params T[] items)
-    {
-        return items.Any() && items.Any(source.Contains);
-    }
+    public static bool ContainsAll<T>(this IEnumerable<T> source, params T[] items) => items.Any() && items.All(source.Contains);
+
+    public static bool ContainsAny<T>(this IEnumerable<T> source, params T[] items) => items.Any() && items.Any(source.Contains);
 
     public static bool ContainsAny<T>(this IEnumerable<T> source, IEnumerable<T> items)
     {
@@ -92,10 +77,7 @@ public static class LinqExtensions
         return itemsArray.Any() && itemsArray.Any(source.Contains);
     }
 
-    public static string StringJoin<T>(this IEnumerable<T> items, string separator = ", ")
-    {
-        return string.Join(separator, items);
-    }
+    public static string StringJoin<T>(this IEnumerable<T> items, string separator = ", ") => string.Join(separator, items);
 
     public static IList<T> SelectUnique<T>(this IEnumerable<T> items)
     {
@@ -111,9 +93,38 @@ public static class LinqExtensions
     {
         return items.SelectMany(x => x).Where(x => x != null).Distinct().OrderBy(x => x).ToList();
     }
-        
+
     public static IList<string> SelectManyUnique(this IEnumerable<IEnumerable<string>> items)
     {
         return items.SelectMany(x => x).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToList();
+    }
+
+    // find index of a byte array within a byte array
+    // - inspired from this post, but re-written as a linq extension.. https://stackoverflow.com/a/26880541/227110
+    public static int IndexOf(this IEnumerable<byte> haystack, IEnumerable<byte> needle)
+    {
+        var needleArray = needle as byte[] ?? needle.ToArray();
+        var haystackArray = haystack as byte[] ?? haystack.ToArray();
+
+        var needleLength = needleArray.Length;
+        var haystackLengthLimit = haystackArray.Length - needleLength;
+
+        if (needleLength > 0)
+        {
+            for (var i = 0; i <= haystackLengthLimit; i++)
+            {
+                var j = 0;
+                for (; j < needleLength; j++)
+                {
+                    if (needleArray.ElementAt(j) != haystackArray[i + j])
+                        break;
+                }
+
+                if (j == needleLength)
+                    return i;
+            }
+        }
+
+        return -1;
     }
 }

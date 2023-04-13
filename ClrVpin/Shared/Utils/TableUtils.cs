@@ -1,5 +1,8 @@
-﻿using System.Text;
+﻿using System;
+using System.Linq;
+using System.Text;
 using OpenMcdf;
+using Utils.Extensions;
 
 namespace ClrVpin.Shared.Utils;
 
@@ -21,6 +24,7 @@ public static class TableUtils
 
     private static string GetScript(string tableFile)
     {
+        // todo; cater for existence of .vbs file.. which needs to take priority!
         string script = null;
         
         using var cf = new CompoundFile(tableFile);
@@ -28,8 +32,10 @@ public static class TableUtils
         {
             var stream = gameStorage.GetStream("GameData");
             var data = stream.GetData();
-            script = Encoding.UTF8.GetString(data);
-            //var scriptLines = script.Split(new[] { "\r\n", "\n\r", "\r", "\n" }, StringSplitOptions.None);
+
+            var i = data.IndexOf(Encoding.ASCII.GetBytes("CODE"));
+            
+            script = Encoding.ASCII.GetString(data.Skip(i + 8).ToArray());
         }
 
         return script;
