@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
 using OpenMcdf;
@@ -22,20 +22,31 @@ public static class TableUtils
         return rom;
     }
 
-    private static string GetScript(string tableFile)
+    private static string GetScript(string vpxFile)
     {
-        // todo; cater for existence of .vbs file.. which needs to take priority!
-        string script = null;
-        
-        using var cf = new CompoundFile(tableFile);
-        if (cf.RootStorage.TryGetStorage("GameStg", out var gameStorage))
-        {
-            var stream = gameStorage.GetStream("GameData");
-            var data = stream.GetData();
+        // if there is an external vbs file present, then this takes precedence over the script within the vpx file
+        var vbsFile = Path.Combine(Path.GetDirectoryName(vpxFile) ?? "", $"{Path.GetFileNameWithoutExtension(vpxFile)}.vbs");
 
-            var i = data.IndexOf(Encoding.ASCII.GetBytes("CODE"));
-            
-            script = Encoding.ASCII.GetString(data.Skip(i + 8).ToArray());
+        string script = null;
+
+        if (File.Exists(vbsFile))
+        {
+            // extract script from vbs
+            script = File.ReadAllText(vbsFile);
+        }
+        else if (File.Exists(vpxFile))
+        {
+            // extract script from vpx
+            using var cf = new CompoundFile(vpxFile);
+            if (cf.RootStorage.TryGetStorage("GameStg", out var gameStorage))
+            {
+                var stream = gameStorage.GetStream("GameData");
+                var data = stream.GetData();
+
+                var i = data.IndexOf(Encoding.ASCII.GetBytes("CODE"));
+
+                script = Encoding.ASCII.GetString(data.Skip(i + 8).ToArray()); // 8 length = sizeof(CODE) + 4 length(?) bytes
+            }
         }
 
         return script;
