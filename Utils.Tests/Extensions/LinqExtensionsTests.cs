@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using Octokit;
 using Utils.Extensions;
 
 namespace Utils.Tests.Extensions;
@@ -42,5 +44,19 @@ internal class LinqExtensionsTests
         // list check.. invokes IEnumerable overload
         var otherCollectionList = new List<int> { 1, 2 };
         Assert.That(collection.ContainsAny(otherCollectionList), Is.True);
+    }
+
+    [Test]
+    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {1, 3}, -1)]
+    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {}, -1)]
+    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {1}, 0)]
+    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {2, 3}, 1)]
+    [TestCase(new byte[] { 1, 2, 3, 4, 10, 20, 30, 40}, new byte[] {20, 30, 40}, 5)]
+    [TestCase(new byte[] { 1, 2}, new byte[] {1, 2, 3}, -1)]
+    [TestCase(new byte[] { }, new byte[] {1, 2, 3}, -1)]
+    [TestCase(new byte[] { }, new byte[] {}, -1)]
+    public void TestIndexOf(byte[] haystack, byte[] needle, int expectedIndex)
+    {
+        Assert.That(haystack.IndexOf(needle), Is.EqualTo(expectedIndex));
     }
 }

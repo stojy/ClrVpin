@@ -46,7 +46,9 @@ public class FeederViewModel : IShowViewModel
         UpdateIsValid();
 
         var rom = TableUtils.GetRomOrPup(@"C:\vp\tables\vpx\4 Queens (Bally 1970).vpx");
-//        var rom = TableUtils.GetRomOrPup(@"C:\vp\tables\vpx\4a.zip");
+        rom = TableUtils.GetRomOrPup(@"C:\vp\tables\vpx\007 Goldeneye (Sega 1996).vpx");
+        rom = TableUtils.GetRomOrPup(@"C:\vp\tables\vpx\Aaron Spelling (Data East 1992).vpx" );
+        rom = TableUtils.GetRomOrPup(@"C:\vp\tables\vpx\Alien Poker (Williams 1980).vpx" );
     }
 
     public bool IsValid { get; set; }
