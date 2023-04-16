@@ -135,7 +135,7 @@
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Left" Width="875">
-          <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
+          <GroupBox DockPanel.Dock="Top" Header="Include Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(-->
                 <ComboBox ItemsSource="{Binding GameFiltersViewModel.TablesFilterView}"
@@ -364,6 +364,46 @@
             </StackPanel>
           </GroupBox>
 
+          <!-- fix -->
+          <GroupBox DockPanel.Dock="Top" Header="Fix" Margin="0,0,0,10">
+            <StackPanel Margin="5,0">
+              <WrapPanel Margin="0,5,0,0">
+                <ContentControl Template="{StaticResource KeyValuePair}"
+                                controls:GenericAttached.String="All Tables"
+                                controls:GenericAttached.String2="tba"
+                                controls:GenericAttached.Double="100"
+                                controls:GenericAttached.Double2="14">
+                  <WrapPanel>
+                    <Button ToolTip="Overwrite all database table ROM names using the values extracted from your table scripts"
+                            Style="{StaticResource RaisedAccentButtonStyle}"
+                            Margin="0,0,5,0"
+                            Height="30"
+                            Command="{Binding OverwriteDatabaseRomsCommand}">
+                      Overwrite ROM Names
+                    </Button>
+                    <Button ToolTip="Overwrite all database table PUP names using the values extracted from your table scripts"
+                            Style="{StaticResource RaisedAccentButtonStyle}"
+                            Height="30"
+                            Margin="10,0,0,0"
+                            Command="{Binding OverwriteDatabasePupsCommand}">
+                      Overwrite PUP Names
+                    </Button>
+                  </WrapPanel>
+                </ContentControl>
+              </WrapPanel>
+
+              <ContentControl Template="{StaticResource KeyValuePair}"
+                              controls:GenericAttached.String="Backup Folder"
+                              controls:GenericAttached.Double="100"
+                              controls:GenericAttached.Double2="14">
+                <Hyperlink NavigateUri="{Binding BackupFolder}" Command="{Binding NavigateToBackupFolderCommand}" FontSize="16">
+                  <TextBlock Text="{Binding BackupFolder}" />
+                </Hyperlink>
+              </ContentControl>
+            </StackPanel>
+          </GroupBox>
+
+          <!-- tables -->
           <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
             <TextBlock Text="{Binding GameItemsView.Count}" />
             <TextBlock Text=" / " />
