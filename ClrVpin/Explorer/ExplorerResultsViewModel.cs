@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,7 @@ using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
+using ClrVpin.Shared.Utils;
 using PropertyChanged;
 using Utils;
 using Utils.Extensions;
@@ -40,6 +42,12 @@ public class ExplorerResultsViewModel
     public ICommand DynamicFilteringCommand { get; private set; }
     public ICommand MinRatingChangedCommand { get; set; }
     public ICommand MaxRatingChangedCommand { get; set; }
+
+    public ICommand OverwriteDatabaseRomsCommand { get; private set; }
+    public ICommand OverwriteDatabasePupsCommand { get;  private set;}
+
+    public string BackupFolder { get; private set; }
+    public ICommand NavigateToBackupFolderCommand { get; private set; }
 
     public ObservableCollection<GameItem> GameItems { get; private set; }
 
@@ -129,7 +137,87 @@ public class ExplorerResultsViewModel
         var tableStaleOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.TableStaleOptions.Select(y => y.Enum))).ToArray();
         GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(tableStaleOptions, Settings.SelectedTableStaleOptions, 
             _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage));
+
+        BackupFolder = Model.Settings.BackupFolder;
+        NavigateToBackupFolderCommand = new Utils.ActionCommand(NavigateToBackupFolder);
+
+        OverwriteDatabaseRomsCommand = new ActionCommand(OverwriteDatabaseRoms);
+        OverwriteDatabasePupsCommand = new ActionCommand(OverwriteDatabasePups);
     }
+
+    private async void OverwriteDatabaseRoms()
+    {
+        await GetRomAndPupDetails(true);
+    }
+
+    private async void OverwriteDatabasePups()
+    {
+        await GetRomAndPupDetails(false);
+    }
+
+    private async Task GetRomAndPupDetails(bool isRom)
+    {
+        var validTables = GameItems
+            .Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent));
+
+        var tableFiles = validTables.Select(x => x.LocalGame.Content.Hits.First().Path);
+        
+
+        //var tableFiles = GameItems
+        //    .Select(gameItem => gameItem.LocalGame.Content.Hits
+        //        .Where(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)
+        //        .Select(hit => hit.File))
+        //    .SelectMany(x => x)
+        //    .ToList();
+
+        tableFiles.ForEach(tableFile => TableUtils.GetRomAndPup(tableFile));
+
+        await Task.Delay(0);
+        //var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(GetOnlineGames(), overwriteProperties);
+
+        //// write ALL local game entries back to the database
+        //// - updated properties via OnlineGames.Hit.LocalGame are reflected in the local game entries
+        //// - write irrespective of whether matched or not so that no entries are lost
+        //if (updatedGameCount > 0)
+        //    DatabaseUtils.WriteGamesToDatabase(_localGames.Select(x => x.Game));
+
+        //Logger.Info($"Added missing database info: table count: {updatedGameCount}, info count: {GameUpdater.GetPropertiesUpdatedCount(propertyStatistics)}");
+
+        //var properties = propertyStatistics.Select(property => $"- {property.Key,-13}: {property.Value}").StringJoin("\n");
+        //var details = CreatePercentageStatistic("Tables Fixed  ", updatedGameCount, matchedGameCount) +
+        //              $"\n{properties}";
+
+        //var isSuccess = updatedGameCount == 0;
+        //if (isSuccess)
+        //    await Notification.ShowSuccess(DialogHostName, "No Updates Required");
+        //else
+        //    await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
+    }
+    
+    //private async Task AllTableUpdateDatabase(bool overwriteProperties)
+    //{
+    //    var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(GetOnlineGames(), overwriteProperties);
+
+    //    // write ALL local game entries back to the database
+    //    // - updated properties via OnlineGames.Hit.LocalGame are reflected in the local game entries
+    //    // - write irrespective of whether matched or not so that no entries are lost
+    //    if (updatedGameCount > 0)
+    //        DatabaseUtils.WriteGamesToDatabase(_localGames.Select(x => x.Game));
+
+    //    Logger.Info($"Added missing database info: table count: {updatedGameCount}, info count: {GameUpdater.GetPropertiesUpdatedCount(propertyStatistics)}");
+
+    //    var properties = propertyStatistics.Select(property => $"- {property.Key,-13}: {property.Value}").StringJoin("\n");
+    //    var details = CreatePercentageStatistic("Tables Fixed  ", updatedGameCount, matchedGameCount) +
+    //                  $"\n{properties}";
+
+    //    var isSuccess = updatedGameCount == 0;
+    //    if (isSuccess)
+    //        await Notification.ShowSuccess(DialogHostName, "No Updates Required");
+    //    else
+    //        await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
+    //}
+
+    private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
     private void MinRatingChanged()
     {
