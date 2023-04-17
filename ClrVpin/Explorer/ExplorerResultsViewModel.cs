@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Feeder;
+using ClrVpin.Logging;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
@@ -147,22 +148,32 @@ public class ExplorerResultsViewModel
 
     private async void OverwriteDatabaseRoms()
     {
-        await GetRomAndPupDetails(true);
+        await GetRoms();
     }
 
     private async void OverwriteDatabasePups()
     {
-        await GetRomAndPupDetails(false);
+        //await GetRoms();
     }
 
-    private async Task GetRomAndPupDetails(bool isRom)
+    private async Task GetRoms()
     {
         var validTables = GameItems
             .Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent));
 
-        var tableFiles = validTables.Select(x => x.LocalGame.Content.Hits.First().Path);
-        
+        var tables = validTables.Select(x => new
+        {
+            x.LocalGame.Content.Hits.First().Path,
+            x.LocalGame.Game.Type
+        });
 
+        // todo; progress bar and notification result
+
+        var roms = tables.Select(table => TableUtils.GetRom(table.Type, table.Path)).ToList();
+        Logger.Info($"Detected ROMs: success={roms.Count(rom => rom.isSuccess == true)}, failed={roms.Count(rom => rom.isSuccess == false)}, skipped={roms.Count(rom => rom.isSuccess == null)}");
+        
+        await Task.Delay(0);
+        
         //var tableFiles = GameItems
         //    .Select(gameItem => gameItem.LocalGame.Content.Hits
         //        .Where(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)
@@ -170,9 +181,8 @@ public class ExplorerResultsViewModel
         //    .SelectMany(x => x)
         //    .ToList();
 
-        tableFiles.ForEach(tableFile => TableUtils.GetRomAndPup(tableFile));
-
-        await Task.Delay(0);
+        
+        
         //var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(GetOnlineGames(), overwriteProperties);
 
         //// write ALL local game entries back to the database
