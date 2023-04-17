@@ -10,18 +10,22 @@ namespace ClrVpin.Shared.Utils;
 
 public static class TableUtils
 {
-    public static string GetRomAndPup(string tableFile)
+    public static (bool? isSuccess, string name) GetRom(string type, string tableFile)
     {
+        // skip checking ROM if the table type doesn't support a ROM
+        if (type.In("PM", "EM"))
+            return (null, null);
+
         var script = GetScript(tableFile);
         var romName = GetRomName(script);
 
-        var message = $"rom: {romName ?? "UNKNOWN",-8} tableFile={Path.GetFileName(tableFile)}";
+        var message = $"Detected ROM: {romName ?? "UNKNOWN",-8} tableFile={Path.GetFileName(tableFile)}";
         if (romName == null)
             Logger.Warn(message);
         else
             Logger.Info(message);
 
-        return romName;
+        return (romName != null, romName);
     }
 
     private static string GetScript(string vpxFile)

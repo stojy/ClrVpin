@@ -376,17 +376,19 @@
                   <WrapPanel>
                     <Button ToolTip="Overwrite all database table ROM names using the values extracted from your table scripts"
                             Style="{StaticResource RaisedAccentButtonStyle}"
-                            Margin="0,0,5,0"
                             Height="30"
+                            Margin="0,0,5,0"
+                            Padding="3,0"
                             Command="{Binding OverwriteDatabaseRomsCommand}">
-                      Overwrite ROM Names
+                      Update ROM Names
                     </Button>
                     <Button ToolTip="Overwrite all database table PUP names using the values extracted from your table scripts"
                             Style="{StaticResource RaisedAccentButtonStyle}"
                             Height="30"
                             Margin="10,0,0,0"
+                            Padding="5,0"
                             Command="{Binding OverwriteDatabasePupsCommand}">
-                      Overwrite PUP Names
+                      Update PUP Names
                     </Button>
                   </WrapPanel>
                 </ContentControl>
