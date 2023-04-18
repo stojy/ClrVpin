@@ -11,12 +11,16 @@ namespace ClrVpin.Shared;
 [AddINotifyPropertyChangedInterface]
 internal class ProgressViewModel
 {
-    public ProgressViewModel()
+    public ProgressViewModel(string title = null)
     {
+        Title = title;
+
         _cancellationTokenSource = new CancellationTokenSource();
 
         CancelCommand = new ActionCommand(Cancel);
     }
+
+    public string Title { get; set; }
 
     public TimeSpan Duration => _durationStopwatch.Elapsed;
     public double DisplayDurationInSeconds { get; private set; }
