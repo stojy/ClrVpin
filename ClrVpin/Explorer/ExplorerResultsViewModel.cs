@@ -158,21 +158,21 @@ public class ExplorerResultsViewModel
 
     private async Task GetRoms()
     {
-        var validTables = GameItems
-            .Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent));
+        var progress = new ProgressViewModel("Extracting ROM Names");
+        progress.Show(Window);
 
-        var tables = validTables.Select(x => new
-        {
-            x.LocalGame.Content.Hits.First().Path,
-            x.LocalGame.Game.Type
-        });
+        progress.Update("Inspecting Tables");
 
-        // todo; progress bar and notification result
+        var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent));
+        var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
 
-        var roms = tables.Select(table => TableUtils.GetRom(table.Type, table.Path)).ToList();
+        var roms = await TableUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
+
+        //todo; notification result
         Logger.Info($"Detected ROMs: success={roms.Count(rom => rom.isSuccess == true)}, failed={roms.Count(rom => rom.isSuccess == false)}, skipped={roms.Count(rom => rom.isSuccess == null)}");
         
-        await Task.Delay(0);
+
+        progress.Close();
         
         //var tableFiles = GameItems
         //    .Select(gameItem => gameItem.LocalGame.Content.Hits

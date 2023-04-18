@@ -1,25 +1,47 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using ClrVpin.Logging;
 using OpenMcdf;
 using Utils.Extensions;
 
 namespace ClrVpin.Shared.Utils;
 
+public record TableFileDetail(string Type, string Path);
+
 public static class TableUtils
 {
-    public static (bool? isSuccess, string name) GetRom(string type, string tableFile)
+    public static async Task<List<(bool? isSuccess, string name)>> GetRomsAsync(IEnumerable<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
+    {
+        // run on a separate thread to avoid blocking the caller thread (e.g. UI) since this is a potentially slow operation
+        return await Task.Run(() => GetRoms(tableFileDetails.ToList(), updateAction));
+    }
+
+    private static List<(bool? isSuccess, string name)> GetRoms(ICollection<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
+    {
+        var totalFiles = tableFileDetails.Count;
+
+        return tableFileDetails.Select((tableFile, i) =>
+        {
+            updateAction(Path.GetFileName(tableFile.Path), (i + 1) / (float)totalFiles);
+            return GetRom(tableFile.Type, tableFile.Path);
+        }).ToList();
+    }
+
+    private static (bool? isSuccess, string name) GetRom(string type, string path)
     {
         // skip checking ROM if the table type doesn't support a ROM
         if (type.In("PM", "EM"))
             return (null, null);
 
-        var script = GetScript(tableFile);
+        var script = GetScript(path);
         var romName = GetRomName(script);
 
-        var message = $"Detected ROM: {romName ?? "UNKNOWN",-8} tableFile={Path.GetFileName(tableFile)}";
+        var message = $"Detected ROM: {romName ?? "UNKNOWN",-8} tableFile={Path.GetFileName(path)}";
         if (romName == null)
             Logger.Warn(message);
         else
