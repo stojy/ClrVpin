@@ -43,7 +43,7 @@ public static class TableUtils
         var script = GetScript(path);
         var romName = GetRomName(script);
 
-        var message = $"Detected ROM: {romName ?? "UNKNOWN",-10} tableFile={fileName}";
+        var message = $"Detected ROM: {romName ?? "FAILED",-12} tableFile={fileName}";
         if (romName == null)
             Logger.Warn(message);
         else
@@ -117,12 +117,16 @@ public static class TableUtils
     private static readonly HashSet<string> _solidStateTableImplementationWithoutRom = new(new[]
     {
         "4X4 (Atari 1983).vpx",
-        "Alaska (Interflip 1978).vpx" // both EM ad SS tables exist, but the SS isn't implemented
+        "Alaska (Interflip 1978).vpx", // both EM ad SS tables exist, but the SS isn't implemented
+        "Alive (Brunswick 1978).vpx",
+        "America's Most Haunted (Spooky Pinball 2014).vpx",
+        "Aspen (Brunswick 1979).vpx",
     });
 
     // find GameName usage
-    // - https://regex101.com/r/pmseXc/2
-    private static readonly Regex _gameNameUsageRegex = new(@"Controller(?:.|\n)*?GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled);
+    // - https://regex101.com/r/pmseXc/4
+    private static readonly Regex _gameNameUsageRegex = new(@"Controller(?:.|\n){0,100}?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled);
+    
     private static readonly string[] _knownGameNameVariables = { "cgamename", "gamename" };
     private static readonly Regex _gameNameKnownVariablesRegex = new(GetGameNameVariablesPattern(_knownGameNameVariables), RegexOptions.Compiled);
 }
