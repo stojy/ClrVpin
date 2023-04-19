@@ -34,14 +34,16 @@ public static class TableUtils
 
     private static (bool? isSuccess, string name) GetRom(string type, string path)
     {
+        var fileName = Path.GetFileName(path);
+
         // skip checking ROM if the table type doesn't support a ROM
-        if (type.In("PM", "EM"))
+        if (type.In("PM", "EM") || _solidStateTableImplementationWithoutRom.Contains(fileName))
             return (null, null);
 
         var script = GetScript(path);
         var romName = GetRomName(script);
 
-        var message = $"Detected ROM: {romName ?? "UNKNOWN",-8} tableFile={Path.GetFileName(path)}";
+        var message = $"Detected ROM: {romName ?? "UNKNOWN",-10} tableFile={fileName}";
         if (romName == null)
             Logger.Warn(message);
         else
@@ -49,6 +51,16 @@ public static class TableUtils
 
         return (romName != null, romName);
     }
+
+    // solid state tables that are known to be implemented without a ROM
+    private static readonly HashSet<string> _solidStateTableImplementationWithoutRom = new(new []
+    {
+        "4X4 (Atari 1983).vpx"
+    });
+        
+        
+
+
 
     private static string GetScript(string vpxFile)
     {
