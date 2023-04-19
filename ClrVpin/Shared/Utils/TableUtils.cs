@@ -52,16 +52,6 @@ public static class TableUtils
         return (romName != null, romName);
     }
 
-    // solid state tables that are known to be implemented without a ROM
-    private static readonly HashSet<string> _solidStateTableImplementationWithoutRom = new(new []
-    {
-        "4X4 (Atari 1983).vpx"
-    });
-        
-        
-
-
-
     private static string GetScript(string vpxFile)
     {
         // the vpx files are encoded as CFBF (compound file binary format), which is a COM structured storage for housing files/folders within a single file
@@ -122,6 +112,13 @@ public static class TableUtils
     // find GameName variable assignment
     // - https://regex101.com/r/VDUvva/5
     private static string GetGameNameVariablesPattern(params string[] gameNames) => @$"(?i:{gameNames.StringJoin("|")})\s*?\=\s*\""(?<romName>\w*?)\""";
+
+    // solid state tables that are known to be implemented without a ROM
+    private static readonly HashSet<string> _solidStateTableImplementationWithoutRom = new(new[]
+    {
+        "4X4 (Atari 1983).vpx",
+        "Alaska (Interflip 1978).vpx" // both EM ad SS tables exist, but the SS isn't implemented
+    });
 
     // find GameName usage
     // - https://regex101.com/r/pmseXc/2
