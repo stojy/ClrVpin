@@ -319,24 +319,24 @@ public class ExplorerResultsViewModel
         var failedDetail = CreateNamedPercentageStatistic("Failed", failedCount, roms.Count);
         
         var skippedCount = roms.Count(rom => rom.isSuccess == null);
-        var skippedDetail = CreateNamedPercentageStatistic("n/a (PM or EM table)", skippedCount, roms.Count);
+        var skippedDetail = CreateNamedPercentageStatistic("n/a¹", skippedCount, roms.Count);
 
-        var detail = new[] { successDetail, failedDetail, skippedDetail }.StringJoin("\n");
+        var detail = new[] { successDetail, failedDetail, skippedDetail, "\n¹ PM/EM tables and SS tables without VPinMame" }.StringJoin("\n");
 
         Logger.Info($"ROM extraction: success={successCount}, failed={failedCount}, skipped={skippedCount}");
 
         return (failedCount == 0, detail);
     }
 
-    private static string CreateNamedPercentageStatistic(string title, int count, int totalCount) => $"{title,-20} : {CreatePercentageStatistic(count, totalCount)}";
+    private static string CreateNamedPercentageStatistic(string title, int count, int totalCount) => $"{title,-20} : {CreatePercentageStatistic(count, totalCount, true)}";
 
-    private static string CreatePercentageStatistic(int? count, int totalCount)
+    private static string CreatePercentageStatistic(int? count, int totalCount, bool showTotalCount = false)
     {
         if (count == null)
             return "n/a";
 
         var missingPercentage = totalCount == 0 ? 0 : 100f * count / totalCount;
-        var missingPercentageStatistic = $"{count,-3} of {totalCount} ({missingPercentage:F2}%)";
+        var missingPercentageStatistic = $"{count,-3}{(showTotalCount ? $" of {totalCount}" : "")} ({missingPercentage:F2}%)";
 
         return missingPercentageStatistic;
     }
