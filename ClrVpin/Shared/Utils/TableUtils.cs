@@ -11,7 +11,7 @@ using Utils.Extensions;
 
 namespace ClrVpin.Shared.Utils;
 
-public record TableFileDetail(string Type, string Path);
+public record TableFileDetail(string Type, bool IsOriginal, string Path);
 
 public static class TableUtils
 {
@@ -28,11 +28,11 @@ public static class TableUtils
         return tableFileDetails.Select((tableFile, i) =>
         {
             updateAction(Path.GetFileName(tableFile.Path), (i + 1) / (float)totalFiles);
-            return GetRom(tableFile.Type, tableFile.Path);
+            return GetRom(tableFile.Type, tableFile.IsOriginal, tableFile.Path);
         }).ToList();
     }
 
-    private static (bool? isSuccess, string name) GetRom(string type, string path)
+    private static (bool? isSuccess, string name) GetRom(string type, bool _, string path)
     {
         var fileName = Path.GetFileName(path);
 
@@ -121,6 +121,17 @@ public static class TableUtils
         "Alive (Brunswick 1978).vpx",
         "America's Most Haunted (Spooky Pinball 2014).vpx",
         "Aspen (Brunswick 1979).vpx",
+        "Batman 66 (Original 2018).vpx",
+        "Black Knight Sword of Rage (Stern 2019).vpx",
+        "Captain Nemo (Quetzal Pinball 2015).vpx",
+        "CARtoons RC (Original 2017).vpx",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+
     });
 
     // find GameName usage
