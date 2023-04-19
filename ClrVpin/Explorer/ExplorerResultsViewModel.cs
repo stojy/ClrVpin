@@ -151,8 +151,9 @@ public class ExplorerResultsViewModel
         await GetRoms();
     }
 
-    private async void OverwriteDatabasePups()
+    private static async void OverwriteDatabasePups()
     {
+        await Task.Delay(0);
         //await GetRoms();
     }
 
@@ -161,18 +162,19 @@ public class ExplorerResultsViewModel
         var progress = new ProgressViewModel("Extracting ROM Names");
         progress.Show(Window);
 
-        progress.Update("Inspecting Tables");
-
+        // extract ROMs
         var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent));
         var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
-
         var roms = await TableUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
 
-        //todo; notification result
-        Logger.Info($"Detected ROMs: success={roms.Count(rom => rom.isSuccess == true)}, failed={roms.Count(rom => rom.isSuccess == false)}, skipped={roms.Count(rom => rom.isSuccess == null)}");
-        
+        // update DB
 
+        // display result
         progress.Close();
+        var (isSuccess, detail) = CreateRomsStatistics(roms);
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All ROM Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some ROM Names", null, detail));
+
+
         
         //var tableFiles = GameItems
         //    .Select(gameItem => gameItem.LocalGame.Content.Hits
@@ -203,7 +205,7 @@ public class ExplorerResultsViewModel
         //else
         //    await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
     }
-    
+
     //private async Task AllTableUpdateDatabase(bool overwriteProperties)
     //{
     //    var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(GetOnlineGames(), overwriteProperties);
@@ -308,13 +310,33 @@ public class ExplorerResultsViewModel
         return (missingCount, staleCount, statistic);
     }
 
+    private static (bool isSuccess, string detail) CreateRomsStatistics(IReadOnlyCollection<(bool? isSuccess, string name)> roms)
+    {
+        var successCount = roms.Count(rom => rom.isSuccess == true);
+        var successDetail = CreateNamedPercentageStatistic("Success", successCount, roms.Count);
+
+        var failedCount = roms.Count(rom => rom.isSuccess == false);
+        var failedDetail = CreateNamedPercentageStatistic("Failed", failedCount, roms.Count);
+        
+        var skippedCount = roms.Count(rom => rom.isSuccess == null);
+        var skippedDetail = CreateNamedPercentageStatistic("n/a (PM or EM table)", skippedCount, roms.Count);
+
+        var detail = new[] { successDetail, failedDetail, skippedDetail }.StringJoin("\n");
+
+        Logger.Info($"ROM extraction: success={successCount}, failed={failedCount}, skipped={skippedCount}");
+
+        return (failedCount == 0, detail);
+    }
+
+    private static string CreateNamedPercentageStatistic(string title, int count, int totalCount) => $"{title,-20} : {CreatePercentageStatistic(count, totalCount)}";
+
     private static string CreatePercentageStatistic(int? count, int totalCount)
     {
         if (count == null)
             return "n/a";
 
         var missingPercentage = totalCount == 0 ? 0 : 100f * count / totalCount;
-        var missingPercentageStatistic = $"{count,-3} ({missingPercentage:F2}%)";
+        var missingPercentageStatistic = $"{count,-3} of {totalCount} ({missingPercentage:F2}%)";
 
         return missingPercentageStatistic;
     }
