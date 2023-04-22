@@ -15,13 +15,13 @@ public record TableFileDetail(string Type, string Path);
 
 public static class TableUtils
 {
-    public static async Task<List<(bool? isSuccess, string name)>> GetRomsAsync(IEnumerable<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
+    public static async Task<List<(string file, bool? isSuccess, string name)>> GetRomsAsync(IEnumerable<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
     {
         // run on a separate thread to avoid blocking the caller thread (e.g. UI) since this is a potentially slow operation
         return await Task.Run(() => GetRoms(tableFileDetails.ToList(), updateAction));
     }
 
-    private static List<(bool? isSuccess, string name)> GetRoms(ICollection<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
+    private static List<(string file, bool? isSuccess, string name)> GetRoms(ICollection<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
     {
         var totalFiles = tableFileDetails.Count;
 
@@ -32,13 +32,14 @@ public static class TableUtils
         }).ToList();
     }
 
-    private static (bool? isSuccess, string name) GetRom(string type, string path)
+    private static (string file, bool? isSuccess, string name) GetRom(string type, string path)
     {
         var fileName = Path.GetFileName(path);
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(path);
 
         // skip checking ROM if the table type doesn't support a ROM
         if (type.In("PM", "EM") || _solidStateTablesWithoutRomSupport.Contains(fileName))
-            return (null, null);
+            return (fileNameWithoutExtension, null, null);
 
         var script = GetScript(path);
         var romName = GetRomName(script);
@@ -49,7 +50,7 @@ public static class TableUtils
         else
             Logger.Info(message);
 
-        return (romName != null, romName);
+        return (fileNameWithoutExtension, romName != null, romName);
     }
 
     private static string GetScript(string vpxFile)
