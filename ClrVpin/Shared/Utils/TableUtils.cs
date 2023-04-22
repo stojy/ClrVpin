@@ -156,13 +156,15 @@ public static class TableUtils
         "Primus (Stern 2018).vpx",
         "Rob Zombie's Spookshow International (Spooky Pinball 2016).vpx",
         "Roman Victory (Taito do Brasil 1977).vpx",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-
+        "Saloon (Taito do Brasil 1978).vpx",
+        "Star Wars (Original 1978).vpx",
+        "Swashbuckler (Recel 1979).vpx",
+        "The Pabst Can Crusher (Stern 2016).vpx",
+        "Total Nuclear Annihilation (Spooky Pinball 2017).vpx",
+        "Whoa Nellie! Big Juicy Melons (Stern 2015).vpx",
+        "Willy Wonka Pro (Original 2020).vpx",
+        "Wizard of Oz (Original 2018).vpx",
+        "Zeke's Peak (Taito 1984).vpx"
     });
 
     // find GameName usage
