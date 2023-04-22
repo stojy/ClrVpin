@@ -107,7 +107,7 @@ public class FeederViewModel : IShowViewModel
         _window.Hide();
         Logger.Clear();
 
-        var progress = new ProgressViewModel();
+        var progress = new ProgressViewModel("Feeding");
         progress.Show(_window);
 
         var localGames = new List<LocalGame>();
