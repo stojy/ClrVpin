@@ -37,7 +37,7 @@ public static class TableUtils
         var fileName = Path.GetFileName(path);
 
         // skip checking ROM if the table type doesn't support a ROM
-        if (type.In("PM", "EM") || _solidStateTableImplementationWithoutRom.Contains(fileName))
+        if (type.In("PM", "EM") || _solidStateTablesWithoutRomSupport.Contains(fileName))
             return (null, null);
 
         var script = GetScript(path);
@@ -107,7 +107,7 @@ public static class TableUtils
         //   2. unknown/uncommon variable name - create RegEx on demand
         //      - e.g. cGameName=cGameName... cGameName="adam"
         // - loop through the matches looking for the first match that is NOT commented out.. done via code because RegEx was too slow/complicated :(
-        match = gameName.ToLower().In(_knownGameNameVariables) ? _gameNameKnownVariablesRegex.Match(script) : Regex.Match(script, GetGameNameVariablesPattern(gameName));
+        match = gameName.ToLower().In(_knownGameNameVariables) ? _gameNameKnownVariablesRegex.Match(script) : Regex.Match(script, GetGameNameVariablesPattern(gameName), RegexOptions.Multiline);
         var (isCommented, romName) = GetUncommentedRomName(match);
         while (isCommented)
         {
@@ -128,7 +128,7 @@ public static class TableUtils
     }
 
     // solid state tables that are known to be implemented without a ROM
-    private static readonly HashSet<string> _solidStateTableImplementationWithoutRom = new(new[]
+    private static readonly HashSet<string> _solidStateTablesWithoutRomSupport = new(new[]
     {
         "4X4 (Atari 1983).vpx",
         "Alaska (Interflip 1978).vpx", // both EM ad SS tables exist, but the SS isn't implemented
@@ -146,6 +146,13 @@ public static class TableUtils
         "Dragon (Gottlieb 1978).vpx", // both EM and SS tables exist, but the SS isn't implemented
         "Football (Taito do Brasil 1979).vpx",
         "Game of Thrones (Limited Edition) (Stern 2015).vpx",
+        "Guardians Of The Galaxy (Stern 2017).vpx",
+        "Junkyard Cats (Original 2012).vpx",
+        "Kiss (Limited Edition) (Stern 2015).vpx", // newer table doesn't have ROM support.. deliberately
+        "Loch Ness Monster (Game Plan 1985).vpx", // no known rom exists.. https://www.vpforums.org/index.php?app=downloads&showfile=15577
+        "Mr. Doom (Recel 1979).vpx",
+        "Pinball (Stern 1977).vpx",
+        "",
         "",
         "",
         "",

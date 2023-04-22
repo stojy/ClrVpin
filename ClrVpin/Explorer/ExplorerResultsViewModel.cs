@@ -321,7 +321,7 @@ public class ExplorerResultsViewModel
         var skippedCount = roms.Count(rom => rom.isSuccess == null);
         var skippedDetail = CreateNamedPercentageStatistic("n/a¹", skippedCount, roms.Count);
 
-        var detail = new[] { successDetail, failedDetail, skippedDetail, "\n¹ PM/EM tables and SS tables without VPinMame" }.StringJoin("\n");
+        var detail = new[] { successDetail, failedDetail, skippedDetail, "\n¹ PM/EM tables or SS tables without ROM support" }.StringJoin("\n");
 
         Logger.Info($"ROM extraction: success={successCount}, failed={failedCount}, skipped={skippedCount}");
 
