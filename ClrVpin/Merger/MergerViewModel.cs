@@ -175,7 +175,7 @@ public class MergerViewModel : IShowViewModel
         _window.Hide();
         Logger.Clear();
 
-        var progress = new ProgressViewModel();
+        var progress = new ProgressViewModel("Merging");
         progress.Show(_window);
 
 

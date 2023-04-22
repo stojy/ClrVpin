@@ -57,7 +57,7 @@ public class ExplorerViewModel : IShowViewModel
         _window.Hide();
         Logger.Clear();
 
-        var progress = new ProgressViewModel();
+        var progress = new ProgressViewModel("Exploring");
         progress.Show(_window);
 
         List<LocalGame> games;

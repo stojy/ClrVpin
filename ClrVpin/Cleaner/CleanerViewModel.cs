@@ -108,7 +108,7 @@ public class CleanerViewModel : IShowViewModel
         _window.Hide();
         Logger.Clear();
 
-        var progress = new ProgressViewModel();
+        var progress = new ProgressViewModel("Cleaning");
         progress.Show(_window);
 
         List<LocalGame> games;
