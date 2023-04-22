@@ -100,18 +100,32 @@ public static class TableUtils
         if (gameName.StartsWith('"') && gameName.EndsWith("\""))
             return gameName.TrimStart('\"').TrimEnd('\"');
 
-        // gameName is a variable name that references the romName, so find the variable assignment based on the variable name..
-        // 1. known/common variable name - use the compiled RegEx to improve lookup performance
-        //    - e.g. cGameName=cGameName... cGameName="adam"
-        // 2. unknown/uncommon variable name - create RegEx on demand
-        //    - e.g. cGameName=cGameName... cGameName="adam"
+        // gameName is a variable name that references the romName
+        // - find the variable assignment based on the variable name..
+        //   1. known/common variable name - use the compiled RegEx to improve lookup performance
+        //      - e.g. cGameName=cGameName... cGameName="adam"
+        //   2. unknown/uncommon variable name - create RegEx on demand
+        //      - e.g. cGameName=cGameName... cGameName="adam"
+        // - loop through the matches looking for the first match that is NOT commented out.. done via code because RegEx was too slow/complicated :(
         match = gameName.ToLower().In(_knownGameNameVariables) ? _gameNameKnownVariablesRegex.Match(script) : Regex.Match(script, GetGameNameVariablesPattern(gameName));
-        return !match.Success ? null : match.Groups["romName"].Value;
+        var (isCommented, romName) = GetUncommentedRomName(match);
+        while (isCommented)
+        {
+            match = match.NextMatch();
+            (isCommented, romName) = GetUncommentedRomName(match);
+        }
+        return romName;
     }
 
-    // find GameName variable assignment
-    // - https://regex101.com/r/VDUvva/5
-    private static string GetGameNameVariablesPattern(params string[] gameNames) => @$"(?i:{gameNames.StringJoin("|")})\s*?\=\s*\""(?<romName>\w*?)\""";
+    private static (bool isCommented, string romName) GetUncommentedRomName(Match match)
+    {
+        if (!match.Success)
+            return (false, null);
+        if (match.Groups["preamble"].Value.Contains("'"))
+            return (true, null);
+        
+        return (false, match.Groups["romName"].Value);
+    }
 
     // solid state tables that are known to be implemented without a ROM
     private static readonly HashSet<string> _solidStateTableImplementationWithoutRom = new(new[]
@@ -125,9 +139,9 @@ public static class TableUtils
         "Black Knight Sword of Rage (Stern 2019).vpx",
         "Captain Nemo (Quetzal Pinball 2015).vpx",
         "CARtoons RC (Original 2017).vpx",
-        "",
-        "",
-        "",
+        "Cavalier (Recel 1979).vpx",
+        "Circus (Brunswick 1980).vpx",
+        "Circus (Gottlieb 1980).vpx",
         "",
         "",
         "",
@@ -136,8 +150,11 @@ public static class TableUtils
 
     // find GameName usage
     // - https://regex101.com/r/pmseXc/4
-    private static readonly Regex _gameNameUsageRegex = new(@"Controller(?:.|\n){0,100}?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled);
+    private static readonly Regex _gameNameUsageRegex = new(@"Controller(?:.|\n){0,100}?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
     
+    // find GameName variable assignment
+    // - https://regex101.com/r/VDUvva/6
+    private static string GetGameNameVariablesPattern(params string[] gameNames) => @$"^(?<preamble>.*?)(?i:{gameNames.StringJoin("|")})\s*?\=\s*\""(?<romName>\w*?)\""";
     private static readonly string[] _knownGameNameVariables = { "cgamename", "gamename" };
-    private static readonly Regex _gameNameKnownVariablesRegex = new(GetGameNameVariablesPattern(_knownGameNameVariables), RegexOptions.Compiled);
+    private static readonly Regex _gameNameKnownVariablesRegex = new(GetGameNameVariablesPattern(_knownGameNameVariables), RegexOptions.Compiled | RegexOptions.Multiline);
 }
