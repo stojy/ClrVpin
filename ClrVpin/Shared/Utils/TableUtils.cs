@@ -150,8 +150,12 @@ public static class TableUtils
         "Junkyard Cats (Original 2012).vpx",
         "Kiss (Limited Edition) (Stern 2015).vpx", // newer table doesn't have ROM support.. deliberately
         "Loch Ness Monster (Game Plan 1985).vpx", // no known rom exists.. https://www.vpforums.org/index.php?app=downloads&showfile=15577
+        "Mephisto (Cirsa 1987).vpx",
         "Mr. Doom (Recel 1979).vpx",
         "Pinball (Stern 1977).vpx",
+        "Primus (Stern 2018).vpx",
+        "Rob Zombie's Spookshow International (Spooky Pinball 2016).vpx",
+        "Roman Victory (Taito do Brasil 1977).vpx",
         "",
         "",
         "",
