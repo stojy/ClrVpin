@@ -142,6 +142,12 @@ public static class TableUtils
         "Cavalier (Recel 1979).vpx",
         "Circus (Brunswick 1980).vpx",
         "Circus (Gottlieb 1980).vpx",
+        "dof_test_table_VPX.vpx",
+        "Dragon (Gottlieb 1978).vpx", // both EM and SS tables exist, but the SS isn't implemented
+        "Football (Taito do Brasil 1979).vpx",
+        "Game of Thrones (Limited Edition) (Stern 2015).vpx",
+        "",
+        "",
         "",
         "",
         "",
@@ -152,7 +158,7 @@ public static class TableUtils
     // - https://regex101.com/r/pmseXc/5
     //private static readonly Regex _gameNameUsageRegex = new(@"Controller(?:.|\n){0,100}?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
     //private static readonly Regex _gameNameUsageRegex = new(@"With Controller(.|\n)*?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
-    private static readonly Regex _gameNameUsageRegex = new(@"Controller(.|\n)*?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
+    private static readonly Regex _gameNameUsageRegex = new(@"Controller(.|\n)*?\.\s*GameName\s*?\=\s*(?<gameName>.*?)[\s\:]", RegexOptions.Compiled | RegexOptions.Multiline);
     
     // find GameName variable assignment
     // - https://regex101.com/r/VDUvva/6
