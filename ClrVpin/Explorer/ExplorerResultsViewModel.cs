@@ -163,71 +163,35 @@ public class ExplorerResultsViewModel
         progress.Show(Window);
 
         // extract ROMs
-        var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent));
+        var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)).ToList();
+        var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
+
         var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
+
         var roms = await TableUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
 
         // update DB
+        // - overwrite ALL local game entries whether successful or not
+        progress.Update("Updating Database");
+        var updatedGameCount = 0;
+        roms.ForEach(rom =>
+        {
+            if (!gamesDictionary.TryGetValue(rom.file, out var game) || game.Rom == rom.name)
+                return;
+            
+            gamesDictionary[rom.file].Rom = rom.name;
+            updatedGameCount++;
+        });
+        
+        if (updatedGameCount > 0)
+            DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
 
         // display result
         progress.Close();
-        var (isSuccess, detail) = CreateRomsStatistics(roms);
+        var (isSuccess, detail) = CreateRomsStatistics(roms, updatedGameCount);
         await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All ROM Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some ROM Names", null, detail));
-
-
         
-        //var tableFiles = GameItems
-        //    .Select(gameItem => gameItem.LocalGame.Content.Hits
-        //        .Where(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)
-        //        .Select(hit => hit.File))
-        //    .SelectMany(x => x)
-        //    .ToList();
-
-        
-        
-        //var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(GetOnlineGames(), overwriteProperties);
-
-        //// write ALL local game entries back to the database
-        //// - updated properties via OnlineGames.Hit.LocalGame are reflected in the local game entries
-        //// - write irrespective of whether matched or not so that no entries are lost
-        //if (updatedGameCount > 0)
-        //    DatabaseUtils.WriteGamesToDatabase(_localGames.Select(x => x.Game));
-
-        //Logger.Info($"Added missing database info: table count: {updatedGameCount}, info count: {GameUpdater.GetPropertiesUpdatedCount(propertyStatistics)}");
-
-        //var properties = propertyStatistics.Select(property => $"- {property.Key,-13}: {property.Value}").StringJoin("\n");
-        //var details = CreatePercentageStatistic("Tables Fixed  ", updatedGameCount, matchedGameCount) +
-        //              $"\n{properties}";
-
-        //var isSuccess = updatedGameCount == 0;
-        //if (isSuccess)
-        //    await Notification.ShowSuccess(DialogHostName, "No Updates Required");
-        //else
-        //    await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
     }
-
-    //private async Task AllTableUpdateDatabase(bool overwriteProperties)
-    //{
-    //    var (propertyStatistics, updatedGameCount, matchedGameCount) = GameUpdater.UpdateProperties(GetOnlineGames(), overwriteProperties);
-
-    //    // write ALL local game entries back to the database
-    //    // - updated properties via OnlineGames.Hit.LocalGame are reflected in the local game entries
-    //    // - write irrespective of whether matched or not so that no entries are lost
-    //    if (updatedGameCount > 0)
-    //        DatabaseUtils.WriteGamesToDatabase(_localGames.Select(x => x.Game));
-
-    //    Logger.Info($"Added missing database info: table count: {updatedGameCount}, info count: {GameUpdater.GetPropertiesUpdatedCount(propertyStatistics)}");
-
-    //    var properties = propertyStatistics.Select(property => $"- {property.Key,-13}: {property.Value}").StringJoin("\n");
-    //    var details = CreatePercentageStatistic("Tables Fixed  ", updatedGameCount, matchedGameCount) +
-    //                  $"\n{properties}";
-
-    //    var isSuccess = updatedGameCount == 0;
-    //    if (isSuccess)
-    //        await Notification.ShowSuccess(DialogHostName, "No Updates Required");
-    //    else
-    //        await Notification.ShowSuccess(DialogHostName, "Tables Updated", null, details);
-    //}
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
@@ -310,7 +274,7 @@ public class ExplorerResultsViewModel
         return (missingCount, staleCount, statistic);
     }
 
-    private static (bool isSuccess, string detail) CreateRomsStatistics(IReadOnlyCollection<(bool? isSuccess, string name)> roms)
+    private static (bool isSuccess, string detail) CreateRomsStatistics(IReadOnlyCollection<(string path, bool? isSuccess, string romName)> roms, int updatedGameCount)
     {
         var successCount = roms.Count(rom => rom.isSuccess == true);
         var successDetail = CreateNamedPercentageStatistic("Success", successCount, roms.Count);
@@ -320,14 +284,18 @@ public class ExplorerResultsViewModel
         
         var skippedCount = roms.Count(rom => rom.isSuccess == null);
         var skippedDetail = CreateNamedPercentageStatistic("n/a¹", skippedCount, roms.Count);
+        
+        var updatedGameCountDetail = CreateNamedCountStatistic("Updated Count", updatedGameCount);
 
-        var detail = new[] { successDetail, failedDetail, skippedDetail, "\n¹ PM/EM tables or SS tables without ROM support" }.StringJoin("\n");
+        var detail = new[] { successDetail, failedDetail, skippedDetail, updatedGameCountDetail, "\n¹ PM/EM tables or SS tables without ROM support" }.StringJoin("\n");
 
         Logger.Info($"ROM extraction: success={successCount}, failed={failedCount}, skipped={skippedCount}");
 
         return (failedCount == 0, detail);
     }
 
+    private static string CreateNamedCountStatistic(string title, int count) => $"{title,-20} : {count}";
+    
     private static string CreateNamedPercentageStatistic(string title, int count, int totalCount) => $"{title,-20} : {CreatePercentageStatistic(count, totalCount, true)}";
 
     private static string CreatePercentageStatistic(int? count, int totalCount, bool showTotalCount = false)
