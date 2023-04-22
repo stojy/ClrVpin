@@ -163,9 +163,12 @@ public static class TableUtils
 
     // find GameName usage
     // - https://regex101.com/r/pmseXc/5
+    // - applying a 0 to 1000 char maximum limit between Controller and GameName..
+    //   - RegEx performance optimisation
+    //   - workaround where the word 'Controller' and 'GameName' both appear in a non-vPinMame context, e.g. Mephisto (Cirsa 1987).vpx
     //private static readonly Regex _gameNameUsageRegex = new(@"Controller(?:.|\n){0,100}?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
     //private static readonly Regex _gameNameUsageRegex = new(@"With Controller(.|\n)*?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
-    private static readonly Regex _gameNameUsageRegex = new(@"Controller(.|\n)*?\.\s*GameName\s*?\=\s*(?<gameName>.*?)[\s\:]", RegexOptions.Compiled | RegexOptions.Multiline);
+    private static readonly Regex _gameNameUsageRegex = new(@"Controller(.|\n){0,1000}\.\s*GameName\s*?\=\s*(?<gameName>.*?)[\s\:]", RegexOptions.Compiled | RegexOptions.Multiline);
     
     // find GameName variable assignment
     // - https://regex101.com/r/VDUvva/6
