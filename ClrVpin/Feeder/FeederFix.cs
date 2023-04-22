@@ -357,6 +357,9 @@ public static class FeederFix
             case "Captain NEMO Dives Again (Quetzal Pinball 2015)":
                 WrongName(onlineGame, "Captain Nemo");
                 break;
+            case "Saloon (Taito do Brasil 1978 1978)":
+                WrongManufacturerYear(onlineGame, "Taito do Brasil");
+                break;
         }
     }
 
