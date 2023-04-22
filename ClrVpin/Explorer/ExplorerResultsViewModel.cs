@@ -164,7 +164,7 @@ public class ExplorerResultsViewModel
 
         // extract ROMs
         var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent));
-        var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.IsOriginal, tableFile.LocalGame.Content.Hits.First().Path));
+        var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
         var roms = await TableUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
 
         // update DB

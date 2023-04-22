@@ -11,7 +11,7 @@ using Utils.Extensions;
 
 namespace ClrVpin.Shared.Utils;
 
-public record TableFileDetail(string Type, bool IsOriginal, string Path);
+public record TableFileDetail(string Type, string Path);
 
 public static class TableUtils
 {
@@ -28,11 +28,11 @@ public static class TableUtils
         return tableFileDetails.Select((tableFile, i) =>
         {
             updateAction(Path.GetFileName(tableFile.Path), (i + 1) / (float)totalFiles);
-            return GetRom(tableFile.Type, tableFile.IsOriginal, tableFile.Path);
+            return GetRom(tableFile.Type, tableFile.Path);
         }).ToList();
     }
 
-    private static (bool? isSuccess, string name) GetRom(string type, bool _, string path)
+    private static (bool? isSuccess, string name) GetRom(string type, string path)
     {
         var fileName = Path.GetFileName(path);
 
