@@ -14,6 +14,7 @@
     <PackageIcon>ClrVpin.png</PackageIcon>
     <RepositoryUrl>https://github.com/stojy/ClrVpin</RepositoryUrl>
     <RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+    <StartupObject>ClrVpin.Program</StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

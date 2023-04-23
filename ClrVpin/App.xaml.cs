@@ -2,12 +2,14 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
 using ClrVpin.Controls;
+using ClrVpin.Home;
 using ClrVpin.Models.Settings;
 using Notification = ClrVpin.Shared.Notification;
 
@@ -33,6 +35,15 @@ namespace ClrVpin
             Logging.Logger.Info($"App started: settings={JsonSerializer.Serialize(SettingsManager.Create().Settings)}");
 
             SetupExceptionHandling();
+
+            ShowHomeWindow();
+        }
+
+        private static void ShowHomeWindow()
+        {
+            // alternatively this can be done in app.xaml StartupUri="HomeWindow".. but done here in code to remove some of the 'magic' and give us a little more control
+            var window = new HomeWindow();
+            window.ShowDialog();
         }
 
         private static void SetupExceptionHandling()
