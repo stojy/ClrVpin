@@ -3,6 +3,7 @@ using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using NLog.Targets;
 
 namespace ClrVpin;
 
@@ -49,10 +50,20 @@ public static class Program
         inspectCommand.AddAlias("i");
         inspectCommand.AddOption(tableOption);
 
+        var pauseOption = new Option<bool>("--pause", "Pause before exit");
         var rootCommand = new RootCommand("ClrVpin Command Line Interface");
         rootCommand.AddCommand(inspectCommand);
+        rootCommand.AddGlobalOption(pauseOption);
 
-        inspectCommand.SetHandler(table => { Console.WriteLine($"my table: {table}"); }, tableOption);
+        inspectCommand.SetHandler((pause, table) =>
+        {
+            Console.WriteLine($"my table: {table}");
+            
+            if (!pause)
+                return;
+            Console.WriteLine("Press any key to exit..");
+            Console.ReadKey();
+        }, pauseOption, tableOption);
 
         return rootCommand.Invoke(args);
     }
