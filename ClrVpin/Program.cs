@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace ClrVpin;
@@ -6,17 +7,23 @@ namespace ClrVpin;
 public static class Program
 {
     [STAThread]
-    public static void Main()
+    public static int Main(string[] args)
     {
-        //ShowConsole();
+        if (args.Any())
+            return RunConsole();
+
         App.Main();
+        return 0;
     }
 
-    private static void ShowConsole()
+    private static int RunConsole()
     {
-        // refer https://stackoverflow.com/questions/32204195/wpf-and-commandline-app-in-the-same-executable
+        // run a console as either..
+        // a. new console - if started from UI, e.g. explorer
+        // b. existing console - if started from a console
+        // - refer https://stackoverflow.com/questions/32204195/wpf-and-commandline-app-in-the-same-executable
         // - not specified in the posts, but the console must be created/used BEFORE App.Main is started
-        //   --> for reasons unknown, creating in App.OnStartup prevents the console WriteLine from working.. although Console.ReadKey() still works!
+        // - not done within App.OnStartup because whilst creates/attaches console works, the WriteLine does not
         try
         {
             const int attachParentProcess = -1;
@@ -38,6 +45,8 @@ public static class Program
         {
             FreeConsole();
         }
+
+        return 0;
     }
 
     [DllImport("kernel32")]
