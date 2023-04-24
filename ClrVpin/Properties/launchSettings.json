@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "ClrVpin CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "inspect --table blah.txt"
+    },
+    "ClrVpin GUI": {
+      "commandName": "Project"
+    }
+  }
+}
