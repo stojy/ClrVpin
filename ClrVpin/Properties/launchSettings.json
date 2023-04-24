@@ -2,7 +2,7 @@
   "profiles": {
     "ClrVpin CLI": {
       "commandName": "Project",
-      "commandLineArgs": "inspect --table blah.txt"
+      "commandLineArgs": "inspect --table blah.txt --pause"
     },
     "ClrVpin GUI": {
       "commandName": "Project"
