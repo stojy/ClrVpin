@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Utils.Tests
 {
@@ -24,7 +23,7 @@ namespace Utils.Tests
         public void TestCreateKey()
         {
             var encrypted = Cipher.Encrypt("spreadsheetKey", "password");
-            Console.WriteLine(encrypted);
+            System.Console.WriteLine(encrypted);
 
             Assert.That(encrypted, Is.Not.Null);
         }
