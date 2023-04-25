@@ -3,7 +3,7 @@ using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using NLog.Targets;
+using ClrVpin.Shared.Utils;
 
 namespace ClrVpin;
 
@@ -55,18 +55,54 @@ public static class Program
         rootCommand.AddCommand(inspectCommand);
         rootCommand.AddGlobalOption(pauseOption);
 
-        inspectCommand.SetHandler((pause, table) =>
-        {
-            Console.WriteLine($"my table: {table}");
-            
-            if (!pause)
-                return;
-            Console.WriteLine("Press any key to exit..");
-            Console.ReadKey();
-        }, pauseOption, tableOption);
+        inspectCommand.SetHandler((pause, table) => Invoke(() => Inspect(table), pause), pauseOption, tableOption);
 
-        return rootCommand.Invoke(args);
+        rootCommand.Invoke(args);
+        return _returnCode;
     }
+
+    private static void Invoke(Func<int> func, bool pause)
+    {
+        func();
+
+        if (!pause)
+            return;
+        
+        Debug("\nPress any key to exit..");
+        Console.ReadKey();
+    }
+
+    // ReSharper disable once UnusedMethodReturnValue.Local - not currently supported by System.CommandLine.. refer _returnCode comment
+    private static int Inspect(FileSystemInfo table)
+    {
+        if (!table.Exists)
+            return Error($"Table not found: '{table.Name}'", -1);
+
+        var rom = TableUtils.GetRom(null, table.FullName, true);
+        if (rom.isSuccess == false)
+            return Warning("ROM not found in the table script", -2);
+
+        return Success($"ROM: {rom.name}");
+    }
+
+    private static int Success(string message) => ProcessResult(message, 0, ConsoleColor.Green);
+    private static int Debug(string message) => ProcessResult(message, null, ConsoleColor.DarkGray);
+    private static int Warning(string message, int returnCode) => ProcessResult(message, returnCode, ConsoleColor.Yellow);
+    private static int Error(string message, int returnCode) => ProcessResult(message, returnCode, ConsoleColor.Red);
+
+    private static int ProcessResult(string message, int? returnCode = null, ConsoleColor? color = null)
+    {
+        var exitingColor = Console.ForegroundColor;
+        if (color != null)
+            Console.ForegroundColor = color.Value;
+        Console.WriteLine($"{message}");
+        Console.ForegroundColor = exitingColor;
+
+        if (returnCode != null)
+            _returnCode = returnCode.Value;
+        return _returnCode;
+    }
+
 
     [DllImport("kernel32")]
     private static extern bool AttachConsole(int dwProcessId);
@@ -76,4 +112,6 @@ public static class Program
 
     [DllImport("kernel32")]
     private static extern bool FreeConsole();
+
+    private static int _returnCode; // use field state because System.CommandLine doesn't appear to support returning error codes directly from the SetHandler method.. pretty naff :(
 }
