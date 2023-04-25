@@ -32,7 +32,7 @@ public static class TableUtils
         }).ToList();
     }
 
-    private static (string file, bool? isSuccess, string name) GetRom(string type, string path)
+    public static (string file, bool? isSuccess, string name) GetRom(string type, string path, bool skipLogging = false)
     {
         var fileName = Path.GetFileName(path);
         var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(path);
@@ -44,11 +44,14 @@ public static class TableUtils
         var script = GetScript(path);
         var romName = GetRomName(script);
 
-        var message = $"Detected ROM: {romName ?? "FAILED",-12} tableFile={fileName}";
-        if (romName == null)
-            Logger.Warn(message);
-        else
-            Logger.Info(message);
+        if (!skipLogging)
+        {
+            var message = $"Detected ROM: {romName ?? "FAILED",-12} tableFile={fileName}";
+            if (romName == null)
+                Logger.Warn(message);
+            else
+                Logger.Info(message);
+        }
 
         return (fileNameWithoutExtension, romName != null, romName);
     }

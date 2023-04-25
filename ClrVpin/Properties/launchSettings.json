@@ -2,7 +2,7 @@
   "profiles": {
     "ClrVpin CLI": {
       "commandName": "Project",
-      "commandLineArgs": "inspect --table blah.txt --pause"
+      "commandLineArgs": "inspect --paus --table \"C:\\vp\\tables\\vpx\\8 Ball (Williams 1966).vpx\" "
     },
     "ClrVpin GUI": {
       "commandName": "Project"
