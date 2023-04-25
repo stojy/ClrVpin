@@ -43,21 +43,25 @@ public static class Program
 
     private static int ProcessCommandLine(string[] args)
     {
-        var tableOption = new Option<FileInfo>("--table", "The table file to inspect") { IsRequired = true };
-        tableOption.AddAlias("--t");
+        // global
+        var pauseOption = new Option<bool>("--pause", "Pause before exit");
 
+        // inspect
+        var tableArgument = new Argument<FileInfo>("table", "The table file");
         var inspectCommand = new Command("inspect", "Inspect file details");
         inspectCommand.AddAlias("i");
-        inspectCommand.AddOption(tableOption);
+        inspectCommand.AddArgument(tableArgument);
+        inspectCommand.SetHandler((pause, table) => Invoke(() => Inspect(table), pause), pauseOption, tableArgument);
 
-        var pauseOption = new Option<bool>("--pause", "Pause before exit");
+        // root
         var rootCommand = new RootCommand("ClrVpin Command Line Interface");
         rootCommand.AddCommand(inspectCommand);
         rootCommand.AddGlobalOption(pauseOption);
 
-        inspectCommand.SetHandler((pause, table) => Invoke(() => Inspect(table), pause), pauseOption, tableOption);
-
         rootCommand.Invoke(args);
+
+        // using field state because SetHandler doesn't appear to support returning error codes directly from the SetHandler method.. pretty naff :(
+        // - perhaps this will be available via the newer AddAction??
         return _returnCode;
     }
 
@@ -78,11 +82,8 @@ public static class Program
         if (!table.Exists)
             return Error($"Table not found: '{table.Name}'", -1);
 
-        var rom = TableUtils.GetRom(null, table.FullName, true);
-        if (rom.isSuccess == false)
-            return Warning("ROM not found in the table script", -2);
-
-        return Success($"ROM: {rom.name}");
+        var (_, isSuccess, romName) = TableUtils.GetRom(null, table.FullName, true);
+        return isSuccess == false ? Warning("ROM not found in the table script", -2) : Success($"ROM: {romName}");
     }
 
     private static int Success(string message) => ProcessResult(message, 0, ConsoleColor.Green);
@@ -103,7 +104,6 @@ public static class Program
         return _returnCode;
     }
 
-
     [DllImport("kernel32")]
     private static extern bool AttachConsole(int dwProcessId);
 
@@ -113,5 +113,5 @@ public static class Program
     [DllImport("kernel32")]
     private static extern bool FreeConsole();
 
-    private static int _returnCode; // use field state because System.CommandLine doesn't appear to support returning error codes directly from the SetHandler method.. pretty naff :(
+    private static int _returnCode; 
 }
