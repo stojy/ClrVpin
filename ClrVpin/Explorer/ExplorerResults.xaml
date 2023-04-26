@@ -382,14 +382,14 @@
                             Command="{Binding OverwriteDatabaseRomsCommand}">
                       Update ROM Names
                     </Button>
-                    <Button ToolTip="Overwrite all database table PUP names using the values extracted from your table scripts"
+                    <!--<Button ToolTip="Overwrite all database table PUP names using the values extracted from your table scripts"
                             Style="{StaticResource RaisedAccentButtonStyle}"
                             Height="30"
                             Margin="10,0,0,0"
                             Padding="10,0"
                             Command="{Binding OverwriteDatabasePupsCommand}">
                       Update PUP Names
-                    </Button>
+                    </Button>-->
                   </WrapPanel>
                 </ContentControl>
               </WrapPanel>
