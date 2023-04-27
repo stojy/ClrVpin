@@ -13,10 +13,10 @@ public static class VersionManagementService
     public static bool ShouldCheck()
     {
         var settings = Model.SettingsManager.Settings;
-        var shouldCheckForUpdate = settings.EnableCheckForNewVersion &&
+        var shouldCheckForUpdate = settings.EnableCheckForUpdatesAutomatically &&
                                    (settings.LastCheckForNewVersion == null || DateTime.Now - settings.LastCheckForNewVersion.Value > TimeSpan.FromDays(1));
 
-        Logger.Info($"Version checking: shouldCheckForUpdate={shouldCheckForUpdate}, EnableCheckForNewVersion={settings.EnableCheckForNewVersion}, LastCheckForNewVersion={settings.LastCheckForNewVersion}");
+        Logger.Info($"Version checking: shouldCheckForUpdate={shouldCheckForUpdate}, EnableCheckForUpdatesAutomatically={settings.EnableCheckForUpdatesAutomatically}, LastCheckForNewVersion={settings.LastCheckForNewVersion}");
 
         return shouldCheckForUpdate;
     }
@@ -27,7 +27,8 @@ public static class VersionManagementService
 
         try
         {
-            var releases = await VersionManagement.Check(Model.SettingsManager.Settings.Guid, "stojy", "ClrVpin", msg => Logger.Info($"Version checking: {msg}"));
+            var settings = Model.SettingsManager.Settings;
+            var releases = await VersionManagement.Check(settings.Guid, "stojy", "ClrVpin", settings.EnableCheckForUpdatesPreRelease, msg => Logger.Info($"Version checking: {msg}"));
 
             if (releases.Any())
                 await VersionManagementView.Show(releases, parent);
@@ -36,7 +37,8 @@ public static class VersionManagementService
 
             // update last check AFTER processing to ensure the msi installer (if invoked) doesn't update the version (since it causes the process to exit before it reaches here)
             // - intention is that the new version when it starts up will perform another version check to ensure everything is up to date (which it should be!)
-            Model.SettingsManager.Settings.LastCheckForNewVersion = DateTime.Now;
+            settings.LastCheckForNewVersion = DateTime.Now;
+            
             Model.SettingsManager.Write();
         }
         catch (Exception e)

@@ -22,7 +22,7 @@ public class Settings : ISettings
         BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
         EnableDiagnosticLogging = false;
         SkipLoggingForOriginalTables = true;
-        EnableCheckForNewVersion = true;
+        EnableCheckForUpdatesAutomatically = true;
         TrainerWheels = true;
 
         AllContentTypes = new List<ContentType>
@@ -87,7 +87,8 @@ public class Settings : ISettings
 
     public bool EnableDiagnosticLogging { get; set; }
     public bool SkipLoggingForOriginalTables { get; set; }
-    public bool EnableCheckForNewVersion { get; set; }
+    public bool EnableCheckForUpdatesAutomatically { get; set; }
+    public bool EnableCheckForUpdatesPreRelease { get; set; }
     public DateTime? LastCheckForNewVersion { get; set; }
     public bool TrainerWheels { get; set; }
 

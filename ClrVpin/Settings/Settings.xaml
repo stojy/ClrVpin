@@ -88,20 +88,24 @@
           <StackPanel>
             <ContentControl ContentTemplate="{StaticResource FolderSelection}" Content="{Binding BackupFolderModel}" />
 
-            <WrapPanel Margin="5">
-              <ToggleButton ToolTip="Include additional diagnostic logging, e.g. fuzzy match scoring for matched tables" IsChecked="{Binding Settings.EnableDiagnosticLogging}" />
+            <WrapPanel Margin="5" ToolTip="Include additional diagnostic logging, e.g. fuzzy match scoring for matched tables" >
+              <ToggleButton IsChecked="{Binding Settings.EnableDiagnosticLogging}" />
               <TextBlock Margin="10,0,0,0" Text="Diagnostic Logging" />
             </WrapPanel>
-            <WrapPanel Margin="5">
-              <ToggleButton ToolTip="Skip logging for all details regarding original (non-manufactured) tables" IsChecked="{Binding Settings.SkipLoggingForOriginalTables}" />
+            <WrapPanel Margin="5" ToolTip="Skip logging for all details regarding original (non-manufactured) tables" >
+              <ToggleButton IsChecked="{Binding Settings.SkipLoggingForOriginalTables}" />
               <TextBlock Margin="10,0,0,0" Text="Skip Logging For Original Tables" />
             </WrapPanel>
-            <WrapPanel Margin="5">
-              <ToggleButton ToolTip="Automatically check for a new application version during startup.  Limited to once per day." IsChecked="{Binding Settings.EnableCheckForNewVersion}" />
-              <TextBlock Margin="10,0,0,0" Text="Check For Updates" />
+            <WrapPanel Margin="5" ToolTip="Automatically check for a new application releases during startup.  Limited to once per day.">
+              <ToggleButton IsChecked="{Binding Settings.EnableCheckForUpdatesAutomatically}" />
+              <TextBlock Margin="10,0,0,0" Text="Check For Updates Automatically" />
             </WrapPanel>
-            <WrapPanel Margin="5">
-              <ToggleButton ToolTip="When enabled, all file operations are ignored, i.e. no files will be copied, moved, renamed, or deleted." IsChecked="{Binding Settings.TrainerWheels}" />
+            <WrapPanel Margin="5" ToolTip="Check for new application releases includes those marked as pre-releases">
+              <ToggleButton IsChecked="{Binding Settings.EnableCheckForUpdatesPreRelease}" />
+              <TextBlock Margin="10,0,0,0" Text="Check For Updates Including Pre-releases" />
+            </WrapPanel>
+            <WrapPanel Margin="5" ToolTip="When enabled, all file operations are ignored, i.e. no files will be copied, moved, renamed, or deleted." >
+              <ToggleButton IsChecked="{Binding Settings.TrainerWheels}" />
               <TextBlock Margin="10,0,0,0" Text="Trainer Wheels" />
             </WrapPanel>
           </StackPanel>

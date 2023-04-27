@@ -27,7 +27,7 @@ namespace Utils
             return _buildTime ??= File.GetLastWriteTime(Assembly.GetEntryAssembly()?.Location!);
         }
 
-        public static async Task<List<Release>> Check(string guid, string author, string repository, Action<string> logAction)
+        public static async Task<List<Release>> Check(string guid, string author, string repository, bool includePreRelease, Action<string> logAction)
         {
             // check if the current version is the latest
             var client = new GitHubClient(new ProductHeaderValue($"ClrVpin_{guid}"));
@@ -36,18 +36,20 @@ namespace Utils
 
             var installedVersion = GetProductVersion();
 
-            logAction($"existingVersion={installedVersion}, newVersion={releases.FirstOrDefault()?.TagName}");
+            // latest release excludes pre-release unless instructed otherwise
+            var latestRelease = releases.FirstOrDefault(release => !release.Prerelease || includePreRelease);
+            logAction($"existingVersion={installedVersion}, latestVersion={latestRelease?.TagName}");
 
-            // no need to compare which is the actual 'latest' since this is already taken care of by the underlying git API
-            // - i.e. avoid any mucking about with SemVer comparison logic
-            if (installedVersion != releases.FirstOrDefault()?.TagName)
+            // the 'latest' release is assumed to be the last one retrieved by the git API
+            // - i.e. no need for any SemVer comparison logic
+            if (installedVersion != latestRelease?.TagName)
             {
-                skippedReleases.Add(releases.First());
+                skippedReleases.Add(latestRelease);
 
                 if (SemVersion.TryParse(installedVersion, SemVersionStyles.Any, out var installedSemVer))
                 {
-                    // attempt to determine what versions have been skipped (if any)
-                    // - i.e. muck about with SemVer comparison logic
+                    // determine what releases have been 'skipped', i.e. releases (excluding latest) that were available, but not installed
+                    // - use SemVer comparison logic
                     // - bail if any version can't be cleanly SemVer parsed
                     var earlierSkippedReleases = releases.Skip(1).TakeWhile(historicalRelease =>
                     {
