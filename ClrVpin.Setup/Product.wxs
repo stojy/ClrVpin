@@ -144,6 +144,8 @@
         <File Source="$(var.ClrVpin.TargetDir)MdXaml.Plugins.dll" />
         <File Source="$(var.ClrVpin.TargetDir)ICSharpCode.AvalonEdit.dll" />
         <File Source="$(var.ClrVpin.TargetDir)SemVer.dll" />
+        <File Source="$(var.ClrVpin.TargetDir)OpenMcdf.dll" />
+        <File Source="$(var.ClrVpin.TargetDir)System.CommandLine.dll" />
       </Component>
 
       <Component Id="ContentComponent" Guid="8A17DDBE-F668-4821-A8FF-DE0878EDD381" Win64="yes">
