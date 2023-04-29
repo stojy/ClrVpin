@@ -32,6 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wiki", "wiki", "{7ACAABF4-8
 		ClrVpin.wiki\Inner-Workings.md = ClrVpin.wiki\Inner-Workings.md
 		ClrVpin.wiki\Misc.md = ClrVpin.wiki\Misc.md
 		ClrVpin.wiki\Overview.md = ClrVpin.wiki\Overview.md
+		ClrVpin.wiki\Modes-Gui-Cli.md = ClrVpin.wiki\Modes-Gui-Cli.md
 		ClrVpin.wiki\Roadmap.md = ClrVpin.wiki\Roadmap.md
 		ClrVpin.wiki\Screenshots.md = ClrVpin.wiki\Screenshots.md
 		ClrVpin.wiki\Step-By-Step.md = ClrVpin.wiki\Step-By-Step.md
