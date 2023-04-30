@@ -7,6 +7,7 @@ using ByteSizeLib;
 using Microsoft.VisualBasic.Devices;
 using NLog;
 using NLog.Targets;
+using Utils.Extensions;
 
 namespace ClrVpin.Logging
 {
@@ -17,16 +18,20 @@ namespace ClrVpin.Logging
             _dispatch = Dispatcher.CurrentDispatcher;
             File = GetLogFile();
 
-            var currentProcess = Process.GetCurrentProcess();
+            Info($"\n\n{GetSystemInfo()}");
+        }
 
+        public static string GetSystemInfo()
+        {
+            var currentProcess = Process.GetCurrentProcess();
             var computerInfo = new ComputerInfo();
-            var systemInfo = "\n\n---------- System Info ----------\n" +
+            var systemInfo = "---------- System Info ----------\n" +
                              $"Start Time:            {currentProcess.StartTime}\n" +
                              $"App:                   {currentProcess.ProcessName}\n" +
                              $"File Version:          {currentProcess.MainModule?.FileVersionInfo.FileVersion}\n" +
                              $"Product Version:       {currentProcess.MainModule?.FileVersionInfo.ProductVersion}\n" +
-                             $"Path:                  {currentProcess.MainModule?.FileName}\n" +
-                             $"Command Line:          {Environment.CommandLine}\n" +
+                             $"Executable:            {currentProcess.MainModule?.FileName}\n" +
+                             $"Command Line Args:     {Environment.GetCommandLineArgs().StringJoin(" ")}\n" +
                              $"Processor Type:        {Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER")}\n" + // https://en.wikichip.org/wiki/intel/cpuid
                              $"Processor Count:       {Environment.ProcessorCount}\n" +
                              $"Free Physical Memory:  {ByteSize.FromBytes(computerInfo.AvailablePhysicalMemory).ToString("0.#")}\n" +
@@ -35,11 +40,10 @@ namespace ClrVpin.Logging
                              $"64 bit:                {Environment.Is64BitOperatingSystem}\n" +
                              $"CLI Version:           {Environment.Version}\n" +
                              "---------------------------------";
-
-            Info(systemInfo);
+            return systemInfo;
         }
 
-        public static ObservableCollection<Log> Logs { get; } = new ObservableCollection<Log>();
+        public static ObservableCollection<Log> Logs { get; } = new();
         public static string File { get; }
 
         public static void Debug(string message, bool isDiagnostic = false)

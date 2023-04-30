@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Markup;
 using ClrVpin.Controls;
 using ClrVpin.Home;
+using ClrVpin.Logging;
 using ClrVpin.Models.Settings;
 using Notification = ClrVpin.Shared.Notification;
 
@@ -31,7 +32,7 @@ namespace ClrVpin
 
             base.OnStartup(e);
 
-            Logging.Logger.Info($"App started: settings={JsonSerializer.Serialize(SettingsManager.Create().Settings)}");
+            Logger.Info($"App started: settings={JsonSerializer.Serialize(SettingsManager.Create().Settings)}");
 
             SetupExceptionHandling();
 
@@ -73,29 +74,35 @@ namespace ClrVpin
                                     "- steps to reproduce\n" +
                                     "- screenshot (if applicable)\n" +
                                     "- relevant portion of the log file: c:\\ProgramData\\ClrVpin\\logs\\ClrVpin.log";
+            
+            
             var detail = $"Message:       {exception.Message}\n" +
+                         $"Type:          {exception.GetType()}\n" +
                          $"Inner Message: {exception.InnerException?.Message}\n" +
+                         $"Inner Type:    {exception.InnerException?.GetType()}\n" +
                          $"Assembly:      {assembly}\n" +
                          $"Sender:        {sender}\n" +
                          $"Source:        {source}\n" +
                          $"Stack:\n{exception.StackTrace}\n" +
-                         $"Inner Stack:\n{exception.InnerException?.StackTrace}";
+                         $"Inner Stack:\n{exception.InnerException?.StackTrace}\n";
 
+            var systemInfo = Logger.GetSystemInfo();
+            detail += $"\n{systemInfo}";
 
             try
             {
-                Logging.Logger.Error(exception, $"{title}\n{detail}");
+                Logger.Error(exception, $"{title}\n{detail}");
 
                 if (Current.MainWindow is MaterialWindowEx window)
                     window.TryShow();
 
-                Notification.ShowError("HomeDialog", title, subTitle, detail, true, true).ContinueWith(_ => SubmitBugAndExit(detail));
+                Notification.ShowError("HomeDialog", title, subTitle, detail, true, true).ContinueWith(_ => SubmitBugAndExit(exception.Message, detail));
             }
             catch (Exception ex)
             {
                 // if the material window fails (e.g. HomeWindow doesn't have a DialogHost available yet) then default back to the trusty windows message box
                 MessageBox.Show(Current.MainWindow!, $"{title}\n\n{subTitle}\n\n{exception}", "An Error Has Occurred.  ClrVpin will be shutdown.", MessageBoxButton.OK, MessageBoxImage.Error);
-                Logging.Logger.Error(ex, "Exception in HandleError");
+                Logger.Error(ex, "Exception in HandleError");
                 Environment.Exit(-2);
             }
             //finally
@@ -104,9 +111,9 @@ namespace ClrVpin
             //}
         }
 
-        private static void SubmitBugAndExit(string detail)
+        private static void SubmitBugAndExit(string heading, string detail)
         {
-            const string title = @"Unhandled Error - [add summary description here]";
+            string title = $"Unhandled Error - {heading}";
             var body = @"**Describe the bug**
 [A description of the bug]
 
@@ -135,10 +142,11 @@ namespace ClrVpin
 
             // more markdown/github workarounds
             body = body
-                .Replace("`", @"\`")              // escape tilde to avoid being interpreting as code, e.g. used by .net in it's stack trace
-                .Replace("\r\n", "<br />")        // change newlines within stacktrace to line breaks
-                .Replace("\n", "<br />")          // change other newlines to line breaks    
-                [..Math.Min(body.Length, 8_000)]; // max github URL is 8k, refer https://github.com/cli/cli/issues/1575
+                .Replace("`", @"\`")                     // escape tilde to avoid being interpreting as code, e.g. used by .net in it's stack trace
+                .Replace("&", "%26")                     // escape ampersand so it can be sent via the URL
+                .Replace("\r\n", "<br />")               // change newlines within stacktrace to line breaks
+                .Replace("\n", "<br />");                // change other newlines to line breaks    
+            body = body[..Math.Min(body.Length, 8_000)]; // max github URL is 8k, refer https://github.com/cli/cli/issues/1575
             
             Process.Start(new ProcessStartInfo($@"https://github.com/stojy/ClrVpin/issues/new?&template=bug_report.md&title={title}&body={body}") { UseShellExecute = true });
              

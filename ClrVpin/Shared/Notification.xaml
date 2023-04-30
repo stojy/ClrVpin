@@ -72,7 +72,7 @@
                      Style="{DynamicResource MaterialDesignHeadline4TextBlock}" Margin="0" HorizontalAlignment="Center" />
           <TextBlock Text="{Binding SubTitle}" Visibility="{Binding SubTitle, Converter={StaticResource ReverseNullToVisibilityConverter}}"
                      Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Margin="0,30,0,10" HorizontalAlignment="Left" />
-          <ScrollViewer MaxWidth="1500" MaxHeight="1000" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+          <ScrollViewer MaxWidth="1500" MaxHeight="800" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
             <TextBlock Name="Detail"
                        Text="{Binding Detail}" Visibility="{Binding Detail, Converter={StaticResource ReverseNullToVisibilityConverter}}"
                        FontSize="18" Margin="0,30,0,0" />
