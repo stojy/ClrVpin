@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
+using System.Xml;
 using ClrVpin.Controls;
 using ClrVpin.Home;
 using ClrVpin.Logging;
@@ -73,7 +74,7 @@ namespace ClrVpin
             const string subTitle = "Exiting this dialog will close the application and open the bug report web page. Please include the following information..\n" +
                                     "- steps to reproduce\n" +
                                     "- screenshot (if applicable)\n" +
-                                    "- relevant portion of the log file: c:\\ProgramData\\ClrVpin\\logs\\ClrVpin.log";
+                                    "- additional logs if relevant (refer c:\\ProgramData\\ClrVpin\\logs\\ClrVpin.log)";
             
             
             var detail = $"Message:       {exception.Message}\n" +
@@ -85,9 +86,9 @@ namespace ClrVpin
                          $"Source:        {source}\n" +
                          $"Stack:\n{exception.StackTrace}\n" +
                          $"Inner Stack:\n{exception.InnerException?.StackTrace}\n";
-
-            var systemInfo = Logger.GetSystemInfo();
-            detail += $"\n{systemInfo}";
+            detail += $"\n{Logger.GetSystemInfo()}";
+            
+            detail += $"\n{Logger.GetLogs()}";
 
             try
             {
@@ -113,7 +114,7 @@ namespace ClrVpin
 
         private static void SubmitBugAndExit(string heading, string detail)
         {
-            string title = $"Unhandled Error - {heading}";
+            var title = $"Unhandled Error - {heading}";
             var body = @"**Describe the bug**
 [A description of the bug]
 
@@ -143,11 +144,15 @@ namespace ClrVpin
             // more markdown/github workarounds
             body = body
                 .Replace("`", @"\`")                     // escape tilde to avoid being interpreting as code, e.g. used by .net in it's stack trace
-                .Replace("&", "%26")                     // escape ampersand so it can be sent via the URL
                 .Replace("\r\n", "<br />")               // change newlines within stacktrace to line breaks
                 .Replace("\n", "<br />");                // change other newlines to line breaks    
-            body = body[..Math.Min(body.Length, 8_000)]; // max github URL is 8k, refer https://github.com/cli/cli/issues/1575
             
+            // escape special URL chars, e.g. %, &, etc
+            body = System.Net.WebUtility.UrlEncode(body);
+
+            // truncate submission to fit within github URK max 8k size, refer https://github.com/cli/cli/issues/1575
+            body = body[..Math.Min(body.Length, 8_000)]; 
+
             Process.Start(new ProcessStartInfo($@"https://github.com/stojy/ClrVpin/issues/new?&template=bug_report.md&title={title}&body={body}") { UseShellExecute = true });
              
             Environment.Exit(-1);

@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Threading;
 using ByteSizeLib;
 using Microsoft.VisualBasic.Devices;
@@ -38,8 +39,8 @@ namespace ClrVpin.Logging
                              $"Free Virtual Memory:   {ByteSize.FromBytes(computerInfo.AvailableVirtualMemory).ToString("0.#")}\n" +
                              $"OS:                    {Environment.OSVersion}\n" +
                              $"64 bit:                {Environment.Is64BitOperatingSystem}\n" +
-                             $"CLI Version:           {Environment.Version}\n" +
-                             "---------------------------------";
+                             $"CLI Version:           {Environment.Version}\n";
+
             return systemInfo;
         }
 
@@ -88,6 +89,14 @@ namespace ClrVpin.Logging
         public static void Clear()
         {
             _dispatch.BeginInvoke(() => Logs.Clear());
+        }
+
+        public static string GetLogs(int logCount = 5)
+        {
+            var logs = Logs.TakeLast(logCount).Select(log => $"{log.Level} {log.Message}").StringJoin("\n");
+
+            return $"------ Recent Logs (max {logCount}) ------\n" +
+                   $"{logs}\n";
         }
 
         private static bool IsIgnored(bool isDiagnostic) => isDiagnostic && Model.Settings?.EnableDiagnosticLogging == false;
