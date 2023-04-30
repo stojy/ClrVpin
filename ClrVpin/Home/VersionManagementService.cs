@@ -23,7 +23,7 @@ public static class VersionManagementService
 
     public static async Task CheckAndHandle(MaterialWindowEx parent = null, bool showIfNoUpdateExists = false)
     {
-        const string dialogHost = "HomeDialog";
+        const string dialogHost = HomeWindow.HomeDialogHost;
 
         try
         {

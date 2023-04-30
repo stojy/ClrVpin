@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using ClrVpin.Home;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
@@ -25,7 +26,7 @@ namespace ClrVpin.Shared.Utils
             }
             catch (Exception e)
             {
-                await Notification.ShowWarning("HomeDialog",
+                await Notification.ShowWarning(HomeWindow.HomeDialogHost,
                     "Unable to read PinballY/PinballX database file",
                     "Please check the database xml file is well formatted, e.g. via https://codebeautify.org/xmlvalidator.\n\n" +
                     "Alternatively, log an issue via github and upload the xml file for review.",

@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
-using System.Xml;
 using ClrVpin.Controls;
 using ClrVpin.Home;
 using ClrVpin.Logging;
@@ -85,9 +84,9 @@ namespace ClrVpin
                          $"Source:        {source}\n" +
                          $"Stack:\n{exception.StackTrace}\n" +
                          $"Inner Stack:\n{exception.InnerException?.StackTrace}\n";
-            detail += $"\n{Logger.GetSystemInfo()}";
             
             detail += $"\n{Logger.GetLogs()}";
+            detail += $"\n{Logger.GetSystemInfo()}";
 
             try
             {
@@ -96,7 +95,7 @@ namespace ClrVpin
                 if (Current.MainWindow is MaterialWindowEx window)
                     window.TryShow();
 
-                Notification.ShowError("HomeDialog", title, subTitle, detail, true, true).ContinueWith(_ => SubmitBugAndExit(exception.Message, detail));
+                Notification.ShowError(HomeWindow.HomeDialogHost, title, subTitle, detail, true, true).ContinueWith(_ => SubmitBugAndExit(exception.Message, detail));
             }
             catch (Exception ex)
             {
