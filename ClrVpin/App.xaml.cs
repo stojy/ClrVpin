@@ -73,8 +73,7 @@ namespace ClrVpin
             const string title = "Sorry, something has gone wrong :(";
             const string subTitle = "Exiting this dialog will close the application and open the bug report web page. Please include the following information..\n" +
                                     "- steps to reproduce\n" +
-                                    "- screenshot (if applicable)\n" +
-                                    "- additional logs if relevant (refer c:\\ProgramData\\ClrVpin\\logs\\ClrVpin.log)";
+                                    "- screenshot (if applicable)";
             
             
             var detail = $"Message:       {exception.Message}\n" +
