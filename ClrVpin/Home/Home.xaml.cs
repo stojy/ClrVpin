@@ -46,7 +46,7 @@ public partial class HomeWindow
                 {
                     Title = "Your settings have been reset",
                     Detail = Model.SettingsManager.ResetReason
-                }, "HomeDialog").ContinueWith(_ => Dispatcher.Invoke(Restart));
+                }, HomeDialogHost).ContinueWith(_ => Dispatcher.Invoke(Restart));
             }
         };
 
@@ -74,4 +74,5 @@ public partial class HomeWindow
 
     private bool _wasConfigResetHandled;
     private bool _activated;
+    public const string HomeDialogHost = "HomeDialog";
 }

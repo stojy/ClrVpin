@@ -46,7 +46,7 @@ namespace ClrVpin.Models.Settings
                     // reset the settings if the user's stored settings version differs to the default version
                     if (settings!.Version < settings.MinVersion)
                     {
-                        //Notification.ShowWarning("HomeDialog", "Your settings are incompatible and will be reset", "Apologies for the inconvenience").RunSynchronously();
+                        //Notification.ShowWarning(HomeWindow.HomeDialogHost, "Your settings are incompatible and will be reset", "Apologies for the inconvenience").RunSynchronously();
                         settings = Reset<T>(defaultSettings);
                         resetReason = "Your settings file was out of date.";
                     }

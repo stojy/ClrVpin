@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Extensions;
+using ClrVpin.Home;
 using ClrVpin.Logging;
 using ClrVpin.Models.Cleaner;
 using ClrVpin.Models.Settings;
@@ -103,48 +104,61 @@ public class CleanerViewModel : IShowViewModel
 
     private async void Start()
     {
-        Logger.Info($"\nCleaner started, settings={JsonSerializer.Serialize(Settings)}");
+        ProgressViewModel progress = null;
 
-        _window.Hide();
-        Logger.Clear();
-
-        var progress = new ProgressViewModel("Cleaning");
-        progress.Show(_window);
-
-        List<LocalGame> games;
-        var selectedCheckContentTypes = Settings.Cleaner.GetSelectedCheckContentTypes();
         try
         {
-            progress.Update("Loading Database");
-            games = await DatabaseUtils.ReadGamesFromDatabases(selectedCheckContentTypes);
-            Logger.Info($"Loading database complete, duration={progress.Duration}", true);
-        }
-        catch (Exception)
-        {
+            Logger.Info($"\nCleaner started, settings={JsonSerializer.Serialize(Settings)}");
+
+            _window.Hide();
+            Logger.Clear();
+
+            progress = new ProgressViewModel("Cleaning");
+            progress.Show(_window);
+
+            List<LocalGame> games;
+            var selectedCheckContentTypes = Settings.Cleaner.GetSelectedCheckContentTypes();
+            try
+            {
+                progress.Update("Loading Database");
+                games = await DatabaseUtils.ReadGamesFromDatabases(selectedCheckContentTypes);
+                Logger.Info($"Loading database complete, duration={progress.Duration}", true);
+            }
+            catch (Exception)
+            {
+                progress.Close();
+                _window.TryShow();
+                return;
+            }
+
+            progress.Update("Matching Files");
+            var unmatchedFiles = await ContentUtils.MatchContentToLocalAsync(games, UpdateProgress, selectedCheckContentTypes, Settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported));
+
+            progress.Update("Fixing Files");
+            var fixedFiles = await CleanerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
+
+            progress.Update("Removing Unmatched Files");
+            await CleanerUtils.RemoveUnmatchedAsync(unmatchedFiles, UpdateProgress);
+
+            // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
+            FileUtils.DeleteActiveBackupFolderIfEmpty();
+
+            progress.Update("Preparing Results");
+            await Task.Delay(1);
+            _games = new ObservableCollection<LocalGame>(games);
+
             progress.Close();
-            _window.TryShow();
-            return;
+
+            await ShowResults(fixedFiles, unmatchedFiles, progress.Duration);
         }
-
-        progress.Update("Matching Files");
-        var unmatchedFiles = await ContentUtils.MatchContentToLocalAsync(games, UpdateProgress, selectedCheckContentTypes, Settings.Cleaner.SelectedCheckHitTypes.Contains(HitTypeEnum.Unsupported));
-
-        progress.Update("Fixing Files");
-        var fixedFiles = await CleanerUtils.FixAsync(games, Settings.BackupFolder, UpdateProgress);
-
-        progress.Update("Removing Unmatched Files");
-        await CleanerUtils.RemoveUnmatchedAsync(unmatchedFiles, UpdateProgress);
-
-        // delete empty backup folders - i.e. if there are no files (empty sub-directories are allowed)
-        FileUtils.DeleteActiveBackupFolderIfEmpty();
-
-        progress.Update("Preparing Results");
-        await Task.Delay(1);
-        _games = new ObservableCollection<LocalGame>(games);
-
-        progress.Close();
-
-        await ShowResults(fixedFiles, unmatchedFiles, progress.Duration);
+        catch (UnauthorizedAccessException e)
+        {
+            progress?.Close();
+            Logger.Error(e, "Cleaner");
+            await Notification.ShowWarning(HomeWindow.HomeDialogHost, "Cleaner Was Unsuccessful", "Please check that the folder is not read only and then try again.",
+                $"Error: {e.Message}\nDetails: refer to the log file.. ClrVpin.log");
+            _window.Close();
+        }
 
         void UpdateProgress(string detail, float ratioComplete) => progress.Update(null, ratioComplete, detail);
     }
