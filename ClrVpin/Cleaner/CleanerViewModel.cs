@@ -155,8 +155,8 @@ public class CleanerViewModel : IShowViewModel
         {
             progress?.Close();
             Logger.Error(e, "Cleaner");
-            await Notification.ShowWarning(HomeWindow.HomeDialogHost, "Cleaner Was Unsuccessful", "Please check that the folder is not read only and then try again.",
-                $"Error: {e.Message}\nDetails: refer to the log file.. ClrVpin.log");
+            await Notification.ShowWarning(HomeWindow.HomeDialogHost, "Cleaner Was Unsuccessful", "Access Error: please check that the folder is not read only and then try again.",
+                $"{Logger.GetLogs(1)}", showCloseButton:true);
             _window.Close();
         }
 
