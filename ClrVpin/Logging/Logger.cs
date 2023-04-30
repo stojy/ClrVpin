@@ -115,9 +115,12 @@ namespace ClrVpin.Logging
             return path;
         }
 
-        private static void Add(Level level, string message)
+        private static void Add(Level level, string message, bool sync = false)
         {
-            _dispatch.BeginInvoke(() => Logs.Add(new Log(level, message)));
+            if (!sync)
+                _dispatch.BeginInvoke(() => Logs.Add(new Log(level, message)));
+            else
+                _dispatch.Invoke(() => Logs.Add(new Log(level, message)));
         }
 
         private static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
