@@ -168,7 +168,7 @@ public class ExplorerResultsViewModel
 
         var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
 
-        var roms = await TableUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
+        var roms = await TableRomUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
 
         // update DB
         // - overwrite ALL local game entries whether successful or not
@@ -190,8 +190,42 @@ public class ExplorerResultsViewModel
         progress.Close();
         var (isSuccess, detail) = CreateRomsStatistics(roms, updatedGameCount);
         await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All ROM Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some ROM Names", null, detail));
-        
     }
+    
+    //private async Task GetNames(string type)
+    //{
+    //    var progress = new ProgressViewModel($"Extracting {type} Names");
+    //    progress.Show(Window);
+
+    //    // extract
+    //    var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)).ToList();
+    //    var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
+
+    //    var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
+
+    //    var names = await TableRomUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
+
+    //    // update DB
+    //    // - overwrite ALL local game entries whether successful or not
+    //    progress.Update("Updating Database");
+    //    var updatedGameCount = 0;
+    //    names.ForEach(name =>
+    //    {
+    //        if (!gamesDictionary.TryGetValue(name.file, out var game) || game.Rom == name.name)
+    //            return;
+            
+    //        gamesDictionary[name.file].Rom = name.name;
+    //        updatedGameCount++;
+    //    });
+        
+    //    if (updatedGameCount > 0)
+    //        DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
+
+    //    // display result
+    //    progress.Close();
+    //    var (isSuccess, detail) = CreateRomsStatistics(names, updatedGameCount);
+    //    await (isSuccess ? Notification.ShowSuccess(DialogHostName, $"All {type} Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, $"Failed to Update Some {type} Names", null, detail));
+    //}
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 

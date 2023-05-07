@@ -52,7 +52,7 @@ public static class CliHandler
             return;
         }
 
-        var (_, isSuccess, romName) = TableUtils.GetRom(null, table.FullName, true);
+        var (_, isSuccess, romName) = TableRomUtils.GetRom(null, table.FullName, true);
         if (isSuccess == false)
             ConsoleUtils.Warning("ROM not found in the table script", -2);
         else
