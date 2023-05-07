@@ -151,10 +151,9 @@ public class ExplorerResultsViewModel
         await GetRoms();
     }
 
-    private static async void OverwriteDatabasePups()
+    private async void OverwriteDatabasePups()
     {
-        await Task.Delay(0);
-        //await GetRoms();
+        await GetPups();
     }
 
     private async Task GetRoms()
@@ -188,44 +187,45 @@ public class ExplorerResultsViewModel
 
         // display result
         progress.Close();
-        var (isSuccess, detail) = CreateRomsStatistics(roms, updatedGameCount);
+        var (isSuccess, detail) = CreateNamesStatistics("ROM", roms, updatedGameCount);
         await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All ROM Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some ROM Names", null, detail));
     }
     
-    //private async Task GetNames(string type)
-    //{
-    //    var progress = new ProgressViewModel($"Extracting {type} Names");
-    //    progress.Show(Window);
+    private async Task GetPups()
+    {
+        var progress = new ProgressViewModel("Extracting PUP Names");
+        progress.Show(Window);
 
-    //    // extract
-    //    var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)).ToList();
-    //    var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
+        // extract PUPs
+        var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)).ToList();
+        var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
 
-    //    var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
+        var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
 
-    //    var names = await TableRomUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
+        var pups = await TablePupUtils.GetPupsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
 
-    //    // update DB
-    //    // - overwrite ALL local game entries whether successful or not
-    //    progress.Update("Updating Database");
-    //    var updatedGameCount = 0;
-    //    names.ForEach(name =>
-    //    {
-    //        if (!gamesDictionary.TryGetValue(name.file, out var game) || game.Rom == name.name)
-    //            return;
+        // update DB
+        // - overwrite ALL local game entries whether successful or not
+        progress.Update("Updating Database");
+        var updatedGameCount = 0;
+        pups.ForEach(pup =>
+        {
+            // todo; create a new field?  or create a new DB?
+            if (!gamesDictionary.TryGetValue(pup.file, out var game) || game.Rom == pup.name)
+                return;
             
-    //        gamesDictionary[name.file].Rom = name.name;
-    //        updatedGameCount++;
-    //    });
+            gamesDictionary[pup.file].Rom = pup.name;
+            updatedGameCount++;
+        });
         
-    //    if (updatedGameCount > 0)
-    //        DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
+        if (updatedGameCount > 0)
+            DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
 
-    //    // display result
-    //    progress.Close();
-    //    var (isSuccess, detail) = CreateRomsStatistics(names, updatedGameCount);
-    //    await (isSuccess ? Notification.ShowSuccess(DialogHostName, $"All {type} Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, $"Failed to Update Some {type} Names", null, detail));
-    //}
+        // display result
+        progress.Close();
+        var (isSuccess, detail) = CreateNamesStatistics("PUP", pups, updatedGameCount);
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All PUP Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some PUP Names", null, detail));
+    }
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
@@ -308,22 +308,23 @@ public class ExplorerResultsViewModel
         return (missingCount, staleCount, statistic);
     }
 
-    private static (bool isSuccess, string detail) CreateRomsStatistics(IReadOnlyCollection<(string path, bool? isSuccess, string romName)> roms, int updatedGameCount)
+    private static (bool isSuccess, string detail) CreateNamesStatistics(string type, IReadOnlyCollection<(string path, bool? isSuccess, string name)> items, int updatedGameCount)
     {
-        var successCount = roms.Count(rom => rom.isSuccess == true);
-        var successDetail = CreateNamedPercentageStatistic("Success", successCount, roms.Count);
+        var successCount = items.Count(item => item.isSuccess == true);
+        var successDetail = CreateNamedPercentageStatistic("Success", successCount, items.Count);
 
-        var failedCount = roms.Count(rom => rom.isSuccess == false);
-        var failedDetail = CreateNamedPercentageStatistic("Failed", failedCount, roms.Count);
+        var failedCount = items.Count(item => item.isSuccess == false);
+        var failedDetail = CreateNamedPercentageStatistic("Failed", failedCount, items.Count);
         
-        var skippedCount = roms.Count(rom => rom.isSuccess == null);
-        var skippedDetail = CreateNamedPercentageStatistic("n/a¹", skippedCount, roms.Count);
+        var skippedCount = items.Count(item => item.isSuccess == null);
+        var skippedDetail = CreateNamedPercentageStatistic("n/a¹", skippedCount, items.Count);
         
         var updatedGameCountDetail = CreateNamedCountStatistic("Updated Count", updatedGameCount);
 
-        var detail = new[] { successDetail, failedDetail, skippedDetail, updatedGameCountDetail, "\n¹ PM/EM tables or SS tables without ROM support" }.StringJoin("\n");
+        // todo; customizable disclaimer?
+        var detail = new[] { successDetail, failedDetail, skippedDetail, updatedGameCountDetail, $"\n¹ PM/EM tables or SS tables without {type} support" }.StringJoin("\n");
 
-        Logger.Info($"ROM extraction: success={successCount}, failed={failedCount}, skipped={skippedCount}");
+        Logger.Info($"{type} extraction: success={successCount}, failed={failedCount}, skipped={skippedCount}");
 
         return (failedCount == 0, detail);
     }
