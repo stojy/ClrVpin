@@ -88,7 +88,8 @@ public class FeederViewModel : IShowViewModel
                 FixFeedOptionEnum.UpgradeUrlHttps,
                 FixFeedOptionEnum.WrongManufacturerYear,
                 FixFeedOptionEnum.WrongName,
-                FixFeedOptionEnum.WrongUrlIpdb))
+                FixFeedOptionEnum.WrongUrlIpdb,
+                FixFeedOptionEnum.WrongType))
         {
             _feedFixDuplicateTableOption.IsActive = false;
             _feedFixDuplicateTableOption.IsSupported = false;

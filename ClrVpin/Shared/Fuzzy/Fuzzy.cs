@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ClrVpin.Logging;
+using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using Utils;
 using Utils.Extensions;
@@ -44,7 +45,7 @@ public static class Fuzzy
         Authors = new[] { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99", "balutito", "siggis" };
         string[] language = { "a", "and", "n'", "'n", "n", "the", "en" };
         string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
-        string[] types = { "em", "ss", "pm" };
+        string[] types = { TableType.ElectroMagnetic.ToLower(), TableType.SolidState.ToLower(), TableType.PureMechanical.ToLower() };
         string[] descriptions = { "no leds", "upgrade", "premium" };
         pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(types).Concat(descriptions));
         _wholeWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);

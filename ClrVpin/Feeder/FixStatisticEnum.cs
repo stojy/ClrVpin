@@ -61,6 +61,9 @@ public enum FixStatisticsEnum
     [Description("Wrong Manufacturer/Year")]
     WrongManufacturerYear,
 
+    [Description("Wrong Type")]
+    WrongType,
+
     [Description("Duplicate Table")]
     DuplicateGame
 }

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using ClrVpin.Logging;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Feeder.Vps;
+using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared.Fuzzy;
 using ClrVpin.Shared.Utils;
@@ -306,64 +307,68 @@ public static class FeederFix
                 FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5709", "Stern");
                 break;
             case "Phychedelic (Gottlieb 1970)":
-                WrongName(onlineGame, "Psychedelic");
+                FixWrongName(onlineGame, "Psychedelic");
                 break;
             case "Martian Queen (LTD ) (LTD 0)":
-                WrongName(onlineGame, "Martian Queen");
+                FixWrongName(onlineGame, "Martian Queen");
                 WrongManufacturerYear(onlineGame, "LTD do Brasil Diverses Eletrnicas Ltda", 1981);
                 break;
             case "AC-DC (Stern 2012)":
-                WrongName(onlineGame, "AC/DC (Let There Be Rock Limited Edition)");
+                FixWrongName(onlineGame, "AC/DC (Let There Be Rock Limited Edition)");
                 break;
             case "Hang Glider (Bally ) (Bally 1976)":
-                WrongName(onlineGame, "Hang Glider");
+                FixWrongName(onlineGame, "Hang Glider");
                 break;
             case "Avatar, James Cameron's (Stern 2010)":
-                WrongName(onlineGame, "James Cameron’s Avatar");
+                FixWrongName(onlineGame, "James Cameron’s Avatar");
                 break;
             case "Metallica (Stern 2013)":
-                WrongName(onlineGame, "Metallica (Premium Monsters)");
+                FixWrongName(onlineGame, "Metallica (Premium Monsters)");
                 break;
             case "North Star (Gottlieb ) (Gottlieb 1964)":
-                WrongName(onlineGame, "North Star");
+                FixWrongName(onlineGame, "North Star");
                 break;
             case "Power Play, Bobby Orr's (Bally 1978)":
-                WrongName(onlineGame, "Bobby Orr Power Play");
+                FixWrongName(onlineGame, "Bobby Orr Power Play");
                 break;
             case "Star Trek (Stern 2013)":
-                WrongName(onlineGame, "Star Trek (Enterprise Limited Edition)");
+                FixWrongName(onlineGame, "Star Trek (Enterprise Limited Edition)");
                 break;
             case "JP's Star Trek LE (Stern 2013)": // duplicate with above star trek entry will be merged later on
-                WrongName(onlineGame, "Star Trek (Enterprise Limited Edition)");
+                FixWrongName(onlineGame, "Star Trek (Enterprise Limited Edition)");
                 break;
             case "The Avengers (Stern 2012)":
-                WrongName(onlineGame, "The Avengers (Pro)");
+                FixWrongName(onlineGame, "The Avengers (Pro)");
                 break;
             case "Star Wars - The Empire Strikes Back (Hankin 1980)":
-                WrongName(onlineGame, "The Empire Strikes Back");
+                FixWrongName(onlineGame, "The Empire Strikes Back");
                 break;
             case "The Walking Dead (Stern 2014)":
-                WrongName(onlineGame, "The Walking Dead (Limited Edition)");
+                FixWrongName(onlineGame, "The Walking Dead (Limited Edition)");
                 break;
             case "JP's The Walking Dead (Stern 2014)":
-                WrongName(onlineGame, "The Walking Dead (Pro)");
+                FixWrongName(onlineGame, "The Walking Dead (Pro)");
                 break;
             case "Big Indian (Gottlieb 1974)":
                 FixWrongUrlIpdb(onlineGame, "https://www.ipdb.org/machine.cgi?id=257");
                 break;
             case "JP's Captain Fantastic (Bally 1976)":
-                WrongName(onlineGame, "Capt. Fantastic and The Brown Dirt Cowboy");
+                FixWrongName(onlineGame, "Capt. Fantastic and The Brown Dirt Cowboy");
                 break;
             case "Captain NEMO Dives Again (Quetzal Pinball 2015)":
-                WrongName(onlineGame, "Captain Nemo");
+                FixWrongName(onlineGame, "Captain Nemo");
                 break;
             case "Saloon (Taito do Brasil 1978 1978)":
                 WrongManufacturerYear(onlineGame, "Taito do Brasil");
                 break;
+            case "Night Rider (Bally 1976)":
+                // VPX tables are the 1977 SS version
+                FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=4497", "Bally", 1977, tableType: TableType.SolidState);
+                break;
         }
     }
 
-    private static void FixGame(OnlineGameBase onlineGame, string ipdbUrl, string manufacturer, int? year = null, string name = null)
+    private static void FixGame(OnlineGameBase onlineGame, string ipdbUrl, string manufacturer, int? year = null, string name = null, string tableType = null)
     {
         // assign correct IPDB url and manufacturer
         // - if the game already exists, then it will be picked up later as a duplicate
@@ -372,7 +377,10 @@ public static class FeederFix
         WrongManufacturerYear(onlineGame, manufacturer, year);
 
         if (name != null)
-            WrongName(onlineGame, name);
+            FixWrongName(onlineGame, name);
+
+        if (tableType != null)
+            FixTableType(onlineGame, tableType);
     }
 
     private static void FixWrongUrlContent(OnlineGame onlineGame)
@@ -518,12 +526,12 @@ public static class FeederFix
         onlineGame.IpdbUrl = null;
     }
 
-    private static void WrongName(OnlineGameBase onlineGame, string name)
+    private static void FixWrongName(OnlineGameBase onlineGame, string name)
     {
         if (!IsActive(FixFeedOptionEnum.WrongName))
             return;
 
-        LogFixed(onlineGame, FixStatisticsEnum.WrongName, $"new name={name}");
+        LogFixed(onlineGame, FixStatisticsEnum.WrongName, $"old name={onlineGame.Name}, new name={name}");
         onlineGame.Name = name;
     }
 
@@ -535,6 +543,15 @@ public static class FeederFix
         LogFixed(onlineGame, FixStatisticsEnum.WrongManufacturerYear, $"old manufacturer={onlineGame.Manufacturer}, new manufacturer={manufacturer}");
         onlineGame.Manufacturer = manufacturer;
         onlineGame.Year = year ?? onlineGame.Year;
+    }
+
+    private static void FixTableType(OnlineGameBase onlineGame, string tableType)
+    {
+        if (!IsActive(FixFeedOptionEnum.WrongType))
+            return;
+
+        LogFixed(onlineGame, FixStatisticsEnum.WrongType, $"old type={onlineGame.Type}, new type={tableType}");
+        onlineGame.Type = tableType;
     }
 
     private static bool IsActive(FixFeedOptionEnum option) => Model.Settings.Feeder.SelectedFeedFixOptions.Contains(option);
