@@ -163,6 +163,7 @@ namespace ClrVpin.Models.Settings
             new() {Enum = FixFeedOptionEnum.WrongUrlContent, Tip = "Fix content URL, e.g. vpuniverse.com URL path"},
             new() {Enum = FixFeedOptionEnum.WrongName, Tip = "Fix table name"},
             new() {Enum = FixFeedOptionEnum.WrongManufacturerYear, Tip = "Fix manufacturer name"},
+            new() {Enum = FixFeedOptionEnum.WrongType, Tip = "Fix table type, i.e. PM, EM, or SS"},
             new() {Enum = FixFeedOptionEnum.DuplicateTable, Tip = "Merge duplicate table entries based on the IPDB URL (n/a for original tables)"},
         };
 

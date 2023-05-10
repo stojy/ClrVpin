@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClrVpin.Models.Shared;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,7 +30,9 @@ public static class TableRomUtils
 
     public static (string file, bool? isSuccess, string name) GetRom(string type, string path, bool skipLogging = false)
     {
-        return TableUtils.GetName(path, "ROM", fileName => type.In("PM", "EM") || _solidStateTablesWithoutRomSupport.Contains(fileName), GetRomName, skipLogging);
+        //fix tables incorrectly from feed.. incorrectly identified as without rom
+            
+        return TableUtils.GetName(path, "ROM", fileName => type.In(TableType.PureMechanical, TableType.ElectroMagnetic) || _solidStateTablesWithoutRomSupport.Contains(fileName), GetRomName, skipLogging);
     }
 
     private static string GetRomName(string script)

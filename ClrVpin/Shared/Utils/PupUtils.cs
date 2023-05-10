@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
+using ClrVpin.Models.Shared;
 using OpenMcdf;
 using Utils.Extensions;
 
@@ -36,7 +37,7 @@ public static class PupUtils
         var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(path);
 
         // skip checking ROM if the table type doesn't support a ROM
-        if (type.In("PM", "EM") || _solidStateTablesWithoutRomSupport.Contains(fileName))
+        if (type.In(TableType.PureMechanical, TableType.ElectroMagnetic) || _solidStateTablesWithoutRomSupport.Contains(fileName))
             return (fileNameWithoutExtension, null, null);
 
         var script = GetScript(path);

@@ -18,6 +18,7 @@ namespace ClrVpin.Models.Feeder
         [Description("Wrong URL - IPDB")] WrongUrlIpdb,
         [Description("Wrong Name")] WrongName,
         [Description("Wrong Manufacturer/Year")] WrongManufacturerYear,
+        [Description("Wrong Type")] WrongType,
         [Description("Duplicate Table")] DuplicateTable,
     }
 }
