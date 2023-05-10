@@ -365,6 +365,9 @@ public static class FeederFix
                 // VPX tables are the 1977 SS version
                 FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=4497", "Bally", 1977, tableType: TableType.SolidState);
                 break;
+            case "Rambo (Original 2021)":
+                FixTableType(onlineGame, TableType.SolidState);
+                break;
         }
     }
 
