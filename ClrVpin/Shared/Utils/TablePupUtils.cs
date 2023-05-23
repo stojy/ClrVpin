@@ -4,11 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ClrVpin.Logging;
 using Utils.Extensions;
 
 namespace ClrVpin.Shared.Utils;
 
-public class TablePupUtils
+public static class TablePupUtils
 {
     public static async Task<List<(string file, bool? isSuccess, string name)>> GetPupsAsync(IEnumerable<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
     {
@@ -23,59 +24,84 @@ public class TablePupUtils
         return tableFileDetails.Select((tableFile, i) =>
         {
             updateAction(Path.GetFileName(tableFile.Path), (i + 1) / (float)totalFiles);
-            return GetPup(tableFile.Path);
+            return GetPup(tableFile.Path, true);
         }).ToList();
     }
 
     private static (string file, bool? isSuccess, string name) GetPup(string path, bool skipLogging = false)
     {
-        return TableUtils.GetName(path, "PUP", _ => false, GetPupName, skipLogging);
+        return TableUtils.GetName(path, "PuP", _ => false, script => GetPupName(script, path), skipLogging);
     }
 
-    private static string GetPupName(string script)
+    private static (string name, bool? isSuccess) GetPupName(string script, string path)
     {
-        // todo; implement for PUP
-
-        // find gameName usage
-        var match = _gameNameUsageRegex.Match(script);
+        // find pup variable name assignment
+        var match = _pupClassNameRegex.Match(script);
         if (!match.Success)
-            return null;
-        var gameName = match.Groups["gameName"].Value;
+            return (null, null);
+        var pupClassName = match.Groups["pupVariableName"].Value;
 
-        // if gameName is enclosed in quotes, then the content IS the romName
-        // - e.g. gameName="adam"
-        if (gameName.StartsWith('"') && gameName.EndsWith("\""))
-            return gameName.TrimStart('\"').TrimEnd('\"');
+        // find pup game variable name
+        match = pupClassName.In(_knownPupClassNames) ? _pupGameVariableNameRegex.Match(script) : Regex.Match(script, GetPupGameVariableNamesPattern(pupClassName), RegexOptions.Multiline);
+        if (!match.Success)
+        {
+            Logger.Warn($"PuP: Failed to find game name table: '{Path.GetFileName(path)}'");
+            return (null, false);
+        }
+        var pupGameVariableName = match.Groups["pupGameVariableName"].Value;
 
-        // gameName is a variable name that references the romName
+        // if pupGameVariableName is enclosed in quotes, then the content IS the pup folder
+        // - e.g. PuPlayer.B2SInit "","gog_2020"
+        if (pupGameVariableName.StartsWith('"') && pupGameVariableName.EndsWith("\""))
+        {
+            var name = pupGameVariableName.TrimStart('\"').TrimEnd('\"');
+            return (name, true);
+        }
+
+        // pupGameVariableName is a variable name that references the pup folder
         // - find the variable assignment based on the variable name..
         //   1. known/common variable name - use the compiled RegEx to improve lookup performance
-        //      - e.g. cGameName=cGameName... cGameName="adam"
+        //      - e.g. cPuPPack="adam"
         //   2. unknown/uncommon variable name - create RegEx on demand
-        //      - e.g. cGameName=cGameName... cGameName="adam"
+        //      - e.g. PuPPack_folder="adam"
         // - loop through the matches looking for the first match that is NOT commented out.. done via code because RegEx was too slow/complicated :(
-        match = gameName.ToLower().In(_knownGameNameVariables) ? _gameNameKnownVariablesRegex.Match(script) : Regex.Match(script, GetGameNameVariablesPattern(gameName), RegexOptions.Multiline);
-        var (isCommented, romName) = TableRomUtils.GetUncommentedRomName(match);
+        match = pupGameVariableName.In(_knownPupGameVariableNames) ? _pupGameNameRegex.Match(script) : Regex.Match(script, GetPupGameNamePattern(pupGameVariableName), RegexOptions.Multiline);
+        var (isCommented, pupName) = GetUncommentedPupName(match);
         while (isCommented)
         {
             match = match.NextMatch();
-            (isCommented, romName) = TableRomUtils.GetUncommentedRomName(match);
+            (isCommented, pupName) = GetUncommentedPupName(match);
         }
-        return romName;
+        return (pupName, pupName != null);
     }
 
-    // find GameName usage
-    // - https://regex101.com/r/pmseXc/5
-    // - applying a 0 to 1000 char maximum limit between Controller and GameName..
-    //   - RegEx performance optimisation
-    //   - workaround where the word 'Controller' and 'GameName' both appear in a non-vPinMame context, e.g. Mephisto (Cirsa 1987).vpx
-    //private static readonly Regex _gameNameUsageRegex = new(@"Controller(?:.|\n){0,100}?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
-    //private static readonly Regex _gameNameUsageRegex = new(@"With Controller(.|\n)*?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
-    private static readonly Regex _gameNameUsageRegex = new(@"Controller(.|\n){0,1000}\.\s*GameName\s*?\=\s*(?<gameName>.*?)[\s\:]", RegexOptions.Compiled | RegexOptions.Multiline);
-    
-    // find GameName variable assignment
-    // - https://regex101.com/r/VDUvva/6
-    private static string GetGameNameVariablesPattern(params string[] gameNames) => @$"^(?<preamble>.*?)(?i:{gameNames.StringJoin("|")})\s*?\=\s*\""(?<romName>\w*?)\""";
-    private static readonly string[] _knownGameNameVariables = { "cgamename", "gamename" };
-    private static readonly Regex _gameNameKnownVariablesRegex = new(GetGameNameVariablesPattern(_knownGameNameVariables), RegexOptions.Compiled | RegexOptions.Multiline);
+    private static (bool isCommented, string romName) GetUncommentedPupName(Match match)
+    {
+        if (!match.Success)
+            return (false, null);
+        if (match.Groups["preamble"].Value.Contains("'"))
+            return (true, null);
+
+        return (false, match.Groups["pupName"].Value);
+    }
+
+    // find pup class name
+    // - https://regex101.com/r/P8EwEU/2
+    // - e.g. Set PuPlayer = CreateObject("PinUpPlayer.PinDisplay")
+    private static readonly Regex _pupClassNameRegex = new(@"Set\s*(?<pupClassName>\w*)\s*=\s*CreateObject\(\""PinUpPlayer.PinDisplay\""\)", RegexOptions.Compiled | RegexOptions.Multiline);
+
+    // find pup game name variable name
+    // - https://regex101.com/r/zrJElD/2
+    // - e.g. PuPlayer.B2SInit "", cGameName
+    private static string GetPupGameVariableNamesPattern(params string[] pupClassNames) => @$"({pupClassNames.StringJoin("|")}).B2SInit.*,\s*(?<pupGameVariableName>[\""\w]*)\s*";
+    private static readonly string[] _knownPupClassNames = { "PuPlayer"};
+    private static readonly Regex _pupGameVariableNameRegex = new(GetPupGameVariableNamesPattern(_knownPupClassNames), RegexOptions.Compiled | RegexOptions.Multiline);
+
+    // find pup game name assignment
+    // - https://regex101.com/r/x4aPlv/2
+    // - e.g. Const cGameName = "b66_orig"
+    //        cPuPPack = "smanve_101c"
+    private static string GetPupGameNamePattern(params string[] pupVariableNames) => @$"^(?<preamble>.*)(?i:{pupVariableNames.StringJoin("|")})\s*?\=\s*\""(?<pupName>.*?)\""";
+    private static readonly string[] _knownPupGameVariableNames = { "cPuPPack" };
+    private static readonly Regex _pupGameNameRegex = new(GetPupGameNamePattern(_knownPupGameVariableNames), RegexOptions.Compiled | RegexOptions.Multiline);
 }

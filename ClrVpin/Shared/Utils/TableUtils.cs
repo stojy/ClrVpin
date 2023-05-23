@@ -12,7 +12,7 @@ public record TableFileDetail(string Type, string Path);
 
 public static class TableUtils
 {
-    internal static (string file, bool? isSuccess, string name) GetName(string path, string getType, Func<string, bool> skipCheckFunc, Func<string, string> getNameFunc, bool skipLogging = false)
+    internal static (string file, bool? isSuccess, string name) GetName(string path, string getType, Func<string, bool> skipCheckFunc, Func<string, (string name, bool? isSuccess)> getNameFunc, bool skipLogging = false)
     {
         var fileName = Path.GetFileName(path);
         var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(path);
@@ -21,18 +21,18 @@ public static class TableUtils
             return (fileNameWithoutExtension, null, null);
 
         var script = GetScript(path);
-        var name = getNameFunc(script);
+        var (name, isSuccess) = getNameFunc(script);
 
         if (!skipLogging)
         {
             var message = $"Detected {getType}: {name ?? "FAILED",-12} tableFile={fileName}";
-            if (name == null)
+            if (name == null && isSuccess == false) // don't log entry if it's not an error, e.g. files that don't support PuP/ROM are not errors
                 Logger.Warn(message);
             else
                 Logger.Info(message);
         }
 
-        return (fileNameWithoutExtension, name != null, name);
+        return (fileNameWithoutExtension, isSuccess, name);
     }
 
     private static string GetScript(string vpxFile)

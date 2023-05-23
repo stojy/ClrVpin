@@ -72,8 +72,6 @@ public class AccessorTest
     [Test]
     public void TestNonMemberClass()
     { 
-        var testClass = new TestClass();
-        
         Assert.That(() => new Accessor<string>(() => TestClass.GetString()), Throws.Exception.TypeOf<ArgumentException>().With.Message.EqualTo("expression must be return a field or property"));
     }
 }
