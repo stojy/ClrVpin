@@ -5,6 +5,26 @@ namespace Utils.Tests;
 
 public class AccessorTest
 {
+    private class TestClass
+    {
+        public string Property { get; set; }
+        public string Field;
+        public static string GetString() => "blah";
+    }
+
+    [Test]
+    public void TestAccessor()
+    {
+        var testClass = new TestClass { Property = "a" };
+
+        var accessor = new Accessor<string>(() => testClass.Property);
+        Assert.That(accessor.Get(), Is.EqualTo("a"));
+
+        accessor.Set("b");
+        Assert.That(testClass.Property, Is.EqualTo("b"));
+        Assert.That(accessor.Get(), Is.EqualTo("b"));
+    }
+    
     [Test]
     public void TestProperty()
     {
@@ -54,17 +74,6 @@ public class AccessorTest
     { 
         var testClass = new TestClass();
         
-        Assert.That(() => new Accessor<string>(() => testClass.GetString()), Throws.Exception.TypeOf<ArgumentException>().With.Message.EqualTo("expression must be return a field or property"));
-    }
-
-
-    private class TestClass
-    {
-        // ReSharper disable once PropertyCanBeMadeInitOnly.Local
-        public string Property { get; set; }
-
-        public string Field;
-
-        public string GetString() => "blah";
+        Assert.That(() => new Accessor<string>(() => TestClass.GetString()), Throws.Exception.TypeOf<ArgumentException>().With.Message.EqualTo("expression must be return a field or property"));
     }
 }
