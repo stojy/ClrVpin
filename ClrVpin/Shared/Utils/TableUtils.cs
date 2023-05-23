@@ -26,8 +26,12 @@ public static class TableUtils
         if (!skipLogging)
         {
             var message = $"Detected {getType}: {name ?? "FAILED",-12} tableFile={fileName}";
-            if (name == null && isSuccess == false) // don't log entry if it's not an error, e.g. files that don't support PuP/ROM are not errors
-                Logger.Warn(message);
+            if (name == null)
+            {
+                // don't log entry if it's not an error, e.g. files that don't support PuP/ROM are not errors
+                if (isSuccess == false)
+                    Logger.Warn(message);
+            } 
             else
                 Logger.Info(message);
         }

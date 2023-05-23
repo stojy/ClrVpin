@@ -24,7 +24,7 @@ public static class TablePupUtils
         return tableFileDetails.Select((tableFile, i) =>
         {
             updateAction(Path.GetFileName(tableFile.Path), (i + 1) / (float)totalFiles);
-            return GetPup(tableFile.Path, true);
+            return GetPup(tableFile.Path);
         }).ToList();
     }
 
@@ -44,10 +44,7 @@ public static class TablePupUtils
         // find pup game variable name
         match = pupClassName.In(_knownPupClassNames) ? _pupGameVariableNameRegex.Match(script) : Regex.Match(script, GetPupGameVariableNamesPattern(pupClassName), RegexOptions.Multiline);
         if (!match.Success)
-        {
-            Logger.Warn($"PuP: Failed to find game name table: '{Path.GetFileName(path)}'");
             return (null, false);
-        }
         var pupGameVariableName = match.Groups["pupGameVariableName"].Value;
 
         // if pupGameVariableName is enclosed in quotes, then the content IS the pup folder
