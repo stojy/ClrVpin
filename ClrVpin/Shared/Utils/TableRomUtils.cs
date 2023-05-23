@@ -1,10 +1,10 @@
-﻿using ClrVpin.Models.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ClrVpin.Models.Shared;
 using Utils.Extensions;
 
 namespace ClrVpin.Shared.Utils;
@@ -15,6 +15,11 @@ public static class TableRomUtils
     {
         // run on a separate thread to avoid blocking the caller thread (e.g. UI) since this is a potentially slow operation
         return await Task.Run(() => GetRoms(tableFileDetails.ToList(), updateAction));
+    }
+
+    public static (string file, bool? isSuccess, string name) GetRom(string type, string path, bool skipLogging = false)
+    {
+        return TableUtils.GetName(path, "ROM", fileName => type.In(TableType.PureMechanical, TableType.ElectroMagnetic) || _solidStateTablesWithoutRomSupport.Contains(fileName), GetRomName, skipLogging);
     }
 
     private static List<(string file, bool? isSuccess, string name)> GetRoms(ICollection<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
@@ -28,54 +33,55 @@ public static class TableRomUtils
         }).ToList();
     }
 
-    public static (string file, bool? isSuccess, string name) GetRom(string type, string path, bool skipLogging = false)
-    {
-        //fix tables incorrectly from feed.. incorrectly identified as without rom
-            
-        return TableUtils.GetName(path, "ROM", fileName => type.In(TableType.PureMechanical, TableType.ElectroMagnetic) || _solidStateTablesWithoutRomSupport.Contains(fileName), GetRomName, skipLogging);
-    }
-
-    private static string GetRomName(string script)
+    private static (string name, bool? isSuccess) GetRomName(string script)
     {
         // find gameName usage
         var match = _gameNameUsageRegex.Match(script);
         if (!match.Success)
-            return null;
+            return (null, false);
         var gameName = match.Groups["gameName"].Value;
 
         // if gameName is enclosed in quotes, then the content IS the romName
         // - e.g. gameName="adam"
         if (gameName.StartsWith('"') && gameName.EndsWith("\""))
-            return gameName.TrimStart('\"').TrimEnd('\"');
+        {
+            var name = gameName.TrimStart('\"').TrimEnd('\"');
+            return (name, true);
+        }
 
         // gameName is a variable name that references the romName
         // - find the variable assignment based on the variable name..
         //   1. known/common variable name - use the compiled RegEx to improve lookup performance
-        //      - e.g. cGameName=cGameName... cGameName="adam"
+        //      - e.g. cGameName="adam"
         //   2. unknown/uncommon variable name - create RegEx on demand
-        //      - e.g. cGameName=cGameName... cGameName="adam"
+        //      - e.g. cGameName="adam"
         // - loop through the matches looking for the first match that is NOT commented out.. done via code because RegEx was too slow/complicated :(
-        match = gameName.ToLower().In(_knownGameNameVariables) ? _gameNameKnownVariablesRegex.Match(script) : Regex.Match(script, GetGameNameVariablesPattern(gameName), RegexOptions.Multiline);
+        match = gameName.ToLower().In(_knownGameNameVariables) ? _gameNameRegex.Match(script) : Regex.Match(script, GetGameNameVariablesPattern(gameName), RegexOptions.Multiline);
         var (isCommented, romName) = GetUncommentedRomName(match);
         while (isCommented)
         {
             match = match.NextMatch();
             (isCommented, romName) = GetUncommentedRomName(match);
         }
-        return romName;
+
+        return (romName, romName != null);
     }
 
-    public static (bool isCommented, string romName) GetUncommentedRomName(Match match)
-        {
-            if (!match.Success)
-                return (false, null);
-            if (match.Groups["preamble"].Value.Contains("'"))
-                return (true, null);
-        
-            return (false, match.Groups["romName"].Value);
-        }
+    private static (bool isCommented, string romName) GetUncommentedRomName(Match match)
+    {
+        if (!match.Success)
+            return (false, null);
+        if (match.Groups["preamble"].Value.Contains("'"))
+            return (true, null);
 
-        // solid state tables that are known to be implemented without a ROM
+        return (false, match.Groups["romName"].Value);
+    }
+
+    // find GameName variable assignment
+    // - https://regex101.com/r/VDUvva/6
+    private static string GetGameNameVariablesPattern(params string[] gameNames) => @$"^(?<preamble>.*?)(?i:{gameNames.StringJoin("|")})\s*?\=\s*\""(?<romName>\w*?)\""";
+
+    // solid state tables that are known to be implemented without a ROM
 
     private static readonly HashSet<string> _solidStateTablesWithoutRomSupport = new(new[]
     {
@@ -124,10 +130,6 @@ public static class TableRomUtils
     //private static readonly Regex _gameNameUsageRegex = new(@"Controller(?:.|\n){0,100}?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
     //private static readonly Regex _gameNameUsageRegex = new(@"With Controller(.|\n)*?\.\s*GameName\s*?\=\s*(?<gameName>.*?)\s", RegexOptions.Compiled | RegexOptions.Multiline);
     private static readonly Regex _gameNameUsageRegex = new(@"Controller(.|\n){0,1000}\.\s*GameName\s*?\=\s*(?<gameName>.*?)[\s\:]", RegexOptions.Compiled | RegexOptions.Multiline);
-    
-    // find GameName variable assignment
-    // - https://regex101.com/r/VDUvva/6
-    private static string GetGameNameVariablesPattern(params string[] gameNames) => @$"^(?<preamble>.*?)(?i:{gameNames.StringJoin("|")})\s*?\=\s*\""(?<romName>\w*?)\""";
     private static readonly string[] _knownGameNameVariables = { "cgamename", "gamename" };
-    private static readonly Regex _gameNameKnownVariablesRegex = new(GetGameNameVariablesPattern(_knownGameNameVariables), RegexOptions.Compiled | RegexOptions.Multiline);
+    private static readonly Regex _gameNameRegex = new(GetGameNameVariablesPattern(_knownGameNameVariables), RegexOptions.Compiled | RegexOptions.Multiline);
 }

@@ -187,16 +187,16 @@ public class ExplorerResultsViewModel
 
         // display result
         progress.Close();
-        var (isSuccess, detail) = CreateNamesStatistics("ROM", roms, updatedGameCount);
+        var (isSuccess, detail) = CreateNamesStatistics("ROM", roms, updatedGameCount, "\n¹ PM/EM tables or SS tables without ROM support");
         await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All ROM Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some ROM Names", null, detail));
     }
     
     private async Task GetPups()
     {
-        var progress = new ProgressViewModel("Extracting PUP Names");
+        var progress = new ProgressViewModel("Extracting PuP Names");
         progress.Show(Window);
 
-        // extract PUPs
+        // extract PuPs
         var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)).ToList();
         var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
 
@@ -218,13 +218,13 @@ public class ExplorerResultsViewModel
             updatedGameCount++;
         });
         
-        if (updatedGameCount > 0)
-            DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
+        //if (updatedGameCount > 0)
+        //    DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
 
         // display result
         progress.Close();
-        var (isSuccess, detail) = CreateNamesStatistics("PUP", pups, updatedGameCount);
-        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All PUP Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some PUP Names", null, detail));
+        var (isSuccess, detail) = CreateNamesStatistics("PuP", pups, updatedGameCount, "\n¹ tables without PuP support");
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All PuP Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some PuP Names", null, detail));
     }
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
@@ -308,7 +308,7 @@ public class ExplorerResultsViewModel
         return (missingCount, staleCount, statistic);
     }
 
-    private static (bool isSuccess, string detail) CreateNamesStatistics(string type, IReadOnlyCollection<(string path, bool? isSuccess, string name)> items, int updatedGameCount)
+    private static (bool isSuccess, string detail) CreateNamesStatistics(string type, IReadOnlyCollection<(string path, bool? isSuccess, string name)> items, int updatedGameCount, string disclaimer)
     {
         var successCount = items.Count(item => item.isSuccess == true);
         var successDetail = CreateNamedPercentageStatistic("Success", successCount, items.Count);
@@ -321,8 +321,7 @@ public class ExplorerResultsViewModel
         
         var updatedGameCountDetail = CreateNamedCountStatistic("Updated Count", updatedGameCount);
 
-        // todo; customizable disclaimer?
-        var detail = new[] { successDetail, failedDetail, skippedDetail, updatedGameCountDetail, $"\n¹ PM/EM tables or SS tables without {type} support" }.StringJoin("\n");
+        var detail = new[] { successDetail, failedDetail, skippedDetail, updatedGameCountDetail, disclaimer }.StringJoin("\n");
 
         Logger.Info($"{type} extraction: success={successCount}, failed={failedCount}, skipped={skippedCount}");
 
