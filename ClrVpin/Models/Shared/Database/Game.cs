@@ -3,6 +3,7 @@ using PropertyChanged;
 
 namespace ClrVpin.Models.Shared.Database;
 
+// unlike PinballX, PinballY will NOT discard unknown properties (e.g. newer properties that are not supported)
 [AddINotifyPropertyChangedInterface]
 public class Game
 {
@@ -43,21 +44,28 @@ public class Game
     // - refer https://stackoverflow.com/a/246359/227110
     public bool ShouldSerializeRating() => Rating.HasValue;
 
+    // NOT supported by PinballX "Game Manager" - the value will be discarded when the file is written
     [XmlElement("players")]
     public string Players { get; set; }
 
     [XmlElement("comment")]
     public string Comment { get; set; }
 
+    // NOT supported by PinballX "Game Manager" - the value will be discarded when the file is written
+    // NOT supported by PinballX "Database Manager" - the value will be discarded when the file is written
     [XmlElement("theme")]
     public string Theme { get; set; }
 
+    // NOT supported by PinballX "Game Manager" - the value will be discarded when the file is written
     [XmlElement("author")]
     public string Author { get; set; }
 
+    // NOT supported by PinballX "Game Manager" - the value will be discarded when the file is written
     [XmlElement("version")]
     public string Version { get; set; }
 
+    // NOT supported by PinballX "Game Manager" - the value will be discarded when the file is written
+    // NOT supported by PinballX "Database Manager" - the value will be discarded when the file is written
     [XmlElement("ipdbid")]
     public string IpdbId { get; set; }
 
@@ -65,11 +73,18 @@ public class Game
     [XmlElement("ipdbNr")]
     public string IpdbNr { get; set; }
 
+    // NOT supported by PinballX "Game Manager" - the value will be discarded when the file is written
     [XmlElement("dateadded")]
     public string DateAddedString { get; set; }
 
+    // NOT supported by PinballX "Game Manager" - the value will be discarded when the file is written
     [XmlElement("datemodified")]
     public string DateModifiedString { get; set; }
+
+    // NOT supported by PinballX "Game Manager" - the value will be discarded when the file is written
+    // NOT supported by PinballX "Database Manager" - the value will be discarded when the file is written
+    [XmlElement("pup")]
+    public string Pup{ get; set; }
 
     [XmlIgnore]
     public string DatabaseFile { get; set; }
