@@ -41,10 +41,15 @@ public static class TablePupUtils
             return (null, null);
         var pupClassName = match.Groups["pupVariableName"].Value;
 
-        // find pup game variable name
-        match = pupClassName.In(_knownPupClassNames) ? _pupGameVariableNameRegex.Match(script) : Regex.Match(script, GetPupGameVariableNamesPattern(pupClassName), RegexOptions.Multiline);
+        // find pup game variable name - from B2SInit (the newer API usage)
+        match = pupClassName.In(_knownPupClassNames) ? _pupGameVariableNameB2SInitRegex.Match(script) : Regex.Match(script, GetPupGameVariableNamesB2SInitPattern(pupClassName), RegexOptions.Multiline);
         if (!match.Success)
-            return (null, false);
+        {
+            // find pup game variable name - from Init (the older API usage)
+            match = pupClassName.In(_knownPupClassNames) ? _pupGameVariableNameInitRegex.Match(script) : Regex.Match(script, GetPupGameVariableNamesInitPattern(pupClassName), RegexOptions.Multiline);
+            if (!match.Success)
+                return (null, false);
+        }
         var pupGameVariableName = match.Groups["pupGameVariableName"].Value;
 
         // if pupGameVariableName is enclosed in quotes, then the content IS the pup folder
@@ -87,12 +92,19 @@ public static class TablePupUtils
     // - e.g. Set PuPlayer = CreateObject("PinUpPlayer.PinDisplay")
     private static readonly Regex _pupClassNameRegex = new(@"Set\s*(?<pupClassName>\w*)\s*=\s*CreateObject\(\""PinUpPlayer.PinDisplay\""\)", RegexOptions.Compiled | RegexOptions.Multiline);
 
-    // find pup game name variable name
+    private static readonly string[] _knownPupClassNames = {"PuPlayer"};
+
+    // find pup game name variable name from B2SInit
     // - https://regex101.com/r/zrJElD/2
     // - e.g. PuPlayer.B2SInit "", cGameName
-    private static string GetPupGameVariableNamesPattern(params string[] pupClassNames) => @$"({pupClassNames.StringJoin("|")}).B2SInit.*,\s*(?<pupGameVariableName>[\""\w]*)\s*";
-    private static readonly string[] _knownPupClassNames = { "PuPlayer"};
-    private static readonly Regex _pupGameVariableNameRegex = new(GetPupGameVariableNamesPattern(_knownPupClassNames), RegexOptions.Compiled | RegexOptions.Multiline);
+    private static string GetPupGameVariableNamesB2SInitPattern(params string[] pupClassNames) => @$"({pupClassNames.StringJoin("|")}).B2SInit.*,\s*(?<pupGameVariableName>[\""\w]*)\s*";
+    private static readonly Regex _pupGameVariableNameB2SInitRegex = new(GetPupGameVariableNamesB2SInitPattern(_knownPupClassNames), RegexOptions.Compiled | RegexOptions.Multiline);
+
+    // find pup game name variable name from Init
+    // - https://regex101.com/r/O8ZMF5/1
+    // - e.g. PuPlayer.Init pBackglass, cGameName
+    private static string GetPupGameVariableNamesInitPattern(params string[] pupClassNames) => @$"({pupClassNames.StringJoin("|")}).Init .*,\s*(?<pupGameVariableName>[\""\w]+)\s*";
+    private static readonly Regex _pupGameVariableNameInitRegex = new(GetPupGameVariableNamesInitPattern(_knownPupClassNames), RegexOptions.Compiled | RegexOptions.Multiline);
 
     // find pup game name assignment
     // - https://regex101.com/r/x4aPlv/2
