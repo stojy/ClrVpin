@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ClrVpin.Logging;
 using Utils.Extensions;
 
 namespace ClrVpin.Shared.Utils;
@@ -30,10 +29,10 @@ public static class TablePupUtils
 
     private static (string file, bool? isSuccess, string name) GetPup(string path, bool skipLogging = false)
     {
-        return TableUtils.GetName(path, "PuP", _ => false, script => GetPupName(script, path), skipLogging);
+        return TableUtils.GetName(path, "PuP", _ => false, GetPupName, skipLogging);
     }
 
-    private static (string name, bool? isSuccess) GetPupName(string script, string path)
+    private static (string name, bool? isSuccess) GetPupName(string script)
     {
         // find pup variable name assignment
         var match = _pupClassNameRegex.Match(script);
