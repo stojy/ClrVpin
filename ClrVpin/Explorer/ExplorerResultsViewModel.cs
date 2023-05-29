@@ -163,15 +163,13 @@ public class ExplorerResultsViewModel
 
         // extract ROMs
         var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)).ToList();
-        var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
-
         var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
-
         var roms = await TableRomUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
 
         // update DB
         // - overwrite ALL local game entries whether successful or not
         progress.Update("Updating Database");
+        var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
         var updatedGameCount = 0;
         roms.ForEach(rom =>
         {
@@ -187,8 +185,8 @@ public class ExplorerResultsViewModel
 
         // display result
         progress.Close();
-        var (isSuccess, detail) = CreateNamesStatistics("ROM", roms, updatedGameCount, "\n¹ PM/EM tables or SS tables without ROM support");
-        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All ROM Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some ROM Names", null, detail));
+        var (isSuccess, detail) = CreateNamesStatistics("ROM", roms, updatedGameCount, "\n¹ Tables without ROM support, e.g. PM, EM and some SS without VPinMame");
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "Success", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Detect Some Table ROM Names", null, detail));
     }
     
     private async Task GetPups()
@@ -198,33 +196,30 @@ public class ExplorerResultsViewModel
 
         // extract PuPs
         var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)).ToList();
-        var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
-
-        var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
-
+        var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(null, tableFile.LocalGame.Content.Hits.First().Path));
         var pups = await TablePupUtils.GetPupsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
 
         // update DB
         // - overwrite ALL local game entries whether successful or not
         progress.Update("Updating Database");
+        var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
         var updatedGameCount = 0;
         pups.ForEach(pup =>
         {
-            // todo; create a new field?  or create a new DB?
-            if (!gamesDictionary.TryGetValue(pup.file, out var game) || game.Rom == pup.name)
+            if (!gamesDictionary.TryGetValue(pup.file, out var game) || game.Pup == pup.name)
                 return;
             
-            gamesDictionary[pup.file].Rom = pup.name;
+            gamesDictionary[pup.file].Pup = pup.name;
             updatedGameCount++;
         });
         
-        //if (updatedGameCount > 0)
-        //    DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
+        if (updatedGameCount > 0)
+            DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
 
         // display result
         progress.Close();
-        var (isSuccess, detail) = CreateNamesStatistics("PuP", pups, updatedGameCount, "\n¹ tables without PuP support");
-        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "All PuP Names Updated", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Update Some PuP Names", null, detail));
+        var (isSuccess, detail) = CreateNamesStatistics("PuP", pups, updatedGameCount, "\n¹ Tables without PuP support");
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "Success", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Detect Some Table PuP Names", null, detail));
     }
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
@@ -311,15 +306,15 @@ public class ExplorerResultsViewModel
     private static (bool isSuccess, string detail) CreateNamesStatistics(string type, IReadOnlyCollection<(string path, bool? isSuccess, string name)> items, int updatedGameCount, string disclaimer)
     {
         var successCount = items.Count(item => item.isSuccess == true);
-        var successDetail = CreateNamedPercentageStatistic("Success", successCount, items.Count);
+        var successDetail = CreateNamedPercentageStatistic("Successfully Detected", successCount, items.Count);
 
         var failedCount = items.Count(item => item.isSuccess == false);
-        var failedDetail = CreateNamedPercentageStatistic("Failed", failedCount, items.Count);
+        var failedDetail = CreateNamedPercentageStatistic("Failed To Detect", failedCount, items.Count);
         
         var skippedCount = items.Count(item => item.isSuccess == null);
         var skippedDetail = CreateNamedPercentageStatistic("n/a¹", skippedCount, items.Count);
         
-        var updatedGameCountDetail = CreateNamedCountStatistic("Updated Count", updatedGameCount);
+        var updatedGameCountDetail = CreateNamedCountStatistic("Tables Updated", updatedGameCount);
 
         var detail = new[] { successDetail, failedDetail, skippedDetail, updatedGameCountDetail, disclaimer }.StringJoin("\n");
 
@@ -328,9 +323,9 @@ public class ExplorerResultsViewModel
         return (failedCount == 0, detail);
     }
 
-    private static string CreateNamedCountStatistic(string title, int count) => $"{title,-20} : {count}";
+    private static string CreateNamedCountStatistic(string title, int count) => $"{title,-21} : {count}";
     
-    private static string CreateNamedPercentageStatistic(string title, int count, int totalCount) => $"{title,-20} : {CreatePercentageStatistic(count, totalCount, true)}";
+    private static string CreateNamedPercentageStatistic(string title, int count, int totalCount) => $"{title,-21} : {CreatePercentageStatistic(count, totalCount, true)}";
 
     private static string CreatePercentageStatistic(int? count, int totalCount, bool showTotalCount = false)
     {
@@ -338,7 +333,7 @@ public class ExplorerResultsViewModel
             return "n/a";
 
         var missingPercentage = totalCount == 0 ? 0 : 100f * count / totalCount;
-        var missingPercentageStatistic = $"{count,-3}{(showTotalCount ? $" of {totalCount}" : "")} ({missingPercentage:F2}%)";
+        var missingPercentageStatistic = $"{count,-4}{(showTotalCount ? $" of {totalCount}" : "")} ({missingPercentage:F2}%)";
 
         return missingPercentageStatistic;
     }
