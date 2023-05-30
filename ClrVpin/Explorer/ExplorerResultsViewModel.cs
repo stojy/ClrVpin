@@ -158,7 +158,7 @@ public class ExplorerResultsViewModel
 
     private async Task GetRoms()
     {
-        var progress = new ProgressViewModel("Extracting ROM Names");
+        var progress = new ProgressViewModel("Extracting ROM Names From The Table Scripts");
         progress.Show(Window);
 
         // extract ROMs
@@ -167,7 +167,7 @@ public class ExplorerResultsViewModel
         var roms = await TableRomUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
 
         // update DB
-        // - overwrite ALL local game entries whether successful or not
+        // - don't overwrite existing DB entries if the table parsing failed
         progress.Update("Updating Database");
         var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
         var updatedGameCount = 0;
@@ -186,12 +186,12 @@ public class ExplorerResultsViewModel
         // display result
         progress.Close();
         var (isSuccess, detail) = CreateNamesStatistics("ROM", roms, updatedGameCount, "\n¹ Tables without ROM support, e.g. PM, EM and some SS without VPinMame");
-        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "Success", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Detect Some Table ROM Names", null, detail));
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "Success", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Extract Some ROM Names", null, detail));
     }
     
     private async Task GetPups()
     {
-        var progress = new ProgressViewModel("Extracting PuP Names");
+        var progress = new ProgressViewModel("Extracting PuP Names From The Table Scripts");
         progress.Show(Window);
 
         // extract PuPs
@@ -200,7 +200,7 @@ public class ExplorerResultsViewModel
         var pups = await TablePupUtils.GetPupsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
 
         // update DB
-        // - overwrite ALL local game entries whether successful or not
+        // - don't overwrite existing DB entries if the table parsing failed
         progress.Update("Updating Database");
         var gamesDictionary = tableFiles.ToDictionary(tableFile => tableFile.LocalGame.Game.Name, tableFile => tableFile.LocalGame.Game);
         var updatedGameCount = 0;
@@ -219,7 +219,7 @@ public class ExplorerResultsViewModel
         // display result
         progress.Close();
         var (isSuccess, detail) = CreateNamesStatistics("PuP", pups, updatedGameCount, "\n¹ Tables without PuP support");
-        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "Success", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Detect Some Table PuP Names", null, detail));
+        await (isSuccess ? Notification.ShowSuccess(DialogHostName, "Success", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Extract Some PuP Names", null, detail));
     }
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
@@ -306,10 +306,10 @@ public class ExplorerResultsViewModel
     private static (bool isSuccess, string detail) CreateNamesStatistics(string type, IReadOnlyCollection<(string path, bool? isSuccess, string name)> items, int updatedGameCount, string disclaimer)
     {
         var successCount = items.Count(item => item.isSuccess == true);
-        var successDetail = CreateNamedPercentageStatistic("Successfully Detected", successCount, items.Count);
+        var successDetail = CreateNamedPercentageStatistic("Successful Parsing", successCount, items.Count);
 
         var failedCount = items.Count(item => item.isSuccess == false);
-        var failedDetail = CreateNamedPercentageStatistic("Failed To Detect", failedCount, items.Count);
+        var failedDetail = CreateNamedPercentageStatistic("Failed Parsing", failedCount, items.Count);
         
         var skippedCount = items.Count(item => item.isSuccess == null);
         var skippedDetail = CreateNamedPercentageStatistic("n/a¹", skippedCount, items.Count);
@@ -323,9 +323,9 @@ public class ExplorerResultsViewModel
         return (failedCount == 0, detail);
     }
 
-    private static string CreateNamedCountStatistic(string title, int count) => $"{title,-21} : {count}";
+    private static string CreateNamedCountStatistic(string title, int count) => $"{title,-20} : {count}";
     
-    private static string CreateNamedPercentageStatistic(string title, int count, int totalCount) => $"{title,-21} : {CreatePercentageStatistic(count, totalCount, true)}";
+    private static string CreateNamedPercentageStatistic(string title, int count, int totalCount) => $"{title,-20} : {CreatePercentageStatistic(count, totalCount, true)}";
 
     private static string CreatePercentageStatistic(int? count, int totalCount, bool showTotalCount = false)
     {
