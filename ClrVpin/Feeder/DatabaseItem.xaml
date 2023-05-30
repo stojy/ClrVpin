@@ -154,11 +154,18 @@
                       materialDesign:HintAssist.Hint="Players"
                       Style="{StaticResource EditComboBoxStyle}"
                       Width="90" Margin="10,0,0,0" />
-            <ComboBox ItemsSource="{Binding RomsView}"
-                      Text="{Binding Path=LocalGame.Game.Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic.zip"
-                      Style="{StaticResource EditComboBoxStyle}"
-                      Width="300" Margin="10,0,0,0" />
+            <WrapPanel>
+              <ComboBox ItemsSource="{Binding RomsView}"
+                        Text="{Binding Path=LocalGame.Game.Rom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        materialDesign:HintAssist.Hint="ROM" materialDesign:HintAssist.HelperText="e.g. magic"
+                        Style="{StaticResource EditComboBoxStyle}"
+                        Width="140" Margin="10,0,0,0" />
+              <ComboBox ItemsSource="{Binding PupsView}"
+                        Text="{Binding Path=LocalGame.Game.Pup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        materialDesign:HintAssist.Hint="PuP" materialDesign:HintAssist.HelperText="e.g. b66_orig"
+                        Style="{StaticResource EditComboBoxStyle}"
+                        Width="150" Margin="10,0,0,0" />
+            </WrapPanel>
           </WrapPanel>
 
           <ComboBox ItemsSource="{Binding ThemesView}"

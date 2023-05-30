@@ -35,6 +35,7 @@ namespace ClrVpin.Feeder
             YearsView = new ListCollectionView<string>(gameCollections.Years, LocalGame.Game.Year);
             TypesView = new ListCollectionView<string>(gameCollections.Types, LocalGame.Game.Type);
             RomsView = new ListCollectionView<string>(gameCollections.Roms, LocalGame.Game.Rom);
+            PupsView = new ListCollectionView<string>(gameCollections.Pups, LocalGame.Game.Pup);
             PlayersView = new ListCollectionView<string>(gameCollections.Players, LocalGame.Game.Players);
             ThemesView = new ListCollectionView<string>(gameCollections.Themes, LocalGame.Game.Theme);
             AuthorsView = new ListCollectionView<string>(gameCollections.Authors, LocalGame.Game.Author);
@@ -127,6 +128,7 @@ namespace ClrVpin.Feeder
         public ListCollectionView<string> TypesView { get; }
         public ListCollectionView<string> PlayersView { get; }
         public ListCollectionView<string> RomsView { get; }
+        public ListCollectionView<string> PupsView { get; }
         public ListCollectionView<string> ThemesView { get; }
         public ListCollectionView<string> AuthorsView { get; }
 

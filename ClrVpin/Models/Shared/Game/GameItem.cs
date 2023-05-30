@@ -39,6 +39,7 @@ public class GameItem
     public string[] Themes => new[] { string.Join(", ", OnlineGame?.Themes ?? new[] { "" }), LocalGame?.Game.Theme };
     public string[] Players => new[] { OnlineGame?.Players.ToString(), LocalGame?.Game.Players };
     public string[] Roms => new[] { OnlineGame?.RomFiles.FirstOrDefault()?.Name, LocalGame?.Game.Rom };
+    public string Pup => LocalGame?.Game.Pup; 
     public string[] Authors => new[] { string.Join(", ", OnlineGame?.TableFiles.FirstOrDefault()?.Authors ?? new [] {""}), LocalGame?.Game.Author };
 
     // online feed doesn't contain a rating (yet)

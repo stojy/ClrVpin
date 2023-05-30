@@ -16,6 +16,7 @@ public interface IGameCollections
     IList<string> Years { get; }
     IList<string> Players { get; }
     IList<string> Roms { get; }
+    IList<string> Pups { get; }
     IList<string> Themes { get; }
     IList<string> Authors { get; }
     // ReSharper disable once UnusedMemberInSuper.Global
@@ -43,6 +44,7 @@ public class GameCollections : IGameCollections
     public IList<string> Years { get; private set; }
     public IList<string> Players { get; private set; }
     public IList<string> Roms { get; private set; }
+    public IList<string> Pups { get; private set; }
     public IList<string> Themes { get; private set; }
     public IList<string> Authors { get; private set; }
     public IList<string> Formats { get; private set; }
@@ -65,6 +67,7 @@ public class GameCollections : IGameCollections
         Themes = _gameItems.Select(x => x.Themes).SelectManyUnique();
         Players = _gameItems.Select(x => x.Players).SelectManyUnique();
         Roms = _gameItems.Select(x => x.Roms).SelectManyUnique();
+        Pups = _gameItems.Select(x => x.Pup).SelectUnique();
         Authors = _gameItems.Select(x => x.Authors).SelectManyUnique();
 
         // invoke the callback for any addition processing, e.g. updating GameFiltersViewModel
