@@ -69,7 +69,7 @@ public class Game
     [XmlElement("ipdbid")]
     public string IpdbId { get; set; }
 
-    [XmlIgnore] // read property if it exists, but don't write it back during serialization. support kept here for PinballX Manager which (i believe) uses this field
+    // ONLY used by PinballX "Database Manager" - kept in sync with IpdbId for PinballX users
     [XmlElement("ipdbNr")]
     public string IpdbNr { get; set; }
 

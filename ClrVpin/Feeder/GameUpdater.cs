@@ -50,7 +50,7 @@ namespace ClrVpin.Feeder
             var beforeUpdatedPropertyCount = GetPropertiesUpdatedCount(propertyStatistics);
 
             CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Name), () => game.Name, () => onlineGame?.Description, value => game.Name = value, skipUpdate);
-            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame?.IpdbId, value => game.IpdbId = value, skipUpdate);
+            CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.IpdbId), () => game.IpdbId, () => onlineGame?.IpdbId, value => game.IpdbId = game.IpdbNr = value, skipUpdate);
             CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Description), () => game.Description, () => onlineGame?.Description, value => game.Description = value, skipUpdate);
             CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Author), () => game.Author, () => onlineGame?.TableFiles.FirstOrDefault()?.Authors?.StringJoin(), value => game.Author = value, skipUpdate);
             CheckAndFixProperty(overwrite, propertyStatistics, game.Name, nameof(game.Comment), () => game.Comment, () => onlineGame?.TableFiles.FirstOrDefault()?.Comment, value => game.Comment = value, skipUpdate);
