@@ -127,6 +127,13 @@ namespace ClrVpin.Shared.Utils
                 {
                     localGame.Init(gameNumber++);
 
+                    // support both IpdbId (PinballY) and IpdbNr (PinballX)
+                    // - if both are present and different, then default to the value from IpdbId
+                    if (!string.IsNullOrEmpty(localGame.Game.IpdbId))
+                        localGame.Game.IpdbNr = localGame.Game.IpdbId;
+                    else
+                        localGame.Game.IpdbId = localGame.Game.IpdbNr;
+
                     localGame.Game.DatabaseFile = file;
                     localGame.ViewState.NavigateToIpdbCommand = new ActionCommand(() => ContentUtils.NavigateToIpdb(localGame.Derived.IpdbUrl));
                     localGame.Content.Init(contentTypes);

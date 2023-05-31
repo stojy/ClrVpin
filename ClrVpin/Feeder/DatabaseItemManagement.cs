@@ -64,6 +64,7 @@ public static class DatabaseItemManagement
                 Name = onlineGame.Description,
                 Description = onlineGame.Description,
                 IpdbId = onlineGame.IpdbId,
+                IpdbNr = onlineGame.IpdbId, // PinballX
 
                 Manufacturer = onlineGame.Manufacturer,
                 Year = onlineGame.YearString,
@@ -108,6 +109,9 @@ public static class DatabaseItemManagement
 
     private static void Update(IEnumerable<LocalGame> localGames, IGameCollections gameCollections, DatabaseItem databaseItem, bool isNewEntry)
     {
+        // synchronise IpdbNr (PinballX) from IpdbId (PinballY) in the event it's been changed
+        databaseItem.LocalGame.Game.IpdbNr = databaseItem.LocalGame.Game.IpdbId;
+
         // update all games that reside in the same database file as the updated game
         var localGamesInDatabaseFile = localGames.Where(localGame => localGame.Game.DatabaseFile == databaseItem.LocalGame.Game.DatabaseFile);
         DatabaseUtils.WriteGamesToDatabase(localGamesInDatabaseFile.Select(x => x.Game), databaseItem.LocalGame.Game.DatabaseFile, databaseItem.LocalGame.Game.Name, isNewEntry);
