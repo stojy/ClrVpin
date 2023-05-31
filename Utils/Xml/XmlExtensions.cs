@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -68,27 +69,60 @@ public static class XmlExtensions
         document.Root!.RemoveAttributes();
 
         // replace empty tags with blank content.. so that the tags are written as non-self closing
-        document.AssignEmptyElements();
+        //document.AssignEmptyElements();
+
+        // remove empty tags.. so that the tags are not serialized
+        document.RemoveEmptyElements();
 
         return document;
     }
 
     public static XmlWriter CreateNonSelfClosingWriter(string file) => new NonSelfClosingXmlTextWriter(file, Encoding.GetEncoding("Windows-1252"));
 
-    private static void AssignEmptyElements(this XContainer container)
+    // ReSharper disable once MemberCanBePrivate.Global
+    public static void AssignEmptyElements(this XContainer container)
     {
         AssignEmptyElements(container.FirstNode);
     }
 
-    private static void AssignEmptyElements(this XNode node)
+    private static void AssignEmptyElements(this XNode parentNode)
     {
         // recursively assign empty elements with an empty string so the default XmlWriter outputs them as non-self closing tags
-        if (node is XElement e)
+        if (parentNode is XElement parentElement)
         {
-            e.Nodes().ForEach(AssignEmptyElements);
+            var childNodes = parentElement.Nodes().OfType<XElement>();
+            childNodes.ForEach(childNode =>
+            {
+                if (childNode.HasElements)
+                    AssignEmptyElements(childNode);
+                else if (childNode.IsEmpty && string.IsNullOrEmpty(childNode.Value))
+                    parentElement.Value = string.Empty;
+            });
+        }
+    }
+    
+    private static void RemoveEmptyElements(this XContainer container)
+    {
+        RemoveEmptyElements(container.FirstNode);
+    }
 
-            if (e.IsEmpty)
-                e.Value = string.Empty;
+    private static void RemoveEmptyElements(this XNode parentNode)
+    {
+        // recursively remove empty elements so the default XmlWriter does NOT write any empty tags, i.e. irrespective of self closing tag
+        if (parentNode is XElement parentElement)
+        {
+            // materialize the IEnumerable to a List so that we can remove items without breaking the iterating
+            var childNodes = parentElement.Nodes().ToList();
+            childNodes.ForEach(childNode =>
+            {
+                if (childNode is XElement innerElement)
+                {
+                    if (innerElement.HasElements)
+                        RemoveEmptyElements(childNode);
+                    else if (innerElement.IsEmpty && string.IsNullOrEmpty(innerElement.Value))
+                        innerElement.Remove();
+                }
+            });
         }
     }
 }
