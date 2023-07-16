@@ -217,6 +217,7 @@
                       </controls:RoutedEventTrigger>
                     </b:Interaction.Triggers>
                   </ComboBox>
+
                 </WrapPanel>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" Margin="2,5,12,0" />
@@ -339,7 +340,7 @@
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14"
                                 VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListSingleChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
                 </ContentControl>
               </Grid>
 
@@ -349,7 +350,7 @@
                               controls:GenericAttached.Double="60"
                               controls:GenericAttached.Double2="14"
                               VerticalAlignment="Center">
-                <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.MissingFilesOptionsView}" />
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.MissingFilesOptionsView}" />
               </ContentControl>
 
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
@@ -358,7 +359,7 @@
                               controls:GenericAttached.Double="60"
                               controls:GenericAttached.Double2="14"
                               VerticalAlignment="Center">
-                <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableStaleOptionsView}" />
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableStaleOptionsView}" />
               </ContentControl>
 
             </StackPanel>

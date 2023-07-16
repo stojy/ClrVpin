@@ -442,7 +442,7 @@
                                 controls:GenericAttached.String="Fuzzy"
                                 controls:GenericAttached.String2="Filter the tables based on whether the fuzzy matching was successful."
                                 controls:GenericAttached.Double="60" controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableMatchOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListSingleChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableMatchOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
@@ -452,7 +452,7 @@
                                 controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListSingleChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
                 </ContentControl>
               </Grid>
 
@@ -467,7 +467,7 @@
                                 controls:GenericAttached.String2="Filter the tables based on the type of content that was updated. Not applicable for unmatched tables."
                                 controls:GenericAttached.Double="60" 
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableNewContentOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListSingleChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableNewContentOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
@@ -477,7 +477,7 @@
                                 controls:GenericAttached.String2="Filter the tables based on whether the table can be downloaded. Not applicable for unmatched tables."
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableAvailabilityOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListSingleChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableAvailabilityOptionsView}" />
                 </ContentControl>
               </Grid>
             </StackPanel>
@@ -496,7 +496,7 @@
                                 controls:GenericAttached.String2="Don't attribute file(s) as 'New' if they contain these features"
                                 controls:GenericAttached.Double="60" 
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListFilterChipTemplate}" Content="{Binding GameFiltersViewModel.IgnoreFeaturesOptionsView }" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.IgnoreFeaturesOptionsView }" />
                 </ContentControl>
 
                 <!--<Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />-->

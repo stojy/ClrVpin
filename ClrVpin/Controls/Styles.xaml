@@ -138,6 +138,11 @@
   <Style x:Key="AccentChoiceChipRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipAccentRadioButton}">
     <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
   </Style>
+  <Style x:Key="PrimaryChoiceChipRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignChoiceChipAccentRadioButton}">
+    <Setter Property="Foreground" Value="{StaticResource PrimaryMidBrush}" />
+    <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="0" />
+
+  </Style>
 
   <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}" />
   <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" />

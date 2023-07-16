@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:ClrVpin.Converters"
                     xmlns:controls="clr-namespace:ClrVpin.Controls"
-                    xmlns:featureType="clr-namespace:ClrVpin.Shared.FeatureType">
+                    xmlns:featureType="clr-namespace:ClrVpin.Shared.FeatureType"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
   <ResourceDictionary.MergedDictionaries>
     <controls:SharedResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
@@ -35,7 +36,23 @@
   </DataTemplate>
   
   <!--horizontal-->
-  <DataTemplate x:Key="FeatureTypeItemFilterChipTemplate" DataType="featureType:FeatureType">
+  <DataTemplate x:Key="FeatureTypeItemSingleChoiceChipTemplate" DataType="featureType:FeatureType">
+    <RadioButton GroupName="{Binding Tag}"
+                 Content="{Binding Description}"
+                 ToolTip="{Binding Tip}"
+                 ToolTipService.ShowOnDisabled="true"
+                 IsChecked="{Binding IsActive}"
+                 IsEnabled="{Binding IsSupported}"
+                 Margin="{Binding IsSpecial, Converter={StaticResource IsSpecialToHorizontalChipMarginConverter}}"
+                 Command="{Binding SelectedCommand}"
+                 FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
+                 Style="{Binding IsHighlighted, Converter={StaticResource BoolToChoiceChipStyeConverter}}" 
+                 materialDesign:ButtonAssist.CornerRadius="10"
+                 />
+  </DataTemplate>
+
+  <!--horizontal-->
+  <DataTemplate x:Key="FeatureTypeItemMultiFilterChipTemplate" DataType="featureType:FeatureType">
     <CheckBox Content="{Binding Description}"
               ToolTip="{Binding Tip}"
               ToolTipService.ShowOnDisabled="true"
@@ -60,21 +77,7 @@
     </WrapPanel>
   </DataTemplate>
 
-  <!--horizontal-->
-  <DataTemplate x:Key="FeatureTypeItemChoiceChipTemplate" DataType="featureType:FeatureType">
-    <RadioButton GroupName="{Binding Tag}"
-                 Content="{Binding Description}"
-                 ToolTip="{Binding Tip}"
-                 ToolTipService.ShowOnDisabled="true"
-                 IsChecked="{Binding IsActive}"
-                 IsEnabled="{Binding IsSupported}"
-                 Margin="{Binding IsSpecial, Converter={StaticResource IsSpecialToHorizontalChipMarginConverter}}"
-                 Command="{Binding SelectedCommand}"
-                 FontStyle="{Binding IsSpecial, Converter={StaticResource BoolToFontStyleConverter}}"
-                 Style="{Binding IsHighlighted, Converter={StaticResource BoolToChoiceChipStyeConverter}}" />
-  </DataTemplate>
-  
-  <DataTemplate x:Key="FeatureTypeListChoiceChipTemplate">
+  <DataTemplate x:Key="FeatureTypeListSingleChoiceChipTemplate">
     <ItemsControl ItemsSource="{Binding}">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
@@ -83,13 +86,13 @@
       </ItemsControl.ItemsPanel>
       <ItemsControl.ItemTemplate>
         <DataTemplate DataType="featureType:FeatureType">
-          <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeItemChoiceChipTemplate}" />
+          <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeItemSingleChoiceChipTemplate}" />
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
   </DataTemplate>
 
-  <DataTemplate x:Key="FeatureTypeListFilterChipTemplate">
+  <DataTemplate x:Key="FeatureTypeListMultiFilterChipTemplate">
     <ItemsControl ItemsSource="{Binding}">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
@@ -98,7 +101,7 @@
       </ItemsControl.ItemsPanel>
       <ItemsControl.ItemTemplate>
         <DataTemplate DataType="featureType:FeatureType">
-          <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeItemFilterChipTemplate}" />
+          <ContentControl Content="{Binding}" ContentTemplate="{StaticResource FeatureTypeItemMultiFilterChipTemplate}" />
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
