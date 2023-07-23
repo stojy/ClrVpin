@@ -29,6 +29,6 @@ public class MergerSettings
     public bool DeleteIgnoredFiles { get; set; }
 
     public ObservableCollection<HitTypeEnum> SelectedMatchTypes { get; init; } = new();
-    public ObservableCollection<IgnoreCriteriaEnum> SelectedIgnoreCriteria { get; init; } = new();
+    public ObservableCollection<IgnoreCriteriaEnum> SelectedIgnoreCriteria { get; set; } = new();
     public ObservableCollection<MergeOptionEnum> SelectedMergeOptions { get; init; } = new();
 }

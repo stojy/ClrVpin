@@ -137,7 +137,8 @@ public class ExplorerResultsViewModel
         
         var tableStaleOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.TableStaleOptions.Select(y => y.Enum))).ToArray();
         GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(tableStaleOptions, Settings.SelectedTableStaleOptions, 
-            _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage));
+            _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage),
+            includeSelectAll: false);
 
         BackupFolder = Model.Settings.BackupFolder;
         NavigateToBackupFolderCommand = new Utils.ActionCommand(NavigateToBackupFolder);
