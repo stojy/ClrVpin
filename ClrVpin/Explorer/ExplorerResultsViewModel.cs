@@ -129,7 +129,7 @@ public class ExplorerResultsViewModel
         MaxRatingChangedCommand = new ActionCommand(MaxRatingChanged);
 
         GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.TableStyleOptions, Settings.SelectedTableStyleOptions,
-            _ => FilterChangedCommand.Execute(null), includeSelectAll:false);
+            _ => FilterChangedCommand.Execute(null), includeSelectAll:false, minimumNumberOfSelections: 1);
 
         var missingFileOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.MissingFileOptions.Select(y => y.Enum))).ToArray();
         GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(missingFileOptions, Settings.SelectedMissingFileOptions, 
