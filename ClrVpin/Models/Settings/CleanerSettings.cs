@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ClrVpin.Models.Cleaner;
 using ClrVpin.Models.Shared;
@@ -7,6 +8,7 @@ using PropertyChanged;
 namespace ClrVpin.Models.Settings;
 
 [AddINotifyPropertyChangedInterface]
+[Serializable]
 public class CleanerSettings
 {
     public ObservableCollection<string> SelectedCheckContentTypes { get; set; } = new();
