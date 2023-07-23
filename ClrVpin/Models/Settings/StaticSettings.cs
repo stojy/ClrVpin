@@ -12,6 +12,9 @@ namespace ClrVpin.Models.Settings
     {
         static StaticSettings()
         {
+            // common 
+            TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+
             // cleaner
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
             FixablePrioritizedHitTypeEnums = AllHitTypes.Where(x => x.Fixable).Select(x => x.Enum).ToArray();
@@ -29,7 +32,6 @@ namespace ClrVpin.Models.Settings
             DeleteIgnoredFilesOption.Description = DeleteIgnoredFilesOption.Enum.GetDescription();
 
             // feeder
-            TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableAvailabilityOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableNewContentOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -101,8 +103,7 @@ namespace ClrVpin.Models.Settings
         public static readonly EnumOption<TableStyleOptionEnum>[] TableStyleOptions =
         {
             new() {Enum = TableStyleOptionEnum.Manufactured, Tip = "A physical table has been manufactured"},
-            new() {Enum = TableStyleOptionEnum.Original, Tip = "An original table creation that has not been manufactured"},
-            new() {Enum = TableStyleOptionEnum.Both, Tip = "Manufactured AND original tables"}
+            new() {Enum = TableStyleOptionEnum.Original, Tip = "An original table creation that has not been manufactured"}
         };
 
         // all possible missing file options - to be used elsewhere (explorer)

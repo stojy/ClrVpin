@@ -92,7 +92,7 @@ public class ExplorerResultsViewModel
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
             Filter = gameItem =>
-                (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || gameItem.TableStyleOption == Settings.SelectedTableStyleOption) &&
+                (!Settings.SelectedTableStyleOptions.Any() || Settings.SelectedTableStyleOptions.Contains(gameItem.TableStyleOption.ToString())) &&
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
@@ -128,8 +128,8 @@ public class ExplorerResultsViewModel
         MinRatingChangedCommand = new ActionCommand(MinRatingChanged);
         MaxRatingChangedCommand = new ActionCommand(MaxRatingChanged);
 
-        GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
-            () => Settings.SelectedTableStyleOption, () => FilterChangedCommand.Execute(null));
+        GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.TableStyleOptions, Settings.SelectedTableStyleOptions,
+            _ => FilterChangedCommand.Execute(null), includeSelectAll:false);
 
         var missingFileOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.MissingFileOptions.Select(y => y.Enum))).ToArray();
         GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(missingFileOptions, Settings.SelectedMissingFileOptions, 

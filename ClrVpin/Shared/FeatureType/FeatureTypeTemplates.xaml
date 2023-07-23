@@ -13,7 +13,7 @@
   <converters:BoolToStringConverter x:Key="BoolToFontStyleConverter" True="Italic" False="Normal" />
   
   <converters:BoolToStringConverter x:Key="IsSpecialToVerticalCheckboxMarginConverter" True="0,10,0,0" False="0,2,0,0" />
-  <converters:BoolToStringConverter x:Key="IsSpecialToHorizontalChipMarginConverter" True="10,2,0,0" False="0,2,0,0" />
+  <converters:BoolToStringConverter x:Key="IsSpecialToHorizontalChipMarginConverter" True="10,2,0,0" False="0,0,2,0" />
   <converters:BoolToStringConverter x:Key="IsSpecialToToggleButtonMarginConverter" True="5,10,5,5" False="5" />
   <converters:BoolToStringConverter x:Key="IsSpecialToVerticalRadioButtonMarginConverter" True="5,0,5,0" False="0,0,5,0" />
 
