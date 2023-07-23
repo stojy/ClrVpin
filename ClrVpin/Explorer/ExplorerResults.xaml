@@ -299,7 +299,7 @@
                   <Grid>
                     <!-- ratings is drawn within TextBox - refer DatabaseItem.xaml -->
                     <TextBox Text="{Binding Settings.SelectedMinRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             materialDesign:HintAssist.Hint="Min Rating" IsReadOnly="True" Opacity="0.5"
+                             materialDesign:HintAssist.Hint="Min Rating" IsReadOnly="True"
                              Style="{StaticResource RatingsBarTextBoxStyle}"
                              Width="240">
                       <b:Interaction.Triggers>
@@ -316,7 +316,7 @@
                   <Grid Margin="10,0,0,0">
                     <!-- ratings is drawn within TextBox - refer DatabaseItem.xaml -->
                     <TextBox Text="{Binding Settings.SelectedMaxRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             materialDesign:HintAssist.Hint="Max Rating" IsReadOnly="True" Opacity="0.5"
+                             materialDesign:HintAssist.Hint="Max Rating" IsReadOnly="True"
                              Style="{StaticResource RatingsBarTextBoxStyle}"
                              Width="240">
                       <b:Interaction.Triggers>
