@@ -28,7 +28,7 @@ public static class VersionManagementService
         try
         {
             var settings = Model.SettingsManager.Settings;
-            var releases = await VersionManagement.Check(settings.Guid, "stojy", "ClrVpin", settings.EnableCheckForUpdatesPreRelease, msg => Logger.Info($"Version checking: {msg}"));
+            var releases = await VersionManagement.Check(settings.Id, "stojy", "ClrVpin", settings.EnableCheckForUpdatesPreRelease, msg => Logger.Info($"Version checking: {msg}"));
 
             if (releases.Any())
                 await VersionManagementView.Show(releases, parent);

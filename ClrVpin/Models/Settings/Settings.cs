@@ -83,12 +83,12 @@ public class Settings : ISettings
         Explorer = new ExplorerSettings();
     }
 
-    // the 'guid' is a special default setting that are persistent across app 'reset settings' action
+    // the 'id' is a special default setting that are persistent across app 'reset settings' action
     // - assigned to the underlying DefaultSettings class so that they are stored independently when the config is reset
     //   e.g. when settings reset via the UI, these default settings will remain in the separate DefaultSettings.json file to be used for reseeding the Settings file
     // - accessed via Settings as a convenience
     // - need to check for null as this is assigned AFTER ctor via Init() method
-    public string Guid => _defaultSettings?.Guid;
+    public string Id => _defaultSettings?.Id;
 
     // ReSharper disable once MemberCanBePrivate.Global - property is serialized
     public List<ContentType> AllContentTypes { get; set; }
@@ -114,7 +114,7 @@ public class Settings : ISettings
     public int Version { get; set; }
 
     [JsonIgnore]
-    public int MinVersion { get; set; } = 6;
+    public int MinVersion { get; set; } = 7;
 
     public void Init(DefaultSettings defaultSettings)
     {

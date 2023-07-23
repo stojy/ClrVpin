@@ -15,15 +15,15 @@ public class DefaultSettings : ISettings
         // - refer SettingsManager.cs --> these settings are not deleted!
         Version = MinVersion;
             
-        Guid = System.Guid.NewGuid().ToString();
+        Id = Guid.NewGuid().ToString();
     }
     
-    public string Guid { get; set; }
+    public string Id { get; set; }
 
     public int Version { get; set; }
         
     [JsonIgnore]
-    public int MinVersion { get; set; } = 1;
+    public int MinVersion { get; set; } = 2;
 
     public void Init(DefaultSettings defaultSettings) => throw new NotImplementedException("Init not required for DefaultSettings");
 }
