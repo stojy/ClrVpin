@@ -30,15 +30,15 @@ public class CleanerViewModel : IShowViewModel
         StartCommand = new ActionCommand(Start);
 
         CheckPinballContentTypesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(
-            Settings.GetPinballContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, 
+            Settings.GetPinballContentTypes(), () => Settings.Cleaner.SelectedCheckContentTypes, 
             _ => UpdateIsValid(), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage));
         CheckMediaContentTypesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(
-            Settings.GetMediaContentTypes(), Settings.Cleaner.SelectedCheckContentTypes, 
+            Settings.GetMediaContentTypes(), () => Settings.Cleaner.SelectedCheckContentTypes, 
             _ => UpdateIsValid(), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage));
 
-        CheckHitTypesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedCheckHitTypes, ToggleFixHitTypeState);
+        CheckHitTypesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.AllHitTypes, () => Settings.Cleaner.SelectedCheckHitTypes, ToggleFixHitTypeState);
         
-        FixHitTypesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedFixHitTypes, 
+        FixHitTypesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.AllHitTypes, () => Settings.Cleaner.SelectedFixHitTypes, 
             // special handling for the fix hit types as they're functionality coupled with the criteria hit types, e.g. fix is disabled when check options are not selected
             isSupportedFunc: (_, enumOption) => (Settings.Cleaner.SelectedCheckHitTypes.Contains(enumOption.Enum) && enumOption.Enum != HitTypeEnum.Missing, null));
         FixHitTypesView.First(fixHitFeatureType => (HitTypeEnum)fixHitFeatureType.Id == HitTypeEnum.Missing).IsNeverSupported = true;
