@@ -47,7 +47,7 @@ namespace ClrVpin.Merger
 
         protected override ListCollectionView<FeatureType> CreateAllContentFeatureTypesView()
         {
-            var featureView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetFixableContentTypes(), 
+            var featureView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(Settings.GetFixableContentTypes(), 
                 new ObservableCollection<string> {Settings.GetSelectedDestinationContentType().Description}, 
                 _ => UpdateHitsView(), 
                 // merger content types is a 'special egg'.. unlike cleaner, the list is readonly
@@ -61,7 +61,7 @@ namespace ClrVpin.Merger
         {
             // show all hit types, but assign enabled and active based on the merger configuration
             // - valid hits are also visible, enabled by default since these files are copied across without any file name fixing
-            var hitFeaturesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Merger.SelectedMatchTypes.Clone(), _ => UpdateHitsView());
+            var hitFeaturesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.AllHitTypes, Settings.Merger.SelectedMatchTypes.Clone(), _ => UpdateHitsView());
             hitFeaturesView.ForEach(hitFeature =>
             {
                 hitFeature.IsSupported = Settings.Merger.SelectedMatchTypes.Contains((HitTypeEnum)hitFeature.Id) ||

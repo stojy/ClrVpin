@@ -36,7 +36,7 @@ public class MergerViewModel : IShowViewModel
 
         CreateIgnoreCriteria();
 
-        MergeOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.MergeOptions, Settings.Merger.SelectedMergeOptions);
+        MergeOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.MergeOptions, Settings.Merger.SelectedMergeOptions);
 
         SourceFolderModel = new GenericFolderTypeModel("Source", Settings.Merger.SourceFolder, true, folder =>
         {
@@ -142,7 +142,7 @@ public class MergerViewModel : IShowViewModel
         // show all match criteria types
         // - except for unknown and unsupported which are used 'under the hood' for subsequent reporting
         var enumOptions = StaticSettings.MatchTypes.Where(x => !x.Enum.In(HitTypeEnum.CorrectName, HitTypeEnum.Unknown, HitTypeEnum.Unsupported)).ToArray();
-        var featureTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(enumOptions, Settings.Merger.SelectedMatchTypes);
+        var featureTypesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(enumOptions, Settings.Merger.SelectedMatchTypes);
 
         // create separate property for each so they can be referenced individually in the UI
         MatchWrongCase = featureTypesView.First(x => x.Id == (int)HitTypeEnum.WrongCase);
@@ -155,7 +155,7 @@ public class MergerViewModel : IShowViewModel
     private void CreateIgnoreCriteria()
     {
         // create ignore criteria
-        var ignoreFeatureTypesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.IgnoreCriteria, Settings.Merger.SelectedIgnoreCriteria);
+        var ignoreFeatureTypesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreCriteria, Settings.Merger.SelectedIgnoreCriteria);
 
         // create separate property for each so they can be referenced individually in the UI
         IgnoreIfContainsWordsFeature = ignoreFeatureTypesView.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfContainsWords);

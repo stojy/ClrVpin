@@ -44,7 +44,7 @@ public class CleanerResultsViewModel : ResultsViewModel
     protected override ListCollectionView<FeatureType> CreateAllContentFeatureTypesView()
     {
         // show all content types, but assign enabled and active based on the cleaner configuration
-        var contentFeaturesView = FeatureOptions.CreateFeatureOptionsSelectionsView(Settings.GetFixableContentTypes(), Settings.Cleaner.SelectedCheckContentTypes.Clone(), _ => UpdateHitsView());
+        var contentFeaturesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(Settings.GetFixableContentTypes(), Settings.Cleaner.SelectedCheckContentTypes.Clone(), _ => UpdateHitsView());
         contentFeaturesView.ForEach(featureType =>
         {
             featureType.IsSupported = Settings.Cleaner.SelectedCheckContentTypes.Contains(featureType.Description) || featureType.Id == FeatureOptions.SelectAllId;
@@ -56,7 +56,7 @@ public class CleanerResultsViewModel : ResultsViewModel
     {
         // show all hit types, but assign enabled and active based on the cleaner configuration
         // - for completeness the valid hits are also visible, but disabled by default since no fixes were required
-        var hitFeaturesView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedCheckHitTypes.Clone(), _ => UpdateHitsView());
+        var hitFeaturesView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.AllHitTypes, Settings.Cleaner.SelectedCheckHitTypes.Clone(), _ => UpdateHitsView());
         hitFeaturesView.ForEach(featureType =>
         {
             featureType.IsSupported = Settings.Cleaner.SelectedCheckHitTypes.Contains((HitTypeEnum)featureType.Id) ||

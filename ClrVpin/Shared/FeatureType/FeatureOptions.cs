@@ -40,7 +40,7 @@ public static class FeatureOptions
     }
 
     // todo; invoke the multi selections overloads
-    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionView<T>(
+    public static ListCollectionView<FeatureType> CreateFeatureOptionsSingleSelectionView<T>(
         ICollection<EnumOption<T>> enumOptions,
         T highlightedOption,
         Expression<Func<T>> selection,
@@ -71,7 +71,7 @@ public static class FeatureOptions
 
     // todo; invoke the enum version instead?
     // - i.e. avoid need for consumer to convert the selection enum to string manually.. do this automatically for ALL selections, i.e. no more nasty/obscure enum integer in the settings
-    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(
+    public static ListCollectionView<FeatureType> CreateFeatureOptionsMultiSelectionView<T>(
         ICollection<EnumOption<T>> enumOptions,
         ObservableCollection<string> selections,
         Action<FeatureType> changedAction = null,
@@ -86,7 +86,7 @@ public static class FeatureOptions
             minimumNumberOfSelections);
     }
 
-    public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(
+    public static ListCollectionView<FeatureType> CreateFeatureOptionsMultiSelectionView<T>(
         ICollection<EnumOption<T>> enumOptions,
         ObservableCollection<T> selections,
         Action<FeatureType> changedAction = null,
@@ -139,7 +139,7 @@ public static class FeatureOptions
         return new ListCollectionView<FeatureType>(featureTypes);
     }
 
-    private static void SetupSelectedCommand<T>(FeatureType featureType, IReadOnlyCollection<FeatureType> featureTypes, EnumOption<T> enumOption, 
+    private static void SetupSelectedCommand<T>(FeatureType featureType, IReadOnlyCollection<FeatureType> featureTypes, EnumOption<T> enumOption,
         Action<EnumOption<T>> toggleSelection, Action<FeatureType> changedAction, int minNumberOfSelections) where T : Enum
     {
         featureType.SelectedCommand = new ActionCommand(() =>
