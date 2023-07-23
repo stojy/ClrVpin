@@ -135,7 +135,7 @@ public sealed class FeederResultsViewModel
                 () => Model.Settings.Feeder.SelectedTableAvailabilityOption, () => FilterChangedCommand.Execute(null)),
             TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
                 () => Model.Settings.Feeder.SelectedTableNewContentOption, () => FilterChangedCommand.Execute(null)),
-            IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, Model.Settings.Feeder.SelectedIgnoreFeatureOptions,
+            IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions,
                 _ => UpdateIsNew(), includeSelectAll: false)
         };
 

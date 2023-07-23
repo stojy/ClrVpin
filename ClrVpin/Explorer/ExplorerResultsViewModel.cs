@@ -128,15 +128,15 @@ public class ExplorerResultsViewModel
         MinRatingChangedCommand = new ActionCommand(MinRatingChanged);
         MaxRatingChangedCommand = new ActionCommand(MaxRatingChanged);
 
-        GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableStyleOptions, Settings.SelectedTableStyleOptions,
+        GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableStyleOptions, () => Settings.SelectedTableStyleOptions,
             _ => FilterChangedCommand.Execute(null), includeSelectAll:false, minimumNumberOfSelections: 1);
 
         var missingFileOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.MissingFileOptions.Select(y => y.Enum))).ToArray();
-        GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(missingFileOptions, Settings.SelectedMissingFileOptions, 
+        GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(missingFileOptions, () => Settings.SelectedMissingFileOptions, 
             _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage));
         
         var tableStaleOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.TableStaleOptions.Select(y => y.Enum))).ToArray();
-        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(tableStaleOptions, Settings.SelectedTableStaleOptions, 
+        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(tableStaleOptions, () => Settings.SelectedTableStaleOptions, 
             _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage),
             includeSelectAll: false);
 

@@ -23,11 +23,11 @@ public static class FeatureOptions
         SelectedCommand = new ActionCommand(action)
     };
 
-    public static FeatureType CreateFeatureType<T>(EnumOption<T> option, bool isActive, bool isHighlightedOverride = false) where T : Enum
+    public static FeatureType CreateFeatureType<T>(string name, EnumOption<T> option, bool isActive, bool isHighlightedOverride = false) where T : Enum
     {
         return new FeatureType(Convert.ToInt32(option.Enum))
         {
-            Tag = nameof(T),
+            Tag = name,
             Description = option.Description,
             Tip = option.Tip,
             IsSupported = true,
@@ -47,21 +47,21 @@ public static class FeatureOptions
         Action changedAction,
         Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null) where T : Enum
     {
-        var memberAccessor = new Accessor<T>(selection);
+        var selectionAccessor = new Accessor<T>(selection);
 
         // todo; refactor/combine with CreateFeatureOptionsSelectionsViewInternal
 
         // create options with a single selection, e.g. style.. radio button, choice chip, etc
         var featureTypes = enumOptions.Select(enumOption =>
         {
-            var featureType = CreateFeatureType(enumOption, enumOption.Enum.IsEqual(memberAccessor.Get()), enumOption.Enum.IsEqual(highlightedOption));
+            var featureType = CreateFeatureType(selectionAccessor.Name, enumOption, enumOption.Enum.IsEqual(selectionAccessor.Get()), enumOption.Enum.IsEqual(highlightedOption));
             featureType.SelectedCommand = new ActionCommand(() =>
             {
-                memberAccessor.Set(enumOption.Enum);
+                selectionAccessor.Set(enumOption.Enum);
                 changedAction.Invoke();
             });
 
-            SetupIsSupported(enumOptions, option => memberAccessor.Set(option.Enum), isSupportedFunc, enumOption, featureType);
+            SetupIsSupported(enumOptions, option => selectionAccessor.Set(option.Enum), isSupportedFunc, enumOption, featureType);
 
             return featureType;
         }).ToList();
@@ -73,14 +73,17 @@ public static class FeatureOptions
     // - i.e. avoid need for consumer to convert the selection enum to string manually.. do this automatically for ALL selections, i.e. no more nasty/obscure enum integer in the settings
     public static ListCollectionView<FeatureType> CreateFeatureOptionsMultiSelectionView<T>(
         ICollection<EnumOption<T>> enumOptions,
-        ObservableCollection<string> selections,
+        Expression<Func<ObservableCollection<string>>> selectionExpression, // todo; support T instead of string??
         Action<FeatureType> changedAction = null,
         Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null,
         bool includeSelectAll = true,
         int minimumNumberOfSelections = 0
     ) where T : Enum
     {
-        return CreateFeatureOptionsSelectionsViewInternal(enumOptions,
+        Accessor<ObservableCollection<string>>.TryGetName(selectionExpression, out var name);
+        var selections = selectionExpression.Compile().Invoke();
+
+        return CreateFeatureOptionsSelectionsViewInternal(name ?? Guid.NewGuid().ToString(), enumOptions,
             enumOption => selections.Contains(enumOption.Description), enumOption => selections.Toggle(enumOption.Description),
             changedAction, isSupportedFunc, includeSelectAll,
             minimumNumberOfSelections);
@@ -88,13 +91,16 @@ public static class FeatureOptions
 
     public static ListCollectionView<FeatureType> CreateFeatureOptionsMultiSelectionView<T>(
         ICollection<EnumOption<T>> enumOptions,
-        ObservableCollection<T> selections,
+        Expression<Func<ObservableCollection<T>>> selectionExpression,
         Action<FeatureType> changedAction = null,
         Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null,
         bool includeSelectAll = true,
         int minimumNumberOfSelections = 0) where T : Enum
     {
-        return CreateFeatureOptionsSelectionsViewInternal(enumOptions,
+        Accessor<ObservableCollection<T>>.TryGetName(selectionExpression, out var name);
+        var selections = selectionExpression.Compile().Invoke();
+
+        return CreateFeatureOptionsSelectionsViewInternal(name ?? Guid.NewGuid().ToString(), enumOptions,
             enumOption => selections.Contains(enumOption.Enum), enumOption => selections.Toggle(enumOption.Enum),
             changedAction, isSupportedFunc, includeSelectAll,
             minimumNumberOfSelections);
@@ -110,6 +116,7 @@ public static class FeatureOptions
     }
 
     private static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsViewInternal<T>(
+        string selectionName,
         ICollection<EnumOption<T>> enumOptions,
         Func<EnumOption<T>, bool> containsSelection,
         Action<EnumOption<T>> toggleSelection,
@@ -122,7 +129,7 @@ public static class FeatureOptions
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
         var featureTypes = enumOptions.Select(enumOption =>
         {
-            var featureType = CreateFeatureType(enumOption, containsSelection(enumOption));
+            var featureType = CreateFeatureType(selectionName, enumOption, containsSelection(enumOption));
 
             SetupIsSupported(enumOptions, toggleSelection, isSupportedFunc, enumOption, featureType);
 

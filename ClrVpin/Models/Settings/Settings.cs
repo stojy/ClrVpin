@@ -58,7 +58,6 @@ public class Settings : ISettings
         AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
 
-
         // cleaner defaults
         Cleaner = new CleanerSettings();
         // very important NOT to include the database type, since doing so would cause the database file(s) to be deleted
