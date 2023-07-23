@@ -7,6 +7,11 @@ namespace ClrVpin.Models.Settings
 {
     public static class SettingsHelper
     {
+        static SettingsHelper()
+        {
+            _jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
+        }
+
         public static T Reset<T>(DefaultSettings defaultSettings) where T : ISettings, new()
         {
             var settings = new T();
@@ -22,7 +27,7 @@ namespace ClrVpin.Models.Settings
 
         public static void Write<T>(T settings)
         {
-            var serializedSettings = JsonSerializer.Serialize(settings);
+            var serializedSettings = JsonSerializer.Serialize(settings, _jsonSerializerOptions);
             File.WriteAllText(GetPath<T>(), serializedSettings);
         }
 
@@ -77,5 +82,6 @@ namespace ClrVpin.Models.Settings
         private static string GetPath<T>() => Path.Combine(_rootFolder, $"{typeof(T).Name}.json");
 
         private static string _rootFolder;
+        private static JsonSerializerOptions _jsonSerializerOptions;
     }
 }
