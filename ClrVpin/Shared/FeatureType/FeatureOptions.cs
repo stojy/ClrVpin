@@ -41,7 +41,8 @@ public static class FeatureOptions
             HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true }))
         };
     }
-
+    
+    // obsolete - use the overloads
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionView<T>(
         ICollection<EnumOption<T>> enumOptions, 
         T highlightedOption,

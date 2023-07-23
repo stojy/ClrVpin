@@ -15,10 +15,18 @@ public class Settings : ISettings
 {
     public Settings()
     {
-        // following settings are assigned BEFORE json.net deserialization potentially overwrites the values
-        // - i.e. they will be overwritten where a stored setting file exists, otherwise these will become the defaults
-        Version = MinVersion;
+        ApplyDefaults();
+    }
 
+    private void ApplyDefaults()
+    {
+        // apply ALL default values
+        // - the following defaults settings are assigned BEFORE json.net deserialization potentially overwrites the values
+        //   i.e. they will be overwritten where a stored setting file exists, otherwise these will become the defaults
+        // - some of these settings are also assigned via the XxxxSettings member field initialization
+        
+        // common
+        Version = MinVersion;
         BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
         EnableDiagnosticLogging = false;
         SkipLoggingForOriginalTables = true;
@@ -49,29 +57,33 @@ public class Settings : ISettings
         };
         AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
-        // initialise all settings to enabled 
-        Cleaner = new CleanerSettings();
 
+
+        // cleaner defaults
+        Cleaner = new CleanerSettings();
         // very important NOT to include the database type, since doing so would cause the database file(s) to be deleted
         // - deleted because would be designated as unmatched file since no table will match 'Visual Pinball'
         Cleaner.SelectedCheckContentTypes.AddRange(GetFixableContentTypes().Select(x => x.Description).ToList());
         Cleaner.SelectedCheckHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
         Cleaner.SelectedFixHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
 
+        // merger defaults
         Merger = new MergerSettings();
         Merger.SelectedMatchTypes.AddRange(StaticSettings.MatchTypes.Select(x => x.Enum).ToList());
         Merger.SelectedIgnoreCriteria.AddRange(StaticSettings.IgnoreCriteria.Select(x => x.Enum).ToList());
         Merger.SelectedMergeOptions.AddRange(StaticSettings.MergeOptions.Select(x => x.Enum).ToList());
         Merger.DeleteIgnoredFiles = true;
 
+        // feeder defaults
         Feeder = new FeederSettings();
         Feeder.SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
         Feeder.SelectedFeedFixOptions.AddRange(StaticSettings.FixFeedOptions.Select(x => x.Enum).ToList());
 
+        // explorer defaults
         Explorer = new ExplorerSettings();
     }
 
-    // default settings
+    // the 'guid' is a special default setting that are persistent across app 'reset settings' action
     // - assigned to the underlying DefaultSettings class so that they are stored independently when the config is reset
     //   e.g. when settings reset via the UI, these default settings will remain in the separate DefaultSettings.json file to be used for reseeding the Settings file
     // - accessed via Settings as a convenience

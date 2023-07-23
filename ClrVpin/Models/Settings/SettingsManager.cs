@@ -15,7 +15,10 @@ public class SettingsManager
     {
         SettingsHelper.CreateRootFolder(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Stoj", "ClrVpin"));
 
+        // 'DefaultSettings' persist across 'app restart
         (_defaultSettings, _) = SettingsHelper.Read<DefaultSettings>(null);
+
+        // regular settings do NOT persist across 'app restart'
         (Settings, ResetReason) = SettingsHelper.Read<Settings>(_defaultSettings);
             
         // update config after read to store any new properties that have been added
