@@ -127,15 +127,15 @@ public sealed class FeederResultsViewModel
 
         GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null))
         {
-            TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
+            TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
                 () => Model.Settings.Feeder.SelectedTableStyleOption, () => FilterChangedCommand.Execute(null)),
-            TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
+            TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
                 () => Model.Settings.Feeder.SelectedTableMatchOption, () => FilterChangedCommand.Execute(null)),
-            TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,
+            TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,
                 () => Model.Settings.Feeder.SelectedTableAvailabilityOption, () => FilterChangedCommand.Execute(null)),
-            TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsSelectionView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
+            TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
                 () => Model.Settings.Feeder.SelectedTableNewContentOption, () => FilterChangedCommand.Execute(null)),
-            IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsSelectionsView(StaticSettings.IgnoreFeatureOptions, Model.Settings.Feeder.SelectedIgnoreFeatureOptions,
+            IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, Model.Settings.Feeder.SelectedIgnoreFeatureOptions,
                 _ => UpdateIsNew(), includeSelectAll: false)
         };
 

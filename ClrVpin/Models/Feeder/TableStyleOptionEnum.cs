@@ -6,6 +6,7 @@ namespace ClrVpin.Models.Feeder
     {
         [Description("Manufactured")] Manufactured,
         [Description("Original")] Original,
+        // todo; remove this after SelectedTableStyleOptions is exclusively used
         [Description("Both")] Both
     }
 }
