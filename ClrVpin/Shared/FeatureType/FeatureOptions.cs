@@ -13,18 +13,15 @@ namespace ClrVpin.Shared.FeatureType;
 
 public static class FeatureOptions
 {
-    public static FeatureType CreateFeatureType(string description, string tip, bool isActive, Action action, bool isHighlighted = false)
+    public static FeatureType CreateFeatureType(string description, string tip, bool isActive, Action action, bool isHighlighted = false) => new()
     {
-        return new FeatureType()
-        {
-            Description = description,
-            Tip = tip,
-            IsSupported = true,
-            IsHighlighted = isHighlighted,
-            IsActive = isActive,
-            SelectedCommand = new ActionCommand(action)
-        };
-    }
+        Description = description,
+        Tip = tip,
+        IsSupported = true,
+        IsHighlighted = isHighlighted,
+        IsActive = isActive,
+        SelectedCommand = new ActionCommand(action)
+    };
 
     public static FeatureType CreateFeatureType<T>(EnumOption<T> option, bool isActive, bool isHighlightedOverride = false) where T : Enum
     {
@@ -41,12 +38,12 @@ public static class FeatureOptions
             HelpAction = new ActionCommand(() => Process.Start(new ProcessStartInfo(option.HelpUrl) { UseShellExecute = true }))
         };
     }
-    
-    // obsolete - use the overloads
+
+    // todo; invoke the multi selections overloads
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionView<T>(
-        ICollection<EnumOption<T>> enumOptions, 
+        ICollection<EnumOption<T>> enumOptions,
         T highlightedOption,
-        Expression<Func<T>> selection, 
+        Expression<Func<T>> selection,
         Action changedAction,
         Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null) where T : Enum
     {
@@ -72,52 +69,69 @@ public static class FeatureOptions
         return new ListCollectionView<FeatureType>(featureTypes);
     }
 
+    // todo; invoke the enum version instead?
+    // - i.e. avoid need for consumer to convert the selection enum to string manually.. do this automatically for ALL selections, i.e. no more nasty/obscure enum integer in the settings
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(
-        ICollection<EnumOption<T>> enumOptions, 
+        ICollection<EnumOption<T>> enumOptions,
         ObservableCollection<string> selections,
-        Action<FeatureType> changedAction = null, 
+        Action<FeatureType> changedAction = null,
         Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null,
-        bool includeSelectAll = true) where T : Enum
+        bool includeSelectAll = true,
+        int minimumNumberOfSelections = 0
+    ) where T : Enum
     {
         return CreateFeatureOptionsSelectionsViewInternal(enumOptions,
             enumOption => selections.Contains(enumOption.Description), enumOption => selections.Toggle(enumOption.Description),
-            changedAction, isSupportedFunc, includeSelectAll);
+            changedAction, isSupportedFunc, includeSelectAll,
+            minimumNumberOfSelections);
     }
 
     public static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsView<T>(
-        ICollection<EnumOption<T>> enumOptions, 
+        ICollection<EnumOption<T>> enumOptions,
         ObservableCollection<T> selections,
-        Action<FeatureType> changedAction = null, 
+        Action<FeatureType> changedAction = null,
         Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null,
-        bool includeSelectAll = true) where T : Enum
+        bool includeSelectAll = true,
+        int minimumNumberOfSelections = 0) where T : Enum
     {
         return CreateFeatureOptionsSelectionsViewInternal(enumOptions,
             enumOption => selections.Contains(enumOption.Enum), enumOption => selections.Toggle(enumOption.Enum),
-            changedAction, isSupportedFunc, includeSelectAll);
+            changedAction, isSupportedFunc, includeSelectAll,
+            minimumNumberOfSelections);
+    }
+
+    public static void DisableFeatureType(FeatureType featureType, string message = null)
+    {
+        // disable feature type so it can't be used, e.g. non-selectable
+        featureType.IsActive = false;
+        featureType.IsSupported = false;
+        if (message != null)
+            featureType.Tip += message;
     }
 
     private static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsViewInternal<T>(
-        ICollection<EnumOption<T>> enumOptions, 
+        ICollection<EnumOption<T>> enumOptions,
         Func<EnumOption<T>, bool> containsSelection,
         Action<EnumOption<T>> toggleSelection,
         Action<FeatureType> changedAction = null,
         Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool, string)> isSupportedFunc = null,
-        bool includeSelectAll = true) where T : Enum
+        bool includeSelectAll = true,
+        int minimumNumberOfSelections = 0
+    ) where T : Enum
     {
         // create options with a multiple selection support, e.g. style.. checkbox button, filter chip, etc
         var featureTypes = enumOptions.Select(enumOption =>
         {
             var featureType = CreateFeatureType(enumOption, containsSelection(enumOption));
-            featureType.SelectedCommand = new ActionCommand(() =>
-            {
-                toggleSelection(enumOption);
-                changedAction?.Invoke(featureType);
-            });
 
             SetupIsSupported(enumOptions, toggleSelection, isSupportedFunc, enumOption, featureType);
 
             return featureType;
         }).ToList();
+
+        // command setup performed outside of the loop so we've got access to the featureTypes collection
+        featureTypes.ForEach(featureType => SetupSelectedCommand(featureType, featureTypes, enumOptions.First(enumOption => featureType.Id == Convert.ToInt32(enumOption.Enum)),
+            toggleSelection, changedAction, minimumNumberOfSelections));
 
         if (includeSelectAll)
             featureTypes.Add(CreateSelectAll(featureTypes));
@@ -125,8 +139,32 @@ public static class FeatureOptions
         return new ListCollectionView<FeatureType>(featureTypes);
     }
 
-    private static void SetupIsSupported<T>(ICollection<EnumOption<T>> enumOptions, Action<EnumOption<T>> toggleSelection, 
-        Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool isSupported, string message)> isSupportedFunc, 
+    private static void SetupSelectedCommand<T>(FeatureType featureType, IReadOnlyCollection<FeatureType> featureTypes, EnumOption<T> enumOption, 
+        Action<EnumOption<T>> toggleSelection, Action<FeatureType> changedAction, int minNumberOfSelections) where T : Enum
+    {
+        featureType.SelectedCommand = new ActionCommand(() =>
+            {
+                // prevent the button from being deselected if the total number of selections would be less than the minimum allowed
+                // - update ordering..
+                //   a. isActive BEFORE the command is invoked.. e.g. button that was previously selected will have IsActive=false when processed here
+                //   b. UI       AFTER  the command is invoked.. effectively waiting for a dispatch refresh cycle
+                if (featureTypes.Count(x => x.IsActive) < minNumberOfSelections)
+                {
+                    // prevent the feature going inactive
+                    featureType.IsActive = true;
+                }
+                else
+                {
+                    // process the selection as per normal
+                    toggleSelection(enumOption);
+                    changedAction?.Invoke(featureType);
+                }
+            }
+        );
+    }
+
+    private static void SetupIsSupported<T>(ICollection<EnumOption<T>> enumOptions, Action<EnumOption<T>> toggleSelection,
+        Func<ICollection<EnumOption<T>>, EnumOption<T>, (bool isSupported, string message)> isSupportedFunc,
         EnumOption<T> enumOption, FeatureType featureType) where T : Enum
     {
         // if the feature is not supported, then update both..
@@ -140,15 +178,6 @@ public static class FeatureOptions
 
             DisableFeatureType(featureType, result.Value.message);
         }
-    }
-
-    public static void DisableFeatureType(FeatureType featureType, string message = null)
-    {
-        // disable feature type so it can't be used, e.g. non-selectable
-        featureType.IsActive = false;
-        featureType.IsSupported = false;
-        if (message != null)
-            featureType.Tip += message;
     }
 
     private static FeatureType CreateSelectAll(List<FeatureType> featureTypes)

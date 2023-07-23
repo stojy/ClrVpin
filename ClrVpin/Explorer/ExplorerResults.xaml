@@ -336,7 +336,7 @@
 
                 <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
                                 controls:GenericAttached.String="Style"
-                                controls:GenericAttached.String2="Filter tables based on whether the table was physically manufactured."
+                                controls:GenericAttached.String2="Filter tables based on whether the table was physically manufactured. At least one option must be selected."
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14"
                                 VerticalAlignment="Center">
