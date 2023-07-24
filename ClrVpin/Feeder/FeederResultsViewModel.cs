@@ -102,7 +102,7 @@ public sealed class FeederResultsViewModel
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
             Filter = game =>
-                (Settings.SelectedTableAvailabilityOption == TableAvailabilityOptionEnum.Any || game.OnlineGame?.TableAvailability == Settings.SelectedTableAvailabilityOption) &&
+                (game.OnlineGame != null && Settings.SelectedAvailabilityOptions.Contains(game.OnlineGame.TableAvailability)) &&
                 (Settings.SelectedTableNewContentOption == TableNewContentOptionEnum.Any || game.OnlineGame?.NewContentType == Settings.SelectedTableNewContentOption) &&
                 (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || game.TableMatchType == Settings.SelectedTableMatchOption) &&
                 (Settings.SelectedTableStyleOptions.Contains(game.TableStyleOption.ToString())) &&
@@ -129,12 +129,15 @@ public sealed class FeederResultsViewModel
         {
             TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
                 () => Model.Settings.Feeder.SelectedTableMatchOption, () => FilterChangedCommand.Execute(null)),
-            TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,
-                () => Model.Settings.Feeder.SelectedTableAvailabilityOption, () => FilterChangedCommand.Execute(null)),
+            
+            AvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableAvailabilityOptions, 
+                () => Model.Settings.Feeder.SelectedAvailabilityOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
+            
             TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
                 () => Model.Settings.Feeder.SelectedTableNewContentOption, () => FilterChangedCommand.Execute(null)),
-            IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions,
-                _ => UpdateIsNew(), includeSelectAll: false)
+            
+            IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, 
+                () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateIsNew(), includeSelectAll: false)
         };
 
         UpdatedFilterTimeChanged = new ActionCommand(UpdateIsNew);

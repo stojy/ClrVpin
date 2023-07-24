@@ -130,7 +130,6 @@ namespace ClrVpin.Models.Settings
         {
             new() {Enum = TableAvailabilityOptionEnum.Available, Tip = "Tables that are available for download, i.e. valid table URL(s) exist"},
             new() {Enum = TableAvailabilityOptionEnum.Unavailable, Tip = "Tables that are unavailable for download, i.e. no valid URL(s) exist"},
-            new() {Enum = TableAvailabilityOptionEnum.Any, Tip = "Available and unavailable tables"}
         };
         
         public static readonly EnumOption<TableNewContentOptionEnum>[] TableNewContentOptions =
