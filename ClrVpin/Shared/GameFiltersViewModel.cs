@@ -28,23 +28,23 @@ public class GameFiltersViewModel
         UpdateFilterViews();
     }
 
+    // common views
     public ListCollectionView<string> TablesFilterView { get; private set; }
     public ListCollectionView<string> ManufacturersFilterView { get; private set; }
     public ListCollectionView<string> YearsBeginFilterView { get; private set; }
     public ListCollectionView<string> YearsEndFilterView { get; private set; }
     public ListCollectionView<string> TypesFilterView { get; private set; }
     public ListCollectionView<string> FormatsFilterView { get; private set; }
-
     public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
     public ListCollectionView<FeatureType.FeatureType> TableStyleOptionsView { get; }
     
-    // todo; move these into FeederVM since they aren't common (e.g. with explorer)?
+    // feeder specific views
     public ListCollectionView<FeatureType.FeatureType> TableMatchOptionsView { get; init; }
-    public ListCollectionView<FeatureType.FeatureType> TableAvailabilityOptionsView { get; init; }
+    public ListCollectionView<FeatureType.FeatureType> AvailabilityOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> TableNewContentOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> IgnoreFeaturesOptionsView { get; init; }
     
-    // todo; move these into ExplorerVM since they aren't common (e.g. with Feeder)?
+    // explorer specific views
     public ListCollectionView<FeatureType.FeatureType> MissingFilesOptionsView { get; set; }
     public ListCollectionView<FeatureType.FeatureType> TableStaleOptionsView { get; set; }
 
