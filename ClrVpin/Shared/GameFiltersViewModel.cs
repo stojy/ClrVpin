@@ -20,8 +20,11 @@ public class GameFiltersViewModel
         _gameCollections = gameCollections;
         _filterChanged = filterChanged;
 
+        // common views
         PresetDateOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.PresetDateOptions, () => new ObservableCollection<PresetDateOptionEnum>(), PresetDateSelected, null, false);
-        
+        TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableStyleOptions, () => commonFilterSettings.SelectedTableStyleOptions,
+            _ => _filterChanged(), includeSelectAll: false, minimumNumberOfSelections: 1);
+
         UpdateFilterViews();
     }
 
@@ -32,13 +35,16 @@ public class GameFiltersViewModel
     public ListCollectionView<string> TypesFilterView { get; private set; }
     public ListCollectionView<string> FormatsFilterView { get; private set; }
 
-    public ListCollectionView<FeatureType.FeatureType> TableStyleOptionsView { get; set; }
+    public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
+    public ListCollectionView<FeatureType.FeatureType> TableStyleOptionsView { get; }
+    
+    // todo; move these into FeederVM since they aren't common (e.g. with explorer)?
     public ListCollectionView<FeatureType.FeatureType> TableMatchOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> TableAvailabilityOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> TableNewContentOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> IgnoreFeaturesOptionsView { get; init; }
-    public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
     
+    // todo; move these into ExplorerVM since they aren't common (e.g. with Feeder)?
     public ListCollectionView<FeatureType.FeatureType> MissingFilesOptionsView { get; set; }
     public ListCollectionView<FeatureType.FeatureType> TableStaleOptionsView { get; set; }
 
