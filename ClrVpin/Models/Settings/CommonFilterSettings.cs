@@ -24,7 +24,5 @@ public class CommonFilterSettings
     public DateTime? SelectedUpdatedAtDateBegin { get; set; }
     public DateTime? SelectedUpdatedAtDateEnd { get; set; }
 
-    // todo; replace with collection?
-    public TableStyleOptionEnum SelectedTableStyleOption { get; set; } = TableStyleOptionEnum.Manufactured;
     public ObservableCollection<string> SelectedTableStyleOptions { get; set; } = new() { TableStyleOptionEnum.Manufactured.ToString(), TableStyleOptionEnum.Original.ToString() };
 }

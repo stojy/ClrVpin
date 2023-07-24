@@ -105,7 +105,7 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedTableAvailabilityOption == TableAvailabilityOptionEnum.Any || game.OnlineGame?.TableAvailability == Settings.SelectedTableAvailabilityOption) &&
                 (Settings.SelectedTableNewContentOption == TableNewContentOptionEnum.Any || game.OnlineGame?.NewContentType == Settings.SelectedTableNewContentOption) &&
                 (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || game.TableMatchType == Settings.SelectedTableMatchOption) &&
-                (Settings.SelectedTableStyleOption == TableStyleOptionEnum.Both || game.TableStyleOption == Settings.SelectedTableStyleOption) &&
+                (Settings.SelectedTableStyleOptions.Contains(game.TableStyleOption.ToString())) &&
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
@@ -127,8 +127,6 @@ public sealed class FeederResultsViewModel
 
         GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null))
         {
-            TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableStyleOptions, TableStyleOptionEnum.Manufactured,
-                () => Model.Settings.Feeder.SelectedTableStyleOption, () => FilterChangedCommand.Execute(null)),
             TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
                 () => Model.Settings.Feeder.SelectedTableMatchOption, () => FilterChangedCommand.Execute(null)),
             TableAvailabilityOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableAvailabilityOptions, TableAvailabilityOptionEnum.Any,

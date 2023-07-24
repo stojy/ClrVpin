@@ -9,7 +9,6 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Feeder;
 using ClrVpin.Logging;
-using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
@@ -92,7 +91,7 @@ public class ExplorerResultsViewModel
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
             Filter = gameItem =>
-                (!Settings.SelectedTableStyleOptions.Any() || Settings.SelectedTableStyleOptions.Contains(gameItem.TableStyleOption.ToString())) &&
+                (Settings.SelectedTableStyleOptions.Contains(gameItem.TableStyleOption.ToString())) &&
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
@@ -121,16 +120,12 @@ public class ExplorerResultsViewModel
 
         _gameCollections = new GameCollections(GameItems, () => GameFiltersViewModel?.UpdateFilterViews());
 
-        GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null));
-
         DynamicFilteringCommand = new ActionCommand(() => RefreshViews(true));
         FilterChangedCommand = new ActionCommand(() => RefreshViews(Settings.IsDynamicFiltering));
         MinRatingChangedCommand = new ActionCommand(MinRatingChanged);
         MaxRatingChangedCommand = new ActionCommand(MaxRatingChanged);
 
-        GameFiltersViewModel.TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableStyleOptions, () => Settings.SelectedTableStyleOptions,
-            _ => FilterChangedCommand.Execute(null), includeSelectAll:false, minimumNumberOfSelections: 1);
-
+        GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null));
         var missingFileOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.MissingFileOptions.Select(y => y.Enum))).ToArray();
         GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(missingFileOptions, () => Settings.SelectedMissingFileOptions, 
             _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage));
