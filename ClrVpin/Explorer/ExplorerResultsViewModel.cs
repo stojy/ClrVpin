@@ -128,7 +128,7 @@ public class ExplorerResultsViewModel
         GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null));
         var missingFileOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.MissingFileOptions.Select(y => y.Enum))).ToArray();
         GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(missingFileOptions, () => Settings.SelectedMissingFileOptions, 
-            _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage));
+            _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage), false);
         
         var tableStaleOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.TableStaleOptions.Select(y => y.Enum))).ToArray();
         GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(tableStaleOptions, () => Settings.SelectedTableStaleOptions, 
