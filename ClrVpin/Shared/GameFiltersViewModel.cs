@@ -22,7 +22,7 @@ public class GameFiltersViewModel
 
         // common views
         PresetDateOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.PresetDateOptions, () => new ObservableCollection<PresetDateOptionEnum>(), PresetDateSelected, null, false);
-        TableStyleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableStyleOptions, () => commonFilterSettings.SelectedTableStyleOptions,
+        TableConstructionOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableConstructionOptions, () => commonFilterSettings.SelectedTableConstructionOptions,
             _ => _filterChanged(), includeSelectAll: false, minimumNumberOfSelections: 1);
 
         UpdateFilterViews();
@@ -36,11 +36,11 @@ public class GameFiltersViewModel
     public ListCollectionView<string> TypesFilterView { get; private set; }
     public ListCollectionView<string> FormatsFilterView { get; private set; }
     public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
-    public ListCollectionView<FeatureType.FeatureType> TableStyleOptionsView { get; }
+    public ListCollectionView<FeatureType.FeatureType> TableConstructionOptionsView { get; }
     
     // feeder specific views
     public ListCollectionView<FeatureType.FeatureType> TableMatchOptionsView { get; init; }
-    public ListCollectionView<FeatureType.FeatureType> AvailabilityOptionsView { get; init; }
+    public ListCollectionView<FeatureType.FeatureType> TableDownloadOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> TableNewContentOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> IgnoreFeaturesOptionsView { get; init; }
     

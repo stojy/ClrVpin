@@ -448,11 +448,11 @@
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
                 <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" 
-                                controls:GenericAttached.String="Style" 
-                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
-                                controls:GenericAttached.Double="60"
+                                controls:GenericAttached.String="Construction" 
+                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically constructed/manufactured."
+                                controls:GenericAttached.Double="90"
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableStyleOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableConstructionOptionsView}" />
                 </ContentControl>
               </Grid>
 
@@ -473,11 +473,11 @@
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
                 <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" 
-                                controls:GenericAttached.String="Availability" 
-                                controls:GenericAttached.String2="Filter the tables based on whether the table are available to be downloaded. Not applicable for unmatched tables."
-                                controls:GenericAttached.Double="70"
+                                controls:GenericAttached.String="Download" 
+                                controls:GenericAttached.String2="Filter the tables based on whether the table can be downloaded. Not applicable for unmatched tables."
+                                controls:GenericAttached.Double="90"
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.AvailabilityOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableDownloadOptionsView}" />
                 </ContentControl>
               </Grid>
             </StackPanel>
