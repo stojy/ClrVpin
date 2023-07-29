@@ -433,31 +433,16 @@
                 </WrapPanel>
               </Grid>
 
-              <Grid Margin="0,10,0,0">
+              <!--<Grid Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="1.20*" />
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <ContentControl Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Updated"
-                                controls:GenericAttached.String2="Filter the tables based on the type of content that was updated. Not applicable for unmatched tables."
-                                controls:GenericAttached.Double="70"
-                                controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListSingleChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableNewContentOptionsView}" />
-                </ContentControl>
-
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Construction"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically constructed/manufactured."
-                                controls:GenericAttached.Double="90"
-                                controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableConstructionOptionsView}" />
-                </ContentControl>
-              </Grid>
+              </Grid>-->
 
               <Grid>
                 <Grid.ColumnDefinitions>
@@ -466,6 +451,16 @@
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
+                <ContentControl Grid.Column="0" Template="{StaticResource KeyValueAutoPair}"
+                                controls:GenericAttached.String="Construction"
+                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically constructed/manufactured."
+                                controls:GenericAttached.Double="110"
+                                controls:GenericAttached.Double2="14">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableConstructionOptionsView}" />
+                </ContentControl>
+
+                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
+
                 <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
                                 controls:GenericAttached.String="Download"
                                 controls:GenericAttached.String2="Filter the tables based on whether the table can be downloaded. Not applicable for unmatched tables."
@@ -473,16 +468,22 @@
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableDownloadOptionsView}" />
                 </ContentControl>
-
-                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
-
               </Grid>
               
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
                               controls:GenericAttached.String="Fuzzy Matching"
                               controls:GenericAttached.String2="Filter the tables based on the fuzzy matching results."
-                              controls:GenericAttached.Double="60" controls:GenericAttached.Double2="14">
-                <ContentControl Margin="10,0,0,0" ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableMatchOptionsView}" />
+                              controls:GenericAttached.Double="110" 
+                              controls:GenericAttached.Double2="14">
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableMatchOptionsView}" />
+              </ContentControl>
+
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Updated Content"
+                              controls:GenericAttached.String2="Filter the tables based on any new content that has been added. Not applicable for 'local only' tables (i.e. no online match)."
+                              controls:GenericAttached.Double="110"
+                              controls:GenericAttached.Double2="14">
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableNewContentOptionsView}" />
               </ContentControl>
 
             </StackPanel>

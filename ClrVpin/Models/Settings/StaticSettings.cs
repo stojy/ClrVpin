@@ -135,7 +135,6 @@ namespace ClrVpin.Models.Settings
         {
             new() {Enum = TableNewContentOptionEnum.TableBackglassDmd, Tip = "Tables with new content of type: Table, Backglass, or DMDs"},
             new() {Enum = TableNewContentOptionEnum.Other, Tip = "Tables with new content of type: Wheels, ROMs, Media Packs, Sounds, Toppers, PuP Packs, POVs, Alt. Sounds, or Rules"},
-            new() {Enum = TableNewContentOptionEnum.Any, Tip = "Tables with new content of any type, including any unmatched tables where new content is n/a"}
         };
 
         public static readonly EnumOption<IgnoreFeatureOptionEnum>[] IgnoreFeatureOptions =
