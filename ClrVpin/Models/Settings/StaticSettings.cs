@@ -120,10 +120,9 @@ namespace ClrVpin.Models.Settings
         // all possible table match options
         public static readonly EnumOption<TableMatchOptionEnum>[] TableMatchOptions =
         {
-            new() {Enum = TableMatchOptionEnum.LocalAndOnline, Tip = "Tables that exist in both local database and the online feed"},
-            new() {Enum = TableMatchOptionEnum.OnlineOnly, Tip = "Tables that only exist in the online feed, i.e. tables missing from your collection"},
-            new() {Enum = TableMatchOptionEnum.LocalOnly, Tip = "Tables that only exist in your local database, i.e. unmatched tables that may require renaming to match the online feed"},
-            new() {Enum = TableMatchOptionEnum.All, Tip = "All tables irrespective of whether they are matched, missing, or unmatched"}
+            new() {Enum = TableMatchOptionEnum.LocalAndOnline, Tip = "Matched: tables exist in both your local database and the online feed"},
+            new() {Enum = TableMatchOptionEnum.OnlineOnly, Tip = "Missing: tables only exist in the online feed, i.e. tables missing from your collection. Renaming your local table(s) to match the online feed may fix this."},
+            new() {Enum = TableMatchOptionEnum.LocalOnly, Tip = "Unmatched: tables only exist in your local database, i.e. tables unmatched or missing from the online feed. Renaming your local table(s) to match the online feed may fix this."},
         };
 
         public static readonly EnumOption<TableAvailabilityOptionEnum>[] TableDownloadOptions =

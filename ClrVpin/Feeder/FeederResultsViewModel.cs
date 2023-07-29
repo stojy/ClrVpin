@@ -102,9 +102,9 @@ public sealed class FeederResultsViewModel
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
             Filter = game =>
-                (game.OnlineGame != null && Settings.SelectedTableDownloadOptions.Contains(game.OnlineGame.TableAvailability)) &&
+                (game.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(game.OnlineGame.TableAvailability)) &&
                 (Settings.SelectedTableNewContentOption == TableNewContentOptionEnum.Any || game.OnlineGame?.NewContentType == Settings.SelectedTableNewContentOption) &&
-                (Settings.SelectedTableMatchOption == TableMatchOptionEnum.All || game.TableMatchType == Settings.SelectedTableMatchOption) &&
+                (Settings.SelectedTableMatchOptions.Contains(game.TableMatchType)) &&
                 (Settings.SelectedTableConstructionOptions.Contains(game.TableStyleOption.ToString())) &&
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
@@ -127,8 +127,8 @@ public sealed class FeederResultsViewModel
 
         GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null))
         {
-            TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableMatchOptions, TableMatchOptionEnum.All,
-                () => Model.Settings.Feeder.SelectedTableMatchOption, () => FilterChangedCommand.Execute(null)),
+            TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableMatchOptions, 
+                () => Model.Settings.Feeder.SelectedTableMatchOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             TableDownloadOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableDownloadOptions, 
                 () => Model.Settings.Feeder.SelectedTableDownloadOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),

@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel;
 
-namespace ClrVpin.Models.Feeder
+namespace ClrVpin.Models.Feeder;
+
+public enum TableMatchOptionEnum
 {
-    public enum TableMatchOptionEnum
-    {
-        [Description("Matched")] LocalAndOnline, // local and online
-        [Description("Unmatched")] LocalOnly,    // only in local
-        [Description("Missing")] OnlineOnly,     // only in online
-        [Description("All")] All
-    }
+    [Description("Local and Online")] LocalAndOnline,
+    [Description("Local Only")] LocalOnly,    
+    [Description("Online Only")] OnlineOnly,  
 }

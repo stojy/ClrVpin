@@ -22,6 +22,8 @@ public class GameItem
         Update(localLocalGame);
     }
 
+    public override string ToString() => $"'{Name}', {TableMatchType}";
+
     public int Index { get; set; } // 1 based index of every game in the list
     
     public string Name => Names.FirstOrDefault(x => x != null);

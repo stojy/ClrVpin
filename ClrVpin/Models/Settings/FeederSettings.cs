@@ -14,7 +14,7 @@ public class FeederSettings : CommonFilterSettings
 
     // display result filtering criteria
     
-    public TableMatchOptionEnum SelectedTableMatchOption { get; set; } = TableMatchOptionEnum.All;
+    public ObservableCollection<TableMatchOptionEnum> SelectedTableMatchOptions { get; set; } = new() { TableMatchOptionEnum.LocalAndOnline, TableMatchOptionEnum.OnlineOnly, TableMatchOptionEnum.LocalOnly};
     public ObservableCollection<TableAvailabilityOptionEnum> SelectedTableDownloadOptions { get; set; } = new() { TableAvailabilityOptionEnum.Available, TableAvailabilityOptionEnum.Unavailable };
 
     public TableNewContentOptionEnum SelectedTableNewContentOption { get; set; } = TableNewContentOptionEnum.Any;
