@@ -13,7 +13,7 @@ namespace ClrVpin.Models.Settings
         static StaticSettings()
         {
             // common 
-            TableStyleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TableConstructionOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // cleaner
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -33,7 +33,7 @@ namespace ClrVpin.Models.Settings
 
             // feeder
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            TableAvailabilityOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TableDownloadOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableNewContentOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -100,7 +100,7 @@ namespace ClrVpin.Models.Settings
         };
 
         // all possible table style options - to be used elsewhere (feeder)
-        public static readonly EnumOption<TableStyleOptionEnum>[] TableStyleOptions =
+        public static readonly EnumOption<TableStyleOptionEnum>[] TableConstructionOptions =
         {
             new() {Enum = TableStyleOptionEnum.Manufactured, Tip = "A physical table has been manufactured"},
             new() {Enum = TableStyleOptionEnum.Original, Tip = "An original table creation that has not been manufactured"}
@@ -126,7 +126,7 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TableMatchOptionEnum.All, Tip = "All tables irrespective of whether they are matched, missing, or unmatched"}
         };
 
-        public static readonly EnumOption<TableAvailabilityOptionEnum>[] TableAvailabilityOptions =
+        public static readonly EnumOption<TableAvailabilityOptionEnum>[] TableDownloadOptions =
         {
             new() {Enum = TableAvailabilityOptionEnum.Available, Tip = "Tables that are available for download, i.e. valid table URL(s) exist"},
             new() {Enum = TableAvailabilityOptionEnum.Unavailable, Tip = "Tables that are unavailable for download, i.e. no valid URL(s) exist"},
