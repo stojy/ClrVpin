@@ -232,7 +232,7 @@
                     <b:InvokeCommandAction Command="{Binding SelectedCommand}" />
                   </b:EventTrigger>
                 </b:Interaction.Triggers>
-               
+
                 <Grid Name="container">
                   <Image Margin="20" Source="{Binding Url, Converter={StaticResource NullOrEmptyToUnsetConverter}}" Stretch="Uniform" Height="1100" />
 
@@ -276,6 +276,7 @@
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Left" Width="700">
+          <!-- include filtering -->
           <GroupBox DockPanel.Dock="Top" Header="Include Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0"> <!-- margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :( -->
@@ -324,7 +325,7 @@
                             SelectedItem="{Binding Path=Settings.SelectedTypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             materialDesign:HintAssist.Hint="Type"
                             Style="{StaticResource ComboBoxStyle}"
-                            Width="65" Margin="0,0,0,0" 
+                            Width="65" Margin="0,0,0,0"
                             ToolTip="Filter the tables based on the table construction type: PM (Purely Mechanical), EM (Electromechanical), SS (Solid State).">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
@@ -385,10 +386,10 @@
                     </Style>
                   </WrapPanel.Resources>
 
-                  <DatePicker materialDesign:HintAssist.Hint="Updated From" 
-                              Style="{StaticResource DatePickerStyle}" 
+                  <DatePicker materialDesign:HintAssist.Hint="Updated From"
+                              Style="{StaticResource DatePickerStyle}"
                               SelectedDate="{Binding Settings.SelectedUpdatedAtDateBegin}"
-                              DisplayDateEnd="{Binding Settings.SelectedUpdatedAtDateEnd}" 
+                              DisplayDateEnd="{Binding Settings.SelectedUpdatedAtDateEnd}"
                               Margin="0"
                               ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
@@ -398,8 +399,8 @@
                     </b:Interaction.Triggers>
                   </DatePicker>
 
-                  <DatePicker materialDesign:HintAssist.Hint="Updated To" 
-                              Style="{StaticResource DatePickerStyle}" 
+                  <DatePicker materialDesign:HintAssist.Hint="Updated To"
+                              Style="{StaticResource DatePickerStyle}"
                               SelectedDate="{Binding Settings.SelectedUpdatedAtDateEnd}"
                               DisplayDateStart="{Binding Settings.SelectedUpdatedAtDateBegin}"
                               ToolTip="Filter the tables based on when the table was last updated. Ignored for unmatched tables.">
@@ -438,17 +439,19 @@
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ContentControl Template="{StaticResource KeyValueAutoPair}" 
-                                controls:GenericAttached.String="Fuzzy"
-                                controls:GenericAttached.String2="Filter the tables based on whether the fuzzy matching was successful."
-                                controls:GenericAttached.Double="70" controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListSingleChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableMatchOptionsView}" />
+
+                <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                                controls:GenericAttached.String="Updated"
+                                controls:GenericAttached.String2="Filter the tables based on the type of content that was updated. Not applicable for unmatched tables."
+                                controls:GenericAttached.Double="70"
+                                controls:GenericAttached.Double2="14">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListSingleChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableNewContentOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" 
-                                controls:GenericAttached.String="Construction" 
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
+                                controls:GenericAttached.String="Construction"
                                 controls:GenericAttached.String2="Filter the tables based on whether the table was physically constructed/manufactured."
                                 controls:GenericAttached.Double="90"
                                 controls:GenericAttached.Double2="14">
@@ -462,27 +465,30 @@
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ContentControl Template="{StaticResource KeyValueAutoPair}" 
-                                controls:GenericAttached.String="Updated" 
-                                controls:GenericAttached.String2="Filter the tables based on the type of content that was updated. Not applicable for unmatched tables."
-                                controls:GenericAttached.Double="70" 
-                                controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListSingleChoiceChipTemplate}" Content="{Binding GameFiltersViewModel.TableNewContentOptionsView}" />
-                </ContentControl>
 
-                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
-
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}" 
-                                controls:GenericAttached.String="Download" 
+                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
+                                controls:GenericAttached.String="Download"
                                 controls:GenericAttached.String2="Filter the tables based on whether the table can be downloaded. Not applicable for unmatched tables."
                                 controls:GenericAttached.Double="90"
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableDownloadOptionsView}" />
                 </ContentControl>
+
+                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
+
               </Grid>
+              
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Fuzzy Matching"
+                              controls:GenericAttached.String2="Filter the tables based on the fuzzy matching results."
+                              controls:GenericAttached.Double="60" controls:GenericAttached.Double2="14">
+                <ContentControl Margin="10,0,0,0" ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableMatchOptionsView}" />
+              </ContentControl>
+
             </StackPanel>
           </GroupBox>
 
+          <!-- exclude filtering -->
           <GroupBox DockPanel.Dock="Top" Header="Exclude Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <Grid>
@@ -491,10 +497,10 @@
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ContentControl Template="{StaticResource KeyValueAutoPair}" 
-                                controls:GenericAttached.String="Features" 
+                <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                                controls:GenericAttached.String="Features"
                                 controls:GenericAttached.String2="Don't attribute file(s) as 'New' if they contain these features"
-                                controls:GenericAttached.Double="70" 
+                                controls:GenericAttached.Double="70"
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.IgnoreFeaturesOptionsView }" />
                 </ContentControl>
@@ -553,16 +559,16 @@
             <TextBlock Text="{Binding GameItems.Count}" />
           </WrapPanel>
 
-          <DataGrid Name="FeederResults" DockPanel.Dock="Bottom" 
+          <DataGrid Name="FeederResults" DockPanel.Dock="Bottom"
                     SelectionMode="Single"
                     ItemsSource="{Binding GameItemsView}"
-                    AutoGenerateColumns="False" 
-                    CanUserAddRows="False" 
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
                     CanUserDeleteRows="False"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
                     materialDesign:DataGridAssist.CellPadding="4 1 1 4"
                     CellStyle="{StaticResource NoBorderDataGridCellStyle}"
-                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" 
+                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
                     CanUserSortColumns="True"
                     IsReadOnly="True"
                     EnableRowVirtualization="True"
@@ -579,7 +585,7 @@
               <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
                                   Header="#" Binding="{Binding Index}" Width="45" />
 
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" CanUserSort="False" CanUserResize="False" CanUserReorder="False" 
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" CanUserSort="False" CanUserResize="False" CanUserReorder="False"
                                       Width="30" CellStyle="{StaticResource AlignedDataGridCellStyle}">
                 <DataGridTemplateColumn.CellTemplate>
                   <DataTemplate>
@@ -603,7 +609,7 @@
                               Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.OnlineOnly}}"
                               IsEnabled="{Binding IsMatchingEnabled}"
                               Command="{Binding CreateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="Plus" Height="33" Width="33" Margin="-2,0,0,0"/> <!-- drawn oversize because the 'plus' icon is too small -->
+                        <materialDesign:PackIcon Kind="Plus" Height="33" Width="33" Margin="-2,0,0,0" /> <!-- drawn oversize because the 'plus' icon is too small -->
                       </Button>
                     </WrapPanel>
                   </DataTemplate>
