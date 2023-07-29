@@ -103,7 +103,7 @@ public sealed class FeederResultsViewModel
             // - quickest checks placed first to short circuit evaluation of more complex checks
             Filter = game =>
                 (game.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(game.OnlineGame.TableAvailability)) &&
-                (Settings.SelectedTableNewContentOption == TableNewContentOptionEnum.Any || game.OnlineGame?.NewContentType == Settings.SelectedTableNewContentOption) &&
+                (game.OnlineGame?.NewContentType == null || Settings.SelectedTableNewContentOptions.Contains(game.OnlineGame.NewContentType.Value)) &&
                 (Settings.SelectedTableMatchOptions.Contains(game.TableMatchType)) &&
                 (Settings.SelectedTableConstructionOptions.Contains(game.TableStyleOption.ToString())) &&
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
@@ -113,7 +113,7 @@ public sealed class FeederResultsViewModel
                 // do we really need to re-filter against 'UpdatedAt' given it's already calculated during UpdateIsNew??
                 (Settings.SelectedUpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
                 (Settings.SelectedUpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
-                
+
                 (Settings.SelectedTableFilter == null || game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
                 (Settings.SelectedManufacturerFilter == null || game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
                 game.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false // keep if the online file collection is new or doesn't exist (i.e. unmatched)
@@ -133,8 +133,8 @@ public sealed class FeederResultsViewModel
             TableDownloadOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableDownloadOptions, 
                 () => Model.Settings.Feeder.SelectedTableDownloadOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
-            TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsSingleSelectionView(StaticSettings.TableNewContentOptions, TableNewContentOptionEnum.Any,
-                () => Model.Settings.Feeder.SelectedTableNewContentOption, () => FilterChangedCommand.Execute(null)),
+            TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableNewContentOptions, 
+                () => Model.Settings.Feeder.SelectedTableNewContentOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, 
                 () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateIsNew(), includeSelectAll: false)
