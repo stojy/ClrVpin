@@ -218,7 +218,7 @@ public sealed class FeederResultsViewModel
             Left = left,
             Top = top,
             Width = Model.ScreenWorkArea.Width - WindowMargin,
-            Height = (Model.ScreenWorkArea.Height - 10) * 0.73,
+            Height = (Model.ScreenWorkArea.Height - 10) * 0.8,
             Content = this,
             Resources = parentWindow.Resources,
             ContentTemplate = parentWindow.FindResource("FeederResultsTemplate") as DataTemplate
