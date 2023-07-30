@@ -8,15 +8,14 @@ namespace ClrVpin.Models.Settings;
 [Serializable]
 public class FeederSettings : CommonFilterSettings
 {
-    public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new();
+    // defaults assigned via Settings
 
+    public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new();
     public ObservableCollection<FixFeedOptionEnum> SelectedFeedFixOptions { get; set; } = new();
 
-    // display result filtering criteria
-    
-    public ObservableCollection<TableMatchOptionEnum> SelectedTableMatchOptions { get; set; } = new() { TableMatchOptionEnum.LocalAndOnline, TableMatchOptionEnum.OnlineOnly, TableMatchOptionEnum.LocalOnly};
-    public ObservableCollection<TableAvailabilityOptionEnum> SelectedTableDownloadOptions { get; set; } = new() { TableAvailabilityOptionEnum.Available, TableAvailabilityOptionEnum.Unavailable };
+    public ObservableCollection<TableMatchOptionEnum> SelectedTableMatchOptions { get; set; } = new();
+    public ObservableCollection<TableDownloadOptionEnum> SelectedTableDownloadOptions { get; set; } = new();
 
-    public ObservableCollection<TableNewContentOptionEnum> SelectedTableNewContentOptions { get; set; } = new() { TableNewContentOptionEnum.TableBackglassDmd, TableNewContentOptionEnum.Other};
+    public ObservableCollection<string> SelectedTableNewFileOptions { get; set; } = new();
     public ObservableCollection<IgnoreFeatureOptionEnum> SelectedIgnoreFeatureOptions { get; set; } = new ();
 }

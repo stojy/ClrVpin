@@ -47,18 +47,18 @@ public static class FeederFix
             // group files into collections so they can be treated generically
             game.AllFiles = new Dictionary<string, FileCollection>
             {
-                { "Tables", new FileCollection(game.TableFiles) },
-                { "Backglasses", new FileCollection(game.B2SFiles) },
-                { "DMDs", new FileCollection(game.AltColorFiles) },
-                { "Wheels", new FileCollection(game.WheelArtFiles) },
-                { "ROMs", new FileCollection(game.RomFiles) },
-                { "Media Packs", new FileCollection(game.MediaPackFiles) },
-                { "Sounds", new FileCollection(game.SoundFiles) },
-                { "Toppers", new FileCollection(game.TopperFiles) },
-                { "PuP Packs", new FileCollection(game.PupPackFiles) },
-                { "POVs", new FileCollection(game.PovFiles) },
-                { "Alt. Sounds", new FileCollection(game.AltSoundFiles) },
-                { "Rules", new FileCollection(game.RuleFiles) }
+                { TableNewFileOptionEnum.Tables.GetDescription(), new FileCollection(game.TableFiles) },
+                { TableNewFileOptionEnum.Backglasses.GetDescription(), new FileCollection(game.B2SFiles) },
+                { TableNewFileOptionEnum.DMDs.GetDescription(), new FileCollection(game.AltColorFiles) },
+                { TableNewFileOptionEnum.Wheels.GetDescription(), new FileCollection(game.WheelArtFiles) },
+                { TableNewFileOptionEnum.ROMs.GetDescription(), new FileCollection(game.RomFiles) },
+                { TableNewFileOptionEnum.MediaPacks.GetDescription(), new FileCollection(game.MediaPackFiles) },
+                { TableNewFileOptionEnum.Sounds.GetDescription(), new FileCollection(game.SoundFiles) },
+                { TableNewFileOptionEnum.Toppers.GetDescription(), new FileCollection(game.TopperFiles) },
+                { TableNewFileOptionEnum.PuPPacks.GetDescription(), new FileCollection(game.PupPackFiles) },
+                { TableNewFileOptionEnum.POVs.GetDescription(), new FileCollection(game.PovFiles) },
+                { TableNewFileOptionEnum.AlternateSounds.GetDescription(), new FileCollection(game.AltSoundFiles) },
+                { TableNewFileOptionEnum.Rules.GetDescription(), new FileCollection(game.RuleFiles) }
             };
             game.AllFilesList = game.AllFiles.Select(kv => kv.Value).ToList();
             game.AllFilesFlattenedList = game.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
@@ -90,7 +90,7 @@ public static class FeederFix
             game.AltSoundFiles = game.AltSoundFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToList();
 
-            game.TableAvailability = game.TableFiles.Any(file => file.Urls.Any(url => !url.Broken)) ? TableAvailabilityOptionEnum.Available : TableAvailabilityOptionEnum.Unavailable;
+            game.TableDownload = game.TableFiles.Any(file => file.Urls.Any(url => !url.Broken)) ? TableDownloadOptionEnum.Available : TableDownloadOptionEnum.Unavailable;
             game.TableFormats = game.TableFiles.Where(file => !string.IsNullOrWhiteSpace(file.TableFormat)).Select(x => x.TableFormat).Distinct().ToList();
         });
 

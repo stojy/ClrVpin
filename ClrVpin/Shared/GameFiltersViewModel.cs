@@ -41,7 +41,7 @@ public class GameFiltersViewModel
     // feeder specific views
     public ListCollectionView<FeatureType.FeatureType> TableMatchOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> TableDownloadOptionsView { get; init; }
-    public ListCollectionView<FeatureType.FeatureType> TableNewContentOptionsView { get; init; }
+    public ListCollectionView<FeatureType.FeatureType> TableNewFileOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> IgnoreFeaturesOptionsView { get; init; }
     
     // explorer specific views

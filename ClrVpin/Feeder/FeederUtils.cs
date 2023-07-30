@@ -175,7 +175,7 @@ public static class FeederUtils
 
         // logging - missing games
         var missingGames = onlineGames
-            .Where(onlineGame => !onlineGame.IsOriginal && onlineGame.TableFormats.Contains("VPX") && onlineGame.TableAvailability == TableAvailabilityOptionEnum.Available && onlineGame.Hit == null)
+            .Where(onlineGame => !onlineGame.IsOriginal && onlineGame.TableFormats.Contains("VPX") && onlineGame.TableDownload == TableDownloadOptionEnum.Available && onlineGame.Hit == null)
             .OrderBy(onlineGame => onlineGame.Name)
             .ToList();
         Logger.Info($"Fuzzy matching: missing table count={missingGames.Count} (only exists in the online feed.. restricted to tables that are manufactured, VPX, and available for download)");
