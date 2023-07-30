@@ -1,4 +1,5 @@
 ﻿using ClrVpin.Models.Feeder;
+using ClrVpin.Models.Shared;
 
 namespace ClrVpin.Models.Merger;
 

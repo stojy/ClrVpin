@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using ClrVpin.Controls;
 using ClrVpin.Models.Feeder;
+using ClrVpin.Models.Shared;
 using Utils;
 using Utils.Extensions;
 
