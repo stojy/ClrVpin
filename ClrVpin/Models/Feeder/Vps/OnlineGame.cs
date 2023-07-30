@@ -17,7 +17,7 @@ public class OnlineGame : OnlineGameBase
     public UrlSelection ImageUrlSelection { get; set; }
 
     public string YearString { get; set; }
-    public TableAvailabilityOptionEnum TableAvailability { get; set; }
+    public TableDownloadOptionEnum TableDownload { get; set; }
     public List<string> TableFormats { get; set; }
 
     public bool IsOriginal { get; set; }
@@ -31,7 +31,7 @@ public class OnlineGame : OnlineGameBase
     // reference to the highest fuzzy ranked DB match
     public LocalGameHit Hit { get; set; }
 
-    public TableNewContentOptionEnum? NewContentType {get; set; }
+    public List<string> NewFileTypes { get; set; } = new();
     
     public string CreateDescription() => $"{Name?.Trim()} ({Manufacturer?.Trim()} {Year})";
 }

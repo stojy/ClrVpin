@@ -34,7 +34,7 @@ namespace ClrVpin.Models.Settings
             // feeder
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableDownloadOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            TableNewContentOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TableNewFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreFeatureOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -125,16 +125,26 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TableMatchOptionEnum.LocalOnly, Tip = "Unmatched: tables only exist in your local database, i.e. tables unmatched or missing from the online feed. Renaming your local table(s) to match the online feed may fix this."},
         };
 
-        public static readonly EnumOption<TableAvailabilityOptionEnum>[] TableDownloadOptions =
+        public static readonly EnumOption<TableDownloadOptionEnum>[] TableDownloadOptions =
         {
-            new() {Enum = TableAvailabilityOptionEnum.Available, Tip = "Tables that are available for download, i.e. valid table URL(s) exist"},
-            new() {Enum = TableAvailabilityOptionEnum.Unavailable, Tip = "Tables that are unavailable for download, i.e. no valid URL(s) exist"},
+            new() {Enum = TableDownloadOptionEnum.Available, Tip = "Tables that are available for download, i.e. valid table URL(s) exist"},
+            new() {Enum = TableDownloadOptionEnum.Unavailable, Tip = "Tables that are unavailable for download, i.e. no valid URL(s) exist"},
         };
         
-        public static readonly EnumOption<TableNewContentOptionEnum>[] TableNewContentOptions =
+        public static readonly EnumOption<TableNewFileOptionEnum>[] TableNewFileOptions =
         {
-            new() {Enum = TableNewContentOptionEnum.TableBackglassDmd, Tip = "Tables with new content of type: Table, Backglass, or DMDs"},
-            new() {Enum = TableNewContentOptionEnum.Other, Tip = "Tables with new content of type: Wheels, ROMs, Media Packs, Sounds, Toppers, PuP Packs, POVs, Alt. Sounds, or Rules"},
+            new() {Enum = TableNewFileOptionEnum.Tables, Tip = "Tables with new content of type: Table"},
+            new() {Enum = TableNewFileOptionEnum.Backglasses, Tip = "Tables with new content of type: Backglass"},
+            new() {Enum = TableNewFileOptionEnum.DMDs, Tip = "Tables with new content of type: DMD"},
+            new() {Enum = TableNewFileOptionEnum.Wheels, Tip = "Tables with new content of type: Wheel"},
+            new() {Enum = TableNewFileOptionEnum.ROMs, Tip = "Tables with new content of type: ROM(s)"},
+            new() {Enum = TableNewFileOptionEnum.MediaPacks, Tip = "Tables with new content of type: Media Pack"},
+            new() {Enum = TableNewFileOptionEnum.Sounds, Tip = "Tables with new content of type: Sounds"},
+            new() {Enum = TableNewFileOptionEnum.Toppers, Tip = "Tables with new content of type: Topper"},
+            new() {Enum = TableNewFileOptionEnum.PuPPacks, Tip = "Tables with new content of type: PuP Pack"},
+            new() {Enum = TableNewFileOptionEnum.POVs, Tip = "Tables with new content of type: Point of View"},
+            new() {Enum = TableNewFileOptionEnum.AlternateSounds, Tip = "Tables with new content of type: Alternate Sound"},
+            new() {Enum = TableNewFileOptionEnum.Rules, Tip = "Tables with new content of type: Rules"},
         };
 
         public static readonly EnumOption<IgnoreFeatureOptionEnum>[] IgnoreFeatureOptions =

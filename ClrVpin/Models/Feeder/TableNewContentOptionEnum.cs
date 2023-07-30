@@ -2,8 +2,18 @@
 
 namespace ClrVpin.Models.Feeder;
 
-public enum TableNewContentOptionEnum
+public enum TableNewFileOptionEnum
 {
-    [Description("Table, Backglass, DMD")] TableBackglassDmd,
-    [Description("Other")] Other,
+    [Description("Tables")] Tables,
+    [Description("Backglasses")] Backglasses,
+    [Description("DMDs")] DMDs,
+    [Description("Wheels")] Wheels,
+    [Description("ROMs")] ROMs,
+    [Description("Media Packs")] MediaPacks,
+    [Description("Sounds")] Sounds,
+    [Description("Toppers")] Toppers,
+    [Description("PuP Packs")] PuPPacks,
+    [Description("POVs")] POVs,
+    [Description("Alt. Sounds")] AlternateSounds,
+    [Description("Rules")] Rules,
 }

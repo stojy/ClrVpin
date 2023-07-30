@@ -20,14 +20,16 @@
   </ControlTemplate>
 
   <ControlTemplate x:Key="KeyValueAutoPair" TargetType="ContentControl">
-    <WrapPanel Margin="0,2">
-      <TextBlock Text="{TemplateBinding controls:GenericAttached.String}" 
+    <DockPanel Margin="0,2">
+      <TextBlock DockPanel.Dock="Left"
+                 VerticalAlignment="Top"
+                 Text="{TemplateBinding controls:GenericAttached.String}" 
                  MinWidth="{TemplateBinding controls:GenericAttached.Double}" 
                  FontSize="{TemplateBinding controls:GenericAttached.Double2}"
                  Style="{StaticResource KeyTextBlockAutoStyle}"
                  ToolTip="{TemplateBinding controls:GenericAttached.String2}"/>
-      <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="Center" />
-    </WrapPanel>
+      <ContentPresenter DockPanel.Dock="Right" Content="{TemplateBinding Content}" VerticalAlignment="Center" />
+    </DockPanel>
   </ControlTemplate>
 
   <ControlTemplate x:Key="KeyValueStringPair" TargetType="ContentControl">

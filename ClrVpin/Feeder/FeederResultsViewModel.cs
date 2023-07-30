@@ -102,8 +102,8 @@ public sealed class FeederResultsViewModel
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
             Filter = game =>
-                (game.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(game.OnlineGame.TableAvailability)) &&
-                (game.OnlineGame?.NewContentType == null || Settings.SelectedTableNewContentOptions.Contains(game.OnlineGame.NewContentType.Value)) &&
+                (game.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(game.OnlineGame.TableDownload)) &&
+                (game.OnlineGame == null || Settings.SelectedTableNewFileOptions.ContainsAny(game.OnlineGame.NewFileTypes)) &&
                 (Settings.SelectedTableMatchOptions.Contains(game.TableMatchType)) &&
                 (Settings.SelectedTableConstructionOptions.Contains(game.TableStyleOption.ToString())) &&
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
@@ -133,8 +133,8 @@ public sealed class FeederResultsViewModel
             TableDownloadOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableDownloadOptions, 
                 () => Model.Settings.Feeder.SelectedTableDownloadOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
-            TableNewContentOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableNewContentOptions, 
-                () => Model.Settings.Feeder.SelectedTableNewContentOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
+            TableNewFileOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableNewFileOptions, 
+                () => Model.Settings.Feeder.SelectedTableNewFileOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, 
                 () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateIsNew(), includeSelectAll: false)
@@ -257,7 +257,7 @@ public sealed class FeederResultsViewModel
         var restrictedGameItems = GameItems.Where(gameItem =>
             !gameItem.IsOriginal &&
             gameItem.OnlineGame?.TableFormats.Contains("VPX") == true &&
-            gameItem.OnlineGame?.TableAvailability == TableAvailabilityOptionEnum.Available).ToList();
+            gameItem.OnlineGame?.TableDownload == TableDownloadOptionEnum.Available).ToList();
         var matchedManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.LocalAndOnline);
         var missingManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.OnlineOnly);
 
@@ -363,20 +363,8 @@ public sealed class FeederResultsViewModel
                 files.Title = type;
             });
 
-            // assign a helper property to designate games 'new content type', i.e. avoid re-calculating this every time we have a non-update time filter change
-            if (onlineGame.AllFiles.Any(kv => kv.Value.IsNew))
-            {
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (onlineGame.AllFiles.Where(kv => kv.Key.In("Tables", "Backglasses", "DMDs")).Any(kv => kv.Value.IsNew))
-                    onlineGame.NewContentType = TableNewContentOptionEnum.TableBackglassDmd;
-                else
-                    onlineGame.NewContentType = TableNewContentOptionEnum.Other;
-            }
-            else
-            {
-                // this game has no new content within the given time range
-                onlineGame.NewContentType = null;
-            }
+            // assign a helper property to designate the file types that are new (aka updated), i.e. avoid re-calculating this every time we have a non-update time filter change
+            onlineGame.NewFileTypes = onlineGame.AllFiles.Where(kv => kv.Value.IsNew).Select(kv => kv.Key).ToList();
         });
 
         FilterChangedCommand.Execute(null);

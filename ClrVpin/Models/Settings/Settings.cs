@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
+using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Shared;
 using PropertyChanged;
 using Utils.Extensions;
@@ -77,6 +78,14 @@ public class Settings : ISettings
         Feeder = new FeederSettings();
         Feeder.SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
         Feeder.SelectedFeedFixOptions.AddRange(StaticSettings.FixFeedOptions.Select(x => x.Enum).ToList());
+        Feeder.SelectedTableMatchOptions.AddRange(StaticSettings.TableMatchOptions.Select(x => x.Enum).ToList());
+        Feeder.SelectedTableDownloadOptions.AddRange(StaticSettings.TableDownloadOptions.Select(x => x.Enum).ToList());
+        Feeder.SelectedTableNewFileOptions.AddRange(new List<string>
+        {
+            TableNewFileOptionEnum.Tables.GetDescription(),
+            TableNewFileOptionEnum.Backglasses.GetDescription(),
+            TableNewFileOptionEnum.DMDs.GetDescription(),
+        });
 
         // explorer defaults
         Explorer = new ExplorerSettings();

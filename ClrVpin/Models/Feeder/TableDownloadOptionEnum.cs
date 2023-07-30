@@ -2,7 +2,7 @@
 
 namespace ClrVpin.Models.Feeder
 {
-    public enum TableAvailabilityOptionEnum
+    public enum TableDownloadOptionEnum
     {
         [Description("Available")] Available,
         [Description("Unavailable")] Unavailable
