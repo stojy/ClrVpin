@@ -1,5 +1,4 @@
-﻿using ClrVpin.Models.Feeder;
-using ClrVpin.Models.Shared;
+﻿using ClrVpin.Models.Shared;
 
 namespace ClrVpin.Models.Cleaner;
 

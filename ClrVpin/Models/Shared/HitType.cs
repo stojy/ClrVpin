@@ -1,5 +1,4 @@
-﻿using ClrVpin.Models.Feeder;
-using PropertyChanged;
+﻿using PropertyChanged;
 
 namespace ClrVpin.Models.Shared;
 
