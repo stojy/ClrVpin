@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
 using Utils.Extensions;
 

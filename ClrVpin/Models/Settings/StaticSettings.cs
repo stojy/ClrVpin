@@ -4,6 +4,7 @@ using ClrVpin.Models.Cleaner;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Merger;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using Utils.Extensions;
 
 namespace ClrVpin.Models.Settings

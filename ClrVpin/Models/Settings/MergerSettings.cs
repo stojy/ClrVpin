@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ClrVpin.Models.Merger;
-using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
 using Utils;
 

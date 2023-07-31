@@ -1,7 +1,7 @@
 ﻿using ClrVpin.Models.Settings;
 using Utils.Extensions;
 
-namespace ClrVpin.Models.Shared;
+namespace ClrVpin.Models.Shared.Enums;
 
 public static class ContentTypeEnumExtensions
 {

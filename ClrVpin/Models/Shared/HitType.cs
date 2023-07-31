@@ -1,4 +1,5 @@
-﻿using PropertyChanged;
+﻿using ClrVpin.Models.Shared.Enums;
+using PropertyChanged;
 
 namespace ClrVpin.Models.Shared;
 

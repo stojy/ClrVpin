@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
 using Utils.Extensions;
 

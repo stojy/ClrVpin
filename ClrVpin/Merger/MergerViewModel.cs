@@ -14,6 +14,7 @@ using ClrVpin.Home;
 using ClrVpin.Logging;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;

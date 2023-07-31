@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows;
 using ClrVpin.Controls;
 using ClrVpin.Models.Settings;
-using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 
