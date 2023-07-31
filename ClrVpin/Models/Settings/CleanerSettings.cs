@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ClrVpin.Models.Cleaner;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
+using Utils.Extensions;
 
 namespace ClrVpin.Models.Settings;
 
@@ -12,6 +14,20 @@ namespace ClrVpin.Models.Settings;
 [Serializable]
 public class CleanerSettings
 {
+    // empty ctor required for deserialization
+    public CleanerSettings()
+    {
+    }
+
+    public CleanerSettings(IEnumerable<ContentType> getFixableContentTypes)
+    {
+        // very important NOT to include the database type, since doing so would cause the database file(s) to be deleted
+        // - deleted because would be designated as unmatched file since no table will match 'Visual Pinball'
+        SelectedCheckContentTypes.AddRange(getFixableContentTypes.Select(x => x.Description).ToList());
+        SelectedCheckHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
+        SelectedFixHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
+    }
+
     public ObservableCollection<string> SelectedCheckContentTypes { get; set; } = new();
     public ObservableCollection<HitTypeEnum> SelectedCheckHitTypes { get; set; } = new();
     public ObservableCollection<HitTypeEnum> SelectedFixHitTypes { get; set; } = new();

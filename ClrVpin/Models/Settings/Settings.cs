@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
-using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
@@ -25,7 +24,7 @@ public class Settings : ISettings
         // apply ALL default values
         // - the following defaults settings are assigned BEFORE json.net deserialization potentially overwrites the values
         //   i.e. they will be overwritten where a stored setting file exists, otherwise these will become the defaults
-        // - some of these settings are also assigned via the XxxxSettings member field initialization
+        // - some of these settings are also assigned via the XxxSettings member field initialization
         
         // common
         Version = MinVersion;
@@ -59,35 +58,16 @@ public class Settings : ISettings
         };
         AllContentTypes.ForEach(x => x.Description = x.Enum.GetDescription());
 
-        // cleaner defaults
-        Cleaner = new CleanerSettings();
-        // very important NOT to include the database type, since doing so would cause the database file(s) to be deleted
-        // - deleted because would be designated as unmatched file since no table will match 'Visual Pinball'
-        Cleaner.SelectedCheckContentTypes.AddRange(GetFixableContentTypes().Select(x => x.Description).ToList());
-        Cleaner.SelectedCheckHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
-        Cleaner.SelectedFixHitTypes.AddRange(StaticSettings.AllHitTypes.Select(x => x.Enum).ToList());
+        // cleaner
+        Cleaner = new CleanerSettings(GetFixableContentTypes());
 
-        // merger defaults
+        // merger
         Merger = new MergerSettings();
-        Merger.SelectedMatchTypes.AddRange(StaticSettings.MatchTypes.Select(x => x.Enum).ToList());
-        Merger.SelectedIgnoreCriteria.AddRange(StaticSettings.IgnoreCriteria.Select(x => x.Enum).ToList());
-        Merger.SelectedMergeOptions.AddRange(StaticSettings.MergeOptions.Select(x => x.Enum).ToList());
-        Merger.DeleteIgnoredFiles = true;
 
-        // feeder defaults
+        // feeder
         Feeder = new FeederSettings();
-        Feeder.SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
-        Feeder.SelectedFeedFixOptions.AddRange(StaticSettings.FixFeedOptions.Select(x => x.Enum).ToList());
-        Feeder.SelectedTableMatchOptions.AddRange(StaticSettings.TableMatchOptions.Select(x => x.Enum).ToList());
-        Feeder.SelectedTableDownloadOptions.AddRange(StaticSettings.TableDownloadOptions.Select(x => x.Enum).ToList());
-        Feeder.SelectedTableNewFileOptions.AddRange(new List<string>
-        {
-            TableNewFileOptionEnum.Tables.GetDescription(),
-            TableNewFileOptionEnum.Backglasses.GetDescription(),
-            TableNewFileOptionEnum.DMDs.GetDescription(),
-        });
 
-        // explorer defaults
+        // explorer
         Explorer = new ExplorerSettings();
     }
 
