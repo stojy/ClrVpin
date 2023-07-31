@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using ClrVpin.Logging;
 
 namespace ClrVpin.Models.Settings
@@ -9,7 +10,7 @@ namespace ClrVpin.Models.Settings
     {
         static SettingsHelper()
         {
-            _jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
+            _jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, Converters = { new JsonStringEnumConverter() }};
         }
 
         public static T Reset<T>(DefaultSettings defaultSettings) where T : ISettings, new()
@@ -44,7 +45,7 @@ namespace ClrVpin.Models.Settings
 
                 try
                 {
-                    settings = JsonSerializer.Deserialize<T>(data);
+                    settings = JsonSerializer.Deserialize<T>(data, _jsonSerializerOptions);
                     if (defaultSettings != null)
                         settings!.Init(defaultSettings);
 
