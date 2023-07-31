@@ -105,7 +105,7 @@ public sealed class FeederResultsViewModel
                 (game.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(game.OnlineGame.TableDownload)) &&
                 (game.OnlineGame == null || Settings.SelectedTableNewFileOptions.ContainsAny(game.OnlineGame.NewFileTypes)) &&
                 (Settings.SelectedTableMatchOptions.Contains(game.TableMatchType)) &&
-                (Settings.SelectedTableConstructionOptions.Contains(game.TableStyleOption.ToString())) &&
+                (!Settings.SelectedTableConstructionOptions.Any() || Settings.SelectedTableConstructionOptions.Contains(game.TableStyleOption.ToString())) &&
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&

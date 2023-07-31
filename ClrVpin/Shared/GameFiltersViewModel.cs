@@ -23,7 +23,7 @@ public class GameFiltersViewModel
         // common views
         PresetDateOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.PresetDateOptions, () => new ObservableCollection<PresetDateOptionEnum>(), PresetDateSelected, null, false);
         TableConstructionOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableConstructionOptions, () => commonFilterSettings.SelectedTableConstructionOptions,
-            _ => _filterChanged(), includeSelectAll: false, minimumNumberOfSelections: 1);
+            _ => _filterChanged(), includeSelectAll: false, minimumNumberOfSelections: 0);
 
         UpdateFilterViews();
     }
