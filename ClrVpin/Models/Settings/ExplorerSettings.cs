@@ -12,4 +12,5 @@ public class ExplorerSettings : CommonFilterSettings
 
     public ObservableCollection<ContentTypeEnum> SelectedMissingFileOptions { get; set; } = new();
     public ObservableCollection<ContentTypeEnum> SelectedTableStaleOptions { get; set; } = new ();
+    public ObservableCollection<YesNoNullableBooleanOptionEnum> SelectedTableRomOptions { get; set; } = new ();
 }

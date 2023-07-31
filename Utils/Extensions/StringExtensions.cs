@@ -29,6 +29,11 @@ public static class StringExtensions
         return newString.ToString();
     }
 
+    public static bool IsNullOrWhiteSpace(this string value)
+    {
+        return string.IsNullOrWhiteSpace(value);
+    }
+
     public static bool IsEmpty(this string value)
     {
         return string.IsNullOrWhiteSpace(value) || value == "-";

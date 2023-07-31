@@ -44,7 +44,7 @@ public class ExplorerResultsViewModel
     public ICommand MaxRatingChangedCommand { get; set; }
 
     public ICommand OverwriteDatabaseRomsCommand { get; private set; }
-    public ICommand OverwriteDatabasePupsCommand { get;  private set;}
+    public ICommand OverwriteDatabasePupsCommand { get; private set; }
 
     public string BackupFolder { get; private set; }
     public ICommand NavigateToBackupFolderCommand { get; private set; }
@@ -91,7 +91,7 @@ public class ExplorerResultsViewModel
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
             Filter = gameItem =>
-                (Settings.SelectedTableConstructionOptions.Contains(gameItem.TableStyleOption.ToString())) &&
+                Settings.SelectedTableConstructionOptions.Contains(gameItem.TableStyleOption.ToString()) &&
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
@@ -99,14 +99,18 @@ public class ExplorerResultsViewModel
                 (Settings.SelectedUpdatedAtDateEnd == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
                 (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
                 (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
-                
+
                 // if no missing file options are selected then the filter is effectively ignored
                 (!Settings.SelectedMissingFileOptions.Any() || gameItem.LocalGame.Content.MissingImportantTypes.ContainsAny(Settings.SelectedMissingFileOptions)) &&
+                
+                (!Settings.SelectedTableRomOptions.Any() ||
+                 (Settings.SelectedTableRomOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.LocalGame.Game.Rom != null) ||
+                 (Settings.SelectedTableRomOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.LocalGame.Game.Rom == null)) &&
 
                 // if no stale file options are selected then the filter is effectively ignored
-                (!Settings.SelectedTableStaleOptions.Any() || 
-                    gameItem.LocalGame.Content.IsTableVideoStale && Settings.SelectedTableStaleOptions.Contains(ContentTypeEnum.TableVideos) ||
-                    gameItem.LocalGame.Content.IsBackglassVideoStale && Settings.SelectedTableStaleOptions.Contains(ContentTypeEnum.BackglassVideos)) &&
+                (!Settings.SelectedTableStaleOptions.Any() ||
+                 (gameItem.LocalGame.Content.IsTableVideoStale && Settings.SelectedTableStaleOptions.Contains(ContentTypeEnum.TableVideos)) ||
+                 (gameItem.LocalGame.Content.IsBackglassVideoStale && Settings.SelectedTableStaleOptions.Contains(ContentTypeEnum.BackglassVideos))) &&
 
                 // min rating match if either.. null selected min rating is a "don't care", but also explicitly handles no rating (i.e. null rating)
                 // - game rating is null AND selected min rating is null
@@ -127,13 +131,16 @@ public class ExplorerResultsViewModel
 
         GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null));
         var missingFileOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.MissingFileOptions.Select(y => y.Enum))).ToArray();
-        GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(missingFileOptions, () => Settings.SelectedMissingFileOptions, 
+        GameFiltersViewModel.MissingFilesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(missingFileOptions, () => Settings.SelectedMissingFileOptions,
             _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage), false);
-        
+
         var tableStaleOptions = Model.Settings.GetAllContentTypes().Where(x => x.Enum.In(StaticSettings.TableStaleOptions.Select(y => y.Enum))).ToArray();
-        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(tableStaleOptions, () => Settings.SelectedTableStaleOptions, 
+        GameFiltersViewModel.TableStaleOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(tableStaleOptions, () => Settings.SelectedTableStaleOptions,
             _ => FilterChangedCommand.Execute(null), (enumOptions, enumOption) => (enumOptions.Cast<ContentType>().First(x => x == enumOption).IsFolderValid, Model.OptionsDisabledMessage),
-            includeSelectAll: false);
+            false);
+
+        GameFiltersViewModel.RomOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableRomOptions, () => Settings.SelectedTableRomOptions,
+            _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 0);
 
         BackupFolder = Model.Settings.BackupFolder;
         NavigateToBackupFolderCommand = new Utils.ActionCommand(NavigateToBackupFolder);
@@ -171,11 +178,11 @@ public class ExplorerResultsViewModel
         {
             if (!gamesDictionary.TryGetValue(rom.file, out var game) || game.Rom == rom.name)
                 return;
-            
+
             gamesDictionary[rom.file].Rom = rom.name;
             updatedGameCount++;
         });
-        
+
         if (updatedGameCount > 0)
             DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
 
@@ -184,7 +191,7 @@ public class ExplorerResultsViewModel
         var (isSuccess, detail) = CreateNamesStatistics("ROM", roms, updatedGameCount, "\n¹ Tables without ROM support, e.g. PM, EM and some SS without VPinMame");
         await (isSuccess ? Notification.ShowSuccess(DialogHostName, "Success", null, detail) : Notification.ShowWarning(DialogHostName, "Failed to Extract Some ROM Names", null, detail));
     }
-    
+
     private async Task GetPups()
     {
         var progress = new ProgressViewModel("Extracting PuP Names From The Table Scripts");
@@ -204,11 +211,11 @@ public class ExplorerResultsViewModel
         {
             if (!gamesDictionary.TryGetValue(pup.file, out var game) || game.Pup == pup.name)
                 return;
-            
+
             gamesDictionary[pup.file].Pup = pup.name;
             updatedGameCount++;
         });
-        
+
         if (updatedGameCount > 0)
             DatabaseUtils.WriteGamesToDatabase(gamesDictionary.Values);
 
@@ -271,12 +278,12 @@ public class ExplorerResultsViewModel
         var importantValidContentTypes = Model.Settings.GetAllValidContentTypes().Where(x => x.Enum.In(StaticSettings.ImportantContentTypes)).Select(x => x.Enum);
         var statistics = importantValidContentTypes.Select(contentType => CreateContentStatistics(correctNameHits, contentType)).ToList();
 
-        var statisticsDetail = $"{"",-20}{"Missing", -16}{"Stale", -16}\n" + statistics.Select(x => $"{x.missingStatistic}").StringJoin("\n");
-        
+        var statisticsDetail = $"{"",-20}{"Missing",-16}{"Stale",-16}\n" + statistics.Select(x => $"{x.missingStatistic}").StringJoin("\n");
+
         // success requires no missing or stale files
         var missingCount = statistics.Sum(statistic => statistic.missingCount);
         var staleCount = statistics.Sum(statistic => statistic.staleCount);
-        var isSuccess = missingCount  + staleCount == 0;
+        var isSuccess = missingCount + staleCount == 0;
 
         await (isSuccess ? Notification.ShowSuccess(DialogHostName, "Important Files Are Up To Date") : Notification.ShowWarning(DialogHostName, "Missing or Stale Files Detected", null, statisticsDetail));
     }
@@ -306,10 +313,10 @@ public class ExplorerResultsViewModel
 
         var failedCount = items.Count(item => item.isSuccess == false);
         var failedDetail = CreateNamedPercentageStatistic("Failed Parsing", failedCount, items.Count);
-        
+
         var skippedCount = items.Count(item => item.isSuccess == null);
         var skippedDetail = CreateNamedPercentageStatistic("n/a¹", skippedCount, items.Count);
-        
+
         var updatedGameCountDetail = CreateNamedCountStatistic("Tables Updated", updatedGameCount);
 
         var detail = new[] { successDetail, failedDetail, skippedDetail, updatedGameCountDetail, disclaimer }.StringJoin("\n");
@@ -320,7 +327,7 @@ public class ExplorerResultsViewModel
     }
 
     private static string CreateNamedCountStatistic(string title, int count) => $"{title,-20} : {count}";
-    
+
     private static string CreateNamedPercentageStatistic(string title, int count, int totalCount) => $"{title,-20} : {CreatePercentageStatistic(count, totalCount, true)}";
 
     private static string CreatePercentageStatistic(int? count, int totalCount, bool showTotalCount = false)

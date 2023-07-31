@@ -338,11 +338,11 @@
 
               <Grid>
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition />
+                  <ColumnDefinition Width="1*" />
                   <ColumnDefinition Width="Auto"/>
-                  <ColumnDefinition />
+                  <ColumnDefinition Width="0.8*"/>
                   <ColumnDefinition Width="Auto"/>
-                  <ColumnDefinition />
+                  <ColumnDefinition Width="0.8*"/>
                 </Grid.ColumnDefinitions>
                 <ContentControl Grid.Column="0" Template="{StaticResource KeyValueAutoPair}"
                                 controls:GenericAttached.String="Construction"
@@ -357,18 +357,18 @@
 
                 <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
                                 controls:GenericAttached.String="ROM"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table uses a ROM."
+                                controls:GenericAttached.String2="Filter the tables based on whether the table script uses ROM(s)."
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14"
                                 VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableConstructionOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.RomOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="3" Style="{StaticResource SeparatorStyle}" />
 
                 <ContentControl Grid.Column="4" Template="{StaticResource KeyValueAutoPair}"
                                 controls:GenericAttached.String="PuP"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table uses a PuP (Pinup Popper)."
+                                controls:GenericAttached.String2="Filter the tables based on whether the table script uses PuP (Pinup Popper)."
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14"
                                 VerticalAlignment="Center">

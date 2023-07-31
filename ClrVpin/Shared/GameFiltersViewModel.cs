@@ -47,6 +47,7 @@ public class GameFiltersViewModel
     // explorer specific views
     public ListCollectionView<FeatureType.FeatureType> MissingFilesOptionsView { get; set; }
     public ListCollectionView<FeatureType.FeatureType> TableStaleOptionsView { get; set; }
+    public ListCollectionView<FeatureType.FeatureType> RomOptionsView { get; set; }
 
     public void Refresh(int? debounceMilliseconds = null)
     {
