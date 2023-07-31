@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 
 namespace ClrVpin.Models.Settings;
 

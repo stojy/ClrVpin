@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ClrVpin.Models.Shared;
+namespace ClrVpin.Models.Shared.Enums;
 
 public class EnumOption<TEnum> : Option where TEnum: Enum
 {

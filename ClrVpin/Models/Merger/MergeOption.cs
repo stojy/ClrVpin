@@ -1,4 +1,4 @@
-﻿using ClrVpin.Models.Shared;
+﻿using ClrVpin.Models.Shared.Enums;
 
 namespace ClrVpin.Models.Merger;
 

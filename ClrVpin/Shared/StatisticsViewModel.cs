@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using ByteSizeLib;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using ClrVpin.Models.Shared.Game;
 using PropertyChanged;
 using Utils.Extensions;

@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using ByteSizeLib;
+using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
 using Utils;
 using Utils.Extensions;

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ClrVpin.Models.Shared;
+namespace ClrVpin.Models.Shared.Enums;
 
 public enum ContentTypeEnum
 {

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared.Fuzzy;
 using Utils.Extensions;

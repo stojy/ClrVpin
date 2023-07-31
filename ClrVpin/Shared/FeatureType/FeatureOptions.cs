@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using ClrVpin.Controls;
-using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using Utils;
 using Utils.Extensions;
 

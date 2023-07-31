@@ -1,7 +1,7 @@
 ﻿using System;
 using PropertyChanged;
 
-namespace ClrVpin.Models.Shared;
+namespace ClrVpin.Models.Shared.Enums;
 
 [AddINotifyPropertyChangedInterface]
 public class FolderType<T> : EnumOption<T> where T : Enum

@@ -1,4 +1,4 @@
-﻿namespace ClrVpin.Models.Shared;
+﻿namespace ClrVpin.Models.Shared.Enums;
 
 public class IgnoreCriteria : EnumOption<IgnoreCriteriaEnum>
 {

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
 using Utils;
 

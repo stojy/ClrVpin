@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ClrVpin.Models.Cleaner;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Settings;

@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Controls.Folder;
-using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
 using Microsoft.Xaml.Behaviors.Core;

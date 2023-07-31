@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using ByteSizeLib;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
+using ClrVpin.Models.Shared.Enums;
 using ClrVpin.Models.Shared.Game;
 using Utils.Extensions;
 

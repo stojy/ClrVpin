@@ -1,6 +1,7 @@
 ﻿using PropertyChanged;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ClrVpin.Models.Shared.Enums;
 
 namespace ClrVpin.Models.Shared;
 

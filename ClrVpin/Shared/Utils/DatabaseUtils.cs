@@ -9,6 +9,7 @@ using ClrVpin.Home;
 using ClrVpin.Logging;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Database;
+using ClrVpin.Models.Shared.Enums;
 using ClrVpin.Models.Shared.Game;
 using Utils;
 using Utils.Extensions;

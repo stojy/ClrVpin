@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ClrVpin.Models.Shared
+namespace ClrVpin.Models.Shared.Enums
 {
     // decreasing priority order.. important when using 'name' as the multiple file preference
     public enum HitTypeEnum
