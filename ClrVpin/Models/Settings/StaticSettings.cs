@@ -21,9 +21,6 @@ namespace ClrVpin.Models.Settings
 
             MultipleMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
-            MissingFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            TableStaleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-
             // merge
             MergeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreCriteria.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -38,6 +35,11 @@ namespace ClrVpin.Models.Settings
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreFeatureOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+
+            // explorer
+            MissingFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TableStaleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TableRomOptions.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
         // hit types in priority order as determined by matching algorithm - refer MatchFilesToLocal
@@ -115,6 +117,13 @@ namespace ClrVpin.Models.Settings
         {
             new() {Enum = ContentTypeEnum.TableVideos, Tip = "Table video files that are older than the table files (.vpx)"},
             new() {Enum = ContentTypeEnum.BackglassVideos, Tip = "Backglass video files that are older than the backglass files (.directb2s)"},
+        };
+
+        // all possible table stale options - to be used elsewhere (explorer)
+        public static readonly EnumOption<YesNoNullableBooleanOptionEnum>[] TableRomOptions =
+        {
+            new() {Enum = YesNoNullableBooleanOptionEnum.True, Tip = "Table script requires a ROM"},
+            new() {Enum = YesNoNullableBooleanOptionEnum.False, Tip = "Table script does NOT require a ROM"},
         };
 
         // all possible table match options
