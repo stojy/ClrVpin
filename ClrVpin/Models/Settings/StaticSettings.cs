@@ -41,6 +41,7 @@ namespace ClrVpin.Models.Settings
             MissingFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableStaleOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableRomOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TablePupOptions.ForEach(x => x.Description = x.Enum.GetDescription());
         }
 
         // hit types in priority order as determined by matching algorithm - refer MatchFilesToLocal
@@ -120,11 +121,18 @@ namespace ClrVpin.Models.Settings
             new() {Enum = ContentTypeEnum.BackglassVideos, Tip = "Backglass video files that are older than the backglass files (.directb2s)"},
         };
 
-        // all possible table stale options - to be used elsewhere (explorer)
+        // all possible table ROM options - to be used elsewhere (explorer)
         public static readonly EnumOption<YesNoNullableBooleanOptionEnum>[] TableRomOptions =
         {
-            new() {Enum = YesNoNullableBooleanOptionEnum.True, Tip = "Table script requires a ROM"},
-            new() {Enum = YesNoNullableBooleanOptionEnum.False, Tip = "Table script does NOT require a ROM"},
+            new() {Enum = YesNoNullableBooleanOptionEnum.True, Tip = "Table script supports a ROM"},
+            new() {Enum = YesNoNullableBooleanOptionEnum.False, Tip = "Table script does NOT support a ROM"},
+        };
+
+        // all possible table PuP options - to be used elsewhere (explorer)
+        public static readonly EnumOption<YesNoNullableBooleanOptionEnum>[] TablePupOptions =
+        {
+            new() {Enum = YesNoNullableBooleanOptionEnum.True, Tip = "Table script supports PuP"},
+            new() {Enum = YesNoNullableBooleanOptionEnum.False, Tip = "Table script does NOT support PuP"},
         };
 
         // all possible table match options

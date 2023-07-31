@@ -89,7 +89,6 @@ public class Settings : ISettings
 
         // explorer defaults
         Explorer = new ExplorerSettings();
-        Explorer.SelectedTableRomOptions.AddRange(StaticSettings.TableRomOptions.Select(x => x.Enum).ToList());
     }
 
     // the 'id' is a special default setting that are persistent across app 'reset settings' action

@@ -372,7 +372,7 @@
                                 controls:GenericAttached.Double="60"
                                 controls:GenericAttached.Double2="14"
                                 VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableConstructionOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.PupOptionsView}" />
                 </ContentControl>
 
               </Grid>
@@ -380,7 +380,7 @@
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
                               controls:GenericAttached.String="Missing"
                               controls:GenericAttached.String2="Filter tables based on whether the selected files are missing."
-                              controls:GenericAttached.Double="60"
+                              controls:GenericAttached.Double="90"
                               controls:GenericAttached.Double2="14"
                               VerticalAlignment="Center">
                 <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.MissingFilesOptionsView}" />
@@ -389,7 +389,7 @@
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
                               controls:GenericAttached.String="Stale"
                               controls:GenericAttached.String2="Filter tables based on whether the selected media video files are out of date and need to be updated, i.e. re-recorded."
-                              controls:GenericAttached.Double="60"
+                              controls:GenericAttached.Double="90"
                               controls:GenericAttached.Double2="14"
                               VerticalAlignment="Center">
                 <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableStaleOptionsView}" />
