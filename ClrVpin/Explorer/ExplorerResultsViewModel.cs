@@ -109,6 +109,10 @@ public class ExplorerResultsViewModel
                  (Settings.SelectedTableRomOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.LocalGame.Game.Rom != null) ||
                  (Settings.SelectedTableRomOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.LocalGame.Game.Rom == null)) &&
 
+                (!Settings.SelectedTablePupOptions.Any() ||
+                 (Settings.SelectedTablePupOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.LocalGame.Game.Pup != null) ||
+                 (Settings.SelectedTablePupOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.LocalGame.Game.Pup == null)) &&
+
                 // if no stale file options are selected then the filter is effectively ignored
                 (!Settings.SelectedTableStaleOptions.Any() ||
                  (gameItem.LocalGame.Content.IsTableVideoStale && Settings.SelectedTableStaleOptions.Contains(ContentTypeEnum.TableVideos)) ||
@@ -142,6 +146,9 @@ public class ExplorerResultsViewModel
             false);
 
         GameFiltersViewModel.RomOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableRomOptions, () => Settings.SelectedTableRomOptions,
+            _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 0);
+
+        GameFiltersViewModel.PupOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TablePupOptions, () => Settings.SelectedTablePupOptions,
             _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 0);
 
         BackupFolder = Model.Settings.BackupFolder;
