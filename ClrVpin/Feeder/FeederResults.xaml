@@ -644,7 +644,7 @@
               <StackPanel Visibility="{Binding ElementName=FeederResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}"
                           VerticalAlignment="Center" HorizontalAlignment="Center">
                 <materialDesign:PackIcon Kind="AlertCircleOutline" Width="400" Height="400" HorizontalAlignment="Center" />
-                <TextBlock Text="Online information is not available for unmatched tables" FontSize="28" />
+                <TextBlock Text="Online information is not available for 'Local Only' (aka unmatched) tables" FontSize="28" />
               </StackPanel>
             </StackPanel>
 
