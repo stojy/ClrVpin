@@ -494,7 +494,7 @@
             <StackPanel Margin="5">
               <Grid>
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1.20*" />
+                  <ColumnDefinition Width="1.30*" />
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
