@@ -117,14 +117,15 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
                 (Settings.SelectedFormatFilter == null || game.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
                 
-                // do we really need to re-filter against 'UpdatedAt' given it's already calculated during UpdateFileIsNew??
+                // is re-filter against 'UpdatedAt' really required since it's already being calculated within UpdateFilesIsNew
+                // - potentialy useful to avoid the more expensive LCV IsNew filtering below
                 (Settings.SelectedUpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
                 (Settings.SelectedUpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
 
                 (Settings.SelectedTableFilter == null || game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
                 (Settings.SelectedManufacturerFilter == null || game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
           
-                // exclude files that aren't new
+                // exclude any game if ALL of the files aren't considered new
                 // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned
                 game.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false
         };
@@ -147,15 +148,15 @@ public sealed class FeederResultsViewModel
                 () => Model.Settings.Feeder.SelectedTableNewFileOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, 
-                () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateFileIsNew(), includeSelectAll: false)
+                () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateFilesIsNew(), includeSelectAll: false)
         };
 
-        UpdatedFilterTimeChanged = new ActionCommand(UpdateFileIsNew);
+        UpdatedFilterTimeChanged = new ActionCommand(UpdateFilesIsNew);
 
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
-        // force an 'update filter time' change so that the correct 'IsNew' values are calculated
-        UpdatedFilterTimeChanged.Execute(null);
+        // force 'IsFileNew' update check
+        UpdateFilesIsNew();
 
         BackupFolder = Model.Settings.BackupFolder;
         NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
@@ -337,9 +338,15 @@ public sealed class FeederResultsViewModel
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
-    private void UpdateFileIsNew()
+    private void UpdateFilesIsNew()
     {
-        // flag models if they satisfy the updated criteria
+        // for all online games, flag every file as new required beauuse..
+        // - top level LCV filtering hides/shows the entire table (with all content), but IsNew is required when the LCV does NOT filter the table to enable..
+        //   a. category 'new' badge
+        //   b. URL download button color
+        // - to be considered new, following criteria..
+        //   a. time range
+        //   b. ignore criteria - e.g. VR only, music mod, etc
         var onlineGames = GetOnlineGames();
         onlineGames.ForEach(onlineGame =>
         {
