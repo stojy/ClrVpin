@@ -73,7 +73,7 @@ public sealed class FeederResultsViewModel
             onlineGame.TableFiles.ForEach(tableFile =>
             {
                 var comment = tableFile.Comment?.ToLower().Trim();
-                tableFile.IsVirtualOnly = comment?.StartsWith("vr room") == true;
+                tableFile.IsVirtualOnly = comment?.ToLower().ContainsAny("vr room", "vr standalone") == true;
                 tableFile.IsMusicOrSoundMod = comment?.ContainsAny("sound mod", "music mod")  == true;
             });
 
