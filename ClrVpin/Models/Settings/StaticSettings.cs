@@ -169,7 +169,8 @@ namespace ClrVpin.Models.Settings
         {
             new() {Enum = IgnoreFeatureOptionEnum.VirtualRealityOnly, Tip = "Table files that only support virtual reality"},
             new() {Enum = IgnoreFeatureOptionEnum.MusicOrSoundMod, Tip = "Table files that are music and/or sound modifications"},
-            new() {Enum = IgnoreFeatureOptionEnum.FullDmd, Tip = "Backglass files designed for full DMD"},
+            new() {Enum = IgnoreFeatureOptionEnum.BlackAndWhiteMod, Tip = "Table files that are black & white modifications"},
+            new() {Enum = IgnoreFeatureOptionEnum.FullDmd, Tip = "Backglass files that are designed for full DMD"},
         };
 
         // all possible file merge options - to be used elsewhere (feeder)

@@ -24,7 +24,6 @@ public class FeederSettings : CommonFilterSettings
             TableNewFileOptionEnum.Backglasses.GetDescription(),
             TableNewFileOptionEnum.DMDs.GetDescription(),
         });
-
     }
 
     public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new();

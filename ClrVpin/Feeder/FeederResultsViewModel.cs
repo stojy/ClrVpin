@@ -75,6 +75,7 @@ public sealed class FeederResultsViewModel
                 var comment = tableFile.Comment?.ToLower().Trim();
                 tableFile.IsVirtualOnly = comment?.ToLower().ContainsAny("vr room", "vr standalone") == true;
                 tableFile.IsMusicOrSoundMod = comment?.ContainsAny("sound mod", "music mod")  == true;
+                tableFile.IsBlackWhiteMod = comment?.ToLower().ContainsAny("bw mod", "black & white mod", "black and white mod") == true;
             });
 
             onlineGame.B2SFiles.ForEach(backglassFile =>
@@ -121,7 +122,10 @@ public sealed class FeederResultsViewModel
 
                 (Settings.SelectedTableFilter == null || game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
                 (Settings.SelectedManufacturerFilter == null || game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
-                game.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false // keep if the online file collection is new or doesn't exist (i.e. unmatched)
+          
+                // exclude files that aren't new
+                // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned
+                game.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false
         };
         GameItemsView.MoveCurrentToFirst();
 
@@ -354,6 +358,10 @@ public sealed class FeederResultsViewModel
                     // music/sound mod
                     if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.MusicOrSoundMod) && file is TableFile tableFile2) 
                         file.IsNew = !tableFile2.IsMusicOrSoundMod;
+
+                    // black and white mod
+                    if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.BlackAndWhiteMod) && file is TableFile tableFile3) 
+                        file.IsNew = !tableFile3.IsBlackWhiteMod;
 
                     // full DMD
                     if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.FullDmd) && file is ImageFile imageFile) 

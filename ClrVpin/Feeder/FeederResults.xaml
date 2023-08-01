@@ -469,11 +469,11 @@
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableDownloadOptionsView}" />
                 </ContentControl>
               </Grid>
-              
+
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
                               controls:GenericAttached.String="Fuzzy Matching"
                               controls:GenericAttached.String2="Filter the tables based on the fuzzy matching results."
-                              controls:GenericAttached.Double="110" 
+                              controls:GenericAttached.Double="110"
                               controls:GenericAttached.Double2="14">
                 <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableMatchOptionsView}" />
               </ContentControl>
@@ -492,22 +492,13 @@
           <!-- exclude filtering -->
           <GroupBox DockPanel.Dock="Top" Header="Exclude Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
-              <Grid>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1.30*" />
-                  <ColumnDefinition Width="Auto" />
-                  <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <ContentControl Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Features"
-                                controls:GenericAttached.String2="Don't attribute file(s) as 'New' if they contain these features"
-                                controls:GenericAttached.Double="70"
-                                controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.IgnoreFeaturesOptionsView }" />
-                </ContentControl>
-
-                <!--<Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />-->
-              </Grid>
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Features"
+                              controls:GenericAttached.String2="Don't attribute file(s) as 'New' if they contain these features"
+                              controls:GenericAttached.Double="70"
+                              controls:GenericAttached.Double2="14">
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.IgnoreFeaturesOptionsView }" />
+              </ContentControl>
             </StackPanel>
           </GroupBox>
 
