@@ -452,11 +452,11 @@
                 </Grid.ColumnDefinitions>
 
                 <ContentControl Grid.Column="0" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Construction"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically constructed/manufactured."
+                                controls:GenericAttached.String="Manufactured"
+                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
                                 controls:GenericAttached.Double="110"
                                 controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableConstructionOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableManufacturedOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />

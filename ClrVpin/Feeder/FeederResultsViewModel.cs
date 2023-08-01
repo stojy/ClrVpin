@@ -12,6 +12,7 @@ using ClrVpin.Logging;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Settings;
+using ClrVpin.Models.Shared.Enums;
 using ClrVpin.Models.Shared.Game;
 using ClrVpin.Shared;
 using ClrVpin.Shared.FeatureType;
@@ -105,7 +106,11 @@ public sealed class FeederResultsViewModel
                 (game.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(game.OnlineGame.TableDownload)) &&
                 (game.OnlineGame == null || Settings.SelectedTableNewFileOptions.ContainsAny(game.OnlineGame.NewFileTypes)) &&
                 (Settings.SelectedTableMatchOptions.Contains(game.TableMatchType)) &&
-                (!Settings.SelectedTableConstructionOptions.Any() || Settings.SelectedTableConstructionOptions.Contains(game.TableStyleOption.ToString())) &&
+
+                (!Settings.SelectedManufacturedOptions.Any() || 
+                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.True) && game.TableStyleOption == TableStyleOptionEnum.Manufactured) ||
+                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.False) && game.TableStyleOption == TableStyleOptionEnum.Original)) &&
+
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&

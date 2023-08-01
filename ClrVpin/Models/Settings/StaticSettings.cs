@@ -14,7 +14,7 @@ namespace ClrVpin.Models.Settings
         static StaticSettings()
         {
             // common 
-            TableConstructionOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TableManufacturedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // cleaner
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -104,10 +104,10 @@ namespace ClrVpin.Models.Settings
         };
 
         // all possible table style options - to be used elsewhere (feeder)
-        public static readonly EnumOption<TableStyleOptionEnum>[] TableConstructionOptions =
+        public static readonly EnumOption<YesNoNullableBooleanOptionEnum>[] TableManufacturedOptions =
         {
-            new() {Enum = TableStyleOptionEnum.Manufactured, Tip = "A physical table has been manufactured"},
-            new() {Enum = TableStyleOptionEnum.Original, Tip = "An original table creation that has not been manufactured"}
+            new() {Enum = YesNoNullableBooleanOptionEnum.True, Tip = "Manufactured table"},
+            new() {Enum = YesNoNullableBooleanOptionEnum.False, Tip = "Original table, i.e. not manufactured"}
         };
 
         // all possible missing file options - to be used elsewhere (explorer)

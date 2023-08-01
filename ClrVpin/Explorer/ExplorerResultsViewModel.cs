@@ -9,6 +9,7 @@ using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Feeder;
 using ClrVpin.Logging;
+using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Enums;
@@ -92,7 +93,9 @@ public class ExplorerResultsViewModel
             // filter the table names list to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
             Filter = gameItem =>
-                (!Settings.SelectedTableConstructionOptions.Any() || Settings.SelectedTableConstructionOptions.Contains(gameItem.TableStyleOption.ToString())) &&
+                (!Settings.SelectedManufacturedOptions.Any() || 
+                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.TableStyleOption == TableStyleOptionEnum.Manufactured) ||
+                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.TableStyleOption == TableStyleOptionEnum.Original)) &&
                 
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&

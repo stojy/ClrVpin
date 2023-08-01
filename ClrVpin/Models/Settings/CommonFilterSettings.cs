@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Settings;
@@ -23,5 +24,5 @@ public class CommonFilterSettings
     public DateTime? SelectedUpdatedAtDateBegin { get; set; }
     public DateTime? SelectedUpdatedAtDateEnd { get; set; }
 
-    public ObservableCollection<string> SelectedTableConstructionOptions { get; set; } = new();
+    public ObservableCollection<YesNoNullableBooleanOptionEnum> SelectedManufacturedOptions { get; set; } = new();
 }

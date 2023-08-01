@@ -338,19 +338,19 @@
 
               <Grid>
                 <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1*" />
+                  <ColumnDefinition Width="200" />
                   <ColumnDefinition Width="Auto"/>
-                  <ColumnDefinition Width="0.8*"/>
+                  <ColumnDefinition Width="200"/>
                   <ColumnDefinition Width="Auto"/>
-                  <ColumnDefinition Width="0.8*"/>
+                  <ColumnDefinition Width="200"/>
                 </Grid.ColumnDefinitions>
                 <ContentControl Grid.Column="0" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Construction"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically constructed/manufactured."
+                                controls:GenericAttached.String="Manufactured"
+                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
                                 controls:GenericAttached.Double="90"
                                 controls:GenericAttached.Double2="14"
                                 VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableConstructionOptionsView}" />
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableManufacturedOptionsView}" />
                 </ContentControl>
 
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
