@@ -462,9 +462,9 @@
                 <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
 
                 <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Download"
+                                controls:GenericAttached.String="Table Download"
                                 controls:GenericAttached.String2="Filter the tables based on whether the table can be downloaded. Not applicable for unmatched tables."
-                                controls:GenericAttached.Double="90"
+                                controls:GenericAttached.Double="110"
                                 controls:GenericAttached.Double2="14">
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableDownloadOptionsView}" />
                 </ContentControl>

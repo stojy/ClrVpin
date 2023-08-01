@@ -42,56 +42,59 @@ public static class FeederFix
         onlineGames.AddRange(orderedDames);
 
         // perform post-merge fixes, i.e. fixes that DO require duplicate game collections to be merged
-        onlineGames.ForEach(game =>
+        onlineGames.ForEach(onlineGame =>
         {
             // group files into collections so they can be treated generically
-            game.AllFiles = new Dictionary<string, FileCollection>
+            onlineGame.AllFiles = new Dictionary<string, FileCollection>
             {
-                { TableNewFileOptionEnum.Tables.GetDescription(), new FileCollection(game.TableFiles) },
-                { TableNewFileOptionEnum.Backglasses.GetDescription(), new FileCollection(game.B2SFiles) },
-                { TableNewFileOptionEnum.DMDs.GetDescription(), new FileCollection(game.AltColorFiles) },
-                { TableNewFileOptionEnum.Wheels.GetDescription(), new FileCollection(game.WheelArtFiles) },
-                { TableNewFileOptionEnum.ROMs.GetDescription(), new FileCollection(game.RomFiles) },
-                { TableNewFileOptionEnum.MediaPacks.GetDescription(), new FileCollection(game.MediaPackFiles) },
-                { TableNewFileOptionEnum.Sounds.GetDescription(), new FileCollection(game.SoundFiles) },
-                { TableNewFileOptionEnum.Toppers.GetDescription(), new FileCollection(game.TopperFiles) },
-                { TableNewFileOptionEnum.PuPPacks.GetDescription(), new FileCollection(game.PupPackFiles) },
-                { TableNewFileOptionEnum.POVs.GetDescription(), new FileCollection(game.PovFiles) },
-                { TableNewFileOptionEnum.AlternateSounds.GetDescription(), new FileCollection(game.AltSoundFiles) },
-                { TableNewFileOptionEnum.Rules.GetDescription(), new FileCollection(game.RuleFiles) }
+                { TableNewFileOptionEnum.Tables.GetDescription(), new FileCollection(onlineGame.TableFiles) },
+                { TableNewFileOptionEnum.Backglasses.GetDescription(), new FileCollection(onlineGame.B2SFiles) },
+                { TableNewFileOptionEnum.DMDs.GetDescription(), new FileCollection(onlineGame.AltColorFiles) },
+                { TableNewFileOptionEnum.Wheels.GetDescription(), new FileCollection(onlineGame.WheelArtFiles) },
+                { TableNewFileOptionEnum.ROMs.GetDescription(), new FileCollection(onlineGame.RomFiles) },
+                { TableNewFileOptionEnum.MediaPacks.GetDescription(), new FileCollection(onlineGame.MediaPackFiles) },
+                { TableNewFileOptionEnum.Sounds.GetDescription(), new FileCollection(onlineGame.SoundFiles) },
+                { TableNewFileOptionEnum.Toppers.GetDescription(), new FileCollection(onlineGame.TopperFiles) },
+                { TableNewFileOptionEnum.PuPPacks.GetDescription(), new FileCollection(onlineGame.PupPackFiles) },
+                { TableNewFileOptionEnum.POVs.GetDescription(), new FileCollection(onlineGame.PovFiles) },
+                { TableNewFileOptionEnum.AlternateSounds.GetDescription(), new FileCollection(onlineGame.AltSoundFiles) },
+                { TableNewFileOptionEnum.Rules.GetDescription(), new FileCollection(onlineGame.RuleFiles) }
             };
-            game.AllFilesList = game.AllFiles.Select(kv => kv.Value).ToList();
-            game.AllFilesFlattenedList = game.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
-            game.ImageFiles = game.TableFiles.Concat(game.B2SFiles).ToList();
+            onlineGame.AllFilesList = onlineGame.AllFiles.Select(kv => kv.Value).ToList();
+            onlineGame.AllFilesFlattenedList = onlineGame.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
+            onlineGame.ImageFiles = onlineGame.TableFiles.Concat(onlineGame.B2SFiles).ToList();
 
             // assign helper properties here to avoid re-calculating them later
-            game.YearString = game.Year.ToString();
+            onlineGame.YearString = onlineGame.Year.ToString();
             
             // assign Description in the correct preferred format.. the format is VERY important since..
             // - used to update the local DB entry if an update is requested.. used for both fields; Name (vpx) and Description (media)
             // - used by fix online game which references games by the description in order to include all 3 fields.. this is performed earlier on though BEFORE any online fixes are made
-            game.Description = game.CreateDescription();
+            onlineGame.Description = onlineGame.CreateDescription();
 
             // perform post-merge fixes, e.g. missing image url
-            PostMerge(game);
+            PostMerge(onlineGame);
 
             // assign the dictionary files (potentially re-arranged, filtered, etc) back to the lists to ensure they are in sync
             //game.TableFiles = game.AllFiles[nameof(game.TableFiles)].Cast<TableFile>().ToList();
-            game.TableFiles = game.TableFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.B2SFiles = game.B2SFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.WheelArtFiles = game.WheelArtFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.RomFiles = game.RomFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.MediaPackFiles = game.MediaPackFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.AltColorFiles = game.AltColorFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.SoundFiles = game.SoundFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.TopperFiles = game.TopperFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.PupPackFiles = game.PupPackFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.PovFiles = game.PovFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.AltSoundFiles = game.AltSoundFiles.OrderByDescending(x => x.UpdatedAt).ToList();
-            game.RuleFiles = game.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.TableFiles = onlineGame.TableFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.B2SFiles = onlineGame.B2SFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.WheelArtFiles = onlineGame.WheelArtFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.RomFiles = onlineGame.RomFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.MediaPackFiles = onlineGame.MediaPackFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.AltColorFiles = onlineGame.AltColorFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.SoundFiles = onlineGame.SoundFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.TopperFiles = onlineGame.TopperFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.PupPackFiles = onlineGame.PupPackFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.PovFiles = onlineGame.PovFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.AltSoundFiles = onlineGame.AltSoundFiles.OrderByDescending(x => x.UpdatedAt).ToList();
+            onlineGame.RuleFiles = onlineGame.RuleFiles.OrderByDescending(x => x.UpdatedAt).ToList();
 
-            game.TableDownload = game.TableFiles.Any(file => file.Urls.Any(url => !url.Broken)) ? TableDownloadOptionEnum.Available : TableDownloadOptionEnum.Unavailable;
-            game.TableFormats = game.TableFiles.Where(file => !string.IsNullOrWhiteSpace(file.TableFormat)).Select(x => x.TableFormat).Distinct().ToList();
+            // table download available is very simplistic..
+            // - checks if ANY table file URL is not broken
+            // - it does NOT consider whether the file is considered 'new' or not, e.g. the filtering such as date range is ignored
+            onlineGame.TableDownload = onlineGame.TableFiles.Any(file => file.Urls.Any(url => !url.Broken)) ? TableDownloadOptionEnum.Available : TableDownloadOptionEnum.Unavailable;
+            onlineGame.TableFormats = onlineGame.TableFiles.Where(file => !string.IsNullOrWhiteSpace(file.TableFormat)).Select(x => x.TableFormat).Distinct().ToList();
         });
 
         Logger.Info($"Online database post-fix: count={onlineGames.Count} (manufactured={onlineGames.Count(onlineGame => !onlineGame.IsOriginal)}, original={onlineGames.Count(onlineGame => onlineGame.IsOriginal)})");

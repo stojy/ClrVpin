@@ -116,7 +116,8 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
                 (Settings.SelectedFormatFilter == null || game.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
-                // do we really need to re-filter against 'UpdatedAt' given it's already calculated during UpdateIsNew??
+                
+                // do we really need to re-filter against 'UpdatedAt' given it's already calculated during UpdateFileIsNew??
                 (Settings.SelectedUpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
                 (Settings.SelectedUpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
 
@@ -146,10 +147,10 @@ public sealed class FeederResultsViewModel
                 () => Model.Settings.Feeder.SelectedTableNewFileOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, 
-                () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateIsNew(), includeSelectAll: false)
+                () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateFileIsNew(), includeSelectAll: false)
         };
 
-        UpdatedFilterTimeChanged = new ActionCommand(UpdateIsNew);
+        UpdatedFilterTimeChanged = new ActionCommand(UpdateFileIsNew);
 
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
@@ -336,7 +337,7 @@ public sealed class FeederResultsViewModel
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
-    private void UpdateIsNew()
+    private void UpdateFileIsNew()
     {
         // flag models if they satisfy the updated criteria
         var onlineGames = GetOnlineGames();
