@@ -101,33 +101,39 @@ public sealed class FeederResultsViewModel
         GameItems = new ObservableCollection<GameItem>(gameItems);
         GameItemsView = new ListCollectionView<GameItem>(GameItems)
         {
-            // filter the table names list to reflect the various view filtering criteria
+            // game (~table) level filtering
+            // - filter the top level games to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
-            Filter = game =>
-                (game.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(game.OnlineGame.TableDownload)) &&
-                (game.OnlineGame == null || Settings.SelectedTableNewFileOptions.ContainsAny(game.OnlineGame.NewFileTypes)) &&
-                (Settings.SelectedTableMatchOptions.Contains(game.TableMatchType)) &&
+            // - file level filtering (e.g. a game's table can have multiple files with different filtering properties) is also checked here.. but updated elsewhere, refer UpdateFilesIsNew
+            Filter = gameItem =>
+                //todo; replace TableDownload with **file level** IsTableDownloadAvailable flag
+                (gameItem.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(gameItem.OnlineGame.TableDownload)) &&
+
+                (gameItem.OnlineGame == null || Settings.SelectedTableNewFileOptions.ContainsAny(gameItem.OnlineGame.NewFileTypes)) &&
+                (Settings.SelectedTableMatchOptions.Contains(gameItem.TableMatchType)) &&
 
                 (!Settings.SelectedManufacturedOptions.Any() || 
-                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.True) && game.TableStyleOption == TableStyleOptionEnum.Manufactured) ||
-                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.False) && game.TableStyleOption == TableStyleOptionEnum.Original)) &&
+                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.TableStyleOption == TableStyleOptionEnum.Manufactured) ||
+                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.TableStyleOption == TableStyleOptionEnum.Original)) &&
 
-                (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
-                (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(game.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
-                (Settings.SelectedTypeFilter == null || string.CompareOrdinal(game.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
-                (Settings.SelectedFormatFilter == null || game.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
+                (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
+                (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
+                (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
+                (Settings.SelectedFormatFilter == null || gameItem.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
                 
-                // is re-filter against 'UpdatedAt' really required since it's already being calculated within UpdateFilesIsNew
-                // - potentialy useful to avoid the more expensive LCV IsNew filtering below
-                (Settings.SelectedUpdatedAtDateBegin == null || game.UpdatedAt == null || game.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
-                (Settings.SelectedUpdatedAtDateEnd == null || game.UpdatedAt == null || game.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
+                // gameItem.UpdatedAt is derived property that surfaces the 'max updated at' timestamps from ALL the different content and their underlying files
+                // - if a gameItem satisfies the 'updatedAt' filtering.. then all the gameItem's content (e.g. table, backglass, etc) and their file(s) will be available for viewing
+                //   e.g. show all table files irrespective of their update timestamp so long as ANY of the gameItem's content files is later than 'updatedAt'
+                // - avoids the expensive 'on the fly' calculation that would otherwise be required during every filter update
+                (Settings.SelectedUpdatedAtDateBegin == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
+                (Settings.SelectedUpdatedAtDateEnd == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
 
-                (Settings.SelectedTableFilter == null || game.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (Settings.SelectedManufacturerFilter == null || game.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
+                (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
           
                 // exclude any game if ALL of the files aren't considered new
                 // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned
-                game.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false
+                gameItem.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false
         };
         GameItemsView.MoveCurrentToFirst();
 
@@ -340,7 +346,7 @@ public sealed class FeederResultsViewModel
 
     private void UpdateFilesIsNew()
     {
-        // for all online games, flag every file as new required beauuse..
+        // for all online games, flag every file as new required because..
         // - top level LCV filtering hides/shows the entire table (with all content), but IsNew is required when the LCV does NOT filter the table to enable..
         //   a. category 'new' badge
         //   b. URL download button color
@@ -356,6 +362,7 @@ public sealed class FeederResultsViewModel
                 files.ForEach(file =>
                 {
                     // flag file - if the update time range is satisfied
+                    // - this is different to the generated 'gameItem updatedAt' which is an aggregation of the all the content and their file timestamps.. refer GameItemsView filtering
                     file.IsNew = file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
 
                     // treat file as NOT new if any of the except rules are satisfied
