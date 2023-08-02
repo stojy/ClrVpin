@@ -29,6 +29,9 @@ public class Settings : ISettings
         // common
         Version = MinVersion;
         BackupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ClrVpin", "backup");
+        if (!Directory.Exists(BackupFolder))
+            Directory.CreateDirectory(BackupFolder);
+
         EnableDiagnosticLogging = false;
         SkipLoggingForOriginalTables = true;
         EnableCheckForUpdatesAutomatically = true;
