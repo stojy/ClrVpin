@@ -2,7 +2,7 @@
 
 namespace ClrVpin.Models.Feeder;
 
-public enum TableNewFileOptionEnum
+public enum OnlineFileTypeEnum
 {
     [Description("Tables")] Tables,
     [Description("Backglasses")] Backglasses,

@@ -109,10 +109,13 @@ public sealed class FeederResultsViewModel
                 //todo; replace TableDownload with **file level** IsTableDownloadAvailable flag
                 (gameItem.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(gameItem.OnlineGame.TableDownload)) &&
 
-                (gameItem.OnlineGame == null || Settings.SelectedTableNewFileOptions.ContainsAny(gameItem.OnlineGame.NewFileTypes)) &&
-                (Settings.SelectedTableMatchOptions.Contains(gameItem.TableMatchType)) &&
+                // exclude any gameItem that doesn't have new files for one of the selected content types
+                // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned, refer UpdateFilesIsNew
+                (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.NewFileTypes)) &&
 
-                (!Settings.SelectedManufacturedOptions.Any() || 
+                Settings.SelectedTableMatchOptions.Contains(gameItem.TableMatchType) &&
+
+                (!Settings.SelectedManufacturedOptions.Any() ||
                  (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.TableStyleOption == TableStyleOptionEnum.Manufactured) ||
                  (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.TableStyleOption == TableStyleOptionEnum.Original)) &&
 
@@ -120,7 +123,7 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
                 (Settings.SelectedFormatFilter == null || gameItem.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
-                
+
                 // gameItem.UpdatedAt is derived property that surfaces the 'max updated at' timestamps from ALL the different content and their underlying files
                 // - if a gameItem satisfies the 'updatedAt' filtering.. then all the gameItem's content (e.g. table, backglass, etc) and their file(s) will be available for viewing
                 //   e.g. show all table files irrespective of their update timestamp so long as ANY of the gameItem's content files is later than 'updatedAt'
@@ -129,11 +132,12 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedUpdatedAtDateEnd == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
 
                 (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
-          
-                // exclude any game if ALL of the files aren't considered new
-                // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned
-                gameItem.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false
+                (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase))
+
+            // exclude any game if ALL of the files aren't considered new
+            // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned
+            //gameItem.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false
+
         };
         GameItemsView.MoveCurrentToFirst();
 
@@ -150,8 +154,8 @@ public sealed class FeederResultsViewModel
             TableDownloadOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableDownloadOptions, 
                 () => Model.Settings.Feeder.SelectedTableDownloadOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
-            TableNewFileOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableNewFileOptions, 
-                () => Model.Settings.Feeder.SelectedTableNewFileOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
+            OnlineFileTypeOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.OnlineFileTypeOptions, 
+                () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, 
                 () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateFilesIsNew(), includeSelectAll: false)
@@ -392,6 +396,7 @@ public sealed class FeederResultsViewModel
             });
 
             // assign a helper property to designate the file types that are new (aka updated), i.e. avoid re-calculating this every time we have a non-update time filter change
+            // - used as a top level 'gameItem filter'
             onlineGame.NewFileTypes = onlineGame.AllFiles.Where(kv => kv.Value.IsNew).Select(kv => kv.Key).ToList();
         });
 

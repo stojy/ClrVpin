@@ -32,7 +32,7 @@ namespace ClrVpin.Models.Settings
             // feeder
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             TableDownloadOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            TableNewFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            OnlineFileTypeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             IgnoreFeatureOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -149,20 +149,20 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TableDownloadOptionEnum.Unavailable, Tip = "Tables that are unavailable for download, i.e. no valid URL(s) exist"},
         };
         
-        public static readonly EnumOption<TableNewFileOptionEnum>[] TableNewFileOptions =
+        public static readonly EnumOption<OnlineFileTypeEnum>[] OnlineFileTypeOptions =
         {
-            new() {Enum = TableNewFileOptionEnum.Tables, Tip = "Tables with new content of type: Table"},
-            new() {Enum = TableNewFileOptionEnum.Backglasses, Tip = "Tables with new content of type: Backglass"},
-            new() {Enum = TableNewFileOptionEnum.DMDs, Tip = "Tables with new content of type: DMD"},
-            new() {Enum = TableNewFileOptionEnum.Wheels, Tip = "Tables with new content of type: Wheel"},
-            new() {Enum = TableNewFileOptionEnum.ROMs, Tip = "Tables with new content of type: ROM(s)"},
-            new() {Enum = TableNewFileOptionEnum.MediaPacks, Tip = "Tables with new content of type: Media Pack"},
-            new() {Enum = TableNewFileOptionEnum.Sounds, Tip = "Tables with new content of type: Sounds"},
-            new() {Enum = TableNewFileOptionEnum.Toppers, Tip = "Tables with new content of type: Topper"},
-            new() {Enum = TableNewFileOptionEnum.PuPPacks, Tip = "Tables with new content of type: PuP Pack"},
-            new() {Enum = TableNewFileOptionEnum.POVs, Tip = "Tables with new content of type: Point of View"},
-            new() {Enum = TableNewFileOptionEnum.AlternateSounds, Tip = "Tables with new content of type: Alternate Sound"},
-            new() {Enum = TableNewFileOptionEnum.Rules, Tip = "Tables with new content of type: Rules"},
+            new() {Enum = OnlineFileTypeEnum.Tables, Tip = "Tables with new content of type: Table"},
+            new() {Enum = OnlineFileTypeEnum.Backglasses, Tip = "Tables with new content of type: Backglass"},
+            new() {Enum = OnlineFileTypeEnum.DMDs, Tip = "Tables with new content of type: DMD"},
+            new() {Enum = OnlineFileTypeEnum.Wheels, Tip = "Tables with new content of type: Wheel"},
+            new() {Enum = OnlineFileTypeEnum.ROMs, Tip = "Tables with new content of type: ROM(s)"},
+            new() {Enum = OnlineFileTypeEnum.MediaPacks, Tip = "Tables with new content of type: Media Pack"},
+            new() {Enum = OnlineFileTypeEnum.Sounds, Tip = "Tables with new content of type: Sounds"},
+            new() {Enum = OnlineFileTypeEnum.Toppers, Tip = "Tables with new content of type: Topper"},
+            new() {Enum = OnlineFileTypeEnum.PuPPacks, Tip = "Tables with new content of type: PuP Pack"},
+            new() {Enum = OnlineFileTypeEnum.POVs, Tip = "Tables with new content of type: Point of View"},
+            new() {Enum = OnlineFileTypeEnum.AlternateSounds, Tip = "Tables with new content of type: Alternate Sound"},
+            new() {Enum = OnlineFileTypeEnum.Rules, Tip = "Tables with new content of type: Rules"},
         };
 
         public static readonly EnumOption<IgnoreFeatureOptionEnum>[] IgnoreFeatureOptions =

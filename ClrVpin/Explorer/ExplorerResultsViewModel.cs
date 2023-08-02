@@ -20,7 +20,6 @@ using ClrVpin.Shared.Utils;
 using PropertyChanged;
 using Utils;
 using Utils.Extensions;
-using ActionCommand = Microsoft.Xaml.Behaviors.Core.ActionCommand;
 
 namespace ClrVpin.Explorer;
 
@@ -155,7 +154,7 @@ public class ExplorerResultsViewModel
             _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 0);
 
         BackupFolder = Model.Settings.BackupFolder;
-        NavigateToBackupFolderCommand = new Utils.ActionCommand(NavigateToBackupFolder);
+        NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
 
         OverwriteDatabaseRomsCommand = new ActionCommand(OverwriteDatabaseRoms);
         OverwriteDatabasePupsCommand = new ActionCommand(OverwriteDatabasePups);

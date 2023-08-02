@@ -479,11 +479,11 @@
               </ContentControl>
 
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
-                              controls:GenericAttached.String="Updated Files"
-                              controls:GenericAttached.String2="Filter the tables based on any new content that has been added. Not applicable for 'local only' tables (i.e. no online match)."
+                              controls:GenericAttached.String="File Types"
+                              controls:GenericAttached.String2="Filter the tables based on whether the specified file types have any new content. Not applicable for 'local only' tables (i.e. no online match)."
                               controls:GenericAttached.Double="110"
                               controls:GenericAttached.Double2="14">
-                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableNewFileOptionsView}" />
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.OnlineFileTypeOptionsView}" />
               </ContentControl>
 
             </StackPanel>

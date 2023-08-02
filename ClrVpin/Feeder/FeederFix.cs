@@ -47,18 +47,18 @@ public static class FeederFix
             // group files into collections so they can be treated generically
             onlineGame.AllFiles = new Dictionary<string, FileCollection>
             {
-                { TableNewFileOptionEnum.Tables.GetDescription(), new FileCollection(onlineGame.TableFiles) },
-                { TableNewFileOptionEnum.Backglasses.GetDescription(), new FileCollection(onlineGame.B2SFiles) },
-                { TableNewFileOptionEnum.DMDs.GetDescription(), new FileCollection(onlineGame.AltColorFiles) },
-                { TableNewFileOptionEnum.Wheels.GetDescription(), new FileCollection(onlineGame.WheelArtFiles) },
-                { TableNewFileOptionEnum.ROMs.GetDescription(), new FileCollection(onlineGame.RomFiles) },
-                { TableNewFileOptionEnum.MediaPacks.GetDescription(), new FileCollection(onlineGame.MediaPackFiles) },
-                { TableNewFileOptionEnum.Sounds.GetDescription(), new FileCollection(onlineGame.SoundFiles) },
-                { TableNewFileOptionEnum.Toppers.GetDescription(), new FileCollection(onlineGame.TopperFiles) },
-                { TableNewFileOptionEnum.PuPPacks.GetDescription(), new FileCollection(onlineGame.PupPackFiles) },
-                { TableNewFileOptionEnum.POVs.GetDescription(), new FileCollection(onlineGame.PovFiles) },
-                { TableNewFileOptionEnum.AlternateSounds.GetDescription(), new FileCollection(onlineGame.AltSoundFiles) },
-                { TableNewFileOptionEnum.Rules.GetDescription(), new FileCollection(onlineGame.RuleFiles) }
+                { OnlineFileTypeEnum.Tables.GetDescription(), new FileCollection(onlineGame.TableFiles) },
+                { OnlineFileTypeEnum.Backglasses.GetDescription(), new FileCollection(onlineGame.B2SFiles) },
+                { OnlineFileTypeEnum.DMDs.GetDescription(), new FileCollection(onlineGame.AltColorFiles) },
+                { OnlineFileTypeEnum.Wheels.GetDescription(), new FileCollection(onlineGame.WheelArtFiles) },
+                { OnlineFileTypeEnum.ROMs.GetDescription(), new FileCollection(onlineGame.RomFiles) },
+                { OnlineFileTypeEnum.MediaPacks.GetDescription(), new FileCollection(onlineGame.MediaPackFiles) },
+                { OnlineFileTypeEnum.Sounds.GetDescription(), new FileCollection(onlineGame.SoundFiles) },
+                { OnlineFileTypeEnum.Toppers.GetDescription(), new FileCollection(onlineGame.TopperFiles) },
+                { OnlineFileTypeEnum.PuPPacks.GetDescription(), new FileCollection(onlineGame.PupPackFiles) },
+                { OnlineFileTypeEnum.POVs.GetDescription(), new FileCollection(onlineGame.PovFiles) },
+                { OnlineFileTypeEnum.AlternateSounds.GetDescription(), new FileCollection(onlineGame.AltSoundFiles) },
+                { OnlineFileTypeEnum.Rules.GetDescription(), new FileCollection(onlineGame.RuleFiles) }
             };
             onlineGame.AllFilesList = onlineGame.AllFiles.Select(kv => kv.Value).ToList();
             onlineGame.AllFilesFlattenedList = onlineGame.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
