@@ -77,7 +77,6 @@ public sealed class FeederResultsViewModel
                 tableFile.IsMusicOrSoundMod = comment?.ContainsAny("sound mod", "music mod")  == true;
                 tableFile.IsBlackWhiteMod = comment?.ToLower().ContainsAny("bw mod", "black & white mod", "black and white mod") == true;
             });
-
             onlineGame.B2SFiles.ForEach(backglassFile =>
             {
                 backglassFile.IsFullDmd = backglassFile.Features?.Any(feature => feature?.ToLower().Trim() == "fulldmd") == true ||
@@ -93,8 +92,18 @@ public sealed class FeederResultsViewModel
             // assign VPS Url (not a fix)
             onlineGame.VpsUrl = $@"https://virtual-pinball-spreadsheet.web.app/game/{onlineGame.Id}";
 
-            // navigate to url
-            onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file => { file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url))); });
+            // update URL information
+            onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file =>
+            {
+                file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url)));
+
+                if (!file.Urls.Any())
+                    file.UrlStatus = UrlStatus.Missing;
+                else if (file.Urls.All(url => url.Broken))
+                    file.UrlStatus = UrlStatus.Broken;
+                else
+                    file.UrlStatus = UrlStatus.Valid;
+            });
         });
 
         // main games view (data grid)
@@ -104,13 +113,13 @@ public sealed class FeederResultsViewModel
             // game (~table) level filtering
             // - filter the top level games to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
-            // - file level filtering (e.g. a game's table can have multiple files with different filtering properties) is also checked here.. but updated elsewhere, refer UpdateFilesIsNew
+            // - file level filtering (e.g. a game's table can have multiple files with different filtering properties) is also checked here.. but updated elsewhere, refer UpdateOnlineGameFileDetails
             Filter = gameItem =>
                 //todo; replace TableDownload with **file level** IsTableDownloadAvailable flag
                 (gameItem.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(gameItem.OnlineGame.TableDownload)) &&
 
                 // exclude any gameItem that doesn't have new files for one of the selected content types
-                // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned, refer UpdateFilesIsNew
+                // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned, refer UpdateOnlineGameFileDetails
                 (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.NewFileTypes)) &&
 
                 Settings.SelectedTableMatchOptions.Contains(gameItem.TableMatchType) &&
@@ -158,15 +167,15 @@ public sealed class FeederResultsViewModel
                 () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, 
-                () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateFilesIsNew(), includeSelectAll: false)
+                () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false)
         };
 
-        UpdatedFilterTimeChanged = new ActionCommand(UpdateFilesIsNew);
+        UpdatedFilterTimeChanged = new ActionCommand(UpdateOnlineGameFileDetails);
 
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
         // force 'IsFileNew' update check
-        UpdateFilesIsNew();
+        UpdateOnlineGameFileDetails();
 
         BackupFolder = Model.Settings.BackupFolder;
         NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
@@ -348,7 +357,7 @@ public sealed class FeederResultsViewModel
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
-    private void UpdateFilesIsNew()
+    private void UpdateOnlineGameFileDetails()
     {
         // for all online games, flag every file as new required because..
         // - top level LCV filtering hides/shows the entire table (with all content), but IsNew is required when the LCV does NOT filter the table to enable..
@@ -367,7 +376,7 @@ public sealed class FeederResultsViewModel
                 {
                     // flag file - if the update time range is satisfied
                     // - this is different to the generated 'gameItem updatedAt' which is an aggregation of the all the content and their file timestamps.. refer GameItemsView filtering
-                    file.IsNew = file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
+                    file.IsNew = IsFileNew(file);
 
                     // treat file as NOT new if any of the except rules are satisfied
                     // VR only
@@ -393,6 +402,21 @@ public sealed class FeederResultsViewModel
                 // flag file collection info
                 files.IsNew = files.Any(file => file.IsNew);
                 files.Title = type;
+
+                // the file collection url status is limited to only the date range for new files
+                // - although technically wrong, to keep things simple if there are files then assume UrlStatus is valid
+                // - e.g. 6d ago the file update has a missing URL and 10d the URL was valid
+                //   a. 7d filter --> UrlStatus = missing
+                //   a. 14d filter --> UrlStatus = valid
+                var newFiles = files.Where(IsFileNew).ToList();
+                if (!newFiles.Any())
+                    files.UrlStatus = UrlStatus.Valid;
+                else if (newFiles.All(file => file.UrlStatus == UrlStatus.Broken))
+                    files.UrlStatus = UrlStatus.Broken;
+                else if (newFiles.All(file => file.UrlStatus is UrlStatus.Broken or UrlStatus.Missing))
+                    files.UrlStatus = UrlStatus.Missing;
+                else
+                    files.UrlStatus = UrlStatus.Valid;
             });
 
             // assign a helper property to designate the file types that are new (aka updated), i.e. avoid re-calculating this every time we have a non-update time filter change
@@ -402,6 +426,8 @@ public sealed class FeederResultsViewModel
 
         FilterChangedCommand.Execute(null);
     }
+
+    private bool IsFileNew(File file) => file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
 
     private static void NavigateToUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 

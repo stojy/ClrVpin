@@ -69,6 +69,7 @@ public class FileCollection : List<File>
 
     public bool IsNew { get; set; }
     public string Title { get; set; }
+    public UrlStatus UrlStatus { get; set; }
 }
 
 // view model
@@ -106,6 +107,7 @@ public class File
 
     // view model properties
     public bool IsNew { get; set; }
+    public UrlStatus UrlStatus { get; set; }
 }
 
 [AddINotifyPropertyChangedInterface]
