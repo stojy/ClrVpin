@@ -70,6 +70,7 @@ public class FileCollection : List<File>
     public bool IsNew { get; set; }
     public string Title { get; set; }
     public UrlStatusEnum UrlStatus { get; set; }
+    public bool IsNewAndSelectedFileType { get; set; }
 }
 
 // view model

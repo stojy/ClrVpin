@@ -49,7 +49,7 @@
     <Setter Property="Foreground" Value="{StaticResource PrimaryMidBrush}" />
   </Style>
 
-  <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="#FF00C853" False="#89FFFFFF" /> <!--{DynamicResource MaterialDesignBodyLight}-->
+  <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="#FF00C853" False="#89FFFFFF" /> <!--AccentLightBrush AND {DynamicResource MaterialDesignBodyLight}-->
   <converters:BoolToStyleConverter x:Key="IsNewUrlButtonStyleConverter" True="{StaticResource IsNewUrlButtonStyle}" False="{StaticResource UrlButtonStyle}" />
 
   <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
@@ -701,8 +701,9 @@
                       <DataTemplate DataType="{x:Type vps:FileCollection}">
                         <WrapPanel>
                           <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Title}"
-                                     Foreground="{Binding IsNew, Converter={StaticResource TabItemToColorConverter}}" />
-                          <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0" Foreground="{StaticResource AccentLightBrush}"
+                                     Foreground="{Binding IsNewAndSelectedFileType, Converter={StaticResource TabItemToColorConverter}}" />
+                          <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0" 
+                                                   Foreground="{Binding IsNewAndSelectedFileType, Converter={StaticResource TabItemToColorConverter}}"
                                                    Visibility="{Binding IsNew, Converter={StaticResource ReverseBoolToHiddenConverter}}" />
                         </WrapPanel>
                       </DataTemplate>

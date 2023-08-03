@@ -159,15 +159,17 @@ public sealed class FeederResultsViewModel
             UrlStatusOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.UrlStatusOptions, 
                 () => Model.Settings.Feeder.SelectedUrlStatusOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
+            // invoke online game file update to handle IsNewAndSelectedFileType which is file type sensitive
             OnlineFileTypeOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.OnlineFileTypeOptions, 
-                () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
+                () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, 
                 () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false)
         };
 
+        // invoke online game file update to handle IsNew which is time sensitive
         UpdatedFilterTimeChanged = new ActionCommand(UpdateOnlineGameFileDetails);
-
+        
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
         // force 'IsFileNew' update check
@@ -399,6 +401,7 @@ public sealed class FeederResultsViewModel
                 // flag file collection info
                 fileCollection.IsNew = fileCollection.Any(file => file.IsNew);
                 fileCollection.Title = fileCollectionType;
+                fileCollection.IsNewAndSelectedFileType = fileCollection.IsNew && Settings.SelectedOnlineFileTypeOptions.Contains(fileCollectionType);
 
                 // the file collection url status is limited to only the date range for new files
                 // - although technically wrong, to keep things simple if there are files then assume UrlStatus is valid
