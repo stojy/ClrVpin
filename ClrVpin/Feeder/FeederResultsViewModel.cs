@@ -188,10 +188,10 @@ public sealed class FeederResultsViewModel
         GameItemSelectedCommand = new ActionCommand(() =>
         {
             // re-assign the selected tab item when the selected game is changed, priority order..
-            // - select the first tab item that has new file content, e.g. tables, backglasses, etc.
+            // - select the first tab item that has new file content AND matches the selected file type, e.g. tables, backglasses, etc.
             // - else, select the first tab that has file content
             // - else, select the first tab
-            var selectedFileCollection = SelectedGameItem?.OnlineGame?.AllFileCollectionsList.FirstOrDefault(fileList => fileList.IsNew) ??
+            var selectedFileCollection = SelectedGameItem?.OnlineGame?.AllFileCollectionsList.FirstOrDefault(fileList => fileList.IsNewAndSelectedFileType) ??
                                          SelectedGameItem?.OnlineGame?.AllFileCollectionsList.FirstOrDefault(fileList => fileList.Count > 0) ??
                                          SelectedGameItem?.OnlineGame?.AllFileCollectionsList.First();
 
