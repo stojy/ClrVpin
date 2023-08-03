@@ -45,7 +45,7 @@ public static class FeederFix
         onlineGames.ForEach(onlineGame =>
         {
             // group files into collections so they can be treated generically
-            onlineGame.AllFiles = new Dictionary<string, FileCollection>
+            onlineGame.AllFileCollections = new Dictionary<string, FileCollection>
             {
                 { OnlineFileTypeEnum.Tables.GetDescription(), new FileCollection(onlineGame.TableFiles) },
                 { OnlineFileTypeEnum.Backglasses.GetDescription(), new FileCollection(onlineGame.B2SFiles) },
@@ -60,8 +60,8 @@ public static class FeederFix
                 { OnlineFileTypeEnum.AlternateSounds.GetDescription(), new FileCollection(onlineGame.AltSoundFiles) },
                 { OnlineFileTypeEnum.Rules.GetDescription(), new FileCollection(onlineGame.RuleFiles) }
             };
-            onlineGame.AllFilesList = onlineGame.AllFiles.Select(kv => kv.Value).ToList();
-            onlineGame.AllFilesFlattenedList = onlineGame.AllFiles.Select(kv => kv.Value).SelectMany(x => x);
+            onlineGame.AllFileCollectionsList = onlineGame.AllFileCollections.Select(kv => kv.Value).ToList();
+            onlineGame.AllFilesFlattenedList = onlineGame.AllFileCollections.Select(kv => kv.Value).SelectMany(x => x);
             onlineGame.ImageFiles = onlineGame.TableFiles.Concat(onlineGame.B2SFiles).ToList();
 
             // assign helper properties here to avoid re-calculating them later
@@ -76,7 +76,7 @@ public static class FeederFix
             PostMerge(onlineGame);
 
             // assign the dictionary files (potentially re-arranged, filtered, etc) back to the lists to ensure they are in sync
-            //game.TableFiles = game.AllFiles[nameof(game.TableFiles)].Cast<TableFile>().ToList();
+            //game.TableFiles = game.AllFileCollections[nameof(game.TableFiles)].Cast<TableFile>().ToList();
             onlineGame.TableFiles = onlineGame.TableFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             onlineGame.B2SFiles = onlineGame.B2SFiles.OrderByDescending(x => x.UpdatedAt).ToList();
             onlineGame.WheelArtFiles = onlineGame.WheelArtFiles.OrderByDescending(x => x.UpdatedAt).ToList();
@@ -394,7 +394,7 @@ public static class FeederFix
         if (!IsActive(FixFeedOptionEnum.WrongUrlContent))
             return;
 
-        onlineGame.AllFiles.ForEach(kv =>
+        onlineGame.AllFileCollections.ForEach(kv =>
         {
             kv.Value.ForEach(f =>
                 f.Urls.ForEach(urlDetail =>
@@ -415,7 +415,7 @@ public static class FeederFix
         if (!IsActive(FixFeedOptionEnum.InvalidUrlContent))
             return;
 
-        onlineGame.AllFiles.ForEach(kv =>
+        onlineGame.AllFileCollections.ForEach(kv =>
         {
             kv.Value.ForEach(f =>
                 f.Urls.ForEach(urlDetail =>
@@ -435,7 +435,7 @@ public static class FeederFix
     {
         // fix file ordering - ensure a game's most recent files are shown first
         // - deliberately no option to disable this feature
-        onlineGame.AllFiles.ForEach(kv =>
+        onlineGame.AllFileCollections.ForEach(kv =>
         {
             var orderByDescending = kv.Value.OrderByDescending(x => x.UpdatedAt).ToArray();
             if (!kv.Value.SequenceEqual(orderByDescending))
@@ -486,7 +486,7 @@ public static class FeederFix
             return;
 
         // fix updated timestamp - must not be lower than the created timestamp
-        onlineGame.AllFiles.ForEach(kv =>
+        onlineGame.AllFileCollections.ForEach(kv =>
         {
             kv.Value.Where(f => f.UpdatedAt < f.CreatedAt).ForEach(f =>
             {

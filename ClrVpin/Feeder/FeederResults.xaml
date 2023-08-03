@@ -695,7 +695,7 @@
                     <Style x:Key="TabControlStyle" TargetType="TabControl" BasedOn="{StaticResource MaterialDesignTabControl}" />
                   </GroupBox.Resources>
 
-                  <TabControl Style="{StaticResource TabControlStyle}" ItemsSource="{Binding SelectedOnlineGame.AllFilesList}" SelectedItem="{Binding SelectedFileCollection}">
+                  <TabControl Style="{StaticResource TabControlStyle}" ItemsSource="{Binding SelectedOnlineGame.AllFileCollectionsList}" SelectedItem="{Binding SelectedFileCollection}">
                     <TabControl.ItemTemplate>
                       <!--tab item header content-->
                       <DataTemplate DataType="{x:Type vps:FileCollection}">

@@ -9,8 +9,8 @@ namespace ClrVpin.Models.Feeder.Vps;
 public class OnlineGame : OnlineGameBase
 {
     // view model properties
-    public Dictionary<string, FileCollection> AllFiles { get; set; }
-    public List<FileCollection> AllFilesList { get; set; }
+    public Dictionary<string, FileCollection> AllFileCollections { get; set; }
+    public List<FileCollection> AllFileCollectionsList { get; set; }
     public IEnumerable<File> AllFilesFlattenedList { get; set; }
     public List<ImageFile> ImageFiles { get; set; }
 
@@ -32,7 +32,7 @@ public class OnlineGame : OnlineGameBase
     // reference to the highest fuzzy ranked DB match
     public LocalGameHit Hit { get; set; }
 
-    public List<string> NewFileTypes { get; set; } = new();
+    public List<string> NewFileCollectionTypes { get; set; } = new();
     
     public Dictionary<string, UrlStatusEnum> UrlStatusFileTypes { get; set; } = new();
     

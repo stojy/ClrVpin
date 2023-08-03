@@ -93,7 +93,7 @@ public sealed class FeederResultsViewModel
             onlineGame.VpsUrl = $@"https://virtual-pinball-spreadsheet.web.app/game/{onlineGame.Id}";
 
             // update URL information
-            onlineGame.AllFiles.Select(x => x.Value).SelectMany(x => x).ForEach(file =>
+            onlineGame.AllFileCollections.Select(x => x.Value).SelectMany(x => x).ForEach(file =>
             {
                 file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url)));
 
@@ -117,7 +117,7 @@ public sealed class FeederResultsViewModel
             Filter = gameItem =>
                 // exclude any gameItem that doesn't have new files for one of the selected content types
                 // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned, refer UpdateOnlineGameFileDetails
-                (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.NewFileTypes)) &&
+                (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.NewFileCollectionTypes)) &&
 
                 Settings.SelectedTableMatchOptions.Contains(gameItem.TableMatchType) &&
 
@@ -189,9 +189,9 @@ public sealed class FeederResultsViewModel
             // - select the first tab item that has new file content, e.g. tables, backglasses, etc.
             // - else, select the first tab that has file content
             // - else, select the first tab
-            var selectedFileCollection = SelectedGameItem?.OnlineGame?.AllFilesList.FirstOrDefault(fileList => fileList.IsNew) ??
-                                         SelectedGameItem?.OnlineGame?.AllFilesList.FirstOrDefault(fileList => fileList.Count > 0) ??
-                                         SelectedGameItem?.OnlineGame?.AllFilesList.First();
+            var selectedFileCollection = SelectedGameItem?.OnlineGame?.AllFileCollectionsList.FirstOrDefault(fileList => fileList.IsNew) ??
+                                         SelectedGameItem?.OnlineGame?.AllFileCollectionsList.FirstOrDefault(fileList => fileList.Count > 0) ??
+                                         SelectedGameItem?.OnlineGame?.AllFileCollectionsList.First();
 
             // assign a convenience property to avoid a *lot* of nested referenced in the xaml
             SelectedOnlineGame = SelectedGameItem?.OnlineGame;
@@ -365,10 +365,11 @@ public sealed class FeederResultsViewModel
         var onlineGames = GetOnlineGames();
         onlineGames.ForEach(onlineGame =>
         {
-            onlineGame.AllFiles.ForEach(kv =>
+            onlineGame.AllFileCollections.ForEach(kv =>
             {
-                var (type, files) = kv;
-                files.ForEach(file =>
+                var (fileCollectionType, fileCollection) = kv;
+
+                fileCollection.ForEach(file =>
                 {
                     // flag file - if the update time range is satisfied
                     // - this is different to the generated 'gameItem updatedAt' which is an aggregation of the all the content and their file timestamps.. refer GameItemsView filtering
@@ -396,32 +397,32 @@ public sealed class FeederResultsViewModel
                 });
 
                 // flag file collection info
-                files.IsNew = files.Any(file => file.IsNew);
-                files.Title = type;
+                fileCollection.IsNew = fileCollection.Any(file => file.IsNew);
+                fileCollection.Title = fileCollectionType;
 
                 // the file collection url status is limited to only the date range for new files
                 // - although technically wrong, to keep things simple if there are files then assume UrlStatus is valid
                 // - e.g. 6d ago the file update has a missing URL and 10d the URL was valid
                 //   a. 7d filter --> UrlStatus = missing
                 //   a. 14d filter --> UrlStatus = valid
-                var newFiles = files.Where(IsFileNew).ToList();
-                if (!newFiles.Any())
-                    files.UrlStatus = UrlStatusEnum.Valid;
-                else if (newFiles.All(file => file.UrlStatusEnum == UrlStatusEnum.Broken))
-                    files.UrlStatus = UrlStatusEnum.Broken;
-                else if (newFiles.All(file => file.UrlStatusEnum is UrlStatusEnum.Broken or UrlStatusEnum.Missing))
-                    files.UrlStatus = UrlStatusEnum.Missing;
+                var newFileCollectionList = fileCollection.Where(IsFileNew).ToList();
+                if (!newFileCollectionList.Any())
+                    fileCollection.UrlStatus = UrlStatusEnum.Valid;
+                else if (newFileCollectionList.All(file => file.UrlStatusEnum == UrlStatusEnum.Broken))
+                    fileCollection.UrlStatus = UrlStatusEnum.Broken;
+                else if (newFileCollectionList.All(file => file.UrlStatusEnum is UrlStatusEnum.Broken or UrlStatusEnum.Missing))
+                    fileCollection.UrlStatus = UrlStatusEnum.Missing;
                 else
-                    files.UrlStatus = UrlStatusEnum.Valid;
+                    fileCollection.UrlStatus = UrlStatusEnum.Valid;
             });
 
             // assign a helper property to designate the new status of the file collections
             // - avoid re-calculating this every time we have a non-update time filter change
             // - used as a top level 'gameItem filter'
-            onlineGame.NewFileTypes = onlineGame.AllFiles.Where(kv => kv.Value.IsNew).Select(kv => kv.Key).ToList();
+            onlineGame.NewFileCollectionTypes = onlineGame.AllFileCollections.Where(kv => kv.Value.IsNew).Select(kv => kv.Key).ToList();
 
             // assign a helper property to designate the URL status of the file collections
-            onlineGame.UrlStatusFileTypes = onlineGame.AllFiles.ToDictionary((kv) => kv.Key, kv => kv.Value.UrlStatus);
+            onlineGame.UrlStatusFileTypes = onlineGame.AllFileCollections.ToDictionary(kv => kv.Key, kv => kv.Value.UrlStatus);
         });
 
         FilterChangedCommand.Execute(null);
