@@ -17,7 +17,7 @@ public class FeederSettings : CommonFilterSettings
         SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
         SelectedFeedFixOptions.AddRange(StaticSettings.FixFeedOptions.Select(x => x.Enum).ToList());
         SelectedTableMatchOptions.AddRange(StaticSettings.TableMatchOptions.Select(x => x.Enum).ToList());
-        SelectedTableDownloadOptions.AddRange(StaticSettings.TableDownloadOptions.Select(x => x.Enum).ToList());
+        SelectedUrlStatusOptions.AddRange(StaticSettings.UrlStatusOptions.Select(x => x.Enum).ToList());
         SelectedOnlineFileTypeOptions.AddRange(new List<string>
         {
             OnlineFileTypeEnum.Tables.GetDescription(),
@@ -30,7 +30,7 @@ public class FeederSettings : CommonFilterSettings
     public ObservableCollection<FixFeedOptionEnum> SelectedFeedFixOptions { get; set; } = new();
 
     public ObservableCollection<TableMatchOptionEnum> SelectedTableMatchOptions { get; set; } = new();
-    public ObservableCollection<TableDownloadOptionEnum> SelectedTableDownloadOptions { get; set; } = new();
+    public ObservableCollection<UrlStatusEnum> SelectedUrlStatusOptions { get; set; } = new();
 
     public ObservableCollection<string> SelectedOnlineFileTypeOptions { get; set; } = new();
     public ObservableCollection<IgnoreFeatureOptionEnum> SelectedIgnoreFeatureOptions { get; set; } = new ();

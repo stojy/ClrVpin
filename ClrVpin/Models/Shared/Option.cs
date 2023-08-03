@@ -8,7 +8,7 @@ public class Option
     public string Description { get; set; }
     public string Tip { get; init; }
     
-    public bool IsHighlighted { get; set; }
+    public bool IsHighlighted { get; protected init; }
  
-    public string HelpUrl { get; set; }
+    public string HelpUrl { get; protected init; }
 }

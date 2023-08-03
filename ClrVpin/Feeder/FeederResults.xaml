@@ -459,15 +459,7 @@
                   <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableManufacturedOptionsView}" />
                 </ContentControl>
 
-                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
-
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Table Download"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table can be downloaded. Not applicable for unmatched tables."
-                                controls:GenericAttached.Double="110"
-                                controls:GenericAttached.Double2="14">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableDownloadOptionsView}" />
-                </ContentControl>
+                <!--<Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />-->
               </Grid>
 
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
@@ -484,6 +476,14 @@
                               controls:GenericAttached.Double="110"
                               controls:GenericAttached.Double2="14">
                 <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.OnlineFileTypeOptionsView}" />
+              </ContentControl>
+
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Download URL"
+                              controls:GenericAttached.String2="Filter the tables based on whether the selected file type(s) can be downloaded. Not applicable for unmatched tables."
+                              controls:GenericAttached.Double="110"
+                              controls:GenericAttached.Double2="14">
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.UrlStatusOptionsView}" />
               </ContentControl>
 
             </StackPanel>

@@ -31,7 +31,7 @@ namespace ClrVpin.Models.Settings
 
             // feeder
             TableMatchOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            TableDownloadOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            UrlStatusOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             OnlineFileTypeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -143,10 +143,11 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TableMatchOptionEnum.LocalOnly, Tip = "Unmatched: tables only exist in your local database, i.e. tables unmatched or missing from the online feed. Renaming your local table(s) to match the online feed may fix this."},
         };
 
-        public static readonly EnumOption<TableDownloadOptionEnum>[] TableDownloadOptions =
+        public static readonly EnumOption<UrlStatusEnum>[] UrlStatusOptions =
         {
-            new() {Enum = TableDownloadOptionEnum.Available, Tip = "Tables that are available for download, i.e. valid table URL(s) exist"},
-            new() {Enum = TableDownloadOptionEnum.Unavailable, Tip = "Tables that are unavailable for download, i.e. no valid URL(s) exist"},
+            new() {Enum = UrlStatusEnum.Valid, Tip = "Tables with file contents that have valid URL(s)"},
+            new() {Enum = UrlStatusEnum.Broken, Tip = "Tables with file contents that have broken URL(s)"},
+            new() {Enum = UrlStatusEnum.Missing, Tip = "Tables with file contents that have missing URL(s)"}
         };
         
         public static readonly EnumOption<OnlineFileTypeEnum>[] OnlineFileTypeOptions =

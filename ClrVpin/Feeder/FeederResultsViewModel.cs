@@ -98,11 +98,11 @@ public sealed class FeederResultsViewModel
                 file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url)));
 
                 if (!file.Urls.Any())
-                    file.UrlStatus = UrlStatus.Missing;
+                    file.UrlStatusEnum = UrlStatusEnum.Missing;
                 else if (file.Urls.All(url => url.Broken))
-                    file.UrlStatus = UrlStatus.Broken;
+                    file.UrlStatusEnum = UrlStatusEnum.Broken;
                 else
-                    file.UrlStatus = UrlStatus.Valid;
+                    file.UrlStatusEnum = UrlStatusEnum.Valid;
             });
         });
 
@@ -115,9 +115,6 @@ public sealed class FeederResultsViewModel
             // - quickest checks placed first to short circuit evaluation of more complex checks
             // - file level filtering (e.g. a game's table can have multiple files with different filtering properties) is also checked here.. but updated elsewhere, refer UpdateOnlineGameFileDetails
             Filter = gameItem =>
-                //todo; replace TableDownload with **file level** IsTableDownloadAvailable flag
-                (gameItem.OnlineGame == null || Settings.SelectedTableDownloadOptions.Contains(gameItem.OnlineGame.TableDownload)) &&
-
                 // exclude any gameItem that doesn't have new files for one of the selected content types
                 // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned, refer UpdateOnlineGameFileDetails
                 (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.NewFileTypes)) &&
@@ -141,13 +138,12 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedUpdatedAtDateEnd == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
 
                 (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
-                (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase))
+                (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
 
-            // exclude any game if ALL of the files aren't considered new
-            // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned
-            //gameItem.OnlineGame?.AllFiles.Any(fileCollection => fileCollection.Value.IsNew) != false
-
+                (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.Any(fileType =>
+                    Settings.SelectedUrlStatusOptions.Contains(gameItem.OnlineGame.UrlStatusFileTypes[fileType])))
         };
+
         GameItemsView.MoveCurrentToFirst();
 
         _gameCollections = new GameCollections(gameItems, () => GameFiltersViewModel?.UpdateFilterViews());
@@ -160,8 +156,8 @@ public sealed class FeederResultsViewModel
             TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableMatchOptions, 
                 () => Model.Settings.Feeder.SelectedTableMatchOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
-            TableDownloadOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableDownloadOptions, 
-                () => Model.Settings.Feeder.SelectedTableDownloadOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
+            UrlStatusOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.UrlStatusOptions, 
+                () => Model.Settings.Feeder.SelectedUrlStatusOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             OnlineFileTypeOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.OnlineFileTypeOptions, 
                 () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
@@ -410,18 +406,22 @@ public sealed class FeederResultsViewModel
                 //   a. 14d filter --> UrlStatus = valid
                 var newFiles = files.Where(IsFileNew).ToList();
                 if (!newFiles.Any())
-                    files.UrlStatus = UrlStatus.Valid;
-                else if (newFiles.All(file => file.UrlStatus == UrlStatus.Broken))
-                    files.UrlStatus = UrlStatus.Broken;
-                else if (newFiles.All(file => file.UrlStatus is UrlStatus.Broken or UrlStatus.Missing))
-                    files.UrlStatus = UrlStatus.Missing;
+                    files.UrlStatus = UrlStatusEnum.Valid;
+                else if (newFiles.All(file => file.UrlStatusEnum == UrlStatusEnum.Broken))
+                    files.UrlStatus = UrlStatusEnum.Broken;
+                else if (newFiles.All(file => file.UrlStatusEnum is UrlStatusEnum.Broken or UrlStatusEnum.Missing))
+                    files.UrlStatus = UrlStatusEnum.Missing;
                 else
-                    files.UrlStatus = UrlStatus.Valid;
+                    files.UrlStatus = UrlStatusEnum.Valid;
             });
 
-            // assign a helper property to designate the file types that are new (aka updated), i.e. avoid re-calculating this every time we have a non-update time filter change
+            // assign a helper property to designate the new status of the file collections
+            // - avoid re-calculating this every time we have a non-update time filter change
             // - used as a top level 'gameItem filter'
             onlineGame.NewFileTypes = onlineGame.AllFiles.Where(kv => kv.Value.IsNew).Select(kv => kv.Key).ToList();
+
+            // assign a helper property to designate the URL status of the file collections
+            onlineGame.UrlStatusFileTypes = onlineGame.AllFiles.ToDictionary((kv) => kv.Key, kv => kv.Value.UrlStatus);
         });
 
         FilterChangedCommand.Execute(null);

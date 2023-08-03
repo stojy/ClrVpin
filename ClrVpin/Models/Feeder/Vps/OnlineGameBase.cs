@@ -7,9 +7,8 @@ using PropertyChanged;
 
 namespace ClrVpin.Models.Feeder.Vps;
 
-// ReSharper disable UnusedMember.Global
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 [AddINotifyPropertyChangedInterface]
+[Serializable]
 public class OnlineGameBase
 {
     public string Id { get; set; }
@@ -60,6 +59,7 @@ public class LocalGameHit
 }
 
 [AddINotifyPropertyChangedInterface]
+[Serializable]
 public class FileCollection : List<File>
 {
     public FileCollection(IEnumerable<File> files)
@@ -69,7 +69,7 @@ public class FileCollection : List<File>
 
     public bool IsNew { get; set; }
     public string Title { get; set; }
-    public UrlStatus UrlStatus { get; set; }
+    public UrlStatusEnum UrlStatus { get; set; }
 }
 
 // view model
@@ -107,10 +107,11 @@ public class File
 
     // view model properties
     public bool IsNew { get; set; }
-    public UrlStatus UrlStatus { get; set; }
+    public UrlStatusEnum UrlStatusEnum { get; set; }
 }
 
 [AddINotifyPropertyChangedInterface]
+[Serializable]
 public class ImageFile : File
 {
     public string ImgUrl { get; set; }

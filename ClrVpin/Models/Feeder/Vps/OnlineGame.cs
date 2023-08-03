@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ClrVpin.Models.Feeder.Vps;
 
-// ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
 
 // todo; move this to a 'Derived' object.. similar to LocalGame
+[Serializable]
 public class OnlineGame : OnlineGameBase
 {
     // view model properties
@@ -32,6 +33,8 @@ public class OnlineGame : OnlineGameBase
     public LocalGameHit Hit { get; set; }
 
     public List<string> NewFileTypes { get; set; } = new();
+    
+    public Dictionary<string, UrlStatusEnum> UrlStatusFileTypes { get; set; } = new();
     
     public string CreateDescription() => $"{Name?.Trim()} ({Manufacturer?.Trim()} {Year})";
 }
