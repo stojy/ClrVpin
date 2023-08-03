@@ -116,9 +116,12 @@ public class GameFiltersViewModel
             PresetDateOptionEnum.Today => (0, 0),
             PresetDateOptionEnum.Yesterday => (1, 0),
             PresetDateOptionEnum.LastThreeDays => (3, 0),
+            PresetDateOptionEnum.LastFiveDays => (5, 0),
             PresetDateOptionEnum.LastWeek => (7, 0),
+            PresetDateOptionEnum.LastTwoWeeks => (14, 0),
             PresetDateOptionEnum.LastMonth => (0, 1),
             PresetDateOptionEnum.LastThreeMonths => (0, 3),
+            PresetDateOptionEnum.LastSixMonths => (0, 6),
             PresetDateOptionEnum.LastYear => (0, 12),
             _ => (0, 0)
         };

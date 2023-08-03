@@ -200,9 +200,12 @@ namespace ClrVpin.Models.Settings
             new() {Enum = PresetDateOptionEnum.Today},
             new() {Enum = PresetDateOptionEnum.Yesterday},
             new() {Enum = PresetDateOptionEnum.LastThreeDays},
+            new() {Enum = PresetDateOptionEnum.LastFiveDays},
             new() {Enum = PresetDateOptionEnum.LastWeek},
+            new() {Enum = PresetDateOptionEnum.LastTwoWeeks},
             new() {Enum = PresetDateOptionEnum.LastMonth},
             new() {Enum = PresetDateOptionEnum.LastThreeMonths},
+            new() {Enum = PresetDateOptionEnum.LastSixMonths},
             new() {Enum = PresetDateOptionEnum.LastYear}
         };
     }
