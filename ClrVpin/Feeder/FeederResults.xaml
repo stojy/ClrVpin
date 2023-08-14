@@ -277,7 +277,7 @@
       <DockPanel Margin="5" VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Left" Width="700">
           <!-- include filtering -->
-          <GroupBox DockPanel.Dock="Top" Header="Include Filters" Margin="0,0,0,10">
+          <GroupBox DockPanel.Dock="Top" Header="Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0"> <!-- margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :( -->
                 <ComboBox ItemsSource="{Binding GameFiltersViewModel.TablesFilterView}"
@@ -486,14 +486,8 @@
                 <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.UrlStatusOptionsView}" />
               </ContentControl>
 
-            </StackPanel>
-          </GroupBox>
-
-          <!-- exclude filtering -->
-          <GroupBox DockPanel.Dock="Top" Header="Exclude Filters" Margin="0,0,0,10">
-            <StackPanel Margin="5">
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
-                              controls:GenericAttached.String="Features"
+                              controls:GenericAttached.String="Exclude"
                               controls:GenericAttached.String2="Don't attribute file(s) as 'New' if they contain these features"
                               controls:GenericAttached.Double="70"
                               controls:GenericAttached.Double2="14">
@@ -545,81 +539,85 @@
             </StackPanel>
           </GroupBox>
 
-          <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
-            <TextBlock Text="{Binding GameItemsView.Count}" />
-            <TextBlock Text=" / " />
-            <TextBlock Text="{Binding GameItems.Count}" />
-          </WrapPanel>
+          <GroupBox DockPanel.Dock="Top" Header="Tables" Margin="0,0,0,10" Style="{StaticResource GroupBoxPrimaryDark}">
+            <StackPanel>
+              <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
+                <TextBlock Text="{Binding GameItemsView.Count}" />
+                <TextBlock Text=" / " />
+                <TextBlock Text="{Binding GameItems.Count}" />
+              </WrapPanel>
 
-          <DataGrid Name="FeederResults" DockPanel.Dock="Bottom"
-                    SelectionMode="Single"
-                    ItemsSource="{Binding GameItemsView}"
-                    AutoGenerateColumns="False"
-                    CanUserAddRows="False"
-                    CanUserDeleteRows="False"
-                    materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
-                    materialDesign:DataGridAssist.CellPadding="4 1 1 4"
-                    CellStyle="{StaticResource NoBorderDataGridCellStyle}"
-                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                    CanUserSortColumns="True"
-                    IsReadOnly="True"
-                    EnableRowVirtualization="True"
-                    GridLinesVisibility="None"
-                    SelectedItem="{Binding SelectedGameItem}">
+              <DataGrid Name="FeederResults" DockPanel.Dock="Bottom"
+                        SelectionMode="Single"
+                        ItemsSource="{Binding GameItemsView}"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
+                        materialDesign:DataGridAssist.CellPadding="4 1 1 4"
+                        CellStyle="{StaticResource NoBorderDataGridCellStyle}"
+                        ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                        CanUserSortColumns="True"
+                        IsReadOnly="True"
+                        EnableRowVirtualization="True"
+                        GridLinesVisibility="None"
+                        SelectedItem="{Binding SelectedGameItem}">
 
-            <b:Interaction.Triggers>
-              <b:EventTrigger EventName="SelectionChanged">
-                <b:InvokeCommandAction Command="{Binding GameItemSelectedCommand}" />
-              </b:EventTrigger>
-            </b:Interaction.Triggers>
+                <b:Interaction.Triggers>
+                  <b:EventTrigger EventName="SelectionChanged">
+                    <b:InvokeCommandAction Command="{Binding GameItemSelectedCommand}" />
+                  </b:EventTrigger>
+                </b:Interaction.Triggers>
 
-            <DataGrid.Columns>
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
-                                  Header="#" Binding="{Binding Index}" Width="45" />
+                <DataGrid.Columns>
+                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
+                                      Header="#" Binding="{Binding Index}" Width="45" />
 
-              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" CanUserSort="False" CanUserResize="False" CanUserReorder="False"
-                                      Width="30" CellStyle="{StaticResource AlignedDataGridCellStyle}">
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <WrapPanel>
-                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30"
-                              ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalAndOnline}}"
-                              IsEnabled="{Binding IsMatchingEnabled}"
-                              Command="{Binding UpdateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="Pencil" />
-                      </Button>
-                      <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
-                              ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalOnly}}"
-                              IsEnabled="{Binding IsMatchingEnabled}"
-                              Command="{Binding UpdateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="Pencil" />
-                      </Button>
-                      <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
-                              ToolTip="{Binding CreateDatabaseEntryTooltip}"
-                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.OnlineOnly}}"
-                              IsEnabled="{Binding IsMatchingEnabled}"
-                              Command="{Binding CreateDatabaseEntryCommand}">
-                        <materialDesign:PackIcon Kind="Plus" Height="33" Width="33" Margin="-2,0,0,0" /> <!-- drawn oversize because the 'plus' icon is too small -->
-                      </Button>
-                    </WrapPanel>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
+                  <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" CanUserSort="False" CanUserResize="False" CanUserReorder="False"
+                                          Width="30" CellStyle="{StaticResource AlignedDataGridCellStyle}">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <WrapPanel>
+                          <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30"
+                                  ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
+                                  Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalAndOnline}}"
+                                  IsEnabled="{Binding IsMatchingEnabled}"
+                                  Command="{Binding UpdateDatabaseEntryCommand}">
+                            <materialDesign:PackIcon Kind="Pencil" />
+                          </Button>
+                          <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
+                                  ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
+                                  Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalOnly}}"
+                                  IsEnabled="{Binding IsMatchingEnabled}"
+                                  Command="{Binding UpdateDatabaseEntryCommand}">
+                            <materialDesign:PackIcon Kind="Pencil" />
+                          </Button>
+                          <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
+                                  ToolTip="{Binding CreateDatabaseEntryTooltip}"
+                                  Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.OnlineOnly}}"
+                                  IsEnabled="{Binding IsMatchingEnabled}"
+                                  Command="{Binding CreateDatabaseEntryCommand}">
+                            <materialDesign:PackIcon Kind="Plus" Height="33" Width="33" Margin="-2,0,0,0" /> <!-- drawn oversize because the 'plus' icon is too small -->
+                          </Button>
+                        </WrapPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
 
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
-                                  Binding="{Binding Name}"
-                                  Width="255" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
-                                  Binding="{Binding Manufacturer}" Width="160" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
-                                  Binding="{Binding Year}"
-                                  Width="55" />
-              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
-                                  Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
-            </DataGrid.Columns>
-          </DataGrid>
+                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
+                                      Binding="{Binding Name}"
+                                      Width="255" />
+                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
+                                      Binding="{Binding Manufacturer}" Width="160" />
+                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
+                                      Binding="{Binding Year}"
+                                      Width="55" />
+                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
+                                      Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
+                </DataGrid.Columns>
+              </DataGrid>
+            </StackPanel>
+          </GroupBox>
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
@@ -642,7 +640,7 @@
             <StackPanel Visibility="{Binding ElementName=FeederResults, Path=SelectedIndex, Converter={StaticResource PositiveToVisibilityConverter}}">
               <StackPanel Visibility="{Binding SelectedGameItem.OnlineGame, Converter={StaticResource ReverseNullToVisibilityConverter}}">
                 <UniformGrid Columns="3">
-                  <GroupBox Header="Hardware: Table Info">
+                  <GroupBox Header="Table Info" Style="{StaticResource GroupBoxPrimaryDark}">
                     <StackPanel Margin="5,0">
                       <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding SelectedOnlineGame.Name}" />
                       <UniformGrid Columns="2">
@@ -668,7 +666,7 @@
 
                   <ContentControl Content="{Binding SelectedOnlineGame.ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" Margin="5,0" />
 
-                  <GroupBox Header="Software: Virtualized Info">
+                  <GroupBox Header="Virtualized Info" Style="{StaticResource GroupBoxPrimaryDark}">
                     <StackPanel Margin="5,0">
                       <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated"
                                       controls:GenericAttached.String2="{Binding SelectedOnlineGame.UpdatedAt}" />
@@ -690,7 +688,7 @@
                   </GroupBox>
                 </UniformGrid>
 
-                <GroupBox Margin="0,10,0,0" Header="Files">
+                <GroupBox Margin="0,10,0,0" Header="Files" Style="{StaticResource GroupBoxPrimaryDark}">
                   <GroupBox.Resources>
                     <Style x:Key="TabControlStyle" TargetType="TabControl" BasedOn="{StaticResource MaterialDesignTabControl}" />
                   </GroupBox.Resources>
@@ -702,7 +700,7 @@
                         <WrapPanel>
                           <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Title}"
                                      Foreground="{Binding IsNewAndSelectedFileType, Converter={StaticResource TabItemToColorConverter}}" />
-                          <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0" 
+                          <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0"
                                                    Foreground="{Binding IsNewAndSelectedFileType, Converter={StaticResource TabItemToColorConverter}}"
                                                    Visibility="{Binding IsNew, Converter={StaticResource ReverseBoolToHiddenConverter}}" />
                         </WrapPanel>
