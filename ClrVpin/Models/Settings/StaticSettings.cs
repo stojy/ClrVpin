@@ -35,7 +35,7 @@ namespace ClrVpin.Models.Settings
             OnlineFileTypeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
-            IgnoreFeatureOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            MiscFeatureOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // explorer
             MissingFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -166,12 +166,12 @@ namespace ClrVpin.Models.Settings
             new() {Enum = OnlineFileTypeEnum.Rules, Tip = "Tables with new content of type: Rules"},
         };
 
-        public static readonly EnumOption<IgnoreFeatureOptionEnum>[] IgnoreFeatureOptions =
+        public static readonly EnumOption<MiscFeatureOptionEnum>[] MiscFeatureOptions =
         {
-            new() {Enum = IgnoreFeatureOptionEnum.VirtualRealityOnly, Tip = "Table files that only support virtual reality"},
-            new() {Enum = IgnoreFeatureOptionEnum.MusicOrSoundMod, Tip = "Table files that are music and/or sound modifications"},
-            new() {Enum = IgnoreFeatureOptionEnum.BlackAndWhiteMod, Tip = "Table files that are black & white modifications"},
-            new() {Enum = IgnoreFeatureOptionEnum.FullDmd, Tip = "Backglass files that are designed for full DMD"},
+            new() {Enum = MiscFeatureOptionEnum.VirtualRealityOnly, Tip = "Table files that only support virtual reality"},
+            new() {Enum = MiscFeatureOptionEnum.MusicOrSoundMod, Tip = "Table files that are music and/or sound modifications"},
+            new() {Enum = MiscFeatureOptionEnum.BlackAndWhiteMod, Tip = "Table files that are black & white modifications"},
+            new() {Enum = MiscFeatureOptionEnum.FullDmd, Tip = "Backglass files that are designed for full DMD"},
         };
 
         // all possible file merge options - to be used elsewhere (feeder)

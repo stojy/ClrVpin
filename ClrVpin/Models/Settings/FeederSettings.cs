@@ -33,5 +33,5 @@ public class FeederSettings : CommonFilterSettings
     public ObservableCollection<UrlStatusEnum> SelectedUrlStatusOptions { get; set; } = new();
 
     public ObservableCollection<string> SelectedOnlineFileTypeOptions { get; set; } = new();
-    public ObservableCollection<IgnoreFeatureOptionEnum> SelectedIgnoreFeatureOptions { get; set; } = new ();
+    public ObservableCollection<MiscFeatureOptionEnum> SelectedMiscFeatureOptions { get; set; } = new ();
 }

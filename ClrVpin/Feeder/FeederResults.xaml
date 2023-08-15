@@ -487,11 +487,11 @@
               </ContentControl>
 
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
-                              controls:GenericAttached.String="Exclude"
+                              controls:GenericAttached.String="Miscellaneous"
                               controls:GenericAttached.String2="Don't attribute file(s) as 'New' if they contain these features"
-                              controls:GenericAttached.Double="70"
+                              controls:GenericAttached.Double="110"
                               controls:GenericAttached.Double2="14">
-                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.IgnoreFeaturesOptionsView }" />
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.MiscFeaturesOptionsView }" />
               </ContentControl>
             </StackPanel>
           </GroupBox>

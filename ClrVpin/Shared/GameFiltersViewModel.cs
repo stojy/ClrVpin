@@ -42,7 +42,7 @@ public class GameFiltersViewModel
     public ListCollectionView<FeatureType.FeatureType> TableMatchOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> UrlStatusOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> OnlineFileTypeOptionsView { get; init; }
-    public ListCollectionView<FeatureType.FeatureType> IgnoreFeaturesOptionsView { get; init; }
+    public ListCollectionView<FeatureType.FeatureType> MiscFeaturesOptionsView { get; init; }
     
     // explorer specific views
     public ListCollectionView<FeatureType.FeatureType> MissingFilesOptionsView { get; set; }

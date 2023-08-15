@@ -163,8 +163,8 @@ public sealed class FeederResultsViewModel
             OnlineFileTypeOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.OnlineFileTypeOptions, 
                 () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
             
-            IgnoreFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.IgnoreFeatureOptions, 
-                () => Model.Settings.Feeder.SelectedIgnoreFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false)
+            MiscFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.MiscFeatureOptions, 
+                () => Model.Settings.Feeder.SelectedMiscFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false)
         };
 
         // invoke online game file update to handle IsNew which is time sensitive
@@ -377,22 +377,22 @@ public sealed class FeederResultsViewModel
                     // - this is different to the generated 'gameItem updatedAt' which is an aggregation of the all the content and their file timestamps.. refer GameItemsView filtering
                     file.IsNew = IsFileNew(file);
 
-                    // treat file as NOT new if any of the except rules are satisfied
-                    // VR only
-                    if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.VirtualRealityOnly) && file is TableFile tableFile) 
-                        file.IsNew = !tableFile.IsVirtualOnly;
+                    // treat file as NOT new if any of the following rules are satisfied
+                    // - VR only
+                    if (file.IsNew && file is TableFile { IsVirtualOnly: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.VirtualRealityOnly)) 
+                        file.IsNew = false;
 
-                    // music/sound mod
-                    if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.MusicOrSoundMod) && file is TableFile tableFile2) 
-                        file.IsNew = !tableFile2.IsMusicOrSoundMod;
+                    // - music/sound mod
+                    if (file.IsNew && file is TableFile { IsMusicOrSoundMod: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.MusicOrSoundMod)) 
+                        file.IsNew = false;
 
-                    // black and white mod
-                    if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.BlackAndWhiteMod) && file is TableFile tableFile3) 
-                        file.IsNew = !tableFile3.IsBlackWhiteMod;
+                    // - black and white mod
+                    if (file.IsNew && file is TableFile { IsBlackWhiteMod: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.BlackAndWhiteMod)) 
+                        file.IsNew = false;
 
-                    // full DMD
-                    if (file.IsNew && Settings.SelectedIgnoreFeatureOptions.Contains(IgnoreFeatureOptionEnum.FullDmd) && file is ImageFile imageFile) 
-                        file.IsNew = !imageFile.IsFullDmd;
+                    // - full DMD
+                    if (file.IsNew && file is ImageFile { IsFullDmd: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd)) 
+                        file.IsNew = false;
 
                     // flag each url within the file - required to allow for simpler view binding
                     file.Urls.ForEach(url => url.IsNew = file.IsNew);

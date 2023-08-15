@@ -2,7 +2,7 @@
 
 namespace ClrVpin.Models.Feeder;
 
-public enum IgnoreFeatureOptionEnum
+public enum MiscFeatureOptionEnum
 {
     [Description("VR Only")] VirtualRealityOnly,
     [Description("Music/Sound Mod")] MusicOrSoundMod,
