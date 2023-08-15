@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using PropertyChanged;
 using Utils;
 
@@ -48,6 +49,8 @@ internal class ProgressViewModel
             Owner = parentWindow,
             Title = "Progress",
             WindowStyle = WindowStyle.None,
+            AllowsTransparency=true,
+            Background = Brushes.Transparent,
             ResizeMode = ResizeMode.NoResize,
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
             SizeToContent = SizeToContent.WidthAndHeight,

@@ -34,7 +34,7 @@
         - support usage within a DialogHost that has a transparent background, e.g. feeder's image dialog
         - provide a corner radius
     -->
-    <Border BorderThickness="1" BorderBrush="{StaticResource SeparatorBrush}" Padding="10" Background="{DynamicResource MaterialDesignPaper}" MinWidth="300" CornerRadius="10">
+    <Border BorderThickness="1" BorderBrush="{StaticResource SeparatorBrush}" Padding="10" Background="{DynamicResource MaterialDesignPaper}" MinWidth="300" CornerRadius="15">
       <!--using input bindings instead of interaction trigger, as the event trigger DOES NOT WORK when housed within a border..
           - presumably something to do with the DialogHost.. but haven't confirmed 
       -->
