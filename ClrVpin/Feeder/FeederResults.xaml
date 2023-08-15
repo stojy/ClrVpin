@@ -539,8 +539,6 @@
             </StackPanel>
           </GroupBox>
 
-          <GroupBox DockPanel.Dock="Top" Header="Tables" Margin="0,0,0,10" Style="{StaticResource GroupBoxPrimaryDark}">
-            <StackPanel>
               <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
                 <TextBlock Text="{Binding GameItemsView.Count}" />
                 <TextBlock Text=" / " />
@@ -616,8 +614,6 @@
                                       Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
                 </DataGrid.Columns>
               </DataGrid>
-            </StackPanel>
-          </GroupBox>
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">
