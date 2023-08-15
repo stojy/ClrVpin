@@ -479,7 +479,7 @@
               </ContentControl>
 
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
-                              controls:GenericAttached.String="Download URL"
+                              controls:GenericAttached.String="Download"
                               controls:GenericAttached.String2="Filter the tables based on whether the selected file type(s) can be downloaded. Not applicable for unmatched tables."
                               controls:GenericAttached.Double="110"
                               controls:GenericAttached.Double2="14">
