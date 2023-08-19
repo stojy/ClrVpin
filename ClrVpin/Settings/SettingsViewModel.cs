@@ -26,6 +26,7 @@ public class SettingsViewModel : IShowViewModel
 
         BackupFolderModel = new GenericFolderTypeModel("Backup Root", Settings.BackupFolder, true, folder => Settings.BackupFolder = folder);
 
+        CheckForUpdatesCommand = new ActionCommand(CheckForUpdates);
         ResetCommand = new ActionCommand(Reset);
         SaveCommand = new ActionCommand(Close);
 
@@ -50,6 +51,8 @@ public class SettingsViewModel : IShowViewModel
     public List<ContentFolderTypeModel> FrontendContentTypeModels { get; }
 
     public GenericFolderTypeModel BackupFolderModel { get; }
+
+    public ICommand CheckForUpdatesCommand { get; }
 
     public ICommand ResetCommand { get; }
     public ICommand SaveCommand { get; }
@@ -153,6 +156,14 @@ public class SettingsViewModel : IShowViewModel
         Model.SettingsManager.Reset();
         Close();
     }
+
+    private void CheckForUpdates()
+    {
+        // automatically disable pre-release check if update checks are disabled
+        if (!Settings.EnableCheckForUpdatesAutomatically)
+            Settings.EnableCheckForUpdatesPreRelease = false;
+    }
+
 
     private Window _window;
 }
