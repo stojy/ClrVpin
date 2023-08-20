@@ -135,6 +135,7 @@ public class TableFile : ImageFile
     
     // view model properties
     public bool IsVirtualOnly { get; set; }
+    public bool IsFullSingleScreen { get; set; }
     public bool IsMusicOrSoundMod { get; set; }
     public bool IsBlackWhiteMod { get; set; }
 }

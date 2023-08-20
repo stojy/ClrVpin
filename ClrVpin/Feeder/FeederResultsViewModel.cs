@@ -69,13 +69,15 @@ public sealed class FeederResultsViewModel
                 };
             });
             
-            // mark files that are eligible for the ignore filtering
+            // initialize VM attributes so they can be referenced quickly during filtering of the 'misc options'
             onlineGame.TableFiles.ForEach(tableFile =>
             {
-                var comment = tableFile.Comment?.ToLower().Trim();
-                tableFile.IsVirtualOnly = comment?.ToLower().ContainsAny("vr room", "vr standalone") == true;
-                tableFile.IsMusicOrSoundMod = comment?.ContainsAny("sound mod", "music mod")  == true;
-                tableFile.IsBlackWhiteMod = comment?.ToLower().ContainsAny("bw mod", "black & white mod", "black and white mod") == true;
+                var comment = tableFile.Comment?.ToLower().Trim() ?? string.Empty;
+                tableFile.IsVirtualOnly = comment.ContainsAny("vr room", "vr standalone");
+                tableFile.IsFullSingleScreen = (comment.ContainsAny("fss (full single screen)") &&  !comment.ContainsAny("fss (full single screen) option included"))
+                                               || tableFile.Urls.Select(u => u.Url).ContainsAny("https://fss-pinball.com");
+                tableFile.IsMusicOrSoundMod = comment.ContainsAny("sound mod", "music mod");
+                tableFile.IsBlackWhiteMod = comment.ContainsAny("bw mod", "black & white mod", "black and white mod");
             });
             onlineGame.B2SFiles.ForEach(backglassFile =>
             {
@@ -380,6 +382,10 @@ public sealed class FeederResultsViewModel
                     // treat file as NOT new if any of the following rules are satisfied
                     // - VR only
                     if (file.IsNew && file is TableFile { IsVirtualOnly: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.VirtualRealityOnly)) 
+                        file.IsNew = false;
+
+                    // - FSS only
+                    if (file.IsNew && file is TableFile { IsFullSingleScreen: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullSingleScreenOnly)) 
                         file.IsNew = false;
 
                     // - music/sound mod
