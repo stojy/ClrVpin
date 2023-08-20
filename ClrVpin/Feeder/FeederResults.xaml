@@ -139,7 +139,7 @@
           <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
                           Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
           <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Format" controls:GenericAttached.String2="{Binding TableFormat}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Application" controls:GenericAttached.String2="{Binding TableFormat}" />
           <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
                           controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
           <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
@@ -325,8 +325,8 @@
                             SelectedItem="{Binding Path=Settings.SelectedTypeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             materialDesign:HintAssist.Hint="Type"
                             Style="{StaticResource ComboBoxStyle}"
-                            Width="65" Margin="0,0,0,0"
-                            ToolTip="Filter the tables based on the table construction type: PM (Purely Mechanical), EM (Electromechanical), SS (Solid State).">
+                            Width="60" Margin="0,0,0,0"
+                            ToolTip="Filter the tables based on the table construction style: PM (Purely Mechanical), EM (Electromechanical), SS (Solid State).">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
@@ -334,15 +334,15 @@
                     </b:Interaction.Triggers>
                   </ComboBox>
 
-                  <ComboBox ItemsSource="{Binding GameFiltersViewModel.FormatsFilterView}"
-                            SelectedItem="{Binding Path=Settings.SelectedFormatFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            materialDesign:HintAssist.Hint="Format"
+                  <ComboBox ItemsSource="{Binding GameFiltersViewModel.ApplicationFormatsFilterView}"
+                            SelectedItem="{Binding Path=Settings.SelectedApplicationFormatFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            materialDesign:HintAssist.Hint="Application"
                             Style="{StaticResource ComboBoxStyle}"
-                            Width="80" Margin="10,0,0,0"
-                            ToolTip="Filter the tables based on the emulator. Ignored for unmatched tables.">
+                            Width="90" Margin="10,0,0,0"
+                            ToolTip="Filter the tables based on the emulator application. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding FormatChangedCommand}" />
+                        <b:InvokeCommandAction Command="{Binding ApplicationFormatChangedCommand}" />
                       </controls:RoutedEventTrigger>
                     </b:Interaction.Triggers>
                   </ComboBox>

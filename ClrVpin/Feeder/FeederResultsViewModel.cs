@@ -130,7 +130,7 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
-                (Settings.SelectedFormatFilter == null || gameItem.OnlineGame?.TableFormats.Contains(Settings.SelectedFormatFilter) == true) &&
+                (Settings.SelectedApplicationFormatFilter == null || gameItem.OnlineGame?.TableFormats.Contains(Settings.SelectedApplicationFormatFilter) == true) &&
 
                 // gameItem.UpdatedAt is derived property that surfaces the 'max updated at' timestamps from ALL the different content and their underlying files
                 // - if a gameItem satisfies the 'updatedAt' filtering.. then all the gameItem's content (e.g. table, backglass, etc) and their file(s) will be available for viewing
@@ -171,7 +171,7 @@ public sealed class FeederResultsViewModel
 
         // invoke online game file update to handle IsNew which is time sensitive
         UpdatedFilterTimeChanged = new ActionCommand(UpdateOnlineGameFileDetails);
-        FormatChangedCommand = new ActionCommand(UpdateOnlineGameFileDetails);
+        ApplicationFormatChangedCommand = new ActionCommand(UpdateOnlineGameFileDetails);
         
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
@@ -228,7 +228,7 @@ public sealed class FeederResultsViewModel
     public ICommand DynamicFilteringCommand { get; }
     public ICommand FilterChangedCommand { get; set; }
     public ICommand UpdatedFilterTimeChanged { get; set; }
-    public ICommand FormatChangedCommand { get; }
+    public ICommand ApplicationFormatChangedCommand { get; }
 
     public ICommand NavigateToUrlCommand { get; }
     public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
@@ -288,7 +288,7 @@ public sealed class FeederResultsViewModel
         // simplified summary of the FeederStatisticsViewModel info
         var restrictedGameItems = GameItems.Where(gameItem =>
             !gameItem.IsOriginal &&
-            gameItem.OnlineGame?.TableFormats.Contains("VPX") == true &&
+            gameItem.OnlineGame?.TableFormats.Contains(ApplicationFormatEnum.VirtualPinballX) == true &&
             gameItem.OnlineGame?.TableDownload == TableDownloadOptionEnum.Available).ToList();
         var matchedManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.LocalAndOnline);
         var missingManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.OnlineOnly);
@@ -402,8 +402,8 @@ public sealed class FeederResultsViewModel
                     if (file.IsNew && file is ImageFile { IsFullDmd: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd)) 
                         file.IsNew = false;
 
-                    // - table format
-                    if (file.IsNew && Settings.SelectedFormatFilter != null && (file as TableFile)?.TableFormat != Settings.SelectedFormatFilter)
+                    // - emulator application, aka file format, e.g. VPX, FP, etc
+                    if (file.IsNew && Settings.SelectedApplicationFormatFilter != null && (file as TableFile)?.TableFormat != Settings.SelectedApplicationFormatFilter)
                         file.IsNew = false;
 
                     // flag each url within the file - required to allow for simpler view binding

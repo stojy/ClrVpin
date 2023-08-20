@@ -25,7 +25,7 @@ public class FeederSettings : CommonFilterSettings
             OnlineFileTypeEnum.DMDs.GetDescription(),
         });
 
-        SelectedFormatFilter = "VPX";
+        SelectedApplicationFormatFilter = ApplicationFormatEnum.VirtualPinballX;
     }
 
     public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new();
@@ -37,5 +37,5 @@ public class FeederSettings : CommonFilterSettings
     public ObservableCollection<string> SelectedOnlineFileTypeOptions { get; set; } = new();
     public ObservableCollection<MiscFeatureOptionEnum> SelectedMiscFeatureOptions { get; set; } = new ();
 
-    public string SelectedFormatFilter { get; set; }
+    public string SelectedApplicationFormatFilter { get; set; }
 }
