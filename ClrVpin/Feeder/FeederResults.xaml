@@ -342,7 +342,7 @@
                             ToolTip="Filter the tables based on the emulator. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
+                        <b:InvokeCommandAction Command="{Binding FormatChangedCommand}" />
                       </controls:RoutedEventTrigger>
                     </b:Interaction.Triggers>
                   </ComboBox>

@@ -171,6 +171,7 @@ public sealed class FeederResultsViewModel
 
         // invoke online game file update to handle IsNew which is time sensitive
         UpdatedFilterTimeChanged = new ActionCommand(UpdateOnlineGameFileDetails);
+        FormatChangedCommand = new ActionCommand(UpdateOnlineGameFileDetails);
         
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
@@ -227,6 +228,7 @@ public sealed class FeederResultsViewModel
     public ICommand DynamicFilteringCommand { get; }
     public ICommand FilterChangedCommand { get; set; }
     public ICommand UpdatedFilterTimeChanged { get; set; }
+    public ICommand FormatChangedCommand { get; }
 
     public ICommand NavigateToUrlCommand { get; }
     public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
@@ -398,6 +400,10 @@ public sealed class FeederResultsViewModel
 
                     // - full DMD
                     if (file.IsNew && file is ImageFile { IsFullDmd: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd)) 
+                        file.IsNew = false;
+
+                    // - table format
+                    if (file.IsNew && Settings.SelectedFormatFilter != null && (file as TableFile)?.TableFormat != Settings.SelectedFormatFilter)
                         file.IsNew = false;
 
                     // flag each url within the file - required to allow for simpler view binding
