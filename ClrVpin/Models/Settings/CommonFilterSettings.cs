@@ -19,8 +19,6 @@ public class CommonFilterSettings
     public string SelectedYearBeginFilter { get; set; }
     public string SelectedYearEndFilter { get; set; }
 
-    public string SelectedFormatFilter { get; set; }
-
     public DateTime? SelectedUpdatedAtDateBegin { get; set; }
     public DateTime? SelectedUpdatedAtDateEnd { get; set; }
 
