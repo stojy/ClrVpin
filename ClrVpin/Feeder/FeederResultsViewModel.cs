@@ -73,7 +73,7 @@ public sealed class FeederResultsViewModel
             onlineGame.TableFiles.ForEach(tableFile =>
             {
                 var comment = tableFile.Comment?.ToLower().Trim() ?? string.Empty;
-                tableFile.IsVirtualOnly = comment.ContainsAny("vr room", "vr standalone");
+                tableFile.IsVirtualOnly = comment.ContainsAny("vr room", "vr standalone") && !comment.ContainsAny("vr room optional");
                 tableFile.IsFullSingleScreen = (comment.ContainsAny("fss (full single screen)") &&  !comment.ContainsAny("fss (full single screen) option included"))
                                                || tableFile.Urls.Select(u => u.Url).ContainsAny("https://fss-pinball.com");
                 tableFile.IsMusicOrSoundMod = comment.ContainsAny("sound mod", "music mod");
