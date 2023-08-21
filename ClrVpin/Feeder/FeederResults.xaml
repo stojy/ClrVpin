@@ -711,10 +711,11 @@
                     </TabControl.ContentTemplate>
 
                     <TabControl.ItemContainerStyle>
-                      <!-- tab item header style, e.g. padding, disabled, etc -->
                       <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MaterialDesignTabItem}" d:DataContext="{d:DesignInstance vps:FileCollection}">
                         <Setter Property="IsEnabled" Value="{Binding Count}" />
                         <Setter Property="Padding" Value="6,12" />
+                        <!-- unfortunately the selection highlight color template binding gets messed up when using a custom item container style, hence it must be defined manually :( -->
+                        <Setter Property="materialDesign:ColorZoneAssist.Foreground" Value="{DynamicResource PrimaryHueMidBrush}" />
                       </Style>
                     </TabControl.ItemContainerStyle>
                   </TabControl>

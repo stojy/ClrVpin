@@ -400,7 +400,7 @@ public sealed class FeederResultsViewModel
                     UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
                         file is TableFile { IsBlackWhiteMod: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.BlackAndWhiteMod));
 
-                    // - full DMD, i.e. included in the backglass
+                    // - full DMD, true if the DMD is included as part of the backglass
                     UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Backglasses, () =>
                         file is ImageFile { IsFullDmd: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd));
 
@@ -414,7 +414,7 @@ public sealed class FeederResultsViewModel
 
                 fileCollection.Title = fileCollectionType;
 
-                // used for the tab item 'is new' indicator
+                // used for assigning 'new' indicator
                 fileCollection.IsNew = fileCollection.Any(file => file.IsNew);
 
                 // used for assigning the 'green' color and automatically moving the tab selection
