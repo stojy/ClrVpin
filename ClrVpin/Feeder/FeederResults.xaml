@@ -51,6 +51,7 @@
 
   <converters:BoolToStringConverter x:Key="TabItemToColorConverter" True="#FF00C853" False="#89FFFFFF" /> <!--AccentLightBrush AND {DynamicResource MaterialDesignBodyLight}-->
   <converters:BoolToStyleConverter x:Key="IsNewUrlButtonStyleConverter" True="{StaticResource IsNewUrlButtonStyle}" False="{StaticResource UrlButtonStyle}" />
+  <converters:BoolToStringConverter x:Key="IsNewToBorderBrushConverter" True="#FF00C853" False="transparent" />
 
   <DataTemplate x:Key="UrlDetailTemplate" DataType="vps:UrlDetail">
     <!--<Button Style="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ContentControl}}, Path=DataContext.IsNew, Converter={StaticResource IsNewUrlButtonStyleConverter}}"-->
@@ -125,67 +126,73 @@
 
   <!--each of the x3 types (TableFile, ImageFile and File) are subtly different enough to warrant separate templates-->
   <DataTemplate DataType="{x:Type vps:TableFile}">
-    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="6" ClipContent="True">
-      <StackPanel>
-        <!--<Button Command="{Binding ImageSelectedCommand}" Background="Transparent">-->
-        <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
-        <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
+    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="0" ClipContent="True">
+      <Border BorderBrush="{Binding IsNew, Converter= {StaticResource IsNewToBorderBrushConverter}}" BorderThickness="2">
+        <StackPanel>
+          <!--<Button Command="{Binding ImageSelectedCommand}" Background="Transparent">-->
+          <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
+          <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
 
-        <StackPanel Margin="5,0,0,0">
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Comment" controls:GenericAttached.String2="{Binding Comment}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                          controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
-                          Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Simulator" controls:GenericAttached.String2="{Binding TableFormat}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
-                          controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+          <StackPanel Margin="5,0,0,0">
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Comment" controls:GenericAttached.String2="{Binding Comment}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
+                            controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
+                            Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Simulator" controls:GenericAttached.String2="{Binding TableFormat}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
+                            controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+          </StackPanel>
         </StackPanel>
-      </StackPanel>
+      </Border>
     </materialDesign:Card>
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type vps:ImageFile}">
-    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="6" ClipContent="True">
-      <StackPanel>
-        <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
-        <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
+    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="0" ClipContent="True">
+      <Border BorderBrush="{Binding IsNew, Converter= {StaticResource IsNewToBorderBrushConverter}}" BorderThickness="2">
+        <StackPanel>
+          <ContentControl Content="{Binding ImageUrlSelection}" ContentTemplate="{StaticResource ImageTemplate}" />
+          <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
 
-        <StackPanel Margin="5,0,0,0">
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
-                          controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
-                          Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+          <StackPanel Margin="5,0,0,0">
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Features"
+                            controls:GenericAttached.String2="{Binding Features, Converter={StaticResource ListToStringConverter}}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
+                            Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+          </StackPanel>
         </StackPanel>
-      </StackPanel>
+      </Border>
     </materialDesign:Card>
   </DataTemplate>
 
   <DataTemplate DataType="{x:Type vps:File}">
-    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="6" ClipContent="True">
-      <StackPanel>
-        <Grid Height="300">
-          <materialDesign:PackIcon Kind="GhostOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Grid>
-        <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
+    <materialDesign:Card Margin="0" Width="500" UniformCornerRadius="0" ClipContent="True">
+      <Border BorderBrush="{Binding IsNew, Converter= {StaticResource IsNewToBorderBrushConverter}}" BorderThickness="2">
+        <StackPanel>
+          <Grid Height="300">
+            <materialDesign:PackIcon Kind="GhostOutline" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Grid>
+          <ContentControl Content="{Binding Urls}" ContentTemplate="{StaticResource UrlsTemplate}" />
 
-        <StackPanel Margin="5,0,0,0">
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
-                          Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+          <StackPanel Margin="5,0,0,0">
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Version" controls:GenericAttached.String2="{Binding Version}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
+                            Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
+            <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Updated" controls:GenericAttached.String2="{Binding UpdatedAt}" />
+          </StackPanel>
         </StackPanel>
-      </StackPanel>
+      </Border>
     </materialDesign:Card>
   </DataTemplate>
 
@@ -539,81 +546,81 @@
             </StackPanel>
           </GroupBox>
 
-              <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
-                <TextBlock Text="{Binding GameItemsView.Count}" />
-                <TextBlock Text=" / " />
-                <TextBlock Text="{Binding GameItems.Count}" />
-              </WrapPanel>
+          <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" TextBlock.FontStyle="Italic" Opacity="0.6">
+            <TextBlock Text="{Binding GameItemsView.Count}" />
+            <TextBlock Text=" / " />
+            <TextBlock Text="{Binding GameItems.Count}" />
+          </WrapPanel>
 
-              <DataGrid Name="FeederResults" DockPanel.Dock="Bottom"
-                        SelectionMode="Single"
-                        ItemsSource="{Binding GameItemsView}"
-                        AutoGenerateColumns="False"
-                        CanUserAddRows="False"
-                        CanUserDeleteRows="False"
-                        materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
-                        materialDesign:DataGridAssist.CellPadding="4 1 1 4"
-                        CellStyle="{StaticResource NoBorderDataGridCellStyle}"
-                        ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
-                        CanUserSortColumns="True"
-                        IsReadOnly="True"
-                        EnableRowVirtualization="True"
-                        GridLinesVisibility="None"
-                        SelectedItem="{Binding SelectedGameItem}">
+          <DataGrid Name="FeederResults" DockPanel.Dock="Bottom"
+                    SelectionMode="Single"
+                    ItemsSource="{Binding GameItemsView}"
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    CanUserDeleteRows="False"
+                    materialDesign:DataGridAssist.ColumnHeaderPadding="4 1 1 4"
+                    materialDesign:DataGridAssist.CellPadding="4 1 1 4"
+                    CellStyle="{StaticResource NoBorderDataGridCellStyle}"
+                    ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                    CanUserSortColumns="True"
+                    IsReadOnly="True"
+                    EnableRowVirtualization="True"
+                    GridLinesVisibility="None"
+                    SelectedItem="{Binding SelectedGameItem}">
 
-                <b:Interaction.Triggers>
-                  <b:EventTrigger EventName="SelectionChanged">
-                    <b:InvokeCommandAction Command="{Binding GameItemSelectedCommand}" />
-                  </b:EventTrigger>
-                </b:Interaction.Triggers>
+            <b:Interaction.Triggers>
+              <b:EventTrigger EventName="SelectionChanged">
+                <b:InvokeCommandAction Command="{Binding GameItemSelectedCommand}" />
+              </b:EventTrigger>
+            </b:Interaction.Triggers>
 
-                <DataGrid.Columns>
-                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
-                                      Header="#" Binding="{Binding Index}" Width="45" />
+            <DataGrid.Columns>
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}"
+                                  Header="#" Binding="{Binding Index}" Width="45" />
 
-                  <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" CanUserSort="False" CanUserResize="False" CanUserReorder="False"
-                                          Width="30" CellStyle="{StaticResource AlignedDataGridCellStyle}">
-                    <DataGridTemplateColumn.CellTemplate>
-                      <DataTemplate>
-                        <WrapPanel>
-                          <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30"
-                                  ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
-                                  Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalAndOnline}}"
-                                  IsEnabled="{Binding IsMatchingEnabled}"
-                                  Command="{Binding UpdateDatabaseEntryCommand}">
-                            <materialDesign:PackIcon Kind="Pencil" />
-                          </Button>
-                          <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
-                                  ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
-                                  Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalOnly}}"
-                                  IsEnabled="{Binding IsMatchingEnabled}"
-                                  Command="{Binding UpdateDatabaseEntryCommand}">
-                            <materialDesign:PackIcon Kind="Pencil" />
-                          </Button>
-                          <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
-                                  ToolTip="{Binding CreateDatabaseEntryTooltip}"
-                                  Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.OnlineOnly}}"
-                                  IsEnabled="{Binding IsMatchingEnabled}"
-                                  Command="{Binding CreateDatabaseEntryCommand}">
-                            <materialDesign:PackIcon Kind="Plus" Height="33" Width="33" Margin="-2,0,0,0" /> <!-- drawn oversize because the 'plus' icon is too small -->
-                          </Button>
-                        </WrapPanel>
-                      </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                  </DataGridTemplateColumn>
+              <DataGridTemplateColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" CanUserSort="False" CanUserResize="False" CanUserReorder="False"
+                                      Width="30" CellStyle="{StaticResource AlignedDataGridCellStyle}">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <WrapPanel>
+                      <Button Style="{StaticResource ButtonIconStyle}" Height="30" Width="30"
+                              ToolTip="{Binding UpdateDatabaseMatchedEntryTooltip}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalAndOnline}}"
+                              IsEnabled="{Binding IsMatchingEnabled}"
+                              Command="{Binding UpdateDatabaseEntryCommand}">
+                        <materialDesign:PackIcon Kind="Pencil" />
+                      </Button>
+                      <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
+                              ToolTip="{Binding UpdateDatabaseUnmatchedEntryTooltip}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.LocalOnly}}"
+                              IsEnabled="{Binding IsMatchingEnabled}"
+                              Command="{Binding UpdateDatabaseEntryCommand}">
+                        <materialDesign:PackIcon Kind="Pencil" />
+                      </Button>
+                      <Button Style="{StaticResource AccentButtonIconStyle}" Height="30" Width="30"
+                              ToolTip="{Binding CreateDatabaseEntryTooltip}"
+                              Visibility="{Binding TableMatchType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static feederModels:TableMatchOptionEnum.OnlineOnly}}"
+                              IsEnabled="{Binding IsMatchingEnabled}"
+                              Command="{Binding CreateDatabaseEntryCommand}">
+                        <materialDesign:PackIcon Kind="Plus" Height="33" Width="33" Margin="-2,0,0,0" /> <!-- drawn oversize because the 'plus' icon is too small -->
+                      </Button>
+                    </WrapPanel>
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
 
-                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
-                                      Binding="{Binding Name}"
-                                      Width="255" />
-                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
-                                      Binding="{Binding Manufacturer}" Width="160" />
-                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
-                                      Binding="{Binding Year}"
-                                      Width="55" />
-                  <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
-                                      Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
-                </DataGrid.Columns>
-              </DataGrid>
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Table"
+                                  Binding="{Binding Name}"
+                                  Width="255" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Manufacturer"
+                                  Binding="{Binding Manufacturer}" Width="160" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Year"
+                                  Binding="{Binding Year}"
+                                  Width="55" />
+              <DataGridTextColumn d:DataContext="{d:DesignInstance Type=game:GameItem}" ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
+                                  Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy hh:mm}}" />
+            </DataGrid.Columns>
+          </DataGrid>
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Right" Margin="10,0,0,0">

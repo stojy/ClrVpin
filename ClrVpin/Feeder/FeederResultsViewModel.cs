@@ -384,6 +384,9 @@ public sealed class FeederResultsViewModel
                     file.IsNew = IsNewUpdatedTimestamp(file);
 
                     // treat file as NOT new if any of the following rules are satisfied
+                    // - all URLS are either invalid or missing
+                    //UpdateIsNew(file, fileCollectionTypeEnum, null, () => file.UrlStatusEnum != UrlStatusEnum.Valid);
+                    
                     // - VR only
                     UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
                         file is TableFile { IsVirtualOnly: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.VirtualRealityOnly));
@@ -448,13 +451,13 @@ public sealed class FeederResultsViewModel
         FilterChangedCommand.Execute(null);
     }
 
-    private static void UpdateIsNew(File file, OnlineFileTypeEnum actualFileCollectionTypeEnum, OnlineFileTypeEnum requiredOnlineFileTypeEnum, Func<bool> shouldIgnore)
+    private static void UpdateIsNew(File file, OnlineFileTypeEnum actualFileCollectionTypeEnum, OnlineFileTypeEnum? requiredOnlineFileTypeEnum, Func<bool> shouldFlagAsNotNew)
     {
         // update the file's isNew status to false if..
         // - file has not already been designated isNew=false
         // - the file type is a match, e.g. don't validate isNew for a backglass when checking the simulator type
         // - the caller decides that the file should be ignored
-        if (file.IsNew && actualFileCollectionTypeEnum == requiredOnlineFileTypeEnum && shouldIgnore())
+        if (file.IsNew && (requiredOnlineFileTypeEnum == null || actualFileCollectionTypeEnum == requiredOnlineFileTypeEnum) && shouldFlagAsNotNew())
             file.IsNew = false;
     }
 
