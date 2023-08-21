@@ -375,6 +375,8 @@ public sealed class FeederResultsViewModel
             {
                 var (fileCollectionType, fileCollection) = kv;
 
+                var fileCollectionTypeEnum = OnlineFileType.GetEnum(fileCollectionType);
+
                 fileCollection.ForEach(file =>
                 {
                     // flag file - if the update time range is satisfied
@@ -402,8 +404,9 @@ public sealed class FeederResultsViewModel
                     if (file.IsNew && file is ImageFile { IsFullDmd: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd)) 
                         file.IsNew = false;
 
-                    // - emulator application, aka file format, e.g. VPX, FP, etc
-                    if (file.IsNew && Settings.SelectedApplicationFormatFilter != null && (file as TableFile)?.TableFormat != Settings.SelectedApplicationFormatFilter)
+                    // - simulator application, aka file format, e.g. VPX, FP, etc
+                    if (file.IsNew && Settings.SelectedApplicationFormatFilter != null && fileCollectionTypeEnum == OnlineFileTypeEnum.Tables &&
+                        (file as TableFile)?.TableFormat != Settings.SelectedApplicationFormatFilter)
                         file.IsNew = false;
 
                     // flag each url within the file - required to allow for simpler view binding

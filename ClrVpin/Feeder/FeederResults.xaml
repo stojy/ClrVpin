@@ -339,7 +339,7 @@
                             materialDesign:HintAssist.Hint="Application"
                             Style="{StaticResource ComboBoxStyle}"
                             Width="90" Margin="10,0,0,0"
-                            ToolTip="Filter the tables based on the emulator application. Ignored for unmatched tables.">
+                            ToolTip="Filter the tables based on the simulator application. Ignored for unmatched tables.">
                     <b:Interaction.Triggers>
                       <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
                         <b:InvokeCommandAction Command="{Binding ApplicationFormatChangedCommand}" />
