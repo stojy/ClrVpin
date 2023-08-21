@@ -139,7 +139,7 @@
           <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Name" controls:GenericAttached.String2="{Binding Name}"
                           Visibility="{Binding Name, Converter={StaticResource NullableToVisibilityConverter}}" />
           <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Authors" />
-          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Application" controls:GenericAttached.String2="{Binding TableFormat}" />
+          <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Simulator" controls:GenericAttached.String2="{Binding TableFormat}" />
           <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Themes"
                           controls:GenericAttached.String2="{Binding Themes, Converter={StaticResource ListToStringConverter}}" />
           <ContentControl Template="{StaticResource KeyValueStringPair}" controls:GenericAttached.String="Created" controls:GenericAttached.String2="{Binding CreatedAt}" />
@@ -334,9 +334,9 @@
                     </b:Interaction.Triggers>
                   </ComboBox>
 
-                  <ComboBox ItemsSource="{Binding GameFiltersViewModel.ApplicationFormatsFilterView}"
-                            SelectedItem="{Binding Path=Settings.SelectedApplicationFormatFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            materialDesign:HintAssist.Hint="Application"
+                  <ComboBox ItemsSource="{Binding GameFiltersViewModel.SimulatorFormatsFilterView}"
+                            SelectedItem="{Binding Path=Settings.SelectedSimulatorFormatFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            materialDesign:HintAssist.Hint="Simulator"
                             Style="{StaticResource ComboBoxStyle}"
                             Width="90" Margin="10,0,0,0"
                             ToolTip="Filter the tables based on the simulator application. Ignored for unmatched tables.">

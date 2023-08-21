@@ -34,7 +34,7 @@ public class GameFiltersViewModel
     public ListCollectionView<string> YearsBeginFilterView { get; private set; }
     public ListCollectionView<string> YearsEndFilterView { get; private set; }
     public ListCollectionView<string> TypesFilterView { get; private set; }
-    public ListCollectionView<string> ApplicationFormatsFilterView { get; private set; }
+    public ListCollectionView<string> SimulatorFormatsFilterView { get; private set; }
     public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
     public ListCollectionView<FeatureType.FeatureType> TableManufacturedOptionsView { get; }
     
@@ -57,7 +57,7 @@ public class GameFiltersViewModel
         YearsBeginFilterView.RefreshDebounce(debounceMilliseconds);
         YearsEndFilterView.RefreshDebounce(debounceMilliseconds);
         TypesFilterView.RefreshDebounce(debounceMilliseconds);
-        ApplicationFormatsFilterView?.RefreshDebounce(debounceMilliseconds);   // not used by all VMs, e.g. Explorer
+        SimulatorFormatsFilterView?.RefreshDebounce(debounceMilliseconds);   // not used by all VMs, e.g. Explorer
     }
 
     // todo; improve: private method and only invoke once during initialization (i.e. don't recreate LCVs) using an ObservableCollection (from GameCollection) instead of List
@@ -96,7 +96,7 @@ public class GameFiltersViewModel
 
         // table formats - vpx, fp, etc
         // - only available via online
-        ApplicationFormatsFilterView = new ListCollectionView<string>(_gameCollections.Formats)
+        SimulatorFormatsFilterView = new ListCollectionView<string>(_gameCollections.Formats)
         {
             Filter = format => Filter(() => _gameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true))
         };

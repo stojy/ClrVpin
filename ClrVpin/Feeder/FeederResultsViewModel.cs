@@ -130,7 +130,7 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
-                (Settings.SelectedApplicationFormatFilter == null || gameItem.OnlineGame?.TableFormats.Contains(Settings.SelectedApplicationFormatFilter) == true) &&
+                (Settings.SelectedSimulatorFormatFilter == null || gameItem.OnlineGame?.TableFormats.Contains(Settings.SelectedSimulatorFormatFilter) == true) &&
 
                 // gameItem.UpdatedAt is derived property that surfaces the 'max updated at' timestamps from ALL the different content and their underlying files
                 // - if a gameItem satisfies the 'updatedAt' filtering.. then all the gameItem's content (e.g. table, backglass, etc) and their file(s) will be available for viewing
@@ -405,8 +405,8 @@ public sealed class FeederResultsViewModel
                         file.IsNew = false;
 
                     // - simulator application, aka file format, e.g. VPX, FP, etc
-                    if (file.IsNew && Settings.SelectedApplicationFormatFilter != null && fileCollectionTypeEnum == OnlineFileTypeEnum.Tables &&
-                        (file as TableFile)?.TableFormat != Settings.SelectedApplicationFormatFilter)
+                    if (file.IsNew && Settings.SelectedSimulatorFormatFilter != null && fileCollectionTypeEnum == OnlineFileTypeEnum.Tables &&
+                        (file as TableFile)?.TableFormat != Settings.SelectedSimulatorFormatFilter)
                         file.IsNew = false;
 
                     // flag each url within the file - required to allow for simpler view binding
