@@ -118,7 +118,7 @@ public sealed class FeederResultsViewModel
             // - file level filtering (e.g. a game's table can have multiple files with different filtering properties) is also checked here.. but updated elsewhere, refer UpdateOnlineGameFileDetails
             Filter = gameItem =>
                 // exclude any gameItem that doesn't have new files for one of the selected content types
-                // - this also takes care of the exclusion filters (e.g. VR only, sound mod, etc) since these are applied when IsNew is assigned, refer UpdateOnlineGameFileDetails
+                // - this also takes care of the individual file IsNew updates (e.g. VR only, sound mod, etc)
                 (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.NewFileCollectionTypes)) &&
 
                 Settings.SelectedTableMatchOptions.Contains(gameItem.TableMatchType) &&
@@ -381,41 +381,43 @@ public sealed class FeederResultsViewModel
                 {
                     // flag file - if the update time range is satisfied
                     // - this is different to the generated 'gameItem updatedAt' which is an aggregation of the all the content and their file timestamps.. refer GameItemsView filtering
-                    file.IsNew = IsFileNew(file);
+                    file.IsNew = IsNewUpdatedTimestamp(file);
 
                     // treat file as NOT new if any of the following rules are satisfied
                     // - VR only
-                    if (file.IsNew && file is TableFile { IsVirtualOnly: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.VirtualRealityOnly)) 
-                        file.IsNew = false;
+                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        file is TableFile { IsVirtualOnly: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.VirtualRealityOnly));
 
                     // - FSS only
-                    if (file.IsNew && file is TableFile { IsFullSingleScreen: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullSingleScreenOnly)) 
-                        file.IsNew = false;
+                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        file is TableFile { IsFullSingleScreen: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullSingleScreenOnly));
 
                     // - music/sound mod
-                    if (file.IsNew && file is TableFile { IsMusicOrSoundMod: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.MusicOrSoundMod)) 
-                        file.IsNew = false;
+                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        file is TableFile { IsMusicOrSoundMod: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.MusicOrSoundMod));
 
                     // - black and white mod
-                    if (file.IsNew && file is TableFile { IsBlackWhiteMod: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.BlackAndWhiteMod)) 
-                        file.IsNew = false;
+                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        file is TableFile { IsBlackWhiteMod: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.BlackAndWhiteMod));
 
-                    // - full DMD
-                    if (file.IsNew && file is ImageFile { IsFullDmd: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd)) 
-                        file.IsNew = false;
+                    // - full DMD, i.e. included in the backglass
+                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Backglasses, () =>
+                        file is ImageFile { IsFullDmd: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd));
 
                     // - simulator application, aka file format, e.g. VPX, FP, etc
-                    if (file.IsNew && Settings.SelectedSimulatorFormatFilter != null && fileCollectionTypeEnum == OnlineFileTypeEnum.Tables &&
-                        (file as TableFile)?.TableFormat != Settings.SelectedSimulatorFormatFilter)
-                        file.IsNew = false;
+                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        Settings.SelectedSimulatorFormatFilter != null && (file as TableFile)?.TableFormat != Settings.SelectedSimulatorFormatFilter);
 
                     // flag each url within the file - required to allow for simpler view binding
                     file.Urls.ForEach(url => url.IsNew = file.IsNew);
                 });
 
-                // flag file collection info
-                fileCollection.IsNew = fileCollection.Any(file => file.IsNew);
                 fileCollection.Title = fileCollectionType;
+
+                // used for the tab item 'is new' indicator
+                fileCollection.IsNew = fileCollection.Any(file => file.IsNew);
+
+                // used for assigning the 'green' color and automatically moving the tab selection
                 fileCollection.IsNewAndSelectedFileType = fileCollection.IsNew && Settings.SelectedOnlineFileTypeOptions.Contains(fileCollectionType);
 
                 // the file collection url status is limited to only the date range for new files
@@ -423,7 +425,7 @@ public sealed class FeederResultsViewModel
                 // - e.g. 6d ago the file update has a missing URL and 10d the URL was valid
                 //   a. 7d filter --> UrlStatus = missing
                 //   a. 14d filter --> UrlStatus = valid
-                var newFileCollectionList = fileCollection.Where(IsFileNew).ToList();
+                var newFileCollectionList = fileCollection.Where(IsNewUpdatedTimestamp).ToList();
                 if (!newFileCollectionList.Any())
                     fileCollection.UrlStatus = UrlStatusEnum.Valid;
                 else if (newFileCollectionList.All(file => file.UrlStatusEnum == UrlStatusEnum.Broken))
@@ -446,7 +448,17 @@ public sealed class FeederResultsViewModel
         FilterChangedCommand.Execute(null);
     }
 
-    private bool IsFileNew(File file) => file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
+    private static void UpdateIsNew(File file, OnlineFileTypeEnum actualFileCollectionTypeEnum, OnlineFileTypeEnum requiredOnlineFileTypeEnum, Func<bool> shouldIgnore)
+    {
+        // update the file's isNew status to false if..
+        // - file has not already been designated isNew=false
+        // - the file type is a match, e.g. don't validate isNew for a backglass when checking the simulator type
+        // - the caller decides that the file should be ignored
+        if (file.IsNew && actualFileCollectionTypeEnum == requiredOnlineFileTypeEnum && shouldIgnore())
+            file.IsNew = false;
+    }
+
+    private bool IsNewUpdatedTimestamp(File file) => file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
 
     private static void NavigateToUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 
