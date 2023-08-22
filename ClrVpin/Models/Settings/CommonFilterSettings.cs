@@ -9,12 +9,20 @@ namespace ClrVpin.Models.Settings;
 [Serializable]
 public class CommonFilterSettings
 {
+    public CommonFilterSettings()
+    {
+        // default settings
+        SelectedTechnologyTypeOptions = new ObservableCollection<TechnologyTypeOptionEnum>
+        {
+            TechnologyTypeOptionEnum.SS, TechnologyTypeOptionEnum.EM, TechnologyTypeOptionEnum.PM, TechnologyTypeOptionEnum.Unknown
+        };
+    }
     public bool IsDynamicFiltering { get; set; }
 
     public string SelectedTableFilter { get; set; }
     public string SelectedManufacturerFilter { get; set; }
 
-    public ObservableCollection<TechnologyTypeOptionEnum> SelectedTechnologyTypeOptions { get; set; } = new();
+    public ObservableCollection<TechnologyTypeOptionEnum> SelectedTechnologyTypeOptions { get; set; }
     
     public string SelectedYearBeginFilter { get; set; }
     public string SelectedYearEndFilter { get; set; }
