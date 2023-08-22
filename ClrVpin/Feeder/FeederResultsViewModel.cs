@@ -135,7 +135,7 @@ public sealed class FeederResultsViewModel
                  (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.TableStyleOption == TableStyleOptionEnum.Manufactured) ||
                  (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.TableStyleOption == TableStyleOptionEnum.Original)) &&
 
-                // construction date
+                // manufacture/construction date
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 
@@ -254,7 +254,7 @@ public sealed class FeederResultsViewModel
             Left = left,
             Top = top,
             Width = Model.ScreenWorkArea.Width - WindowMargin,
-            Height = (Model.ScreenWorkArea.Height - 10) * 0.8,
+            Height = (Model.ScreenWorkArea.Height - 10) * 0.85,
             Content = this,
             Resources = parentWindow.Resources,
             ContentTemplate = parentWindow.FindResource("FeederResultsTemplate") as DataTemplate
