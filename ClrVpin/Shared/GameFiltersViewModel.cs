@@ -38,7 +38,6 @@ public class GameFiltersViewModel
     public ListCollectionView<string> YearsBeginFilterView { get; private set; }
     public ListCollectionView<string> YearsEndFilterView { get; private set; }
     public ListCollectionView<FeatureType.FeatureType> TechnologyTypeOptionsView { get; private set; }
-    public ListCollectionView<string> SimulatorFormatsFilterView { get; private set; }
     public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
     public ListCollectionView<FeatureType.FeatureType> TableManufacturedOptionsView { get; }
     
@@ -47,6 +46,7 @@ public class GameFiltersViewModel
     public ListCollectionView<FeatureType.FeatureType> UrlStatusOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> OnlineFileTypeOptionsView { get; init; }
     public ListCollectionView<FeatureType.FeatureType> MiscFeaturesOptionsView { get; init; }
+    public ListCollectionView<FeatureType.FeatureType> SimulatorOptionsFilterView { get; init; }
     
     // explorer specific views
     public ListCollectionView<FeatureType.FeatureType> MissingFilesOptionsView { get; set; }
@@ -60,8 +60,6 @@ public class GameFiltersViewModel
         ManufacturersFilterView.RefreshDebounce(debounceMilliseconds);
         YearsBeginFilterView.RefreshDebounce(debounceMilliseconds);
         YearsEndFilterView.RefreshDebounce(debounceMilliseconds);
-        //TechnologyTypeOptionsView.RefreshDebounce(debounceMilliseconds);
-        SimulatorFormatsFilterView?.RefreshDebounce(debounceMilliseconds);   // not used by all VMs, e.g. Explorer
     }
 
     // todo; improve: private method and only invoke once during initialization (i.e. don't recreate LCVs) using an ObservableCollection (from GameCollection) instead of List
@@ -90,13 +88,6 @@ public class GameFiltersViewModel
         {
             // filter the 'years to' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => _gameItemsView.Any(x => x.Year == yearString))
-        };
-
-        // table formats - vpx, fp, etc
-        // - only available via online
-        SimulatorFormatsFilterView = new ListCollectionView<string>(_gameCollections.Formats)
-        {
-            Filter = format => Filter(() => _gameItemsView.Any(x => x.OnlineGame?.TableFormats.Contains(format) == true))
         };
     }
 

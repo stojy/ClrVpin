@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ClrVpin.Models.Shared.Enums;
 
-public static class TechnologyTypeHelper
+public static class TechnologyTypeOptionHelper
 {
     public static TechnologyTypeOptionEnum? GetEnum(string stringType)
     {

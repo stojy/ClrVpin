@@ -37,6 +37,7 @@ namespace ClrVpin.Models.Settings
             FixFeedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             PresetDateOptions.ForEach(x => x.Description = x.Enum.GetDescription());
             MiscFeatureOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            SimulatorOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // explorer
             MissingFileOptions.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -118,6 +119,15 @@ namespace ClrVpin.Models.Settings
             new() {Enum = TechnologyTypeOptionEnum.EM, Tip = "Electro Mechanical tables, created in the 1950s"},
             new() {Enum = TechnologyTypeOptionEnum.PM, Tip = "Pure mechanical tables, created in the 1930s"},
             new() {Enum = TechnologyTypeOptionEnum.Unknown, Tip = "Unknown table technology type"},
+        };
+
+        // all possible simulator applications - to be used elsewhere (feeder)
+        public static readonly EnumOption<SimulatorOptionEnum>[] SimulatorOptions =
+        {
+            new() {Enum = SimulatorOptionEnum.VirtualPinballX, Tip = "Virtual Pinball X (including VP9)"},
+            new() {Enum = SimulatorOptionEnum.FuturePinball, Tip = "Future Pinball"},
+            new() {Enum = SimulatorOptionEnum.PinballFx, Tip = "FX Pinball (includes FX1, FX2, and FX3)"},
+            new() {Enum = SimulatorOptionEnum.Unknown, Tip = "Unknown simulator"},
         };
 
         // all possible missing file options - to be used elsewhere (explorer)

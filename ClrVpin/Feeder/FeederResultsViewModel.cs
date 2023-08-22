@@ -78,6 +78,7 @@ public sealed class FeederResultsViewModel
                                                || tableFile.Urls.Select(u => u.Url).ContainsAny("https://fss-pinball.com");
                 tableFile.IsMusicOrSoundMod = comment.ContainsAny("sound mod", "music mod");
                 tableFile.IsBlackWhiteMod = comment.ContainsAny("bw mod", "black & white mod", "black and white mod");
+                tableFile.Simulator = SimulatorOptionHelper.GetEnum(tableFile.TableFormat);
             });
             onlineGame.B2SFiles.ForEach(backglassFile =>
             {
@@ -142,10 +143,6 @@ public sealed class FeederResultsViewModel
                 (!Settings.SelectedTechnologyTypeOptions.Any() || 
                  Settings.SelectedTechnologyTypeOptions.Contains(gameItem.TechnologyType ?? TechnologyTypeOptionEnum.Unknown)) &&
                 
-                // simulator type
-                // - todo; not required at this level?
-                (Settings.SelectedSimulatorFormatFilter == null || gameItem.OnlineGame?.TableFormats.Contains(Settings.SelectedSimulatorFormatFilter) == true) &&
-
                 // manufacture name
                 (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
 
@@ -175,12 +172,17 @@ public sealed class FeederResultsViewModel
                 () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             MiscFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.MiscFeatureOptions, 
-                () => Model.Settings.Feeder.SelectedMiscFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false)
+                () => Model.Settings.Feeder.SelectedMiscFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false),
+
+
+            // simulator formats - vpx, fp, etc
+            // - only applicable online
+            SimulatorOptionsFilterView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.SimulatorOptions, 
+                () => Model.Settings.Feeder.SelectedSimulatorOptionFilter, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
         };
 
         // invoke online game file update to handle IsNew which is time sensitive
         UpdatedFilterTimeChanged = new ActionCommand(UpdateOnlineGameFileDetails);
-        ApplicationFormatChangedCommand = new ActionCommand(UpdateOnlineGameFileDetails);
         
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
@@ -237,7 +239,6 @@ public sealed class FeederResultsViewModel
     public ICommand DynamicFilteringCommand { get; }
     public ICommand FilterChangedCommand { get; set; }
     public ICommand UpdatedFilterTimeChanged { get; set; }
-    public ICommand ApplicationFormatChangedCommand { get; }
 
     public ICommand NavigateToUrlCommand { get; }
     public ICommand AllTableAddMissingDatabaseInfoCommand { get; }
@@ -297,7 +298,7 @@ public sealed class FeederResultsViewModel
         // simplified summary of the FeederStatisticsViewModel info
         var restrictedGameItems = GameItems.Where(gameItem =>
             !gameItem.IsOriginal &&
-            gameItem.OnlineGame?.TableFormats.Contains(ApplicationFormatEnum.VirtualPinballX) == true &&
+            gameItem.OnlineGame?.TableFormats.Contains(SimulatorAbbreviationEnum.VirtualPinballX) == true &&
             gameItem.OnlineGame?.TableDownload == TableDownloadOptionEnum.Available).ToList();
         var matchedManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.LocalAndOnline);
         var missingManufacturedCount = restrictedGameItems.Count(gameItem => gameItem.TableMatchType is TableMatchOptionEnum.OnlineOnly);
@@ -418,7 +419,7 @@ public sealed class FeederResultsViewModel
 
                     // - simulator application, aka file format, e.g. VPX, FP, etc
                     UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
-                        Settings.SelectedSimulatorFormatFilter != null && (file as TableFile)?.TableFormat != Settings.SelectedSimulatorFormatFilter);
+                        !Settings.SelectedSimulatorOptionFilter.Contains((file as TableFile)?.Simulator ?? SimulatorOptionEnum.Unknown));
 
                     // flag each url within the file - required to allow for simpler view binding
                     file.Urls.ForEach(url => url.IsNew = file.IsNew);

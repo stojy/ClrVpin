@@ -74,7 +74,7 @@ public class GameItem
         
         TableMatchType = GetTableMatchEnum();
 
-        TechnologyType = TechnologyTypeHelper.GetEnum(Type);
+        TechnologyType = TechnologyTypeOptionHelper.GetEnum(Type);
     }
 
 

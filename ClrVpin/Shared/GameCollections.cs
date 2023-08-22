@@ -20,7 +20,7 @@ public interface IGameCollections
     IList<string> Themes { get; }
     IList<string> Authors { get; }
     // ReSharper disable once UnusedMemberInSuper.Global
-    IList<string> Formats { get; }
+    IList<string> SimulatorFormats { get; }
 
     public void Update();
 }
@@ -47,7 +47,7 @@ public class GameCollections : IGameCollections
     public IList<string> Pups { get; private set; }
     public IList<string> Themes { get; private set; }
     public IList<string> Authors { get; private set; }
-    public IList<string> Formats { get; private set; }
+    public IList<string> SimulatorFormats { get; private set; }
 
     public void Update()
     {
@@ -62,7 +62,7 @@ public class GameCollections : IGameCollections
         Types = _gameItems.Select(x => x.Types).SelectManyUnique();
 
         // table formats - vpx, fp, etc.. only available via online
-        Formats = _gameItems.SelectMany(x => x.OnlineGame?.TableFormats ?? new List<string>()).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
+        SimulatorFormats = _gameItems.SelectMany(x => x.OnlineGame?.TableFormats ?? new List<string>()).Distinct().Where(x => x != null).OrderBy(x => x).ToList();
 
         Themes = _gameItems.Select(x => x.Themes).SelectManyUnique();
         Players = _gameItems.Select(x => x.Players).SelectManyUnique();
