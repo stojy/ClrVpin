@@ -124,7 +124,7 @@ public sealed class FeederResultsViewModel
                 // table name
                 (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
 
-                // ALL file filtering based on IsNew, e.g. FSS only, time range, simulator, etc
+                // **ALL** file level filtering - this is based on IsNew calculated within UpdateOnlineGameFileDetails, e.g. FSS only, time range, simulator, url status, etc
                 (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.NewFileCollectionTypes)) &&
 
                 // table match type, e.g. local, online, local and online
@@ -144,12 +144,7 @@ public sealed class FeederResultsViewModel
                  Settings.SelectedTechnologyTypeOptions.Contains(gameItem.TechnologyType ?? TechnologyTypeOptionEnum.Unknown)) &&
                 
                 // manufacture name
-                (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
-
-                // download URL status
-                // - todo; not required at this level?
-                (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.Any(fileType =>
-                    Settings.SelectedUrlStatusOptions.Contains(gameItem.OnlineGame.UrlStatusFileTypes[fileType])))
+                (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase))
         };
 
         GameItemsView.MoveCurrentToFirst();
@@ -162,10 +157,10 @@ public sealed class FeederResultsViewModel
         GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null))
         {
             TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableMatchOptions, 
-                () => Model.Settings.Feeder.SelectedTableMatchOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
+                () => Model.Settings.Feeder.SelectedTableMatchOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             UrlStatusOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.UrlStatusOptions, 
-                () => Model.Settings.Feeder.SelectedUrlStatusOptions, _ => FilterChangedCommand.Execute(null), includeSelectAll: false, minimumNumberOfSelections: 1),
+                () => Model.Settings.Feeder.SelectedUrlStatusOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             // invoke online game file update to handle IsNewAndSelectedFileType which is file type sensitive
             OnlineFileTypeOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.OnlineFileTypeOptions, 
@@ -173,7 +168,6 @@ public sealed class FeederResultsViewModel
             
             MiscFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.MiscFeatureOptions, 
                 () => Model.Settings.Feeder.SelectedMiscFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false),
-
 
             // simulator formats - vpx, fp, etc
             // - only applicable online
@@ -420,6 +414,10 @@ public sealed class FeederResultsViewModel
                     // - simulator application, aka file format, e.g. VPX, FP, etc
                     UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
                         !Settings.SelectedSimulatorOptionFilter.Contains((file as TableFile)?.Simulator ?? SimulatorOptionEnum.Unknown));
+
+                    // download URL status
+                    UpdateIsNew(file, fileCollectionTypeEnum, null, () => 
+                        !Settings.SelectedUrlStatusOptions.Contains(file.UrlStatusEnum));
 
                     // flag each url within the file - required to allow for simpler view binding
                     file.Urls.ForEach(url => url.IsNew = file.IsNew);
