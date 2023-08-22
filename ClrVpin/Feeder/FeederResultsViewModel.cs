@@ -370,7 +370,7 @@ public sealed class FeederResultsViewModel
             MiscFeatureOptionEnum.VirtualRealityOnly, MiscFeatureOptionEnum.FullSingleScreenOnly, MiscFeatureOptionEnum.MusicOrSoundMod, MiscFeatureOptionEnum.BlackAndWhiteMod);
         
         var isTableEnabled = Settings.SelectedOnlineFileTypeOptions.Contains(OnlineFileTypeEnum.Tables.GetDescription());
-        UpdateFeatureOptions(isTableEnabled, GameFiltersViewModel.SimulatorOptionsFilterView.ToList(), (int) SimulatorOptionEnum.VirtualPinballX);
+        FeatureOptions.UpdateFeatureOptions(isTableEnabled, GameFiltersViewModel.SimulatorOptionsFilterView.ToList(), (int) SimulatorOptionEnum.VirtualPinballX);
 
         // backglass file
         UpdateMiscFeatureState(OnlineFileTypeEnum.Backglasses, MiscFeatureOptionEnum.FullDmd);
@@ -385,22 +385,7 @@ public sealed class FeederResultsViewModel
         var miscFeatureOptionItems = GameFiltersViewModel.MiscFeaturesOptionsView.Where(option => miscFeatureOptions.Contains(option.Id));
 
         // update each of the relevant feature options
-        UpdateFeatureOptions(isFileTypeEnabled, miscFeatureOptionItems.ToList());
-    }
-
-    private static void UpdateFeatureOptions(bool isEnabled, List<FeatureType> featureTypes, int? defaultFeatureEnum = null)
-    {
-        // enable/disable the features
-        featureTypes.ForEach(item =>
-        {
-            item.IsSupported = isEnabled;
-            if (!isEnabled)
-                item.IsActive = false;
-        });
-
-        // if the feature is enabled AND no options are active, then select the default feature type if one is provided
-        if (isEnabled && defaultFeatureEnum != null && !featureTypes.Any(option => option.IsActive))
-            featureTypes.First(feature => feature.Id == defaultFeatureEnum).IsActive = true;
+        FeatureOptions.UpdateFeatureOptions(isFileTypeEnabled, miscFeatureOptionItems.ToList());
     }
 
     private void UpdateOnlineGameFileDetails()

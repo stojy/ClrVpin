@@ -106,13 +106,51 @@ public static class FeatureOptions
             minimumNumberOfSelections);
     }
 
+    // update multiple feature options
+    public static void UpdateFeatureOptions(bool isEnabled, List<FeatureType> featureTypes, int? defaultFeatureTypeEnum = null)
+    {
+        // enable/disable the features
+        featureTypes.ForEach(featureType =>
+        {
+            if (isEnabled)
+                EnableFeatureType(featureType);
+            else
+                DisableFeatureType(featureType);
+        });
+
+        // if the feature is enabled AND no options are active, then select the default feature type if one is provided
+        if (isEnabled && defaultFeatureTypeEnum != null && !featureTypes.Any(option => option.IsActive))
+        {
+            var featureType = featureTypes.First(feature => feature.Id == defaultFeatureTypeEnum);
+            SelectFeatureType(featureType, true);
+        }
+    }
+
     public static void DisableFeatureType(FeatureType featureType, string message = null)
     {
         // disable feature type so it can't be used, e.g. non-selectable
-        featureType.IsActive = false;
+
+        if (featureType.IsActive) 
+            SelectFeatureType(featureType, false);
+
         featureType.IsSupported = false;
         if (message != null)
             featureType.Tip += message;
+    }
+
+    private static void EnableFeatureType(FeatureType featureType)
+    {
+        // enable feature type so it can be used, e.g. non-selectable
+        featureType.IsSupported = true;
+    }
+
+    // select feature type programatically, i.e. not via GUI interactions
+    private static void SelectFeatureType(FeatureType featureType, bool isSelected)
+    {
+        // invoke action by only toggling on/off if not already in the on/off state
+        // - to ensure the underlying model is updated
+        featureType.IsActive = isSelected;
+        featureType.SelectedCommand.Execute(true);
     }
 
     private static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsViewInternal<T>(
@@ -149,13 +187,13 @@ public static class FeatureOptions
     private static void SetupSelectedCommand<T>(FeatureType featureType, IReadOnlyCollection<FeatureType> featureTypes, EnumOption<T> enumOption,
         Action<EnumOption<T>> toggleSelection, Action<FeatureType> changedAction, int minNumberOfSelections) where T : Enum
     {
-        featureType.SelectedCommand = new ActionCommand(() =>
+        featureType.SelectedCommand = new ActionCommand<bool?>(ignoreMinNumberOfSelections =>
             {
                 // prevent the button from being deselected if the total number of selections would be less than the minimum allowed
                 // - update ordering..
                 //   a. isActive BEFORE the command is invoked.. e.g. button that was previously selected will have IsActive=false when processed here
                 //   b. UI       AFTER  the command is invoked.. effectively waiting for a dispatch refresh cycle
-                if (featureTypes.Count(x => x.IsActive) < minNumberOfSelections)
+                if (ignoreMinNumberOfSelections != true && featureTypes.Count(x => x.IsActive) < minNumberOfSelections)
                 {
                     // prevent the feature going inactive
                     featureType.IsActive = true;
@@ -216,7 +254,7 @@ public static class FeatureOptions
                 // invoke action by only toggling on/off if not already in the on/off state
                 // - to ensure the underlying model is updated
                 if ((selectAll.IsActive && !wasActive) || (!selectAll.IsActive && wasActive))
-                    featureType.SelectedCommand.Execute(null);
+                    featureType.SelectedCommand.Execute(true);
             });
         });
 

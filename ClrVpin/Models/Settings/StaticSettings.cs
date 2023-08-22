@@ -124,10 +124,10 @@ namespace ClrVpin.Models.Settings
         // all possible simulator applications - to be used elsewhere (feeder)
         public static readonly EnumOption<SimulatorOptionEnum>[] SimulatorOptions =
         {
-            new() {Enum = SimulatorOptionEnum.VirtualPinballX, Tip = "Virtual Pinball X (including VP9)"},
-            new() {Enum = SimulatorOptionEnum.FuturePinball, Tip = "Future Pinball"},
-            new() {Enum = SimulatorOptionEnum.PinballFx, Tip = "FX Pinball (includes FX1, FX2, and FX3)"},
-            new() {Enum = SimulatorOptionEnum.Unknown, Tip = "Unknown simulator"},
+            new() {Enum = SimulatorOptionEnum.VirtualPinballX, Tip = "Table file that supports Virtual Pinball X (including VP9)"},
+            new() {Enum = SimulatorOptionEnum.FuturePinball, Tip = "Table file that supports Future Pinball"},
+            new() {Enum = SimulatorOptionEnum.PinballFx, Tip = "Table file that supports FX Pinball (includes FX1, FX2, and FX3)"},
+            new() {Enum = SimulatorOptionEnum.Unknown, Tip = "Table file that supports an unknown simulator"},
         };
 
         // all possible missing file options - to be used elsewhere (explorer)
