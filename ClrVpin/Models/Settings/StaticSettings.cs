@@ -15,6 +15,7 @@ namespace ClrVpin.Models.Settings
         {
             // common 
             TableManufacturedOptions.ForEach(x => x.Description = x.Enum.GetDescription());
+            TechnologyTypeOptions.ForEach(x => x.Description = x.Enum.GetDescription());
 
             // cleaner
             AllHitTypes.ForEach(x => x.Description = x.Enum.GetDescription());
@@ -108,6 +109,15 @@ namespace ClrVpin.Models.Settings
         {
             new() {Enum = YesNoNullableBooleanOptionEnum.True, Tip = "Manufactured table"},
             new() {Enum = YesNoNullableBooleanOptionEnum.False, Tip = "Original table, i.e. not manufactured"}
+        };
+        
+        // all possible table technology type options - to be used elsewhere (feeder and explorer)
+        public static readonly EnumOption<TechnologyTypeOptionEnum>[] TechnologyTypeOptions =
+        {
+            new() {Enum = TechnologyTypeOptionEnum.SS, Tip = "Solid State tables, created in the 1970s"},
+            new() {Enum = TechnologyTypeOptionEnum.EM, Tip = "Electro Mechanical tables, created in the 1950s"},
+            new() {Enum = TechnologyTypeOptionEnum.PM, Tip = "Pure mechanical tables, created in the 1930s"},
+            new() {Enum = TechnologyTypeOptionEnum.Unknown, Tip = "Unknown table technology type"},
         };
 
         // all possible missing file options - to be used elsewhere (explorer)

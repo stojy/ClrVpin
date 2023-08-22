@@ -14,7 +14,7 @@ public class CommonFilterSettings
     public string SelectedTableFilter { get; set; }
     public string SelectedManufacturerFilter { get; set; }
 
-    public string SelectedTypeFilter { get; set; }
+    public ObservableCollection<TechnologyTypeOptionEnum> SelectedTechnologyTypeOptions { get; set; } = new();
     
     public string SelectedYearBeginFilter { get; set; }
     public string SelectedYearEndFilter { get; set; }

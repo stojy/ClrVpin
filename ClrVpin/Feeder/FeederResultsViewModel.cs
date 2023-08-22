@@ -138,8 +138,9 @@ public sealed class FeederResultsViewModel
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
                 
-                // technology type, i.e. SS, EM, PM
-                (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
+                // technology type, i.e. SS, EM, PM, unknown
+                (!Settings.SelectedTechnologyTypeOptions.Any() || 
+                 Settings.SelectedTechnologyTypeOptions.Contains(gameItem.TechnologyType ?? TechnologyTypeOptionEnum.Unknown)) &&
                 
                 // simulator type
                 // - todo; not required at this level?
@@ -383,7 +384,7 @@ public sealed class FeederResultsViewModel
             {
                 var (fileCollectionType, fileCollection) = kv;
 
-                var fileCollectionTypeEnum = OnlineFileType.GetEnum(fileCollectionType);
+                var fileCollectionTypeEnum = OnlineFileTypeHelper.GetEnum(fileCollectionType);
 
                 fileCollection.ForEach(file =>
                 {

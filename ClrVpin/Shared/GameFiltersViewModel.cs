@@ -25,6 +25,10 @@ public class GameFiltersViewModel
         TableManufacturedOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableManufacturedOptions, () => commonFilterSettings.SelectedManufacturedOptions,
             _ => _filterChanged(), includeSelectAll: false, minimumNumberOfSelections: 0);
 
+        // table HW type, i.e. SS, EM, PM
+        TechnologyTypeOptionsView =  FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TechnologyTypeOptions, () => commonFilterSettings.SelectedTechnologyTypeOptions,
+            _ => _filterChanged(), includeSelectAll: false, minimumNumberOfSelections: 1);
+
         UpdateFilterViews();
     }
 
@@ -33,7 +37,7 @@ public class GameFiltersViewModel
     public ListCollectionView<string> ManufacturersFilterView { get; private set; }
     public ListCollectionView<string> YearsBeginFilterView { get; private set; }
     public ListCollectionView<string> YearsEndFilterView { get; private set; }
-    public ListCollectionView<string> TypesFilterView { get; private set; }
+    public ListCollectionView<FeatureType.FeatureType> TechnologyTypeOptionsView { get; private set; }
     public ListCollectionView<string> SimulatorFormatsFilterView { get; private set; }
     public ListCollectionView<FeatureType.FeatureType> PresetDateOptionsView { get; }
     public ListCollectionView<FeatureType.FeatureType> TableManufacturedOptionsView { get; }
@@ -56,7 +60,7 @@ public class GameFiltersViewModel
         ManufacturersFilterView.RefreshDebounce(debounceMilliseconds);
         YearsBeginFilterView.RefreshDebounce(debounceMilliseconds);
         YearsEndFilterView.RefreshDebounce(debounceMilliseconds);
-        TypesFilterView.RefreshDebounce(debounceMilliseconds);
+        //TechnologyTypeOptionsView.RefreshDebounce(debounceMilliseconds);
         SimulatorFormatsFilterView?.RefreshDebounce(debounceMilliseconds);   // not used by all VMs, e.g. Explorer
     }
 
@@ -86,12 +90,6 @@ public class GameFiltersViewModel
         {
             // filter the 'years to' list to reflect what's displayed in the games list, i.e. taking into account ALL of the existing filter criteria
             Filter = yearString => Filter(() => _gameItemsView.Any(x => x.Year == yearString))
-        };
-
-        // table HW type, i.e. SS, EM, PM
-        TypesFilterView = new ListCollectionView<string>(_gameCollections.Types)
-        {
-            Filter = type => Filter(() => _gameItemsView.Any(x => x.Type == type))
         };
 
         // table formats - vpx, fp, etc

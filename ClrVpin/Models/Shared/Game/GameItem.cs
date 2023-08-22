@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Input;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Feeder.Vps;
+using ClrVpin.Models.Shared.Enums;
 using PropertyChanged;
 
 namespace ClrVpin.Models.Shared.Game;
@@ -57,6 +58,7 @@ public class GameItem
     public TableMatchOptionEnum TableMatchType { get; private set; }
 
     // view model properties
+    public TechnologyTypeOptionEnum? TechnologyType { get; private set; }
     public bool IsMatchingEnabled { get; set; }
 
     public ICommand UpdateDatabaseEntryCommand { get; set; }
@@ -71,7 +73,10 @@ public class GameItem
         LocalGame = localGame;
         
         TableMatchType = GetTableMatchEnum();
+
+        TechnologyType = TechnologyTypeHelper.GetEnum(Type);
     }
+
 
     private TableMatchOptionEnum GetTableMatchEnum()
     {
