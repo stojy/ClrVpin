@@ -34,7 +34,5 @@ public class OnlineGame : OnlineGameBase
 
     public List<string> NewFileCollectionTypes { get; set; } = new();
     
-    public Dictionary<string, UrlStatusEnum> UrlStatusFileTypes { get; set; } = new();
-    
     public string CreateDescription() => $"{Name?.Trim()} ({Manufacturer?.Trim()} {Year})";
 }

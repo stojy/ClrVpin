@@ -430,30 +430,12 @@ public sealed class FeederResultsViewModel
 
                 // support file border, URL button color, automatically selecting the first tab item
                 fileCollection.IsNewAndSelectedFileType = fileCollection.IsNew && Settings.SelectedOnlineFileTypeOptions.Contains(fileCollectionType);
-
-                // the file collection url status is limited to only the date range for new files
-                // - although technically wrong, to keep things simple if there are any files with valid URL(s) then assume UrlStatus is valid
-                // - e.g. 6d ago the file update has a missing URL and 10d the URL was valid
-                //   a. 7d filter --> UrlStatus = missing
-                //   a. 14d filter --> UrlStatus = valid
-                var newFileCollectionList = fileCollection.Where(IsNewUpdatedTimestamp).ToList();
-                if (!newFileCollectionList.Any())
-                    fileCollection.UrlStatus = UrlStatusEnum.Valid;
-                else if (newFileCollectionList.All(file => file.UrlStatusEnum == UrlStatusEnum.Broken))
-                    fileCollection.UrlStatus = UrlStatusEnum.Broken;
-                else if (newFileCollectionList.All(file => file.UrlStatusEnum is UrlStatusEnum.Broken or UrlStatusEnum.Missing))
-                    fileCollection.UrlStatus = UrlStatusEnum.Missing;
-                else
-                    fileCollection.UrlStatus = UrlStatusEnum.Valid;
             });
 
             // support gameItem filtering
             // - assign a helper property to designate the new status of the file collections
             // - avoid re-calculating this every time we have a non-update time filter change
             onlineGame.NewFileCollectionTypes = onlineGame.AllFileCollections.Where(kv => kv.Value.IsNew).Select(kv => kv.Key).ToList();
-
-            // assign a helper property to designate the URL status of the file collections
-            onlineGame.UrlStatusFileTypes = onlineGame.AllFileCollections.ToDictionary(kv => kv.Key, kv => kv.Value.UrlStatus);
         });
 
         FilterChangedCommand.Execute(null);
