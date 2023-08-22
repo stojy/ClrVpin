@@ -119,29 +119,37 @@ public sealed class FeederResultsViewModel
             Filter = gameItem =>
                 // exclude any gameItem that doesn't have new files for one of the selected content types
                 // - this also takes care of the individual file IsNew updates (e.g. VR only, sound mod, etc)
+
+                // table name
+                (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
+
+                // ALL file filtering based on IsNew, e.g. FSS only, time range, simulator, etc
                 (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.NewFileCollectionTypes)) &&
 
+                // table match type, e.g. local, online, local and online
                 Settings.SelectedTableMatchOptions.Contains(gameItem.TableMatchType) &&
 
+                // manufacturer - original or manufactured
                 (!Settings.SelectedManufacturedOptions.Any() ||
                  (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.TableStyleOption == TableStyleOptionEnum.Manufactured) ||
                  (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.TableStyleOption == TableStyleOptionEnum.Original)) &&
 
+                // construction date
                 (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
                 (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
+                
+                // technology type, i.e. SS, EM, PM
                 (Settings.SelectedTypeFilter == null || string.CompareOrdinal(gameItem.Type, 0, Settings.SelectedTypeFilter, 0, 50) == 0) &&
+                
+                // simulator type
+                // - todo; not required at this level?
                 (Settings.SelectedSimulatorFormatFilter == null || gameItem.OnlineGame?.TableFormats.Contains(Settings.SelectedSimulatorFormatFilter) == true) &&
 
-                // gameItem.UpdatedAt is derived property that surfaces the 'max updated at' timestamps from ALL the different content and their underlying files
-                // - if a gameItem satisfies the 'updatedAt' filtering.. then all the gameItem's content (e.g. table, backglass, etc) and their file(s) will be available for viewing
-                //   e.g. show all table files irrespective of their update timestamp so long as ANY of the gameItem's content files is later than 'updatedAt'
-                // - avoids the expensive 'on the fly' calculation that would otherwise be required during every filter update
-                (Settings.SelectedUpdatedAtDateBegin == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value >= Settings.SelectedUpdatedAtDateBegin) &&
-                (Settings.SelectedUpdatedAtDateEnd == null || gameItem.UpdatedAt == null || gameItem.UpdatedAt.Value < Settings.SelectedUpdatedAtDateEnd.Value.AddDays(1)) &&
-
-                (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
+                // manufacture name
                 (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase)) &&
 
+                // download URL status
+                // - todo; not required at this level?
                 (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.Any(fileType =>
                     Settings.SelectedUrlStatusOptions.Contains(gameItem.OnlineGame.UrlStatusFileTypes[fileType])))
         };
@@ -361,13 +369,13 @@ public sealed class FeederResultsViewModel
 
     private void UpdateOnlineGameFileDetails()
     {
-        // for all online games, flag every file as new required because..
-        // - top level LCV filtering hides/shows the entire table (with all content), but IsNew is required when the LCV does NOT filter the table to enable..
-        //   a. category 'new' badge
-        //   b. URL download button color
-        // - to be considered new, following criteria..
-        //   a. time range
-        //   b. ignore criteria - e.g. VR only, music mod, etc
+        // file level filtering relies on IsNew (unlike higher/general filtering)
+        // - for or all online games ONLY, iterate through the file types (e.g. table, backglass, etc) and flag every file(s) as new based on the file filtering options
+        // - usage..
+        //   a. gameItem filtering - top level filtering (online) gameItem filtering, e.g. if  selectedFileType=DMD then only display gameItem if at least one DMD file is new
+        //   b. file type 'new badge'
+        //   c. file highlight - outer green border
+        //   d. file URL link - green button color
         var onlineGames = GetOnlineGames();
         onlineGames.ForEach(onlineGame =>
         {
@@ -417,14 +425,14 @@ public sealed class FeederResultsViewModel
 
                 fileCollection.Title = fileCollectionType;
 
-                // used for assigning 'new' indicator
+                // support file type 'new' indicator
                 fileCollection.IsNew = fileCollection.Any(file => file.IsNew);
 
-                // used for assigning the 'green' color and automatically moving the tab selection
+                // support file border, URL button color, automatically selecting the first tab item
                 fileCollection.IsNewAndSelectedFileType = fileCollection.IsNew && Settings.SelectedOnlineFileTypeOptions.Contains(fileCollectionType);
 
                 // the file collection url status is limited to only the date range for new files
-                // - although technically wrong, to keep things simple if there are files then assume UrlStatus is valid
+                // - although technically wrong, to keep things simple if there are any files with valid URL(s) then assume UrlStatus is valid
                 // - e.g. 6d ago the file update has a missing URL and 10d the URL was valid
                 //   a. 7d filter --> UrlStatus = missing
                 //   a. 14d filter --> UrlStatus = valid
@@ -439,9 +447,9 @@ public sealed class FeederResultsViewModel
                     fileCollection.UrlStatus = UrlStatusEnum.Valid;
             });
 
-            // assign a helper property to designate the new status of the file collections
+            // support gameItem filtering
+            // - assign a helper property to designate the new status of the file collections
             // - avoid re-calculating this every time we have a non-update time filter change
-            // - used as a top level 'gameItem filter'
             onlineGame.NewFileCollectionTypes = onlineGame.AllFileCollections.Where(kv => kv.Value.IsNew).Select(kv => kv.Key).ToList();
 
             // assign a helper property to designate the URL status of the file collections
