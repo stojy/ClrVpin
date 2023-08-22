@@ -438,6 +438,7 @@ public sealed class FeederResultsViewModel
 
                     // - simulator application, aka file format, e.g. VPX, FP, etc
                     UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        Settings.SelectedSimulatorOptionFilter.Any() && // shouldn't be possible to have fileType=Tables enabled without a simulator option, but added anyway for peace of mind
                         !Settings.SelectedSimulatorOptionFilter.Contains((file as TableFile)?.Simulator ?? SimulatorOptionEnum.Unknown));
 
                     // download URL status
