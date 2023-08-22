@@ -181,7 +181,7 @@ public sealed class FeederResultsViewModel
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
         // force 'IsFileNew' update check
-        UpdateOnlineGameFileDetails();
+        SelectedOnlineFileTypeUpdated();
 
         BackupFolder = Model.Settings.BackupFolder;
         NavigateToBackupFolderCommand = new ActionCommand(NavigateToBackupFolder);
