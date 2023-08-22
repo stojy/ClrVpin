@@ -16,6 +16,8 @@ public class CommonFilterSettings
         {
             TechnologyTypeOptionEnum.SS, TechnologyTypeOptionEnum.EM, TechnologyTypeOptionEnum.PM, TechnologyTypeOptionEnum.Unknown
         };
+
+        SelectedManufacturedOptions = new ObservableCollection<YesNoNullableBooleanOptionEnum> { YesNoNullableBooleanOptionEnum.True };
     }
     public bool IsDynamicFiltering { get; set; }
 
@@ -30,5 +32,5 @@ public class CommonFilterSettings
     public DateTime? SelectedUpdatedAtDateBegin { get; set; }
     public DateTime? SelectedUpdatedAtDateEnd { get; set; }
 
-    public ObservableCollection<YesNoNullableBooleanOptionEnum> SelectedManufacturedOptions { get; set; } = new();
+    public ObservableCollection<YesNoNullableBooleanOptionEnum> SelectedManufacturedOptions { get; set; }
 }
