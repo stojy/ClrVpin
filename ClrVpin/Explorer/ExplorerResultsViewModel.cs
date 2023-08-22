@@ -61,7 +61,7 @@ public class ExplorerResultsViewModel
             Left = left,
             Top = top,
             Width = width,
-            Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) * 0.8,
+            Height = (Model.ScreenWorkArea.Height - WindowMargin - WindowMargin) * 0.85,
             Content = this,
             Resources = parentWindow.Resources,
             ContentTemplate = parentWindow.FindResource("ExplorerResultsTemplate") as DataTemplate

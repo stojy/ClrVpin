@@ -134,8 +134,8 @@
 
       <!-- dock panel to provide a scrollbar (if required) for the child controls -->
       <DockPanel Margin="5" VerticalAlignment="Stretch">
-        <DockPanel DockPanel.Dock="Left" Width="875">
-          <GroupBox DockPanel.Dock="Top" Header="Include Filters" Margin="0,0,0,10">
+        <DockPanel DockPanel.Dock="Left" Width="700">
+          <GroupBox DockPanel.Dock="Top" Header="General Filters" Margin="0,0,0,10">
             <StackPanel Margin="5">
               <WrapPanel Margin="0,-5,0,0">  <!--margin kludge required here because the combo boxes have an excessive margin to cater for the helper text :(-->
                 <ComboBox ItemsSource="{Binding GameFiltersViewModel.TablesFilterView}"
@@ -155,7 +155,7 @@
                           Text="{Binding Path=Settings.SelectedManufacturerFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           materialDesign:HintAssist.Hint="Manufacturer"
                           Style="{StaticResource EditComboBoxStyle}"
-                          Width="230" Margin="0"
+                          Width="200" Margin="0"
                           ToolTip="Filter tables based on the manufacturer.">
                   <b:Interaction.Triggers>
                     <controls:RoutedEventTrigger RoutedEvent="TextBoxBase.TextChanged">
@@ -164,52 +164,68 @@
                   </b:Interaction.Triggers>
                 </ComboBox>
 
-                <WrapPanel Margin="20,10,0,0" VerticalAlignment="Center"
+                <ComboBox ItemsSource="{Binding GameFiltersViewModel.YearsBeginFilterView}"
+                          SelectedItem="{Binding Path=Settings.SelectedYearBeginFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          materialDesign:HintAssist.Hint="From Year"
+                          Style="{StaticResource ComboBoxStyle}"
+                          Width="98" Margin="10,0,0,0"
+                          ToolTip="Filter tables based on the earliest manufacture year.">
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </ComboBox>
+
+                <ComboBox ItemsSource="{Binding GameFiltersViewModel.YearsEndFilterView}"
+                          SelectedItem="{Binding Path=Settings.SelectedYearEndFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          materialDesign:HintAssist.Hint="To Year"
+                          Style="{StaticResource ComboBoxStyle}"
+                          Width="82" Margin="10,0,0,0"
+                          ToolTip="Filter tables based on the latest manufacture year.">
+                  <b:Interaction.Triggers>
+                    <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
+                      <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
+                    </controls:RoutedEventTrigger>
+                  </b:Interaction.Triggers>
+                </ComboBox>
+              </WrapPanel>
+
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Technology"
+                              controls:GenericAttached.String2="Filter the tables based on the table construction technology: PM (Purely Mechanical), EM (Electromechanical), SS (Solid State)."
+                              controls:GenericAttached.Double="110"
+                              controls:GenericAttached.Double2="14">
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TechnologyTypeOptionsView}" />
+              </ContentControl>
+
+              <Grid>
+                <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                                controls:GenericAttached.String="Manufactured"
+                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
+                                controls:GenericAttached.Double="110"
+                                controls:GenericAttached.Double2="14"
+                                VerticalAlignment="Center">
+                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableManufacturedOptionsView}" />
+                </ContentControl>
+
+                <WrapPanel Margin="20,10,0,0" VerticalAlignment="Center" HorizontalAlignment="Right"
                            ToolTip="When enabled, the drop down filtering options are dynamically updated to only include values from the filtered list of displayed tables.">
                   <ToggleButton IsChecked="{Binding Settings.IsDynamicFiltering}" Command="{Binding DynamicFilteringCommand}" />
                   <TextBlock Margin="5,0,0,0" Text="Dynamic Filtering" />
                 </WrapPanel>
-              </WrapPanel>
+              </Grid>
+            </StackPanel>
+          </GroupBox>
 
-              <Grid Margin="0,10,0,0">
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1.55*" />
-                  <ColumnDefinition Width="Auto" />
-                  <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <WrapPanel>
-                  <ComboBox ItemsSource="{Binding GameFiltersViewModel.YearsBeginFilterView}"
-                            SelectedItem="{Binding Path=Settings.SelectedYearBeginFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            materialDesign:HintAssist.Hint="Year From"
-                            Style="{StaticResource ComboBoxStyle}"
-                            Width="98" Margin="10,0,0,0"
-                            ToolTip="Filter tables based on the earliest manufacture year.">
-                    <b:Interaction.Triggers>
-                      <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
-                      </controls:RoutedEventTrigger>
-                    </b:Interaction.Triggers>
-                  </ComboBox>
-
-                  <ComboBox ItemsSource="{Binding GameFiltersViewModel.YearsEndFilterView}"
-                            SelectedItem="{Binding Path=Settings.SelectedYearEndFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            materialDesign:HintAssist.Hint="Year To"
-                            Style="{StaticResource ComboBoxStyle}"
-                            Width="82" Margin="10,0,0,0"
-                            ToolTip="Filter tables based on the latest manufacture year.">
-                    <b:Interaction.Triggers>
-                      <controls:RoutedEventTrigger RoutedEvent="ComboBox.SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding FilterChangedCommand}" />
-                      </controls:RoutedEventTrigger>
-                    </b:Interaction.Triggers>
-                  </ComboBox>
-
-                </WrapPanel>
-
-                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" Margin="2,5,12,0" />
-
-                <WrapPanel Grid.Column="2">
+          <GroupBox DockPanel.Dock="Top" Header="Content Filters" Margin="0,0,0,10">
+            <StackPanel>
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Updated"
+                              controls:GenericAttached.String2="Filter the tables based on the simulator application. Ignored for unmatched tables."
+                              controls:GenericAttached.Double="110"
+                              controls:GenericAttached.Double2="14">
+                <WrapPanel Margin="0,-6,0,0">
                   <WrapPanel.Resources>
                     <Style x:Key="DatePickerStyle" TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignFloatingHintDatePicker}">
                       <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
@@ -219,7 +235,7 @@
                     </Style>
                   </WrapPanel.Resources>
 
-                  <DatePicker materialDesign:HintAssist.Hint="Updated From"
+                  <DatePicker materialDesign:HintAssist.Hint="From"
                               Style="{StaticResource DatePickerStyle}"
                               SelectedDate="{Binding Settings.SelectedUpdatedAtDateBegin}"
                               DisplayDateEnd="{Binding Settings.SelectedUpdatedAtDateEnd}"
@@ -232,7 +248,7 @@
                     </b:Interaction.Triggers>
                   </DatePicker>
 
-                  <DatePicker materialDesign:HintAssist.Hint="Updated To"
+                  <DatePicker materialDesign:HintAssist.Hint="To"
                               Style="{StaticResource DatePickerStyle}"
                               SelectedDate="{Binding Settings.SelectedUpdatedAtDateEnd}"
                               DisplayDateStart="{Binding Settings.SelectedUpdatedAtDateBegin}"
@@ -264,19 +280,18 @@
                     </ItemsControl>
                   </materialDesign:PopupBox>
                 </WrapPanel>
-              </Grid>
+              </ContentControl>
 
-              <Grid>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="1.55*" />
-                  <ColumnDefinition Width="Auto" />
-                  <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <WrapPanel>
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Rating"
+                              controls:GenericAttached.String2="Filter the tables based on the table rating/"
+                              controls:GenericAttached.Double="110"
+                              controls:GenericAttached.Double2="14"
+                              Margin="0,6,0,0">
+                <WrapPanel Margin="0,-15,0,0">
                   <WrapPanel.Resources>
                     <Style x:Key="RatingsBarTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
-                      <Setter Property="Margin" Value="0,10" />
+                      <Setter Property="Margin" Value="0,10,0,0" />
                       <Setter Property="HorizontalAlignment" Value="Left" />
                       <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
                       <!--<Setter Property="FontSize" Value="16" />-->
@@ -286,9 +301,9 @@
                   <Grid>
                     <!-- ratings is drawn within TextBox - refer DatabaseItem.xaml -->
                     <TextBox Text="{Binding Settings.SelectedMinRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             materialDesign:HintAssist.Hint="Min Rating" IsReadOnly="True"
+                             materialDesign:HintAssist.Hint="Min" IsReadOnly="True"
                              Style="{StaticResource RatingsBarTextBoxStyle}"
-                             Width="240">
+                             Width="200">
                       <b:Interaction.Triggers>
                         <b:EventTrigger EventName="TextChanged">
                           <b:InvokeCommandAction Command="{Binding MinRatingChangedCommand}" d:DataContext="{d:DesignInstance Type=explorer:ExplorerResultsViewModel}" />
@@ -297,15 +312,15 @@
                     </TextBox>
 
                     <materialDesign:RatingBar Value="{Binding Settings.SelectedMinRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                              Style="{StaticResource RatingBarStyle}" Margin="70,4,0,0" />
+                                              Style="{StaticResource RatingBarStyle}" Margin="30,4,0,0" />
                   </Grid>
 
                   <Grid Margin="10,0,0,0">
                     <!-- ratings is drawn within TextBox - refer DatabaseItem.xaml -->
                     <TextBox Text="{Binding Settings.SelectedMaxRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             materialDesign:HintAssist.Hint="Max Rating" IsReadOnly="True"
+                             materialDesign:HintAssist.Hint="Max" IsReadOnly="True"
                              Style="{StaticResource RatingsBarTextBoxStyle}"
-                             Width="240">
+                             Width="200">
                       <b:Interaction.Triggers>
                         <b:EventTrigger EventName="TextChanged">
                           <b:InvokeCommandAction Command="{Binding MaxRatingChangedCommand}" d:DataContext="{d:DesignInstance Type=explorer:ExplorerResultsViewModel}" />
@@ -314,62 +329,10 @@
                     </TextBox>
 
                     <materialDesign:RatingBar Value="{Binding Settings.SelectedMaxRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                              Style="{StaticResource RatingBarStyle}" Margin="70,4,0,0" />
+                                              Style="{StaticResource RatingBarStyle}" Margin="30,4,0,0" />
                   </Grid>
-
                 </WrapPanel>
 
-                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
-
-              </Grid>
-
-              <Grid>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="220" />
-                  <ColumnDefinition Width="Auto"/>
-                  <ColumnDefinition Width="200"/>
-                  <ColumnDefinition Width="Auto"/>
-                  <ColumnDefinition Width="200"/>
-                </Grid.ColumnDefinitions>
-                <ContentControl Grid.Column="0" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="Manufactured"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table was physically manufactured."
-                                controls:GenericAttached.Double="110"
-                                controls:GenericAttached.Double2="14"
-                                VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableManufacturedOptionsView}" />
-                </ContentControl>
-
-                <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" />
-
-                <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="ROM"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table script uses ROM(s)."
-                                controls:GenericAttached.Double="60"
-                                controls:GenericAttached.Double2="14"
-                                VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.RomOptionsView}" />
-                </ContentControl>
-
-                <Separator Grid.Column="3" Style="{StaticResource SeparatorStyle}" />
-
-                <ContentControl Grid.Column="4" Template="{StaticResource KeyValueAutoPair}"
-                                controls:GenericAttached.String="PuP"
-                                controls:GenericAttached.String2="Filter the tables based on whether the table script uses PuP (Pinup Popper)."
-                                controls:GenericAttached.Double="60"
-                                controls:GenericAttached.Double2="14"
-                                VerticalAlignment="Center">
-                  <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.PupOptionsView}" />
-                </ContentControl>
-
-              </Grid>
-
-              <ContentControl Template="{StaticResource KeyValueAutoPair}"
-                              controls:GenericAttached.String="Technology"
-                              controls:GenericAttached.String2="Filter the tables based on the table construction technology: PM (Purely Mechanical), EM (Electromechanical), SS (Solid State)."
-                              controls:GenericAttached.Double="110"
-                              controls:GenericAttached.Double2="14">
-                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TechnologyTypeOptionsView}" />
               </ContentControl>
 
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
@@ -388,6 +351,36 @@
                               controls:GenericAttached.Double2="14"
                               VerticalAlignment="Center">
                 <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.TableStaleOptionsView}" />
+              </ContentControl>
+
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="ROM"
+                              controls:GenericAttached.String2="Filter tables based on whether the selected media video files are out of date and need to be updated, i.e. re-recorded."
+                              controls:GenericAttached.Double="110"
+                              controls:GenericAttached.Double2="14"
+                              VerticalAlignment="Center">
+                <WrapPanel>
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.RomOptionsView}"/>
+
+                    <Separator Grid.Column="1" Style="{StaticResource SeparatorStyle}" Margin="15,0" />
+
+                    <ContentControl Grid.Column="2" Template="{StaticResource KeyValueAutoPair}"
+                                    controls:GenericAttached.String="PuP"
+                                    controls:GenericAttached.String2="Filter the tables based on whether the table script uses PuP (Pinup Popper)."
+                                    controls:GenericAttached.Double="60"
+                                    controls:GenericAttached.Double2="14"
+                                    VerticalAlignment="Center">
+                      <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.PupOptionsView}" />
+                    </ContentControl>
+                  </Grid>
+                </WrapPanel>
               </ContentControl>
 
             </StackPanel>
@@ -528,16 +521,16 @@
               <DataGridTemplateColumn CellTemplate="{StaticResource RatingTemplate}" Header="Rating"
                                       SortMemberPath="Rating"
                                       Width="55" />
-              <DataGridTemplateColumn Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}"
+              <!--<DataGridTemplateColumn Header="IPDB" CellTemplate="{StaticResource IpdbTemplate}"
                                       SortMemberPath="LocalGame.Derived.Ipdb"
-                                      Width="45" />
-              <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
+                                      Width="45" />-->
+              <!--<DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Type"
                                   Binding="{Binding Type}"
                                   Width="45" />
               <DataGridTemplateColumn Header="Manufactured" CellStyle="{StaticResource CenteredDataGridCellStyle}"
                                       CellTemplate="{StaticResource IsManufacturedTemplate}"
                                       SortMemberPath="LocalGame.Derived.IsOriginal"
-                                      Width="95" />
+                                      Width="95" />-->
               <DataGridTextColumn ElementStyle="{StaticResource VerticalAlignDataElementTextStyle}" Header="Updated"
                                   Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yy HH:mm}}" ToolTipService.ToolTip="omg"
                                   Width="125" />
