@@ -143,12 +143,12 @@
                       Text="{Binding Path=LocalGame.Game.Year, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Year"
                       Style="{StaticResource EditComboBoxStyle}"
-                      Width="90" />
+                      Width="80" />
             <ComboBox ItemsSource="{Binding TypesView}"
                       Text="{Binding Path=LocalGame.Game.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      materialDesign:HintAssist.Hint="Type" ToolTip="EM: electro-mechanical, SS: solid state, PM: purely mechanical"
+                      materialDesign:HintAssist.Hint="Technology" ToolTip="EM: electro-mechanical, SS: solid state, PM: purely mechanical"
                       Style="{StaticResource EditComboBoxStyle}"
-                      Width="90" Margin="10,0,0,0" />
+                      Width="100" Margin="10,0,0,0" />
             <ComboBox ItemsSource="{Binding PlayersView}"
                       Text="{Binding Path=LocalGame.Game.Players, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       materialDesign:HintAssist.Hint="Players"
