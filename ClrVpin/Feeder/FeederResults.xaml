@@ -381,7 +381,8 @@
                               controls:GenericAttached.String="Updated"
                               controls:GenericAttached.String2="Filter the tables based on the simulator application. Ignored for unmatched tables."
                               controls:GenericAttached.Double="110"
-                              controls:GenericAttached.Double2="14">
+                              controls:GenericAttached.Double2="14"
+                              Margin="0,2,0,0">
                 <WrapPanel Margin="0,-8,0,1">
                   <WrapPanel.Resources>
                     <Style x:Key="DatePickerStyle" TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignFloatingHintDatePicker}">
@@ -448,19 +449,19 @@
               </ContentControl>
 
               <ContentControl Template="{StaticResource KeyValueAutoPair}"
-                              controls:GenericAttached.String="Simulator"
-                              controls:GenericAttached.String2="Filter the tables based on the simulator application. Ignored for unmatched tables."
-                              controls:GenericAttached.Double="110"
-                              controls:GenericAttached.Double2="14">
-                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.SimulatorOptionsFilterView}" />
-              </ContentControl>
-
-              <ContentControl Template="{StaticResource KeyValueAutoPair}"
                               controls:GenericAttached.String="Download"
                               controls:GenericAttached.String2="Filter the tables based on whether the selected file type(s) can be downloaded. Not applicable for unmatched tables."
                               controls:GenericAttached.Double="110"
                               controls:GenericAttached.Double2="14">
                 <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.UrlStatusOptionsView}" />
+              </ContentControl>
+
+              <ContentControl Template="{StaticResource KeyValueAutoPair}"
+                              controls:GenericAttached.String="Simulator"
+                              controls:GenericAttached.String2="Filter the tables based on the simulator application. Ignored for unmatched tables."
+                              controls:GenericAttached.Double="110"
+                              controls:GenericAttached.Double2="14">
+                <ContentControl ContentTemplate="{StaticResource FeatureTypeListMultiFilterChipTemplate}" Content="{Binding GameFiltersViewModel.SimulatorOptionsFilterView}" />
               </ContentControl>
 
               <ContentControl Template="{StaticResource KeyValueAutoPair}"

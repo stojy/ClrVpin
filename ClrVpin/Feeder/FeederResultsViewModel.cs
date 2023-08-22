@@ -164,7 +164,7 @@ public sealed class FeederResultsViewModel
             
             // invoke online game file update to handle IsNewAndSelectedFileType which is file type sensitive
             OnlineFileTypeOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.OnlineFileTypeOptions, 
-                () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
+                () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => SelectedOnlineFileTypeUpdated(), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             MiscFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.MiscFeatureOptions, 
                 () => Model.Settings.Feeder.SelectedMiscFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false),
@@ -362,6 +362,46 @@ public sealed class FeederResultsViewModel
     }
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
+
+    private void SelectedOnlineFileTypeUpdated()
+    {
+        // table file
+        UpdateMiscFeatureState(OnlineFileTypeEnum.Tables,
+            MiscFeatureOptionEnum.VirtualRealityOnly, MiscFeatureOptionEnum.FullSingleScreenOnly, MiscFeatureOptionEnum.MusicOrSoundMod, MiscFeatureOptionEnum.BlackAndWhiteMod);
+        
+        var isTableEnabled = Settings.SelectedOnlineFileTypeOptions.Contains(OnlineFileTypeEnum.Tables.GetDescription());
+        UpdateFeatureOptions(isTableEnabled, GameFiltersViewModel.SimulatorOptionsFilterView.ToList(), (int) SimulatorOptionEnum.VirtualPinballX);
+
+        // backglass file
+        UpdateMiscFeatureState(OnlineFileTypeEnum.Backglasses, MiscFeatureOptionEnum.FullDmd);
+
+        UpdateOnlineGameFileDetails();
+    }
+
+    private void UpdateMiscFeatureState(OnlineFileTypeEnum onlineFileType, params MiscFeatureOptionEnum[] miscFeatureOptionEnums)
+    {
+        var isFileTypeEnabled = Settings.SelectedOnlineFileTypeOptions.Contains(onlineFileType.GetDescription());
+        var miscFeatureOptions = miscFeatureOptionEnums.Select(x => (int)x);
+        var miscFeatureOptionItems = GameFiltersViewModel.MiscFeaturesOptionsView.Where(option => miscFeatureOptions.Contains(option.Id));
+
+        // update each of the relevant feature options
+        UpdateFeatureOptions(isFileTypeEnabled, miscFeatureOptionItems.ToList());
+    }
+
+    private static void UpdateFeatureOptions(bool isEnabled, List<FeatureType> featureTypes, int? defaultFeatureEnum = null)
+    {
+        // enable/disable the features
+        featureTypes.ForEach(item =>
+        {
+            item.IsSupported = isEnabled;
+            if (!isEnabled)
+                item.IsActive = false;
+        });
+
+        // if the feature is enabled AND no options are active, then select the default feature type if one is provided
+        if (isEnabled && defaultFeatureEnum != null && !featureTypes.Any(option => option.IsActive))
+            featureTypes.First(feature => feature.Id == defaultFeatureEnum).IsActive = true;
+    }
 
     private void UpdateOnlineGameFileDetails()
     {
