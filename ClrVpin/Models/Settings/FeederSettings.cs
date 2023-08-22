@@ -17,7 +17,7 @@ public class FeederSettings : CommonFilterSettings
         SelectedMatchCriteriaOptions.Add(HitTypeEnum.Fuzzy);
         SelectedFeedFixOptions.AddRange(StaticSettings.FixFeedOptions.Select(x => x.Enum).ToList());
         SelectedTableMatchOptions.AddRange(StaticSettings.TableMatchOptions.Select(x => x.Enum).ToList());
-        SelectedUrlStatusOptions.AddRange(StaticSettings.UrlStatusOptions.Select(x => x.Enum).ToList());
+        SelectedUrlStatusOptions.Add(UrlStatusEnum.Valid);
         SelectedOnlineFileTypeOptions.AddRange(new List<string>
         {
             OnlineFileTypeEnum.Tables.GetDescription(),
