@@ -149,8 +149,9 @@ public static class FeatureOptions
     {
         // invoke action by only toggling on/off if not already in the on/off state
         // - to ensure the underlying model is updated
+        // - guard against no SelectedCommand setup (yet)
         featureType.IsActive = isSelected;
-        featureType.SelectedCommand.Execute(true);
+        featureType.SelectedCommand?.Execute(true);
     }
 
     private static ListCollectionView<FeatureType> CreateFeatureOptionsSelectionsViewInternal<T>(
