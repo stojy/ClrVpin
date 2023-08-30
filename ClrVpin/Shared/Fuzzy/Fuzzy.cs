@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ClrVpin.Logging;
+using ClrVpin.Models.Feeder.Vps;
 using ClrVpin.Models.Shared;
 using ClrVpin.Models.Shared.Game;
 using Utils;
@@ -113,6 +114,12 @@ public static class Fuzzy
 
     private static decimal MinMatchScore => Model.Settings.MatchFuzzyMinimumPercentage;
     private static decimal MinMatchWarningScore => MinMatchScore * 1.2m;
+
+    public static FuzzyItemDetails GetTableDetails(OnlineGame onlineGame)
+    {
+        var fullName = $"{onlineGame.Name} ({onlineGame.Manufacturer} {onlineGame.Year})";
+        return  GetTableDetails(fullName, false);
+    }
 
     public static FuzzyItemDetails GetTableDetails(string sourceName, bool isFileName)
     {
@@ -294,6 +301,15 @@ public static class Fuzzy
     }
 
     public static string LogGameInfo(string name, string description, string manufacturer, string year) => $"name={$"'{name}',",-55} description={$"'{description}',",-55} manufacturer={$"'{manufacturer}',",-20} year={$"{year}",-5}";
+
+    public static (bool success, int score) Match(OnlineGame firstOnlineGame, OnlineGame secondOnlineGame)
+    {
+        var firstGameFuzzyDetails = GetTableDetails(firstOnlineGame);
+        var secondGameFuzzyDetails = GetTableDetails(secondOnlineGame);
+
+        return Match(firstGameFuzzyDetails, secondGameFuzzyDetails);
+    }
+
 
     public static (bool success, int score) Match(FuzzyItemDetails localGameFuzzyDetails, FuzzyItemDetails fileFuzzyDetails)
     {

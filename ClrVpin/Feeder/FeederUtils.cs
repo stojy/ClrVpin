@@ -38,11 +38,9 @@ public static class FeederUtils
 
     public static async Task<List<OnlineGame>> ReadGamesFromOnlineDatabase()
     {
-        using var httpClient = new HttpClient
-        {
-            Timeout = TimeSpan.FromSeconds(60),
-            MaxResponseContentBufferSize = 10 * 1024 * 1024 // 10MB
-        };
+        using var httpClient = new HttpClient();
+        httpClient.Timeout = TimeSpan.FromSeconds(60);
+        httpClient.MaxResponseContentBufferSize = 10 * 1024 * 1024; // 10MB
 
         var onlineGames = (await httpClient.GetFromJsonAsync<OnlineGame[]>(VisualPinballSpreadsheetDatabaseUrl, _jsonSerializerOptions))!.ToList();
 
@@ -61,13 +59,13 @@ public static class FeederUtils
 
             return new
             {
-                name = x.Name,
+                originalName = x.Name,
                 cleanName
             };
-        }).OrderBy(x => x.name.Length);
+        }).OrderBy(x => x.cleanName.Length);
 
-        // unique game is the first in the list item in the cleansed list 
-        var uniqueGame = onlineGames.First(onlineGame => onlineGame.Name == cleansed.First().name);
+        // unique game is the first in the item in the cleansed list 
+        var uniqueGame = onlineGames.First(onlineGame => onlineGame.Name == cleansed.First().originalName);
 
         return uniqueGame;
     }
@@ -82,14 +80,12 @@ public static class FeederUtils
             // - similar to DatabaseUtils.MatchFilesToLocal() uses since VPX/PBY mandates that the entries must be the same!
             // - a LOT faster!!
 
-
             // unlike merger matching, only fuzzy is used
 
             // unlike cleaner/merger..
             // - we already have the manufacturer and year breakdowns, so we can skip the parsing step and assign them directly instead
             // - use GetTableDetails for consistency and assign some properties, but then override with the known values (from the feed) directly
-            var fullName = $"{onlineGame.Name} ({onlineGame.Manufacturer} {onlineGame.Year})";
-            var fuzzyNameDetails = Fuzzy.GetTableDetails(fullName, false);
+            var fuzzyNameDetails = Fuzzy.GetTableDetails(onlineGame);
             fuzzyNameDetails.Manufacturer = onlineGame.Manufacturer;
             fuzzyNameDetails.Year = onlineGame.Year;
 

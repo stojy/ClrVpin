@@ -140,37 +140,54 @@ public static class FeederFix
             return;
 
         // duplicate games are determined by whether entries are have duplicate IPDB url references
-        // - only works for manufactured tables of course
+        // - only applicable for manufactured tables, i.e. we want to skip original tables that incorrectly supply IPDB references
         // - e.g. Star Trek and JP's Star Trek share the same IPDB url
-        var duplicateGamesGrouping = onlineGames.Where(game => !game.IpdbUrl.IsEmpty()).GroupBy(game => game.IpdbUrl).Where(x => x.Count() > 1).ToList();
+        var duplicateGamesGrouping = onlineGames
+            .Where(game => !game.IsOriginal && !game.IpdbUrl.IsEmpty())
+            .GroupBy(game => game.IpdbUrl)
+            .Where(grouping => grouping.Count() > 1)
+            .ToList();
 
         duplicateGamesGrouping.ForEach(grouping =>
         {
-            // assign the unique and duplicate(s)
-            var game = FeederUtils.GetUniqueGame(grouping.ToList());
-            var duplicates = grouping.Except(game).ToList();
+            // determine the 'correct' unique game and designate the others as possible duplicates
+            var allGames = grouping.ToList();
+            var uniqueGame = FeederUtils.GetUniqueGame(allGames);
+            var duplicateGames = grouping.Except(uniqueGame).ToList();
 
-            LogFixed(game, FixStatisticsEnum.DuplicateGame, $"duplicate table(s)={duplicates.Select(x => x.Description).StringJoin()}");
+            // discard any duplicate games that don't don't fuzzy match the unique game
+            duplicateGames = duplicateGames.Where(duplicateGame =>
+            {
+                var (success, score) = Fuzzy.Match(uniqueGame, duplicateGame);
+                if (!success)
+                    Logger.Warn($"Merging duplicate table ignored because fuzzy match failed, score: {score}, IPDB url: {grouping.Key}\n" +
+                                $"- unique:    {uniqueGame}\n" +
+                                $"- duplicate: {duplicateGame}", true);
+                return success;
+            }).ToList();
 
-            Logger.Warn($"Merging duplicate tables detected in the online feed, IPDB url: {grouping.Key}\n" +
-                        $"- unique:    {game}\n" +
-                        $"- duplicate: {duplicates.Select(x => x.CreateDescription()).StringJoin()}", true);
+            LogFixed(uniqueGame, FixStatisticsEnum.DuplicateGame, $"duplicate table(s)={duplicateGames.Select(x => x.Description).StringJoin()}");
+
+            if (duplicateGames.Any())
+                Logger.Warn($"Merging duplicate tables detected in the online feed, IPDB url: {grouping.Key}\n" +
+                            $"- unique:    {uniqueGame}\n" +
+                            $"- duplicate: {duplicateGames.Select(x => x.CreateDescription()).StringJoin()}", true);
 
             // process the duplicates
-            duplicates.ForEach(duplicate =>
+            duplicateGames.ForEach(duplicate =>
             {
                 // merge games collections
-                game.TableFiles.AddRange(duplicate.TableFiles);
-                game.B2SFiles.AddRange(duplicate.B2SFiles);
-                game.WheelArtFiles.AddRange(duplicate.WheelArtFiles);
-                game.RomFiles.AddRange(duplicate.RomFiles);
-                game.MediaPackFiles.AddRange(duplicate.MediaPackFiles);
-                game.AltColorFiles.AddRange(duplicate.AltColorFiles);
-                game.SoundFiles.AddRange(duplicate.SoundFiles);
-                game.TopperFiles.AddRange(duplicate.TopperFiles);
-                game.PupPackFiles.AddRange(duplicate.PupPackFiles);
-                game.AltSoundFiles.AddRange(duplicate.AltSoundFiles);
-                game.RuleFiles.AddRange(duplicate.RuleFiles);
+                uniqueGame.TableFiles.AddRange(duplicate.TableFiles);
+                uniqueGame.B2SFiles.AddRange(duplicate.B2SFiles);
+                uniqueGame.WheelArtFiles.AddRange(duplicate.WheelArtFiles);
+                uniqueGame.RomFiles.AddRange(duplicate.RomFiles);
+                uniqueGame.MediaPackFiles.AddRange(duplicate.MediaPackFiles);
+                uniqueGame.AltColorFiles.AddRange(duplicate.AltColorFiles);
+                uniqueGame.SoundFiles.AddRange(duplicate.SoundFiles);
+                uniqueGame.TopperFiles.AddRange(duplicate.TopperFiles);
+                uniqueGame.PupPackFiles.AddRange(duplicate.PupPackFiles);
+                uniqueGame.AltSoundFiles.AddRange(duplicate.AltSoundFiles);
+                uniqueGame.RuleFiles.AddRange(duplicate.RuleFiles);
 
                 // remove duplicate
                 onlineGames.Remove(duplicate);

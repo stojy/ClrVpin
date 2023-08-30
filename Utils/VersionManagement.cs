@@ -89,7 +89,8 @@ namespace Utils
         private static async Task<string> Download(Release release)
         {
             // download as stream
-            using var httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
+            using var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromMinutes(5);
             var msiAsset = release.Assets.First(asset => asset.BrowserDownloadUrl.EndsWith(".msi"));
             await using var stream = await httpClient.GetStreamAsync(msiAsset.BrowserDownloadUrl);
             
