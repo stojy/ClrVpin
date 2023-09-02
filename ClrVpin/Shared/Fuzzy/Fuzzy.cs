@@ -70,7 +70,8 @@ public static class Fuzzy
         // - 2 options..
         //   a. number without decimal (or underscore) - requires v/V prefix
         //   b. number with decimal (or underscore) - optional v/V prefix
-        _versionRegex = new Regex(@"([vV]\d+$|[vV]?\d+\.+\d*\.*\d*\s*$|[vV]?\d+_+\d*_*\d*\s*$)", RegexOptions.Compiled);
+        // - https://regex101.com/r/UzSgoC/1
+        _versionRegex = new Regex(@"[^a-zA-Z0-9]+([vV]\d+$|[vV]?\d+\.+\d+\.*\d*\s*$|[vV]?\d+_+\d+_*\d*\s*$)", RegexOptions.Compiled);
 
         // preamble
         // - number.. aka file id (assumed 5 digits or more)

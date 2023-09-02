@@ -43,7 +43,7 @@ public class FuzzyTests
     [TestCase("1462262523_The Flintstones(Williams1994)v1.26.vpx", true, "flintstones", "flintstones", "flintstones", "williams", "williams", 1994, TestName = "file name starts with 'the' keyword")]
     [TestCase("Twilight Zone SG1bsoN Mod V3.vpx", true, "twilight zone", "twilightzone", "twilight zone", null, null, null, TestName = "file name with special author camelcase SG1bsoN")]
     [TestCase("Whirlwind 4K 1.1.vpx", true, "whirlwind", "whirlwind", "whirlwind", null, null, null, TestName = "ignore word: 4k #1 - no manufacturer/year")]
-    [TestCase(@"C:\vp\_downloaded\wheel images\V1 (IDSA 1986) Logo.png", true, null, null, null, "idsa", "idsa", 1986, TestName = "name stripped completely: empty string converted to null")]
+    [TestCase(@"C:\vp\_downloaded\wheel images\V1 (IDSA 1986) Logo.png", true, "v1", "v1", "v1", "idsa", "idsa", 1986, TestName = "name stripped completely: empty string converted to null")]
     [TestCase(@"1-2-3... (Automaticos 1973)", false, "1 2 3", "123", "1 2 3", "automaticos", "automaticos", 1973, TestName = "name has trailing periods")]
     [TestCase(@"1-2-3... (Automaticos 1973).vpx", true, "1 2 3", "123", "1 2 3", "automaticos", "automaticos", 1973, TestName = "name has trailing periods")]
     [TestCase(@"1-2-3... (My MANufacturer   is me 1973).vpx", true, "1 2 3", "123", "1 2 3", "my manufacturer is me", "mymanufacturerisme", 1973, TestName = "manufacturer variant - multiple spaces and capitilisation")]
@@ -82,6 +82,7 @@ public class FuzzyTests
     [TestCase("Twilight Zone v1.2 - VP10.vpx", true, "twilightzone", TestName = "remove version with decimal - version before hyphen and IS at the end (VP10 keyword removed) - number to be stripped")]
     [TestCase("Twilight Zone v1_2 - VP10.vpx", true, "twilightzone", TestName = "remove version with underscore - version before hyphen and IS at the end (VP10 keyword removed) - number to be stripped")]
     [TestCase("._Twilight Zone SG1bsoN Mod V3.vpx", true, "twilightzone", TestName = "remove multple.. author, version, mod, etc")]
+    [TestCase("2in1_", true, "2in1", TestName = "1_ is not confused with a parital version number")]
     [TestCase("the black knight", false, "black knight", TestName = "remove 'the'")]
     [TestCase("black&apos; knight", false, "black knight", TestName = "remove '&apos;'")]
     [TestCase("black' knight", false, "black knight", TestName = "remove '''")]
@@ -176,7 +177,8 @@ public class FuzzyTests
     [TestCase("Mum (Spooky Pinball LLC 2014)", "Mom (spooky 2014) b2s v3.directb2s", false, TestName = "single character wrong: levenshtein distance 1, but length too short")]
     [TestCase("Big Brave (Gottlieb 1974)", "Big_Brave_VP99_EN_4player_b2s.directb2s", true, TestName = "various exception words: author, 4player, b2s, etc")]
     [TestCase("Lord Of The Rings (Stern 2003)", "Lord_of_the_Rings_VPW_2022.directb2s", true, TestName = "created year in title")]
-    [TestCase("V1 (IDSA 1986)", "V1 (IDSA 1986) Logo.png", false, TestName = "correct name: but name cleansing removes all contents")]
+    [TestCase("V1 (IDSA 1986)", "V1 (IDSA 1986) Logo.png", true, TestName = "correct name #1: name cleansing does  not removes all contents because name is not mistaken for a version number")]
+    [TestCase("V1.1 (IDSA 1986)", "V1.1 (IDSA 1986) Logo.png", true, TestName = "correct name #2: name cleansing does  not removes all contents because name is not mistaken for a version number")]
     [TestCase("Sir Lancelot (Peyper 1994)", "Sir Lancelot (Peyper 1984) Logo.png", false, TestName = "perfect name match: but wrong decade")]
     public void MatchTest(string gameName, string fileName, bool expectedSuccess)
     {
@@ -229,7 +231,9 @@ public class FuzzyTests
     [TestCase("Whirlwind (Williams 1990)", "Whirlwind 4K 1.1.vpx", 146, TestName = "match without white space (no hyphen): should score higher, no manufacturer/year")]
     [TestCase("Whirl-Wind (Gottlieb 1958)", "Whirlwind 4K 1.1.vpx", 141, TestName = "match with whitespace (hyphen converts to whitespace): should match lower, no manufacturer/year")]
     [TestCase("Americas Most Haunted (Spooky Pinball LLC 2014)", "Americs Most Haunted (spooky 2014) b2s v3.directb2s", 176, TestName = "match with Levenshtein distance, unmatched manufacturer")]
-    [TestCase("V1 (IDSA 1986) Logo", "V1 (IDSA 1986) Logo.png", 65, TestName = "perfect match: but no name match score because the cleansed names are null.. since 'v1' is stripped")]
+    [TestCase("V1 (IDSA 1986) Logo", "V1 (IDSA 1986) Logo.png", 220, TestName = "perfect match #1: match score pass because the cleansed name is not confused with a partial version.. since 'v1' prefix has non-whiteppace)")]
+    [TestCase(" V1 (IDSA 1986) Logo", "V1 (IDSA 1986) Logo.png", 220, TestName = "perfect match #2: match score pass because cleansed name is not confused with a partial version.. since 'v1' prefix has non-whiteppace AFTER the string is trimmed)")]
+    [TestCase("aV1 (IDSA 1986) Logo", "V1 (IDSA 1986) Logo.png", 65, TestName = "perfect match #3: match score failed because the cleaned name does not have the version number parsed due to prefix non-whitespace")]
     [TestCase(@"123 (Talleres de Llobregat 1973)", @"1-2-3... (Automaticos 1973).vpx", 190, TestName = "trailing periods, manufacturer mismatch")]
     [TestCase(@"The Walking Dead (Stern 2014)", @"'The Walking Dead (Stern 2014)", 223, TestName = "manufacturer - exact match ")]
     [TestCase(@"The Walking Dead (Stern 2014)", @"'The Walking Dead (Zen Studios 2014)", 198, TestName = "manufacturer - wrong")]
@@ -281,6 +285,7 @@ public class FuzzyTests
     [TestCase("Black Hole (LTD do Brazil 1982)", "LTD Black Hole.vpx", 16, TestName = "failed match - 'ends with' match (because of LTD prefix) and no manufacturer/year match")]
     [TestCase("Black Hole (Gottlieb 1981)", "Black Hole.vpx", 146, TestName = "exact name match - without manufacturer/year")]
     [TestCase("Tales of the Arabian Nights (Williams 1996)", "TOTAN4k 1.5.vpx", 232, TestName = "alias: totan")]
+    [TestCase("2 in 1 (Bally 1964)", "2in1_(Bally 1964)_rev_1.00.vpx", 215, TestName = "trailing number and underscore (1_) should not be confused with an incomplete version number")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
@@ -385,10 +390,11 @@ public class FuzzyTests
         Assert.That(isMatch, Is.True);
 
         // third chance - no name score match, no unique fuzzy file name match.. but a unique hit on the raw (non-cleaned) table name
-        fileDetails = Fuzzy.GetTableDetails("V1 (IDSA 1986) Logo.png", true);
-        (game, score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
-        Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
-        Assert.That(score, Is.EqualTo(150));
-        Assert.That(isMatch, Is.True);
+        // - NO LONGER APPLICABLE NOW THAT VERSION NUMBERING HAS BEEN IMPROVED TO NO LONGER INCORRECTLY CONSIDER THIS A NON-FIRST CHANCE MATCH
+        //fileDetails = Fuzzy.GetTableDetails("V1.2 (IDSA 1986) Logo.png", true);
+        //(game, score, isMatch) = localGames.MatchToLocalDatabase(fileDetails);
+        //Assert.That(game?.Derived.Ipdb, Is.EqualTo("7"));
+        //Assert.That(score, Is.EqualTo(150));
+        //Assert.That(isMatch, Is.True);
     }
 }
