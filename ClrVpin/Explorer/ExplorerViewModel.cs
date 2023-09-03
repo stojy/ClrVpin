@@ -84,7 +84,7 @@ public class ExplorerViewModel : IShowViewModel
 
         await ShowResults(games, unmatchedFiles, progress.Duration);
 
-        void UpdateProgress(string detail, float ratioComplete) => progress.Update(null, ratioComplete, detail);
+        void UpdateProgress(string detail, int current, int total) => progress.Update(null, null, detail, current, total);
     }
 
     private async Task ShowResults(List<LocalGame> localGames, ICollection<FileDetail> unmatchedFiles, TimeSpan duration)

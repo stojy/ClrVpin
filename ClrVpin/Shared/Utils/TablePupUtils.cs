@@ -10,19 +10,19 @@ namespace ClrVpin.Shared.Utils;
 
 public static class TablePupUtils
 {
-    public static async Task<List<(string file, bool? isSuccess, string name)>> GetPupsAsync(IEnumerable<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
+    public static async Task<List<(string file, bool? isSuccess, string name)>> GetPupsAsync(IEnumerable<TableFileDetail> tableFileDetails, Action<string, int, int> updateAction)
     {
         // run on a separate thread to avoid blocking the caller thread (e.g. UI) since this is a potentially slow operation
         return await Task.Run(() => GetPups(tableFileDetails.ToList(), updateAction));
     }
 
-    private static List<(string file, bool? isSuccess, string name)> GetPups(ICollection<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
+    private static List<(string file, bool? isSuccess, string name)> GetPups(ICollection<TableFileDetail> tableFileDetails, Action<string, int, int> updateAction)
     {
         var totalFiles = tableFileDetails.Count;
 
         return tableFileDetails.Select((tableFile, i) =>
         {
-            updateAction(Path.GetFileName(tableFile.Path), (i + 1) / (float)totalFiles);
+            updateAction(Path.GetFileName(tableFile.Path), i + 1, totalFiles);
             return GetPup(tableFile.Path);
         }).ToList();
     }

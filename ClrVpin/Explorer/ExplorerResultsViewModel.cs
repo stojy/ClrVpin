@@ -182,7 +182,7 @@ public class ExplorerResultsViewModel
         // extract ROMs
         var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)).ToList();
         var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(tableFile.LocalGame.Game.Type, tableFile.LocalGame.Content.Hits.First().Path));
-        var roms = await TableRomUtils.GetRomsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
+        var roms = await TableRomUtils.GetRomsAsync(tableFileDetails, (file, current, total) => progress.Update(null, null, file, current, total));
 
         // update DB
         // - don't overwrite existing DB entries if the table parsing failed
@@ -215,7 +215,7 @@ public class ExplorerResultsViewModel
         // extract PuPs
         var tableFiles = GameItems.Where(gameItem => gameItem.LocalGame.Content.Hits.Any(hit => hit.ContentTypeEnum == ContentTypeEnum.Tables && hit.IsPresent)).ToList();
         var tableFileDetails = tableFiles.Select(tableFile => new TableFileDetail(null, tableFile.LocalGame.Content.Hits.First().Path));
-        var pups = await TablePupUtils.GetPupsAsync(tableFileDetails, (file, rationComplete) => progress.Update(file, rationComplete));
+        var pups = await TablePupUtils.GetPupsAsync(tableFileDetails, (file, current, total) => progress.Update(null, null, file, current, total));
 
         // update DB
         // - don't overwrite existing DB entries if the table parsing failed

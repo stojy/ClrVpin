@@ -18,18 +18,18 @@ namespace ClrVpin.Cleaner;
 
 public static class CleanerUtils
 {
-    public static async Task<List<FileDetail>> FixAsync(List<LocalGame> games, string backupFolder, Action<string, float> updateProgress)
+    public static async Task<List<FileDetail>> FixAsync(List<LocalGame> games, string backupFolder, Action<string, int, int> updateProgress)
     {
         var fixedFileDetails = await Task.Run(() => Fix(games, backupFolder, updateProgress));
         return fixedFileDetails;
     }
 
-    public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
+    public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, int, int> updateProgress)
     {
         await Task.Run(() => RemoveUnmatched(unmatchedFiles, updateProgress));
     }
 
-    private static List<FileDetail> Fix(ICollection<LocalGame> localGames, string backupFolder, Action<string, float> updateProgress)
+    private static List<FileDetail> Fix(ICollection<LocalGame> localGames, string backupFolder, Action<string, int, int> updateProgress)
     {
         FileUtils.SetActiveBackupFolder(backupFolder);
 
@@ -70,7 +70,7 @@ public static class CleanerUtils
             // fix files associated with localGame, if they satisfy the fix criteria
             fixableContentLocalGames.ForEachParallel(fixableContentLocalGame =>
             {
-                updateProgress(fixableContentLocalGame.Game.Description, Interlocked.Increment(ref gamesWithContentCount) / (float)gamesWithContentMaxCount);
+                updateProgress(fixableContentLocalGame.Game.Description, Interlocked.Increment(ref gamesWithContentCount), gamesWithContentMaxCount);
 
                 var gameContentHits = fixableContentLocalGame.Content.ContentHitsCollection.First(contentHits => contentHits.ContentType == contentType);
 
@@ -166,7 +166,7 @@ public static class CleanerUtils
             gameFiles.Add(FileUtils.Rename(preferredHit, localGame, _settings.Cleaner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
     }
 
-    private static void RemoveUnmatched(IEnumerable<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
+    private static void RemoveUnmatched(IEnumerable<FileDetail> unmatchedFiles, Action<string, int, int> updateProgress)
     {
         // delete files NOT associated with localGame, aka unmatched files
         var unmatchedFilesToDelete = unmatchedFiles.Where(unmatchedFile =>
@@ -175,7 +175,7 @@ public static class CleanerUtils
 
         unmatchedFilesToDelete.ForEach((fileDetail, i) =>
         {
-            updateProgress(Path.GetFileName(fileDetail.Path), (i + 1f) / unmatchedFilesToDelete.Count);
+            updateProgress(Path.GetFileName(fileDetail.Path), i + 1,  unmatchedFilesToDelete.Count);
 
             var contentType = fileDetail.ContentType.GetDescription();
             Logger.Info($"Fixing (unmatched).. table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {contentType}");

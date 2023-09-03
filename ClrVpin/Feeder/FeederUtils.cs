@@ -26,12 +26,12 @@ public static class FeederUtils
         };
     }
 
-    public static async Task MatchOnlineToLocalAsync(List<LocalGame> localGames, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+    public static async Task MatchOnlineToLocalAsync(List<LocalGame> localGames, List<OnlineGame> onlineGames, Action<string, int, int> updateProgress)
     {
         await Task.Run(() => MatchOnlineToLocal(localGames, onlineGames, updateProgress));
     }
 
-    public static async Task<IList<GameItem>> MergeOnlineAndLocalGamesAsync(List<LocalGame> localGames, List<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+    public static async Task<IList<GameItem>> MergeOnlineAndLocalGamesAsync(List<LocalGame> localGames, List<OnlineGame> onlineGames, Action<string, int, int> updateProgress)
     {
         return await Task.Run(() => MergeLocalAndOnlineGames(localGames, onlineGames, updateProgress));
     }
@@ -70,11 +70,11 @@ public static class FeederUtils
         return uniqueGame;
     }
 
-    private static void MatchOnlineToLocal(IList<LocalGame> localGames, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+    private static void MatchOnlineToLocal(IList<LocalGame> localGames, ICollection<OnlineGame> onlineGames, Action<string, int, int> updateProgress)
     {
         onlineGames.ForEachParallel((onlineGame, i) =>
         {
-            updateProgress(onlineGame.Name, (i + 1f) / onlineGames.Count);
+            updateProgress(onlineGame.Name, i + 1, onlineGames.Count);
 
             // todo; perform an exact match check to potentially avoid the need for the more expensive fuzzy match check
             // - similar to DatabaseUtils.MatchFilesToLocal() uses since VPX/PBY mandates that the entries must be the same!
@@ -155,7 +155,7 @@ public static class FeederUtils
         localMatchedLocalGame.OnlineGame = onlineGame;
     }
 
-    private static List<GameItem> MergeLocalAndOnlineGames(IEnumerable<LocalGame> localGames, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
+    private static List<GameItem> MergeLocalAndOnlineGames(IEnumerable<LocalGame> localGames, ICollection<OnlineGame> onlineGames, Action<string, int, int> updateProgress)
     {
         // the earlier 'online to local' matching has already determined the matches.. so no need to redo it again
         // - deliberately NOT performing a 'reverse' fuzzy lookup to avoid scenario where x1 online game could have multiple local files
@@ -179,9 +179,9 @@ public static class FeederUtils
 
         // logging - unmatched games
         Logger.Info($"Fuzzy matching: unmatched table count={localOnlyGames.Count} (only exists in the local database.. unrestricted to include manufactured and original tables)");
-        localOnlyGames.OrderBy(localGame => localGame.Game.Name).ForEach(onlyLocalGame =>
+        localOnlyGames.OrderBy(localGame => localGame.Game.Name).ForEach((onlyLocalGame, i) =>
         {
-            updateProgress(onlyLocalGame.Game.Name, null);
+            updateProgress(onlyLocalGame.Game.Name, i + 1, localOnlyGames.Count);
             Logger.Debug($"- unmatched table: '{onlyLocalGame.Game.Name}'");
         });
         

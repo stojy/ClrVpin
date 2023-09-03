@@ -11,7 +11,7 @@ namespace ClrVpin.Shared.Utils;
 
 public static class TableRomUtils
 {
-    public static async Task<List<(string file, bool? isSuccess, string name)>> GetRomsAsync(IEnumerable<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
+    public static async Task<List<(string file, bool? isSuccess, string name)>> GetRomsAsync(IEnumerable<TableFileDetail> tableFileDetails, Action<string, int, int> updateAction)
     {
         // run on a separate thread to avoid blocking the caller thread (e.g. UI) since this is a potentially slow operation
         return await Task.Run(() => GetRoms(tableFileDetails.ToList(), updateAction));
@@ -22,13 +22,13 @@ public static class TableRomUtils
         return TableUtils.GetName(path, "ROM", fileName => type.In(TableType.PureMechanical, TableType.ElectroMagnetic) || _solidStateTablesWithoutRomSupport.Contains(fileName), GetRomName, skipLogging);
     }
 
-    private static List<(string file, bool? isSuccess, string name)> GetRoms(ICollection<TableFileDetail> tableFileDetails, Action<string, float> updateAction)
+    private static List<(string file, bool? isSuccess, string name)> GetRoms(ICollection<TableFileDetail> tableFileDetails, Action<string, int, int> updateAction)
     {
         var totalFiles = tableFileDetails.Count;
 
         return tableFileDetails.Select((tableFile, i) =>
         {
-            updateAction(Path.GetFileName(tableFile.Path), (i + 1) / (float)totalFiles);
+            updateAction(Path.GetFileName(tableFile.Path), (i + 1), totalFiles);
             return GetRom(tableFile.Type, tableFile.Path);
         }).ToList();
     }

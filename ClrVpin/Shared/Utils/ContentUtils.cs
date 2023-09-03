@@ -39,7 +39,7 @@ internal static class ContentUtils
         return unsupportedFixFiles.ToList();
     }
 
-    public static async Task<List<FileDetail>> MatchContentToLocalAsync(List<LocalGame> games, Action<string, float> updateProgress, ContentType[] contentTypes, bool includeUnsupportedFiles)
+    public static async Task<List<FileDetail>> MatchContentToLocalAsync(List<LocalGame> games, Action<string, int, int> updateProgress, ContentType[] contentTypes, bool includeUnsupportedFiles)
     {
         var unmatchedFiles = await Task.Run(() => MatchContentToLocal(games, updateProgress, contentTypes, includeUnsupportedFiles));
         return unmatchedFiles;
@@ -47,17 +47,18 @@ internal static class ContentUtils
 
     public static void NavigateToIpdb(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 
-    public static IEnumerable<FileDetail> MatchFilesToLocal(IList<LocalGame> localGames, IEnumerable<string> contentFiles, ContentType contentType,
-        Func<LocalGame, ContentHits> getContentHits, Action<string, int> updateProgress)
+    public static IEnumerable<FileDetail> MatchFilesToLocal(IList<LocalGame> localGames, IList<string> contentFiles, ContentType contentType,
+        Func<LocalGame, ContentHits> getContentHits, Action<string, int, int> updateProgress)
     {
         var unmatchedSupportedFiles = new ConcurrentBag<FileDetail>();
 
         // for each file, associate it with a game or if one can't be found, then mark it as unmatched
         // - ASSOCIATION IS DONE IRRESPECTIVE OF THE USER'S SELECTED PREFERENCE, I.E. THE USE SELECTIONS ARE CHECKED ELSEWHERE
+        var totalFilesCount = contentFiles.Count;
         contentFiles.ForEachParallel((contentFile, i) =>
         {
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(contentFile);
-            updateProgress(fileNameWithoutExtension, i + 1);
+            updateProgress(fileNameWithoutExtension, i + 1, totalFilesCount);
 
             LocalGame matchedLocalGame;
 
@@ -108,7 +109,7 @@ internal static class ContentUtils
         return unmatchedSupportedFiles.ToList().OrderBy(file => file.Path);
     }
 
-    private static List<FileDetail> MatchContentToLocal(List<LocalGame> games, Action<string, float> updateProgress, IEnumerable<ContentType> checkContentTypes, bool includeUnsupportedFiles)
+    private static List<FileDetail> MatchContentToLocal(List<LocalGame> games, Action<string, int, int> updateProgress, IEnumerable<ContentType> checkContentTypes, bool includeUnsupportedFiles)
     {
         var unmatchedFiles = new List<FileDetail>();
 
@@ -132,7 +133,7 @@ internal static class ContentUtils
             // - any files that can't be matched are designated as 'unknownFiles'.. which form part of 'unmatchedFiles'
             var unmatchedSupportedFiles = MatchFilesToLocal(games, supportedFiles, contentType, 
                 game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
-                (fileName, _) => updateProgress($"{contentType.Description}: {fileName}", ++fileCount / (float)totalFilesCount));
+                (fileName, _, _) => updateProgress($"{contentType.Description}: {fileName}", ++fileCount, totalFilesCount));
 
             // unmatched files = unmatchedSupportedFiles (supported file type, but failed to match) + unsupportedFiles (unsupported file type)
             unmatchedFiles.AddRange(unmatchedSupportedFiles);

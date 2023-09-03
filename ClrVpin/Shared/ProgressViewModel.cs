@@ -79,7 +79,7 @@ internal class ProgressViewModel
             Status = status;
 
         Current = current;
-        Total = current;
+        Total = total;
 
         // either use the ratio if provided, else calculate it if the current/total are provided
         if (ratioComplete != null)

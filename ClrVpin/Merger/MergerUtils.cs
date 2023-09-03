@@ -24,24 +24,24 @@ namespace ClrVpin.Merger
             _settings = Model.Settings;
         }
 
-        public static async Task<List<FileDetail>> CheckAndMatchAsync(List<LocalGame> games, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> CheckAndMatchAsync(List<LocalGame> games, Action<string, int, int> updateProgress)
         {
             var unmatchedFiles = await Task.Run(() => CheckAndMatch(games, updateProgress));
             return unmatchedFiles;
         }
 
-        public static async Task<List<FileDetail>> MergeAsync(List<LocalGame> games, string backupFolder, Action<string, float> updateProgress)
+        public static async Task<List<FileDetail>> MergeAsync(List<LocalGame> games, string backupFolder, Action<string, int, int> updateProgress)
         {
             var mergedFileDetails = await Task.Run(() => Merge(games, backupFolder, updateProgress));
             return mergedFileDetails;
         }
 
-        public static async Task RemoveUnmatchedIgnoredAsync(List<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
+        public static async Task RemoveUnmatchedIgnoredAsync(List<FileDetail> unmatchedFiles, Action<string, int, int> updateProgress)
         {
             await Task.Run(() => RemoveUnmatchedIgnored(unmatchedFiles, updateProgress));
         }
 
-        private static List<FileDetail> CheckAndMatch(IList<LocalGame> games, Action<string, float> updateProgress)
+        private static List<FileDetail> CheckAndMatch(IList<LocalGame> games, Action<string, int, int> updateProgress)
         {
             // determine the destination type
             var contentType = _settings.GetSelectedDestinationContentType();
@@ -50,7 +50,7 @@ namespace ClrVpin.Merger
             var contentFiles = ContentUtils.GetContentFileNames(contentType, _settings.Merger.SourceFolder);
             var unmatchedSupportedFiles = ContentUtils.MatchFilesToLocal(games, contentFiles, contentType, 
                 game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
-                (fileName, fileCount) => updateProgress(fileName, fileCount / (float)contentFiles.Count));
+                (fileName, fileCount, _) => updateProgress(fileName, fileCount, contentFiles.Count));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension
             var nonContentFiles = ContentUtils.GetNonContentFileDetails(contentType, _settings.Merger.SourceFolder);
@@ -59,7 +59,7 @@ namespace ClrVpin.Merger
             return unmatchedSupportedFiles.Concat(nonContentFiles).ToList();
         }
 
-        private static List<FileDetail> Merge(IEnumerable<LocalGame> games, string backupFolder, Action<string, float> updateProgress)
+        private static List<FileDetail> Merge(IEnumerable<LocalGame> games, string backupFolder, Action<string, int, int> updateProgress)
         {
             FileUtils.SetActiveBackupFolder(backupFolder);
 
@@ -74,7 +74,7 @@ namespace ClrVpin.Merger
             
             gamesWithContent.ForEachParallel((game, i) =>
             {
-                updateProgress(game.Game.Description, (i + 1f) / gamesWithContent.Count);
+                updateProgress(game.Game.Description, i + 1, gamesWithContent.Count);
 
                 // retrieve the relevant content hit collection
                 var contentHitCollection = game.Content.ContentHitsCollection.First(x => x.Hits.Any());
@@ -199,7 +199,7 @@ namespace ClrVpin.Merger
             return true;
         }
 
-        private static void RemoveUnmatchedIgnored(IList<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
+        private static void RemoveUnmatchedIgnored(IList<FileDetail> unmatchedFiles, Action<string, int, int> updateProgress)
         {
             // delete files NOT associated with games (aka unknown files)
             // - n/a for any files that are matched as this is already considered (aka removed) during Merge()..
@@ -213,7 +213,7 @@ namespace ClrVpin.Merger
 
             unmatchedFilesToDelete.ForEach((fileDetail, i) =>
             {
-                updateProgress(Path.GetFileName(fileDetail.Path), (i + 1f) / unmatchedFilesToDelete.Count);
+                updateProgress(Path.GetFileName(fileDetail.Path), i + 1, unmatchedFilesToDelete.Count);
 
                 ProcessIgnore(null, IgnoreCriteriaEnum.IgnoreIfContainsWords.GetDescription(), fileDetail.HitType, fileDetail.ContentType, null, new FileInfo(fileDetail.Path!), null);
 

@@ -150,7 +150,7 @@ public class FeederViewModel : IShowViewModel
         await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics);
         Logger.Info($"Feeder rendered, duration={progress.Duration}", true);
 
-        void UpdateProgress(string detail, float? ratioComplete) => progress.Update(null, ratioComplete, detail);
+        void UpdateProgress(string detail, int current, int total) => progress.Update(null, null, detail, current, total);
     }
 
     private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, IList<LocalGame> localGames, Dictionary<string, int> fixStatistics)
