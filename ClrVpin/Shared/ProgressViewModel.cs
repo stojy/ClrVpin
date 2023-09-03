@@ -73,16 +73,25 @@ internal class ProgressViewModel
         _timer.Change(0, 0);
     }
 
-    public void Update(string status, float? ratioComplete = null, string detail = null)
+    public void Update(string status, float? ratioComplete = null, string detail = null, int? current = null, int? total = null)
     {
         if (status != null)
             Status = status;
 
+        Current = current;
+        Total = current;
+
+        // either use the ratio if provided, else calculate it if the current/total are provided
         if (ratioComplete != null)
             Percentage = (int)(100 * ratioComplete.Value);
+        else if (current != null && total != null)
+            Percentage = (int)(100 * ((float)current / total));
 
         Detail = detail;
     }
+
+    public int? Current { get; set; }
+    public int? Total { get; set; }
 
     private readonly CancellationTokenSource _cancellationTokenSource;
 
