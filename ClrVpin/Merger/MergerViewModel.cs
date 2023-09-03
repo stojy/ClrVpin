@@ -80,6 +80,8 @@ public class MergerViewModel : IShowViewModel
     public FeatureType IgnoreIfNotNewerFeature { get; private set; }
     public FeatureType IgnoreIfSmallerFeature { get; private set; }
     public FeatureType IgnoreIfContainsWordsFeature { get; private set; }
+    public FeatureType IgnoreIfFileIsInvalidFeature { get; set; }
+    
     public FeatureType DeleteIgnoredFilesOptionFeature { get; private set; }
     public FeatureType IgnoreSelectClearAllFeature { get; private set; }
 
@@ -162,6 +164,7 @@ public class MergerViewModel : IShowViewModel
         IgnoreIfContainsWordsFeature = ignoreFeatureTypesView.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfContainsWords);
         IgnoreIfSmallerFeature = ignoreFeatureTypesView.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfSmaller);
         IgnoreIfNotNewerFeature = ignoreFeatureTypesView.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfNotNewer);
+        IgnoreIfFileIsInvalidFeature = ignoreFeatureTypesView.First(x => x.Id == (int)IgnoreCriteriaEnum.IgnoreIfFileIsInvalid);
         IgnoreSelectClearAllFeature = ignoreFeatureTypesView.First(x => x.Id == FeatureOptions.SelectAllId);
 
         // delete ignored isn't technically an ignored option.. but added here to keep it visually consistent
@@ -169,6 +172,7 @@ public class MergerViewModel : IShowViewModel
         DeleteIgnoredFilesOptionFeature.SelectedCommand = new ActionCommand(() => Settings.Merger.DeleteIgnoredFiles = !Settings.Merger.DeleteIgnoredFiles);
         ignoreFeatureTypesView.AddNewItem(DeleteIgnoredFilesOptionFeature);
     }
+
 
     private async void Start()
     {

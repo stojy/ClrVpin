@@ -7,5 +7,6 @@ namespace ClrVpin.Models.Shared.Enums
         [Description("Ignore If Not Newer")] IgnoreIfNotNewer,
         [Description("Ignore If Smaller By Percentage")] IgnoreIfSmaller,
         [Description("Ignore If Contains Words")] IgnoreIfContainsWords,
+        [Description("Ignore If File Is Invalid")] IgnoreIfFileIsInvalid,
     }
 }

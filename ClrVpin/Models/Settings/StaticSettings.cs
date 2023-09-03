@@ -76,7 +76,8 @@ namespace ClrVpin.Models.Settings
         {
             new() {Enum = IgnoreCriteriaEnum.IgnoreIfContainsWords, Tip = "If the file is matched: ignore the source file if it contains any of the configured words"},
             new() {Enum = IgnoreCriteriaEnum.IgnoreIfSmaller, Tip = "If a destination file with the same name already exists: ignore the source file if it's smaller based on the specified percentage"},
-            new() {Enum = IgnoreCriteriaEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"}
+            new() {Enum = IgnoreCriteriaEnum.IgnoreIfNotNewer, Tip = "If a destination file with the same name already exists: ignore the source file if it's not newer (using last modified timestamp)"},
+            new() {Enum = IgnoreCriteriaEnum.IgnoreIfFileIsInvalid, Tip = "Ignore the source file if the file is considered as invalid (e.g. file size less than 1kB)"}
         };
 
         public static readonly EnumOption<DeleteIgnoredFilesEnum> DeleteIgnoredFilesOption = 

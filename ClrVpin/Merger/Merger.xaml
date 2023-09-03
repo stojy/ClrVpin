@@ -126,8 +126,10 @@
 
           <ContentControl Content="{Binding IgnoreIfNotNewerFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" HorizontalAlignment="Left" Width="230" />
 
-          <ContentControl Content="{Binding DeleteIgnoredFilesOptionFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
+          <ContentControl Content="{Binding IgnoreIfFileIsInvalidFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
 
+          <ContentControl Content="{Binding DeleteIgnoredFilesOptionFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
+          
           <ContentControl Content="{Binding IgnoreSelectClearAllFeature}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
         </StackPanel>
       </GroupBox>

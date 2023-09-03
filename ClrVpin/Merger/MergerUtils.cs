@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models.Merger;
@@ -150,6 +151,11 @@ namespace ClrVpin.Merger
             // opt out: scan through each ignore criteria to determine if the file should be considered 'merge worthy'
             // - unlike cleaner 'multiple match preference'.. which is more of an 'opt in'
 
+            // ignore if the file is invalid
+            // - currently a very basic check on file size.. but this could be extended in the future to examine the file contents
+            if (_settings.Merger.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfFileIsInvalid) && sourceFileInfo.Length < 1024)
+                return ProcessIgnore(game, IgnoreCriteriaEnum.IgnoreIfFileIsInvalid.GetDescription(), hit, sourceFileInfo, destinationFileInfo, logAction);
+
             // contains words - destination file isn't required (although a table match is required)
             if (_settings.Merger.SelectedIgnoreCriteria.Contains(IgnoreCriteriaEnum.IgnoreIfContainsWords) && _settings.Merger.IgnoreIWords.Any(x => sourceFileInfo.Name.ToLower().Contains(x)))
                 return ProcessIgnore(game, IgnoreCriteriaEnum.IgnoreIfContainsWords.GetDescription(), hit, sourceFileInfo, destinationFileInfo, logAction);
@@ -173,9 +179,14 @@ namespace ClrVpin.Merger
         private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo, Action logAction) => ProcessIgnore(
             game, ignoreCriteriaDescription, hit.Type, hit.ContentTypeEnum, hit, sourceFileInfo, destinationFileInfo, logAction);
 
+        private static object _processIgnoreLock = new();
+
         private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, HitTypeEnum hitTypeEnum, ContentTypeEnum contentTypeEnum, Hit hit, FileSystemInfo sourceFileInfo,
             FileSystemInfo destinationFileInfo, Action logAction = null)
         {
+            // added lock to ensure the logs are not intermingled from other concurrent access, i.e. we want to keep these log lines together
+            Monitor.Enter(_processIgnoreLock);
+            
             var prefix = _settings.Merger.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
             Logger.Info($"{prefix}.. table: {game?.Name ?? "n/a"}, description: {game?.Description ?? "n/a"}, type: {hitTypeEnum.GetDescription()}, " +
                         $"content: {contentTypeEnum.GetDescription()}, ignore option: {ignoreCriteriaDescription}, delete ignored: {_settings.Merger.DeleteIgnoredFiles}");
@@ -196,6 +207,9 @@ namespace ClrVpin.Merger
                 // 2. destination file - may not exist, i.e. this is a new file name (aka new content)
                 Logger.Debug($"- ignored..\n  source: {FileUtils.GetFileInfoStatistics(sourceFileInfo.FullName)}\n  dest:   {FileUtils.GetFileInfoStatistics(destinationFileInfo?.FullName)}");
             }
+            
+            Monitor.Exit(_processIgnoreLock);
+
             return true;
         }
 
