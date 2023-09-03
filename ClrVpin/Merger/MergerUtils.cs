@@ -48,7 +48,8 @@ namespace ClrVpin.Merger
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
             var contentFiles = ContentUtils.GetContentFileNames(contentType, _settings.Merger.SourceFolder);
-            var unmatchedSupportedFiles = ContentUtils.MatchFilesToLocal(games, contentFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
+            var unmatchedSupportedFiles = ContentUtils.MatchFilesToLocal(games, contentFiles, contentType, 
+                game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
                 (fileName, fileCount) => updateProgress(fileName, fileCount / (float)contentFiles.Count));
 
             // identify any unsupported files, i.e. files in the directory that don't have a matching extension

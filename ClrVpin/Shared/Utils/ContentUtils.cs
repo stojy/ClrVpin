@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -49,11 +50,11 @@ internal static class ContentUtils
     public static IEnumerable<FileDetail> MatchFilesToLocal(IList<LocalGame> localGames, IEnumerable<string> contentFiles, ContentType contentType,
         Func<LocalGame, ContentHits> getContentHits, Action<string, int> updateProgress)
     {
-        var unmatchedSupportedFiles = new List<FileDetail>();
+        var unmatchedSupportedFiles = new ConcurrentBag<FileDetail>();
 
         // for each file, associate it with a game or if one can't be found, then mark it as unmatched
         // - ASSOCIATION IS DONE IRRESPECTIVE OF THE USER'S SELECTED PREFERENCE, I.E. THE USE SELECTIONS ARE CHECKED ELSEWHERE
-        contentFiles.ForEach((contentFile, i) =>
+        contentFiles.ForEachParallel((contentFile, i) =>
         {
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(contentFile);
             updateProgress(fileNameWithoutExtension, i + 1);
@@ -104,7 +105,7 @@ internal static class ContentUtils
             }
         });
 
-        return unmatchedSupportedFiles;
+        return unmatchedSupportedFiles.ToList().OrderBy(file => file.Path);
     }
 
     private static List<FileDetail> MatchContentToLocal(List<LocalGame> games, Action<string, float> updateProgress, IEnumerable<ContentType> checkContentTypes, bool includeUnsupportedFiles)
@@ -129,7 +130,8 @@ internal static class ContentUtils
 
             // for the specified content type, match all retrieved files to local database game entries
             // - any files that can't be matched are designated as 'unknownFiles'.. which form part of 'unmatchedFiles'
-            var unmatchedSupportedFiles = MatchFilesToLocal(games, supportedFiles, contentType, game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
+            var unmatchedSupportedFiles = MatchFilesToLocal(games, supportedFiles, contentType, 
+                game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
                 (fileName, _) => updateProgress($"{contentType.Description}: {fileName}", ++fileCount / (float)totalFilesCount));
 
             // unmatched files = unmatchedSupportedFiles (supported file type, but failed to match) + unsupportedFiles (unsupported file type)

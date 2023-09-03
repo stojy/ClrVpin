@@ -8,6 +8,7 @@ using PropertyChanged;
 namespace ClrVpin.Models.Shared.Game;
 
 [AddINotifyPropertyChangedInterface]
+// game definition retrieved from the local DB
 public class LocalGame
 {
     public void Init(int? number = null)

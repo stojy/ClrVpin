@@ -39,7 +39,8 @@ public static class CleanerUtils
         var gamesWithContentCount = 0;
         var gamesWithContentMaxCount = 0;
             
-        static bool GamesWithContentPredicate(LocalGame localGame, ContentType contentType) => localGame.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing));
+        static bool GamesWithContentPredicate(LocalGame localGame, ContentType contentType) 
+            => localGame.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing));
 
         selectedContentTypes.ForEach(contentType =>
         {
