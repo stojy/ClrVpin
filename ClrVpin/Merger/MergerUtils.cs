@@ -49,7 +49,7 @@ namespace ClrVpin.Merger
 
             // for the specified content type, match files (from the source folder) with the correct file extension(s) to a table
             var contentFiles = ContentUtils.GetContentFileNames(contentType, _settings.Merger.SourceFolder);
-            var unmatchedSupportedFiles = ContentUtils.MatchFilesToLocal(games, contentFiles, contentType, 
+            var unmatchedSupportedFiles = ContentUtils.MatchFilesToLocal(games, contentFiles, contentType,
                 game => game.Content.ContentHitsCollection.First(contentHits => contentHits.Enum == contentType.Enum),
                 (fileName, fileCount, _) => updateProgress(fileName, fileCount, contentFiles.Count));
 
@@ -72,7 +72,7 @@ namespace ClrVpin.Merger
             // - match criteria is selected or relevant
             // - ignore criteria is selected or relevant
             var gameFiles = new List<FileDetail>();
-            
+
             gamesWithContent.ForEachParallel((game, i) =>
             {
                 updateProgress(game.Game.Description, i + 1, gamesWithContent.Count);
@@ -179,14 +179,12 @@ namespace ClrVpin.Merger
         private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, Hit hit, FileSystemInfo sourceFileInfo, FileSystemInfo destinationFileInfo, Action logAction) => ProcessIgnore(
             game, ignoreCriteriaDescription, hit.Type, hit.ContentTypeEnum, hit, sourceFileInfo, destinationFileInfo, logAction);
 
-        private static object _processIgnoreLock = new();
-
         private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, HitTypeEnum hitTypeEnum, ContentTypeEnum contentTypeEnum, Hit hit, FileSystemInfo sourceFileInfo,
             FileSystemInfo destinationFileInfo, Action logAction = null)
         {
             // added lock to ensure the logs are not intermingled from other concurrent access, i.e. we want to keep these log lines together
-            Monitor.Enter(_processIgnoreLock);
-            
+            Monitor.Enter(_processIgnoreLoggingLock);
+
             var prefix = _settings.Merger.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
             Logger.Info($"{prefix}.. table: {game?.Name ?? "n/a"}, description: {game?.Description ?? "n/a"}, type: {hitTypeEnum.GetDescription()}, " +
                         $"content: {contentTypeEnum.GetDescription()}, ignore option: {ignoreCriteriaDescription}, delete ignored: {_settings.Merger.DeleteIgnoredFiles}");
@@ -207,8 +205,8 @@ namespace ClrVpin.Merger
                 // 2. destination file - may not exist, i.e. this is a new file name (aka new content)
                 Logger.Debug($"- ignored..\n  source: {FileUtils.GetFileInfoStatistics(sourceFileInfo.FullName)}\n  dest:   {FileUtils.GetFileInfoStatistics(destinationFileInfo?.FullName)}");
             }
-            
-            Monitor.Exit(_processIgnoreLock);
+
+            Monitor.Exit(_processIgnoreLoggingLock);
 
             return true;
         }
@@ -242,6 +240,8 @@ namespace ClrVpin.Merger
                 Logger.Debug($"- ignored..\n  source: {FileUtils.GetFileInfoStatistics(fileDetail.Path)}\n  dest:   {FileUtils.GetFileInfoStatistics(null)}");
             });
         }
+
+        private static readonly object _processIgnoreLoggingLock = new();
 
         private static readonly Models.Settings.Settings _settings;
     }

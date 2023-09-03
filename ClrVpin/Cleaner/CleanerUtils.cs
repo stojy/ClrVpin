@@ -48,7 +48,7 @@ public static class CleanerUtils
             var contentHitsCollectionWithSingleHit = localGame.Content.ContentHitsCollection.FirstOrDefault(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Count == 1);
             var isMissing = contentHitsCollectionWithSingleHit?.Hits[0].Type is HitTypeEnum.Missing;
             var isCorrect = contentHitsCollectionWithSingleHit?.Hits[0].Type is HitTypeEnum.CorrectName;
-            
+
             return !isMissing && !isCorrect;
         }
 
@@ -149,6 +149,7 @@ public static class CleanerUtils
         }
 
         // delete all hit files except the first
+        Monitor.Enter(_fixLoggingLock);
         Logger.Info($"Fixing.. table: {localGame.Game.Name}, description: {localGame.Game.Description}, type: {preferredHit.Type.GetDescription()}, content: {preferredHit.ContentType}, multi option: {multiOptionDescription}",
             isHighlight: true);
 
@@ -164,6 +165,8 @@ public static class CleanerUtils
         // if the preferred hit file isn't 'CorrectName', then rename it
         if (preferredHit.Type != HitTypeEnum.CorrectName)
             gameFiles.Add(FileUtils.Rename(preferredHit, localGame, _settings.Cleaner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
+
+        Monitor.Exit(_fixLoggingLock);
     }
 
     private static void RemoveUnmatched(IEnumerable<FileDetail> unmatchedFiles, Action<string, int, int> updateProgress)
@@ -175,7 +178,7 @@ public static class CleanerUtils
 
         unmatchedFilesToDelete.ForEach((fileDetail, i) =>
         {
-            updateProgress(Path.GetFileName(fileDetail.Path), i + 1,  unmatchedFilesToDelete.Count);
+            updateProgress(Path.GetFileName(fileDetail.Path), i + 1, unmatchedFilesToDelete.Count);
 
             var contentType = fileDetail.ContentType.GetDescription();
             Logger.Info($"Fixing (unmatched).. table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {contentType}");
@@ -184,6 +187,8 @@ public static class CleanerUtils
             fileDetail.Deleted = true;
         });
     }
+
+    private static readonly object _fixLoggingLock = new();
 
     private static readonly Models.Settings.Settings _settings = Model.Settings;
 }
