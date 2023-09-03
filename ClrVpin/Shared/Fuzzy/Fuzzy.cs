@@ -100,12 +100,12 @@ public static class Fuzzy
         // - e.g. Big Injun --> Big Indian
         _aliases = new Dictionary<string, string>
         {
-            new("big injun", "Big Indian"),
-            new("caddie (playmatic 1970)", "Caddie (Playmatic 1976)"), // very special alias where the 1970 and 1975 version are indistinguishable according to IPDB
-            new("GOTG", "Guardians Of The Galaxy"),
-            new("Dale Jr Nascar", "Dale Jr"), // special case.. 'nascar' refers to the table used as a basis, 'dale jr' is a limited run of 'nascar'
-            new("Nascar Race", "Nascar"), // special case.. 'race' is not part of the title
-            new("totan", "Tales of the Arabian Nights (Williams 1996)"), 
+            { "big injun", "Big Indian" },
+            { "caddie (playmatic 1970)", "Caddie (Playmatic 1976)" }, // very special alias where the 1970 and 1975 version are indistinguishable according to IP}B
+            { "GOTG", "Guardians Of The Galaxy" },
+            { "Dale Jr Nascar", "Dale Jr" }, // special case.. 'nascar' refers to the table used as a basis, 'dale jr' is a limited run of 'nasca}'
+            { "Nascar Race", "Nascar" },     // special case.. 'race' is not part of the tit}e
+            { "totan", "Tales of the Arabian Nights (Williams 1996)" }
         };
 
         // remove parenthesis and contents
@@ -119,7 +119,7 @@ public static class Fuzzy
     public static FuzzyItemDetails GetTableDetails(OnlineGame onlineGame)
     {
         var fullName = $"{onlineGame.Name} ({onlineGame.Manufacturer} {onlineGame.Year})";
-        return  GetTableDetails(fullName, false);
+        return GetTableDetails(fullName, false);
     }
 
     public static FuzzyItemDetails GetTableDetails(string sourceName, bool isFileName)
@@ -143,7 +143,7 @@ public static class Fuzzy
         var cleanManufacturer = CleanPostSplit(manufacturer, false);
         var cleanManufacturerNoWhiteSpace = CleanPostSplit(manufacturer, true);
 
-        return new FuzzyItemDetails(sourceName, sourceName?.Trim() ?? "", nameWithoutManufacturerOrYear?.Trim() ?? "", cleanName.ToNullLowerAndTrim(), 
+        return new FuzzyItemDetails(sourceName, sourceName?.Trim() ?? "", nameWithoutManufacturerOrYear?.Trim() ?? "", cleanName.ToNullLowerAndTrim(),
             cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
             cleanManufacturer.ToNullLowerAndTrim(), cleanManufacturerNoWhiteSpace.ToNullLowerAndTrim(), year);
     }
@@ -255,11 +255,11 @@ public static class Fuzzy
             // reject match if we have a tie since we can't reliably determine which is the correct match based on the scoring
             // - e.g. file 'black hole.vpx' should not be able to match against a DB that contains these entries.. 'Black Hole (LTD do Brazil 1982)' and 'Black Hole (Gottlieb 1981)'
             var log = $"Fuzzy table match: success=False, failed because multiple DB table entries matched with identical score, score={$"{preferredMatch.MatchResult.score},",-4}\n" +
-                           $"- source {(isFile ? "file" : "feed")}:         {LogGameInfo(fileOrFeedFuzzyItemDetails.ActualName, null, fileOrFeedFuzzyItemDetails.Manufacturer, fileOrFeedFuzzyItemDetails.Year?.ToString())}\n" +
-                           $"- matched db table #1: {LogGameInfo(preferredMatch.LocalGame.Game.Name, preferredMatch.LocalGame.Game.Description, preferredMatch.LocalGame.Game.Manufacturer, preferredMatch.LocalGame.Game.Year)}\n" +
-                           $"- matched db table #2: {LogGameInfo(alternateMatch.LocalGame.Game.Name, alternateMatch.LocalGame.Game.Description, alternateMatch.LocalGame.Game.Manufacturer, alternateMatch.LocalGame.Game.Year)}";
+                      $"- source {(isFile ? "file" : "feed")}:         {LogGameInfo(fileOrFeedFuzzyItemDetails.ActualName, null, fileOrFeedFuzzyItemDetails.Manufacturer, fileOrFeedFuzzyItemDetails.Year?.ToString())}\n" +
+                      $"- matched db table #1: {LogGameInfo(preferredMatch.LocalGame.Game.Name, preferredMatch.LocalGame.Game.Description, preferredMatch.LocalGame.Game.Manufacturer, preferredMatch.LocalGame.Game.Year)}\n" +
+                      $"- matched db table #2: {LogGameInfo(alternateMatch.LocalGame.Game.Name, alternateMatch.LocalGame.Game.Description, alternateMatch.LocalGame.Game.Manufacturer, alternateMatch.LocalGame.Game.Year)}";
             Logger.Warn(log);
-            
+
             preferredMatch = null;
         }
 
@@ -420,8 +420,8 @@ public static class Fuzzy
         //   e.g. ~1k missing tables x ~1k database entries = ~1M calculations taking about 120s (on my i7 10th gen rig)
         // - any positive score is deemed ok at this stage
         var matchesContainingFileName = orderedMatches.Where(match =>
-            GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Name, match.LocalGame.Derived.NameLowerCase, null, false, 0 , true) > 0 ||
-            GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Description, match.LocalGame.Derived.DescriptionLowerCase, null, false, 0 , true) > 0).ToList();
+            GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Name, match.LocalGame.Derived.NameLowerCase, null, false, 0, true) > 0 ||
+            GetNameMatchScore(nameToMatch, nameToMatchNoWhiteSpace, null, match.LocalGame.Game.Description, match.LocalGame.Derived.DescriptionLowerCase, null, false, 0, true) > 0).ToList();
 
         // only considered a 'unique match' if it matches EXACTLY once.. i.e. sine the table and description duplicate entries have already been removed
         return matchesContainingFileName.Count == 1 ? matchesContainingFileName.First() : null;
@@ -468,16 +468,14 @@ public static class Fuzzy
         return yearMatchScore;
     }
 
-    private static int GetNameMatchScore(FuzzyItemNameDetails first, FuzzyItemNameDetails second, bool isLevenshteinEnabled)
-    {
-        return GetNameMatchScore(first.Name, first.NameWithoutWhiteSpace, first.NameWithoutParenthesis, second.Name, second.NameWithoutWhiteSpace, second.NameWithoutParenthesis, isLevenshteinEnabled, 0, true);
-    }
+    private static int GetNameMatchScore(FuzzyItemNameDetails first, FuzzyItemNameDetails second, bool isLevenshteinEnabled) => GetNameMatchScore(first.Name, first.NameWithoutWhiteSpace, first.NameWithoutParenthesis, second.Name,
+        second.NameWithoutWhiteSpace, second.NameWithoutParenthesis, isLevenshteinEnabled, 0, true);
 
-    private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string firstNoParenthesis, string second, string secondNoWhiteSpace, string secondNoParenthesis, 
+    private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string firstNoParenthesis, string second, string secondNoWhiteSpace, string secondNoParenthesis,
         bool isLevenshteinEnabled, int noMatchScore = 0, bool isTitle = false)
     {
         // matching order is important.. highest priority matches must be first!
-        
+
         // exact match
         var score = IsExactMatch(first, second) ? 150 + ScoringNoWhiteSpaceBonus : 0;
         if (score == 0)
@@ -538,8 +536,8 @@ public static class Fuzzy
             if (score == 0)
                 score = IsStartsMatch(first, second) ? 30 + ScoringNoWhiteSpaceBonus : 0;
             if (score == 0)
-                score = IsStartsMatch(firstNoWhiteSpace, secondNoWhiteSpace) ? 30 : 0;// starts with - limited to source length of strings, i.e. which can be less than the earlier prescribed length breakpoints of 14, 10, and 8
-            
+                score = IsStartsMatch(firstNoWhiteSpace, secondNoWhiteSpace) ? 30 : 0; // starts with - limited to source length of strings, i.e. which can be less than the earlier prescribed length breakpoints of 14, 10, and 8
+
             // ends with - limited to source length of strings, i.e. which can be less than the earlier prescribed length breakpoints of 14, 10, and 8
             if (score == 0)
                 score = IsEndsMatch(first, second) ? 20 + ScoringNoWhiteSpaceBonus : 0;
@@ -595,7 +593,7 @@ public static class Fuzzy
         // does either string start with the other string
         return first.StartsWith(second) || second.StartsWith(first);
     }
-    
+
     private static bool IsEndsMatch(string first, string second)
     {
         if (first == null || second == null)
@@ -626,7 +624,7 @@ public static class Fuzzy
 
         return first.StartsWith(second.Remove(startMatchLength)) && first.EndsWith(second.Substring(second.Length - endMatchLength));
     }
-    
+
     // non-anonymous type so it can be passed as a method parameter
     // - refer https://stackoverflow.com/questions/6624811/how-to-pass-anonymous-types-as-parameters
     private class MatchDetail

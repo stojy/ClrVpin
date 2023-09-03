@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ClrVpin.Logging;
 using ClrVpin.Models.Cleaner;
@@ -17,12 +18,15 @@ namespace ClrVpin.Cleaner;
 
 public static class CleanerUtils
 {
-    private static readonly Models.Settings.Settings _settings = Model.Settings;
-
     public static async Task<List<FileDetail>> FixAsync(List<LocalGame> games, string backupFolder, Action<string, float> updateProgress)
     {
         var fixedFileDetails = await Task.Run(() => Fix(games, backupFolder, updateProgress));
         return fixedFileDetails;
+    }
+
+    public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
+    {
+        await Task.Run(() => RemoveUnmatched(unmatchedFiles, updateProgress));
     }
 
     private static List<FileDetail> Fix(ICollection<LocalGame> localGames, string backupFolder, Action<string, float> updateProgress)
@@ -36,16 +40,21 @@ public static class CleanerUtils
 
         var selectedContentTypes = _settings.Cleaner.GetSelectedCheckContentTypes().ToList();
 
+        static bool FixableGamesContentPredicate(LocalGame localGame, ContentType contentType)
+        {
+            // we can include from the fixable list if the local game DB entry only has 1 match AND is either..
+            // a. missing - i.e. we failed to find a matching file, hence this requires the user to download (or sometimes rename) the file manually
+            // b. correct - i.e. no work required.. so we no point in flagging this to be fixed
+            var contentHitsCollectionWithSingleHit = localGame.Content.ContentHitsCollection.FirstOrDefault(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Count == 1);
+            var isMissing = contentHitsCollectionWithSingleHit?.Hits[0].Type is HitTypeEnum.Missing;
+            var isCorrect = contentHitsCollectionWithSingleHit?.Hits[0].Type is HitTypeEnum.CorrectName;
+            
+            return !isMissing && !isCorrect;
+        }
+
         var gamesWithContentCount = 0;
         var gamesWithContentMaxCount = 0;
-            
-        static bool GamesWithContentPredicate(LocalGame localGame, ContentType contentType) 
-            => localGame.Content.ContentHitsCollection.Any(contentHits => contentHits.ContentType == contentType && contentHits.Hits.Any(hit => hit.Type != HitTypeEnum.Missing));
-
-        selectedContentTypes.ForEach(contentType =>
-        {
-            gamesWithContentMaxCount += localGames.Count(game => GamesWithContentPredicate(game, contentType));
-        });
+        selectedContentTypes.ForEach(contentType => gamesWithContentMaxCount += localGames.Count(game => FixableGamesContentPredicate(game, contentType)));
 
         // iterate through each selected content type
         selectedContentTypes.ForEach(contentType =>
@@ -56,12 +65,12 @@ public static class CleanerUtils
             //   - if no other matches exist, then the content can't be fixed as the content needs to be downloaded
             // - unknown - not associated with a localGame (i.e. no need to check here).. handled elsewhere
             // - unsupported - not associated with any known content type, e.g. Magic.ini
-            var fixableContentLocalGames = localGames.Where(localGame => GamesWithContentPredicate(localGame, contentType)).ToList();
+            var fixableContentLocalGames = localGames.Where(localGame => FixableGamesContentPredicate(localGame, contentType)).ToList();
 
             // fix files associated with localGame, if they satisfy the fix criteria
             fixableContentLocalGames.ForEachParallel(fixableContentLocalGame =>
             {
-                updateProgress(fixableContentLocalGame.Game.Description, ++gamesWithContentCount / (float)gamesWithContentMaxCount);
+                updateProgress(fixableContentLocalGame.Game.Description, Interlocked.Increment(ref gamesWithContentCount) / (float)gamesWithContentMaxCount);
 
                 var gameContentHits = fixableContentLocalGame.Content.ContentHitsCollection.First(contentHits => contentHits.ContentType == contentType);
 
@@ -157,21 +166,16 @@ public static class CleanerUtils
             gameFiles.Add(FileUtils.Rename(preferredHit, localGame, _settings.Cleaner.SelectedFixHitTypes, _settings.GetContentType(preferredHit.ContentTypeEnum).KindredExtensionsList));
     }
 
-    public static async Task RemoveUnmatchedAsync(List<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
-    {
-        await Task.Run(() => RemoveUnmatched(unmatchedFiles, updateProgress));
-    }
-
     private static void RemoveUnmatched(IEnumerable<FileDetail> unmatchedFiles, Action<string, float> updateProgress)
     {
         // delete files NOT associated with localGame, aka unmatched files
         var unmatchedFilesToDelete = unmatchedFiles.Where(unmatchedFile =>
-            unmatchedFile.HitType == HitTypeEnum.Unknown && _settings.Cleaner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown) ||
-            unmatchedFile.HitType == HitTypeEnum.Unsupported && _settings.Cleaner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported)).ToList();
+            (unmatchedFile.HitType == HitTypeEnum.Unknown && _settings.Cleaner.SelectedFixHitTypes.Contains(HitTypeEnum.Unknown)) ||
+            (unmatchedFile.HitType == HitTypeEnum.Unsupported && _settings.Cleaner.SelectedFixHitTypes.Contains(HitTypeEnum.Unsupported))).ToList();
 
         unmatchedFilesToDelete.ForEach((fileDetail, i) =>
         {
-            updateProgress(Path.GetFileName(fileDetail.Path), (i+1f) / unmatchedFilesToDelete.Count);
+            updateProgress(Path.GetFileName(fileDetail.Path), (i + 1f) / unmatchedFilesToDelete.Count);
 
             var contentType = fileDetail.ContentType.GetDescription();
             Logger.Info($"Fixing (unmatched).. table: n/a, description: n/a, type: {fileDetail.HitType.GetDescription()}, content: {contentType}");
@@ -180,4 +184,6 @@ public static class CleanerUtils
             fileDetail.Deleted = true;
         });
     }
+
+    private static readonly Models.Settings.Settings _settings = Model.Settings;
 }

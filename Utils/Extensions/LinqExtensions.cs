@@ -60,19 +60,27 @@ public static class LinqExtensions
             source.Add(item);
     }
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public static void Remove<T>(this ICollection<T> items, T item)
     {
         if (items.Contains(item))
             items.Remove(item);
     }
 
-    public static void Add<T>(this ICollection<T> items, T item)
+    public static void Add<T>(this IList<T> items, T item)
     {
+        // this will fail for arrays at runtime :(
+        // - Array's a *VERY* 'special' beast.. it does NOT implement IList<T> or ICollection<T> as part of their declaration syntax
+        //   - BUT those interfaces are 'injected' added at build/runtime.. and will thus fail at runtime because .Add is not supported by Array :(
+        //   - https://stackoverflow.com/questions/4482557/what-interfaces-do-all-arrays-implement-in-c
+        //     https://stackoverflow.com/questions/35653973/array-doesnt-implement-icollectiont-but-is-assignable
+        // - the non-generic ICollection correctly(?) doesn't support .Add(), but the generic ICollection<T> does
+        //   - https://stackoverflow.com/questions/11690147/why-does-icollection-not-contain-an-add-method
         if (!items.Contains(item))
             items.Add(item);
     }
 
-    public static void AddOrRemove<T>(this ICollection<T> source, T item, bool add)
+    public static void AddOrRemove<T>(this IList<T> source, T item, bool add)
     {
         if (add)
             Add(source, item);
