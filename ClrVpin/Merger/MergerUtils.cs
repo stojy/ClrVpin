@@ -70,7 +70,8 @@ namespace ClrVpin.Merger
             // - match criteria is selected or relevant
             // - ignore criteria is selected or relevant
             var gameFiles = new List<FileDetail>();
-            gamesWithContent.ForEach((game, i) =>
+            
+            gamesWithContent.ForEachParallel((game, i) =>
             {
                 updateProgress(game.Game.Description, (i + 1f) / gamesWithContent.Count);
 
@@ -89,7 +90,6 @@ namespace ClrVpin.Merger
             return gameFiles;
         }
 
-        // ReSharper disable once UnusedParameter.Local
         private static FileDetail Merge(Hit hit, LocalGame localGame, ICollection<HitTypeEnum> supportedHitTypes)
         {
             var fixFileType = FixFileTypeEnum.Skipped;

@@ -72,7 +72,7 @@ public static class FeederUtils
 
     private static void MatchOnlineToLocal(IList<LocalGame> localGames, ICollection<OnlineGame> onlineGames, Action<string, float?> updateProgress)
     {
-        onlineGames.ForEach((onlineGame, i) =>
+        onlineGames.ForEachParallel((onlineGame, i) =>
         {
             updateProgress(onlineGame.Name, (i + 1f) / onlineGames.Count);
 

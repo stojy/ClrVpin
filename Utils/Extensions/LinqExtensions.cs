@@ -2,33 +2,55 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Utils.Extensions;
 
 public static class LinqExtensions
 {
     [DebuggerStepThrough]
-    public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+    public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
     {
-        if (source == null)
+        if (items == null)
             return;
 
-        foreach (var item in source)
+        foreach (var item in items)
             action(item);
+    }
+    
+    [DebuggerStepThrough]
+    public static void ForEachParallel<T>(this IEnumerable<T> items, Action<T> action, int maxConcurrency = 4)
+    {
+        if (items == null)
+            return;
+
+        Parallel.ForEach(items, new ParallelOptions { MaxDegreeOfParallelism = maxConcurrency }, action);
     }
 
     [DebuggerStepThrough]
-    public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
+    public static void ForEach<T>(this IEnumerable<T> items, Action<T, int> action)
     {
-        if (source == null)
+        if (items == null)
             return;
 
         var i = 0;
-        foreach (var item in source)
+        foreach (var item in items)
             action(item, i++);
     }
 
-    public static IEnumerable<T> Except<T>(this IEnumerable<T> source, T item) => source.Except(new List<T> { item });
+    [DebuggerStepThrough]
+    public static void ForEachParallel<T>(this IEnumerable<T> items, Action<T, int> action, int maxConcurrency = 4)
+    {
+        if (items == null)
+            return;
+
+        var i = 0;
+        Parallel.ForEach(items, new ParallelOptions { MaxDegreeOfParallelism = maxConcurrency }, item =>
+            action(item, Interlocked.Increment(ref i)));
+    }
+
+    public static IEnumerable<T> Except<T>(this IEnumerable<T> items, T item) => items.Except(new List<T> { item });
 
     public static void Toggle<T>(this ICollection<T> source, T item)
     {
@@ -38,16 +60,16 @@ public static class LinqExtensions
             source.Add(item);
     }
 
-    public static void Remove<T>(this ICollection<T> source, T item)
+    public static void Remove<T>(this ICollection<T> items, T item)
     {
-        if (source.Contains(item))
-            source.Remove(item);
+        if (items.Contains(item))
+            items.Remove(item);
     }
 
-    public static void Add<T>(this ICollection<T> source, T item)
+    public static void Add<T>(this ICollection<T> items, T item)
     {
-        if (!source.Contains(item))
-            source.Add(item);
+        if (!items.Contains(item))
+            items.Add(item);
     }
 
     public static void AddOrRemove<T>(this ICollection<T> source, T item, bool add)

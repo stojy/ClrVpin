@@ -58,7 +58,7 @@ public static class CleanerUtils
             var fixableContentLocalGames = localGames.Where(localGame => GamesWithContentPredicate(localGame, contentType)).ToList();
 
             // fix files associated with localGame, if they satisfy the fix criteria
-            fixableContentLocalGames.ForEach(fixableContentLocalGame =>
+            fixableContentLocalGames.ForEachParallel(fixableContentLocalGame =>
             {
                 updateProgress(fixableContentLocalGame.Game.Description, ++gamesWithContentCount / (float)gamesWithContentMaxCount);
 
