@@ -20,7 +20,7 @@ public static class TablePupUtils
     {
         var totalFiles = tableFileDetails.Count;
 
-        return tableFileDetails.Select((tableFile, i) =>
+        return tableFileDetails.SelectParallel((tableFile, i) =>
         {
             updateAction(Path.GetFileName(tableFile.Path), i + 1, totalFiles);
             return GetPup(tableFile.Path);
@@ -34,6 +34,9 @@ public static class TablePupUtils
 
     private static (string name, bool? isSuccess) GetPupName(string script)
     {
+        if (script == null)
+            return (null, false);
+
         // find pup variable name assignment
         var match = _pupClassNameRegex.Match(script);
         if (!match.Success)

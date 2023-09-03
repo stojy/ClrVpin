@@ -26,15 +26,18 @@ public static class TableRomUtils
     {
         var totalFiles = tableFileDetails.Count;
 
-        return tableFileDetails.Select((tableFile, i) =>
+        return tableFileDetails.SelectParallel((tableFile, i) =>
         {
-            updateAction(Path.GetFileName(tableFile.Path), (i + 1), totalFiles);
+            updateAction(Path.GetFileName(tableFile.Path), i + 1, totalFiles);
             return GetRom(tableFile.Type, tableFile.Path);
         }).ToList();
     }
 
     private static (string name, bool? isSuccess) GetRomName(string script)
     {
+        if (script == null)
+            return (null, false);
+
         // find gameName usage
         var match = _gameNameUsageRegex.Match(script);
         if (!match.Success)

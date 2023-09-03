@@ -59,15 +59,23 @@ public static class TableUtils
         else if (File.Exists(vpxFile))
         {
             // extract script from vpx
-            using var cf = new CompoundFile(vpxFile);
-            if (cf.RootStorage.TryGetStorage("GameStg", out var gameStorage))
+            try
             {
-                var stream = gameStorage.GetStream("GameData");
-                var data = stream.GetData();
+                using var cf = new CompoundFile(vpxFile);
+                if (cf.RootStorage.TryGetStorage("GameStg", out var gameStorage))
+                {
+                    var stream = gameStorage.GetStream("GameData");
+                    var data = stream.GetData();
 
-                var i = data.IndexOf(Encoding.ASCII.GetBytes("CODE"));
+                    var i = data.IndexOf(Encoding.ASCII.GetBytes("CODE"));
 
-                script = Encoding.ASCII.GetString(data.Skip(i + 8).ToArray()); // 8 length = sizeof(CODE) + 4 length(?) bytes
+                    script = Encoding.ASCII.GetString(data.Skip(i + 8).ToArray()); // 8 length = sizeof(CODE) + 4 length(?) bytes
+                }
+            }
+            catch (Exception e)
+            {
+                // deliberately swallow error so we can continue processing other VPX files
+                Logger.Error(e, $"Unable to extract script from VPX file: {vpxFile}");
             }
         }
 
