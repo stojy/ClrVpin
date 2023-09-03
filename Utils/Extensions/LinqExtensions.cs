@@ -18,9 +18,9 @@ public static class LinqExtensions
         foreach (var item in items)
             action(item);
     }
-    
+
     [DebuggerStepThrough]
-    public static void ForEachParallel<T>(this IEnumerable<T> items, Action<T> action, int maxConcurrency = 4)
+    public static void ForEachParallel<T>(this IEnumerable<T> items, Action<T> action, int maxConcurrency = DegreeOfParallelism)
     {
         if (items == null)
             return;
@@ -40,7 +40,7 @@ public static class LinqExtensions
     }
 
     [DebuggerStepThrough]
-    public static void ForEachParallel<T>(this IEnumerable<T> items, Action<T, int> action, int maxConcurrency = 4)
+    public static void ForEachParallel<T>(this IEnumerable<T> items, Action<T, int> action, int maxConcurrency = DegreeOfParallelism)
     {
         if (items == null)
             return;
@@ -48,6 +48,16 @@ public static class LinqExtensions
         var i = 0;
         Parallel.ForEach(items, new ParallelOptions { MaxDegreeOfParallelism = maxConcurrency }, item =>
             action(item, Interlocked.Increment(ref i)));
+    }
+
+    [DebuggerStepThrough]
+    public static IEnumerable<TResult> SelectParallel<TSource, TResult>(this IEnumerable<TSource> items, Func<TSource, int, TResult> func, int maxConcurrency = DegreeOfParallelism)
+    {
+        if (items == null)
+            return default;
+
+        var i = 0;
+        return items.AsParallel().WithDegreeOfParallelism(DegreeOfParallelism).Select(item => func(item, Interlocked.Increment(ref i)));
     }
 
     public static IEnumerable<T> Except<T>(this IEnumerable<T> items, T item) => items.Except(new List<T> { item });
@@ -157,4 +167,6 @@ public static class LinqExtensions
 
         return -1;
     }
+
+    private const int DegreeOfParallelism = 4;
 }
