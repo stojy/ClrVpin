@@ -21,7 +21,8 @@
           <WrapPanel>
             <WrapPanel>
               <ContentControl Content="{Binding MatchFuzzy}" ContentTemplate="{StaticResource FeatureTypeItemCheckBoxTemplate}" />
-              <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding MatchFuzzy.HelpAction}"
+              <Button Visibility="{Binding MatchFuzzy.IsHelpSupported, Converter={StaticResource BoolToVisibilityConverter}}" 
+                      Command="{Binding MatchFuzzy.HelpAction}"
                       Style="{StaticResource MaterialDesignIconButton}" 
                       ToolTip="Open help page in the browser" 
                       Height="NaN" Width="NaN" Margin="10,0,0,0"

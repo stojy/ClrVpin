@@ -138,6 +138,12 @@ public static class FeatureOptions
             featureType.Tip += message;
     }
 
+    // select feature type programatically, i.e. not via GUI interactions
+    public static void ClearFeatureType(FeatureType featureType)
+    {
+        SelectFeatureType(featureType, false);
+    }
+
     private static void EnableFeatureType(FeatureType featureType)
     {
         // enable feature type so it can be used, e.g. non-selectable
@@ -147,8 +153,9 @@ public static class FeatureOptions
     // select feature type programatically, i.e. not via GUI interactions
     private static void SelectFeatureType(FeatureType featureType, bool isSelected)
     {
-        // invoke action by only toggling on/off if not already in the on/off state
-        // - to ensure the underlying model is updated
+        // invoke the normal button click workflow so that assigning programatically works the same as if the user had clicked
+        // - assign IsActive.. normally done by WPF via the bi-directional xaml binding
+        // - invoke command handler.. normally done by wPF via WPF command binding.  this will take care of any user defined selection state (including the button state)
         // - guard against no SelectedCommand setup (yet)
         featureType.IsActive = isSelected;
         featureType.SelectedCommand?.Execute(true);

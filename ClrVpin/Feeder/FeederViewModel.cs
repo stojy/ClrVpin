@@ -35,7 +35,7 @@ public class FeederViewModel : IShowViewModel
         // explicitly disable fuzzy logic if ALL of the settings are not fully configured, e.g. frontend database folder not setup
         if (!Model.SettingsManager.IsValid)
         {
-            Settings.Feeder.SelectedMatchCriteriaOptions.Clear();  // clear the settings to disable matching
+            FeatureOptions.ClearFeatureType(MatchFuzzy);
             FeatureOptions.DisableFeatureType(MatchFuzzy, Model.OptionsDisabledMessage);
         }
 
