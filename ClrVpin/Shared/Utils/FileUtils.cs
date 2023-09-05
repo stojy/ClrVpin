@@ -180,7 +180,7 @@ namespace ClrVpin.Shared.Utils
             Rename(sourcePath, newPath);
         }
 
-        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+        // ReSharper disable once UnusedParameter.Local
         private static void Merge(string sourcePath, string destinationPath, HitTypeEnum hitTypeEnum, string contentType, bool deleteSource, bool preserveDateModified, Action<string> backupAction = null)
         {
             // backup the existing file (if any) before overwriting

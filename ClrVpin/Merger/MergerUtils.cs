@@ -130,6 +130,9 @@ namespace ClrVpin.Merger
             {
                 fixFileType = FixFileTypeEnum.Ignored;
 
+                // added lock to ensure the logs are not intermingled from other concurrent access, i.e. we want to keep these log lines together
+                Monitor.Enter(_processMergeLoggingLock);
+
                 if (!ShouldIgnore(localGame.Game, hit, sourceFileInfo, destinationFileInfo ?? correctDestinationFileInfo, LogFuzzyMatch))
                 {
                     fixFileType = FixFileTypeEnum.Merged;
@@ -141,6 +144,8 @@ namespace ClrVpin.Merger
                     LogFuzzyMatch();
                     FileUtils.Merge(hit.Path, destinationFileName, hit.Type, hit.ContentType, shouldDeleteSource, preserveDateModified, contentType.KindredExtensionsList, backupFile => hit.Path = backupFile);
                 }
+
+                Monitor.Exit(_processMergeLoggingLock);
             }
 
             return new FileDetail(hit.ContentTypeEnum, hit.Type, fixFileType, sourceFileInfo.Name, hit.Size ?? 0);
@@ -182,9 +187,6 @@ namespace ClrVpin.Merger
         private static bool ProcessIgnore(Game game, string ignoreCriteriaDescription, HitTypeEnum hitTypeEnum, ContentTypeEnum contentTypeEnum, Hit hit, FileSystemInfo sourceFileInfo,
             FileSystemInfo destinationFileInfo, Action logAction = null)
         {
-            // added lock to ensure the logs are not intermingled from other concurrent access, i.e. we want to keep these log lines together
-            Monitor.Enter(_processIgnoreLoggingLock);
-
             var prefix = _settings.Merger.DeleteIgnoredFiles ? "Removing (delete ignored selected)" : "Skipping (ignore option selected)";
             Logger.Info($"{prefix}.. table: {game?.Name ?? "n/a"}, description: {game?.Description ?? "n/a"}, type: {hitTypeEnum.GetDescription()}, " +
                         $"content: {contentTypeEnum.GetDescription()}, ignore option: {ignoreCriteriaDescription}, delete ignored: {_settings.Merger.DeleteIgnoredFiles}");
@@ -205,8 +207,6 @@ namespace ClrVpin.Merger
                 // 2. destination file - may not exist, i.e. this is a new file name (aka new content)
                 Logger.Debug($"- ignored..\n  source: {FileUtils.GetFileInfoStatistics(sourceFileInfo.FullName)}\n  dest:   {FileUtils.GetFileInfoStatistics(destinationFileInfo?.FullName)}");
             }
-
-            Monitor.Exit(_processIgnoreLoggingLock);
 
             return true;
         }
@@ -241,7 +241,7 @@ namespace ClrVpin.Merger
             });
         }
 
-        private static readonly object _processIgnoreLoggingLock = new();
+        private static readonly object _processMergeLoggingLock = new();
 
         private static readonly Models.Settings.Settings _settings;
     }
