@@ -388,6 +388,14 @@ public static class FeederFix
             case "Rambo (Original 2021)":
                 FixTableType(onlineGame, TableType.SolidState);
                 break;
+            case "The Avengers Infinity Quest (Stern 2020)":
+            case "Nightmare (Digital Illusions 1992)":
+            case "Night of the Living Dead (Pininventions 2014)":
+            case "Batman 66 (Stern 2016)":
+            case "Mortal Kombat II (Midway 1992)":
+                // alternatively, GameDerived.CheckIsOriginal() can be overriden.. but better to fix the issue at the source where possible
+                WrongManufacturerYear(onlineGame, "Original");
+                break;
         }
     }
 

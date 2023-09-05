@@ -106,7 +106,7 @@ public static class FeederUtils
                     var isOriginal = existingMatchOnlineGame.IsOriginal || localMatchedGame.Derived.IsOriginal || fuzzyNameDetails.IsOriginal;
                     var existingFullName = $"{existingMatchOnlineGame.Name} ({existingMatchOnlineGame.Manufacturer} {existingMatchOnlineGame.Year})";
 
-                    var fuzzyLog = $"duplicate fuzzy match: replaceExisting={replaceExistingMatch}, isOriginal={isOriginal}\n" +
+                    var fuzzyLog = $"Duplicate fuzzy match: replaceExisting={replaceExistingMatch}, isOriginal={isOriginal}\n" +
                                    $"- db record:                      {Fuzzy.LogGameInfo(localMatchedGame.Game.Name, localMatchedGame.Game.Description, localMatchedGame.Game.Manufacturer, localMatchedGame.Game.Year)}\n" +
                                    $"- existing feed match: score={$"{existingMatchOnlineGame.Hit.Score},",-4} {Fuzzy.LogGameInfo(existingFullName, null, existingMatchOnlineGame.Manufacturer, existingMatchOnlineGame.YearString)}\n" +
                                    $"- new feed match:      score={$"{score},",-4} {Fuzzy.LogGameInfo(fuzzyNameDetails.ActualName, null, fuzzyNameDetails.Manufacturer, fuzzyNameDetails.Year?.ToString())}";
