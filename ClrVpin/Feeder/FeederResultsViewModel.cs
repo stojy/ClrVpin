@@ -157,7 +157,8 @@ public sealed class FeederResultsViewModel
         GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null))
         {
             TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableMatchOptions, 
-                () => Model.Settings.Feeder.SelectedTableMatchOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
+                () => Model.Settings.Feeder.SelectedTableMatchOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1,
+                isSupportedFunc: (_, enumOption) => (enumOption.Enum == TableMatchOptionEnum.OnlineOnly || IsMatchingEnabled, MatchingDisabledMessage)),
             
             UrlStatusOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.UrlStatusOptions, 
                 () => Model.Settings.Feeder.SelectedUrlStatusOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
