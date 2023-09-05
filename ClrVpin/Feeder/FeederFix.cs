@@ -354,8 +354,8 @@ public static class FeederFix
             case "Star Trek (Stern 2013)":
                 FixWrongName(onlineGame, "Star Trek (Enterprise Limited Edition)");
                 break;
-            case "JP's Star Trek LE (Stern 2013)": // duplicate with above star trek entry will be merged later on
-                FixWrongName(onlineGame, "Star Trek (Enterprise Limited Edition)");
+            case "JP's Star Trek LE (Stern 2013)":
+                FixWrongName(onlineGame, "Star Trek (Vengeance Premium)");
                 break;
             case "The Avengers (Stern 2012)":
                 FixWrongName(onlineGame, "The Avengers (Pro)");
