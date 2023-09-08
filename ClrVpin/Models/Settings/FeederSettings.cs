@@ -26,6 +26,7 @@ public class FeederSettings : CommonFilterSettings
         });
 
         SelectedSimulatorOptionFilter = new ObservableCollection<SimulatorOptionEnum> { SimulatorOptionEnum.VirtualPinballX, SimulatorOptionEnum.Unknown };
+        SelectedMiscFeatureOptions = new ObservableCollection<MiscFeatureOptionEnum> { MiscFeatureOptionEnum.Standard, MiscFeatureOptionEnum.FullDmd };
     }
 
     public ObservableCollection<HitTypeEnum> SelectedMatchCriteriaOptions { get; set; } = new();
@@ -35,7 +36,6 @@ public class FeederSettings : CommonFilterSettings
     public ObservableCollection<UrlStatusEnum> SelectedUrlStatusOptions { get; set; } = new();
 
     public ObservableCollection<string> SelectedOnlineFileTypeOptions { get; set; } = new();
-    public ObservableCollection<MiscFeatureOptionEnum> SelectedMiscFeatureOptions { get; set; } = new ();
-
     public ObservableCollection<SimulatorOptionEnum> SelectedSimulatorOptionFilter { get; set; }
+    public ObservableCollection<MiscFeatureOptionEnum> SelectedMiscFeatureOptions { get; set; }
 }

@@ -106,6 +106,7 @@ public class File
     public UrlDetail[] Urls { get; set; } = Array.Empty<UrlDetail>();
 
     // view model properties
+    public HashSet<MiscFeatureOptionEnum> FeatureOptions { get; } = new();
     public bool IsNew { get; set; }
     public UrlStatusEnum UrlStatusEnum { get; set; }
 }
@@ -119,11 +120,11 @@ public class ImageFile : File
 
     // view model properties
     public UrlSelection ImageUrlSelection { get; set; }
-    public bool IsFullDmd { get; set; }
 }
 
 // ReSharper disable ClassNeverInstantiated.Global - required for collections as r# doesn't realize this is a json deserialized object
 [AddINotifyPropertyChangedInterface]
+[Serializable]
 public class TableFile : ImageFile
 {
     [JsonPropertyName("theme")]
@@ -133,9 +134,5 @@ public class TableFile : ImageFile
     public string Comment { get; set; }
     
     // view model properties
-    public bool IsVirtualOnly { get; set; }
-    public bool IsFullSingleScreen { get; set; }
-    public bool IsMusicOrSoundMod { get; set; }
-    public bool IsBlackWhiteMod { get; set; }
     public SimulatorOptionEnum? Simulator { get; set; } // converted from TableFormat
 }

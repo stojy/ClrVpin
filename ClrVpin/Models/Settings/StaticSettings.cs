@@ -189,11 +189,12 @@ namespace ClrVpin.Models.Settings
 
         public static readonly EnumOption<MiscFeatureOptionEnum>[] MiscFeatureOptions =
         {
+            new() {Enum = MiscFeatureOptionEnum.Standard, Tip = "Table or backglass files with a 'standard' feature set"},
+            new() {Enum = MiscFeatureOptionEnum.FullDmd, Tip = "Backglass files that are designed for full DMD"},
             new() {Enum = MiscFeatureOptionEnum.VirtualRealityOnly, Tip = "Table files that only support virtual reality"},
-            new() {Enum = MiscFeatureOptionEnum.FullSingleScreenOnly, Tip = "Table files that are full single screen, e.g. backglass, dmd, and table rendered on a single monitor"},
+            new() {Enum = MiscFeatureOptionEnum.FullSingleScreenOnly, Tip = "Table files that only support full single screen, e.g. backglass, dmd, and table rendered on a single monitor"},
             new() {Enum = MiscFeatureOptionEnum.MusicOrSoundMod, Tip = "Table files that are music and/or sound modifications"},
             new() {Enum = MiscFeatureOptionEnum.BlackAndWhiteMod, Tip = "Table files that are black & white modifications"},
-            new() {Enum = MiscFeatureOptionEnum.FullDmd, Tip = "Backglass files that are designed for full DMD"},
         };
 
         // all possible file merge options - to be used elsewhere (feeder)

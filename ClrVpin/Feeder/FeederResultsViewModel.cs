@@ -73,17 +73,38 @@ public sealed class FeederResultsViewModel
             onlineGame.TableFiles.ForEach(tableFile =>
             {
                 var comment = tableFile.Comment?.ToLower().Trim() ?? string.Empty;
-                tableFile.IsVirtualOnly = comment.ContainsAny("vr room", "vr standalone") && !comment.ContainsAny("vr room optional");
-                tableFile.IsFullSingleScreen = (comment.ContainsAny("fss (full single screen)") &&  !comment.ContainsAny("fss (full single screen) option included"))
-                                               || tableFile.Urls.Select(u => u.Url).ContainsAny("https://fss-pinball.com");
-                tableFile.IsMusicOrSoundMod = comment.ContainsAny("sound mod", "music mod");
-                tableFile.IsBlackWhiteMod = comment.ContainsAny("bw mod", "black & white mod", "black and white mod");
+
+                if (comment.ContainsAny("vr room", "vr standalone") && !comment.ContainsAny("optional vr room option", "vr room option"))
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.VirtualRealityOnly);
+
+                if ((comment.ContainsAny("fss (full single screen)") &&  !comment.ContainsAny("fss (full single screen) option included"))
+                    || tableFile.Urls.Select(u => u.Url).ContainsAny("https://fss-pinball.com"))
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.FullSingleScreenOnly);
+                
+                if (comment.ContainsAny("sound mod", "music mod"))
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.MusicOrSoundMod);
+                
+                if (comment.ContainsAny("bw mod", "black & white mod", "black and white mod"))
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.BlackAndWhiteMod);
+
+                // any table that doesn't contain at least one feature is considered as 'standard'
+                if (tableFile.FeatureOptions.Count == 0)
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.Standard);
+
                 tableFile.Simulator = SimulatorOptionHelper.GetEnum(tableFile.TableFormat);
             });
+
             onlineGame.B2SFiles.ForEach(backglassFile =>
             {
-                backglassFile.IsFullDmd = backglassFile.Features?.Any(feature => feature?.ToLower().Trim() == "fulldmd") == true ||
-                                          backglassFile.Urls?.Any(url => url.Url.ToLower().RemoveChars('-').Contains("fulldmd")) == true;
+                if (backglassFile.Features?.Any(feature => feature?.ToLower().Trim() == "fulldmd") == true ||
+                    backglassFile.Urls?.Any(url => url.Url.ToLower().RemoveChars('-').Contains("fulldmd")) == true)
+                {
+                    backglassFile.FeatureOptions.Add(MiscFeatureOptionEnum.FullDmd);
+                }
+
+                // any file that doesn't contain at least one feature is considered 'standard'
+                if (backglassFile.FeatureOptions.Count == 0)
+                    backglassFile.FeatureOptions.Add(MiscFeatureOptionEnum.Standard);
             });
 
             // extract IpdbId
@@ -93,7 +114,7 @@ public sealed class FeederResultsViewModel
 
             // create the VPS URL
             // assign VPS Url (not a fix)
-            onlineGame.VpsUrl = $@"https://virtual-pinball-spreadsheet.web.app/game/{onlineGame.Id}";
+            onlineGame.VpsUrl = $"https://virtual-pinball-spreadsheet.web.app/game/{onlineGame.Id}";
 
             // update URL information
             onlineGame.AllFileCollections.Select(x => x.Value).SelectMany(x => x).ForEach(file =>
@@ -168,7 +189,7 @@ public sealed class FeederResultsViewModel
                 () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => SelectedOnlineFileTypeUpdated(), includeSelectAll: false, minimumNumberOfSelections: 1),
             
             MiscFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.MiscFeatureOptions, 
-                () => Model.Settings.Feeder.SelectedMiscFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false),
+                () => Model.Settings.Feeder.SelectedMiscFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
 
             // simulator formats - vpx, fp, etc
             // - only applicable online
@@ -367,22 +388,25 @@ public sealed class FeederResultsViewModel
     private void SelectedOnlineFileTypeUpdated()
     {
         // table file
-        UpdateMiscFeatureState(OnlineFileTypeEnum.Tables,
+        UpdateMiscFeatureState(new [] {OnlineFileTypeEnum.Tables},
             MiscFeatureOptionEnum.VirtualRealityOnly, MiscFeatureOptionEnum.FullSingleScreenOnly, MiscFeatureOptionEnum.MusicOrSoundMod, MiscFeatureOptionEnum.BlackAndWhiteMod);
         
         var isTableEnabled = Settings.SelectedOnlineFileTypeOptions.Contains(OnlineFileTypeEnum.Tables.GetDescription());
         FeatureOptions.UpdateFeatureOptions(isTableEnabled, GameFiltersViewModel.SimulatorOptionsFilterView.ToList(), (int) SimulatorOptionEnum.VirtualPinballX);
 
         // backglass file
-        UpdateMiscFeatureState(OnlineFileTypeEnum.Backglasses, MiscFeatureOptionEnum.FullDmd);
+        UpdateMiscFeatureState(new [] {OnlineFileTypeEnum.Backglasses}, MiscFeatureOptionEnum.FullDmd);
+
+        // table or backglass file
+        UpdateMiscFeatureState(new [] {OnlineFileTypeEnum.Tables, OnlineFileTypeEnum.Backglasses}, MiscFeatureOptionEnum.Standard);
 
         UpdateOnlineGameFileDetails();
     }
 
-    private void UpdateMiscFeatureState(OnlineFileTypeEnum onlineFileType, params MiscFeatureOptionEnum[] miscFeatureOptionEnums)
+    private void UpdateMiscFeatureState(IEnumerable<OnlineFileTypeEnum> onlineFileTypes, params MiscFeatureOptionEnum[] miscFeatureOptionToUpdate)
     {
-        var isFileTypeEnabled = Settings.SelectedOnlineFileTypeOptions.Contains(onlineFileType.GetDescription());
-        var miscFeatureOptions = miscFeatureOptionEnums.Select(x => (int)x);
+        var isFileTypeEnabled = Settings.SelectedOnlineFileTypeOptions.ContainsAny(onlineFileTypes.Select(x => x.GetDescription()));
+        var miscFeatureOptions = miscFeatureOptionToUpdate.Select(x => (int)x);
         var miscFeatureOptionItems = GameFiltersViewModel.MiscFeaturesOptionsView.Where(option => miscFeatureOptions.Contains(option.Id));
 
         // update each of the relevant feature options
@@ -413,38 +437,47 @@ public sealed class FeederResultsViewModel
                     // - this is different to the generated 'gameItem updatedAt' which is an aggregation of the all the content and their file timestamps.. refer GameItemsView filtering
                     file.IsNew = IsNewUpdatedTimestamp(file);
 
+                    // todo; change to 'add' rather than 'remove'
+
                     // treat file as NOT new if any of the following rules are satisfied
-                    // - all URLS are either invalid or missing
-                    //UpdateIsNew(file, fileCollectionTypeEnum, null, () => file.UrlStatusEnum != UrlStatusEnum.Valid);
-                    
                     // - VR only
-                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
-                        file is TableFile { IsVirtualOnly: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.VirtualRealityOnly));
+                    ClearIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        file.FeatureOptions.Contains(MiscFeatureOptionEnum.VirtualRealityOnly) && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.VirtualRealityOnly));
 
                     // - FSS only
-                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
-                        file is TableFile { IsFullSingleScreen: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullSingleScreenOnly));
+                    ClearIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        file.FeatureOptions.Contains(MiscFeatureOptionEnum.FullSingleScreenOnly) && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullSingleScreenOnly));
 
                     // - music/sound mod
-                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
-                        file is TableFile { IsMusicOrSoundMod: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.MusicOrSoundMod));
+                    ClearIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        file.FeatureOptions.Contains(MiscFeatureOptionEnum.MusicOrSoundMod) && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.MusicOrSoundMod));
 
                     // - black and white mod
-                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
-                        file is TableFile { IsBlackWhiteMod: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.BlackAndWhiteMod));
+                    ClearIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        file.FeatureOptions.Contains(MiscFeatureOptionEnum.BlackAndWhiteMod) && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.BlackAndWhiteMod));
 
-                    // - full DMD, true if the DMD is included as part of the backglass
-                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Backglasses, () =>
-                        file is ImageFile { IsFullDmd: true } && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd));
+                    // - standard table
+                    ClearIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                        file.FeatureOptions.Contains(MiscFeatureOptionEnum.Standard) && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.Standard));
+
+                    // - full DMD
+                    ClearIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Backglasses, () => 
+                        file.FeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd) && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.FullDmd));
+
+                    // - standard DMD
+                    ClearIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Backglasses, () =>
+                        file.FeatureOptions.Contains(MiscFeatureOptionEnum.Standard) && !Settings.SelectedMiscFeatureOptions.Contains(MiscFeatureOptionEnum.Standard));
+
 
                     // - simulator application, aka file format, e.g. VPX, FP, etc
-                    UpdateIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                    ClearIsNew(file, fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
                         Settings.SelectedSimulatorOptionFilter.Any() && // shouldn't be possible to have fileType=Tables enabled without a simulator option, but added anyway for peace of mind
                         !Settings.SelectedSimulatorOptionFilter.Contains((file as TableFile)?.Simulator ?? SimulatorOptionEnum.Unknown));
 
                     // download URL status
-                    UpdateIsNew(file, fileCollectionTypeEnum, null, () => 
+                    ClearIsNew(file, fileCollectionTypeEnum, null, () =>
                         !Settings.SelectedUrlStatusOptions.Contains(file.UrlStatusEnum));
+
 
                     // flag each url within the file - required to allow for simpler view binding
                     file.Urls.ForEach(url => url.IsNew = file.IsNew);
@@ -468,13 +501,13 @@ public sealed class FeederResultsViewModel
         FilterChangedCommand.Execute(null);
     }
 
-    private static void UpdateIsNew(File file, OnlineFileTypeEnum actualFileCollectionTypeEnum, OnlineFileTypeEnum? requiredOnlineFileTypeEnum, Func<bool> shouldFlagAsNotNew)
+    private static void ClearIsNew(File file, OnlineFileTypeEnum actualFileCollectionTypeEnum, OnlineFileTypeEnum? requiredOnlineFileTypeEnum, Func<bool> shouldClearIsNew)
     {
         // update the file's isNew status to false if..
         // - file has not already been designated isNew=false
         // - the file type is a match, e.g. don't validate isNew for a backglass when checking the simulator type
         // - the caller decides that the file should be ignored
-        if (file.IsNew && (requiredOnlineFileTypeEnum == null || actualFileCollectionTypeEnum == requiredOnlineFileTypeEnum) && shouldFlagAsNotNew())
+        if (file.IsNew && (requiredOnlineFileTypeEnum == null || actualFileCollectionTypeEnum == requiredOnlineFileTypeEnum) && shouldClearIsNew())
             file.IsNew = false;
     }
 
