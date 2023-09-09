@@ -317,6 +317,9 @@ public sealed class FeederResultsViewModel
                 if (comment.ContainsAny("bw mod", "black & white mod", "black and white mod"))
                     tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.BlackAndWhiteMod);
 
+                if (comment.ContainsAny("patch"))
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.Patch);
+
                 // any table that doesn't contain at least one feature is considered as 'standard'
                 if (tableFile.FeatureOptions.Count == 0)
                     tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.Standard);
@@ -365,7 +368,7 @@ public sealed class FeederResultsViewModel
     {
         // table file type - enable features
         UpdateMiscFeatureState(new[] { OnlineFileTypeEnum.Tables },
-            MiscFeatureOptionEnum.VirtualRealityOnly, MiscFeatureOptionEnum.FullSingleScreenOnly, MiscFeatureOptionEnum.MusicOrSoundMod, MiscFeatureOptionEnum.BlackAndWhiteMod);
+            MiscFeatureOptionEnum.VirtualRealityOnly, MiscFeatureOptionEnum.FullSingleScreenOnly, MiscFeatureOptionEnum.MusicOrSoundMod, MiscFeatureOptionEnum.BlackAndWhiteMod, MiscFeatureOptionEnum.Patch);
 
         // - enable simulator options and also default first option VPX if none are already selected
         var isTableEnabled = Settings.SelectedOnlineFileTypeOptions.Contains(OnlineFileTypeEnum.Tables.GetDescription());

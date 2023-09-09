@@ -9,5 +9,6 @@ public enum MiscFeatureOptionEnum
     [Description("VR Only")] VirtualRealityOnly,
     [Description("FSS Only")] FullSingleScreenOnly,
     [Description("Music/Sound Mod")] MusicOrSoundMod,
-    [Description("Black & White Mod")] BlackAndWhiteMod
+    [Description("Black & White Mod")] BlackAndWhiteMod,
+    [Description("Patch")] Patch
 }
