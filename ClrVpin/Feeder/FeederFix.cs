@@ -388,11 +388,18 @@ public static class FeederFix
             case "Rambo (Original 2021)":
                 FixTableType(onlineGame, TableType.SolidState);
                 break;
+            case "Joker Poker (Gottlieb 1978)":
+                // joker poker ia a very special egg because there are 2 variants of the table from the same manufacturer/year that need to be disambiguated
+                // - it's a bit of a hack, but we're treating the EM version as a variant.. similar to a 'limited edition'
+                if (onlineGame.Type == TableType.SolidState)
+                    FixWrongName(onlineGame, "Joker Poker - Limited Edition");
+                break;
             case "The Avengers Infinity Quest (Stern 2020)":
             case "Nightmare (Digital Illusions 1992)":
             case "Night of the Living Dead (Pininventions 2014)":
             case "Batman 66 (Stern 2016)":
             case "Mortal Kombat II (Midway 1992)":
+            case "Strip Joker Poker (Gottlieb 1978)":
                 // alternatively, GameDerived.CheckIsOriginal() can be overriden.. but better to fix the issue at the source where possible
                 WrongManufacturerYear(onlineGame, "Original");
                 break;

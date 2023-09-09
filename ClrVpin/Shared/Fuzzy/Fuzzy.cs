@@ -46,9 +46,9 @@ public static class Fuzzy
         Authors = new[] { "jps", "jp's", "sg1bson", "vpw", "starlion", "pinball58", "vp99", "balutito", "siggis" };
         string[] language = { "a", "and", "n'", "'n", "n", "the", "en" };
         string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
-        string[] types = { TableType.ElectroMagnetic.ToLower(), TableType.SolidState.ToLower(), TableType.PureMechanical.ToLower() };
+        string[] technologyTypes = { TableType.ElectroMagnetic.ToLower(), TableType.SolidState.ToLower(), TableType.PureMechanical.ToLower() };
         string[] descriptions = { "no leds", "upgrade", "premium" };
-        pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(types).Concat(descriptions));
+        pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(technologyTypes).Concat(descriptions));
         _wholeWordRegex = new Regex($@"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
 
         // first pass single whitespace
@@ -312,18 +312,18 @@ public static class Fuzzy
     }
 
 
-    public static (bool success, int score) Match(FuzzyItemDetails localGameFuzzyDetails, FuzzyItemDetails fileFuzzyDetails)
+    public static (bool success, int score) Match(FuzzyItemDetails localGameFuzzyDetails, FuzzyItemDetails fileOrFeedFuzzyDetails)
     {
-        var nameMatchScore = GetNameMatchScore(localGameFuzzyDetails, fileFuzzyDetails, true);
+        var nameMatchScore = GetNameMatchScore(localGameFuzzyDetails, fileOrFeedFuzzyDetails, true);
 
         // manufacturer matching is the EXACT same as name matching, but the result is scaled back to 10% to reflect it's lesser importance
         // - the additional scoring though is important to distinguish between games that match exactly but only 1 has the correct manufacturer 
         // - files that don't have a manufacturer match are given a slight negative score
         //   e.g. DB 'Kiss (Stern 2015)' matching against file 'kiss'
         var manufacturerScore = GetNameMatchScore(localGameFuzzyDetails.Manufacturer, localGameFuzzyDetails.ManufacturerNoWhiteSpace, null,
-            fileFuzzyDetails.Manufacturer, fileFuzzyDetails.ManufacturerNoWhiteSpace, null, true, -100) / 10;
+            fileOrFeedFuzzyDetails.Manufacturer, fileOrFeedFuzzyDetails.ManufacturerNoWhiteSpace, null, true, -100) / 10;
 
-        var yearMatchScore = GetYearMatchScore(localGameFuzzyDetails.Year, fileFuzzyDetails.Year);
+        var yearMatchScore = GetYearMatchScore(localGameFuzzyDetails.Year, fileOrFeedFuzzyDetails.Year);
         var lengthScore = GetLengthMatchScore(localGameFuzzyDetails);
 
         var score = nameMatchScore + manufacturerScore + yearMatchScore + lengthScore;
