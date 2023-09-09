@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -25,10 +26,15 @@ public static class Fuzzy
         _preParseWordRemovalRegex = new Regex($@"{pattern}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         // chars
-        // - special consideration for non-ascii characters (i.e. 8 bit chars) as handling of these between IPDB, XML DB, and file names is often inconsistent
-        string[] specialChars = { "&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", @"[^\x00-\x7F]", "&", @"\(", @"\)" };
+        // - cater for special and non-ascii characters (i.e. 8 bit chars) as handling of these between IPDB, XML DB, and file names is often inconsistent
+        // - https://regex101.com/r/EFqzhF/2
+        string[] specialChars = { "&apos;", "ï¿½", "'", "`", "’", ",", ";", "!", @"\?", "&", @"\(", @"\)" };
+        string[] nonAsciiChars = { @"[^\x00-\x7F]" };
         pattern = string.Join('|', specialChars);
-        _trimSpecialCharRegex = new Regex($@"({pattern})", RegexOptions.Compiled);
+        _trimSpecialCharRegex = new Regex($"({pattern})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        
+        pattern = string.Join('|', specialChars.Concat(nonAsciiChars));
+        _trimSpecialAndNonAsciiCharRegex = new Regex($"({pattern})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         string[] trailingPeriod = { @"\.{1}$" };
         pattern = string.Join('|', trailingPeriod);
@@ -134,16 +140,18 @@ public static class Fuzzy
 
         // fuzzy clean the name field
         // - name keeping white space
-        var cleanName = CleanPostSplit(nameWithoutManufacturerOrYear, false);
+        var cleanName = CleanPostSplit(nameWithoutManufacturerOrYear, false, isFileName);
+
         // - name without white space
-        var cleanNameWithoutWhiteSpace = CleanPostSplit(nameWithoutManufacturerOrYear, true);
+        var cleanNameWithoutWhiteSpace = CleanPostSplit(nameWithoutManufacturerOrYear, true, isFileName);
+        
         // - name without parenthesis, e.g. "kiss (limited edition) (stern 2015)"
         var nameWithoutParenthesis = _removeParenthesisAndContentsRegex.Replace(nameWithoutManufacturerOrYear ?? "", "");
-        var cleanNameWithoutParenthesis = CleanPostSplit(nameWithoutParenthesis, false);
+        var cleanNameWithoutParenthesis = CleanPostSplit(nameWithoutParenthesis, false, isFileName);
 
         // fuzzy clean the manufacturer field
-        var cleanManufacturer = CleanPostSplit(manufacturer, false);
-        var cleanManufacturerNoWhiteSpace = CleanPostSplit(manufacturer, true);
+        var cleanManufacturer = CleanPostSplit(manufacturer, false, isFileName);
+        var cleanManufacturerNoWhiteSpace = CleanPostSplit(manufacturer, true, isFileName);
 
         return new FuzzyItemDetails(sourceName, sourceName?.Trim() ?? "", nameWithoutManufacturerOrYear?.Trim() ?? "", cleanName.ToNullLowerAndTrim(),
             cleanNameWithoutWhiteSpace.ToNullLowerAndTrim(), cleanNameWithoutParenthesis.ToNullLowerAndTrim(),
@@ -174,7 +182,7 @@ public static class Fuzzy
         return sourceName;
     }
 
-    public static string CleanPostSplit(string name, bool removeAllWhiteSpace)
+    public static string CleanPostSplit(string name, bool removeAllWhiteSpace, bool isFileName)
     {
         if (name == null)
             return null;
@@ -190,8 +198,11 @@ public static class Fuzzy
         // trim (whole) words
         cleanName = _wholeWordRegex.Replace(cleanName, "");
 
-        // trim chars - must trim extension period for version to work correctly!
-        cleanName = _trimSpecialCharRegex.Replace(cleanName, "");
+        // trim chars
+        // - must trim extension period for version to work correctly!
+        // - when parsing files, do NOT remove non-ascii chars (except for those defined a special chars) so that the file to database comparison can be made
+        //   e.g. database 'galaxia' comparison against 'galxia' will fail.. thus we must the diacritic 'galáxia' to allow a successful comparison
+        cleanName = isFileName ? _trimSpecialCharRegex.Replace(cleanName, "") :  _trimSpecialAndNonAsciiCharRegex.Replace(cleanName, "");
 
         // trim last period
         // - required for version to work correctly
@@ -562,7 +573,7 @@ public static class Fuzzy
         if (first == null || second == null)
             return false;
 
-        return first == second;
+        return Equals(first, second);
     }
 
     private static bool IsLevenshteinMatch(int minStringLength, int maxDistance, string first, string second)
@@ -627,6 +638,14 @@ public static class Fuzzy
         return first.StartsWith(second.Remove(startMatchLength)) && first.EndsWith(second.Substring(second.Length - endMatchLength));
     }
 
+    private static bool Equals(string str1, string str2)
+    {
+        // IgnoreNonSpace - ignore non-spacing characters such as diacritics, e.g. 'á' is treated as 'a'
+        // - https://stackoverflow.com/questions/55548264/how-can-i-get-true-if-we-compare-a-to-%C3%A1
+        // - https://learn.microsoft.com/en-us/dotnet/api/system.globalization.compareoptions?view=netframework-4.7.2
+        return string.Compare(str1, str2, CultureInfo.InvariantCulture, CompareOptions.IgnoreNonSpace) == 0; 
+    }
+
     // non-anonymous type so it can be passed as a method parameter
     // - refer https://stackoverflow.com/questions/6624811/how-to-pass-anonymous-types-as-parameters
     private class MatchDetail
@@ -640,6 +659,7 @@ public static class Fuzzy
     private static readonly Regex _preParseWordRemovalRegex;
     private static readonly Regex _fileNameInfoRegex;
     private static readonly Regex _trimSpecialCharRegex;
+    private static readonly Regex _trimSpecialAndNonAsciiCharRegex;
     private static readonly Regex _trimTrailingPeriodRegex;
     private static readonly Regex _wholeWordRegex;
     private static readonly Regex _addSpacingFirstPassRegex;
