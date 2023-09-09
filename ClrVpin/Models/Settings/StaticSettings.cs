@@ -195,7 +195,7 @@ namespace ClrVpin.Models.Settings
             new() {Enum = MiscFeatureOptionEnum.FullSingleScreenOnly, Tip = "Table files that only support full single screen, e.g. backglass, dmd, and table rendered on a single monitor"},
             new() {Enum = MiscFeatureOptionEnum.MusicOrSoundMod, Tip = "Table files that are music and/or sound modifications"},
             new() {Enum = MiscFeatureOptionEnum.BlackAndWhiteMod, Tip = "Table files that are black & white modifications"},
-            new() {Enum = MiscFeatureOptionEnum.Patch, Tip = "Table files that are delta patches requiring a merge from the original table"},
+            new() {Enum = MiscFeatureOptionEnum.Patch, Tip = "Table files that are patches that require the original table file to be manually merged with the patch"},
         };
 
         // all possible file merge options - to be used elsewhere (feeder)
