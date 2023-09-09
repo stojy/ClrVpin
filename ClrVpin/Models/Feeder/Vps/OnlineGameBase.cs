@@ -69,7 +69,7 @@ public class FileCollection : List<File>
 
     public bool IsNew { get; set; }
     public string Title { get; set; }
-    public bool IsNewAndSelectedFileType { get; set; }
+    public bool IsNewAndSelectedFileCollectionType { get; set; }
 }
 
 // view model

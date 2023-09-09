@@ -32,7 +32,7 @@ public class OnlineGame : OnlineGameBase
     // reference to the highest fuzzy ranked DB match
     public LocalGameHit Hit { get; set; }
 
-    public List<string> NewFileCollectionTypes { get; set; } = new();
+    public List<string> IsNewFileCollectionTypes { get; set; } = new();
     
     public string CreateDescription() => $"{Name?.Trim()} ({Manufacturer?.Trim()} {Year})";
 }

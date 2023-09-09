@@ -673,9 +673,9 @@
                       <DataTemplate DataType="{x:Type vps:FileCollection}">
                         <WrapPanel>
                           <TextBlock FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding Title}"
-                                     Foreground="{Binding IsNewAndSelectedFileType, Converter={StaticResource TabItemToColorConverter}}" />
+                                     Foreground="{Binding IsNewAndSelectedFileCollectionType, Converter={StaticResource TabItemToColorConverter}}" />
                           <materialDesign:PackIcon Kind="NewBox" Height="32" Width="32" Margin="1,-16,0,0"
-                                                   Foreground="{Binding IsNewAndSelectedFileType, Converter={StaticResource TabItemToColorConverter}}"
+                                                   Foreground="{Binding IsNewAndSelectedFileCollectionType, Converter={StaticResource TabItemToColorConverter}}"
                                                    Visibility="{Binding IsNew, Converter={StaticResource ReverseBoolToHiddenConverter}}" />
                         </WrapPanel>
                       </DataTemplate>
