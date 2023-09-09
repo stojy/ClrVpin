@@ -35,100 +35,8 @@ public sealed class FeederResultsViewModel
         _localGames = localGames;
 
         IsMatchingEnabled = Model.Settings.Feeder.SelectedMatchCriteriaOptions.Any();
-        
-        // assign VM properties
-        gameItems.ForEach(gameItem =>
-        {
-            // local database show/add commands
-            gameItem.IsMatchingEnabled = IsMatchingEnabled;
-            gameItem.UpdateDatabaseEntryCommand = new ActionCommand(() =>
-                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, _localGames, gameItem, _gameCollections, () => GameItems?.Remove(gameItem), true));
-            gameItem.CreateDatabaseEntryCommand = new ActionCommand(() =>
-                DatabaseItemManagement.CreateDatabaseItem(DialogHostName, _localGames, gameItem, _gameCollections));
-            gameItem.UpdateDatabaseMatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
-            gameItem.UpdateDatabaseUnmatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
-            gameItem.CreateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
 
-            if (gameItem.OnlineGame is not { } onlineGame) // pattern matching - assign AND check for not null!
-                return;
-
-            // image - for showing dialog with larger view of image
-            onlineGame.ImageUrlSelection = new UrlSelection
-            {
-                Url = onlineGame.ImgUrl,
-                SelectedCommand = new ActionCommand(() => ShowImage(onlineGame.ImgUrl))
-            };
-
-            // show large image popup
-            onlineGame.ImageFiles.ForEach(imageFile =>
-            {
-                imageFile.ImageUrlSelection = new UrlSelection
-                {
-                    Url = imageFile.ImgUrl,
-                    SelectedCommand = new ActionCommand(() => ShowImage(imageFile.ImgUrl))
-                };
-            });
-            
-            // initialize VM attributes so they can be referenced quickly during filtering of the 'misc options'
-            onlineGame.TableFiles.ForEach(tableFile =>
-            {
-                var comment = tableFile.Comment?.ToLower().Trim() ?? string.Empty;
-
-                if (comment.ContainsAny("vr room", "vr standalone") && !comment.ContainsAny("optional vr room option", "vr room option"))
-                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.VirtualRealityOnly);
-
-                if ((comment.ContainsAny("fss (full single screen)") &&  !comment.ContainsAny("fss (full single screen) option included"))
-                    || tableFile.Urls.Select(u => u.Url).ContainsAny("https://fss-pinball.com"))
-                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.FullSingleScreenOnly);
-                
-                if (comment.ContainsAny("sound mod", "music mod", "jukebox mod"))
-                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.MusicOrSoundMod);
-                
-                if (comment.ContainsAny("bw mod", "black & white mod", "black and white mod"))
-                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.BlackAndWhiteMod);
-
-                // any table that doesn't contain at least one feature is considered as 'standard'
-                if (tableFile.FeatureOptions.Count == 0)
-                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.Standard);
-
-                tableFile.Simulator = SimulatorOptionHelper.GetEnum(tableFile.TableFormat);
-            });
-
-            onlineGame.B2SFiles.ForEach(backglassFile =>
-            {
-                if (backglassFile.Features?.Any(feature => feature?.ToLower().Trim() == "fulldmd") == true ||
-                    backglassFile.Urls?.Any(url => url.Url.ToLower().RemoveChars('-').Contains("fulldmd")) == true)
-                {
-                    backglassFile.FeatureOptions.Add(MiscFeatureOptionEnum.FullDmd);
-                }
-
-                // any file that doesn't contain at least one feature is considered 'standard'
-                if (backglassFile.FeatureOptions.Count == 0)
-                    backglassFile.FeatureOptions.Add(MiscFeatureOptionEnum.Standard);
-            });
-
-            // extract IpdbId
-            var match = _regexExtractIpdbId.Match(onlineGame.IpdbUrl ?? string.Empty);
-            if (match.Success)
-                onlineGame.IpdbId = match.Groups["ipdbId"].Value;
-
-            // create the VPS URL
-            // assign VPS Url (not a fix)
-            onlineGame.VpsUrl = $"https://virtual-pinball-spreadsheet.web.app/game/{onlineGame.Id}";
-
-            // update URL information
-            onlineGame.AllFileCollections.Select(x => x.Value).SelectMany(x => x).ForEach(file =>
-            {
-                file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url)));
-
-                if (!file.Urls.Any())
-                    file.UrlStatusEnum = UrlStatusEnum.Missing;
-                else if (file.Urls.All(url => url.Broken))
-                    file.UrlStatusEnum = UrlStatusEnum.Broken;
-                else
-                    file.UrlStatusEnum = UrlStatusEnum.Valid;
-            });
-        });
+        UpdateGameItemsViewModel(gameItems);
 
         // main games view (data grid)
         GameItems = new ObservableCollection<GameItem>(gameItems);
@@ -138,34 +46,7 @@ public sealed class FeederResultsViewModel
             // - filter the top level games to reflect the various view filtering criteria
             // - quickest checks placed first to short circuit evaluation of more complex checks
             // - file level filtering (e.g. a game's table can have multiple files with different filtering properties) is also checked here.. but updated elsewhere, refer UpdateOnlineGameFileDetails
-            Filter = gameItem =>
-                // exclude any gameItem that doesn't have new files for one of the selected content types
-                // - this also takes care of the individual file IsNew updates (e.g. VR only, sound mod, etc)
-
-                // table name
-                (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
-
-                // **ALL** file level filtering - this is based on IsNew calculated within UpdateOnlineGameFileDetails, e.g. FSS only, time range, simulator, url status, etc
-                (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.IsNewFileCollectionTypes)) &&
-
-                // table match type, e.g. local, online, local and online
-                Settings.SelectedTableMatchOptions.Contains(gameItem.TableMatchType) &&
-
-                // manufacturer - original or manufactured
-                (!Settings.SelectedManufacturedOptions.Any() ||
-                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.TableStyleOption == TableStyleOptionEnum.Manufactured) ||
-                 (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.TableStyleOption == TableStyleOptionEnum.Original)) &&
-
-                // manufacture/construction date
-                (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
-                (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
-                
-                // technology type, i.e. SS, EM, PM, unknown
-                (!Settings.SelectedTechnologyTypeOptions.Any() || 
-                 Settings.SelectedTechnologyTypeOptions.Contains(gameItem.TechnologyType ?? TechnologyTypeOptionEnum.Unknown)) &&
-                
-                // manufacture name
-                (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase))
+            Filter = GameItemsViewFilter
         };
 
         GameItemsView.MoveCurrentToFirst();
@@ -177,29 +58,29 @@ public sealed class FeederResultsViewModel
 
         GameFiltersViewModel = new GameFiltersViewModel(GameItemsView, _gameCollections, Settings, () => FilterChangedCommand?.Execute(null))
         {
-            TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableMatchOptions, 
+            TableMatchOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.TableMatchOptions,
                 () => Model.Settings.Feeder.SelectedTableMatchOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1,
                 isSupportedFunc: (_, enumOption) => (enumOption.Enum == TableMatchOptionEnum.OnlineOnly || IsMatchingEnabled, MatchingDisabledMessage)),
-            
-            UrlStatusOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.UrlStatusOptions, 
+
+            UrlStatusOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.UrlStatusOptions,
                 () => Model.Settings.Feeder.SelectedUrlStatusOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
-            
+
             // invoke online game file update to handle IsNewAndSelectedFileCollectionType which is file type sensitive
-            OnlineFileTypeOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.OnlineFileTypeOptions, 
+            OnlineFileTypeOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.OnlineFileTypeOptions,
                 () => Model.Settings.Feeder.SelectedOnlineFileTypeOptions, _ => UpdateFilterOptionsBasedOnSelectedFileTypes(), includeSelectAll: false, minimumNumberOfSelections: 1),
-            
-            MiscFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.MiscFeatureOptions, 
+
+            MiscFeaturesOptionsView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.MiscFeatureOptions,
                 () => Model.Settings.Feeder.SelectedMiscFeatureOptions, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
 
             // simulator formats - vpx, fp, etc
             // - only applicable online
-            SimulatorOptionsFilterView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.SimulatorOptions, 
-                () => Model.Settings.Feeder.SelectedSimulatorOptionFilter, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1),
+            SimulatorOptionsFilterView = FeatureOptions.CreateFeatureOptionsMultiSelectionView(StaticSettings.SimulatorOptions,
+                () => Model.Settings.Feeder.SelectedSimulatorOptionFilter, _ => UpdateOnlineGameFileDetails(), includeSelectAll: false, minimumNumberOfSelections: 1)
         };
 
         // invoke online game file update to handle IsNew which is time sensitive
         UpdatedFilterTimeChanged = new ActionCommand(UpdateOnlineGameFileDetails);
-        
+
         NavigateToUrlCommand = new ActionCommand<string>(url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
         // update filter options and IsNew properties
@@ -245,8 +126,6 @@ public sealed class FeederResultsViewModel
 
     public ObservableCollection<GameItem> GameItems { get; }
     public ListCollectionView<GameItem> GameItemsView { get; }
-
-    private readonly GameCollections _gameCollections;
     public Window Window { get; private set; }
 
     public GameItem SelectedGameItem { get; set; }
@@ -385,18 +264,115 @@ public sealed class FeederResultsViewModel
 
     private void NavigateToBackupFolder() => Process.Start("explorer.exe", BackupFolder);
 
+    private void UpdateGameItemsViewModel(IList<GameItem> gameItems)
+    {
+        // assign VM properties
+        gameItems.ForEach(gameItem =>
+        {
+            // local database show/add commands
+            gameItem.IsMatchingEnabled = IsMatchingEnabled;
+            gameItem.UpdateDatabaseEntryCommand = new ActionCommand(() =>
+                DatabaseItemManagement.UpdateDatabaseItem(DialogHostName, _localGames, gameItem, _gameCollections, () => GameItems?.Remove(gameItem), true));
+            gameItem.CreateDatabaseEntryCommand = new ActionCommand(() =>
+                DatabaseItemManagement.CreateDatabaseItem(DialogHostName, _localGames, gameItem, _gameCollections));
+            gameItem.UpdateDatabaseMatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
+            gameItem.UpdateDatabaseUnmatchedEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
+            gameItem.CreateDatabaseEntryTooltip += IsMatchingEnabled ? "" : MatchingDisabledMessage;
+
+            if (gameItem.OnlineGame is not { } onlineGame) // pattern matching - assign AND check for not null!
+                return;
+
+            // image - for showing dialog with larger view of image
+            onlineGame.ImageUrlSelection = new UrlSelection
+            {
+                Url = onlineGame.ImgUrl,
+                SelectedCommand = new ActionCommand(() => ShowImage(onlineGame.ImgUrl))
+            };
+
+            // show large image popup
+            onlineGame.ImageFiles.ForEach(imageFile =>
+            {
+                imageFile.ImageUrlSelection = new UrlSelection
+                {
+                    Url = imageFile.ImgUrl,
+                    SelectedCommand = new ActionCommand(() => ShowImage(imageFile.ImgUrl))
+                };
+            });
+
+            // initialize VM attributes so they can be referenced quickly during filtering of the 'misc options'
+            onlineGame.TableFiles.ForEach(tableFile =>
+            {
+                var comment = tableFile.Comment?.ToLower().Trim() ?? string.Empty;
+
+                if (comment.ContainsAny("vr room", "vr standalone") && !comment.ContainsAny("optional vr room option", "vr room option"))
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.VirtualRealityOnly);
+
+                if ((comment.ContainsAny("fss (full single screen)") && !comment.ContainsAny("fss (full single screen) option included"))
+                    || tableFile.Urls.Select(u => u.Url).ContainsAny("https://fss-pinball.com"))
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.FullSingleScreenOnly);
+
+                if (comment.ContainsAny("sound mod", "music mod", "jukebox mod"))
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.MusicOrSoundMod);
+
+                if (comment.ContainsAny("bw mod", "black & white mod", "black and white mod"))
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.BlackAndWhiteMod);
+
+                // any table that doesn't contain at least one feature is considered as 'standard'
+                if (tableFile.FeatureOptions.Count == 0)
+                    tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.Standard);
+
+                tableFile.Simulator = SimulatorOptionHelper.GetEnum(tableFile.TableFormat);
+            });
+
+            onlineGame.B2SFiles.ForEach(backglassFile =>
+            {
+                if (backglassFile.Features?.Any(feature => feature?.ToLower().Trim() == "fulldmd") == true ||
+                    backglassFile.Urls?.Any(url => url.Url.ToLower().RemoveChars('-').Contains("fulldmd")) == true)
+                {
+                    backglassFile.FeatureOptions.Add(MiscFeatureOptionEnum.FullDmd);
+                }
+
+                // any file that doesn't contain at least one feature is considered 'standard'
+                if (backglassFile.FeatureOptions.Count == 0)
+                    backglassFile.FeatureOptions.Add(MiscFeatureOptionEnum.Standard);
+            });
+
+            // extract IpdbId
+            var match = _regexExtractIpdbId.Match(onlineGame.IpdbUrl ?? string.Empty);
+            if (match.Success)
+                onlineGame.IpdbId = match.Groups["ipdbId"].Value;
+
+            // create the VPS URL
+            // assign VPS Url (not a fix)
+            onlineGame.VpsUrl = $"https://virtual-pinball-spreadsheet.web.app/game/{onlineGame.Id}";
+
+            // update URL information
+            onlineGame.AllFileCollections.Select(x => x.Value).SelectMany(x => x).ForEach(file =>
+            {
+                file.Urls.ForEach(url => url.SelectedCommand = new ActionCommand(() => NavigateToUrl(url.Url)));
+
+                if (!file.Urls.Any())
+                    file.UrlStatusEnum = UrlStatusEnum.Missing;
+                else if (file.Urls.All(url => url.Broken))
+                    file.UrlStatusEnum = UrlStatusEnum.Broken;
+                else
+                    file.UrlStatusEnum = UrlStatusEnum.Valid;
+            });
+        });
+    }
+
     private void UpdateFilterOptionsBasedOnSelectedFileTypes()
     {
         // table file type - enable features
-        UpdateMiscFeatureState(new [] {OnlineFileTypeEnum.Tables},
+        UpdateMiscFeatureState(new[] { OnlineFileTypeEnum.Tables },
             MiscFeatureOptionEnum.VirtualRealityOnly, MiscFeatureOptionEnum.FullSingleScreenOnly, MiscFeatureOptionEnum.MusicOrSoundMod, MiscFeatureOptionEnum.BlackAndWhiteMod);
-        
+
         // - enable simulator options and also default first option VPX if none are already selected
         var isTableEnabled = Settings.SelectedOnlineFileTypeOptions.Contains(OnlineFileTypeEnum.Tables.GetDescription());
-        FeatureOptions.UpdateFeatureOptions(isTableEnabled, GameFiltersViewModel.SimulatorOptionsFilterView.ToList(), (int) SimulatorOptionEnum.VirtualPinballX);
+        FeatureOptions.UpdateFeatureOptions(isTableEnabled, GameFiltersViewModel.SimulatorOptionsFilterView.ToList(), (int)SimulatorOptionEnum.VirtualPinballX);
 
         // backglass file - enable features
-        UpdateMiscFeatureState(new [] {OnlineFileTypeEnum.Backglasses}, MiscFeatureOptionEnum.FullDmd);
+        UpdateMiscFeatureState(new[] { OnlineFileTypeEnum.Backglasses }, MiscFeatureOptionEnum.FullDmd);
 
         // table or backglass file - enable features
         var tableAndBackglassFileType = new[] { OnlineFileTypeEnum.Tables, OnlineFileTypeEnum.Backglasses };
@@ -405,7 +381,7 @@ public sealed class FeederResultsViewModel
         // - automatically standard simulator options and also default first option VPX if none are already selected
         var isTableOrBackglassEnabled = Settings.SelectedOnlineFileTypeOptions.ContainsAny(tableAndBackglassFileType.Select(x => x.GetDescription()));
         if (isTableOrBackglassEnabled)
-            FeatureOptions.SelectDefaultFeatureType(GameFiltersViewModel.MiscFeaturesOptionsView.ToList(), (int) MiscFeatureOptionEnum.Standard);
+            FeatureOptions.SelectDefaultFeatureType(GameFiltersViewModel.MiscFeaturesOptionsView.ToList(), (int)MiscFeatureOptionEnum.Standard);
 
         UpdateOnlineGameFileDetails();
     }
@@ -457,9 +433,9 @@ public sealed class FeederResultsViewModel
 
                         // simulator application, aka file format, e.g. VPX, FP, etc.. only applies to tables, e.g. should be ignored for backglass, dmd, etc
                         (!fileCollectionTypeEnum.In(OnlineFileTypeEnum.Tables) ||
-                        IsNew(fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
-                            Settings.SelectedSimulatorOptionFilter.Any() &&
-                            Settings.SelectedSimulatorOptionFilter.Contains((file as TableFile)?.Simulator ?? SimulatorOptionEnum.Unknown)) == true) &&
+                         IsNew(fileCollectionTypeEnum, OnlineFileTypeEnum.Tables, () =>
+                             Settings.SelectedSimulatorOptionFilter.Any() &&
+                             Settings.SelectedSimulatorOptionFilter.Contains((file as TableFile)?.Simulator ?? SimulatorOptionEnum.Unknown)) == true) &&
 
                         // download URL status
                         IsNew(fileCollectionTypeEnum, null, () =>
@@ -487,12 +463,40 @@ public sealed class FeederResultsViewModel
         FilterChangedCommand.Execute(null);
     }
 
-    private static bool? IsNew(OnlineFileTypeEnum actualFileCollectionTypeEnum, OnlineFileTypeEnum? requiredOnlineFileTypeEnum, Func<bool> isNewFunc)
+    private bool GameItemsViewFilter(GameItem gameItem)
     {
+        var show = (Settings.SelectedTableFilter == null || gameItem.Name.Contains(Settings.SelectedTableFilter, StringComparison.OrdinalIgnoreCase)) &&
+                   // **ALL** file level filtering - this is based on IsNew calculated within UpdateOnlineGameFileDetails, e.g. FSS only, time range, simulator, url status, etc
+                   // - exclude any gameItem that doesn't have new files for one of the selected content types
+                   // - this also takes care of the individual file IsNew updates (e.g. VR only, sound mod, etc)
+                   (gameItem.OnlineGame == null || Settings.SelectedOnlineFileTypeOptions.ContainsAny(gameItem.OnlineGame.IsNewFileCollectionTypes)) &&
+
+                   // table match type, e.g. local, online, local and online
+                   Settings.SelectedTableMatchOptions.Contains(gameItem.TableMatchType) &&
+
+                   // manufacturer - original or manufactured
+                   (!Settings.SelectedManufacturedOptions.Any() ||
+                    (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.True) && gameItem.TableStyleOption == TableStyleOptionEnum.Manufactured) ||
+                    (Settings.SelectedManufacturedOptions.Contains(YesNoNullableBooleanOptionEnum.False) && gameItem.TableStyleOption == TableStyleOptionEnum.Original)) &&
+
+                   // manufacture/construction date
+                   (Settings.SelectedYearBeginFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearBeginFilter, 0, 50) >= 0) &&
+                   (Settings.SelectedYearEndFilter == null || string.CompareOrdinal(gameItem.Year, 0, Settings.SelectedYearEndFilter, 0, 50) <= 0) &&
+
+                   // technology type, i.e. SS, EM, PM, unknown
+                   (!Settings.SelectedTechnologyTypeOptions.Any() ||
+                    Settings.SelectedTechnologyTypeOptions.Contains(gameItem.TechnologyType ?? TechnologyTypeOptionEnum.Unknown)) &&
+
+                   // manufacture name
+                   (Settings.SelectedManufacturerFilter == null || gameItem.Manufacturer.Contains(Settings.SelectedManufacturerFilter, StringComparison.OrdinalIgnoreCase));
+        
+        return show;
+    }
+
+    private static bool? IsNew(OnlineFileTypeEnum actualFileCollectionTypeEnum, OnlineFileTypeEnum? requiredOnlineFileTypeEnum, Func<bool> isNewFunc) =>
         // if the file type matches (or is don't care), then invoke the callback to allow the caller to determine if the file is new (or not)
         // - returning null indicates no check was made, i.e. n/a
-        return requiredOnlineFileTypeEnum == null || actualFileCollectionTypeEnum == requiredOnlineFileTypeEnum ? isNewFunc() : null;
-    }
+        requiredOnlineFileTypeEnum == null || actualFileCollectionTypeEnum == requiredOnlineFileTypeEnum ? isNewFunc() : null;
 
     private bool IsNewUpdatedTimestamp(File file) => file.UpdatedAt >= (Settings.SelectedUpdatedAtDateBegin ?? DateTime.MinValue) && file.UpdatedAt <= (Settings.SelectedUpdatedAtDateEnd?.AddDays(1) ?? DateTime.Now);
 
@@ -515,6 +519,8 @@ public sealed class FeederResultsViewModel
     }
 
     private IEnumerable<OnlineGame> GetOnlineGames() => GameItems.Where(item => item.OnlineGame != null).Select(item => item.OnlineGame);
+
+    private readonly GameCollections _gameCollections;
 
     private readonly Regex _regexExtractIpdbId = new(@"http.?:\/\/www\.ipdb\.org\/machine\.cgi\?id=(?<ipdbId>\d*)$", RegexOptions.Compiled);
     private readonly IList<LocalGame> _localGames;
