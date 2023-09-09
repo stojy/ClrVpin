@@ -118,12 +118,16 @@ public static class FeatureOptions
                 DisableFeatureType(featureType);
         });
 
-        // if the feature is enabled AND no options are active, then select the default feature type if one is provided
-        if (isEnabled && defaultFeatureTypeEnum != null && !featureTypes.Any(option => option.IsActive))
-        {
-            var featureType = featureTypes.First(feature => feature.Id == defaultFeatureTypeEnum);
+        if (defaultFeatureTypeEnum != null)
+            SelectDefaultFeatureType(featureTypes, defaultFeatureTypeEnum.Value);
+    }
+
+    public static void SelectDefaultFeatureType(List<FeatureType> featureTypes, int defaultFeatureTypeEnum)
+    {
+        // if the feature is enabled AND no options are active, then select the default feature type
+        var featureType = featureTypes.First(feature => feature.Id == defaultFeatureTypeEnum);
+        if (featureType.IsSupported && !featureTypes.Any(option => option.IsActive)) 
             SelectFeatureType(featureType, true);
-        }
     }
 
     public static void DisableFeatureType(FeatureType featureType, string message = null)
