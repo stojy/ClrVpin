@@ -127,6 +127,7 @@ public class FuzzyTests
     [TestCase("1826898402_Shrek1.0.vpx", true, "1826898402_Shrek1.0", TestName = "drop file extension")]
     [TestCase("1826898402_Shrek(Stern2008)(MOD)1.0.vpx", true, "1826898402_Shrek(Stern2008)1.0", TestName = "remove '(MOD)'")]
     [TestCase("13Big INjun123.vpx", true, "13Big Indian123", TestName = "substitute alias #1 - big injun")]
+    [TestCase("Bally Hoo.vpx", true, "Bally Hoo (Bally 1969)", TestName = "substitute alias #2 - bally hoo")]
     public void CleanPreSplitTest(string fileName, bool isFileName, string expectedName)
     {
         // confirm CleanPreSplit provides exact results - i.e. ignore scoring
@@ -286,6 +287,8 @@ public class FuzzyTests
     [TestCase("Black Hole (Gottlieb 1981)", "Black Hole.vpx", 146, TestName = "exact name match - without manufacturer/year")]
     [TestCase("Tales of the Arabian Nights (Williams 1996)", "TOTAN4k 1.5.vpx", 232, TestName = "alias: totan")]
     [TestCase("2 in 1 (Bally 1964)", "2in1_(Bally 1964)_rev_1.00.vpx", 215, TestName = "trailing number and underscore (1_) should not be confused with an incomplete version number")]
+    [TestCase("Bally Hoo (Bally 1969)", "Bally Hoo.vpx", 129, TestName = "alias substitution to cater for 'bally' matching the name instead of the manufacturer")]
+    [TestCase("Independence Day (Sega 1996)", "ID4 (Sega 1996)_Bigus(MOD)2.0.vpx", 227, TestName = "alias substitution.. ID4 abbreviation to Independence Day")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation

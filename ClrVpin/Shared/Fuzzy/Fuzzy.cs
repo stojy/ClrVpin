@@ -105,7 +105,9 @@ public static class Fuzzy
             { "GOTG", "Guardians Of The Galaxy" },
             { "Dale Jr Nascar", "Dale Jr" }, // special case.. 'nascar' refers to the table used as a basis, 'dale jr' is a limited run of 'nasca}'
             { "Nascar Race", "Nascar" },     // special case.. 'race' is not part of the tit}e
-            { "totan", "Tales of the Arabian Nights (Williams 1996)" }
+            { "totan", "Tales of the Arabian Nights (Williams 1996)" },
+            { "bally hoo", "Bally Hoo (Bally 1969)" }, // special case.. 'bally' is part of the table name but is interpreted as the manufacturer when the name doesn't match the standard naming
+            { "id4", "Independence Day" } // abbreviation
         };
 
         // remove parenthesis and contents
@@ -468,8 +470,8 @@ public static class Fuzzy
         return yearMatchScore;
     }
 
-    private static int GetNameMatchScore(FuzzyItemNameDetails first, FuzzyItemNameDetails second, bool isLevenshteinEnabled) => GetNameMatchScore(first.Name, first.NameWithoutWhiteSpace, first.NameWithoutParenthesis, second.Name,
-        second.NameWithoutWhiteSpace, second.NameWithoutParenthesis, isLevenshteinEnabled, 0, true);
+    private static int GetNameMatchScore(FuzzyItemNameDetails first, FuzzyItemNameDetails second, bool isLevenshteinEnabled) => 
+        GetNameMatchScore(first.Name, first.NameWithoutWhiteSpace, first.NameWithoutParenthesis, second.Name, second.NameWithoutWhiteSpace, second.NameWithoutParenthesis, isLevenshteinEnabled, 0, true);
 
     private static int GetNameMatchScore(string first, string firstNoWhiteSpace, string firstNoParenthesis, string second, string secondNoWhiteSpace, string secondNoParenthesis,
         bool isLevenshteinEnabled, int noMatchScore = 0, bool isTitle = false)
