@@ -107,7 +107,7 @@ public static class FeatureOptions
     }
 
     // update multiple feature options
-    public static void UpdateFeatureOptions(bool isEnabled, List<FeatureType> featureTypes, int? defaultFeatureTypeEnum = null)
+    public static void EnableDisableFeatureOptions(bool isEnabled, List<FeatureType> featureTypes)
     {
         // enable/disable the features
         featureTypes.ForEach(featureType =>
@@ -117,17 +117,19 @@ public static class FeatureOptions
             else
                 DisableFeatureType(featureType);
         });
-
-        if (defaultFeatureTypeEnum != null)
-            SelectDefaultFeatureType(featureTypes, defaultFeatureTypeEnum.Value);
     }
 
-    public static void SelectDefaultFeatureType(List<FeatureType> featureTypes, int defaultFeatureTypeEnum)
+    public static void SelectDefaultFeatureTypes(List<FeatureType> featureTypes, params int[] defaultFeatureTypeEnums)
     {
-        // if the feature is enabled AND no options are active, then select the default feature type
-        var featureType = featureTypes.First(feature => feature.Id == defaultFeatureTypeEnum);
-        if (featureType.IsSupported && !featureTypes.Any(option => option.IsActive)) 
-            SelectFeatureType(featureType, true);
+        // do nothing if a feature type is already selected/active
+        if (featureTypes.Any(option => option.IsActive))
+            return;
+
+        // select all of the specified default feature types
+        var defaultFeatureTypes = featureTypes.Where(feature => defaultFeatureTypeEnums.Contains(feature.Id));
+        defaultFeatureTypes
+            .Where(defaultFeatureType => defaultFeatureType.IsSupported)
+            .ForEach(defaultFeatureType => SelectFeatureType(defaultFeatureType, true));
     }
 
     public static void DisableFeatureType(FeatureType featureType, string message = null)

@@ -369,7 +369,9 @@ public sealed class FeederResultsViewModel
 
         // - enable simulator options and also default first option VPX if none are already selected
         var isTableEnabled = Settings.SelectedOnlineFileTypeOptions.Contains(OnlineFileTypeEnum.Tables.GetDescription());
-        FeatureOptions.UpdateFeatureOptions(isTableEnabled, GameFiltersViewModel.SimulatorOptionsFilterView.ToList(), (int)SimulatorOptionEnum.VirtualPinballX);
+        FeatureOptions.EnableDisableFeatureOptions(isTableEnabled, GameFiltersViewModel.SimulatorOptionsFilterView.ToList());
+        if (isTableEnabled)
+            FeatureOptions.SelectDefaultFeatureTypes(GameFiltersViewModel.SimulatorOptionsFilterView.ToList(), (int)SimulatorOptionEnum.VirtualPinballX, (int)SimulatorOptionEnum.Unknown);
 
         // backglass file - enable features
         UpdateMiscFeatureState(new[] { OnlineFileTypeEnum.Backglasses }, MiscFeatureOptionEnum.FullDmd);
@@ -381,7 +383,7 @@ public sealed class FeederResultsViewModel
         // - automatically standard simulator options and also default first option VPX if none are already selected
         var isTableOrBackglassEnabled = Settings.SelectedOnlineFileTypeOptions.ContainsAny(tableAndBackglassFileType.Select(x => x.GetDescription()));
         if (isTableOrBackglassEnabled)
-            FeatureOptions.SelectDefaultFeatureType(GameFiltersViewModel.MiscFeaturesOptionsView.ToList(), (int)MiscFeatureOptionEnum.Standard);
+            FeatureOptions.SelectDefaultFeatureTypes(GameFiltersViewModel.MiscFeaturesOptionsView.ToList(), (int)MiscFeatureOptionEnum.Standard, (int)MiscFeatureOptionEnum.Standard);
 
         UpdateOnlineGameFileDetails();
     }
@@ -393,7 +395,7 @@ public sealed class FeederResultsViewModel
         var miscFeatureOptionItems = GameFiltersViewModel.MiscFeaturesOptionsView.Where(option => miscFeatureOptions.Contains(option.Id));
 
         // update each of the relevant feature options
-        FeatureOptions.UpdateFeatureOptions(isFileTypeEnabled, miscFeatureOptionItems.ToList());
+        FeatureOptions.EnableDisableFeatureOptions(isFileTypeEnabled, miscFeatureOptionItems.ToList());
     }
 
     private void UpdateOnlineGameFileDetails()
