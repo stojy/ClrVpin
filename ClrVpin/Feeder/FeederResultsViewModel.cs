@@ -81,7 +81,7 @@ public sealed class FeederResultsViewModel
                     || tableFile.Urls.Select(u => u.Url).ContainsAny("https://fss-pinball.com"))
                     tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.FullSingleScreenOnly);
                 
-                if (comment.ContainsAny("sound mod", "music mod"))
+                if (comment.ContainsAny("sound mod", "music mod", "jukebox mod"))
                     tableFile.FeatureOptions.Add(MiscFeatureOptionEnum.MusicOrSoundMod);
                 
                 if (comment.ContainsAny("bw mod", "black & white mod", "black and white mod"))
