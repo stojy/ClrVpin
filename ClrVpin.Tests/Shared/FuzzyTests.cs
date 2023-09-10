@@ -291,6 +291,7 @@ public class FuzzyTests
     [TestCase("Bally Hoo (Bally 1969)", "Bally Hoo.vpx", 129, TestName = "alias substitution to cater for 'bally' matching the name instead of the manufacturer")]
     [TestCase("Independence Day (Sega 1996)", "ID4 (Sega 1996)_Bigus(MOD)2.0.vpx", 227, TestName = "alias substitution.. ID4 abbreviation to Independence Day")]
     [TestCase("Galaxia (LTD do Brasil 1975)", "Galáxia (LTD do Brasil 1975).vpx", 220, TestName = "ignore diacritics for string comparison - a == á")]
+    [TestCase("Capt. Fantastic and The Brown Dirt Cowboy (Bally 1976)", "JP's Captain Fantastic (Bally 1975) v3.1 - Pup.vpx", 175, TestName = "abbreviation alias - capt. to captain")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation

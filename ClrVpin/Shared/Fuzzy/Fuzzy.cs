@@ -109,7 +109,8 @@ public static class Fuzzy
             { "Nascar Race", "Nascar" },     // special case.. 'race' is not part of the tit}e
             { "totan", "Tales of the Arabian Nights (Williams 1996)" },
             { "bally hoo", "Bally Hoo (Bally 1969)" }, // special case.. 'bally' is part of the table name but is interpreted as the manufacturer when the name doesn't match the standard naming
-            { "id4", "Independence Day" } // abbreviation
+            { "id4", "Independence Day" }, // abbreviation
+            { "capt.", "Captain" } 
         };
 
         // remove parenthesis and contents
