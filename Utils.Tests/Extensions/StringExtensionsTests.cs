@@ -54,10 +54,18 @@ public class StringExtensionsTests
     [TestCase("Galáxia", "Galaxia")]
     [TestCase("Cáfế", "Cafe")]
     [TestCase("crème brûlée", "creme brulee")]
-    [TestCase("Ю", "Ю", Description = "no conversion.. character is not a diacritic")]
+    [TestCase("Ю", "Ю", Description = "character left since it's not a diacritic")]
     [TestCase("ÃŘ", "AR")]
+    [TestCase("stoj™", "stoj™", Description = "character left since it's not a diacritic")]
     public void TestRemoveDiacritics(string source, string expectedResult)
     {
         Assert.That(source.RemoveDiacritics(), Is.EqualTo(expectedResult));
+    }
+
+    [TestMethod]
+    [TestCase("Galáxia", "Galaxia")]
+    public void TestEqualsIgnoreDiacritics(string source, string expectedResult)
+    {
+        Assert.That(source.EqualsIgnoreDiacritics(expectedResult));
     }
 }

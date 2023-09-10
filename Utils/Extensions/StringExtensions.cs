@@ -62,4 +62,12 @@ public static class StringExtensions
             .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark);
         return new string(baseCharacters.ToArray());
     }
+
+    public static bool EqualsIgnoreDiacritics(this string source, string other)
+    {
+        // IgnoreNonSpace - ignore the non-spacing characters that form the diacritic symbols
+        // - https://stackoverflow.com/questions/55548264/how-can-i-get-true-if-we-compare-a-to-%C3%A1
+        // - https://learn.microsoft.com/en-us/dotnet/api/system.globalization.compareoptions?view=netframework-4.7.2
+        return string.Compare(source, other, CultureInfo.InvariantCulture, CompareOptions.IgnoreNonSpace) == 0; 
+    }
 }
