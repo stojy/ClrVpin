@@ -1,5 +1,8 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Utils.Extensions;
+using Assert = NUnit.Framework.Assert;
+
 // ReSharper disable StringLiteralTypo
 
 namespace Utils.Tests.Extensions;
@@ -28,22 +31,33 @@ public class StringExtensionsTests
     }
 
     [Test]
-    [TestCase("abcdefgh", new[] {'b', 'f'}, "acdegh")]
-    [TestCase("abc--de-fgh", new[] {'-'}, "abcdefgh")]
-    [TestCase(null, new[] {'-'}, null)]
+    [TestCase("abcdefgh", new[] { 'b', 'f' }, "acdegh")]
+    [TestCase("abc--de-fgh", new[] { '-' }, "abcdefgh")]
+    [TestCase(null, new[] { '-' }, null)]
     public void TestRemoveChars(string source, char[] unwantedChars, string expectedResult)
     {
         Assert.That(source.RemoveChars(unwantedChars), Is.EqualTo(expectedResult));
     }
 
     [Test]
-    [TestCase("music and sound mod", new[] {"music mod"}, false)]
-    [TestCase("music and sound mod", new[] {"music"}, true)]
-    [TestCase("music and sound mod", new[] {"sound mod"}, true)]
-    [TestCase(null, new[] {"sound mod"}, false)]
-    [TestCase(null, new[] {""}, false)]
+    [TestCase("music and sound mod", new[] { "music mod" }, false)]
+    [TestCase("music and sound mod", new[] { "music" }, true)]
+    [TestCase("music and sound mod", new[] { "sound mod" }, true)]
+    [TestCase(null, new[] { "sound mod" }, false)]
+    [TestCase(null, new[] { "" }, false)]
     public void TestContainsAny(string source, string[] items, bool expectedResult)
     {
         Assert.That(source.ContainsAny(items), Is.EqualTo(expectedResult));
+    }
+
+    [TestMethod]
+    [TestCase("Galáxia", "Galaxia")]
+    [TestCase("Cáfế", "Cafe")]
+    [TestCase("crème brûlée", "creme brulee")]
+    [TestCase("Ю", "Ю", Description = "no conversion.. character is not a diacritic")]
+    [TestCase("ÃŘ", "AR")]
+    public void TestRemoveDiacritics(string source, string expectedResult)
+    {
+        Assert.That(source.RemoveDiacritics(), Is.EqualTo(expectedResult));
     }
 }
