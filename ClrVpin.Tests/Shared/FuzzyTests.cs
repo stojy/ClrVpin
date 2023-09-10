@@ -24,7 +24,7 @@ public class FuzzyTests
     [TestCase("Indiana Jones.directb2s", true, "indiana jones", "indianajones", "indiana jones", null, null, null)]
     [TestCase("Indiana Jones (blah) (Williams 1993).directb2s", true, "indiana jones blah", "indianajonesblah", "indiana jones", "williams", "williams", 1993,
         TestName = "double parenthesis - first parenthesis is used #1 - and parenthesis stripped")]
-    [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012).directb2s", true, "c dc let there be rock limited edition", "cdcletthereberocklimitededition", "c dc", "stern", "stern", 2012,
+    [TestCase("AC-DC (Let There Be Rock Limited Edition) (Stern 2012).directb2s", true, "dc let there be rock limited edition", "dcletthereberocklimitededition", "dc", "stern", "stern", 2012,
         TestName = "double parenthesis - first parenthesis is used #1 - and parenthesis stripped, also - becomes space")]
     [TestCase("Batman (66 Limited Edition) (Stern 2016)", true, "batman 66 limited edition", "batman66limitededition", "batman", "stern", "stern", 2016,
         TestName = "double parenthesis - first parenthesis is used #3 - and parenthesis stripped")]
@@ -219,10 +219,10 @@ public class FuzzyTests
     [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern)", 133, TestName = "contains name 20char and missing year")]
     [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1993)", 183, TestName = "contains name 20char and exact year")]
     [TestCase("Indiana Jones Rocks Baby (Stern 1993)", "OMG Indiana Jones Rocks Baby (Stern 1994)", 173, TestName = "contains name 20char and +/-1 year")]
-    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", 85, TestName = "contains name 13char and missing year")]
-    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", 135, TestName = "contains name 13char and exact year")]
-    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", 125, TestName = "contains name 13char and +/-1 year")]
-    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", 35, TestName = "contains name 13char and +/-2 year")]
+    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern)", 84, TestName = "contains name 13char and missing year")]
+    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1993)", 134, TestName = "contains name 13char and exact year")]
+    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1994)", 124, TestName = "contains name 13char and +/-1 year")]
+    [TestCase("Indiana Jones R (Stern 1993)", "OMG Indiana Jones Rocks (Stern 1995)", 34, TestName = "contains name 13char and +/-2 year")]
     [TestCase("Back To The Future (Data East 1990)", "Back To The Future Starlion MoD 1.0.directb2s", 149, TestName = "manufacturer and year missing")]
     [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", 202, TestName = "after chars removed - perfect match, no manufacturer/year")]
     [TestCase("Cowboy Eight Ball (LTD 1981)", "Cowboy Eight Ball 213 (LTD do Brasil Diversï¿½es Eletrï¿½nicas Ltda 1981).f4v", 152, TestName = "after chars removed - partial match, no manufacturer/year")]
@@ -259,7 +259,7 @@ public class FuzzyTests
     [TestCase("Pinball (Stern 1977)", "Pinball PM (Stern 1977).vpx", 220, TestName = "strip pinball type from name - PM")]
     [TestCase("Roller Derby (Bally 1960)", "Bally Roller Derby 2.0.vpx", 173, TestName = "non-standard naming.. extract manufacturer from name")]
     [TestCase("Wolverine (Zen Studios 2013)", "X-Men Wolverine LE (Stern 2012).vpx", 31, TestName = "partial name match and no manufacturer/year.. expected to fail")]
-    [TestCase("Mac's Galaxy (MAC S.A. 1986)", "Mac Galaxy (MAC 1986).vpx", 42, TestName = "similar match, but 's' preventing a better score")]
+    [TestCase("Mac's Galaxy (MAC S.A. 1986)", "Mac Galaxy (MAC 1986).vpx", 67, TestName = "similar match, but 's' preventing a better score")]
     [TestCase("James Camerons Avatar (Limited Edition) (Stern 2010)", "Avatar, James Cameron's (Stern 2010)", 145, TestName = "online matching scenario - database desc to online (forward).. expected hit against 'james cameron'")]
     [TestCase("Avatar, James Cameron's (Stern 2010)", "James Camerons Avatar (Limited Edition) (Stern 2010)", 141,
         TestName = "online matching scenario - online to database desc (reverse.. does not happen).. unexpected(?) lower score")]
@@ -299,6 +299,8 @@ public class FuzzyTests
     [TestCase("Title Fight (Gottlieb 1990)", "TitleFightBeta.vpx", 147, TestName = "remove alias 'beta'")]
     [TestCase("Gorgar (Williams 1979)", "UWs Gorgar v1.5_VPX8.vpx", 145, TestName = "igore author 'UWs', 'VPX8', and trim '_'")]
     [TestCase("Mephisto (Cirsa 1987)", "jp mephisto.directb2s", 145, TestName = "author 'jp'")]
+    [TestCase("Martian Queen (LTD do Brasil 1981)", "marqueen_w.directb2s", 149, TestName = "known word substitution: marqueen and trim single character 'w'")]
+    [TestCase("Martian Queen (LTD do Brasil 1981)", "q_marqueen_w.directb2s", 149, TestName = "known word substitution: marqueen and trim single character 'q' and 'w'")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
