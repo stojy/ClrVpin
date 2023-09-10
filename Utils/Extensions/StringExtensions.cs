@@ -8,8 +8,9 @@ namespace Utils.Extensions;
 public static class StringExtensions
 {
     // convert from camel case to regular title cased source
-    // e.g. SpinACard --> Spin A Card
-    public static string FromCamelCase(this string source, IEnumerable<string> ignoreWords = null)
+    // e.g. splitOnNumbers=false.. SpinACard --> Spin A Card
+    // e.g. splitOnNumbers=true.. TitleFightBeta1 --> Title Fight Beta 1
+    public static string FromCamelCase(this string source, bool splitOnNumbers = false, IEnumerable<string> ignoreWords = null)
     {
         // handle ignoreWords by converting matches to lowercase so they are effectively ignored when it comes to the title case checking
         ignoreWords?.ForEach(x => source = source.Replace(x, x.ToLower()));
@@ -21,9 +22,13 @@ public static class StringExtensions
             var previousLetter = i >= 1 ? source[i - 1] : (char?)null;
             var earlierLetter = i >= 2 ? source[i - 2] : (char?)null;
 
-            if (char.IsUpper(currentLetter) && previousLetter != null &&
-                (char.IsLower(previousLetter.Value) || (char.ToLowerInvariant(previousLetter.Value) == 'a' && (earlierLetter == null || char.IsLower(earlierLetter.Value)))))
-                newString.Append(" ");
+            if (previousLetter != null &&
+                (char.IsUpper(currentLetter) || (splitOnNumbers && char.IsNumber(currentLetter) && !char.IsNumber(previousLetter.Value))) &&
+                (char.IsLower(previousLetter.Value) || splitOnNumbers && char.IsNumber(previousLetter.Value) || (char.ToLowerInvariant(previousLetter.Value) == 'a' && (earlierLetter == null || char.IsLower(earlierLetter.Value)))))
+            {
+                newString.Append(' ');
+            }
+
             newString.Append(currentLetter);
         }
 
@@ -63,11 +68,9 @@ public static class StringExtensions
         return new string(baseCharacters.ToArray());
     }
 
-    public static bool EqualsIgnoreDiacritics(this string source, string other)
-    {
+    public static bool EqualsIgnoreDiacritics(this string source, string other) =>
         // IgnoreNonSpace - ignore the non-spacing characters that form the diacritic symbols
         // - https://stackoverflow.com/questions/55548264/how-can-i-get-true-if-we-compare-a-to-%C3%A1
         // - https://learn.microsoft.com/en-us/dotnet/api/system.globalization.compareoptions?view=netframework-4.7.2
-        return string.Compare(source, other, CultureInfo.InvariantCulture, CompareOptions.IgnoreNonSpace) == 0; 
-    }
+        string.Compare(source, other, CultureInfo.InvariantCulture, CompareOptions.IgnoreNonSpace) == 0;
 }

@@ -50,7 +50,8 @@ public static class Fuzzy
         string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
         string[] technologyTypes = { TableType.ElectroMagnetic.ToLower(), TableType.SolidState.ToLower(), TableType.PureMechanical.ToLower() };
         string[] descriptions = { "no leds", "upgrade", "premium" };
-        pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(technologyTypes).Concat(descriptions));
+        string[] versions = { "beta" };
+        pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(technologyTypes).Concat(descriptions).Concat(versions));
         _wholeWordRegex = new Regex($"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
 
         // first pass single whitespace
@@ -187,7 +188,7 @@ public static class Fuzzy
         // clean the string to make it a little cleaner for subsequent matching.. order is VERY important!
 
         // insert word break for any camel casing, e.g. "SpotACard" becomes "Sport A Card"
-        var cleanName = name.FromCamelCase(_titleCaseWordExceptions);
+        var cleanName = name.FromCamelCase(false, _titleCaseWordExceptions);
 
         // easier comparison when everything is in the same case
         cleanName = cleanName.ToNullLowerAndTrim() ?? "";

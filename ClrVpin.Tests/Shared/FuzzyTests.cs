@@ -292,6 +292,9 @@ public class FuzzyTests
     [TestCase("Independence Day (Sega 1996)", "ID4 (Sega 1996)_Bigus(MOD)2.0.vpx", 227, TestName = "alias substitution.. ID4 abbreviation to Independence Day")]
     [TestCase("Galaxia (LTD do Brasil 1975)", "Galáxia (LTD do Brasil 1975).vpx", 220, TestName = "ignore diacritics for string comparison - a == á")]
     [TestCase("Capt. Fantastic and The Brown Dirt Cowboy (Bally 1976)", "JP's Captain Fantastic (Bally 1975) v3.1 - Pup.vpx", 175, TestName = "abbreviation alias - capt. to captain")]
+    [TestCase("The Walking Dead (Limited Edition) (Stern 2014)", "The Walking Dead Siggis mod.vpx", 70, TestName = "should not match.. partial match on start, but missing 'limited edition', manufacturer, or year")]
+    [TestCase("The Walking Dead (Limited Edition) (Stern 2014)", "The Walking Dead Siggis mod Limited Edition.vpx", 160, TestName = "limited edition included AFTER stop words 'siggis' and 'mod' removed")]
+    //[TestCase("Title Fight (Gottlieb 1990)", "TitleFightBeta1.vpx", 160, TestName = "limited edition included AFTER stop words 'siggis' and 'mod' removed")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
