@@ -25,12 +25,12 @@ public class StringExtensionsTests
     [TestCase("TheHouse", "The House")]
     [TestCase("123TheHouse", "123The House")]
     [TestCase("AC/DC Let There BeRock", "A C/DC Let There Be Rock")] // first word "AC" has "A" inserted as a new word.. an unfortunate side effect
-    [TestCase("TitleFightBeta12Alpha", "Title Fight Beta12Alpha")] // numbers are used to delimit new words
+    [TestCase("TitleFightBeta12Alpha", "Title Fight Beta12Alpha")]   // numbers are used to delimit new words
     public void TestFromCamelCase(string name, string expectedName)
     {
         Assert.That(name.FromCamelCase(), Is.EqualTo(expectedName));
     }
-    
+
     [Test]
     [TestCase("SpinACard", "Spin A Card")]
     [TestCase("aSpinACard", "a Spin A Card")]
@@ -90,5 +90,16 @@ public class StringExtensionsTests
     public void TestEqualsIgnoreDiacritics(string source, string expectedResult)
     {
         Assert.That(source.EqualsIgnoreDiacritics(expectedResult));
+    }
+
+    [TestMethod]
+    [TestCase(" abc ", "abc")]
+    [TestCase("_abc_", "abc")]
+    [TestCase("-abc-", "abc")]
+    [TestCase("_ -abc _-", "abc")]
+    [TestCase(" abc 1", "abc 1")]
+    public void TestTrimPseudoWhitespace(string source, string expectedResult)
+    {
+        Assert.That(source.TrimPseudoWhitespace(), Is.EqualTo(expectedResult));
     }
 }

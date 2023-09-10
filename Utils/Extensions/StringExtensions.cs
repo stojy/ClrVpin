@@ -24,7 +24,7 @@ public static class StringExtensions
 
             if (previousLetter != null &&
                 (char.IsUpper(currentLetter) || (splitOnNumbers && char.IsNumber(currentLetter) && !char.IsNumber(previousLetter.Value))) &&
-                (char.IsLower(previousLetter.Value) || splitOnNumbers && char.IsNumber(previousLetter.Value) || (char.ToLowerInvariant(previousLetter.Value) == 'a' && (earlierLetter == null || char.IsLower(earlierLetter.Value)))))
+                (char.IsLower(previousLetter.Value) || (splitOnNumbers && char.IsNumber(previousLetter.Value)) || (char.ToLowerInvariant(previousLetter.Value) == 'a' && (earlierLetter == null || char.IsLower(earlierLetter.Value)))))
             {
                 newString.Append(' ');
             }
@@ -73,4 +73,9 @@ public static class StringExtensions
         // - https://stackoverflow.com/questions/55548264/how-can-i-get-true-if-we-compare-a-to-%C3%A1
         // - https://learn.microsoft.com/en-us/dotnet/api/system.globalization.compareoptions?view=netframework-4.7.2
         string.Compare(source, other, CultureInfo.InvariantCulture, CompareOptions.IgnoreNonSpace) == 0;
+
+    public static string TrimPseudoWhitespace(this string source) => 
+        source?.TrimStart(_pseudoWhiteSpaceChars).TrimEnd(_pseudoWhiteSpaceChars);
+
+    private static readonly char[] _pseudoWhiteSpaceChars = { ' ', '_', '-' };
 }
