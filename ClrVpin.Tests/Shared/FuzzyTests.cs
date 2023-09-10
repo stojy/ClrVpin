@@ -298,6 +298,7 @@ public class FuzzyTests
     [TestCase("Title Fight (Gottlieb 1990)", "TitleFightBeta1.vpx", 147, TestName = "remove alias 'beta1'")]
     [TestCase("Title Fight (Gottlieb 1990)", "TitleFightBeta.vpx", 147, TestName = "remove alias 'beta'")]
     [TestCase("Gorgar (Williams 1979)", "UWs Gorgar v1.5_VPX8.vpx", 145, TestName = "igore author 'UWs', 'VPX8', and trim '_'")]
+    [TestCase("Mephisto (Cirsa 1987)", "jp mephisto.directb2s", 145, TestName = "author 'jp'")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
