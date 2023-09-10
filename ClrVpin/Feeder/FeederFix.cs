@@ -400,7 +400,8 @@ public static class FeederFix
             case "Batman 66 (Stern 2016)":
             case "Mortal Kombat II (Midway 1992)":
             case "Strip Joker Poker (Gottlieb 1978)":
-                // alternatively, GameDerived.CheckIsOriginal() can be overriden.. but better to fix the issue at the source where possible
+                // if the tables can be identified more generically (e.g. via manufacturer) then add to GameDerived.CheckIsOriginal() instead
+                // - implementing via CheckIsOriginal() will also maintain the manufacturer.. which can help with subsequent file matching
                 WrongManufacturerYear(onlineGame, "Original");
                 break;
         }

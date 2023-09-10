@@ -60,7 +60,8 @@ namespace ClrVpin.Models.Shared.Game
                    manufacturer?.StartsWith("Zen Studios", StringComparison.InvariantCultureIgnoreCase) == true ||
                    manufacturer?.StartsWith("Professional Pinball", StringComparison.InvariantCultureIgnoreCase) == true ||
                    manufacturer?.StartsWith("Cunning Developments", StringComparison.InvariantCultureIgnoreCase) == true ||
-                   manufacturer?.StartsWith("Dream Pinball 3D", StringComparison.InvariantCultureIgnoreCase) == true;
+                   manufacturer?.StartsWith("Dream Pinball 3D", StringComparison.InvariantCultureIgnoreCase) == true ||
+                   manufacturer?.StartsWith("Digital Illusions", StringComparison.InvariantCultureIgnoreCase) == true;
             
             // determine isOriginal based on table name
             var isNameOriginal =  name?.Equals("Jurassic park - Limited Edition", StringComparison.InvariantCultureIgnoreCase) == true || 
