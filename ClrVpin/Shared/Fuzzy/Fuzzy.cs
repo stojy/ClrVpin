@@ -50,7 +50,7 @@ public static class Fuzzy
         string[] vpx = { "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" };
         string[] technologyTypes = { TableType.ElectroMagnetic.ToLower(), TableType.SolidState.ToLower(), TableType.PureMechanical.ToLower() };
         string[] descriptions = { "no leds", "upgrade", "premium" };
-        string[] versions = { "beta" };
+        string[] versions = { "beta1", "beta" }; // order is important, e.g. ensure beta1 is removed before beta
         pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(technologyTypes).Concat(descriptions).Concat(versions));
         _wholeWordRegex = new Regex($"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
 
