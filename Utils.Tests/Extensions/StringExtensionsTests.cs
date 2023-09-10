@@ -93,6 +93,7 @@ public class StringExtensionsTests
     }
 
     [TestMethod]
+    [TestCase(null, null)]
     [TestCase(" abc ", "abc")]
     [TestCase("_abc_", "abc")]
     [TestCase("-abc-", "abc")]
@@ -101,5 +102,17 @@ public class StringExtensionsTests
     public void TestTrimPseudoWhitespace(string source, string expectedResult)
     {
         Assert.That(source.TrimPseudoWhitespace(), Is.EqualTo(expectedResult));
+    }
+
+    [TestMethod]
+    [TestCase(null, null)]
+    [TestCase("a abc b", "abc")]
+    [TestCase("   a abc b   ", "abc")]
+    [TestCase("a a abc b c", "a abc b", Description = "only trim the first word from start and end")]
+    [TestCase("1 abc b", "1 abc", Description = "numbers are not trimmed")]
+    [TestCase("a abc 2", "abc 2", Description = "numbers are not trimmed")]
+    public void TestTrimSingleLetterWords(string source, string expectedResult)
+    {
+        Assert.That(source.TrimSingleLetterWords(), Is.EqualTo(expectedResult));
     }
 }

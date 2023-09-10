@@ -77,5 +77,27 @@ public static class StringExtensions
     public static string TrimPseudoWhitespace(this string source) => 
         source?.TrimStart(_pseudoWhiteSpaceChars).TrimEnd(_pseudoWhiteSpaceChars);
 
+    public static string TrimSingleLetterWords(this string source)
+    {
+        if (source == null)
+            return null;
+        
+        // trim any whitespace before we start
+        source = source.TrimPseudoWhitespace();
+
+        // trim any single letter character words from beginning and end
+        var splitWords = source.Split(" ");
+        
+        var firstWordChars = splitWords.First().ToCharArray();
+        if (firstWordChars.Length == 1 && char.IsLetter(firstWordChars.First()))
+            source = source.TrimStart(firstWordChars.First());
+        
+        var lastWordChars = splitWords.Last().ToCharArray();
+        if (lastWordChars.Length == 1 && char.IsLetter(lastWordChars.First()))
+            source = source.TrimEnd(lastWordChars.First());
+
+        return source.TrimPseudoWhitespace();
+    }
+
     private static readonly char[] _pseudoWhiteSpaceChars = { ' ', '_', '-' };
 }
