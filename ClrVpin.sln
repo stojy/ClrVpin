@@ -31,8 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wiki", "wiki", "{7ACAABF4-8
 		ClrVpin.wiki\How-To-Use.md = ClrVpin.wiki\How-To-Use.md
 		ClrVpin.wiki\Inner-Workings.md = ClrVpin.wiki\Inner-Workings.md
 		ClrVpin.wiki\Misc.md = ClrVpin.wiki\Misc.md
-		ClrVpin.wiki\Overview.md = ClrVpin.wiki\Overview.md
 		ClrVpin.wiki\Modes-Gui-Cli.md = ClrVpin.wiki\Modes-Gui-Cli.md
+		ClrVpin.wiki\Overview.md = ClrVpin.wiki\Overview.md
 		ClrVpin.wiki\Roadmap.md = ClrVpin.wiki\Roadmap.md
 		ClrVpin.wiki\Screenshots.md = ClrVpin.wiki\Screenshots.md
 		ClrVpin.wiki\Step-By-Step.md = ClrVpin.wiki\Step-By-Step.md
@@ -145,7 +145,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0F74A07E-1B35-44D9-88FE-4E331CB19F52} = {34B6F8B8-7694-4097-811B-C7B944177E1C}
+		{0F74A07E-1B35-44D9-88FE-4E331CB19F52} = {7ACAABF4-86F5-4DEB-A6D8-0B0DC0801498}
 		{7ACAABF4-86F5-4DEB-A6D8-0B0DC0801498} = {34B6F8B8-7694-4097-811B-C7B944177E1C}
 		{B2EA9621-BFC7-4C92-941E-62F8ABFBAA2E} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
 		{CFF71167-5612-47C6-A2A2-C7A3BA3AEB95} = {0F74A07E-1B35-44D9-88FE-4E331CB19F52}
