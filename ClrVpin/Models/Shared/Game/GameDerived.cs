@@ -12,7 +12,6 @@ namespace ClrVpin.Models.Shared.Game
         public string Ipdb { get; set; }
         public string IpdbUrl { get; set; }
         public string NameLowerCase { get; set; }
-        public string NameWithoutParenthesis { get; set; }
         public string DescriptionLowerCase { get; set; }
         public bool IsOriginal { get; set; }
         public string TableFileWithExtension { get; set; }
@@ -63,19 +62,19 @@ namespace ClrVpin.Models.Shared.Game
                    manufacturer?.StartsWith("Dream Pinball 3D", StringComparison.InvariantCultureIgnoreCase) == true ||
                    manufacturer?.StartsWith("Digital Illusions", StringComparison.InvariantCultureIgnoreCase) == true;
             
-            // determine isOriginal based on table name
-            var isNameOriginal =  name?.Equals("Jurassic park - Limited Edition", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Kiss Live", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Dream Pinball 3D", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Sharpshooter", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Silver Line", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Space Cadet", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Yamanobori", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Siggi's Spider-Man Classic", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Mad Scientist", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Midnight Magic", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Pro Pinball The Web", StringComparison.InvariantCultureIgnoreCase) == true || 
-                                  name?.Equals("Octopus", StringComparison.InvariantCultureIgnoreCase) == true ;
+            // determine isOriginal based on table name.. for feeder the name excludes the parenthesis, but for local games it does not.. hence the 'StartsWith' comparison
+            var isNameOriginal =  name?.StartsWith("Jurassic park - Limited Edition", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Kiss Live", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Dream Pinball 3D", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Sharpshooter", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Silver Line", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Space Cadet", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Yamanobori", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Siggi's Spider-Man Classic", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Mad Scientist", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Midnight Magic", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Pro Pinball The Web", StringComparison.InvariantCultureIgnoreCase) == true || 
+                                  name?.StartsWith("Octopus", StringComparison.InvariantCultureIgnoreCase) == true ;
 
             return isManufacturerOriginal || isNameOriginal;
         }
