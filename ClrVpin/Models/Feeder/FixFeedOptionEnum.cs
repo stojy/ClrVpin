@@ -20,4 +20,5 @@ public enum FixFeedOptionEnum
     [Description("Wrong Manufacturer/Year")] WrongManufacturerYear,
     [Description("Wrong Type")] WrongType,
     [Description("Duplicate Table")] DuplicateTable,
+    [Description("Wrong Simulator")] WrongSimulator
 }

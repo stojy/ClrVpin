@@ -217,6 +217,7 @@ namespace ClrVpin.Models.Settings
             new() {Enum = FixFeedOptionEnum.WrongManufacturerYear, Tip = "Fix manufacturer name"},
             new() {Enum = FixFeedOptionEnum.WrongType, Tip = "Fix table type, i.e. PM, EM, or SS"},
             new() {Enum = FixFeedOptionEnum.DuplicateTable, Tip = "Merge duplicate table entries based on the IPDB URL (n/a for original tables)"},
+            new() {Enum = FixFeedOptionEnum.WrongSimulator, Tip = "Fix simulator type, e.g. table designated as FP instead of VPX"}
         };
 
         public static readonly EnumOption<PresetDateOptionEnum>[] PresetDateOptions =

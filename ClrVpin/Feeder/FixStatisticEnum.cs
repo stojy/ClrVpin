@@ -65,5 +65,8 @@ public enum FixStatisticsEnum
     WrongType,
 
     [Description("Duplicate Table")]
-    DuplicateGame
+    DuplicateGame,
+
+    [Description("Wrong Simulator")]
+    WrongSimulator
 }

@@ -19,7 +19,7 @@ public static class FeederFix
     {
         // used with Regex.Replace will capture multiple matches at once.. same word or other other words
         // - refer Fuzzy.cs
-        _trimAuthorsRegex = new Regex($@"(?<=^|[^a-z^A-Z])({Fuzzy.Authors.StringJoin("|")})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        _trimAuthorsRegex = new Regex($"(?<=^|[^a-z^A-Z])({Fuzzy.Authors.StringJoin("|")})(?=$|[^a-zA-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     }
 
     public static Dictionary<string, int> FixOnlineDatabase(List<OnlineGame> onlineGames)
@@ -112,7 +112,7 @@ public static class FeederFix
     // fixes that do NOT require the collections to be initialized (which must occur after de-duplicating, aka merging)
     private static void PreMerge(OnlineGame onlineGame)
     {
-        FixNamedGames(onlineGame);
+        FixTableSpecificIssues(onlineGame);
 
         FixTableInvalidCharacters(onlineGame);
         FixManufacturerInvalidCharacters(onlineGame);
@@ -284,7 +284,7 @@ public static class FeederFix
         onlineGame.Manufacturer = onlineGame.Manufacturer.RemoveInvalidFileNameChars(true);
     }
 
-    private static void FixNamedGames(OnlineGame onlineGame)
+    private static void FixTableSpecificIssues(OnlineGame onlineGame)
     {
         // non-generic fixes for specifically named games
         // - this is very smelly, but treating these as 'exceptional' (and hopefully few!) scenarios, similar to GameDerived.CheckIsOriginal
@@ -335,7 +335,7 @@ public static class FeederFix
                 break;
             case "Martian Queen (LTD ) (LTD 0)":
                 FixWrongName(onlineGame, "Martian Queen");
-                WrongManufacturerYear(onlineGame, "LTD do Brasil Diverses Eletrnicas Ltda", 1981);
+                FixWrongManufacturerYear(onlineGame, "LTD do Brasil Diverses Eletrnicas Ltda", 1981);
                 break;
             case "AC-DC (Stern 2012)":
                 FixWrongName(onlineGame, "AC/DC (Let There Be Rock Limited Edition)");
@@ -383,7 +383,7 @@ public static class FeederFix
                 FixWrongName(onlineGame, "Captain Nemo");
                 break;
             case "Saloon (Taito do Brasil 1978 1978)":
-                WrongManufacturerYear(onlineGame, "Taito do Brasil");
+                FixWrongManufacturerYear(onlineGame, "Taito do Brasil");
                 break;
             case "Night Rider (Bally 1976)":
                 // VPX tables are the 1977 SS version
@@ -406,7 +406,11 @@ public static class FeederFix
             case "Strip Joker Poker (Gottlieb 1978)":
                 // if the tables can be identified more generically (e.g. via manufacturer) then add to GameDerived.CheckIsOriginal() instead
                 // - implementing via CheckIsOriginal() has the added benefit of maintaining the manufacturer.. which can help with subsequent file matching
-                WrongManufacturerYear(onlineGame, "Original");
+                FixWrongManufacturerYear(onlineGame, "Original");
+                break;
+            case "Border Town (Gottlieb 1940)":
+                // one of the files is incorrectly marked as VPX
+                FixWrongSimulator(onlineGame, SimulatorAbbreviationEnum.FuturePinball);
                 break;
         }
     }
@@ -417,7 +421,7 @@ public static class FeederFix
         // - if the game already exists, then it will be picked up later as a duplicate
         FixWrongUrlIpdb(onlineGame, ipdbUrl);
 
-        WrongManufacturerYear(onlineGame, manufacturer, year);
+        FixWrongManufacturerYear(onlineGame, manufacturer, year);
 
         if (name != null)
             FixWrongName(onlineGame, name);
@@ -578,7 +582,7 @@ public static class FeederFix
         onlineGame.Name = name;
     }
 
-    private static void WrongManufacturerYear(OnlineGameBase onlineGame, string manufacturer, int? year = null)
+    private static void FixWrongManufacturerYear(OnlineGameBase onlineGame, string manufacturer, int? year = null)
     {
         if (!IsActive(FixFeedOptionEnum.WrongManufacturerYear))
             return;
@@ -587,6 +591,17 @@ public static class FeederFix
         onlineGame.Manufacturer = manufacturer;
         onlineGame.Year = year ?? onlineGame.Year;
     }
+
+    private static void FixWrongSimulator(OnlineGameBase onlineGame, string tableFormat)
+    {
+        if (!IsActive(FixFeedOptionEnum.WrongSimulator))
+            return;
+
+        // mark all tables files as the specified table format.. which will be translated to Simulator elsewhere
+        LogFixed(onlineGame, FixStatisticsEnum.WrongSimulator, $"old simulator(s)={onlineGame.TableFiles.Select(table => table.TableFormat).StringJoin()}, new simulator={tableFormat}");
+        onlineGame.TableFiles.ForEach(tableFile => tableFile.TableFormat = tableFormat);
+    }
+
 
     private static void FixTableType(OnlineGameBase onlineGame, string tableType)
     {
