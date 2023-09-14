@@ -289,6 +289,7 @@ public static class FeederFix
         // non-generic fixes for specifically named games
         // - this is very smelly, but treating these as 'exceptional' (and hopefully few!) scenarios, similar to GameDerived.CheckIsOriginal
         // - no need to strip author from the manufactured table as this is done later
+        // - names especially need to be fixed s GameDerived.CheckIsOriginal can work, e.g. "JP's Space Cadet" needs the author stripped
         // - todo; report/fix the underlying VPS feed and then remove this code??
         var description = onlineGame.CreateDescription();
         switch (description)
@@ -325,6 +326,9 @@ public static class FeederFix
                 break;
             case "JP's Transformers (Original 2011)":
                 FixGame(onlineGame, "https://www.ipdb.org/machine.cgi?id=5709", "Stern");
+                break;
+            case "JP's Space Cadet (Maxis 1996)":
+                FixWrongName(onlineGame, "Space Cadet");
                 break;
             case "Phychedelic (Gottlieb 1970)":
                 FixWrongName(onlineGame, "Psychedelic");
@@ -401,7 +405,7 @@ public static class FeederFix
             case "Mortal Kombat II (Midway 1992)":
             case "Strip Joker Poker (Gottlieb 1978)":
                 // if the tables can be identified more generically (e.g. via manufacturer) then add to GameDerived.CheckIsOriginal() instead
-                // - implementing via CheckIsOriginal() will also maintain the manufacturer.. which can help with subsequent file matching
+                // - implementing via CheckIsOriginal() has the added benefit of maintaining the manufacturer.. which can help with subsequent file matching
                 WrongManufacturerYear(onlineGame, "Original");
                 break;
         }
