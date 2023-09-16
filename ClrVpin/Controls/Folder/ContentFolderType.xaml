@@ -39,7 +39,7 @@
         </b:Interaction.Triggers>
       </TextBox>
 
-      <TextBox Margin="5,0,0,0" Width="150" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Linked Files(s)"
+      <TextBox Margin="5,0,0,0" Width="160" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Linked Files(s)"
                ToolTip="Any related files with matching extensions will also be moved/copied/deleted."
                Text="{Binding KindredExtensions, UpdateSourceTrigger=PropertyChanged}">
         <b:Interaction.Triggers>

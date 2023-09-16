@@ -1,9 +1,11 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using PropertyChanged;
 
 namespace ClrVpin.Controls.Folder
 {
     [AddINotifyPropertyChangedInterface]
+    [Serializable]
     public class FolderTypeDetail
     {
         public string Folder { get; set; }
