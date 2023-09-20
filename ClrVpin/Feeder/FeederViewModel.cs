@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using ClrVpin.Controls;
 using ClrVpin.Extensions;
+using ClrVpin.Home;
 using ClrVpin.Logging;
 using ClrVpin.Models.Feeder;
 using ClrVpin.Models.Settings;
@@ -103,54 +105,69 @@ public class FeederViewModel : IShowViewModel
 
     private async void Start()
     {
-        Logger.Info($"Feeder started, settings={JsonSerializer.Serialize(Settings)}");
+        ProgressViewModel progress = null;
 
-        _window.Hide();
-        Logger.Clear();
-
-        var progress = new ProgressViewModel("Feeding");
-        progress.Show(_window);
-
-        var localGames = new List<LocalGame>();
-        if (MatchFuzzy.IsActive)
+        try
         {
-            try
+            Logger.Info($"Feeder started, settings={JsonSerializer.Serialize(Settings)}");
+
+            progress = new ProgressViewModel("Feeding");
+
+            _window.Hide();
+            Logger.Clear();
+
+            progress.Show(_window);
+
+            var localGames = new List<LocalGame>();
+            if (MatchFuzzy.IsActive)
             {
-                progress.Update("Loading database");
-                localGames = await DatabaseUtils.ReadGamesFromDatabases(Settings.GetFixableContentTypes());
-                Logger.Info($"Loading database complete, duration={progress.Duration}", true);
+                try
+                {
+                    progress.Update("Loading database");
+                    localGames = await DatabaseUtils.ReadGamesFromDatabases(Settings.GetFixableContentTypes());
+                    Logger.Info($"Loading database complete, duration={progress.Duration}", true);
+                }
+                catch (Exception)
+                {
+                    progress.Close();
+                    _window.TryShow();
+                    return;
+                }
             }
-            catch (Exception)
-            {
-                progress.Close();
-                _window.TryShow();
-                return;
-            }
+
+            progress.Update("Fetching online database");
+            var onlineGames = await FeederUtils.ReadGamesFromOnlineDatabase();
+
+            progress.Update("Fixing online database");
+            var feedFixStatistics = FeederFix.FixOnlineDatabase(onlineGames);
+            Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
+
+            progress.Update("Matching online to local database(s)");
+            await FeederUtils.MatchOnlineToLocalAsync(localGames, onlineGames, UpdateProgress);
+            Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
+
+            progress.Update("Matching local to online database");
+            var gameItems = await FeederUtils.MergeOnlineAndLocalGamesAsync(localGames, onlineGames, UpdateProgress);
+            Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
+
+            progress.Update("Preparing Results");
+
+            progress.Close();
+
+            await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics);
+            Logger.Info($"Feeder rendered, duration={progress.Duration}", true);
+
+            void UpdateProgress(string detail, int current, int total) => progress.Update(null, null, detail, current, total);
         }
+        catch (HttpRequestException e)
+        {
+            progress?.Close();
+            Logger.Warn(e, "Feeder");
 
-        progress.Update("Fetching online database");
-        var onlineGames = await FeederUtils.ReadGamesFromOnlineDatabase();
-
-        progress.Update("Fixing online database");
-        var feedFixStatistics = FeederFix.FixOnlineDatabase(onlineGames);
-        Logger.Info($"Loading online database complete, duration={progress.Duration}", true);
-
-        progress.Update("Matching online to local database(s)");
-        await FeederUtils.MatchOnlineToLocalAsync(localGames, onlineGames, UpdateProgress);
-        Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
-
-        progress.Update("Matching local to online database");
-        var gameItems = await FeederUtils.MergeOnlineAndLocalGamesAsync(localGames, onlineGames, UpdateProgress);
-        Logger.Info($"Matching local and online databases complete, duration={progress.Duration}", true);
-
-        progress.Update("Preparing Results");
-
-        progress.Close();
-
-        await ShowResults(progress.Duration, gameItems, localGames, feedFixStatistics);
-        Logger.Info($"Feeder rendered, duration={progress.Duration}", true);
-
-        void UpdateProgress(string detail, int current, int total) => progress.Update(null, null, detail, current, total);
+            await Notification.ShowWarning(HomeWindow.HomeDialogHost, "Feeder Was Unsuccessful", "Unable to access the internet.  Please check your internet connection and then try again.",
+                $"{Logger.GetLogs(1)}", showCloseButton:true);
+            _window.Close();
+        }
     }
 
     private async Task ShowResults(TimeSpan duration, IList<GameItem> gameItems, IList<LocalGame> localGames, Dictionary<string, int> fixStatistics)

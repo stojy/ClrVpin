@@ -74,16 +74,22 @@ namespace ClrVpin.Logging
             Add(Level.Warn, message);
         }
 
+        public static void Warn(Exception exception, string message)
+        {
+            _logger.Warn(exception, FormatErrorMessage(message));
+            Add(Level.Warn, $"{message}\n{exception}", sync: true);
+        }
+
         public static void Error(Exception exception, string message)
         {
             _logger.Error(exception, FormatErrorMessage(message));
-            Add(Level.Error, $"{message}\n{exception}");
+            Add(Level.Error, $"{message}\n{exception}", sync: true);
         }
 
         public static void Error(string message)
         {
             _logger.Error(FormatErrorMessage(message));
-            Add(Level.Error, message);
+            Add(Level.Error, message, sync: true);
         }
 
         private static string FormatErrorMessage(string message) => $"\n******* ERROR *******\n{message}";

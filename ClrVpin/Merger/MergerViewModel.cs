@@ -227,7 +227,7 @@ public class MergerViewModel : IShowViewModel
         {
             progress?.Close();
             Logger.Error(e, "Merger");
-            await Notification.ShowWarning(HomeWindow.HomeDialogHost, "Merger Was Unsuccessful", "Access Error: please check that the folder is not read only and then try again.",
+            await Notification.ShowWarning(HomeWindow.HomeDialogHost, "Merger Was Unsuccessful", "Access Error: please check that the folder is not read only and try again.",
                 $"{Logger.GetLogs(1)}", showCloseButton:true);
             _window.Close();
         }
