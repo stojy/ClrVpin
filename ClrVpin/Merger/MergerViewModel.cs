@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -42,7 +43,7 @@ public class MergerViewModel : IShowViewModel
         SourceFolderModel = new GenericFolderTypeModel("Source", Settings.Merger.SourceFolder, true, folder =>
         {
             Settings.Merger.SourceFolder = folder;
-            TryUpdateDestinationFolder(folder);
+            TryUpdateDestinationContentType(folder);
         });
 
         var destinationContentTypes = Model.Settings.GetFixableContentTypes().Select((contentType, i) => 
@@ -53,7 +54,7 @@ public class MergerViewModel : IShowViewModel
                 Tip = contentType.Tip + (contentType.IsFolderValid == false ? Model.OptionsDisabledMessage : null)
             });
         DestinationContentTypesView = new ListCollectionView<FeatureType>(destinationContentTypes);
-        TryUpdateDestinationFolder(Settings.Merger.DestinationContentType);
+        TryUpdateDestinationContentType(Settings.Merger.DestinationContentType);
 
         IgnoreWordsString = string.Join(", ", Settings.Merger.IgnoreIWords);
         IgnoreWordsChangedCommand = new ActionCommand(IgnoreWordsChanged);
@@ -126,13 +127,15 @@ public class MergerViewModel : IShowViewModel
         IsValid = !string.IsNullOrEmpty(Settings.Merger.DestinationContentType);
     }
 
-    private void TryUpdateDestinationFolder(string folder)
+    private void TryUpdateDestinationContentType(string folder)
     {
-        // attempt to assign destination folder automatically based on the specified folder
+        var directory = Path.GetFileName(folder)?.ToLower();
+
+        // attempt to assign destination content type automatically based on the specified folder
         // - if a folder for a disabled content type is specified (e.g. folder in settings hasn't been configured), then remove the selected item (if any)
         var matchedContentType = DestinationContentTypesView
             .Where(contentType => contentType.IsActive)
-            .FirstOrDefault(c => folder?.ToLower().EndsWith(c.Description.ToLower()) ?? false);
+            .FirstOrDefault(c => directory == c.Description.ToLower());
         
         DestinationContentType = matchedContentType;
         DestinationContentTypesView.MoveCurrentTo(DestinationContentType);
