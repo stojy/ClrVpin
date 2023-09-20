@@ -99,5 +99,5 @@ public static class StringExtensions
         return source.TrimPseudoWhitespace();
     }
 
-    private static readonly char[] _pseudoWhiteSpaceChars = { ' ', '_', '-' };
+    private static readonly char[] _pseudoWhiteSpaceChars = { ' ', '_', '-' }; // _ = snake case, - = kebab case
 }

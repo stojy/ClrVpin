@@ -47,12 +47,12 @@ public static class Fuzzy
         // - https://regex101.com/r/DoztL5/1
         Authors = new[] { "jps", "jp's", "jp", "sg1bson", "vpw", "starlion", "pinball58", "vp99", "balutito", "siggis", "uws" };
         string[] language = { "a", "and", "n'", "'n", "n", "the", "en" };
-        string[] vpx = {"vpx8", "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024" }; // order is important, e.g. vpx8 to be stripped before vpx
+        string[] vpx = {"vpx8", "vpx", "mod", "vp10", "4k", "b2s", "4player", "2021", "2022", "2023", "2024", "logo" }; // order is important, e.g. vpx8 to be stripped before vpx
         string[] technologyTypes = { TableType.ElectroMagnetic.ToLower(), TableType.SolidState.ToLower(), TableType.PureMechanical.ToLower() };
         string[] descriptions = { "no leds", "upgrade", "premium" };
         string[] versions = { "beta1", "beta" }; // order is important, e.g. ensure beta1 is removed before beta
         pattern = string.Join('|', Authors.Concat(language).Concat(vpx).Concat(technologyTypes).Concat(descriptions).Concat(versions));
-        _wholeWordRegex = new Regex($"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
+        _stopWholeWordRegex = new Regex($"(?<=^|[^a-z^A-Z])({pattern})(?=$|[^a-zA-Z])", RegexOptions.Compiled);
 
         // first pass single whitespace
         // - performed BEFORE other checks that aren't sensitive to these changes
@@ -195,7 +195,7 @@ public static class Fuzzy
         cleanName = cleanName.ToNullLowerAndTrim() ?? "";
 
         // trim (whole) words
-        cleanName = _wholeWordRegex.Replace(cleanName, "");
+        cleanName = _stopWholeWordRegex.Replace(cleanName, "");
 
         // trim pseudo white space, e.g. trailing '_' char caused by whole removal: blah_VPX8
         cleanName = cleanName.TrimPseudoWhitespace();
@@ -663,7 +663,7 @@ public static class Fuzzy
     private static readonly Regex _fileNameInfoRegex;
     private static readonly Regex _trimSpecialAndNonAsciiCharRegex;
     private static readonly Regex _trimTrailingPeriodRegex;
-    private static readonly Regex _wholeWordRegex;
+    private static readonly Regex _stopWholeWordRegex;
     private static readonly Regex _addSpacingFirstPassRegex;
     private static readonly Regex _addSpacingSecondPassRegex;
     private static readonly Regex _versionRegex;

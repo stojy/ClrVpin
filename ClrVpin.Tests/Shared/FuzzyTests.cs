@@ -301,6 +301,7 @@ public class FuzzyTests
     [TestCase("Mephisto (Cirsa 1987)", "jp mephisto.directb2s", 145, TestName = "author 'jp'")]
     [TestCase("Martian Queen (LTD do Brasil 1981)", "marqueen_w.directb2s", 149, TestName = "known word substitution: marqueen and trim single character 'w'")]
     [TestCase("Martian Queen (LTD do Brasil 1981)", "q_marqueen_w.directb2s", 149, TestName = "known word substitution: marqueen and trim single character 'q' and 'w'")]
+    [TestCase("O Gaucho (LTD do Brasil 1975)", "o gaucho_logo.png", 145, TestName = "drop word: logo")]
     public void MatchScoreTest(string databaseName, string fileOrFeedName, int expectedScore)
     {
         // exactly same as MatchTest.. with a score validation
