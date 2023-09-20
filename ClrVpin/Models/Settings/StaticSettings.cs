@@ -65,7 +65,7 @@ namespace ClrVpin.Models.Settings
             new(HitTypeEnum.Missing, false, "Files that are missing.  Missing files can be downloaded via the 'Feeder' feature from the home page."),
             new(HitTypeEnum.Unknown, false, "Files that do match the configured file extension type, but don't match any of the tables in the database"),
             new(HitTypeEnum.Unsupported, false,
-                "Files that don't match the configured file extension types - ONLY APPLICABLE FOR MEDIA CONTENT, since unsupported files are EXPECTED to exist in the tables folder (e.g. txt, exe, ogg, etc)")
+                "Files that don't match the configured file extension types - ONLY APPLICABLE FOR MEDIA CONTENT, since unsupported file types/extensions are EXPECTED to exist in the tables folder (e.g. txt, exe, ogg, etc)")
         };
 
         // merger matching criteria types - to be used elsewhere (merger)

@@ -40,7 +40,7 @@
       </TextBox>
 
       <TextBox Margin="5,0,0,0" Width="160" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Linked Files(s)"
-               ToolTip="Any related files with matching extensions will also be moved/copied/deleted."
+               ToolTip="Any related files with matching extension or filename. Depending on the usage context, these files will be either moved/copied or ignored."
                Text="{Binding KindredExtensions, UpdateSourceTrigger=PropertyChanged}">
         <b:Interaction.Triggers>
           <b:EventTrigger EventName="TextChanged">

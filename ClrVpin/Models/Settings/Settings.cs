@@ -41,7 +41,7 @@ public class Settings : ISettings
         { 
             new() { Enum = ContentTypeEnum.Tables, Tip = "Playfield table", Extensions = "*.vpx, *.vpt", KindredExtensions = "*.ini, *.vbs, *.txt, *.pdf", Category = ContentTypeCategoryEnum.Pinball, IsFolderRequired = true},
             new() { Enum = ContentTypeEnum.Backglasses, Tip = "Video used for the backglass", Extensions = "*.directb2s", Category = ContentTypeCategoryEnum.Pinball },
-            new() { Enum = ContentTypeEnum.PointOfViews, Tip = "3D camera configuration", Extensions = "*.pov", Category = ContentTypeCategoryEnum.Pinball },
+            new() { Enum = ContentTypeEnum.PointOfViews, Tip = "3D camera configuration", Extensions = "*.pov", KindredExtensions = "autopov.pov", Category = ContentTypeCategoryEnum.Pinball },
             new() { Enum = ContentTypeEnum.Database, Tip = "Pinball X or Pinball Y database file", Extensions = "*.xml", Category = ContentTypeCategoryEnum.Database, IsFolderRequired = true},
             new() { Enum = ContentTypeEnum.TableAudio, Tip = "Audio used when displaying a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media },
             new() { Enum = ContentTypeEnum.LaunchAudio, Tip = "Audio used when launching a table", Extensions = "*.mp3, *.wav", Category = ContentTypeCategoryEnum.Media },
@@ -105,7 +105,7 @@ public class Settings : ISettings
     public int Version { get; set; }
 
     [JsonIgnore]
-    public int MinVersion { get; set; } = 8;
+    public int MinVersion { get; set; } = 9;
 
     public void Init(DefaultSettings defaultSettings)
     {

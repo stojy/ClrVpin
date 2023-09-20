@@ -25,7 +25,8 @@ internal static class ContentUtils
 
     public static IEnumerable<FileDetail> GetNonContentFileDetails(ContentType contentType, string folder)
     {
-        // return all files that don't match the supported file extensions
+        // return all files that don't match the supported file extensions OR kindred file extensions
+        // - kindred file extensions are normally in the format *.<ext>, but may also include a file name, e.g. autopov.pov
         var supportedExtensions = contentType.ExtensionsList.Select(x => x.TrimStart('*').ToLower()).ToList();
         var kindredExtensions = contentType.KindredExtensionsList.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.TrimStart('*').ToLower());
         supportedExtensions.AddRange(kindredExtensions);
@@ -101,7 +102,9 @@ internal static class ContentUtils
                     // - e.g. possible for..
                     //   a. table --> new table files added AND the database not updated yet
                     //   b. table support and media --> as per pinball OR extra/redundant files exist where there is no table (yet!)
-                    unmatchedSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, contentFile, new FileInfo(contentFile).Length));
+                    //   c. pov --> known exception for 'autopov.pov' which is a special case that is known NOT to match a table
+                    if (!contentType.KindredExtensionsList.Contains(Path.GetFileName(contentFile)))
+                        unmatchedSupportedFiles.Add(new FileDetail(contentType.Enum, HitTypeEnum.Unknown, FixFileTypeEnum.Skipped, contentFile, new FileInfo(contentFile).Length));
                 }
             }
         });
